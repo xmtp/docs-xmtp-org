@@ -1,0 +1,490 @@
+---
+description: Learn how to build custom content types for use with XMTP
+---
+
+# Build custom content types for use with XMTP
+
+:::warning[warning]
+
+Be aware that your custom content type may not be automatically recognized or supported by other apps, which could result in the other apps overlooking or only displaying the fallback text for your custom content type.
+
+:::
+
+Building a custom content type enables you to manage data in a way that is more personalized or specialized to the needs of your app.
+
+For more common content types, you can usually find a [standard](/content-types/content-types#standard-content-types) or [standards-track](/content-types/content-types#standards-track-content-types) content type to serve your needs.
+
+If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
+
+## Create the content type
+
+Create the custom content type by creating a new file
+
+:::code-group
+
+```jsx [JavaScript]
+// A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-js/pull/509/files
+import { ContentTypeId } from "@xmtp/xmtp-js";
+import type { ContentCodec, EncodedContent } from "@xmtp/xmtp-js";
+
+// Create a unique identifier for your content type
+export const ContentTypeMultiplyNumbers = new ContentTypeId({
+  authorityId: 'your.domain',
+  typeId: 'multiply-number',
+  versionMajor: 1,
+  versionMinor: 0,
+})
+
+// Define the MultiplyNumbers class
+export class MultiplyNumbers {
+  public num1: number
+  public num2: number
+  public result: number | undefined
+
+  constructor(num1: number, num2: number, result?: number) {
+    this.num1 = num1
+    this.num2 = num2
+    this.result = result
+  }
+}
+
+// Define the MultiplyCodec class
+export class ContentTypeMultiplyNumberCodec
+  implements ContentCodec<MultiplyNumbers>
+{
+  get contentType(): ContentTypeId {
+    return ContentTypeMultiplyNumbers
+  }
+
+  // The encode method accepts an object of MultiplyNumbers and encodes it as a byte array
+  encode(numbers: MultiplyNumbers): EncodedContent {
+    const { num1, num2 } = numbers
+    return {
+      type: ContentTypeMultiplyNumbers,
+      parameters: {},
+      content: new TextEncoder().encode(JSON.stringify({ num1, num2 })),
+    }
+  }
+
+  // The decode method decodes the byte array, parses the string into numbers (num1, num2), and returns their product
+  decode(encodedContent: EncodedContent): MultiplyNumbers {
+    const decodedContent = new TextDecoder().decode(encodedContent.content)
+    const { num1, num2 } = JSON.parse(decodedContent)
+    return new MultiplyNumbers(num1, num2, num1 * num2)
+  }
+
+  fallback(content: MultiplyNumbers): string | undefined {
+    return `Can’t display number content types. Number was ${JSON.stringify(
+      content
+    )}`
+    // return undefined to indicate that this content type should not be displayed if it's not supported by a client
+  }
+
+  // Set to true to enable push notifications for interoperable content types.
+  // Receiving clients must handle this field appropriately.
+  shouldPush(): boolean {
+    return true;
+  }
+}
+```
+
+```jsx [React]
+// A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-web/pull/141/files
+import { ContentTypeId } from "@xmtp/xmtp-js";
+import type { ContentCodec, EncodedContent } from "@xmtp/xmtp-js";
+
+// Create a unique identifier for your content type
+export const ContentTypeMultiplyNumbers = new ContentTypeId({
+  authorityId: 'your.domain',
+  typeId: 'multiply-number',
+  versionMajor: 1,
+  versionMinor: 0,
+})
+
+// Define the MultiplyNumbers class
+export class MultiplyNumbers {
+  public num1: number
+  public num2: number
+  public result: number | undefined
+
+  constructor(num1: number, num2: number, result?: number) {
+    this.num1 = num1
+    this.num2 = num2
+    this.result = result
+  }
+}
+
+// Define the MultiplyCodec class
+export class ContentTypeMultiplyNumberCodec
+  implements ContentCodec<MultiplyNumbers>
+{
+  get contentType(): ContentTypeId {
+    return ContentTypeMultiplyNumbers
+  }
+
+  // The encode method accepts an object of MultiplyNumbers and encodes it as a byte array
+  encode(numbers: MultiplyNumbers): EncodedContent {
+    const { num1, num2 } = numbers
+    return {
+      type: ContentTypeMultiplyNumbers,
+      parameters: {},
+      content: new TextEncoder().encode(JSON.stringify({ num1, num2 })),
+    }
+  }
+
+  // The decode method decodes the byte array, parses the string into numbers (num1, num2), and returns their product
+  decode(encodedContent: EncodedContent): MultiplyNumbers {
+    const decodedContent = new TextDecoder().decode(encodedContent.content)
+    const { num1, num2 } = JSON.parse(decodedContent)
+    return new MultiplyNumbers(num1, num2, num1 * num2)
+  }
+
+  fallback(content: MultiplyNumbers): string | undefined {
+    return `Can’t display number content types. Number was ${JSON.stringify(
+      content
+    )}`
+    // return undefined to indicate that this content type should not be displayed if it's not supported by a client
+  }
+
+  // This method is optional and can be used to determine if the content type should have a push notification
+  shouldPush() {
+    return true;
+  }
+}
+
+export const multiplyNumbersContentTypeConfig: ContentTypeConfiguration = {
+  codecs: [new ContentTypeMultiplyNumberCodec()],
+  contentTypes: [ContentTypeMultiplyNumbers.toString()],
+  namespace: NAMESPACE, // Replace with the actual namespace you are using
+  processors: {
+    [ContentTypeMultiplyNumbers.toString()]: [processMultiplyNumbers],
+  },
+  validators: {
+    [ContentTypeMultiplyNumbers.toString()]: isValidMultiplyNumbersContent,
+  },
+};
+
+// You'll need to define the processMultiplyNumbers and isValidMultiplyNumbersContent functions
+// These should be tailored to handle the specific logic of processing and validating
+// the content type for multiplying numbers.
+
+function processMultiplyNumbers(content) {
+  // Define how to process the multiply numbers content
+  // Example: logging, storing, or manipulating the data
+}
+
+function isValidMultiplyNumbersContent(content) {
+  // Define validation logic for multiply numbers content
+  // Example: checking if the numbers are valid, not null, etc.
+}
+```
+
+```kotlin [Kotlin]
+import org.json.JSONObject
+import org.xmtp.android.library.codecs.ContentTypeId
+import org.xmtp.android.library.codecs.ContentTypeIdBuilder
+import org.xmtp.android.library.codecs.ContentCodec
+import org.xmtp.android.library.codecs.EncodedContent
+
+data class NumberPair(val a: Double, val b: Double, var result: Double = 0.0)
+
+data class MultiplyNumberCodec(
+    override var contentType: ContentTypeId = ContentTypeIdBuilder.builderFromAuthorityId(
+        authorityId = "your.domain",
+        typeId = "multiply-number",
+        versionMajor = 1,
+        versionMinor = 0
+    )
+) : ContentCodec<NumberPair> {
+    override fun encode(content: NumberPair): EncodedContent {
+        val jsonObject = JSONObject()
+        jsonObject.put("a", content.a)
+        jsonObject.put("b", content.b)
+        return EncodedContent.newBuilder().also {
+            it.type = contentType
+            it.content = jsonObject.toString().toByteStringUtf8()
+        }.build()
+    }
+
+    override fun decode(content: EncodedContent): NumberPair {
+        val jsonObject = JSONObject(content.content.toStringUtf8())
+        val a = jsonObject.getDouble("a")
+        val b = jsonObject.getDouble("b")
+        val numberPair = NumberPair(a, b, a * b)
+        return numberPair
+    }
+
+    override fun fallback(content: NumberPair): String? {
+        return "Error: This app does not support numbers."
+    }
+
+    // This method is optional and can be used to determine if the content type should have a push notification
+    override fun shouldPush(): Boolean {
+      return true;
+    }
+}
+```
+
+```swift [Swift]
+//A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-ios/pull/211
+import XMTP
+
+public struct MultiplyNumbers {
+    public var num1: Double
+    public var num2: Double
+    public var result: Double?
+
+    public init(num1: Double, num2: Double, result: Double? = nil) {
+        self.num1 = num1
+        self.num2 = num2
+        self.result = result
+    }
+}
+
+public struct MultiplyNumbersCodec: ContentCodec {
+	public typealias T = MultiplyNumbers
+
+	public var contentType: ContentTypeID {
+		ContentTypeID(authorityID: "example.com", typeID: "number", versionMajor: 1, versionMinor: 1)
+	}
+
+  public func encode(content: MultiplyNumbers, client: Client) throws -> EncodedContent {
+        var encodedContent = EncodedContent()
+        encodedContent.type = contentType
+        encodedContent.parameters["num1"] = String(content.num1)
+        encodedContent.parameters["num2"] = String(content.num2)
+        return encodedContent
+    }
+
+	public func decode(content: EncodedContent, client _: Client) throws -> MultiplyNumbers {
+        guard let num1Str = content.parameters["num1"], let num1 = Double(num1Str),
+              let num2Str = content.parameters["num2"], let num2 = Double(num2Str) else {
+            throw CodecError.invalidContent
+        }
+        return MultiplyNumbers(num1: num1, num2: num2, result: num1 * num2)
+    }
+
+    public func fallback(content: MultiplyNumbers) throws -> String? {
+		return "MultiplyNumbersCodec is not supported"
+	}
+
+
+    // This method is optional and can be used to determine if the content type should have a push notification
+    public func shouldPush() -> Bool {
+      return true;
+    }
+}
+```
+
+```jsx [React Native]
+import { content } from '@xmtp/proto'
+
+import {JSContentCodec, Client, Conversation, DecodedMessage } from '@xmtp/react-native-sdk';
+
+type EncodedContent = content.EncodedContent
+type ContentTypeId = content.ContentTypeId
+
+const ContentTypeMultiplyNumbers: ContentTypeId = {
+  authorityId: 'com.example',
+  typeId: 'multiplyNumbers',
+  versionMajor: 1,
+  versionMinor: 1,
+}
+class MultiplyNumbers {
+  public readonly num1: number
+  public readonly num2: number
+  public readonly result: number
+
+  constructor(num1: number, num2: number, result: number) {
+    this.num1 = num1
+    this.num2 = num2
+    this.result = result
+  }
+}
+
+class ContentTypeMultiplyNumberCodec
+  implements JSContentCodec<MultiplyNumbers>
+{
+  get contentType() {
+    return ContentTypeMultiplyNumbers
+  }
+
+  encode(decoded: MultiplyNumbers): EncodedContent {
+    return {
+      type: ContentTypeMultiplyNumbers,
+      parameters: {
+        num1: decoded.num1.toString(),
+        num2: decoded.num2.toString(),
+      },
+      content: new Uint8Array(),
+    }
+  }
+
+  decode(encoded: EncodedContent): MultiplyNumbers {
+    const num1 = parseFloat(encoded.parameters['num1'] ?? '0')
+    const num2 = parseFloat(encoded.parameters['num2'] ?? '0')
+    return new MultiplyNumbers(num1, num2, num1 * num2)
+  }
+
+  fallback(content: MultiplyNumbers): string {
+    return `MultiplyNumbersCodec is not supported`
+  }
+
+  // This method is optional and can be used to determine if the content type should trigger a push notification
+  shouldPush(): boolean {
+    return true;
+  }
+}
+```
+
+:::
+
+## Configure the content types
+
+Import and register the custom content type.
+
+:::code-group
+
+```jsx [JavaScript]
+import { ContentTypeMultiplyNumberCodec } from "./xmtp-content-type-multiply-number";
+
+const client = await Client.create({
+  env: "production",
+  codecs: [new ContentTypeMultiplyNumberCodec()],
+});
+//or
+client.registerCodec(new ContentTypeMultiplyNumberCodec());
+```
+
+```jsx [React]
+import {
+  XMTPProvider,
+} from "@xmtp/react-sdk";
+
+import {multiplyNumbersContentTypeConfig} from "./xmtp-content-type-multiply-number";
+
+const contentTypeConfigs = [
+  multiplyNumbersContentTypeConfig,
+];
+
+createRoot(document.getElementById("root") as HTMLElement).render(
+  <StrictMode>
+    <XMTPProvider contentTypeConfigs={contentTypeConfigs}>
+      <App />
+    </XMTPProvider>
+  </StrictMode>,
+);
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ContentTypeMultiplyNumberCodec
+
+Client.register(codec = ContentTypeMultiplyNumberCodec())
+```
+
+```swift [Swift]
+Client.register(codec: ContentTypeMultiplyNumberCodec())
+```
+
+```jsx [React Native]
+import { ContentTypeMultiplyNumberCodec } from "./xmtp-content-type-number";
+
+const client = await Client.create({
+  env: "production",
+  codecs: [new ContentTypeMultiplyNumberCodec()],
+});
+```
+
+:::
+
+## Send the content
+
+Send a message using the custom content type. This code sample demonstrates how to use the `MultiplyCodec` custom content type to perform multiplication operations.
+
+:::code-group
+
+```jsx [JavaScript]
+const numbersToMultiply = new MultiplyNumbers(2, 3);
+
+conversation.send(numbersToMultiply, {
+  contentType: ContentTypeMultiplyNumbers,
+});
+```
+
+```jsx [React]
+const numbersToMultiply = { a: 3, b: 7 };
+
+conversation.send(numbersToMultiply, {
+  contentType: ContentTypeMultiplyNumbers,
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ContentTypeMultiplyNumberCodec
+
+val numbers = NumberPair(
+    a = 3,
+    b = 7,
+)
+
+conversation.send(
+    content = numbers,
+    options = SendOptions(contentType = ContentTypeMultiplyNumberCodec().contentType),
+)
+```
+
+```swift [Swift]
+let multiplyNumbers = MultiplyNumbers(num1: 3, num2: 2)
+try await aliceConversation.send(content: multiplyNumbers, options: .init(contentType: ContentTypeMultiplyNumberCodec().contentType))
+```
+
+```jsx [React Native]
+const multiplyNumbers = new MultiplyNumbers(3, 7);
+await bobConvo.send(multiplyNumbers, {
+  contentType: ContentTypeMultiplyNumbers,
+});
+```
+
+:::
+
+## Receive the content
+
+To use the result of the multiplication operation, add a renderer for the custom content type.
+
+To handle unsupported content types, refer to the [fallback](/dms/messages#handle-an-unsupported-content-type-error) section.
+
+:::code-group
+
+```jsx [JavaScript]
+if (message.contentType.sameAs(ContentTypeMultiplyNumber)) {
+  return message.content; // 21
+}
+```
+
+```jsx [React]
+if (message.contentType.sameAs(ContentTypeMultiplyNumber)) {
+  return message.content; // 21
+}
+```
+
+```swift [Swift]
+if let content: MultiplyNumbers = try? messages[0].content() {
+    //content.result
+}
+```
+
+```kotlin [Kotlin]
+Code sample coming soon
+```
+
+```jsx [React Native]
+// Because of this message content is now a function which returns the actual content. 
+// You can get that content by call `message.content()` now instead of message.content. 
+// This may involve more filtering on the message side to make sure you are handling different contentTypes appropriately.
+
+if (message.contentTypeId === "com.example/multiplyNumbers:1.1") {
+  return message.content(); // 21
+}
+```
+
+:::

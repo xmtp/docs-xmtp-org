@@ -1,0 +1,27 @@
+# Best practices for push notifications
+
+- Display push notifications only for messages sent **to** a user. In other words, do not send a push notification to a user about a message they sent. To do this, filter out messages sent by the user and don't send push notifications for them.
+
+- Provide a separate setting for enabling and disabling direct message push notifications. For example, if you’re building a Lens app, provide a setting for XMTP push notifications that’s separate from Lens push notifications for posts, comments, likes, and so forth. For example, here are push notification settings in the Orb app:
+
+  <div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/push-notif-settings.png" width="350px" />
+  </div>
+
+- Decrypt messages for push notifications so you can display the contents within the notification. For example, here is a decrypted push notification provided by the [Converse app](https://getconverse.app/).
+
+- Display badges that indicate the presence of new notifications, messages, or conversations to help with engagement and interaction success.
+
+  - Here is a conversation icon badge showing the presence of an unread message:
+
+    <div>
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/unread-badge.png" width="350px" />
+    </div>
+
+    Along these lines, be sure to unbadge conversations in which the user sent the latest message to avoid displaying unnecessary badges as users send messages across different apps. The action of sending the latest message implies that the user has seen the conversation.
+
+  - Here is an app icon badge showing the number of unread messages in the Orb app:
+
+    <div>
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/badging-orb.jpg" width="200px"/>
+    </div>

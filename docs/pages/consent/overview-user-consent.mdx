@@ -1,0 +1,81 @@
+# Overview of user content preferences
+
+User consent preferences enable your app to request and respect user consent preferences. With this feature, another blockchain account address registered on the XMTP network can have one of three consent preference values:
+
+- Unknown
+- Allowed
+- Denied
+
+These values express a user's consent preferences for a contact. These consent preferences are stored privately in an encrypted consent list on the XMTP network. The consent list is accessible by all apps that a user has authorized.
+
+## How user consent preferences are set
+
+Here are some of the ways user consent preferences are set:
+
+### Unknown
+
+Conversation created in an app on an SDK version **with** user consent support:
+
+- For a new conversation that a peer contact wants to start with a user, the consent preference is set to `unknown`.
+
+Conversation created in an app on an SDK version **without** user consent support:
+
+- For all conversations with any peer contact, the consent preference is set to `unknown`.
+
+### Allowed
+
+Conversation created in an app on an SDK version **with** user consent support:
+
+- For a new conversation that a user created with a peer contact, the SDK sets the consent preference to `allowed`.
+
+  The user’s creation of the conversation with the contact is considered consent.
+
+- For an existing conversation created by a peer contact that hasn’t had its consent preference updated on the network (`unknown`) and that the user responds to, the SDK will update the consent preference to `allowed`.
+
+  The user's response to the conversation is considered consent.
+
+- For a peer contact that a user has taken the action to allow, subscribe to, or enable notifications from, for example, the app must update the consent preference to `allowed`.
+
+Conversation created in an app on an SDK version **without** user consent support:
+
+- There are no scenarios in which a user consent preference will be set to `allowed`.
+
+### Denied
+
+Conversation created in an app on an SDK version **with** user consent support:
+
+- For a peer contact that a user has taken the action to block, unsubscribe from, or disable notifications from, for example, the app must update the consent preference to `denied`.
+
+Conversation created in an app on an SDK version **without** user consent support:
+
+- There are no scenarios in which a user consent preference will be set to `denied`.
+
+## Use consent preferences to respect user intent
+
+Your app should aim to handle consent preferences appropriately because they are an expression of user intent.
+
+For example, if a user blocked a contact, your app should respect the user's intent to not see messages from the blocked contact. Handling the consent preference incorrectly and showing the user messages from the blocked contact may cause the user to lose trust in your app.
+
+Be sure to load the latest consent list from the network at appropriate steps in your app flow to ensure that your app can operate using the latest data.
+
+Here are some suggestions for how your app might provide user experiences that respect user intent based on consent preferences:
+
+**Unknown**
+
+Consider displaying a conversation with an `unknown` contact on a **Requests** tab and give the user the option to block or allow the contact.
+
+<div>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/requests-tab.png" width="375px" />
+</div>
+
+**Allowed**
+
+Consider displaying a conversation with an `allowed` contact on a **Messages** tab and give the user the option to block the contact.
+
+<div>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/messages-tab.png" width="375px" />
+</div>
+
+**Denied**
+
+Consider removing a conversation with a `denied` contact from the user’s inbox completely. In an appropriate location in your app, give the user the option to unblock the contact.
