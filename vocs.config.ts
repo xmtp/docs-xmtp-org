@@ -2,7 +2,6 @@ import { defineConfig } from 'vocs';
 
 export default defineConfig({
    "title":"XMTP Documentation",
-   baseUrl: 'https://xmtp.org',
    description: 'Documentation for XMTP, the open and secure messaging protocol for web3',
    editLink: {
       pattern: 'https://github.com/xmtp/docs-xmtp-org/edit/main/site/pages/:path',
@@ -12,7 +11,7 @@ export default defineConfig({
    iconUrl: '/x-mark.png',
    topNav: [ 
       { text: 'XMTP.org', link: 'https://xmtp.org/' },
-      { text: 'XMTP.chat', link: 'https://xmtp.org/' },
+      { text: 'XMTP.chat', link: 'https://xmtp.chat/' },
    ],
    ogImageUrl: {
       '/': '/xmtp-card.jpeg',
@@ -70,10 +69,6 @@ export default defineConfig({
            {
               "text":"Stream conversations & messages",
               "link":"/dms/streams"
-           },
-           {
-            "text":"Resolve identities",
-            "link":"/dms/identity-resolution"
            },
            {
               "text":"Troubleshoot",
