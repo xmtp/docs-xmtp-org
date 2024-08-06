@@ -235,7 +235,7 @@ When the app calls `sync()`, LibXMTP will make three attempts to automatically s
 
 ## Spam protection
 
-To prevent unwanted contacts, the app should apply the existing [Universal allow/block Preferences](/consent/overview-user-consent) to group chats. The Group protocol provides the `added_by_inbox_id` method to find out who has initiated the user into a group chat. Apps can compare this inboxId using the standard `isInboxIdAllowed()` or `isInboxIdDenied()` functions on the contacts to determine how and whether the group should be listed and how and whether messages are displayed based on the design of the app and the user's settings.
+To prevent unwanted contacts, the app should apply the existing [Universal allow/block Preferences](/consent/user-consent) to group chats. The Group protocol provides the `added_by_inbox_id` method to find out who has initiated the user into a group chat. Apps can compare this inboxId using the standard `isInboxIdAllowed()` or `isInboxIdDenied()` functions on the contacts to determine how and whether the group should be listed and how and whether messages are displayed based on the design of the app and the user's settings.
 
 :::note
 Even if an app is not displaying a group chat, LibXMTP will keep receiving group messages and store them in the local database as long as the user is a member of the group.

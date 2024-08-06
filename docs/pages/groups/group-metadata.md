@@ -4,136 +4,92 @@ Group chats can have metadata, like names and images. Metadata can help users mo
 
 ## Get a group chat name
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 const groupName =await group.groupName();
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 group.name
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 try group.groupname()
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 // this API is experimental and may change in the future
 
 const groupName = group.name;
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Update a group chat name
+## Update a group chat name
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 await group.updateName("New Group Name");
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 group.updateGroupName("New Group Name")
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 try await group.updateGroupName(groupname: "New Group Name")
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 // this API is experimental and may change in the future
 
 await group.updateName("New Group Name");
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Get a group chat image URL
+## Get a group chat image URL
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 const groupName = await group.imageUrlSquare()
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 group.imageURLSquare
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 try group.groupImageUrlSquare()
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Update a group chat image URL
+## Update a group chat image URL
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 await group.updateImageUrlSquare("ImageURL")
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 group.updateGroupImageUrlSquare("newurl.com")
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 try await group.updateGroupImageUrlSquare(imageUrlSquare: "newurl.com")
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::

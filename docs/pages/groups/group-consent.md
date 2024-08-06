@@ -12,12 +12,11 @@ To learn how to allow and deny contact by address, see [Universal allow/block pr
 
 To learn how to keep user consent preferences synchronized, see [Synchronize user consent preferences](https://xmtp.org/consent#synchronize-user-consent-preferences).
 
-### Allow or deny contact by wallet in group chat
+## Allow or deny contact by wallet in group chat
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 // Allow
 await contact.allow([walletAddress]);
 
@@ -25,37 +24,26 @@ await contact.allow([walletAddress]);
 await contact.deny([walletAddress]);
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 Code sample coming soon
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 // Allow
 try await contact.allowInboxes(inboxIDs: [inboxID])
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Allow or deny contact by inbox ID in group chat
+## Allow or deny contact by inbox ID in group chat
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 // Allow
 await contact.allowGroup([groupId]);
 
@@ -63,10 +51,7 @@ await contact.allowGroup([groupId]);
 await contact.denyGroup([groupId]);
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 // Allow
 contacts.allowInboxes(listOf(inboxID))
 
@@ -74,10 +59,7 @@ contacts.allowInboxes(listOf(inboxID))
 contacts.denyInboxes(listOf(inboxID))
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 // Allow
 try await contact.allowInboxes(inboxIds: [inboxID])
 
@@ -85,22 +67,17 @@ try await contact.allowInboxes(inboxIds: [inboxID])
 try await contact.denyInboxes(inboxIds: [inboxID])
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Allow or deny contact by group chat ID
+## Allow or deny contact by group chat ID
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 // Allow group
 await contact.allowGroup([groupId]);
 
@@ -108,10 +85,7 @@ await contact.allowGroup([groupId]);
 await contact.denyGroup([groupId]);
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 // Allow
 contact.allowGroups(listOf(group.id))
 
@@ -119,43 +93,31 @@ contact.allowGroups(listOf(group.id))
 contact.denyGroups(listOf(group.id))
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 Code sample coming soon
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Allow or deny contact from inbox ID
+## Allow or deny contact from inbox ID
 
 Enable a user to explicitly allow or deny contact from an inbox ID.
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 // Allow
 await client.contacts.allowInboxes([client.inboxId])
 
 // Deny
 await client.contacts.denyInboxes([client.inboxId])
-
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 // Allow
 client.contacts.allowInboxes(listOf(client.inboxID))
 
@@ -163,10 +125,7 @@ client.contacts.allowInboxes(listOf(client.inboxID))
 client.contacts.denyInboxes(listOf(client.inboxID))
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 // Allow
 try await client.contacts.allowInboxes(inboxIds: [client.inboxID])
 
@@ -174,24 +133,19 @@ try await client.contacts.allowInboxes(inboxIds: [client.inboxID])
 try await client.contacts.denyInboxes(inboxIds: [client.inboxID])
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Check consent for group chat ID
+## Check consent for group chat ID
 
 Check if contact from a group chat ID is allowed or denied for a user.
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 // Check if contact by a group is allowed for a member
 const isAllowed = await group.isGroupAllowed(groupId);
 
@@ -199,61 +153,40 @@ const isAllowed = await group.isGroupAllowed(groupId);
 const isDenied = await group.isGroupDenied(groupId);
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 contact.isGroupAllowed(group.id)
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 await contact.isGroupAllowed(groupId: groupID)
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::
 
-### Check consent for inbox ID
+## Check consent for inbox ID
 
 Check if contact from an inbox ID is allowed or denied for a user.
 
-<Tabs groupId="sdklangs">
-<TabItem value="rn" label="React Native" attributes={{className: "rn_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 await client.contacts.isInboxAllowed(client.inboxId)
 ```
 
-</TabItem>
-<TabItem value="kotlin" label="Kotlin" attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 contacts.isInboxAllowed(client.inboxId)
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 await contact.isInboxAllowed(inboxId: client.inboxID)
 ```
 
-</TabItem>
-<TabItem value="node" label="Node"  attributes={{className: "node_tab"}}>
-
-```tsx
+```tsx [Node]
 Code sample coming soon
 ```
 
-</TabItem>
-</Tabs>
+:::

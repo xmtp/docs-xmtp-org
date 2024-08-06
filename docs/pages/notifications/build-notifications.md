@@ -70,7 +70,7 @@ await client.registerInstallation({
 
 The notification server adds Alix's `installationId` to certain topics. The list of `subscriptionDetails` includes all information needed to join topics, such as user permission and HMAC keys for safely checking messages.
 
-- `consentState`: Notifications are only subscribed to if the `consentState` of a conversation is "allowed". This ensures that users receive notifications only for conversations they have consented to. [Learn more](/consent/overview-user-consent)
+- `consentState`: Notifications are only subscribed to if the `consentState` of a conversation is "allowed". This ensures that users receive notifications only for conversations they have consented to. [Learn more](/consent/user-consent)
 
 - `Invite` topic V2: Clients use invite topics to initiate conversations between wallets. [Learn more](https://github.com/xmtp/proto/blob/main/PROTOCOL.md#invitations)
 
