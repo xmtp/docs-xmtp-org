@@ -91,7 +91,7 @@ XMTP doesn't currently support smart contract wallets. XMTP has been implemented
 
 ### Which languages and environments does the XMTP SDK support?
 
-XMTP SDKs are [available for multiple languages](intro-to-xmtp#find-your-xmtp-client-sdk).
+XMTP SDKs are [available for multiple languages](/get-started/examples/#sdks).
 
 ### Which web3 libraries does the XMTP SDK require?
 

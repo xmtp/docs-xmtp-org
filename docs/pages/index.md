@@ -2,7 +2,7 @@
 description: "XMTP is an open protocol, network, and standards for secure, private web3 messaging."
 ---
 
-# Introduction to XMTP
+# Build with XMTP
 
 XMTP (Extensible Message Transport Protocol) is an open protocol, network, and standards for secure, private web3 messaging.
 
@@ -14,7 +14,7 @@ Developers build with XMTP SDKs to provide messaging between blockchain accounts
 
 - [End-to-end encryption](/protocol/v2/invitation-and-message-encryption) of **messages that the user owns and controls**
 
-- Providing an **[interoperable inbox](/protocol/portable-inbox)** accessible across apps built with XMTP
+- Providing a **[portable inbox](/protocol/portable-inbox)** accessible across apps built with XMTP
 
 - Relaying messages to the **progressively decentralized** [XMTP network](/protocol/v2/architectural-overview#network-layer)
 
@@ -26,7 +26,7 @@ Developers build with XMTP SDKs to provide messaging between blockchain accounts
 - [Kotlin](https://github.com/xmtp/xmtp-android)
 - [Swift](https://github.com/xmtp/xmtp-ios)
 
-XMTP client SDKs require you to use [ethers](https://ethers.org/) or another web3 library capable of supplying an [ethers Signer](https://docs.ethers.io/v5/api/signer/). These [wallet connection tools](faq#wallet-connectors), as well as others, provide this capability.
+XMTP client SDKs require you to use [ethers](https://ethers.org/) or another web3 library capable of supplying an [ethers Signer](https://docs.ethers.io/v5/api/signer/). These [wallet connection tools](/get-started/faq#wallet-connectors), as well as others, provide this capability.
 
 ## Try messaging with XMTP
 
@@ -56,7 +56,7 @@ To send a message to an address it must have an XMTP identity already created on
 
 In the meantime, need someone to message with? Send a message to the following address and get an immediate response from the XMTP message bot: `gm.xmtp.eth` / `0x937C0d4a6294cdfa575de17382c7076b579DC176`. You can message the ENS name or the raw 0x address.
 
-### See the [interoperable inbox](/protocol/portable-inbox) in action
+### See the [portable inbox](/protocol/portable-inbox) in action
 
 Try a second app and see all of your conversations in both apps, regardless of the app you used to start them. This also means you and a friend can each use your own preferred app to exchange messages.
 
