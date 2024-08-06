@@ -76,4 +76,4 @@ When you click **Sign**, you're consenting to receive broadcast messages from th
 
 When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
 
-To learn about XMTP's consent standards, see [Universal allow/block preferences](/consent/overview-user-consent).
+To learn about XMTP's consent standards, see [Universal allow/block preferences](/consent/user-consent).

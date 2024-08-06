@@ -14,7 +14,7 @@ Is your app using a great tool to filter spam and keep inboxes safe? Open an [is
 
 ## Implement XMTP user consent
 
-[Implement user consent preferences](/consent/overview-user-consent) in your app to enable users to manage spammy contacts and conversations.
+[Implement user consent preferences](/consent/user-consent) in your app to enable users to manage spammy contacts and conversations.
 
 ## Use a third-party tool
 

@@ -103,8 +103,8 @@ export default defineConfig({
         "collapsed":false,
         "items":[
             {
-               "text":"Overview",
-               "link":"/consent/overview-user-consent"
+               "text":"Understand user consent",
+               "link":"/consent/user-consent"
             },
             {
                "text":"Build with consent methods",
