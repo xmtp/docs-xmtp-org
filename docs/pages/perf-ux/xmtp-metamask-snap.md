@@ -1,8 +1,3 @@
----
-sidebar_label: MetaMask Snap
-sidebar_position: 3
----
-
 # Use and build with the "Sign in with XMTP" MetaMask Snap
 
 Use the “Sign in with XMTP” MetaMask Snap to securely and conveniently sign in to any web app built with XMTP.

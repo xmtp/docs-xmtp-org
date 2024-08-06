@@ -29,4 +29,4 @@ Use this separate local database to store reactions and replies content types, e
 
 - When building a web app with the [xmtp-js SDK](https://github.com/xmtp/xmtp-js), you can use the browser `localStorage` as the local cache to store encrypted data, decrypting data each time before display. You might also consider [using Dexie to manage your web app's local data](#manage-local-data-with-dexie-in-a-web-app-built-with-xmtp-js).
 
-For more performance best practices, see [Optimize performance of your app](/resources/get-featured)
+For more performance best practices, see [Launch checklist](/perf-ux/get-featured).

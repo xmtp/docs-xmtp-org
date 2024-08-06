@@ -1,4 +1,4 @@
-# Get featured
+# Launch checklist
 
 To be featured on the xmtp.org home page and receive amplification from XMTP's social channels, follow this checklist. Meeting these criteria helps you provide a best-in-class messaging experience with your client.
 
@@ -21,7 +21,7 @@ Before launching, ensure your app meets the following criteria:
 - [ ] No duplicate conversations should be created or displayed. If duplicates exist, only the latest conversation should be visible.
 - [ ] The app should be stable and not crash frequently.
 - [ ] No visible critical bugs.
-- [ ] Make sure to use the [latest](/resources/changelog) XMTP client SDK.
+- [ ] Make sure to use the latest [XMTP client SDK](/get-started/examples).
 - [ ] Always set an `appVersion` [value](/dms/client#configure-the-client).
 
 ### Suport content types

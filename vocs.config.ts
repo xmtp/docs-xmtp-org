@@ -4,23 +4,29 @@ export default defineConfig({
    "title":"XMTP Documentation",
    description: 'Documentation for XMTP, the open and secure messaging protocol for web3',
    editLink: {
-      pattern: 'https://github.com/xmtp/docs-xmtp-org/edit/main/site/pages/:path',
+      pattern: 'https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path',
       text: 'Suggest changes to this page',
    },
-   logoUrl: '/x-mark.png',
+   logoUrl: { 
+      light: '/logomark.svg', 
+      dark: '/logomark-dark.svg'
+    }, 
    iconUrl: '/x-mark.png',
    topNav: [ 
-      { text: 'XMTP.org', link: 'https://xmtp.org/' },
-      { text: 'XMTP.chat', link: 'https://xmtp.chat/' },
+      {text: 'Converse app', link: 'https://github.com/ephemeraHQ/converse-app'},
+      {text: 'XMTP.org', link: 'https://xmtp.org/'},
    ],
    ogImageUrl: {
       '/': '/xmtp-card.jpeg',
-      '/docs': 'https://vocs.dev/api/og?logo=%logo&title=%title&description=%description',
     },
    socials: [
       {
-        icon: 'github',
-        link: 'https://github.com/xmtp',
+         icon: 'discord',
+         link: 'https://discord.gg/xmtp',
+      },
+      {
+      icon: 'github',
+      link: 'https://github.com/xmtp',
       },
     ],
    "sidebar":[
@@ -29,7 +35,7 @@ export default defineConfig({
         "collapsed":false,
         "items":[
            {
-              "text":"Introduction to XMTP",
+              "text":"Intro to XMTP",
               "link":"/"
            },
            {
@@ -37,7 +43,7 @@ export default defineConfig({
               "link":"/get-started/developer-quickstart"
            },
            {
-              "text":"Tools and example apps",
+              "text":"SDKs and example apps",
               "link":"/get-started/examples"
            },
            {
@@ -220,6 +226,14 @@ export default defineConfig({
             "text":"Performance test",
             "link":"/perf-ux/debug-and-test"
          },
+         {
+            "text":"Launch checklist",
+            "link":"/perf-ux/get-featured"
+         },
+         {
+            "text":"MetaMask Snap",
+            "link":"/perf-ux/xmtp-metamask-snap"
+         },
        ],
      },
 {
@@ -306,27 +320,5 @@ export default defineConfig({
            }
         ]
      },
-     {
-        "text":"Resources",
-        "collapsed":false,
-        "items":[
-           {
-              "text":"Build an XMTP CLI",
-              "link":"/resources/cli"
-           },
-           {
-              "text":"MetaMask Snap",
-              "link":"/resources/xmtp-metamask-snap"
-           },
-           {
-              "text":"XMTP partnerships",
-              "link":"/resources/get-featured"
-           },
-           {
-              "text":"Changelog",
-              "link":"/resources/changelog"
-           }
-        ]
-     }
   ]
 })
