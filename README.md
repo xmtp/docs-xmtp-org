@@ -70,7 +70,7 @@ Run this command to start a local development server you can use to view the web
 $ npm run dev
 ```
 
-The command opens the website at http://localhost:5173/ in your default browser.
+The command opens the website at `http://localhost:5173/` in your default browser.
 
 As you make and save changes to markdown files, the website automatically updates to reflect most changes without having to restart the server.
 
@@ -88,7 +88,7 @@ As you make and save changes to markdown files, the website automatically update
    $ npm run preview
    ```
 
-   The command opens the website at http://localhost:4173/ in your default browser.
+   The command opens the website at `http://localhost:4173/` in your default browser.
 
 Note that any changes you save to markdown files aren't reflected in this static build because the command serves the website from the `dist` directory, not the editable markdown files.
 
