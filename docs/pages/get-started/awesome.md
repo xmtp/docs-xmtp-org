@@ -4,7 +4,7 @@
 
 ### 🏆 Best XMTP Bot with Frames - $1500 - up to 3
 
-MessageKit is a powerful framework that simplifies the process of building messaging bots on XMTP. With its robust set of tools and integrations, you can quickly create bots that can handle various tasks, from simple replies to complex interactions involving AI and transactions. Here’s a step-by-step guide to get you started.
+MessageKit is a powerful framework that simplifies the process of building messaging bots on XMTP. With its robust set of tools and integrations, you can quickly create bots that can handle integrate web3 primitives like on chain transactions, mints, games and more.
 
 Ideas:
 
