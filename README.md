@@ -1,24 +1,24 @@
 # Welcome to `docs-xmtp-org`
 
-This is the repo for documentation about XMTP, the Extensible Message Transport Protocol.
+This is the repo for documentation about XMTP, the Extensible Message Transport Protocol. This repo is open, and contributions from the public are welcome! 🫶
 
-This repo is open and contributions from the public are welcome! 🫶
+We're glad you're here. 👋
 
-When contributing, please follow the XMTP community [code of conduct]() to help create a safe and positive experience for all.
+If you're interested in contributing to XMTP documentation, please follow the guidance in this document to help ensure your contribution experience goes as smoothly as possible.
 
-## Ways to contribute
+You can contribute by submitting:
 
-Thank you for your interest in contributing to XMTP documentation! We're glad you're here. 👋
+- A [bug report](https://github.com/xmtp/docs-xmtp-org/issues/new?assignees=jhaaaa&labels=bug%2C+documentation&projects=&template=bug_report.md&title=)
+- A [feature request](https://github.com/xmtp/docs-xmtp-org/issues/new?assignees=jhaaaa&labels=documentation%2C+enhancement&projects=&template=feature_request.md&title=)
+- A pull request
 
-To help ensure your contribution experience goes as smoothly as possible, please follow the guidance provided in this document.
-
-Here are two common methods for submitting a PR to the `docs-xmtp-org` repo. Use the one that best suits the issue and the way you like to work.
-
-When you submit a PR, make sure to include a link to the [bug report](#report-a-bug) or [feature request](#request-a-feature-or-enhancement) your PR addresses. If a documentation issue doesn't exist, please open one before you start contributing.
+If you submit a pull request (PR), include a link to the bug report or feature request your PR addresses. If a documentation issue doesn't exist, please [open one](https://github.com/xmtp/docs-xmtp-org/issues) before you start contributing.
 
 Have a question about contributing? Post to the [XMTP Help & Resources forum](https://community.xmtp.org/c/help/9).
 
-### Use the “Suggest changes to this page” link to submit a pull request
+And lastly, when contributing, please follow the XMTP community code of conduct to help create a safe and positive experience for all.
+
+## Use the “Suggest changes to this page” link to submit a pull request
 
 Using the **Suggest changes to this page** link provides a guided flow for editing content and submitting a PR using the GitHub UI in a web browser. 
 
@@ -44,7 +44,7 @@ The **Suggest changes to this page** link allows you to submit a PR to an **exis
 
 _The guidance in this section is inspired by the following public sector information licensed under the Open Government Licence v3.0: [Propose a content change using GitHub](https://design-system.service.gov.uk/community/propose-a-content-change-using-github/) by the GOV.UK Design System._
 
-### Manually fork the repo and submit a pull request
+## Manually fork the repo and submit a pull request
 
 Manually fork the `docs-xmtp-org` repo, make your changes, and submit your PR.
 
@@ -54,7 +54,7 @@ When you use this technique to submit your PR, you might find it useful to [set 
 
 ## Set up a local environment
 
-If you are contributing to `docs.xmtp.org` documentation by forking the `docs-xmtp-org` repo, you might be interested in setting up a local environment where you can build the site and see your changes.
+If you are contributing by manually creating a pull request, you might want to set up a local environment where you can build the `docs-xmtp-org` repo and see your changes.
 
 `docs.xmtp.org` is built using [Vocs](https://vocs.dev/), a minimal static documentation generator.
 
@@ -76,13 +76,13 @@ As you make and save changes to markdown files, the website automatically update
 
 ### Generate and view a local static build
 
-1. Run this command to generate static website content into the `dist` directory.
+1. Run this command to generate static website content in the `dist` directory.
 
    ```bash
    $ npm run build
    ```
 
-2. Run this command to start a local server to view the static website content generated into the `dist` directory.
+2. Run this command to start a local server to view the static website content generated in the `dist` directory.
 
    ```bash
    $ npm run preview
@@ -106,7 +106,7 @@ The `docs.xmtp.org` team includes technical writers, product managers, developer
 - Audience needs
 - Adherence to [documentation style guidance](#documentation-style-guidance)
 
-## Documentation style guidance
+## Follow XMTP documentation style guidance
 
 When writing XMTP documentation, follow the [Google developer documentation style guide](https://developers.google.com/style). You might find the [Word list](https://developers.google.com/style/word-list#word-list) particularly useful.
 
