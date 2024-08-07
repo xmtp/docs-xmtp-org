@@ -21,7 +21,7 @@ Support for WalletConnect v2 is now standard in RainbowKit. To learn how to upgr
 - [wagmi](https://wagmi.sh/)
 
 :::info[For more info]
-See this example implementation in the [XMTP React Native example app](https://github.com/xmtp/xmtp-react-native/blob/main/example/src/AuthView.tsx#L7).
+See this example implementation in the [XMTP React Native example app](https://github.com/xmtp/xmtp-react-native/blob/40638c09fd60df58609732a3fa549d45526fae0b/example/README.md#configure-thirdweb-client-api).
 :::
 
 ### Message payload storage
@@ -33,7 +33,7 @@ Here are some options for storing encrypted message payload content:
 - [web3.storage](https://web3.storage/)
 
 :::info[For more info]
-See [Remote attachment content type](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/content-type-remote-attachment). Specifically, storage use is describe in the [Upload the encrypted attachment](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/) section.
+See [Remote attachment content type](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/content-type-remote-attachment). Specifically, storage use is described in the [Upload the encrypted attachment](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/) section.
 :::
 
 ### Decentralized social
@@ -44,10 +44,6 @@ Here are some decentralized social protocols that work with XMTP:
 For more info, see [CyberConnect & XMTP Integration Demo App](https://github.com/cyberconnecthq/cc-xmtp-chatapp) and [Integrating XMTP into CyberConnect](https://cyberconnect.hashnode.dev/integrating-xmtp-into-cyberconnect-a-guide)
 - [Lens](https://www.lens.xyz/)  
 For more info, see the [Hey Lens app](https://github.com/heyxyz/hey) GitHub repo.
-
-### Decentralized app store
-
-To launch your own dApp store and list any dApp, including your own, see the [Polygon dApp Store Kit](https://polygon.technology/blog/dapp-store-kit-your-dapp-your-store-your-rules)
 
 ### Wallet apps
 
@@ -85,7 +81,7 @@ Here are just a few chains that work with XMTP:
 
 ### Smart contract wallets
 
-XMTP doesn't currently support smart contract wallets. XMTP has been implemented to work with Ethereum Virtual Machine (EVM)-compatible wallet apps and blockchain accounts (wallets). It also works with externally owned accounts (EOAs) on Ethereum and Ethereum side-chains and L2s.
+To learn more about XMTP support for smart contract wallets, see this XIP in **Draft** status: [XIP-44: Smart Contract Wallet Support](https://community.xmtp.org/t/xip-44-smart-contract-wallet-support/627).
 
 ## Build with XMTP
 
@@ -328,7 +324,7 @@ In your app onboarding flow, enable your users to activate XMTP DMs. User access
 
 For example, here is a prompt to activate XMTP DMs in the onboarding flow to [claim a Lens handle](https://claim.lens.xyz/):
 
-![activatedmsscreen-width-500px](https://raw.githubusercontent.com/xmtp/xmtp-dot-org/main/docs/concepts/img/activate-dms-screen.png)
+![activatedmsscreen-width-500px](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/activate-dms-screen.png)
 
 In your app onboarding flow, request user permission to display app-specific push notifications to reach users outside of an app session.
 
@@ -378,7 +374,7 @@ XMTP provides a standardized approach to addressing these options, focusing on m
 
 ### How do XMTP clients communicate with XMTP nodes?
 
-Clients communicate with XMTP nodes through a gRPC (or JSON/HTTP) [message API](https://github.com/xmtp/proto/blob/main/proto/message_api/v1/message_api.proto).
+Clients communicate with XMTP nodes through a gRPC (or JSON/HTTP) message API.
 
 ### What is the expected network latency for message delivery and retrieval?
 
@@ -420,7 +416,7 @@ There are no message storage and retrieval-related fees incurred by developers f
 
 ### Has XMTP undergone a security audit?
 
-The [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`) was verified by [CertiK](https://www.certik.com/company/about) on Feb 6, 2023. Read their [XMTP security assessment](https://github.com/xmtp/xmtp-dot-org/blob/main/static/img/REP-final-20230207T000355Z.pdf).
+The [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`) was verified by [CertiK](https://www.certik.com/company/about) on Feb 6, 2023. Read their [XMTP security assessment](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/REP-final-20230207T000355Z.pdf).
 
 ### How does XMTP establish a secure and fraud-proof relationship between two identities?
 
@@ -442,7 +438,7 @@ When a user starts a new messaging session, they must sign with their blockchain
 
 Because there is no secure place in the browser to persist a decrypted key bundle, the app can use the bundle for the current session only. Once the user starts a new session, such as after refreshing their browser, they must sign again to decrypt their key bundle.
 
-If you are using the JavaScript client SDK, you might consider [manually handling private key storage](/dms/client), but only with the understanding that this approach **requires the utmost care**.
+If you are using the JavaScript client SDK, you might consider [manually handling private key storage](/dms/client#saving-keys), but only with the understanding that this approach **requires the utmost care**.
 
 Based on developer and community feedback, we are researching more robust approaches to secure key management.
 
@@ -486,15 +482,11 @@ Have other questions or ideas about message formats and metadata? Post to the [X
 
 Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).
 
-For this reason, XMTP supports [message attachments](#does-xmtp-support-message-attachments).
+For this reason, XMTP supports [message attachments](/content-types/remote-attachment).
 
 ### Does XMTP support message attachments?
 
-Yes.
-
-:::info[For more info]
-See [XIP-17: Remote attachment content type](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-17-remote-attachment-content-type-proposal.md) and [Support attachments in your app built with XMTP](/content-types/remote-attachment).
-:::
+Yes. See [Support attachments in your app built with XMTP](/content-types/remote-attachment).
 
 ### Does XMTP support deleting and editing messages?
 
@@ -517,11 +509,7 @@ To learn more about how the XMTP Inbox chat app is built, see the [xmtp-inbox-we
 
 ### Does XMTP support broadcast messaging?
 
-XMTP natively supports one-to-one messaging. One-to-many broadcast messages, or announcements, can be constructed using the XMTP SDK.
-
-:::info[For more info]
-See [Broadcast messages with XMTP](/consent/broadcast).
-:::
+Yes. See [Broadcast messages with XMTP](/consent/broadcast).
 
 ## Ephemera
 
@@ -533,4 +521,4 @@ Ephemera employees work alongside other XMTP community members to build with and
 
 ### Does Ephemera plan to build apps or are you focused 100% on the protocol?
 
-Ephemera focuses on serving developers. We build [SDKs](#find-your-xmtp-client-sdk) and [examples](/get-started/examples) that help developers build great experiences with XMTP.
+Ephemera focuses on serving developers. We build [SDKs, developer tools, and example apps](/get-started/examples) that help developers build great experiences with XMTP.

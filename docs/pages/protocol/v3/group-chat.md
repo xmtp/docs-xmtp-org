@@ -17,7 +17,7 @@ description: "Learn about group chat concepts and protocols"
   * Update permissions policies.
 * Every installation (app) registered to the user receives group messages as they are sent.
   * Messages are encrypted so only the installation can decrypt them. Apps do not share the same keys.
-  * A user can prompt an existing app to send [message history](message-history) to a newly registered app.
+  * A user can prompt an existing app to send [message history](/protocol/v3/message-history) to a newly registered app.
 * Apps can find out what groups a user is part of through the [conversations protocol](#conversations-protocol).
   * Apps can list existing groups.
   * Apps can poll or stream for new group invitations.
@@ -34,7 +34,7 @@ description: "Learn about group chat concepts and protocols"
 
 ## Security and encryption
 
-A user starts with a predefined Ethereum Wallet and loads up an app that supports XMTP. Once the user has [joined or created an inbox](identity), XMTP creates an installation key pair for the app.  The public key component of this pair is also known as the *signature key*.
+A user starts with a predefined Ethereum Wallet and loads up an app that supports XMTP. Once the user has [joined or created an inbox](/protocol/v3/identity), XMTP creates an installation key pair for the app.  The public key component of this pair is also known as the *signature key*.
 
 XMTP then takes the installation key and creates an *MLS credential*.  This is signed by the Ethereum wallet and contains the wallet address and a hash of the signature key. XMTP uses the [Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519) signature algorithm and curve25519 elliptic curve for the installation key. Because XMTP uses Ed25519, the public key is in the format specified in [RFC8032](https://www.rfc-editor.org/rfc/rfc8032.html).
 
@@ -128,9 +128,7 @@ A one-person group is allowed. Messages sent to the group will be broadcast to a
 
 ## Group permissions
 
-:::info More Information
-You can find more information on group chat permissions in [XIP-47](https://community.xmtp.org/t/xip-47-group-chat-permissions/651).
-:::
+You can find more information on group chat permissions in [Handle group chat permissions](/groups/group-permissions) and [XIP-47](https://community.xmtp.org/t/xip-47-group-chat-permissions/651).
 
 ### Admins
 
@@ -193,11 +191,9 @@ The conversations protocol contains methods to create groups, and monitor all gr
 
 ### Local database and syncing
 
-:::info More Information
 You can find more information on database operations in [XMTP MLS](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
-:::
 
-When an app first calls `Client.create()` in one of the XMTP APIs, LibXMTP creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface. See [Authentication](https://xmtp.org/dms/authentication#saving-keys) for instructions on how to extract the key, store it, and pass it to `Client.create()` later.  If you want to delete your local database, call `Client.deleteLocalDatabase()`.
+When an app first calls `Client.create()` in one of the XMTP APIs, LibXMTP creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface. See [Saving keys](/dms/client#saving-keys) for instructions on how to extract the key, store it, and pass it to `Client.create()` later.  If you want to delete your local database, call `Client.deleteLocalDatabase()`.
 
 Calling the `sync()` method on the Conversations protocol checks for welcome messages and creates a new group if one is found. The new group will not show up on the list until the app syncs. Calling the `sync()` method on the Group protocol prompts LibXMTP to pull updates from the network and push any unsent updates from the client related to the group. This will update the database for the group.
 
@@ -235,7 +231,7 @@ When the app calls `sync()`, LibXMTP will make three attempts to automatically s
 
 ## Spam protection
 
-To prevent unwanted contacts, the app should apply the existing [Universal allow/block Preferences](/consent/user-consent) to group chats. The Group protocol provides the `added_by_inbox_id` method to find out who has initiated the user into a group chat. Apps can compare this inboxId using the standard `isInboxIdAllowed()` or `isInboxIdDenied()` functions on the contacts to determine how and whether the group should be listed and how and whether messages are displayed based on the design of the app and the user's settings.
+To prevent unwanted contacts, the app should apply the existing [user consent preferences](/consent/user-consent) to group chats. The Group protocol provides the `added_by_inbox_id` method to find out who has initiated the user into a group chat. Apps can compare this inboxId using the standard `isInboxIdAllowed()` or `isInboxIdDenied()` functions on the contacts to determine how and whether the group should be listed and how and whether messages are displayed based on the design of the app and the user's settings.
 
 :::note
 Even if an app is not displaying a group chat, LibXMTP will keep receiving group messages and store them in the local database as long as the user is a member of the group.
@@ -245,4 +241,4 @@ Even if an app is not displaying a group chat, LibXMTP will keep receiving group
 
 ![XMTP Push Notifications](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/notif-diagram.png)
 
-Group chat supports push notifications. You can use a Firebase Cloud Messaging Server to serve push notifications with Android, iOS, or web apps.  For more information, see [Notifications with XMTP](/notifications/build-notifications).
+Group chat supports push notifications. You can use a Firebase Cloud Messaging Server to serve push notifications with Android, iOS, or web apps.  For more information, see [Build push notifications](/notifications/build-notifications).

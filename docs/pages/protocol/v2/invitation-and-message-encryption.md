@@ -6,7 +6,7 @@ All XMTP invitations and messages are encrypted.
 
 This section describes how invitation and message encryption work for XMTP V2. Only client apps with XMTP client SDK >=v7.0.0 can use XMTP V2.
 
-To learn more about invitations and messages, see [XMTP V2 topics and message presentation flow](architectural-overview#xmtp-v2-topics-and-message-presentation-flow).
+To learn more about invitations and messages, see [XMTP V2 topics and message presentation flow](/protocol/v2/architectural-overview#xmtp-v2-topics-and-message-presentation-flow).
 
 To learn about how invitation and message encryption work in XMTP V1, see [XMTP V1 message encryption](#xmtp-v1-message-encryption).
 
@@ -48,7 +48,7 @@ Likewise, this sequence diagram illustrates the message decryption and message v
 
 ## XMTP V1 message encryption
 
-This section describes how message encryption works for XMTP V1. To understand whether a client app will use XMTP V1 or V2, see [Determining whether to use XMTP V2 or V1 topics](architectural-overview#determining-whether-to-use-xmtp-v2-or-v1-topics).
+This section describes how message encryption works for XMTP V1. To understand whether a client app will use XMTP V1 or V2, see [Determining whether to use XMTP V2 or V1 topics](/protocol/v2/architectural-overview#determining-whether-to-use-xmtp-v2-or-v1-topics).
 
 With XMTP V1 message encryption, a client app encrypts and decrypts messages using the following artifacts:
 

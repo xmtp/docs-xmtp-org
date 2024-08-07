@@ -2,7 +2,9 @@
 
 Robust group chat permissions are key to providing users with a friendly and safe group chat experience.
 
-These are the current permissions allowed for a group:
+## Available permissions and options
+
+These are the permissions allowed for a group:
 
 - Add member
 - Remove member
@@ -10,8 +12,6 @@ These are the current permissions allowed for a group:
 - Add admin
 - Remove admin
 - Update permissions
-
-## Permission options
 
 These are the permission options available for each permission:
 

@@ -61,7 +61,7 @@ await client.contacts.deny([spamConvo.peerAddress, unwantedConvo.peerAddress]);
 
 To ensure that you’re using the latest consent preferences, make sure to refresh the consent list from the network. Perform the refresh just in case the consent preference has changed on a different device, for example.
 
-- `refreshConsentList()` returns the history of all consent entries.
+`refreshConsentList()` returns the history of all consent entries.
 
 :::code-group
 
@@ -242,7 +242,7 @@ if (state === "denied") {
 
 :::
 
-## Streaming the consent list
+## Stream the consent list
 
 This section provides an example of how to stream the consent list. The code snippet below demonstrates how to create a new conversation and then stream the consent list, logging each action to the console.
 

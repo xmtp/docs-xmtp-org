@@ -2,7 +2,7 @@
 
 A subscription Open Frame enables users to subscribe to content. To learn how to build a subscription Open Frame, see [Subscribe](https://message-kit.vercel.app/frames/tutorials/subscribe).
 
-This tutorial assumes your app already supports non-subscription Open Frames. If not, see [Introduction to Open Frames](https://message-kit.vercel.app/frames) to set this up first.
+This tutorial assumes your app already supports non-subscription Open Frames. If not, see [Get started with Open Frames](/open-frames/open-frames) to set this up first.
 
 ## Example subscription Open Frame
 
