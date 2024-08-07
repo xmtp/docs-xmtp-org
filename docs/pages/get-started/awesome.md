@@ -6,9 +6,26 @@
 
 MessageKit is a powerful framework that simplifies the process of building messaging bots on XMTP. With its robust set of tools and integrations, you can quickly create bots that can handle various tasks, from simple replies to complex interactions involving AI and transactions. Here’s a step-by-step guide to get you started.
 
+Ideas:
+
+- Tipping Bots: Facilitate peer-to-peer tipping within chats, rewarding helpful or interesting contributions.
+- Betting Bots: Allow users to place bets on events or outcomes within the chat.
+- Game Bots: Engage users with interactive games like Wordle, Rock Paper Scissors, or trivia.
+- Transaction Bots: Assist users with executing and confirming transactions directly within the chat.
+- Alpha Bots: Share alpha information, market insights, and exclusive updates.
+- AI Agents: Implement web3 crypto AI agents that can performa transactions and manage services.
+
 ### 🔔 Best Use of XMTP Subscribe - $1500 - up to 3
 
-Use a Subscribe button to ask users for consent, making sure messages go to their main inbox. Add a signed payload to conversations to show the recipient agrees to receive messages. Users sign a consent update with their wallet, creating a signature as proof. Senders use this payload when starting new conversations. Client SDKs check the payload to confirm consent before allowing messages.
+Use XMTP consent proofs to let users subscribe to newsletters, get updates from creators, or receive notifications from brands. This method makes communication secure and reliable. It helps creators grow their audience with trusted opt-in only wallet subscribers.
+
+Ideas:
+-Newsletter Subscriptions: Allow users to subscribe to weekly or monthly newsletters.
+-Creator Updates: Enable users to get the latest updates from their favorite content creators.
+-Brand Notifications: Let users receive promotional messages and updates from brands they follow.
+-Event Reminders: Allow users to subscribe to event notifications and reminders.
+-Product Announcements: Enable users to get updates on new product launches and features.
+-Transaction Confirmations: Send confirmations for completed transactions or actions.
 
 ## Resources
 
