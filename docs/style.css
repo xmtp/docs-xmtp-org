@@ -1,27 +1,27 @@
-/* for html ol - use with className vocs_List vocs_List_ordered */
-/* General list styling */
-ol, ul {
-  margin: 0 0 1.5em 1.5em;  /* Bottom margin and left padding */
-  padding: 0;
-  line-height: 1.6;  /* Line height for readability */
+/* Base style for an html external link */
+.ext-link {
+  color: var(--theme-accent-color); /* Use Vocs theme variable */
+  text-decoration: underline; /* Underline the link */
+  position: relative; /* To position the arrow */
+  padding-right: 1.2em; /* Space for the arrow */
+  display: inline-flex; /* Align items within the link */
+  align-items: center; /* Vertically center the content */
 }
 
-/* List items */
-ol li, ul li {
-  margin: 0.5em 0;  /* Space between list items */
+/* Style for the html external link arrow */
+.ext-link::after {
+  content: '↗'; /* Unicode character U+2197 */
+  margin-left: 0.2em; /* Space between text and arrow */
+  font-size: 0.8em; /* Size proportionally smaller */
+  vertical-align: middle; /* Align the arrow vertically */
 }
 
-/* Nested text within list items */
-ol li p, ul li p {
-  margin: 0.5em 0 0 0;  /* Space around paragraphs within list items */
-  line-height: 1.6;  /* Ensuring same line height */
+/* Base style for an html internal link */
+.int-link {
+  color: var(--theme-accent-color); /* Use Vocs theme variable */
+  text-decoration: underline; /* Underline the link */
+  position: relative; /* To position the arrow */
+  padding-right: 1.2em; /* Space for the arrow */
+  display: inline-flex; /* Align items within the link */
+  align-items: center; /* Vertically center the content */
 }
-
-/* Additional spacing for nested lists */
-ol ol, ol ul, ul ol, ul ul {
-  margin: 0 0 1.5em 1.5em;  /* Bottom margin and left padding */
-}
-
-/* for html int links add className="vocs_Anchor vocs_Link vocs_Link_accent_underlined" */
-
-/* for html ext links add className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink" */

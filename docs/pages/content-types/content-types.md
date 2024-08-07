@@ -110,5 +110,5 @@ Here are tutorials you can use to learn how to create custom content types:
 
 - [Basic: Multiply numbers](/content-types/custom)  
 Create a custom content type used to multiply numbers.
-- [Advanced: Send a Polygon transaction](/content-types/transaction-hash)  
+- [Advanced: Send a Polygon transaction](/content-types/custom)  
 Create a custom content type used to send transaction hashes on the Polygon blockchain.
