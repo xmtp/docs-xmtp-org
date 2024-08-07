@@ -43,13 +43,13 @@ However, this option does not allow users to restore a local cache across apps. 
 
 ### Web support for group chat
 
-The XMTP [JavaScript SDK](https://github.com/xmtp/xmtp-js) and [React SDK](https://github.com/xmtp/xmtp-web/tree/main/packages/react-sdk) don’t yet provide web support for group chat. However, if you want to integrate group chat backend support, you can use the [**experimental** Node SDK](https://www.npmjs.com/package/@xmtp/mls-client).
+The XMTP [JavaScript SDK](https://github.com/xmtp/xmtp-js) and [React SDK](https://github.com/xmtp/xmtp-web/tree/main/packages/react-sdk) don’t yet provide web support for group chat. However, if you want to integrate group chat backend support, you can use the **experimental** XMTP [Node SDK](https://www.npmjs.com/package/@xmtp/mls-client).
 
 Web support for group chat is lagging due to technical challenges related to integrating WebAssembly (WASM) and its extensions. WASM sandbox cannot access the operating system directly, which is necessary for tasks like file reads. WASI extends WASM to allow operating system interaction, but it comes with its own set of challenges. For example, current WASI 0.2 has no built-in way to handle asynchronous operations effectively. The team is working toward solutions. 
 
 ### Push notifications
 
-Group chat supports push notifications. To learn more, see the [Notifications with XMTP](/notifications/build-notifications) section.
+Group chat supports push notifications. To learn more, see the [Build push notifications](/notifications/build-notifications).
  
 ## XMTP V3 SDK example apps
 
@@ -62,6 +62,8 @@ If you’d like to dive right into exploring the code, check out the example app
 ## Create group chats
 
 Take these steps to create group chats.
+
+::::steps
 
 ### Create a client that supports group chat
 
@@ -237,9 +239,11 @@ If a member is using an app installation that doesn’t support group chat, cons
 
 :::
 
+::::
+
 ## Display group chats
 
-Take these steps to display group chats associated with the current client.
+Use these methods to display group chats associated with the current client.
 
 ### Get group chats
 
@@ -401,7 +405,7 @@ await group.send("Hello, group!", ContentTypeText);
 
 ## Stream group chats
 
-Take these steps to stream group chats.
+Use these methods to stream group chats.
 
 ### Stream group chat updates
 
@@ -608,8 +612,6 @@ When your user sends a message, you don’t need to sync with the network for th
 See [⚠️ Important: Manage actions that make a local database inaccessible](#️-important-manage-actions-that-make-a-local-database-inaccessible).
 
 This means that everything XMTP gets from the network for the user is stored in this local database and never needs to be fetched again. Extra syncing isn’t costly as the process won’t fetch data it already has, but this is just an explanation of why syncing isn’t necessary for data created by a user’s own actions.
-
-To learn more, see [Local Database and Syncing](/groups/build-group-chat#local-database-and-syncing). 
 
 However, you must sync (or use streaming) to enable **other** users to see the group chats and messages your user created and sent.
 

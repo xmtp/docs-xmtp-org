@@ -4,21 +4,19 @@ description: "Learn about spam filters for apps built with XMTP."
 
 # Filter spam in apps built with XMTP
 
-:::tip[FYI]
+Implement [user consent preferences](/consent/user-consent) in your app to give users a way to manage spammy contacts and conversations.
 
-Third-party and public good tools listed on this page are not official endorsements and are provided for informational purposes only.
+You might also consider using other spam management tools as needed.
+
+## Spam management tools
+
+This list of third-party and public good spam management tools is provided for informational purposes only.
+
+:::tip
 
 Is your app using a great tool to filter spam and keep inboxes safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
 
 :::
-
-## Implement XMTP user consent
-
-[Implement user consent preferences](/consent/user-consent) in your app to enable users to manage spammy contacts and conversations.
-
-## Use a third-party tool
-
-Explore these third-party spam filtering tools.
 
 ### Airstack spam filters
 
@@ -31,7 +29,7 @@ The General inbox should contain all the users that a given user is likely to kn
 - [Request Inbox](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/xmtp/spam-filters/request-inbox)  
 The Request Inbox is for users unknown to the main user and without any connections. It typically holds spam, which users should avoid.
 
-## Public good tools
+### Public good tools
 
 Experiment with these spam filtering tools provided as public goods by members of the XMTP community.
 

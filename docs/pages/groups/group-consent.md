@@ -1,16 +1,12 @@
 # Handle user consent in group chat
 
-With XMTP, in addition to permissions that enable members to add and remove members, user consent preferences also apply.
+In addition to permissions that enable designated members to add and remove members from a group chat, user consent preferences also apply.
 
-[User consent preferences](https://xmtp.org/consent) enable you to give a user the option to allow or deny contact from a group ID, inbox ID, or address.
+User consent preferences enable a user to allow or deny contact from a group ID, inbox ID, or address in a group chat context.
 
 For example, your app can check `inboxId` values using the `isInboxIdAllowed()` or `isInboxIdDenied()` functions. Then, based on your app's design and the user's settings, your app can determine how and whether a group chat and message should be displayed for a user.
 
-To learn more, see [Spam Protection](https://github.com/xmtp/xmtp-dot-org/blob/678ec45d3c4d85ae304314685ed88f26cb7d4506/docs/v3/group-chat.md#spam-protection).
-
-To learn how to allow and deny contact by address, see [Universal allow/block preferences](https://xmtp.org/consent#enable-user-consent-preferences).
-
-To learn how to keep user consent preferences synchronized, see [Synchronize user consent preferences](https://xmtp.org/consent#synchronize-user-consent-preferences).
+User consent preferences also exist in the 1:1 chat context. To learn more, see [Understand user consent](/consent/user-consent).
 
 ## Allow or deny contact by wallet in group chat
 
@@ -190,3 +186,11 @@ Code sample coming soon
 ```
 
 :::
+
+## Stream user consent
+
+To learn how to stream user consent preferences, see [Stream the consent list](/consent/consent-methods#stream-the-consent-list).
+
+## Synchronize user consent
+
+To learn how to keep user consent preferences synchronized, see [Synchronize user consent preferences](/consent/consent-methods#synchronize-user-consent-preferences).

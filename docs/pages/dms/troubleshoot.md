@@ -1,5 +1,7 @@
 # Troubleshooting
 
+This document provides troubleshooting tips for common developer support questions.
+
 ## Why is my app failing with a "Buffer is not found" error?
 
 If you run into issues with `Buffer` and `polyfills`, try this solution:

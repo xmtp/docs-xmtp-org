@@ -12,9 +12,9 @@ If you already have an XMTP app, integrating universal allow/block features beco
 
 Before diving into the code let's consider important aspects while integrating consent features. For example, before making an allow or block action you should synchronize the updated consent list in order to **prevent overwriting network** consent from another app. For more details head to these sections of our docs:
 
-- [Understand user consent preferences](https://xmtp.org/consent#understand-user-consent-preferences): Here are some of the ways user consent preferences are set
-- [Use consent preferences to respect user intent](https://xmtp.org/consent#use-consent-preferences-to-respect-user-intent): Your app should aim to handle consent preferences appropriately because they are an expression of user intent.
-- [Synchronize user consent preferences](https://xmtp.org/consent#synchronize-user-consent-preferences):All apps that use the user consent feature must adhere to the logic described in this section to keep the consent list on the network synchronized with local app user consent preferences, and vice versa.
+- [Understand user consent preferences](/consent/user-consent#understand-user-consent-preferences): Here are some of the ways user consent preferences are set
+- [Use consent preferences to respect user intent](/consent/user-consent#use-consent-preferences-to-respect-user-intent): Your app should aim to handle consent preferences appropriately because they are an expression of user intent.
+- [Synchronize user consent preferences](/consent/consent-methods#synchronize-user-consent-preferences): All apps that use the user consent feature must adhere to the logic described in this section to keep the consent list on the network synchronized with local app user consent preferences, and vice versa.
 
 ## Installation Steps
 
@@ -261,7 +261,7 @@ Ethers.js relies on the Buffer class, which is a global object in Node.js but no
    global.Buffer = global.Buffer || require("buffer").Buffer;
    ```
 
-## Caution :warning:
+:::warning[Caution]
 
 **Always synchronize consent states:** Before updating consent preferences on the network, ensure you refresh the consent list with `await xmtp.contacts.refreshConsentList();`. Update the network's consent list only in these scenarios:
 
@@ -269,6 +269,8 @@ Ethers.js relies on the Buffer class, which is a global object in Node.js but no
 - **User Allows Contact:** Set to `allowed` if a user subscribes or enables notifications.
 - **Legacy Preferences:** Align the network with any existing local preferences.
 - **User Response:** Set to `allowed` if the user has engaged in conversation.
+
+:::
 
 Neglecting these guidelines can result in consent state conflicts and compromise user privacy.
 
@@ -278,4 +280,4 @@ Consent has really evolved through the years. It started with email, then email 
 
 ### Example repos
 
-React Native example repo [xmtp-rn-request-inbox](https://github.com/xmtp/xmtp-quickstart-react-native-request-inboxx)
+React Native example repo [xmtp-rn-request-inbox](https://github.com/xmtp/xmtp-quickstart-react-native-request-inbox)

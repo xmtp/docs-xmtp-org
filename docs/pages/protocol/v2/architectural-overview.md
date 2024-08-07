@@ -28,7 +28,7 @@ This diagram shows the key components of an XMTP node. The nodes provide a **mes
 
 ![Diagram showing three nodes connected in a peer-to-peer fashion to form the XMTP network. The diagram shows the key components of a node, including a message API and Waku node. The diagram also shows a client app connecting a message API client to the message API in a node.](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/xmtp-nodes.png)<!--Source file: [https://www.figma.com/file/77ToMB4T16NiLwJjIp7dU1/diagrams?type=design&node-id=16-502&mode=design)-->
 
-Currently, nodes are configured to rate limit high-volume publishing from message API clients. A rate-limited message API client can expect to receive a 429 status code response from a node. Rate limits can change at any time in the interest of maintaining network health. To learn more, see [Rate limiting](/consent/broadcast#xmtp-network-rate-limiting).
+Currently, nodes are configured to rate limit high-volume publishing from message API clients. A rate-limited message API client can expect to receive a 429 status code response from a node. Rate limits can change at any time in the interest of maintaining network health. To learn more, see [Rate limiting](/consent/broadcast#understand-xmtp-network-rate-limits).
 
 Every **envelope** contains a payload, often encrypted, that is not observable by nodes. The payload could be a public key bundle, private key bundle, or a message created by a client app, but this information is opaque to nodes. Meaning is assigned to these envelopes in the [Client layer](#client-layer).
 
@@ -50,7 +50,7 @@ Here’s a high-level view of how XMTP nodes relay and store envelopes containin
 
 ## Client layer
 
-The client layer consists of XMTP message API clients (clients) embedded in client apps built with the XMTP client SDK. A message API client connects to the message API in an arbitrary XMTP node to communicate with the network, as shown in the [XMTP node diagram](#xmtp-node-diagram).
+The client layer consists of XMTP message API clients (clients) embedded in client apps built with the XMTP client SDK. A message API client connects to the message API in an arbitrary XMTP node to communicate with the network, as shown in the [XMTP node diagram](#network-layer).
 
 The primary responsibilities of a client are to:
 
@@ -58,7 +58,7 @@ The primary responsibilities of a client are to:
   To learn more, see [Key generation and usage](/protocol/v2/key-generation-and-usage).
 
 - Encrypt and decrypt private key bundles, invitations, and messages.  
-  To learn more, see [Invitation and message encryption](invitation-and-message-encryption).
+  To learn more, see [Invitation and message encryption](/protocol/v2/invitation-and-message-encryption).
 
 - Submit and retrieve public key bundles, encrypted private key bundles, encrypted invitations, and encrypted messages to and from the XMTP network.
 
@@ -197,7 +197,7 @@ In this flow, the client app:
 
 5. Uses Bola’s private key and Amal’s public key to create a shared secret. Uses the shared secret to create an encryption key to decrypt Amal’s message and present it to Bola.
 
-For more details, see [Invitation and message encryption](invitation-and-message-encryption).
+For more details, see [Invitation and message encryption](/protocol/v2/invitation-and-message-encryption).
 
 ### Determining whether to use XMTP V2 or V1 topics
 
@@ -211,7 +211,7 @@ A contact topic may contain multiple versions of a public key bundle for a user.
 
 The app layer consists of client apps built with the XMTP client SDK.
 
-A developer can provide messaging between blockchain accounts in their app by building with the [XMTP client SDK](index#xmtp-sdks-and-example-apps). When a developer builds with the SDK, their app embeds an XMTP message API client, which communicates with a message API in an XMTP node to handle all XMTP network interactions required to enable their users to send and receive messages. To learn more, see [XMTP node diagram](#xmtp-node-diagram).
+A developer can provide messaging between blockchain accounts in their app by building with the [XMTP client SDK](/get-started/examples#sdks). When a developer builds with the SDK, their app embeds an XMTP message API client, which communicates with a message API in an XMTP node to handle all XMTP network interactions required to enable their users to send and receive messages. To learn more, see [XMTP node diagram](#network-layer).
 
 With XMTP network interactions handled by the message API client, developers can focus on the user-related aspects of building client apps, such as:
 

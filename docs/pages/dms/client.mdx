@@ -11,7 +11,7 @@ The XMTP message API revolves around a network client that allows retrieving a
 
 ## Create a client
 
-A client is created that requires passing in a connected wallet that implements the [Signer](https://github.com/xmtp/xmtp-js/blob/main/src/types/Signer.ts) interface.
+A client is created that requires passing in a connected wallet that implements the Signer interface.
 
 [Use client configuration options](#configure-the-client) to change parameters of a client's network connection.
 
@@ -414,7 +414,7 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
 <table>
 <tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
 <tr><td>appVersion</td><td>`undefined`</td><td>Add a client app version identifier that's included with API requests. **Production apps are strongly encouraged to set this value.**<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `dev`, `production`, or `local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-production-and-dev-network-environments).</td><td></td></tr>
+<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `dev`, `production`, or `local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-network-environments).</td><td></td></tr>
 <tr><td>apiUrl</td><td>`undefined`</td><td>Manually specify an API URL to use. If specified, value of `env` will be ignored.</td><td></td></tr>
 <tr><td>keystoreProviders</td><td>`[StaticKeystoreProvider, NetworkKeystoreProvider, KeyGeneratorKeystoreProvider]`</td><td>Override the default behavior of how the Client creates a Keystore with a custom provider. This can be used to get the user's private keys from a different storage mechanism.</td><td></td></tr>
 <tr><td>persistConversations</td><td>`true`</td><td>Maintain a cache of previously seen V2 conversations in the storage provider (defaults to `LocalStorage`).</td><td></td></tr>
@@ -424,7 +424,7 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
 <tr><td>preCreateIdentityCallback</td><td>`undefined`</td><td>`preCreateIdentityCallback` is a function that will be called immediately before a [Create Identity](/protocol/signatures#sign-to-create-an-xmtp-identity) wallet signature is requested from the user.</td><td></td></tr>
 <tr><td>preEnableIdentityCallback</td><td>`undefined`</td><td>`preEnableIdentityCallback` is a function that will be called immediately before an [Enable Identity](/protocol/signatures#sign-to-enable-an-xmtp-identity) wallet signature is requested from the user.</td><td></td></tr>
 <tr><td>useSnaps</td><td>`false`</td><td>Enabling the `useSnaps` flag will allow the client to attempt to connect to the "Sign in with XMTP" MetaMask Snap as part of client creation. It is safe to enable this flag even if you do not know whether the user has an appropriate MetaMask version enabled. If no compatible version of MetaMask is found, client creation will proceed as if this flag was set to `false`. To learn more, see [Build with the Snap](/perf-ux/xmtp-metamask-snap#as-a-developer-who-wants-my-app-to-use-sign-in-with-xmtp-how-do-i-get-started).</td><td></td></tr>
-<tr><td>basePersistence</td><td>`InMemoryPersistence` (Node.js) or `LocalStoragePersistence` (browser)</td><td>A persistence provider used by the Keystore to persist its cache of conversations and metadata. Ignored in cases where the `useSnaps` is enabled and the user has a Snaps-compatible browser. To learn more, see [Keystore](https://github.com/xmtp/xmtp-js/blob/beta/src/keystore/README.md#keystore) and [Pluggable persistence](https://github.com/xmtp/xmtp-js/releases/tag/v11.0.0).</td><td></td></tr>
+<tr><td>basePersistence</td><td>`InMemoryPersistence` (Node.js) or `LocalStoragePersistence` (browser)</td><td>A persistence provider used by the Keystore to persist its cache of conversations and metadata. Ignored in cases where the `useSnaps` is enabled and the user has a Snaps-compatible browser. To learn more, see [Keystore](https://github.com/xmtp/xmtp-js/blob/962259d7cfbbeb7995208f01eb5c5243c51f0b8e/packages/js-sdk/src/keystore/README.md?plain=1) and [Pluggable persistence](https://github.com/xmtp/xmtp-js/releases/tag/v11.0.0).</td><td></td></tr>
 <tr><td>apiClientFactory</td><td>`HttpApiClient`</td><td>Override the function used to create an API client for the XMTP network. If you are running `xmtp-js` on a server, you will want to import [`@xmtp/grpc-api-client`](https://github.com/xmtp/xmtp-node-js-tools/tree/main/packages/grpc-api-client) and set this option to `GrpcApiClient.fromOptions` for better performance and reliability. To learn more, see [Pluggable gRPC API client](https://github.com/xmtp/xmtp-js/releases/tag/v11.0.0).</td><td></td></tr>
 </table>
 </div>
@@ -433,7 +433,7 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
 <table>
 <tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
 <tr><td>appVersion</td><td>undefined</td><td>Add a client app version identifier that's included with API requests.<br/>For example, you can use the following format: appVersion: APP_NAME + '/' + APP_VERSION.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>dev</td><td>Connect to the specified XMTP network environment. Valid values include dev, production, or local. For important details about working with these environments, see [XMTP production and dev network environments](https://github.com/xmtp/xmtp-web/blob/main/packages/react-sdk/README.md#xmtp-production-and-dev-network-environments).</td><td></td></tr>
+<tr><td>env</td><td>dev</td><td>Connect to the specified XMTP network environment. Valid values include dev, production, or local. For important details about working with these environments, see [XMTP production and dev network environments](#xmtp-network-environments).</td><td></td></tr>
 <tr><td>apiUrl</td><td>undefined</td><td>Manually specify an API URL to use. If specified, value of env will be ignored.</td><td></td></tr>
 <tr><td>keystoreProviders</td><td>[StaticKeystoreProvider, NetworkKeystoreProvider, KeyGeneratorKeystoreProvider]</td><td>Override the default behavior of how the client creates a Keystore with a custom provider. This can be used to get the user's private keys from a different storage mechanism.</td><td></td></tr>
 <tr><td>persistConversations</td><td>true</td><td>Maintain a cache of previously seen V2 conversations in the storage provider (defaults to LocalStorage).</td><td></td></tr>
@@ -449,7 +449,7 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
 <table>
 <tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
 <tr><td>appVersion</td><td>`undefined`</td><td>Add a client app version identifier that's included with API requests. **Production apps are strongly encouraged to set this value.**<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>`DEV`</td><td>Connect to the specified XMTP network environment. Valid values include `DEV`, `.PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-production-and-dev-network-environments).</td><td></td></tr>
+<tr><td>env</td><td>`DEV`</td><td>Connect to the specified XMTP network environment. Valid values include `DEV`, `.PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-network-environments).</td><td></td></tr>
 </table>
 
 Configure `env`
@@ -470,7 +470,7 @@ val client = Client().create(account = account, options = options)
 <table>
 <tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
 <tr><td>appVersion</td><td>`undefined`</td><td>Add a client app version identifier that's included with API requests. **Production apps are strongly encouraged to set this value.**<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `.dev`, `.production`, or `.local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-production-and-dev-network-environments).</td><td></td></tr>
+<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `.dev`, `.production`, or `.local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-network-environments).</td><td></td></tr>
 </table>
 
 Configure `env`
@@ -486,7 +486,7 @@ let client = try await Client.create(account: account, options: clientOptions)
 <table>
 <tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
 <tr><td>appVersion</td><td>`undefined`</td><td>Add a client app version identifier that's included with API requests. **Production apps are strongly encouraged to set this value.**<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `dev`, `production`, or `local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-production-and-dev-network-environments).</td></tr>
+<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `dev`, `production`, or `local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-network-environments).</td></tr>
 </table>
 </div>
 

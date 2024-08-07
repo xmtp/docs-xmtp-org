@@ -154,30 +154,26 @@ export default defineConfig({
                "text":"Remote attachment",
                "link":"/content-types/remote-attachment"
             },
-           {
-              "text":"Replies",
-              "link":"/content-types/reply"
-           },
-           {
-              "text":"Reactions",
-              "link":"/content-types/reaction"
-           },
-           {
-              "text":"Read receipts",
-              "link":"/content-types/read-receipt"
-           },
-           {
-              "text":"Onchain transaction references",
-              "link":"/content-types/transaction-ref"
-           },
-           {
-              "text":"Send a transaction hash",
-              "link":"/content-types/transaction-hash"
-           },
-           {
-              "text":"Create a custom content type",
-              "link":"/content-types/custom"
-           }
+         {
+            "text":"Replies",
+            "link":"/content-types/reply"
+         },
+         {
+            "text":"Reactions",
+            "link":"/content-types/reaction"
+         },
+         {
+            "text":"Read receipts",
+            "link":"/content-types/read-receipt"
+         },
+         {
+            "text":"Onchain transaction references",
+            "link":"/content-types/transaction-ref"
+         },
+         {
+            "text":"Custom content type",
+            "link":"/content-types/custom"
+         },
         ]
      },
      {
@@ -305,7 +301,7 @@ export default defineConfig({
                     "link":"/protocol/v2/architectural-overview"
                  },
                  {
-                    "text":"Keys",
+                    "text":"Key generation",
                     "link":"/protocol/v2/key-generation-and-usage"
                  },
                  {
@@ -313,7 +309,7 @@ export default defineConfig({
                     "link":"/protocol/v2/invitation-and-message-encryption"
                  },
                  {
-                    "text":"Algorithms",
+                    "text":"Algorithms in use",
                     "link":"/protocol/v2/algorithms-in-use"
                  }
               ]

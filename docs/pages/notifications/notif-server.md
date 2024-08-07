@@ -15,7 +15,7 @@ This guide is for macOS users, but the steps should be similar for Linux users.
 
    - [Mac](https://docs.docker.com/docker-for-mac/install/)
    - [Windows](https://docs.docker.com/docker-for-windows/install/)
-   - [Linux](https://docs.docker.com/engine/install/)
+   - [Linux](https://docs.docker.com/desktop/install/linux-install/)
 
 2. You must also have Docker and Docker Compose installed on your system. You can install them using Homebrew:
 

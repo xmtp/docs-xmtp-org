@@ -26,7 +26,7 @@ description: "Learn about multi-wallet identity and app installation concepts"
   * The inbox log has a list of all identity actions affecting the inbox.
   * The inbox log can track 256 identity actions. Since identity actions can be combined, this can be more than 256 associations, removals, change of recovery wallets, etc.
 
-:::info More Information
+:::info[More Information]
 You can find more information on multi-wallet identity in [XIP-46](https://community.xmtp.org/t/xip-46-multi-wallet-identity/639).
 :::
 
@@ -114,13 +114,13 @@ So, a complete identity action could look like this:
 
 ```text
 XMTP : Authenticate to inbox
-
+ 
 Inbox ID: 4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb
 Current time: 1970-01-01T00:00:00Z
-
+ 
 - Create inbox
   (Owner: 0x1234567890abcdef1234)
-
+ 
 For more info: https://xmtp.org/signatures/
 ```
 

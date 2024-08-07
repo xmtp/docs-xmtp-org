@@ -2,7 +2,7 @@
 
 A transactional Open Frame enables users to trigger onchain transactions. To learn how to build a transaction Open Frame, see [Transactions](https://message-kit.vercel.app/frames/tutorials/transactions).
 
-This tutorial assumes your app already supports non-transactional Open Frames. If not, see [Introduction to Open Frames](https://message-kit.vercel.app/frames) to set this up first.
+This tutorial assumes your app already supports non-transactional Open Frames. If not, see [Get started with Open Frames](/open-frames/open-frames) to set this up first.
 
 :::tip
 
@@ -44,7 +44,7 @@ const isTransactionFrame = button.action === "tx";
 
 ## Identify the transaction target and postUrl
 
-If the button action indicates the Open Frame is transactional, get the `target` and `postUrl` from the button. To learn more, see Open Frame Metadata [Optional Properties](https://www.openframes.xyz/#optional-properties).
+If the button action indicates the Open Frame is transactional, get the `target` and `postUrl` from the button. To learn more, see [Open Frame Metadata - Optional Properties](https://www.openframes.xyz/#optional-properties).
 
 ```tsx [TypeScript]
 if (isTransactionFrame) {
