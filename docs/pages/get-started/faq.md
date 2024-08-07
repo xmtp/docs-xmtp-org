@@ -21,7 +21,7 @@ Support for WalletConnect v2 is now standard in RainbowKit. To learn how to upgr
 - [wagmi](https://wagmi.sh/)
 
 :::info[For more info]
-See this example implementation in the [XMTP React Native example app](https://github.com/xmtp/xmtp-react-native/blob/main/example/src/AuthView.tsx#L7).
+See this example implementation in the [XMTP React Native example app](https://github.com/xmtp/xmtp-react-native/blob/40638c09fd60df58609732a3fa549d45526fae0b/example/README.md#configure-thirdweb-client-api).
 :::
 
 ### Message payload storage
@@ -33,7 +33,7 @@ Here are some options for storing encrypted message payload content:
 - [web3.storage](https://web3.storage/)
 
 :::info[For more info]
-See [Remote attachment content type](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/content-type-remote-attachment). Specifically, storage use is describe in the [Upload the encrypted attachment](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/) section.
+See [Remote attachment content type](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/content-type-remote-attachment). Specifically, storage use is described in the [Upload the encrypted attachment](https://github.com/xmtp/xmtp-js-content-types/tree/main/packages/) section.
 :::
 
 ### Decentralized social

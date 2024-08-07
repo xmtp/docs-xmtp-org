@@ -12,9 +12,9 @@ Developers build with XMTP SDKs to provide messaging between blockchain accounts
 
 - [Authentication](/protocol/signatures) using an **XMTP identity that the user owns and controls**
 
-- [End-to-end encryption](/protocol/v2/invitation-and-message-encryption) of **messages that the user owns and controls**
+- End-to-end encryption of **[1:1 messages](/protocol/v2/invitation-and-message-encryption) and [group chats](/protocol/v3/group-chat#security-and-encryption) that the user owns and controls**
 
-- Providing a **[portable inbox](/protocol/portable-inbox)** accessible across apps built with XMTP
+- Providing a **[portable inbox](/protocol/portable-inbox) accessible across apps** built with XMTP
 
 - Relaying messages to the **progressively decentralized** [XMTP network](/protocol/v2/architectural-overview#network-layer)
 
@@ -68,7 +68,7 @@ With XMTP, you own and control your messages and are always free to use the app 
 
 XMTP has been implemented to work with Ethereum Virtual Machine (EVM)-compatible wallet apps and blockchain accounts (wallets), though XMTP itself does not use EVMs. XMTP also works with other web3 identities that apps built with XMTP can derive from Ethereum accounts, such as ENS names and Lens profiles.
 
-To learn more, see [Works with XMTP]/get-started/faq#what-works-with-xmtp).
+To learn more, see [Works with XMTP](/get-started/faq#what-works-with-xmtp).
 
 ## Understand XMTP concepts
 
