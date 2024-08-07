@@ -2,11 +2,11 @@
 
 ## Bounties
 
-🏆 **Best XMTP Bot with Frames - $1500** - up to 3
+### 🏆 Best XMTP Bot with Frames - $1500 - up to 3
 
 MessageKit is a powerful framework that simplifies the process of building messaging bots on XMTP. With its robust set of tools and integrations, you can quickly create bots that can handle various tasks, from simple replies to complex interactions involving AI and transactions. Here’s a step-by-step guide to get you started.
 
-🔔 **Best Use of XMTP Subscribe - $1500** - up to 3
+### 🔔 Best Use of XMTP Subscribe - $1500 - up to 3
 
 Use a Subscribe button to ask users for consent, making sure messages go to their main inbox. Add a signed payload to conversations to show the recipient agrees to receive messages. Users sign a consent update with their wallet, creating a signature as proof. Senders use this payload when starting new conversations. Client SDKs check the payload to confirm consent before allowing messages.
 
