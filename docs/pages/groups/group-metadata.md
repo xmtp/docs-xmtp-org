@@ -6,7 +6,7 @@ Group chats can have metadata, like names and images. Metadata can help users mo
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 const groupName =await group.groupName();
 ```
 
@@ -30,7 +30,7 @@ const groupName = group.name;
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 await group.updateName("New Group Name");
 ```
 
@@ -54,8 +54,8 @@ await group.updateName("New Group Name");
 
 :::code-group
 
-```jsx [JavaScript]
-const groupName = await group.imageUrlSquare()
+```jsx [React Native]
+const groupName = await group.imageUrlSquare();
 ```
 
 ```kotlin [Kotlin]
@@ -67,7 +67,9 @@ try group.groupImageUrlSquare()
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+const groupImageUrl = group.imageUrl;
 ```
 
 :::
@@ -76,8 +78,8 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-await group.updateImageUrlSquare("ImageURL")
+```jsx [React Native]
+await group.updateImageUrlSquare("ImageURL");
 ```
 
 ```kotlin [Kotlin]
@@ -89,7 +91,9 @@ try await group.updateGroupImageUrlSquare(imageUrlSquare: "newurl.com")
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+await group.updateImageUrl("newurl.com");
 ```
 
 :::

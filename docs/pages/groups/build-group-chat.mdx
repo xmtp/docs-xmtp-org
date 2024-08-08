@@ -115,41 +115,40 @@ let client = try await Client.create(
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-import { createWalletClient, http, toBytes } from 'viem'
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'
-import { mainnet } from 'viem/chains'
-import { Client } from '@xmtp/mls-client'
+import { createWalletClient, http, toBytes } from "viem";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { mainnet } from "viem/chains";
+import { Client } from "@xmtp/mls-client";
 
 // create a wallet for signing
-const key = generatePrivateKey()
-const account = privateKeyToAccount(key)
+const key = generatePrivateKey();
+const account = privateKeyToAccount(key);
 const wallet = createWalletClient({
   account,
   chain: mainnet,
   transport: http(),
-})
+});
 
 // create client
 const client = Client.create(account.address, {
-  env: 'dev', // or 'production'
+  env: "dev", // or 'production'
   // provide a path for the local SQLite DB
-  dbPath: 'path/to/local/db/file.db3',
-})
+  dbPath: "path/to/local/db/file.db3",
+});
 
 // sign the provided message
 const signature = await user.wallet.signMessage({
   // it's possible for `signatureText` to be `null` if the identity is already registered
   message: client.signatureText!,
-})
-const signatureBytes = toBytes(signature)
+});
+const signatureBytes = toBytes(signature);
 
 // add the signature to the client
-client.addEcdsaSignature(signatureBytes)
+client.addEcdsaSignature(signatureBytes);
 
 // register client identity
-await client.registerIdentity()
+await client.registerIdentity();
 ```
-
 :::
 
 ### Check if a user has a V3 identity
@@ -161,10 +160,7 @@ To learn more about V3 identities, see [Multi-wallet Identity in V3](/protocol/v
 :::code-group
 
 ```jsx [React Native]
-const canMessageV3 = await client.canGroupMessage([
-  alix.address,
-  bo.address,
-]);
+const canMessageV3 = await client.canGroupMessage([alix.address, bo.address]);
 ```
 
 ```kotlin [Kotlin]
@@ -195,14 +191,14 @@ To create a group chat, each of the specified member addresses must have a V3 id
 
 ```jsx [React Native]
 const group = await client.conversations.newGroup(
-    [anotherClient.address],
-    // set the permission level for the group. Options include "admin_only", where only the creator is an admin, or "all_members" to make everyone an admin.
-    { 
-	    permissionLevel: 'admin_only',
-	    name: 'Group Name',
-	    imageUrlSquare: '<URL>'
-    }
-  )
+  [anotherClient.address],
+  // set the permission level for the group. Options include "admin_only", where only the creator is an admin, or "all_members" to make everyone an admin.
+  {
+    permissionLevel: "admin_only",
+    name: "Group Name",
+    imageUrlSquare: "<URL>",
+  },
+);
 ```
 
 ```kotlin [Kotlin]
@@ -225,7 +221,7 @@ permissions: .adminOnly, name: "Group Name", imageUrlSquare: "<URL>")
 
 const group = await client.conversations.newConversation(
   [walletAddress1, walletAddress2],
-  GroupPermissions.GroupCreatorIsAdmin
+  GroupPermissions.GroupCreatorIsAdmin,
 );
 ```
 
@@ -396,7 +392,7 @@ try await group.send(content: "Hello, group!")
 
 const group = await client.conversations.newConversation(
   [walletAddress1, walletAddress2],
-  GroupPermissions.GroupCreatorIsAdmin
+  GroupPermissions.GroupCreatorIsAdmin,
 );
 await group.send("Hello, group!", ContentTypeText);
 ```
@@ -430,15 +426,13 @@ groups.push(group);
 Stream group chats and direct message conversations:
 
 ```jsx [React Native]
-const streamAllConversations =async (client) => {
-const allConvos = [];
-const cancelStreamAll =await client.conversations.streamAll(
-    (conversation) => {
-      allConvos.push(conversation);
-    },
-  );
-
-  // Use cancelStreamAll() to stop listening to all conversation updates
+const streamAllGroupMessages = async (client) => {
+  const allConvos = [];
+  const cancelStreamAllGroupMessages =
+    await client.conversations.streamAllMessages(async (message) => {
+      console.log(`New message: ${message.content}`);
+    });
+  // Use cancelStreamAllGroupMessages() to stop listening to all conversation updates
 };
 ```
 
@@ -493,10 +487,10 @@ for try await conversation in client.conversations.streamAll() {
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-const stream = client.conversations.stream()
+const stream = client.conversations.stream();
 
 for await (const group of stream) {
-  console.log('New group created', group);
+  console.log("New group created", group);
 }
 
 // stop stream
@@ -576,11 +570,11 @@ Stream messages in group chats, current and future:
 const stream = client.conversations.streamAllMessages();
 
 for await (const message of stream) {
-  console.log('New message received ', message);
+  console.log("New message received ", message);
 }
 
 // stop the stream
-stream.stop()
+stream.stop();
 ```
 
 Stream messages in a group chat:
@@ -588,14 +582,14 @@ Stream messages in a group chat:
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-const stream = group.stream()
+const stream = group.stream();
 
 for await (const message of stream) {
-  console.log('New message received ', message);
+  console.log("New message received ", message);
 }
 
 // stop the stream
-stream.stop()
+stream.stop();
 ```
 </div>
 

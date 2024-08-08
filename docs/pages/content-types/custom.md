@@ -31,8 +31,8 @@ Create the custom content type by creating a new file
 
 ```jsx [JavaScript]
 // A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-js/pull/509/files
-import { ContentTypeId } from "@xmtp/xmtp-js";
-import type { ContentCodec, EncodedContent } from "@xmtp/xmtp-js";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+import type { ContentCodec, EncodedContent } from "@xmtp/content-type-primitives";
 
 // Create a unique identifier for your content type
 export const ContentTypeMultiplyNumbers = new ContentTypeId({
@@ -97,8 +97,8 @@ export class ContentTypeMultiplyNumberCodec
 
 ```jsx [React]
 // A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-web/pull/141/files
-import { ContentTypeId } from "@xmtp/xmtp-js";
-import type { ContentCodec, EncodedContent } from "@xmtp/xmtp-js";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+import type { ContentCodec, EncodedContent } from "@xmtp/content-type-primitives";
 
 // Create a unique identifier for your content type
 export const ContentTypeMultiplyNumbers = new ContentTypeId({
@@ -233,7 +233,7 @@ data class MultiplyNumberCodec(
 ```
 
 ```swift [Swift]
-//A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-ios/pull/211
+// A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-ios/pull/211
 import XMTP
 
 public struct MultiplyNumbers {
