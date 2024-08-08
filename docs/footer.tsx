@@ -3,8 +3,8 @@ export default function Footer() {
     <div style={{ textAlign: "center" }}>
       <div>
         <small>
-          <a
-            href="https://creativecommons.org/licenses/by/4.0/"
+        <a
+            href="https://xmtp.org/"
             target="_blank"
             style={{
               "--vocs_ExternalLink_iconUrl":
@@ -12,9 +12,12 @@ export default function Footer() {
             }}
             className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink"
           >
-            CC BY 4.0
+            Visit xmtp.org
           </a>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </small>
+      </div>
+      <div>
+      <small>
           <a
             href="privacy"
             className="vocs_Anchor vocs_Link vocs_Link_accent_underlined"
@@ -31,7 +34,19 @@ export default function Footer() {
         </small>
       </div>
       <div>
-        <small>Copyright © 2024-present XMTP.</small>
+        <small>         
+          <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            target="_blank"
+            style={{
+              "--vocs_ExternalLink_iconUrl":
+                "url(/.vocs/icons/arrow-diagonal.svg)",
+            }}
+            className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink"
+          >
+            CC BY 4.0
+          </a>
+          &nbsp;&nbsp;Copyright © 2024-present XMTP.</small>
       </div>
     </div>
   );

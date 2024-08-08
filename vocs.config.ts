@@ -17,7 +17,8 @@ export default defineConfig({
       {text: 'XMTP.org', link: 'https://xmtp.org/'},
    ],
    ogImageUrl: {
-      '/': '/xmtp-card.jpeg',
+      '/': '/xmtp-og-card.jpeg',
+      '/docs': 'https://vocs.dev/api/og?logo=%logo&title=%title&description=%description',
     },
    socials: [
       {
