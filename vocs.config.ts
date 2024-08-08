@@ -8,10 +8,10 @@ export default defineConfig({
       text: 'Suggest changes to this page',
    },
    logoUrl: { 
-      light: '/logomark.svg', 
-      dark: '/logomark-dark.svg'
-    }, 
-   iconUrl: '/x-mark.png',
+      light: '/logomark-dark-purple.png', 
+      dark: '/logomark-light-purple.png'
+    },
+   iconUrl: '/x-mark-blue.png', 
    topNav: [ 
       {text: 'Converse app', link: 'https://github.com/ephemeraHQ/converse-app'},
       {text: 'XMTP.org', link: 'https://xmtp.org/'},
