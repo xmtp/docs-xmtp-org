@@ -12,7 +12,7 @@ User consent preferences also exist in the 1:1 chat context. To learn more, see 
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow
 await contact.allow([walletAddress]);
 
@@ -30,7 +30,9 @@ try await contact.allowInboxes(inboxIDs: [inboxID])
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+await client.contacts.allow([walletAddress]);
 ```
 
 :::
@@ -39,7 +41,7 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow
 await contact.allowGroup([groupId]);
 
@@ -64,7 +66,13 @@ try await contact.denyInboxes(inboxIds: [inboxID])
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// allow
+await client.contacts.allowInboxes([inboxID]);
+
+// deny
+await client.contacts.denyInboxes([inboxID]);
 ```
 
 :::
@@ -73,7 +81,7 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow group
 await contact.allowGroup([groupId]);
 
@@ -94,7 +102,13 @@ Code sample coming soon
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// allow
+await client.contacts.allowGroups([groupId]);
+
+// deny
+await client.contacts.denyGroups([groupId]);
 ```
 
 :::
@@ -105,12 +119,12 @@ Enable a user to explicitly allow or deny contact from an inbox ID.
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow
-await client.contacts.allowInboxes([client.inboxId])
+await client.contacts.allowInboxes([client.inboxId]);
 
 // Deny
-await client.contacts.denyInboxes([client.inboxId])
+await client.contacts.denyInboxes([client.inboxId]);
 ```
 
 ```kotlin [Kotlin]
@@ -141,7 +155,7 @@ Check if contact from a group chat ID is allowed or denied for a user.
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Check if contact by a group is allowed for a member
 const isAllowed = await group.isGroupAllowed(groupId);
 
@@ -158,7 +172,13 @@ await contact.isGroupAllowed(groupId: groupID)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// is group allowed?
+await client.contacts.isGroupAllowed(groupId);
+
+// is group denied?
+await client.contacts.isGroupDenied(groupId);
 ```
 
 :::
@@ -169,8 +189,8 @@ Check if contact from an inbox ID is allowed or denied for a user.
 
 :::code-group
 
-```jsx [JavaScript]
-await client.contacts.isInboxAllowed(client.inboxId)
+```jsx [React Native]
+await client.contacts.isInboxAllowed(client.inboxId);
 ```
 
 ```kotlin [Kotlin]
@@ -182,7 +202,13 @@ await contact.isInboxAllowed(inboxId: client.inboxID)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// is inbox allowed?
+await client.contacts.isInboxAllowed(inboxId);
+
+// is inbox denied?
+await client.contacts.isInboxDenied(inboxId);
 ```
 
 :::

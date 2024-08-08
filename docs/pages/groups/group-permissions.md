@@ -45,7 +45,7 @@ By design, checking admin permission status by wallet address is not supported. 
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Assume group is an existing group chat object for client
 const isAdmin = await.group.isAdmin(adminClient.inboxID)
 ```
@@ -72,9 +72,9 @@ const isAdmin = group.isAdmin(inboxId);
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 //Assume group is an existing group chat object for client
-const isSuperAdmin = await group.isSuperAdmin(client.inboxID)
+const isSuperAdmin = await group.isSuperAdmin(client.inboxID);
 ```
 
 ```kotlin [Kotlin]
@@ -98,8 +98,8 @@ const isSuperAdmin = group.isSuperAdmin(inboxId);
 
 :::code-group
 
-```jsx [JavaScript]
-await group.listAdmins()
+```jsx [React Native]
+await group.listAdmins();
 ```
 
 ```kotlin [Kotlin]
@@ -112,7 +112,9 @@ try group.listAdmins()
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+const admins = group.admins;
 ```
 
 :::
@@ -121,8 +123,8 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-await group.listSuperAdmins()
+```jsx [React Native]
+await group.listSuperAdmins();
 ```
 
 ```kotlin [Kotlin]
@@ -135,7 +137,9 @@ try group.listSuperAdmins()
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+const superAdmins = group.superAdmins;
 ```
 
 :::
@@ -144,8 +148,8 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-await group.addAdmin(client.inboxID)
+```jsx [React Native]
+await group.addAdmin(client.inboxID);
 ```
 
 ```kotlin [Kotlin]
@@ -157,7 +161,9 @@ try await group.addAdmin(inboxid: inboxID)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+await group.addAdmin(inboxId);
 ```
 
 :::
@@ -166,8 +172,8 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-await group.addSuperAdmin(client.inboxID)
+```jsx [React Native]
+await group.addSuperAdmin(client.inboxID);
 ```
 
 ```kotlin [Kotlin]
@@ -179,7 +185,9 @@ try await group.addSuperAdmin(inboxid: inboxID)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+await group.addSuperAdmin(inboxId);
 ```
 
 :::
@@ -188,8 +196,8 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-await group.removeAdmin(client.inboxID)
+```jsx [React Native]
+await group.removeAdmin(client.inboxID);
 ```
 
 ```kotlin [Kotlin]
@@ -201,7 +209,9 @@ try await group.removeAdmin(inboxid: inboxid)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+await group.removeAdmin(inboxId);
 ```
 
 :::
@@ -210,8 +220,8 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-await group.removeSuperAdmin(client.inboxId)
+```jsx [React Native]
+await group.removeSuperAdmin(client.inboxId);
 ```
 
 ```kotlin [Kotlin]
@@ -234,7 +244,7 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 await group.addMemberInboxIds([inboxId]);
 ```
 
@@ -249,7 +259,7 @@ try await group.addMembersByInboxId(inboxIds: [inboxId])
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-await group.addMembers([inboxId]);
+await group.addMembersByInboxId([inboxId]);
 ```
 
 :::
@@ -258,7 +268,7 @@ await group.addMembers([inboxId]);
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 await group.addMembers([walletAddress]);
 ```
 
@@ -278,12 +288,11 @@ await group.addMembers([walletAddress]);
 
 :::
 
-
 ### Remove members by inbox ID
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 await group.removeMemberInboxIds([inboxId]);
 ```
 
@@ -298,7 +307,7 @@ try await group.removeMemberInboxIds(inboxIds: [inboxId])
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-await group.removeMembers([inboxId]);
+await group.removeMembersByInboxId([inboxId]);
 ```
 
 :::
@@ -307,7 +316,7 @@ await group.removeMembers([inboxId]);
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 await group.removeMembers([walletAddress]);
 ```
 
@@ -331,8 +340,8 @@ await group.removeMembers([walletAddress]);
 
 :::code-group
 
-```jsx [JavaScript]
-await group.memberInboxIds()
+```jsx [React Native]
+await group.memberInboxIds();
 ```
 
 ```kotlin [Kotlin]
@@ -353,7 +362,9 @@ try await client.inboxIdFromAddress(address: peerAddress)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// this API is experimental and may change in the future
+
+const inboxId = await client.getInboxIdByAddress(address);
 ```
 
 :::
@@ -362,9 +373,9 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
-const members = await group.members()
-const addresses = members.map(member => member.addresses)
+```jsx [React Native]
+const members = await group.members();
+const addresses = members.map((member) => member.addresses);
 ```
 
 ```kotlin [Kotlin]
@@ -378,10 +389,17 @@ let peerMembers = try Conversation.group(group).peerAddresses.sorted()
 
 ```tsx [Node]
 // this API is experimental and may change in the future
-// sync group first
 
+// sync group first
 await group.sync();
+
+// get group members
 const members = group.members;
+
+// map inbox ID to account addresses
+const inboxIdAddressMap = new Map(
+  members.map((member) => [member.inboxId, member.accountAddresses]),
+);
 ```
 
 :::
@@ -390,7 +408,7 @@ const members = group.members;
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // this API is experimental and may change in the future
 
 const addedByInboxId =await group.addedByInboxId();
@@ -405,9 +423,9 @@ try await group.addedByInboxId();
 ```
 
 ```tsx [Node]
-// this API is experimental and may change in the future
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
 
-const addedByInboxId = await group.addedByInboxId;
+await client.contacts.allow([walletAddress]);
 ```
 
 :::
