@@ -1,15 +1,20 @@
 import { defineConfig } from 'vocs';
 
+// console.log('Loading Vocs config...')
+
 export default defineConfig({
-   head: (
-      <>
-         <script
+   head: () => {
+      // console.log(`Generating head content... ${new Date().toISOString()}`)
+      return (
+        <>
+          <script
             src="https://plausible.io/js/script.js"
             data-domain="docs.xmtp.org"
             defer
-         />
-      </>
-    ),
+          />
+        </>
+      )
+    },
    "title":"XMTP Documentation",
    description: 'Documentation for XMTP, the open and secure messaging protocol for web3',
    editLink: {
