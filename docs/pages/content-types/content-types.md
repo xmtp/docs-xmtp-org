@@ -52,13 +52,21 @@ A standards-track content type is one that is being actively reviewed for adopti
 
 Here are standards-track content types that you can review, test, and adopt in your app today:
 
+### Native attachment content type
+
+Use to send any attachment up to 1mb of size. using the `AttachmentCodec` and a storage provider.
+
+- [Read the doc](/content-types/attachment)
+- SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [JavaScript](https://github.com/xmtp/xmtp-js-content-types/tree/363e82c894f5a4436c5617b1c0424bab574b27c0/packages), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
+- Implemented in: Converse, Hey
+
 ### Remote attachment content type
 
 Use to send a remote attachment of any size using the `RemoteAttachmentCodec` and a storage provider.
 
 - [Read the doc](/content-types/remote-attachment)
 - SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [JavaScript](https://github.com/xmtp/xmtp-js-content-types/tree/363e82c894f5a4436c5617b1c0424bab574b27c0/packages), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
-- Implemented in: Converse, Lenster
+- Implemented in: Converse, Hey
 
 ### Read receipt content type
 
@@ -109,6 +117,6 @@ Fallback plain text is "alt text"-like description text that you can associate w
 Here are tutorials you can use to learn how to create custom content types:
 
 - [Basic: Multiply numbers](/content-types/custom)  
-Create a custom content type used to multiply numbers.
+  Create a custom content type used to multiply numbers.
 - [Advanced: Send a Polygon transaction](/content-types/custom)  
-Create a custom content type used to send transaction hashes on the Polygon blockchain.
+  Create a custom content type used to send transaction hashes on the Polygon blockchain.
