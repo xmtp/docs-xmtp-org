@@ -52,7 +52,7 @@ A standards-track content type is one that is being actively reviewed for adopti
 
 Here are standards-track content types that you can review, test, and adopt in your app today:
 
-### Native attachment content type
+### Static attachment content type
 
 Use to send any attachment up to 1mb of size. using the `AttachmentCodec` and a storage provider.
 

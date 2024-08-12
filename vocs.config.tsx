@@ -171,7 +171,7 @@ export default defineConfig({
           link: "/content-types/content-types",
         },
         {
-          text: "Native attachment",
+          text: "Static attachment",
           link: "/content-types/attachment",
         },
         {
