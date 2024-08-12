@@ -12,20 +12,21 @@ Use a local database to store reactions. This will enable your app to performant
 
 To learn more about using a local database, see [Use local-first architecture](/perf-ux/local-first).
 
-## Configure the content type
-
-In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-<div data-title="JavaScript">
-In the JavaScript SDK, you need to import this package first.
+### Install the package
 
 ```bash [Bash]
 npm i @xmtp/content-type-reaction
 ```
 
+> In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+## Configure the content type
+
 After importing the package, you can register the codec.
+
+:::code-group
+
+<div data-title="JavaScript">
 
 ```jsx [JavaScript]
 import {
@@ -36,10 +37,10 @@ import {
 const xmtp = await Client.create(signer, { env: "dev" });
 xmtp.registerCodec(new ReactionCodec());
 ```
+
 </div>
 
 <div data-title="React">
-The React SDK supports all current standards-track content types, but only text messages are enabled out of the box. Adding support for other standards-track content types requires a bit of configuration.
 
 ```jsx [JavaScript]
 import {
@@ -59,6 +60,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
   </StrictMode>,
 );
 ```
+
 </div>
 
 ```kotlin [Kotlin]
@@ -223,6 +225,7 @@ Use to check if a message has any reactions. It takes a `CachedMessage` as a par
 import { hasReaction } from "@xmtp/react-sdk";
 const messageHasReaction = hasReaction(originalMessage!);
 ```
+
 </div>
 
 ```kotlin [Kotlin]

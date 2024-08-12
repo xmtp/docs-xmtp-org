@@ -24,16 +24,17 @@ You're welcome to provide feedback on the [Proposal for read receipts content ty
 
 While this is a per-app decision, the best practice is to provide users with the option to opt out of sending read receipts. If a user opts out, when they read a message, a read receipt will not be sent to the sender of the message.
 
+## Install the package
+
+```bash [Bash]
+npm i @xmtp/content-type-read-receipt
+```
+
 ## Configure the content type
 
 :::code-group
 
 <div data-title="JavaScript">
-```bash [Bash]
-npm i @xmtp/content-type-read-receipt
-```
-
-**Import and register**
 
 ```tsx [TypeScript]
 import {
@@ -44,6 +45,7 @@ import {
 const xmtp = await Client.create(signer, { env: "dev" });
 xmtp.registerCodec(new ReadReceiptCodec());
 ```
+
 </div>
 
 ```kotlin [Kotlin]
@@ -69,7 +71,6 @@ const client = await Client.create(signer, {
 ## Send a read receipt
 
 :::code-group
-
 
 ```tsx [TypeScript]
 // The content of a read receipt message must be an empty object.
@@ -142,6 +143,7 @@ if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
   return message.sent; //Date received
 }
 ```
+
 :::
 
 ## Display a read receipt
