@@ -332,3 +332,9 @@ Here are some helpful tutorials to get you started with implementing consent in 
 
 3. [Build a consent management system](https://github.com/xmtp/allow-list-management.git)
    Explore how to create a simple system for managing who you are subscribed to.
+
+4. [Build a subscribe-broadcast system](https://github.com/xmtp/subscribe-broadcast)
+   Learn how to implement a subscribe and broadcast system using XMTP.
+
+5. [Set up a broadcast API backend](https://github.com/xmtp/broadcast-example-api)
+   Discover how to create a backend API for handling broadcast messages in XMTP.
