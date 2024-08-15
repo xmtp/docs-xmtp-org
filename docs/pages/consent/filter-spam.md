@@ -8,17 +8,15 @@ Implement [user consent preferences](/consent/user-consent) in your app to give 
 
 You might also consider using other spam management tools as needed.
 
-## Spam management tools
-
-This list of third-party and public good spam management tools is provided for informational purposes only.
+The following list of spam management tools is provided for informational purposes only.
 
 :::tip
 
-Is your app using a great tool to filter spam and keep inboxes safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
+Is your app using a great third-party or public good tool to filter spam and keep inboxes safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
 
 :::
 
-### Public good tools
+## Spam management as a public good
 
 Experiment with these spam filtering tools provided as public goods by members of the XMTP community.
 

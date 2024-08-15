@@ -320,21 +320,4 @@ Update a consent preference in the consent list on the network in the following 
 
 The following diagram illustrates the detailed logic for how user consent preferences are set in an app and in the consent list on the XMTP network.
 
-## Tutorials
-
-Here are some helpful tutorials to get you started with implementing consent in your XMTP-powered applications:
-
-1. [Add consent to existing JavaScript app](https://github.com/xmtp/xmtp-quickstart-request-inbox)
-   Learn how to integrate consent management into an existing JavaScript application.
-
-2. [Add consent to existing React Native app](https://github.com/xmtp/xmtp-react-native-quickstart-request-inbox)
-   Discover how to implement consent features in a React Native application.
-
-3. [Build a consent management system](https://github.com/xmtp/allow-list-management.git)
-   Explore how to create a simple system for managing who you are subscribed to.
-
-4. [Build a subscribe-broadcast system](https://github.com/xmtp/subscribe-broadcast)
-   Learn how to implement a subscribe and broadcast system using XMTP.
-
-5. [Set up a broadcast API backend](https://github.com/xmtp/broadcast-example-api)
-   Discover how to create a backend API for handling broadcast messages in XMTP.
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-state-logic.png)

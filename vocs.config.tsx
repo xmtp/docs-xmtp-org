@@ -129,7 +129,7 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Understand user consent",
+          text: "Understand consent",
           link: "/consent/user-consent",
         },
         {
@@ -147,6 +147,10 @@ export default defineConfig({
         {
           text: "Send broadcast messages",
           link: "/consent/broadcast",
+        },
+        {
+          text: "Quickstart repos",
+          link: "/consent/consent-quickstarts",
         },
       ],
     },
