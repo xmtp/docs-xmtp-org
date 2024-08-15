@@ -15,7 +15,7 @@ This list is not exhaustive and is just a starting point. A highly extensible pr
 Here are some options for connecting wallets to your app built with XMTP:
 
 - [RainbowKit](https://www.rainbowkit.com/)  
-Support for WalletConnect v2 is now standard in RainbowKit. To learn how to upgrade, see [Migrating to WalletConnect v2](https://www.rainbowkit.com/guides/walletconnect-v2).
+  Support for WalletConnect v2 is now standard in RainbowKit. To learn how to upgrade, see [Migrating to WalletConnect v2](https://www.rainbowkit.com/guides/walletconnect-v2).
 - [Thirdweb](https://thirdweb.com/)
 - [WalletConnect](https://walletconnect.com/)
 - [wagmi](https://wagmi.sh/)
@@ -41,9 +41,9 @@ See [Remote attachment content type](https://github.com/xmtp/xmtp-js-content-typ
 Here are some decentralized social protocols that work with XMTP:
 
 - [CyberConnect](https://link3.to/cyberconnect)  
-For more info, see [CyberConnect & XMTP Integration Demo App](https://github.com/cyberconnecthq/cc-xmtp-chatapp) and [Integrating XMTP into CyberConnect](https://cyberconnect.hashnode.dev/integrating-xmtp-into-cyberconnect-a-guide)
+  For more info, see [CyberConnect & XMTP Integration Demo App](https://github.com/cyberconnecthq/cc-xmtp-chatapp) and [Integrating XMTP into CyberConnect](https://cyberconnect.hashnode.dev/integrating-xmtp-into-cyberconnect-a-guide)
 - [Lens](https://www.lens.xyz/)  
-For more info, see the [Hey Lens app](https://github.com/heyxyz/hey) GitHub repo.
+  For more info, see the [Hey Lens app](https://github.com/heyxyz/hey) GitHub repo.
 
 ### Wallet apps
 
@@ -103,13 +103,13 @@ import { CHAIN_ID } from "src/constants";
 import type { Address } from "viem";
 import { useWalletClient } from "wagmi";
 
-const useEthersWalletClient = (): ({
+const useEthersWalletClient = (): {
   data: {
-    getAddress: () => Promise<Address>,
-    signMessage: (message: string) => Promise<string>,
-  },
-  isLoading: boolean,
-}) => {
+    getAddress: () => Promise<Address>;
+    signMessage: (message: string) => Promise<string>;
+  };
+  isLoading: boolean;
+} => {
   const { data, isLoading } = useWalletClient({ chainId: CHAIN_ID });
 
   const ethersWalletClient = {
@@ -253,7 +253,8 @@ Currently, Bun does not offer full compatibility with XMTP. Use Yarn as an alter
     ],
   };
   ```
-:::
+
+  :::
 
 :::details[WEBPACK]
 
@@ -273,6 +274,7 @@ module.exports = {
   transpileDependencies: true,
 };
 ```
+
 :::
 
 :::details[VITE]
@@ -293,6 +295,7 @@ export default defineConfig({
   /**/
 });
 ```
+
 :::
 
 :::details[NuxtJS]
@@ -312,6 +315,7 @@ export default {
   },
 };
 ```
+
 :::
 
 ### Where can I get official XMTP brand assets?
@@ -320,7 +324,7 @@ See the [XMTP brand guidelines](https://github.com/xmtp/brand) GitHub repo.
 
 ### How should I handle the XMTP onboarding flow in my app?
 
-In your app onboarding flow, enable your users to activate XMTP DMs. User access to DMs can help with app engagement and re-engagement. 
+In your app onboarding flow, enable your users to activate XMTP DMs. User access to DMs can help with app engagement and re-engagement.
 
 For example, here is a prompt to activate XMTP DMs in the onboarding flow to [claim a Lens handle](https://claim.lens.xyz/):
 
@@ -384,11 +388,11 @@ XMTP provides perceptibly real-time message delivery and retrieval. The network 
 
 XMTP doesn't provide a direct method to fetch all XMTP-enabled wallet addresses in bulk. You might consider using a third-party service to do so instead of building the functionality yourself.
 
-For example, services like [Airstack](https://www.airstack.xyz/) and [Blaze](https://www.withblaze.app/) have compiled extensive lists of XMTP addresses by querying the XMTP `canMessage` API over time at a rate that avoids hitting the limits.
+For example, services like [Blaze](https://www.withblaze.app/) have compiled extensive lists of XMTP addresses by querying the XMTP `canMessage` API over time at a rate that avoids hitting the limits.
 
 ### Does XMTP support group chat?
 
-Yes. XMTP V3 supports group chat in React Native, Android, iOS, and Node.js SDKs. 
+Yes. XMTP V3 supports group chat in React Native, Android, iOS, and Node.js SDKs.
 
 :::info[For more info]
 See [Build group chat with MLS and XMTP](/groups/build-group-chat)
