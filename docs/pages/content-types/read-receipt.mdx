@@ -127,7 +127,7 @@ if (message.encodedContent.type == ContentTypeReadReceipt) {
     // The message is a ReadReceipt
     val readReceipt: ReadReceipt? = message.content()
     if (readReceipt != null) {
-      println("Message read at: ${readReceipt.timestamp}")
+      println("Message read at: ${message.sent}")
     }
 }
 ```
