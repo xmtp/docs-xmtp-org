@@ -17,7 +17,9 @@ Broadcast messages delivered to users who haven't provided explicit consent to r
 
 - Use the [Broadcast SDK](https://www.npmjs.com/package/@xmtp/broadcast-sdk) to send high-volume broadcasts. The SDK helps manage [rate-limiting logic](#understand-xmtp-network-rate-limits) and enables easier broadcasting setup.
 
-- Explore the [broadcaster-app](https://github.com/alexrisch/broadcaster-app) repo for concise strategies and code samples for high-volume broadcast management, including batch processing, error handling, and rate-limit adherence.
+- Explore the [broadcaster-app repo](https://github.com/alexrisch/broadcaster-app) for concise strategies and code samples for high-volume broadcast management, including batch processing, error handling, and rate-limit adherence.
+
+- Use the [broadcast-example-api repo](https://github.com/xmtp/broadcast-example-api) and [subscribe-broadcast repo](https://github.com/xmtp/subscribe-broadcast) to try out the [subscribe with built-in consent and broadcast flow](subscribe-broadcast).
 
 ## Send a broadcast message
 
