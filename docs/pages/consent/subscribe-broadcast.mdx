@@ -2,7 +2,7 @@
 
 With XMTP, messages from a contact you haven't messaged before are kept out of your main inbox until you explicitly approve the contact. Only then can the messages display in your main inbox. This helps you keep your main inbox free from spammy and scammy messages.
 
-![Gif showing the difference between contacts and conversations in a user's main inbox vs scammy/spammy conversations in a user's secondary requests and spam inboxes](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/main-vs-spam.gif)
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/main-vs-spam.gif" alt="Gif showing the difference between contacts and conversations in a user's main inbox vs scammy/spammy conversations in a user's secondary requests and spam inboxes" width="50%"/>
 
 XMTP [user consent preferences](/consent/user-consent) enable apps to display messages from approved contacts in a user’s main inbox, while unapproved and scammy/spammy messages are kept out of the way in secondary UIs
 
@@ -26,85 +26,37 @@ In this tutorial, we will:
 
 See the README in the [broadcast-example-api repo](https://github.com/xmtp/broadcast-example-api).
 
+:::info
+Be sure to use the same broadcast sending address in this step and when setting up the subscribe-broadcast web page in the next step.
+:::
+
 ## Set up an example subscribe-broadcast web page
 
 See the README in the [subscribe-broadcast repo](https://github.com/xmtp/subscribe-broadcast).
 
-## Send an example broadcast welcome message
+:::info
+Be sure to use the same broadcast sending address in this step and when setting up the example broadcast API in the previous step.
+:::
 
-Now that you have the example broadcast API and example subscribe-broadcast page running, let’s use them to send an example welcome message to a new contact/subscriber.
+## Send and receive the example broadcast welcome message
 
-We will define a broadcast, define a welcome message, and click the Subscribe button on the example subscribe-broadcast page to send the welcome message. 
+Now that you have the example broadcast API and example subscribe-broadcast page running, let’s use them to send and receive an example broadcast welcome message to a new contact/subscriber.
 
-The message will display in the subscriber’s main inbox because clicking the Subscribe button not only creates the subscription, it also approves contact from the broadcaster.
-
-### Define the broadcast
-
-With the example subscribe-broadcast page running, go to [http://localhost:3000/subscribe/button](http://localhost:3000/subscribe/button). 
-
-You should see a dropdown list of broadcasts and a **Subscribe** button.
-
-![subscribe-broadcast web page](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/subscribe-broadcast-page.png)
-
-To edit the available broadcasts, in the **subscribe-broadcast** repo, see the `src/app/broadcastConfigs.ts` file.
-
-```tsx
-interface BroadcastConfig {
-  name: string;
-  address: string;
-}
-
-export const broadcastConfigs: BroadcastConfig[] = [
-  {
-    address: "0x62EEd858af7590fbCaE803d208c53ddBb0D1309c",
-    name: "Hello World Wild Web",
-  },
-];
-```
-
-In the **address** field, enter a string that is the raw 0x Ethereum address of the broadcast sender address.
-
-In the **name** field, enter a string that is the name of the broadcast.
-
-### Define the example welcome broadcast message
-
-When you connect a wallet to the subscribe-broadcast page and click **Subscribe**, the page will send an example welcome message to the connected wallet address on the XMTP `dev` network.
-
-The example welcome message is defined in `src/lib/broadcasterConfigs.ts` in the **broadcast-example-api** repo.
-
-```tsx
-const broadcastConfigs: BroadcastConfig[] = [
-  {
-    address: "0x62EEd858af7590fbCaE803d208c53ddBb0D1309c",
-    greeting: "Welcome to the World Wild Web!",
-    id: "XMTP",
-  },
-];
-```
-
-In the **address** field, enter a string that is the raw 0x Ethereum address of the broadcast sender address.
-
-In the **greeting** field, enter a string that is the welcome message you want to send when someone subscribes to your broadcast.
-
-In the **id** field, enter a string that is a unique ID for the broadcast.
-
-### Send and receive the example welcome broadcast message
-
-1. With the example subscribe-broadcast page running, go to [http://localhost:3000/subscribe/button](http://localhost:3000/subscribe/button). 
-2. Connect the wallet you want to subscribe to the broadcast. To demonstrate the consent feature of the Subscribe button, be sure to connect a wallet address that has not already exchanged messages with the broadcast address.
-3. Select the broadcast you defined.
+1. With the example subscribe-broadcast page running, go to [http://localhost:3000/subscribe/button](http://localhost:3000/subscribe/button).
+2. Connect the wallet you want to subscribe to the broadcast. To demonstrate the consent feature of the **Subscribe** button, be sure to connect a wallet address that has not already exchanged messages with the broadcast address.
+3. In the broadcast dropdown menu, select the broadcast you defined when setting up the [example subscribe-broadcast web page](https://github.com/xmtp/subscribe-broadcast).
 4. Click **Subscribe**.
-5. Go to XXXXXXxmtp web app on devXXXXXX and connect the subscribed wallet address. The example welcome broadcast message displays in the main inbox.
+5. Go to XXXXXXxmtp web app on devXXXXXX and connect the subscribed wallet address. The example broadcast welcome message displays in the main inbox. You defined the broadcast welcome message as a part of setting up the [example broadcast API](https://github.com/xmtp/broadcast-example-api).
 
 ## Send an example broadcast message
 
 You can also use the example subscribe-broadcast page to send an example broadcast message.
 
-1. In the **broadcast-example-api** repo, update `addresses.json`  to include only the address you just subscribed to the broadcast.
+1. In the **broadcast-example-api** repo, update `addresses.json` to include only the address you just subscribed to the broadcast.
 2. With the example subscribe-broadcast page running, go to [http://localhost:3000/Broadcast](http://localhost:3000/Broadcast).
-    
-    ![Broadcast page](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/broadcast-page.png)
-    
+
+![Broadcast page](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/broadcast-page.png)
+
 3. In the broadcast dropdown menu, select the broadcast you defined.
 4. In the broadcast text field, enter example broadcast text.
 5. Click **Broadcast** to send the example broadcast text to the subscribed address.
