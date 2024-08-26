@@ -30,19 +30,15 @@ When you click **Sign**, you're creating an **_XMTP identity_**, associated with
 
 More precisely, two things happen:
 
-1. XMTP generates a set of keys that you need to send and receive messages on the XMTP network.
-
-   These keys are XMTP-specific and different from your account keys. XMTP generates the keys as proxies for your account keys because XMTP can’t (and shouldn’t) use your account keys directly.
-
-   These XMTP keys include a public key, which is displayed as a hexadecimal string in the **Message** section of the signature request window.
-
-   This XMTP public key is directly tied to your XMTP identity, is stored and advertised on the XMTP network, and provides the information others need to message you.
-
-   To learn more about these keys, see [Key generation and usage](/protocol/v2/key-generation-and-usage).
-
-2. You sign a message containing your XMTP identity using your account keys.
-
-   This signature establishes a relationship between your XMTP identity and your account and enables anyone to verify that your XMTP identity is authentic and controlled by the account you used to sign it.
+<ol className="vocs_List vocs_List_ordered">
+  <li>XMTP generates a set of keys that you need to send and receive messages on the XMTP network.
+    <p>These keys are XMTP-specific and different from your account keys. XMTP generates the keys as proxies for your account keys because XMTP can’t (and shouldn’t) use your account keys directly.</p>
+    <p>These XMTP keys include a public key, which is displayed as a hexadecimal string in the <strong>Message</strong> section of the signature request window.</p>
+    <p>This XMTP public key is directly tied to your XMTP identity, is stored and advertised on the XMTP network, and provides the information others need to message you.</p>
+    <p>To learn more about these keys, see <a className="vocs_Anchor vocs_Link vocs_Link_accent_underlined" href="/protocol/v2/key-generation-and-usage">Key generation and usage</a>.</p></li>
+  <li>You sign a message containing your XMTP identity using your account keys.
+    <p>This signature establishes a relationship between your XMTP identity and your account and enables anyone to verify that your XMTP identity is authentic and controlled by the account you used to sign it.</p></li>
+</ol>
 
 Once you’ve successfully signed to create an XMTP identity, you’ll never be prompted to do it again for the same account.
 
@@ -68,7 +64,7 @@ You’re prompted to sign to enable your XMTP identity any time an app built wit
 
 When you click a **Subscribe** button built with XMTP’s consent standards, you're prompted to sign to grant your consent to receive broadcast messages from a publisher.
 
-For example, here’s the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button). You will typically see **Subscribe** buttons like this on a web page or in a dapp.
+For example, here’s the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You will typically see **Subscribe** buttons like this on a web page or in a dapp.
 
 ![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
 
@@ -76,4 +72,4 @@ When you click **Sign**, you're consenting to receive broadcast messages from th
 
 When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
 
-To learn about XMTP's consent standards, see [Universal allow/block preferences](/consent/user-consent).
+To learn about XMTP's consent standards, see [Understand user consent preferences](/consent/user-consent).

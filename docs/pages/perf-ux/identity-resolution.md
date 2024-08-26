@@ -19,32 +19,22 @@ When displaying a name, also look for and display its associated avatar. For exa
 
 ## Third-party identity resolution tools
 
-Explore these third-party identity resolution tools.
+This list of third-party identity resolution tools is provided for informational purposes only.
 
-:::tip[FYI]
+:::tip
 
-Tools listed on this page aren't official endorsements and are provided for informational purposes only.
+Is your app using a great tool to resolve identities? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
 
-Is your app using a great tool to resolve identities? Open an [issue](https://github.com/xmtp/xmtp-dot-org/issues) to share information about it.
-
-:::
-
-### Airstack
-
-Airstack provides tools to resolve [ENS](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/resolve-identities/ens), [Farcaster](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/farcaster/resolve-farcaster-users), and [Lens](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/lens/resolve-lens-profiles) identities.
-
-:::note[Lens v1 and v2 support]
-_Airstack currently supports identity resolution with both the new Lens V2 handle `namespace/@handlename` format and the legacy V1 `.lens` profile name_
 :::
 
 ### Everyname
 
-Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, and other](https://docs.everyname.xyz/api/forward-social-profile) identities.
-
-### Unstoppable Domains
-
-Unstoppable Domains provides tools to resolve [Unstoppable Domains](https://docs.unstoppabledomains.com/resolution/overview/) identities.
+Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, and other identities](https://docs.everyname.xyz/api/forward-social-profile).
 
 ### SimpleHash
 
 [SimpleHash](https://docs.simplehash.com/reference/overview) provides tools to resolve ENS and Base Name Service identities.
+
+### Unstoppable Domains
+
+Unstoppable Domains provides tools to resolve [Unstoppable Domains](https://docs.unstoppabledomains.com/resolution/overview/) identities.

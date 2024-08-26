@@ -2,7 +2,7 @@
 
 This document provides a developer quickstart, followed by more detailed guidance for getting started building with XMTP.
 
-Need to send a test message? Message the XMTP message bot at `gm.xmtp.eth` (0x937C0d4a6294cdfa575de17382c7076b579DC176) to get an immediate automated reply.
+Need to send a test message? Message the XMTP message bot at `gm.xmtp.eth` (`0x937C0d4a6294cdfa575de17382c7076b579DC176`) to get an immediate automated reply.
 
 ### Install an SDK
 
@@ -212,7 +212,7 @@ function sendMessage(message: string) {
 
 This section provides more detailed guidance for getting started with XMTP. The examples use the [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`).
 
-You might also be interested in exploring this Replit: <a className="ext-link" href="https://replit.com/@FabrizioGuespe/XMTP-Developer-Quickstart?v=1#index.ts">JavaScript live code example</a>
+You might also be interested in exploring this Replit: <a target="_blank" className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink" href="https://replit.com/@FabrizioGuespe/XMTP-Developer-Quickstart?v=1#index.ts">JavaScript live code example</a>
 
 ### Install required packages
 
@@ -242,7 +242,7 @@ console.log("Wallet address: " + wallet.address);
 
 ### Create a client
 
-To create a client, you need to pass in a wallet that implements the `Signer` interface. This is a requirement because the XMTP client uses the wallet to sign messages and verify the sender's identity. When you create a client, you can set [client parameters](/dms/client#configure-the-client), including which [network environment](https://fixme/dms/authentication#environments) (`env`) the client should connect to.
+To create a client, you need to pass in a wallet that implements the `Signer` interface. This is a requirement because the XMTP client uses the wallet to sign messages and verify the sender's identity. When you create a client, you can set [client parameters](/dms/client#configure-the-client), including which [network environment](/dms/client#xmtp-network-environments) (`env`) the client should connect to.
 
 ```jsx
 const xmtp = await Client.create(signer, { env: "dev" });

@@ -117,8 +117,8 @@ if (isXmtpFrameActionPayload(previousFrame.postBody)) {
 
 ### Frog
 
-- [Frog middle documentation](https://frog.fm/concepts/middleware#xmtp-frames-middleware)
-- [XMTP x Frog middle quickstart](https://github.com/fabriguespe/frog-starter)
+- [Frog middleware documentation](https://frog.fm/concepts/middleware#xmtp-frames-middleware)
+- [XMTP x Frog middleware quickstart](https://github.com/fabriguespe/frog-starter)
 
 #### Frame metadata
 

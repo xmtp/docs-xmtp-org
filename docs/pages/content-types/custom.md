@@ -1,8 +1,10 @@
 ---
-description: Learn how to build custom content types for use with XMTP
+description: Learn how to build custom content types
 ---
 
-# Build custom content types for use with XMTP
+# Build custom content types
+
+Building a custom content type enables you to manage data in a way that is more personalized or specialized to the needs of your app.
 
 :::warning[warning]
 
@@ -10,13 +12,18 @@ Be aware that your custom content type may not be automatically recognized or su
 
 :::
 
-Building a custom content type enables you to manage data in a way that is more personalized or specialized to the needs of your app.
-
 For more common content types, you can usually find a [standard](/content-types/content-types#standard-content-types) or [standards-track](/content-types/content-types#standards-track-content-types) content type to serve your needs.
 
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
 
-## Create the content type
+This document describes how to build custom content types using two examples:
+
+- Build a basic custom content type that multiplies numbers
+- Build an advanced custom content type that sends a transaction hash
+
+## Basic: Build a custom content type that multiplies numbers
+
+### Create the content type
 
 Create the custom content type by creating a new file
 
@@ -24,8 +31,8 @@ Create the custom content type by creating a new file
 
 ```jsx [JavaScript]
 // A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-js/pull/509/files
-import { ContentTypeId } from "@xmtp/xmtp-js";
-import type { ContentCodec, EncodedContent } from "@xmtp/xmtp-js";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+import type { ContentCodec, EncodedContent } from "@xmtp/content-type-primitives";
 
 // Create a unique identifier for your content type
 export const ContentTypeMultiplyNumbers = new ContentTypeId({
@@ -90,8 +97,8 @@ export class ContentTypeMultiplyNumberCodec
 
 ```jsx [React]
 // A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-web/pull/141/files
-import { ContentTypeId } from "@xmtp/xmtp-js";
-import type { ContentCodec, EncodedContent } from "@xmtp/xmtp-js";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+import type { ContentCodec, EncodedContent } from "@xmtp/content-type-primitives";
 
 // Create a unique identifier for your content type
 export const ContentTypeMultiplyNumbers = new ContentTypeId({
@@ -226,7 +233,7 @@ data class MultiplyNumberCodec(
 ```
 
 ```swift [Swift]
-//A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-ios/pull/211
+// A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-ios/pull/211
 import XMTP
 
 public struct MultiplyNumbers {
@@ -339,7 +346,7 @@ class ContentTypeMultiplyNumberCodec
 
 :::
 
-## Configure the content types
+### Configure the content type
 
 Import and register the custom content type.
 
@@ -397,7 +404,7 @@ const client = await Client.create({
 
 :::
 
-## Send the content
+### Send the content
 
 Send a message using the custom content type. This code sample demonstrates how to use the `MultiplyCodec` custom content type to perform multiplication operations.
 
@@ -447,11 +454,11 @@ await bobConvo.send(multiplyNumbers, {
 
 :::
 
-## Receive the content
+### Receive the content
 
 To use the result of the multiplication operation, add a renderer for the custom content type.
 
-To handle unsupported content types, refer to the [fallback](/dms/messages#handle-an-unsupported-content-type-error) section.
+To handle unsupported content types, see the [fallback](/dms/messages#handle-unsupported-content-types) section.
 
 :::code-group
 
@@ -488,3 +495,153 @@ if (message.contentTypeId === "com.example/multiplyNumbers:1.1") {
 ```
 
 :::
+
+## Advanced: Build a custom content type to send a transaction hash
+
+This tutorial covers how to build a custom content type that sends transaction hashes on the Polygon blockchain. This example also describes how to use the custom content type to render the transaction hash.
+
+:::warning
+
+Be aware that a custom content type may not be automatically recognized or supported by other applications, which could result in it being overlooked or only its fallback text being displayed.
+
+:::
+
+### Create the custom content type
+
+Create a new file, `xmtp-content-type-transaction-hash.tsx`. This file hosts the `TransactionHash` class for encoding and decoding the custom content type.
+
+```jsx [JavaScript]
+import { ContentTypeId } from "@xmtp/xmtp-js";
+
+export const ContentTypeTransactionHash = new ContentTypeId({
+  authorityId: "your.domain",
+  typeId: "transaction-hash",
+  versionMajor: 1,
+  versionMinor: 0,
+});
+
+export class ContentTypeTransactionHashCodec {
+  get contentType() {
+    return ContentTypeTransactionHash;
+  }
+
+  encode(hash) {
+    return {
+      type: ContentTypeTransactionHash,
+      parameters: {},
+      content: new TextEncoder().encode(hash),
+    };
+  }
+
+  decode(content: { content: any }) {
+    const uint8Array = content.content;
+    const hash = new TextDecoder().decode(uint8Array);
+    return hash;
+  }
+}
+```
+
+### Import and register the custom content type
+
+```jsx [JavaScript]
+import {
+  ContentTypeTransactionHash,
+  ContentTypeTransactionHashCodec,
+} from "./xmtp-content-type-transaction-hash";
+
+const xmtp = await Client.create(signer, {
+  env: "dev",
+});
+xmtp.registerCodec(new ContentTypeTransactionHashCodec());
+```
+
+### Send a message using the custom content type
+
+This code sample demonstrates how to use the `TransactionHash` content type to send a transaction.
+
+```jsx [JavaScript]
+// Create a wallet from a known private key
+const wallet = new ethers.Wallet(privateKey);
+console.log(`Wallet address: ${wallet.address}`);
+
+//im using a burner wallet with MATIC from a faucet
+//https://faucet.polygon.technology/
+
+// Set up provider for Polygon Testnet (Mumbai)
+const provider = new ethers.providers.JsonRpcProvider(
+  "https://rpc-mumbai.maticvigil.com",
+);
+
+// Connect the wallet to the provider
+const signer = wallet.connect(provider);
+
+// Define the recipient address and amount
+const amount = ethers.utils.parseEther("0.01"); // Amount in ETH (0.01 in this case)
+
+// Create a transaction
+const transaction = {
+  to: recipientAddress,
+  value: amount,
+};
+
+// Sign and send the transaction
+const tx = await signer.sendTransaction(transaction);
+console.log(`Transaction hash: ${tx.hash}`);
+
+const conversation = await xmtp.conversations.newConversation(WALLET_TO);
+await conversation
+  .send(tx.hash, {
+    contentType: ContentTypeTransactionHash,
+  })
+  .then(() => {
+    console.log("Transaction data sent", tx.hash);
+  })
+  .catch((error) => {
+    console.log("Error sending transaction data: ", error);
+  });
+```
+
+### Use the result of the hash
+
+Add an async renderer for the custom content type.
+
+```jsx {JavaScript}
+if (message.contentType.sameAs(ContentTypeTransactionHash)) {
+  // Handle ContentTypeAttachment
+  return (
+    <TransactionMonitor key={message.id} encodedContent={message.content} />
+  );
+}
+
+const TransactionMonitor = ({ encodedContent }) => {
+  const [retryCount, setRetryCount] = useState(0);
+
+  const [transactionValue, setTransactionValue] = useState(null);
+
+  useEffect(() => {
+    const fetchTransactionReceipt = async () => {
+      console.log(encodedContent);
+      const provider = new ethers.providers.JsonRpcProvider(
+        "https://rpc-mumbai.maticvigil.com",
+      );
+      const receipt = await provider.getTransactionReceipt(encodedContent);
+      const tx = await provider.getTransaction(encodedContent);
+      if (tx && tx.value) {
+        setTransactionValue(ethers.utils.formatEther(tx.value));
+      }
+    };
+    fetchTransactionReceipt();
+  }, [encodedContent, retryCount]);
+
+  return transactionValue ? (
+    <div>Transaction value: {transactionValue} ETH</div>
+  ) : (
+    <div>
+      Waiting for transaction to be mined...
+      <button onClick={() => setRetryCount(retryCount + 1)}>
+        Refresh Status 🔄
+      </button>
+    </div>
+  );
+};
+```

@@ -1,22 +1,18 @@
 # Handle user consent in group chat
 
-With XMTP, in addition to permissions that enable members to add and remove members, user consent preferences also apply.
+In addition to permissions that enable designated members to add and remove members from a group chat, user consent preferences also apply.
 
-[User consent preferences](https://xmtp.org/consent) enable you to give a user the option to allow or deny contact from a group ID, inbox ID, or address.
+User consent preferences enable a user to allow or deny contact from a group ID, inbox ID, or address in a group chat context.
 
 For example, your app can check `inboxId` values using the `isInboxIdAllowed()` or `isInboxIdDenied()` functions. Then, based on your app's design and the user's settings, your app can determine how and whether a group chat and message should be displayed for a user.
 
-To learn more, see [Spam Protection](https://github.com/xmtp/xmtp-dot-org/blob/678ec45d3c4d85ae304314685ed88f26cb7d4506/docs/v3/group-chat.md#spam-protection).
-
-To learn how to allow and deny contact by address, see [Universal allow/block preferences](https://xmtp.org/consent#enable-user-consent-preferences).
-
-To learn how to keep user consent preferences synchronized, see [Synchronize user consent preferences](https://xmtp.org/consent#synchronize-user-consent-preferences).
+User consent preferences also exist in the 1:1 chat context. To learn more, see [Understand user consent](/consent/user-consent).
 
 ## Allow or deny contact by wallet in group chat
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow
 await contact.allow([walletAddress]);
 
@@ -34,7 +30,9 @@ try await contact.allowInboxes(inboxIDs: [inboxID])
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+await client.contacts.allow([walletAddress]);
 ```
 
 :::
@@ -43,7 +41,7 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow
 await contact.allowGroup([groupId]);
 
@@ -68,7 +66,13 @@ try await contact.denyInboxes(inboxIds: [inboxID])
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// allow
+await client.contacts.allowInboxes([inboxID]);
+
+// deny
+await client.contacts.denyInboxes([inboxID]);
 ```
 
 :::
@@ -77,7 +81,7 @@ Code sample coming soon
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow group
 await contact.allowGroup([groupId]);
 
@@ -98,7 +102,13 @@ Code sample coming soon
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// allow
+await client.contacts.allowGroups([groupId]);
+
+// deny
+await client.contacts.denyGroups([groupId]);
 ```
 
 :::
@@ -109,12 +119,12 @@ Enable a user to explicitly allow or deny contact from an inbox ID.
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Allow
-await client.contacts.allowInboxes([client.inboxId])
+await client.contacts.allowInboxes([client.inboxId]);
 
 // Deny
-await client.contacts.denyInboxes([client.inboxId])
+await client.contacts.denyInboxes([client.inboxId]);
 ```
 
 ```kotlin [Kotlin]
@@ -145,7 +155,7 @@ Check if contact from a group chat ID is allowed or denied for a user.
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [React Native]
 // Check if contact by a group is allowed for a member
 const isAllowed = await group.isGroupAllowed(groupId);
 
@@ -162,7 +172,13 @@ await contact.isGroupAllowed(groupId: groupID)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// is group allowed?
+await client.contacts.isGroupAllowed(groupId);
+
+// is group denied?
+await client.contacts.isGroupDenied(groupId);
 ```
 
 :::
@@ -173,8 +189,8 @@ Check if contact from an inbox ID is allowed or denied for a user.
 
 :::code-group
 
-```jsx [JavaScript]
-await client.contacts.isInboxAllowed(client.inboxId)
+```jsx [React Native]
+await client.contacts.isInboxAllowed(client.inboxId);
 ```
 
 ```kotlin [Kotlin]
@@ -186,7 +202,21 @@ await contact.isInboxAllowed(inboxId: client.inboxID)
 ```
 
 ```tsx [Node]
-Code sample coming soon
+// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+
+// is inbox allowed?
+await client.contacts.isInboxAllowed(inboxId);
+
+// is inbox denied?
+await client.contacts.isInboxDenied(inboxId);
 ```
 
 :::
+
+## Stream user consent
+
+To learn how to stream user consent preferences, see [Stream the consent list](/consent/consent-methods#stream-the-consent-list).
+
+## Synchronize user consent
+
+To learn how to keep user consent preferences synchronized, see [Synchronize user consent preferences](/consent/consent-methods#synchronize-user-consent-preferences).

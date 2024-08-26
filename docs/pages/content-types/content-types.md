@@ -22,51 +22,29 @@ Here is the current standard content type:
 
 An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don’t need to perform any additional steps related to content types.
 
-<Tabs groupId="sdk-langs">
-<TabItem value="js" label="JavaScript"  attributes={{className: "js_tab"}}>
+:::code-group
 
-```jsx
+```jsx [JavaScript]
 await conversation.send("gm");
 ```
 
-</TabItem>
-<TabItem value="react" label="React"  attributes={{className: "react_tab"}}>
-
-```jsx
+```jsx [React]
 await sendMessage(conversation, "gm");
 ```
 
-</TabItem>
-<TabItem value="swift" label="Swift"  attributes={{className: "swift_tab"}}>
-
-```swift
+```swift [Swift]
 try await conversation.send(content: "gm")
 ```
 
-</TabItem>
-<TabItem value="dart" label="Dart"  attributes={{className: "dart_tab"}}>
-
-```dart
-var convo = await client.newConversation("0x...");
-await client.sendMessage(convo, 'gm');
-```
-
-</TabItem>
-<TabItem value="kotlin" label="Kotlin"  attributes={{className: "kotlin_tab"}}>
-
-```kotlin
+```kotlin [Kotlin]
 conversation.send(text = "gm")
 ```
 
-</TabItem>
-<TabItem value="rn" label="React Native"  attributes={{className: "rn_tab"}}>
-
-```jsx
+```jsx [React Native]
 await conversation.send("gm");
 ```
 
-</TabItem>
-</Tabs>
+:::
 
 ## Standards-track content types
 
@@ -74,21 +52,11 @@ A standards-track content type is one that is being actively reviewed for adopti
 
 Here are standards-track content types that you can review, test, and adopt in your app today:
 
-### Attachment content type
-
-Use to send an attachment smaller than 1MB using the `AttachmentCodec`. The codec automatically encrypts the attachment and uploads it to the XMTP network.
-
-<!-- - [Read the doc](/docs/content-types/attachment)-->
-
-- [Comment on the XIP](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-15-attachment-content-type.md)
-- SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
-
 ### Remote attachment content type
 
 Use to send a remote attachment of any size using the `RemoteAttachmentCodec` and a storage provider.
 
 - [Read the doc](/content-types/remote-attachment)
-- [Comment on the XIP](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-17-remote-attachment-content-type-proposal.md)
 - SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [JavaScript](https://github.com/xmtp/xmtp-js-content-types/tree/363e82c894f5a4436c5617b1c0424bab574b27c0/packages), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
 - Implemented in: Converse, Lenster
 
@@ -97,7 +65,6 @@ Use to send a remote attachment of any size using the `RemoteAttachmentCodec` an
 Use to send a read receipt, which is a `timestamp` that indicates when a message was read. The read receipt is sent as a message and you can use it to calculate the time since the last message was read.
 
 - [Read the doc](/content-types/read-receipt)
-- [Comment on the XIP idea](https://github.com/orgs/xmtp/discussions/43)
 - SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [JavaScript](https://github.com/xmtp/xmtp-js-content-types/tree/363e82c894f5a4436c5617b1c0424bab574b27c0/packages), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
 
 ### Reaction content type
@@ -105,7 +72,6 @@ Use to send a read receipt, which is a `timestamp` that indicates when a message
 Use a reaction to send a quick and often emoji-based way to respond to a message. Reactions are usually limited to a predefined set of emojis or symbols provided by the messaging app.
 
 - [Read the doc](/content-types/reaction)
-- [Comment on the XIP idea](https://community.xmtp.org/t/proposal-for-emoji-reactions-content-type/499/1)
 - SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [JavaScript](https://github.com/xmtp/xmtp-js-content-types/tree/363e82c894f5a4436c5617b1c0424bab574b27c0/packages), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
 - Implemented in: Converse
 
@@ -114,14 +80,14 @@ Use a reaction to send a quick and often emoji-based way to respond to a message
 Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 
 - [Read the doc](/content-types/reply)
-- [Comment on the XIP idea](https://github.com/orgs/xmtp/discussions/35)
 - SDK support: [React](https://github.com/xmtp/xmtp-web/tree/8a248eab168eba494909d7215cffba9d50c1f87c/packages/react-sdk/src/helpers/caching/contentTypes), [JavaScript](https://github.com/xmtp/xmtp-js-content-types/tree/363e82c894f5a4436c5617b1c0424bab574b27c0/packages), [Kotlin](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/codecs), [Swift](https://github.com/xmtp/xmtp-ios/tree/main/Sources/XMTP/Codecs)
+- Implemented in: Converse
 
 ### On-chain transaction reference content type
 
 Use to send references to on-chain transactions, such as crypto payments.
 
-- [Comment on the XIP idea](https://github.com/orgs/xmtp/discussions/37)
+- [Read the doc](/content-types/transaction-ref)
 - Implemented in: Coinbase Wallet
 
 ## Create a custom content type
@@ -142,10 +108,7 @@ Fallback plain text is "alt text"-like description text that you can associate w
 
 Here are tutorials you can use to learn how to create custom content types:
 
-### [Basic: Multiply Number](/content-types/custom)
-
+- [Basic: Multiply numbers](/content-types/custom)  
 Create a custom content type used to multiply numbers.
-
-### [Advanced: Send a Polygon transaction](/content-types/transaction-hash)
-
+- [Advanced: Send a Polygon transaction](/content-types/custom)  
 Create a custom content type used to send transaction hashes on the Polygon blockchain.

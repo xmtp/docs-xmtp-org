@@ -107,9 +107,11 @@ useEffect(() => {
 
 ## Listen for new messages in a conversation
 
-You can code your app to listen for new incoming and outgoing messages in a conversation by calling `conversation.streamMessages()`.
+You can code your app to listen for new incoming and outgoing messages in a conversation by calling `conversation.streamMessages()`. The stream returned by the `stream` methods is an asynchronous iterator. This means that the stream can be used by a for-await-of loop. 
 
-_The stream returned by the `stream` methods is an asynchronous iterator. This means that the stream can be used by a for-await-of loop. However, note that by its nature, the stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`._
+:::warning[Important]
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+:::
 
 :::code-group
 
@@ -211,7 +213,7 @@ useEffect(() => {
 
 ## Listen for new messages in all conversations
 
-:::info
+:::warning[Important]
 
 There is a chance that the stream can miss messages if multiple new conversations are received while the stream is being updated to include a new conversation.
 

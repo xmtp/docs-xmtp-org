@@ -43,13 +43,13 @@ However, this option does not allow users to restore a local cache across apps. 
 
 ### Web support for group chat
 
-The XMTP [JavaScript SDK](https://github.com/xmtp/xmtp-js) and [React SDK](https://github.com/xmtp/xmtp-web/tree/main/packages/react-sdk) don’t yet provide web support for group chat. However, if you want to integrate group chat backend support, you can use the [**experimental** Node SDK](https://www.npmjs.com/package/@xmtp/mls-client).
+The XMTP [JavaScript SDK](https://github.com/xmtp/xmtp-js) and [React SDK](https://github.com/xmtp/xmtp-web/tree/main/packages/react-sdk) don’t yet provide web support for group chat. However, if you want to integrate group chat backend support, you can use the **experimental** XMTP [Node SDK](https://www.npmjs.com/package/@xmtp/mls-client).
 
 Web support for group chat is lagging due to technical challenges related to integrating WebAssembly (WASM) and its extensions. WASM sandbox cannot access the operating system directly, which is necessary for tasks like file reads. WASI extends WASM to allow operating system interaction, but it comes with its own set of challenges. For example, current WASI 0.2 has no built-in way to handle asynchronous operations effectively. The team is working toward solutions. 
 
 ### Push notifications
 
-Group chat supports push notifications. To learn more, see the [Notifications with XMTP](/notifications/build-notifications) section.
+Group chat supports push notifications. To learn more, see the [Build push notifications](/notifications/build-notifications).
  
 ## XMTP V3 SDK example apps
 
@@ -62,6 +62,8 @@ If you’d like to dive right into exploring the code, check out the example app
 ## Create group chats
 
 Take these steps to create group chats.
+
+::::steps
 
 ### Create a client that supports group chat
 
@@ -113,41 +115,40 @@ let client = try await Client.create(
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-import { createWalletClient, http, toBytes } from 'viem'
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'
-import { mainnet } from 'viem/chains'
-import { Client } from '@xmtp/mls-client'
+import { createWalletClient, http, toBytes } from "viem";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { mainnet } from "viem/chains";
+import { Client } from "@xmtp/mls-client";
 
 // create a wallet for signing
-const key = generatePrivateKey()
-const account = privateKeyToAccount(key)
+const key = generatePrivateKey();
+const account = privateKeyToAccount(key);
 const wallet = createWalletClient({
   account,
   chain: mainnet,
   transport: http(),
-})
+});
 
 // create client
 const client = Client.create(account.address, {
-  env: 'dev', // or 'production'
+  env: "dev", // or 'production'
   // provide a path for the local SQLite DB
-  dbPath: 'path/to/local/db/file.db3',
-})
+  dbPath: "path/to/local/db/file.db3",
+});
 
 // sign the provided message
 const signature = await user.wallet.signMessage({
   // it's possible for `signatureText` to be `null` if the identity is already registered
   message: client.signatureText!,
-})
-const signatureBytes = toBytes(signature)
+});
+const signatureBytes = toBytes(signature);
 
 // add the signature to the client
-client.addEcdsaSignature(signatureBytes)
+client.addEcdsaSignature(signatureBytes);
 
 // register client identity
-await client.registerIdentity()
+await client.registerIdentity();
 ```
-
 :::
 
 ### Check if a user has a V3 identity
@@ -159,10 +160,7 @@ To learn more about V3 identities, see [Multi-wallet Identity in V3](/protocol/v
 :::code-group
 
 ```jsx [React Native]
-const canMessageV3 = await client.canGroupMessage([
-  alix.address,
-  bo.address,
-]);
+const canMessageV3 = await client.canGroupMessage([alix.address, bo.address]);
 ```
 
 ```kotlin [Kotlin]
@@ -193,14 +191,14 @@ To create a group chat, each of the specified member addresses must have a V3 id
 
 ```jsx [React Native]
 const group = await client.conversations.newGroup(
-    [anotherClient.address],
-    // set the permission level for the group. Options include "admin_only", where only the creator is an admin, or "all_members" to make everyone an admin.
-    { 
-	    permissionLevel: 'admin_only',
-	    name: 'Group Name',
-	    imageUrlSquare: '<URL>'
-    }
-  )
+  [anotherClient.address],
+  // set the permission level for the group. Options include "admin_only", where only the creator is an admin, or "all_members" to make everyone an admin.
+  {
+    permissionLevel: "admin_only",
+    name: "Group Name",
+    imageUrlSquare: "<URL>",
+  },
+);
 ```
 
 ```kotlin [Kotlin]
@@ -223,7 +221,7 @@ permissions: .adminOnly, name: "Group Name", imageUrlSquare: "<URL>")
 
 const group = await client.conversations.newConversation(
   [walletAddress1, walletAddress2],
-  GroupPermissions.GroupCreatorIsAdmin
+  GroupPermissions.GroupCreatorIsAdmin,
 );
 ```
 
@@ -237,9 +235,11 @@ If a member is using an app installation that doesn’t support group chat, cons
 
 :::
 
+::::
+
 ## Display group chats
 
-Take these steps to display group chats associated with the current client.
+Use these methods to display group chats associated with the current client.
 
 ### Get group chats
 
@@ -392,7 +392,7 @@ try await group.send(content: "Hello, group!")
 
 const group = await client.conversations.newConversation(
   [walletAddress1, walletAddress2],
-  GroupPermissions.GroupCreatorIsAdmin
+  GroupPermissions.GroupCreatorIsAdmin,
 );
 await group.send("Hello, group!", ContentTypeText);
 ```
@@ -401,7 +401,7 @@ await group.send("Hello, group!", ContentTypeText);
 
 ## Stream group chats
 
-Take these steps to stream group chats.
+Use these methods to stream group chats.
 
 ### Stream group chat updates
 
@@ -426,15 +426,13 @@ groups.push(group);
 Stream group chats and direct message conversations:
 
 ```jsx [React Native]
-const streamAllConversations =async (client) => {
-const allConvos = [];
-const cancelStreamAll =await client.conversations.streamAll(
-    (conversation) => {
-      allConvos.push(conversation);
-    },
-  );
-
-  // Use cancelStreamAll() to stop listening to all conversation updates
+const streamAllGroupMessages = async (client) => {
+  const allConvos = [];
+  const cancelStreamAllGroupMessages =
+    await client.conversations.streamAllMessages(async (message) => {
+      console.log(`New message: ${message.content}`);
+    });
+  // Use cancelStreamAllGroupMessages() to stop listening to all conversation updates
 };
 ```
 
@@ -489,10 +487,10 @@ for try await conversation in client.conversations.streamAll() {
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-const stream = client.conversations.stream()
+const stream = client.conversations.stream();
 
 for await (const group of stream) {
-  console.log('New group created', group);
+  console.log("New group created", group);
 }
 
 // stop stream
@@ -572,11 +570,11 @@ Stream messages in group chats, current and future:
 const stream = client.conversations.streamAllMessages();
 
 for await (const message of stream) {
-  console.log('New message received ', message);
+  console.log("New message received ", message);
 }
 
 // stop the stream
-stream.stop()
+stream.stop();
 ```
 
 Stream messages in a group chat:
@@ -584,14 +582,14 @@ Stream messages in a group chat:
 ```tsx [Node]
 // this API is experimental and may change in the future
 
-const stream = group.stream()
+const stream = group.stream();
 
 for await (const message of stream) {
-  console.log('New message received ', message);
+  console.log("New message received ", message);
 }
 
 // stop the stream
-stream.stop()
+stream.stop();
 ```
 </div>
 
@@ -608,8 +606,6 @@ When your user sends a message, you don’t need to sync with the network for th
 See [⚠️ Important: Manage actions that make a local database inaccessible](#️-important-manage-actions-that-make-a-local-database-inaccessible).
 
 This means that everything XMTP gets from the network for the user is stored in this local database and never needs to be fetched again. Extra syncing isn’t costly as the process won’t fetch data it already has, but this is just an explanation of why syncing isn’t necessary for data created by a user’s own actions.
-
-To learn more, see [Local Database and Syncing](/groups/build-group-chat#local-database-and-syncing). 
 
 However, you must sync (or use streaming) to enable **other** users to see the group chats and messages your user created and sent.
 

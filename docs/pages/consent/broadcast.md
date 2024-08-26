@@ -110,7 +110,7 @@ If you prefer to handle rate-limiting manually, here are some tips:
   >
   > [Cancel]&nbsp;&nbsp;&nbsp;[**Continue**]
 
-  If it suits your use case, consider handling consent using a [**Subscribe** button with consent proofs](subscribe) on a web page or in a dapp. 
+  If it suits your use case, consider handling consent using a [**Subscribe** button with consent proofs](/consent/subscribe) on a web page or in a dapp. 
 
 - **If your app allows your customers to send broadcast messages to their users**, be sure to advise your customers to get their users' consent before sending them broadcast messages. For example, you can provide this guidance during onboarding. Here's some example text you can build upon:
 
