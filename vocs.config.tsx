@@ -1,6 +1,20 @@
 import { defineConfig } from "vocs";
 
+// console.log('Loading Vocs config...')
+
 export default defineConfig({
+  head: () => {
+    // console.log(`Generating head content... ${new Date().toISOString()}`)
+    return (
+      <>
+        <script
+          src="https://plausible.io/js/script.js"
+          data-domain="docs.xmtp.org"
+          defer
+        />
+      </>
+    );
+  },
   title: "XMTP Documentation",
   description:
     "Documentation for XMTP, the open and secure messaging protocol for web3",
@@ -9,10 +23,10 @@ export default defineConfig({
     text: "Suggest changes to this page",
   },
   logoUrl: {
-    light: "/logomark.svg",
-    dark: "/logomark-dark.svg",
+    light: "/logomark-dark-purple.png",
+    dark: "/logomark-light-purple.png",
   },
-  iconUrl: "/x-mark.png",
+  iconUrl: "/x-mark-blue.png",
   topNav: [
     {
       text: "Converse app",
@@ -21,7 +35,9 @@ export default defineConfig({
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
-    "/": "/xmtp-card.jpeg",
+    "/": "/xmtp-og-card.jpeg",
+    "/docs":
+      "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
   },
   socials: [
     {
@@ -43,10 +59,6 @@ export default defineConfig({
           link: "/",
         },
         {
-          text: "ETH Online",
-          link: "/get-started/awesome",
-        },
-        {
           text: "Developer quickstart",
           link: "/get-started/developer-quickstart",
         },
@@ -57,6 +69,10 @@ export default defineConfig({
         {
           text: "SDK references",
           link: "/get-started/references",
+        },
+        {
+          text: "ETH Online",
+          link: "/get-started/awesome",
         },
         {
           text: "FAQ",
@@ -117,20 +133,12 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Understand user consent",
+          text: "Understand consent",
           link: "/consent/user-consent",
         },
         {
           text: "Build with consent methods",
           link: "/consent/consent-methods",
-        },
-        {
-          text: "Add consent to existing JS app",
-          link: "/consent/consent-js",
-        },
-        {
-          text: "Add consent to existing RN app",
-          link: "/consent/consent-rn",
         },
         {
           text: "Filter spam",
@@ -145,8 +153,8 @@ export default defineConfig({
           link: "/consent/broadcast",
         },
         {
-          text: "Build a consent management system",
-          link: "/consent/consent-management",
+          text: "Quickstart repos",
+          link: "/consent/consent-quickstarts",
         },
       ],
     },
@@ -179,11 +187,7 @@ export default defineConfig({
           link: "/content-types/transaction-ref",
         },
         {
-          text: "Send a transaction hash",
-          link: "/content-types/transaction-hash",
-        },
-        {
-          text: "Create a custom content type",
+          text: "Custom content type",
           link: "/content-types/custom",
         },
       ],
@@ -313,7 +317,7 @@ export default defineConfig({
               link: "/protocol/v2/architectural-overview",
             },
             {
-              text: "Keys",
+              text: "Key generation",
               link: "/protocol/v2/key-generation-and-usage",
             },
             {
@@ -321,7 +325,7 @@ export default defineConfig({
               link: "/protocol/v2/invitation-and-message-encryption",
             },
             {
-              text: "Algorithms",
+              text: "Algorithms in use",
               link: "/protocol/v2/algorithms-in-use",
             },
           ],
