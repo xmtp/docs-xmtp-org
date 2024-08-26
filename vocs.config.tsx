@@ -71,7 +71,7 @@ export default defineConfig({
           link: "/get-started/references",
         },
         {
-          text: "ETH Online",
+          text: "ETHOnline 2024",
           link: "/get-started/awesome",
         },
         {
