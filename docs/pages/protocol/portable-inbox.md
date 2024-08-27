@@ -4,7 +4,7 @@ description: "With XMTP, each user gets a portable inbox that provides access to
 
 # XMTP portable inbox
 
-With apps built with XMTP, each user gets a portable inbox. This inbox provides access to all of the XMTP messages you’ve exchanged, regardless of the app used to create the message. With your portable inbox, your essages meet you where you are.
+With apps built with XMTP, each user gets a portable inbox. This inbox provides access to all of the XMTP messages you’ve exchanged, regardless of the app used to create the message. With your portable inbox, your messages meet you where you are.
 
 For example, this means that you and a friend can each use your own preferred app to exchange messages.
 
