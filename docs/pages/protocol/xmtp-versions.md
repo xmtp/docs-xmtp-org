@@ -28,7 +28,7 @@ To learn more about how XMTP V3 works, see the sections in [XMTP V3](/protocol/v
 
 ## XMTP V2
 
-XMTP V2 supports one-to-one chat. One-to-one chat will eventually be available throught XMTP V3 and be built on MLS.
+XMTP V2 supports one-to-one chat. One-to-one chat will eventually be available through XMTP V3 and be built on MLS.
 
 The following XMTP SDKs support V2:
 
