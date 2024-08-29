@@ -20,7 +20,7 @@ And lastly, when contributing, please follow the XMTP community code of conduct 
 
 ## Use the “Suggest changes to this page” link to submit a pull request
 
-Using the **Suggest changes to this page** link provides a guided flow for editing content and submitting a PR using the GitHub UI in a web browser. 
+Using the **Suggest changes to this page** link provides a guided flow for editing content and submitting a PR using the GitHub UI in a web browser.
 
 A PR is a request to add (or pull) your content updates into the project and publish them to the documentation on the site. After you submit a pull request, your proposed changes are publicly visible, meaning that anyone with a GitHub account can see them on GitHub.
 

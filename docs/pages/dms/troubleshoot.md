@@ -24,7 +24,7 @@ window.Buffer = window.Buffer ?? Buffer;
 
 ### On the first line of your main file, import `polyfills`
 
-- ReacJS: `index.js` or `index.tsx`
+- ReactJS: `index.js` or `index.tsx`
 - VueJS: `main.js`
 - NuxtJS: `app.vue`
 
