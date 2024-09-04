@@ -5,6 +5,8 @@ description: "XMTP is an open protocol, network, and standards for secure, priva
 # Build with XMTP
 
 XMTP (Extensible Message Transport Protocol) is an open protocol, network, and standards for secure, private web3 messaging.
+XMTP is not a blockchain. Nodes on the XMTP network run software to store and transfer messages between blockchain accounts.
+Currently, XMTP Labs is working towards decentralizing the network.
 
 ## Why XMTP?
 
