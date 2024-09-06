@@ -17,7 +17,6 @@ Here are some options for connecting wallets to your app built with XMTP:
 - [RainbowKit](https://www.rainbowkit.com/)  
   Support for WalletConnect v2 is now standard in RainbowKit. To learn how to upgrade, see [Migrating to WalletConnect v2](https://www.rainbowkit.com/guides/walletconnect-v2).
 - [Thirdweb](https://thirdweb.com/)
-- [WalletConnect](https://walletconnect.com/)
 - [wagmi](https://wagmi.sh/)
 
 :::info[For more info]
@@ -346,11 +345,13 @@ The XMTP ecosystem is continually evolving. If you know of other reliable servic
 
 ### Does XMTP support group chat?
 
-Yes. XMTP V3 supports group chat in React Native, Android, iOS, and Node.js SDKs.
+XMTP supports group chat in React Native, Android, iOS, and Node.js SDKs.
 
 :::info[For more info]
 See [Build group chat with MLS and XMTP](/groups/build-group-chat)
 :::
+
+To learn more about when group chat will be available for the web, see the XMTP Developer Community Call about [wen group chat web](https://www.youtube.com/watch?v=qnCeXsqqKcY).
 
 ## Network
 
@@ -368,7 +369,7 @@ These network nodes operate in US jurisdiction in compliance with Office of Fore
 
 To explore the software for the nodes that currently form the XMTP network, see the [xmtp-node-go repo](https://github.com/xmtp/xmtp-node-go).
 
-Ephemera is working toward a phased decentralization of the network.
+Ephemera is working toward a phased decentralization of the network. Have questions or feedback regarding decentralization? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
 Decentralization of the XMTP network will be achieved by a diverse set of independent third parties operating nodes all over the world. Decentralization is a top priority and is required to ensure that XMTP is able to serve everyone on the planet.
 
@@ -382,7 +383,7 @@ Ephemera is researching various consensus protocols that would allow the network
 
 Yes, you will be able to run a node.
 
-Ephemera is working toward a phased decentralization of the network.
+Ephemera is working toward a phased decentralization of the network. Ephemera is working toward a phased decentralization of the network. Have questions or feedback regarding decentralization? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
 ### Does XMTP have a token?
 
@@ -406,6 +407,12 @@ XMTP provides perceptibly real-time message delivery and retrieval. The network 
 
 ## Fees
 
+XMTP core developers and researchers are working on outlining a specific fee model for XMTP. The team will share a proposed plan as soon as it’s well-defined enough to generate meaningful input.
+
+In the meantime, here are more general statements about fees on the XMTP network.
+
+Have questions or feedback about the fee model for XMTP? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
+
 ### Who pays to keep the network running?
 
 Ephemera is committed to keeping the network running. Future incentive mechanisms will enable the network to run autonomously of Ephemera.
@@ -416,21 +423,17 @@ Currently, messaging incurs no fee. As XMTP decentralizes, messaging between par
 
 There are no messaging-related fees incurred by developers for building with the XMTP SDK.
 
-### What are the costs of XMTP message storage and retrieval?
-
-Messages are stored off-chain on the XMTP network, with all nodes currently hosted by Ephemera. Ephemera currently absorbs all message storage and retrieval costs.
-
-There are no message storage and retrieval-related fees incurred by developers for building with the XMTP SDK.
-
 ## Security
 
 ### Has XMTP undergone a security audit?
+
+A security audit of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) will begin in Q4 2024. The audit will be performed by [NCC Group](https://www.nccgroup.com/).
 
 The [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`) was verified by [CertiK](https://www.certik.com/company/about) on Feb 6, 2023. Read their [XMTP security assessment](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/REP-final-20230207T000355Z.pdf).
 
 ### How does XMTP establish a secure and fraud-proof relationship between two identities?
 
-XMTP V3 uses a combination of Ethereum wallet signatures and MLS (Messaging Layer Security):
+XMTP uses a combination of Ethereum wallet signatures and MLS (Messaging Layer Security):
 
 1. A user starts with an Ethereum wallet and installs an XMTP-enabled app.
 
@@ -446,33 +449,15 @@ XMTP V3 uses a combination of Ethereum wallet signatures and MLS (Messaging Laye
 
 For more details, see [Group chat concepts and protocols](/protocol/v3/group-chat#security-and-encryption) and [Identity in XMTP v3](/protocol/v3/identity)
 
-In this regard, XMTP V3 provides several improvements over V2:
-
-- Enhanced security: V3 implements the MLS protocol, which provides stronger security guarantees including forward secrecy and post-compromise security.
-
-- Group chat support: V3 natively supports secure group chats, allowing multiple participants to communicate securely in a single conversation.
-
-- Scalability: The MLS protocol used in v3 is designed to scale efficiently, supporting larger groups and more frequent updates.
-
-- Improved key management: V3's use of installation keys and MLS credentials provides a more robust and flexible key management system.
-
-- Better privacy: V3 includes features to enhance user privacy, such as hiding sender metadata in group chats.
-
-- Future-proofing: The adoption of MLS, an emerging standard for secure messaging, positions XMTP to be compatible with future developments in secure communication protocols.
-
-- Interoperability: By using MLS, XMTP v3 aligns with industry standards, potentially allowing for easier interoperability with other secure messaging systems in the future.
-
-These improvements make XMTP v3 a secure, scalable, and feature-rich protocol for decentralized messaging, particularly suited for apps requiring high levels of security and support for group communications.
-
 #### XMTP v2
 
-In V2, blockchain accounts sign and advertise a set of keys to start using XMTP. These keys are used to establish a shared secret between the blockchain accounts. The shared secret is then used to generate a key for encrypting an invitation, allowing the blockchain accounts to start exchanging messages. No third-party apps or relayers are involved in this process.
+In v2, blockchain accounts sign and advertise a set of keys to start using XMTP. These keys are used to establish a shared secret between the blockchain accounts. The shared secret is then used to generate a key for encrypting an invitation, allowing the blockchain accounts to start exchanging messages. No third-party apps or relayers are involved in this process.
 
 For more details, see [Key generation and usage in XMTP v2](/protocol/v2/key-generation-and-usage) and [Invitation and message encryption with XMTP v2](/protocol/v2/invitation-and-message-encryption).
 
 ### Does each blockchain account address have a corresponding XMTP identity?
 
-Yes. In XMTP V3, each blockchain account address is associated with an XMTP identity.
+Yes, each blockchain account address is associated with an XMTP identity.
 
 1. When a user first uses XMTP with a particular blockchain account, they create an "identity key" for that account.
 
@@ -482,19 +467,7 @@ Yes. In XMTP V3, each blockchain account address is associated with an XMTP iden
 
 To learn more about identity in XMTP v3, see [Identity in XMTP v3](/protocol/v3/identity).
 
-In this regard, XMTP V3 provides several improvements over V2:
-
-- Multi-device support: V3's use of installation keys allows users to have multiple devices or apps associated with a single blockchain identity, improving user experience and flexibility.
-
-- Enhanced security: The multi-layered key structure (identity key, installation keys, MLS credentials) provides better isolation and security, reducing the risk if a single device or app is compromised.
-
-- Scalability: The V3 approach scales better for users with multiple devices or apps, without requiring a new full identity setup for each.
-
-- Revocation and rotation: V3 allows for more granular key management, including the ability to revoke specific installation keys without affecting the entire identity.
-
-These improvements make XMTP V3 robust, flexible, and secure in its handling of user identities, particularly for users engaging with multiple devices or apps.
-
-#### XMTP V2
+#### XMTP v2
 
 Yes. Each blockchain account address is represented by an XMTP identity key. This identity key is a part of a key bundle that only the address that generated it can use to authenticate messages.
 
@@ -502,7 +475,7 @@ To learn more about XMTP identity keys, see [Key generation and usage in XMTP](/
 
 ### Why do apps built with XMTP require a user to sign with their blockchain account private keys each time they start a new messaging session?
 
-In XMTP V3, users need to authenticate with their blockchain account when starting a new messaging session in this way:
+Users need to authenticate with their blockchain account when starting a new messaging session in this way:
 
 - Initial authentication: When a user first uses XMTP with their blockchain account, they need to sign a message to create their XMTP identity key.
 
@@ -516,9 +489,9 @@ If you're using the JavaScript client SDK, you might consider [manually handling
 
 The XMTP team continues to research and develop more user-friendly approaches to secure key management based on developer and community feedback.
 
-For more details on identity and key management in XMTP V3, see [Identity in XMTP v3](/protocol/v3/identity).
+For more details on identity and key management in XMTP v3, see [Identity in XMTP v3](/protocol/v3/identity).
 
-#### XMTP V2 
+#### XMTP v2 
 
 When a user starts a new messaging session, they must sign with their blockchain account private key to decrypt their XMTP key bundle. The key bundle is then used for invitation and message decryption.
 
@@ -534,13 +507,33 @@ XMTP stores messages in the XMTP network before and after retrieval. App-specifi
 
 ### What are the XMTP message retention policies?
 
-XMTP provides both `production` and `dev` network environments to support the development phases of your project.
+#### For XMTP’s blockchain and node databases:
 
-The `production` network is configured to store messages indefinitely.
+Currently, encrypted payloads are stored indefinitely.
 
-XMTP may occasionally delete messages and keys from the `dev` network and will provide advance notice in the [XMTP Discord community](https://discord.gg/xmtp) and [XMTP Announcements forum](https://community.xmtp.org/c/start-here/announcements/7).
+In the coming year, a retention policy is likely to be added. 
 
-Different approaches to long-term message storage are currently being researched.
+This retention policy would represent a minimum retention period, not a maximum. For example, the policy will provide a functional guarantee not a privacy guarantee. A privacy guarantee is more difficult to provide due to the decentralized nature of the network and subtleties of blockchain data availability.
+
+For example, a retention policy may look something like the following, though specifics are subject to change:
+  - One year for messages
+  - Indefinite storage for account information and personal preferences  
+
+The team is researching a way to provide this indefinite storage and have it scale forever. 
+- If research shows that it's possible, we'll share a plan for how it will be archieved. 
+- If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
+
+Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
+
+#### For the on-device database managed by the XMTP SDK:
+
+Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
+
+### What are the costs of XMTP message storage and retrieval?
+
+Messages are stored off-chain on the XMTP network, with all nodes currently hosted by Ephemera. Ephemera currently absorbs all message storage and retrieval costs.
+
+There are no message storage and retrieval-related fees incurred by developers for building with the XMTP SDK.
 
 ## Messages
 
@@ -557,25 +550,9 @@ To learn more about content types, see [Content types](/content-types/content-ty
 To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
 
 ### Which message metadata does XMTP support?
-
-Message payloads in XMTP V3 include timestamps, which are now more rigorously handled and they were in V2:
-
-- Server-side timestamps: When a message is received by an XMTP node, the node adds its own timestamp to the message.
-
-- Client-side timestamps: The sending client can still include its own timestamp in the message payload.
-
-- Timestamp verification: XMTP nodes perform basic checks on client-provided timestamps. If a timestamp is too far in the future or past, the message may be rejected.
-
-- Ordering: Messages are primarily ordered based on the server-side timestamps, which helps prevent manipulation of message order by clients.
-
-This approach provides a reliable basis for message ordering and helps mitigate some potential issues with client-manipulated timestamps. However, it's important to note that perfect clock synchronization across a distributed system remains a challenge, and apps should be designed with this in mind.
-
-For more details on message handling in XMTP v3, see [Message delivery in XMTP v3](#TODO).
-
-#### XMTP V2
-
+ 
 Message payloads include references to timestamps. However, timestamps are not independently verified and can be set to any value by the sending app.
-
+ 
 ### Does XMTP have a maximum message size?
 
 Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).
