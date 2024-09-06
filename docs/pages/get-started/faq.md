@@ -369,9 +369,13 @@ These network nodes operate in US jurisdiction in compliance with Office of Fore
 
 To explore the software for the nodes that currently form the XMTP network, see the [xmtp-node-go repo](https://github.com/xmtp/xmtp-node-go).
 
-Ephemera is working toward a phased decentralization of the network. Have questions or feedback regarding decentralization? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
+Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanism include:
 
-Decentralization of the XMTP network will be achieved by a diverse set of independent third parties operating nodes all over the world. Decentralization is a top priority and is required to ensure that XMTP is able to serve everyone on the planet.
+- An on-chain smart contract node registry, which lists the currently active set of XMTP nodes
+- An off-chain broadcast network of nodes run by a set of independent third parties, which handles the majority of the messaging data (loosely ordered, low latency)
+- A series of on-chain smart contracts on an XMTP L2, which handles account information and the most critical messaging data (strictly ordered, medium latency)
+
+To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the `xmtpd` repo.
 
 ### Is XMTP a blockchain?
 
@@ -407,21 +411,13 @@ XMTP provides perceptibly real-time message delivery and retrieval. The network 
 
 ## Fees
 
-XMTP core developers and researchers are working on outlining a specific fee model for XMTP. The team will share a proposed plan as soon as it’s well-defined enough to generate meaningful input.
+XMTP core developers and researchers are working on a specific fee model for XMTP, with the following guiding principles in mind:
 
-In the meantime, here are more general statements about fees on the XMTP network.
+- Infrastructure costs for the network must remain low even when decentralized, and comparable to the costs for an equivalent centralized messaging service.
+- There must be a sizable free tier for most end users, with the low cost per-user subsidized by the largest apps and bulk senders.
+- There must be a low "take rate": the biggest driver of cost must be infrastructure costs, with any remaining cost returned to the network.
 
-Have questions or feedback about the fee model for XMTP? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
-
-### Who pays to keep the network running?
-
-Ephemera is committed to keeping the network running. Future incentive mechanisms will enable the network to run autonomously of Ephemera.
-
-### Will XMTP charge messaging fees?
-
-Currently, messaging incurs no fee. As XMTP decentralizes, messaging between participants that opt-in will remain free, while unsolicited messages may incur fees or see token staking requirements.
-
-There are no messaging-related fees incurred by developers for building with the XMTP SDK.
+Have questions or feedback about the fee model for XMTP? See [XMTP fees: Guiding principles and FAQ](https://community.xmtp.org/t/xmtp-fees-guiding-principles-and-faq/795) in the XMTP Community Forums.
 
 ## Security
 
@@ -461,11 +457,11 @@ Yes, each blockchain account address is associated with an XMTP identity.
 
 1. When a user first uses XMTP with a particular blockchain account, they create an "identity key" for that account.
 
-2. This identity key is used to sign "installation keys" for each app or device where the user uses XMTP.
+2. This identity key is used to sign "installation keys" for each app or device where the user uses XMTP. The identity key is also used to add or remove account access for additional wallets.
 
 3. The installation keys are then used to create and sign MLS credentials, which are used for secure communication in individual and group chats.
 
-To learn more about identity in XMTP v3, see [Identity in XMTP v3](/protocol/v3/identity).
+To learn more about identity in XMTP v3, see [Multi-wallet identity](/protocol/v3/identity).
 
 #### XMTP v2
 
