@@ -385,9 +385,11 @@ Ephemera is researching various consensus protocols that would allow the network
 
 ### Will I be able to run my own XMTP node?
 
-Yes, you will be able to run a node.
+Yes, you will be able to run a node. 
 
-Ephemera is working toward a phased decentralization of the network. Ephemera is working toward a phased decentralization of the network. Have questions or feedback regarding decentralization? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
+Ephemera is in the process of building the replication mechanisms required to enable third-parties to run XMTP nodes and participate in network decentralization.
+
+To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the `xmtpd` repo.
 
 ### Does XMTP have a token?
 
@@ -516,7 +518,7 @@ For example, a retention policy may look something like the following, though sp
   - Indefinite storage for account information and personal preferences  
 
 The team is researching a way to provide this indefinite storage and have it scale forever. 
-- If research shows that it's possible, we'll share a plan for how it will be archieved. 
+- If research shows that it's possible, we'll share a plan for how it will be achieved. 
 - If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
 
 Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
