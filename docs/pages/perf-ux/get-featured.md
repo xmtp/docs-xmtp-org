@@ -50,15 +50,15 @@ Way to go! 🎉 Here are some resources and ideas for promoting your app launch:
 
 - Check out these launch posts for apps built with XMTP:
     - [Coinbase Wallet](https://x.com/CoinbaseWallet/status/1679178581224873985?s=20)
-    - [Converse](https://twitter.com/converseapp_/status/1648362598058819585)
+    - [Converse](https://x.com/converseapp_/status/1648362598058819585)
     - [Lenster](https://x.com/lensterxyz/status/1588203593257009152?s=20&t=wHy9mBrNR5ri146CbhCMUw)
     - [Orb](https://x.com/orbapp_/status/1618659601154715649?s=20)
-    - [Bello](https://twitter.com/xmtp_/status/1693978790618095972)
+    - [Bello](https://x.com/xmtp_/status/1693978790618095972)
 - Need an XMTP logo for your announcement?
   - See the [XMTP Brand Guidelines](https://github.com/xmtp/brand)
 - Tag the XMTP team to help amplify your launch
   - [@xmtp4all](https://lenster.xyz/u/xmtp4all) on Lens
-  - [@xmtp\_](https://x.com/xmtp_) on Twitter
+  - [@xmtp\_](https://x.com/xmtp_) on X (Twitter)
   - [@xmtp](https://warpcast.com/xmtp) on Farcaster
   - [@xmtp_network](https://www.threads.net/@xmtp_network) on Threads
 - Have your app added to the [XMTP home page](https://xmtp.org/)
