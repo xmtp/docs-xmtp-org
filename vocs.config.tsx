@@ -28,10 +28,6 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    {
-      text: "Converse app",
-      link: "https://github.com/ephemeraHQ/converse-app",
-    },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -51,16 +47,12 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "Introduction",
-      collapsed: false,
+      text: "Overview",
+      collapsed: true,
       items: [
         {
           text: "Intro to XMTP",
-          link: "/",
-        },
-        {
-          text: "ETHOnline 2024",
-          link: "/get-started/awesome",
+          link: "/get-started/intro",
         },
         {
           text: "FAQ",
@@ -69,8 +61,8 @@ export default defineConfig({
       ],
     },
     {
-      text: "Integrate messaging",
-      collapsed: false,
+      text: "Broadcast notifications",
+      collapsed: true,
       items: [
         {
           text: "Enable subscriptions",
@@ -87,36 +79,8 @@ export default defineConfig({
       ]
     },
     {
-      text: "Build mini-apps",
-      collapsed: false,
-      items: [
-        {
-          text: "Build mini-apps with MessageKit",
-          link: "https://message-kit.vercel.app/",
-        },
-        {
-          text: "Display Open Frames",
-          collapsed: false,
-          items: [
-            {
-              text: "Get started with Open Frames",
-              link: "/open-frames/open-frames",
-            },
-            {
-              text: "Display transactional Open Frames",
-              link: "/open-frames/transactional-open-frames",
-            },
-            {
-              text: "Display subscription Open Frames",
-              link: "/open-frames/subscription-open-frames",
-            },
-          ],
-        },
-      ]
-    },
-    {
-      text: "Build an inbox app",
-      collapsed: false,
+      text: "Build chat inboxes",
+      collapsed: true,
       items: [
         {
           text: "Get started",
@@ -136,7 +100,7 @@ export default defineConfig({
             },
           ],
         },
-    {
+        {
           text: "Create a client",
           link: "/dms/client",
         },
@@ -259,6 +223,24 @@ export default defineConfig({
           ],
         },
         {
+          text: "Display Open Frames",
+          collapsed: false,
+          items: [
+            {
+              text: "Get started with Open Frames",
+              link: "/open-frames/open-frames",
+            },
+            {
+              text: "Display transactional Open Frames",
+              link: "/open-frames/transactional-open-frames",
+            },
+            {
+              text: "Display subscription Open Frames",
+              link: "/open-frames/subscription-open-frames",
+            },
+          ],
+        },
+        {
           text: "Performance & UX",
           collapsed: false,
           items: [
@@ -295,8 +277,18 @@ export default defineConfig({
       ]
     },
     {
-      text: "Protocol concepts",
-      collapsed: false,
+      text: "Build chat bots",
+      collapsed: true,
+      items: [
+        {
+          text: "Build chat bots with MessageKit",
+          link: "https://message-kit.vercel.app/",
+        },
+      ]
+    },
+    {
+      text: "Learn protocol concepts",
+      collapsed: true,
       items: [
         {
           text: "XMTP versions",
