@@ -508,7 +508,7 @@ Currently, encrypted payloads are stored indefinitely.
 
 In the coming year, a retention policy is likely to be added. 
 
-This retention policy would represent a minimum retention period, not a maximum. For example, the policy will provide a functional guarantee not a privacy guarantee. A privacy guarantee is more difficult to provide due to the decentralized nature of the network and subtleties of blockchain data availability.
+This retention policy would represent a minimum retention period, not a maximum.
 
 For example, a retention policy may look something like the following, though specifics are subject to change:
   - One year for messages
