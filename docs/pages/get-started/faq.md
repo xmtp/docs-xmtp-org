@@ -435,7 +435,7 @@ With XMTP, the concept of an identity centers on an inbox ID that has a constant
 
 1. A user starts with an Ethereum wallet and installs an XMTP-enabled app.
 
-2. The user creates an XMTP inbox ID, which can represent a set of identities (wallets and appinstallations).
+2. The user creates an XMTP inbox ID, which can represent a set of identities (wallets and app installations).
 
 3. The first wallet to claim an inbox ID becomes the first member of the set and is designated as the "recovery address."
 
