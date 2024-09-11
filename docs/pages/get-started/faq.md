@@ -373,7 +373,7 @@ Ephemera is in the process of building the replication and incentive mechanisms 
 
 - An on-chain smart contract node registry, which lists the currently active set of XMTP nodes
 - An off-chain broadcast network of nodes run by a set of independent third parties, which handles the majority of the messaging data (loosely ordered, low latency)
-- A series of on-chain smart contracts on an XMTP L2, which handles account information and the most critical messaging data (strictly ordered, medium latency)
+- A series of on-chain smart contracts on an XMTP L3, which handles account information and the most critical messaging data (strictly ordered, medium latency)
 
 To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the `xmtpd` repo.
 
