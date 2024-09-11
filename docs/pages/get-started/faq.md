@@ -447,7 +447,7 @@ With XMTP, the concept of an identity centers on an inbox ID that has a constant
 
 6. Wallets and app installations can be removed from the set using a signature from the recovery address.
 
-7. Changes to an inbox ID's set of identities are published as "identity updates" to the server, which stores them as an "inbox log."
+7. Changes to an inbox ID's set of identities are published as "identity updates" to the XMTP network, which stores them as an "inbox log."
 
 MLS credentials contain only the inbox ID. When a client receives a credential, they verify it by:
 - Downloading the inbox log for that inbox ID
