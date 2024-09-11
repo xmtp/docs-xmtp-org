@@ -369,7 +369,7 @@ These network nodes operate in US jurisdiction in compliance with Office of Fore
 
 To explore the software for the nodes that currently form the XMTP network, see the [xmtp-node-go repo](https://github.com/xmtp/xmtp-node-go).
 
-Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanism include:
+Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanisms include:
 
 - An on-chain smart contract node registry, which lists the currently active set of XMTP nodes
 - An off-chain broadcast network of nodes run by a set of independent third parties, which handles the majority of the messaging data (loosely ordered, low latency)
