@@ -369,11 +369,11 @@ These network nodes operate in US jurisdiction in compliance with Office of Fore
 
 To explore the software for the nodes that currently form the XMTP network, see the [xmtp-node-go repo](https://github.com/xmtp/xmtp-node-go).
 
-Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanism include:
+Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanisms include:
 
 - An on-chain smart contract node registry, which lists the currently active set of XMTP nodes
 - An off-chain broadcast network of nodes run by a set of independent third parties, which handles the majority of the messaging data (loosely ordered, low latency)
-- A series of on-chain smart contracts on an XMTP L2, which handles account information and the most critical messaging data (strictly ordered, medium latency)
+- A series of on-chain smart contracts on an XMTP L3, which handles account information and the most critical messaging data (strictly ordered, medium latency)
 
 To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the `xmtpd` repo.
 
@@ -435,7 +435,7 @@ The SDK establishes most of the relationship, but the core logic is as follows:
 
 1. A user starts with an Ethereum wallet and installs an XMTP-enabled app.
 
-2. The user creates an XMTP inbox ID, which can represent a set of identities (wallets and appinstallations).
+2. The user creates an XMTP inbox ID, which can represent a set of identities (wallets and app installations).
 
 3. The first wallet to claim an inbox ID becomes the first member of the set and is designated as the "recovery address."
 
@@ -447,7 +447,7 @@ The SDK establishes most of the relationship, but the core logic is as follows:
 
 6. Wallets and app installations can be removed from the set using a signature from the recovery address.
 
-7. Changes to an inbox ID's set of identities are published as "identity updates" to the server, which stores them as an "inbox log."
+7. Changes to an inbox ID's set of identities are published as "identity updates" to the XMTP network, which stores them as an "inbox log."
 
 MLS credentials contain only the inbox ID. When a client receives a credential, they verify it by:
 - Downloading the inbox log for that inbox ID
@@ -460,7 +460,7 @@ For a first-time XMTP user, the process typically involves:
 - One wallet signature to claim the Inbox ID and add the installation key (these can be batched)
 - One installation key signature (handled invisibly by the app) to consent to being added to the inbox ID.
 
-This process requires only one visible signature from the end user, in addition to any XMPT v2 signatures.
+This process requires only one visible signature from the end user, in addition to any XMTP v2 signatures.
 
 For more details, see [Group chat concepts and protocols](/protocol/v3/group-chat#security-and-encryption) and [Identity in XMTP v3](/protocol/v3/identity)
 
@@ -508,7 +508,7 @@ Currently, encrypted payloads are stored indefinitely.
 
 In the coming year, a retention policy is likely to be added. 
 
-This retention policy would represent a minimum retention period, not a maximum. For example, the policy will provide a functional guarantee not a privacy guarantee. A privacy guarantee is more difficult to provide due to the decentralized nature of the network and subtleties of blockchain data availability.
+This retention policy would represent a minimum retention period, not a maximum.
 
 For example, a retention policy may look something like the following, though specifics are subject to change:
   - One year for messages
