@@ -69,7 +69,7 @@ export default defineConfig({
           link: "/consent/subscribe",
         },
         {
-          text: "Send broadcast messages",
+          text: "Broadcast notifications",
           link: "/consent/broadcast",
         },
         {
@@ -106,7 +106,7 @@ export default defineConfig({
         },
         {
           text: "Build 1:1 chat",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Create a 1:1 conversation",
@@ -124,7 +124,7 @@ export default defineConfig({
         },
         {
           text: "Build group chat",
-          collapsed: false,
+          collapsed: true,
           items: [            
             {
               text: "Build group chat",
@@ -145,15 +145,15 @@ export default defineConfig({
           ],  
         },
         {
-          text: "Push notifications",
-          collapsed: false,
+          text: "Build push notifications",
+          collapsed: true,
           items: [
             {
-              text: "Build notifications",
+              text: "Send push notifications",
               link: "/notifications/build-notifications",
             },
             {
-              text: "Set up a notification server",
+              text: "Set up a push notification server",
               link: "/notifications/notif-server",
             },
             {
@@ -172,7 +172,7 @@ export default defineConfig({
         },
         {
           text: "Support user consent",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Understand consent",
@@ -190,7 +190,7 @@ export default defineConfig({
         },
         {
           text: "Support content types",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Understand content types",
@@ -224,7 +224,7 @@ export default defineConfig({
         },
         {
           text: "Display Open Frames",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Get started with Open Frames",
@@ -242,7 +242,7 @@ export default defineConfig({
         },
         {
           text: "Performance & UX",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Use local-first architecture",
@@ -277,16 +277,6 @@ export default defineConfig({
       ]
     },
     {
-      text: "Build chat bots",
-      collapsed: true,
-      items: [
-        {
-          text: "Build chat bots with MessageKit",
-          link: "https://message-kit.vercel.app/",
-        },
-      ]
-    },
-    {
       text: "Learn protocol concepts",
       collapsed: true,
       items: [
@@ -308,7 +298,7 @@ export default defineConfig({
         },
         {
           text: "XMTP V3",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Group chat",
@@ -330,7 +320,7 @@ export default defineConfig({
         },
         {
           text: "XMTP V2",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Architecture",
