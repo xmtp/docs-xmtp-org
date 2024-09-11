@@ -460,7 +460,7 @@ For a first-time XMTP user, the process typically involves:
 - One wallet signature to claim the Inbox ID and add the installation key (these can be batched)
 - One installation key signature (handled invisibly by the app) to consent to being added to the inbox ID.
 
-This process requires only one visible signature from the end user, in addition to any XMPT v2 signatures.
+This process requires only one visible signature from the end user, in addition to any XMTP v2 signatures.
 
 For more details, see [Group chat concepts and protocols](/protocol/v3/group-chat#security-and-encryption) and [Identity in XMTP v3](/protocol/v3/identity)
 
