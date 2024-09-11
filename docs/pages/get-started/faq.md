@@ -335,14 +335,6 @@ In your app onboarding flow, also request user permission to display app-specifi
 
 Push notifications are particularly valuable for messaging apps, as they help ensure users don't miss important communications and can respond promptly to new messages.
 
-### Is there a way to get a list of all current XMTP-enabled wallets?
-
-XMTP doesn't provide a direct method to fetch all XMTP-enabled wallet addresses in bulk. You might consider using a third-party service to do so instead of building the functionality yourself.
-
-[Blaze CRM](https://www.withblaze.app/) is one known service. It compiles lists of XMTP addresses by querying the XMTP `canMessage` API over time.
-
-The XMTP ecosystem is continually evolving. If you know of other reliable services providing this functionality, please consider sharing them in the [XMTP Community Forums](https://community.xmtp.org/c/development/third-party-tools/74).
-
 ### Does XMTP support group chat?
 
 XMTP supports group chat in React Native, Android, iOS, and Node.js SDKs.
@@ -352,6 +344,14 @@ See [Build group chat with MLS and XMTP](/groups/build-group-chat)
 :::
 
 To learn more about when group chat will be available for the web, see the XMTP Developer Community Call about [wen group chat web](https://www.youtube.com/watch?v=qnCeXsqqKcY).
+
+### Is there a way to get a list of all current XMTP-enabled wallets?
+
+XMTP doesn't provide a direct method to fetch all XMTP-enabled wallet addresses in bulk. You might consider using a third-party service to do so instead of building the functionality yourself.
+
+[Blaze CRM](https://www.withblaze.app/) is one known service. It compiles lists of XMTP addresses by querying the XMTP `canMessage` API over time.
+
+The XMTP ecosystem is continually evolving. If you know of other reliable services providing this functionality, please consider sharing them in the [XMTP Community Forums](https://community.xmtp.org/c/development/third-party-tools/74).
 
 ## Network
 
@@ -363,7 +363,7 @@ These network nodes operate in US jurisdiction in compliance with Office of Fore
 
 - Cuba
 - Iran
-- North Korea
+- North Korea 
 - Syria
 - The Crimea, Donetsk People’s Republic, and Luhansk People’s Republic regions of Ukraine
 
@@ -384,8 +384,6 @@ XMTP is not a blockchain. Nodes on the XMTP network run software to store and tr
 Ephemera is researching various consensus protocols that would allow the network to operate in a decentralized fashion while maintaining its current emphasis on user privacy and low-latency message delivery.
 
 ### Will I be able to run my own XMTP node?
-
-Yes, you will be able to run a node. 
 
 Ephemera is in the process of building the replication mechanisms required to enable third-parties to run XMTP nodes and participate in network decentralization.
 
@@ -432,6 +430,8 @@ The [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`) was verif
 ### How does XMTP establish a secure and fraud-proof relationship between identities?
 
 With XMTP, the concept of an identity centers on an inbox ID that has a constantly changing set of identities that can be either wallets or app installations.
+
+The SDK establishes most of the relationship, but the core logic is as follows:
 
 1. A user starts with an Ethereum wallet and installs an XMTP-enabled app.
 
