@@ -27,10 +27,6 @@ Is your app using a great tool to resolve identities? Open an [issue](https://gi
 
 :::
 
-### Everyname
-
-Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, and other identities](https://docs.everyname.xyz/api/forward-social-profile).
-
 ### SimpleHash
 
 [SimpleHash](https://docs.simplehash.com/reference/overview) provides tools to resolve ENS and Base Name Service identities.
