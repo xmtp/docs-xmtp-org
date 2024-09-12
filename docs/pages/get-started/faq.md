@@ -413,8 +413,8 @@ XMTP provides perceptibly real-time message delivery and retrieval. The network 
 
 XMTP core developers and researchers are working on a specific fee model for XMTP, with the following guiding principles in mind:
 
+- Fees will be dynamic to protect the network from Denial of Service (DoS) attacks.
 - Infrastructure costs for the network must remain low even when decentralized, and comparable to the costs for an equivalent centralized messaging service.
-- There must be a sizable free tier for most end users, with the low cost per-user subsidized by the largest apps and bulk senders.
 - There must be a low "take rate": the biggest driver of cost must be infrastructure costs, with any remaining cost returned to the network.
 
 Have questions or feedback about the fee model for XMTP? See [XMTP fees: Guiding principles and FAQ](https://community.xmtp.org/t/xmtp-fees-guiding-principles-and-faq/795) in the XMTP Community Forums.
