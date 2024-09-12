@@ -27,9 +27,13 @@ Is your app using a great tool to resolve identities? Open an [issue](https://gi
 
 :::
 
-### Everyname
+### Airstack
 
-Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, and other identities](https://docs.everyname.xyz/api/forward-social-profile).
+[Airstack](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/resolve-identities) provides tools to resolve Ox, ENS, Lens, and Farcaster identities.
+
+### ENSjs
+
+[ENSjs](https://github.com/ensdomains/ensjs) provides tools to resolve ENS identities.
 
 ### SimpleHash
 
@@ -37,4 +41,4 @@ Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, 
 
 ### Unstoppable Domains
 
-Unstoppable Domains provides tools to resolve [Unstoppable Domains](https://docs.unstoppabledomains.com/resolution/overview/) identities.
+[Unstoppable Domains](https://docs.unstoppabledomains.com/resolution/overview/) provides tools to resolve Unstoppable Domains identities.
