@@ -61,6 +61,21 @@ export default defineConfig({
       ],
     },
     {
+      text: "Build chat bots with MessageKit ↗",
+      link: "https://message-kit.vercel.app",
+      items: [], // Add this line
+    },
+    {
+      text: "Embed a chat widget",
+      collapsed: true,
+      items: [
+        {
+          text: "Developer quickstart",
+          link: "/get-started/developer-quickstart",
+        },
+      ],
+    },
+    {
       text: "Broadcast notifications",
       collapsed: true,
       items: [
@@ -275,11 +290,6 @@ export default defineConfig({
           link: "/dms/troubleshoot",
         },        
       ]
-    },
-    {
-      text: "Build chat bots ↗",
-      link: "https://message-kit.vercel.app",
-      items: [], // Add this line
     },
     {
       text: "Learn protocol concepts",
