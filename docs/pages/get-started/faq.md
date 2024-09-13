@@ -544,7 +544,7 @@ To learn more about content types, see [Content types](/content-types/content-ty
 
 To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
 
-### Which message metadata does XMTP support?
+### Which message metadata does XMTP v2 support?
  
 Message payloads include references to timestamps. However, timestamps are not independently verified and can be set to any value by the sending app.
  
