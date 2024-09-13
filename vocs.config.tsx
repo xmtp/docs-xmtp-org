@@ -277,6 +277,11 @@ export default defineConfig({
       ]
     },
     {
+      text: "Build chat bots ↗",
+      link: "https://message-kit.vercel.app",
+      items: [], // Add this line
+    },
+    {
       text: "Learn protocol concepts",
       collapsed: true,
       items: [
