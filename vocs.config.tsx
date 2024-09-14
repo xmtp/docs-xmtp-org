@@ -67,13 +67,8 @@ export default defineConfig({
     },
     {
       text: "Embed a chat widget",
-      collapsed: true,
-      items: [
-        {
-          text: "Developer quickstart",
-          link: "/get-started/developer-quickstart",
-        },
-      ],
+      link: "/chat-widget/chat-widget",
+      items: [], // Add this line
     },
     {
       text: "Broadcast notifications",
