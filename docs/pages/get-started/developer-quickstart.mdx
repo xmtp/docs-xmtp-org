@@ -242,7 +242,7 @@ console.log("Wallet address: " + wallet.address);
 
 ### Create a client
 
-To create a client, you need to pass in a wallet that implements the `Signer` interface. This is a requirement because the XMTP client uses the wallet to sign messages and verify the sender's identity. When you create a client, you can set [client parameters](/dms/client#configure-the-client), including which [network environment](/dms/client#xmtp-network-environments) (`env`) the client should connect to.
+To create a client, you need to pass in a wallet that implements the `Signer` interface. This is a requirement because the XMTP client uses the wallet to sign messages and verify the sender's identity. When you create a client, you can set [client parameters](/client/create-client#configure-the-client), including which [network environment](/client/create-client#xmtp-network-environments) (`env`) the client should connect to.
 
 ```jsx
 const xmtp = await Client.create(signer, { env: "dev" });
