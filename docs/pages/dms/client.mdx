@@ -12,7 +12,7 @@ To create an XMTP client, it must be connected to a wallet on startup. You must 
 
 For more information about wallet signature requests, see [Account signatures](/protocol/signatures).
 
-Clients created by XMTP v3 SDKs also support XMTP v2 messages. At a high-level, XMTP v3 is used to support group chat and XMTP v2 is used to support 1:1 chat.
+Clients created by XMTP v3 SDKs can also support XMTP v2 messages if the wallet is an EOA. At a high-level, XMTP v3 is used to support group chat and XMTP v2 is used to support 1:1 chat.
 
 In the near future, XMTP v3 will support both group and 1:1 chat with Messaging Layer Security (MLS). Have questions or feedback, post to the [XMTP Community Forums](https://community.xmtp.org/c/development/58).
 
@@ -26,7 +26,7 @@ If your mobile app provides group chat, you must explicitly configure your clien
 
 :::tip[Best practice: Set enableV3 to true]
 
-Regardless of whether your app provides group chat, set the `enableV3` client option to `true` to benefit from other aspects of the upgraded XMTP v3 protocol.
+Regardless of whether your app provides group chat, set the `enableV3` client option to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 is additive and does not stop support for XMTP v2 functionality.
 
 :::
 
@@ -40,7 +40,6 @@ import { Client } from "@xmtp/xmtp-js";
 // Create the client with a `Signer` from your application
 const xmtp = await Client.create(signer, {
   env: "production",
-  enableV3: true, // Enable group chat support
 });
 ```
 
@@ -65,7 +64,6 @@ export const CreateClient: React.FC<{ signer: Signer }> = ({ signer }) => {
     const options = {
       persistConversations: false,
       env: "production",
-      enableV3: true, // Enable group chat support
     };
     await initialize({ keys, options, signer });
   }, [initialize]);
@@ -82,7 +80,7 @@ val client = Client().create(
         enableV3 = true, // Enable group chat support
         appContext = context, // Required if enableV3 is true
         dbDirectory = "mydbdir", // Optional: specify database directory
-        dbEncryptionKey = ByteArray(32) // Optional: 32-byte array for database encryption
+        dbEncryptionKey = ByteArray(32) // Required: 32-byte array for database encryption
     )
 )
 ```
@@ -96,7 +94,7 @@ let client = try await Client.create(
         api: .init(env: .production, isSecure: true),
         enableV3: true, // Enable group chat support
         dbDirectory: "mydir", // Optional: specify database directory
-        dbEncryptionKey: key // Optional: key for database encryption
+        dbEncryptionKey: key // Required: key for database encryption
     )
 )
 ```
@@ -108,7 +106,7 @@ const xmtp = await Client.create(signer, {
   env: "production",
   enableV3: true, // Enable group chat support
   dbDirectory: "mydbdir", // Optional: specify database directory
-  dbEncryptionKey: new Uint8Array(32), // Optional: 32-byte array for database encryption
+  dbEncryptionKey: new Uint8Array(32), // Required: 32-byte array for database encryption
 });
 ```
 
@@ -768,10 +766,15 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
     <td>null</td>
     <td>Required if `enableV3` is set to `true`.</td>
   </tr>
+    <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory.</td>
+    </tr>
   <tr>
     <td>dbEncryptionKey</td>
     <td>null</td>
-    <td>Optional. If not provided, a key is created and stored for you.</td>
+    <td>Required. For information about recommended key storage for Kotlin, [Android Keystore system](https://developer.android.com/privacy-and-security/keystore)./td>
   </tr>
   <tr>
     <td>appVersion</td>
@@ -813,9 +816,14 @@ val client = Client().create(account = account, options = options)
     <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol.</td>
   </tr>
     <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory.</td>
+    </tr>
+    <tr>
     <td>dbEncryptionKey</td>
     <td>null</td>
-    <td>Optional. If not provided, the database remains unencrypted.</td>
+    <td>Required. For information about recommended key storage for Swift, see [Protecting keys with the Secure Enclave](https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave).</td>
   </tr>
   <tr>
     <td>appVersion</td>
@@ -871,6 +879,16 @@ let client = try await Client.create(account: account, options: clientOptions)
         app support, especially around communicating important SDK updates,
         including deprecations and required upgrades.
       </td>
+    </tr>
+    <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory.</td>
+    </tr>
+    <tr>
+      <td>dbEncryptionKey</td>
+      <td>null</td>
+      <td>Required. For information about recommended key storage for Swift, see [Protecting keys with the Secure Enclave](https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave).</td>
     </tr>
   </table>
 </div>
