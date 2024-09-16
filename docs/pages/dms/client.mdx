@@ -16,7 +16,7 @@ Clients created by XMTP v3 SDKs can also support XMTP v2 messages if the wallet 
 
 In the near future, XMTP v3 will support both group and 1:1 chat with Messaging Layer Security (MLS). Have questions or feedback, post to the [XMTP Community Forums](https://community.xmtp.org/c/development/58).
 
-Group chat is currently supported for mobile apps in Kotlin, Swift, React Native, and Node.js.
+Group chat is currently supported in Kotlin, Swift, React Native, and Node.js.
 
 In the near future, XMTP v3 will also support group chat for the web.
 
@@ -80,7 +80,7 @@ val client = Client().create(
         enableV3 = true, // Enable group chat support
         appContext = context, // Required if enableV3 is true
         dbDirectory = "mydbdir", // Optional: specify database directory
-        dbEncryptionKey = ByteArray(32) // Required: 32-byte array for database encryption
+        dbEncryptionKey = ByteArray(32) // Required 32-byte array for database encryption if enableV3 is true
     )
 )
 ```
@@ -94,7 +94,7 @@ let client = try await Client.create(
         api: .init(env: .production, isSecure: true),
         enableV3: true, // Enable group chat support
         dbDirectory: "mydir", // Optional: specify database directory
-        dbEncryptionKey: key // Required: key for database encryption
+        dbEncryptionKey: key // // Required 32-byte array for database encryption if enableV3 is true
     )
 )
 ```
