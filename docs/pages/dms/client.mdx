@@ -26,7 +26,7 @@ If your mobile app provides group chat, you must explicitly configure your clien
 
 :::tip[Best practice for mobile apps]
 
-Regardless of whether your mobile app provides group chat, set the `enableV3` client option to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 is additive and doesn't stop your app's support for XMTP v2 functionality.
+Regardless of whether your mobile app provides group chat, set the `enableV3` client option to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.
 
 :::
 
@@ -79,8 +79,8 @@ val client = Client().create(
         api = ClientOptions.Api(XMTPEnvironment.PRODUCTION, isSecure = true),
         enableV3 = true, // Enable group chat support
         appContext = context, // Required if enableV3 is true
-        dbDirectory = "mydbdir", // Optional: specify database directory
-        dbEncryptionKey = ByteArray(32) // Required 32-byte array for database encryption if enableV3 is true
+        dbEncryptionKey = ByteArray(32), // Required 32-byte array for database encryption if enableV3 is true
+        dbDirectory = "mydbdir", // Optional. Specify a database directory. If no directory is specified, the value is set to xmtp_db by default.
     )
 )
 ```
@@ -93,8 +93,8 @@ let client = try await Client.create(
     options: .init(
         api: .init(env: .production, isSecure: true),
         enableV3: true, // Enable group chat support
-        dbDirectory: "mydir", // Optional: specify database directory
-        dbEncryptionKey: key // Required 32-byte array for database encryption if enableV3 is true
+        dbEncryptionKey: key, // Required 32-byte array for database encryption if enableV3 is true
+        dbDirectory: "mydir", // Specify a database directory. If no directory is specified, the value is set to xmtp_db by default.
     )
 )
 ```
@@ -105,8 +105,8 @@ import { Client } from "@xmtp/xmtp-react-native";
 const xmtp = await Client.create(signer, {
   env: "production",
   enableV3: true, // Enable group chat support
-  dbDirectory: "mydbdir", // Optional: specify database directory
   dbEncryptionKey: new Uint8Array(32), // Required: 32-byte array for database encryption
+  dbDirectory: "mydbdir", // Specify a database directory. If no directory is specified, the value is set to xmtp_db by default.
 });
 ```
 
@@ -527,7 +527,7 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
       <td>keystoreProviders</td>
       <td>
         `[StaticKeystoreProvider, NetworkKeystoreProvider,
-        KeyGeneratorKeystoreProvider]`
+        KeyGeneratorKeystore Provider]`
       </td>
       <td>
         Override the default behavior of how the Client creates a Keystore with
@@ -745,23 +745,23 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
   <tr>
     <td>enableV3</td>
     <td>`false`</td>
-    <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol.</td>
+    <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your mobile app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.</td>
   </tr>
   <tr>
     <td>appContext</td>
     <td>null</td>
     <td>Required if `enableV3` is set to `true`.</td>
   </tr>
-    <tr>
-      <td>dbDirectory</td>
-      <td>xmtp_db</td>
-      <td>Optional. Specify a database directory.</td>
-    </tr>
   <tr>
     <td>dbEncryptionKey</td>
     <td>null</td>
-    <td>Required. For information about recommended key storage for Kotlin, [Android Keystore system](https://developer.android.com/privacy-and-security/keystore).</td>
+    <td>Required 32-byte array for database encryption if `enableV3` is `true`. For information about recommended key storage for Kotlin, [Android Keystore system](https://developer.android.com/privacy-and-security/keystore).</td>
   </tr>
+    <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default.</td>
+    </tr>
   <tr>
     <td>appVersion</td>
     <td>`undefined`</td>
@@ -799,18 +799,18 @@ val client = Client().create(account = account, options = options)
   <tr>
     <td>enableV3</td>
     <td>`false`</td>
-    <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol.</td>
+    <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.</td>
   </tr>
-    <tr>
-      <td>dbDirectory</td>
-      <td>xmtp_db</td>
-      <td>Optional. Specify a database directory.</td>
-    </tr>
     <tr>
     <td>dbEncryptionKey</td>
     <td>null</td>
-    <td>Required. For information about recommended key storage for Swift, see [Protecting keys with the Secure Enclave](https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave).</td>
+    <td>Required 32-byte array for database encryption if `enableV3` is `true`. For information about recommended key storage for Swift, see [Protecting keys with the Secure Enclave](https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave).</td>
   </tr>
+      <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default.</td>
+    </tr>
   <tr>
     <td>appVersion</td>
     <td>`undefined`</td>
@@ -848,19 +848,19 @@ let client = try await Client.create(account: account, options: clientOptions)
     <tr>
       <td>enableV3</td>
       <td>`false`</td>
-      <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol.</td>
-    </tr>
-    <tr>
-      <td>dbDirectory</td>
-      <td>xmtp_db</td>
-      <td>Optional. Specify a database directory.</td>
+      <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.</td>
     </tr>
     <tr>
       <td>dbEncryptionKey</td>
       <td>null</td>
-      <td>Required. For information about recommended key storage for Kotlin, [Android Keystore system](https://developer.android.com/privacy-and-security/keystore). For information about recommended key storage for Swift, see [Protecting keys with the Secure Enclave](https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave).</td>
+      <td>Required. For secure key storage in React Native, consider using libraries like `react-native-keychain` or `expo-secure-store`. These provide cross-platform solutions for securely storing sensitive data on both iOS and Android devices.</td>
     </tr>
-        <tr>
+    <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default.</td>
+    </tr>
+    <tr>
       <td>appVersion</td>
       <td>`undefined`</td>
       <td>

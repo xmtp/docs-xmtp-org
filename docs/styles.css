@@ -173,3 +173,12 @@ small + ul.TabbedList {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.02);
   border-color: var(--vocs-color-primary);
 }
+
+/* Table styles */
+
+table th,
+table td {
+  border: 1px solid #7d7d7d;
+  vertical-align: top;
+  padding: 4px; /* Add padding for more margin */
+}
