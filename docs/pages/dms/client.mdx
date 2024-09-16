@@ -96,7 +96,7 @@ let client = try await Client.create(
         api: .init(env: .production, isSecure: true),
         enableV3: true, // Enable group chat support
         dbDirectory: "mydir", // Optional: specify database directory
-        dbEncryptionKey: key // Optional: key for database encryption
+        dbEncryptionKey: key // // Required 32-byte array for database encryption if enableV3 is true
     )
 )
 ```
