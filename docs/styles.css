@@ -98,6 +98,7 @@ small + ul.TabbedList {
 }
 
 .custom-homepage-tile {
+  position: relative; /* Add this line */
   background-color: var(--vocs-color-bg-soft);
   border: 1px solid var(--vocs-color-border);
   border-radius: 8px;
@@ -105,7 +106,7 @@ small + ul.TabbedList {
   text-decoration: none;
   color: var(--vocs-color-text);
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .custom-homepage-tile:hover {
@@ -137,14 +138,11 @@ small + ul.TabbedList {
   opacity: 0.7;
   transition: opacity 0.3s ease, filter 0.3s ease;
   filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+  display: block; /* Add this line */
 }
 
 .dark .custom-homepage-tile-external-icon {
   filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
-}
-
-.custom-homepage-tile:hover .custom-homepage-tile-external-icon {
-  opacity: 1;
 }
 
 .custom-homepage-tile-title {

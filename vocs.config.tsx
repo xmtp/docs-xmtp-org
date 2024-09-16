@@ -112,7 +112,7 @@ export default defineConfig({
         },
         {
           text: "Create a client",
-          link: "/dms/client",
+          link: "/client/create-client",
         },
         {
           text: "Build 1:1 chat",
