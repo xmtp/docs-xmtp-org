@@ -28,10 +28,6 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    {
-      text: "Converse app",
-      link: "https://github.com/ephemeraHQ/converse-app",
-    },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -51,28 +47,12 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "Get started",
-      collapsed: false,
+      text: "Overview",
+      collapsed: true,
       items: [
         {
           text: "Intro to XMTP",
-          link: "/",
-        },
-        {
-          text: "Developer quickstart",
-          link: "/get-started/developer-quickstart",
-        },
-        {
-          text: "SDKs and example apps",
-          link: "/get-started/examples",
-        },
-        {
-          text: "SDK references",
-          link: "/get-started/references",
-        },
-        {
-          text: "ETHOnline 2024",
-          link: "/get-started/awesome",
+          link: "/get-started/intro",
         },
         {
           text: "FAQ",
@@ -81,194 +61,234 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build 1:1 chat",
-      collapsed: false,
-      items: [
-        {
-          text: "Create a client",
-          link: "/dms/client",
-        },
-        {
-          text: "Create a conversation",
-          link: "/dms/conversations",
-        },
-        {
-          text: "Send messages",
-          link: "/dms/messages",
-        },
-        {
-          text: "Stream conversations & messages",
-          link: "/dms/streams",
-        },
-        {
-          text: "Troubleshoot",
-          link: "/dms/troubleshoot",
-        },
-      ],
+      text: "Build chat bots with MessageKit ↗",
+      link: "https://message-kit.vercel.app",
+      items: [], // Add this line
     },
     {
-      text: "Build group chat",
-      collapsed: false,
-      items: [
-        {
-          text: "Build group chat",
-          link: "/groups/build-group-chat",
-        },
-        {
-          text: "Handle group consent",
-          link: "/groups/group-consent",
-        },
-        {
-          text: "Handle group permissions",
-          link: "/groups/group-permissions",
-        },
-        {
-          text: "Handle group metadata",
-          link: "/groups/group-metadata",
-        },
-      ],
+      text: "Embed a chat widget",
+      link: "/chat-widget/chat-widget",
+      items: [], // Add this line
     },
     {
-      text: "Support user consent",
-      collapsed: false,
+      text: "Broadcast notifications",
+      collapsed: true,
       items: [
-        {
-          text: "Understand consent",
-          link: "/consent/user-consent",
-        },
-        {
-          text: "Build with consent methods",
-          link: "/consent/consent-methods",
-        },
-        {
-          text: "Filter spam",
-          link: "/consent/filter-spam",
-        },
         {
           text: "Enable subscriptions",
           link: "/consent/subscribe",
         },
         {
-          text: "Send broadcast messages",
+          text: "Broadcast notifications",
           link: "/consent/broadcast",
         },
         {
           text: "Quickstart repos",
           link: "/consent/consent-quickstarts",
         },
-      ],
+      ]
     },
     {
-      text: "Support content types",
-      collapsed: false,
+      text: "Build chat inboxes",
+      collapsed: true,
       items: [
         {
-          text: "Understand content types",
-          link: "/content-types/content-types",
+          text: "Get started",
+          collapsed: false,
+          items: [
+            {
+              text: "Developer quickstart",
+              link: "/get-started/developer-quickstart",
+            },
+            {
+              text: "SDKs and example apps",
+              link: "/get-started/examples",
+            },
+            {
+              text: "SDK references",
+              link: "/get-started/references",
+            },
+          ],
         },
         {
-          text: "Remote attachment",
-          link: "/content-types/remote-attachment",
+          text: "Create a client",
+          link: "/client/create-client",
         },
         {
-          text: "Replies",
-          link: "/content-types/reply",
+          text: "Build 1:1 chat",
+          collapsed: true,
+          items: [
+            {
+              text: "Create a 1:1 conversation",
+              link: "/dms/conversations",
+            },
+            {
+              text: "Send 1:1 messages",
+              link: "/dms/messages",
+            },
+            {
+              text: "Stream 1:1 conversations & messages",
+              link: "/dms/streams",
+            },
+          ],
         },
         {
-          text: "Reactions",
-          link: "/content-types/reaction",
+          text: "Build group chat",
+          collapsed: true,
+          items: [            
+            {
+              text: "Build group chat",
+              link: "/groups/build-group-chat",
+            },
+            {
+              text: "Handle group consent",
+              link: "/groups/group-consent",
+            },
+            {
+              text: "Handle group permissions",
+              link: "/groups/group-permissions",
+            },
+            {
+              text: "Handle group metadata",
+              link: "/groups/group-metadata",
+            },
+          ],  
         },
         {
-          text: "Read receipts",
-          link: "/content-types/read-receipt",
+          text: "Build push notifications",
+          collapsed: true,
+          items: [
+            {
+              text: "Send push notifications",
+              link: "/notifications/build-notifications",
+            },
+            {
+              text: "Set up a push notification server",
+              link: "/notifications/notif-server",
+            },
+            {
+              text: "Best practices",
+              link: "/notifications/notif-best-practices",
+            },
+            {
+              text: "Try Android example notifications",
+              link: "/notifications/notifs-android",
+            },
+            {
+              text: "Try iOS example notifications",
+              link: "/notifications/notifs-ios",
+            },
+          ],
         },
         {
-          text: "Onchain transaction references",
-          link: "/content-types/transaction-ref",
+          text: "Support user consent",
+          collapsed: true,
+          items: [
+            {
+              text: "Understand consent",
+              link: "/consent/user-consent",
+            },
+            {
+              text: "Build with consent methods",
+              link: "/consent/consent-methods",
+            },
+            {
+              text: "Filter spam",
+              link: "/consent/filter-spam",
+            },
+          ],
         },
         {
-          text: "Custom content type",
-          link: "/content-types/custom",
+          text: "Support content types",
+          collapsed: true,
+          items: [
+            {
+              text: "Understand content types",
+              link: "/content-types/content-types",
+            },
+            {
+              text: "Remote attachment",
+              link: "/content-types/remote-attachment",
+            },
+            {
+              text: "Replies",
+              link: "/content-types/reply",
+            },
+            {
+              text: "Reactions",
+              link: "/content-types/reaction",
+            },
+            {
+              text: "Read receipts",
+              link: "/content-types/read-receipt",
+            },
+            {
+              text: "Onchain transaction references",
+              link: "/content-types/transaction-ref",
+            },
+            {
+              text: "Custom content type",
+              link: "/content-types/custom",
+            },
+          ],
         },
-      ],
+        {
+          text: "Display Open Frames",
+          collapsed: true,
+          items: [
+            {
+              text: "Get started with Open Frames",
+              link: "/open-frames/open-frames",
+            },
+            {
+              text: "Display transactional Open Frames",
+              link: "/open-frames/transactional-open-frames",
+            },
+            {
+              text: "Display subscription Open Frames",
+              link: "/open-frames/subscription-open-frames",
+            },
+          ],
+        },
+        {
+          text: "Performance & UX",
+          collapsed: true,
+          items: [
+            {
+              text: "Use local-first architecture",
+              link: "/perf-ux/local-first",
+            },
+            {
+              text: "Use optimistic sending",
+              link: "/perf-ux/optimistic-sending",
+            },
+            {
+              text: "Resolve identities",
+              link: "/perf-ux/identity-resolution",
+            },
+            {
+              text: "Performance test",
+              link: "/perf-ux/debug-and-test",
+            },
+            {
+              text: "Launch checklist",
+              link: "/perf-ux/get-featured",
+            },
+            {
+              text: "MetaMask Snap",
+              link: "/perf-ux/xmtp-metamask-snap",
+            },
+          ],
+        },    
+        {
+          text: "Troubleshoot",
+          link: "/dms/troubleshoot",
+        },        
+      ]
     },
     {
-      text: "Push notifications",
-      collapsed: false,
-      items: [
-        {
-          text: "Build notifications",
-          link: "/notifications/build-notifications",
-        },
-        {
-          text: "Set up a notification server",
-          link: "/notifications/notif-server",
-        },
-        {
-          text: "Best practices",
-          link: "/notifications/notif-best-practices",
-        },
-        {
-          text: "Try Android example notifications",
-          link: "/notifications/notifs-android",
-        },
-        {
-          text: "Try iOS example notifications",
-          link: "/notifications/notifs-ios",
-        },
-      ],
-    },
-    {
-      text: "Performance & UX",
-      collapsed: false,
-      items: [
-        {
-          text: "Use local-first architecture",
-          link: "/perf-ux/local-first",
-        },
-        {
-          text: "Use optimistic sending",
-          link: "/perf-ux/optimistic-sending",
-        },
-        {
-          text: "Resolve identities",
-          link: "/perf-ux/identity-resolution",
-        },
-        {
-          text: "Performance test",
-          link: "/perf-ux/debug-and-test",
-        },
-        {
-          text: "Launch checklist",
-          link: "/perf-ux/get-featured",
-        },
-        {
-          text: "MetaMask Snap",
-          link: "/perf-ux/xmtp-metamask-snap",
-        },
-      ],
-    },
-    {
-      text: "Display Open Frames",
-      collapsed: false,
-      items: [
-        {
-          text: "Get started with Open Frames",
-          link: "/open-frames/open-frames",
-        },
-        {
-          text: "Display transactional Open Frames",
-          link: "/open-frames/transactional-open-frames",
-        },
-        {
-          text: "Display subscription Open Frames",
-          link: "/open-frames/subscription-open-frames",
-        },
-      ],
-    },
-    {
-      text: "Protocol concepts",
-      collapsed: false,
+      text: "Learn protocol concepts",
+      collapsed: true,
       items: [
         {
           text: "XMTP versions",
@@ -288,7 +308,7 @@ export default defineConfig({
         },
         {
           text: "XMTP V3",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Group chat",
@@ -310,7 +330,7 @@ export default defineConfig({
         },
         {
           text: "XMTP V2",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Architecture",

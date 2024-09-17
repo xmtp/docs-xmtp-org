@@ -4,31 +4,50 @@ description: Learn how to create and configure an XMTP client
 
 # Create and configure an XMTP client
 
-The XMTP message API revolves around a network client that allows retrieving and sending messages to other network participants. A client must be connected to a wallet on startup. The client will request a wallet signature in two cases:
-
-1. To sign the newly generated key bundle. This happens only the very first time when key bundle is not found in storage.
-2. To sign a random salt used to encrypt the key bundle in storage. This happens every time the client is started (including the very first time).
+The XMTP message API revolves around a network client that allows retrieving and sending messages to other network participants. 
 
 ## Create a client
 
-A client is created that requires passing in a connected wallet that implements the Signer interface.
+To create an XMTP client, it must be connected to a wallet on startup. You must pass in a connected wallet that implements the Signer interface. This wallet is required for authentication and encryption purposes.
 
-[Use client configuration options](#configure-the-client) to change parameters of a client's network connection.
+For more information about wallet signature requests, see [Account signatures](/protocol/signatures).
+
+Clients created by XMTP v3 SDKs can also support XMTP v2 messages if the wallet is an EOA. At a high-level, XMTP v3 is used to support group chat and XMTP v2 is used to support 1:1 chat.
+
+In the near future, XMTP v3 will support both group and 1:1 chat with Messaging Layer Security (MLS). Have questions or feedback? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/58).
+
+Group chat is currently supported in Kotlin, Swift, React Native, and Node.js.
+
+In the near future, XMTP v3 will also support group chat for the web.
+
+For more information about the work being done to support group chat for the web, see this [SQLite, WebAssembly, and Diesel](https://www.youtube.com/watch?v=qnCeXsqqKcY&t=240s) talk in the XMTP Developer Community Call.
+
+If your mobile app provides group chat, you must explicitly configure your client to enable this functionality by setting the `enableV3` client option to `true`.
+
+:::tip[Best practice for mobile apps]
+
+Regardless of whether your mobile app provides group chat, set the `enableV3` client option to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.
+
+:::
+
+For more information about client options, including how to set your client's network environment, see [client configuration options](#configure-the-client).
 
 :::code-group
 
 ```ts [JavaScript]
 import { Client } from "@xmtp/xmtp-js";
+
 // Create the client with a `Signer` from your application
-const xmtp = await Client.create(signer, { env: "dev" });
+const xmtp = await Client.create(signer, {
+  env: "production",
+});
 ```
 
-<div data-title="React">
-To use the hooks provided by the React SDK, you must wrap your app with an `XMTPProvider`. This gives the hooks access to the XMTP client instance.
-
-```ts [TypeScript]
+```ts [React]
 import { XMTPProvider } from "@xmtp/react-sdk";
+import { useClient } from "@xmtp/react-sdk";
 
+// Wrap your app with XMTPProvider
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <XMTPProvider>
@@ -36,63 +55,94 @@ createRoot(document.getElementById("root") as HTMLElement).render(
     </XMTPProvider>
   </StrictMode>
 );
-```
 
-```tsx [TypeScript]
+// Inside your component
 export const CreateClient: React.FC<{ signer: Signer }> = ({ signer }) => {
   const { client, error, isLoading, initialize } = useClient();
 
   const handleConnect = useCallback(async () => {
     const options = {
       persistConversations: false,
-      env: "dev",
+      env: "production",
     };
     await initialize({ keys, options, signer });
   }, [initialize]);
 
-  if (error) {
-    return "An error occurred while initializing the client";
-  }
-
-  if (isLoading) {
-    return "Awaiting signatures...";
-  }
-
-  if (!client) {
-    return (
-      <button type="button" onClick={handleConnect}>
-        Connect to XMTP
-      </button>
-    );
-  }
-
-  return "Connected to XMTP";
+  // ... rest of the component code
 };
 ```
 
-</div>
-
 ```kotlin [Kotlin]
-// Create the client with a `SigningKey` from your app
-val options =
-    ClientOptions(
-        api = ClientOptions.Api(env = XMTPEnvironment.PRODUCTION, isSecure = true)
+val client = Client().create(
+    account = wallet, // wallet that implements SigningKey
+    options = ClientOptions(
+        api = ClientOptions.Api(XMTPEnvironment.PRODUCTION, isSecure = true),
+        enableV3 = true, // Enable group chat support
+        appContext = context, // Required if enableV3 is true
+        dbEncryptionKey = ByteArray(32), // Required 32-byte array for database encryption if enableV3 is true
+        dbDirectory = "mydbdir", // Optional. Specify a database directory. If no directory is specified, the value is set to xmtp_db by default.
     )
-val client = Client().create(account = account, options = options)
+)
 ```
 
 ```swift [Swift]
 import XMTP
 
-// Create the client with a `SigningKey` from your app
 let client = try await Client.create(
-  account: account, options: .init(api: .init(env: .production)))
+    account: account, // account that implements SigningKey
+    options: .init(
+        api: .init(env: .production, isSecure: true),
+        enableV3: true, // Enable group chat support
+        dbEncryptionKey: key, // Required 32-byte array for database encryption if enableV3 is true
+        dbDirectory: "mydir", // Specify a database directory. If no directory is specified, the value is set to xmtp_db by default.
+    )
+)
 ```
 
 ```tsx [React Native]
 import { Client } from "@xmtp/xmtp-react-native";
-// Create the client with a `Signer` from your application
-const xmtp = await Client.create(signer);
+
+const xmtp = await Client.create(signer, {
+  env: "production",
+  enableV3: true, // Enable group chat support
+  dbEncryptionKey: new Uint8Array(32), // Required: 32-byte array for database encryption
+  dbDirectory: "mydbdir", // Specify a database directory. If no directory is specified, the value is set to xmtp_db by default.
+});
+```
+
+```tsx [Node]
+import { createWalletClient, http, toBytes } from "viem";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { mainnet } from "viem/chains";
+import { Client } from "@xmtp/mls-client";
+
+// Create a wallet for signing
+const key = generatePrivateKey();
+const account = privateKeyToAccount(key);
+const wallet = createWalletClient({
+  account,
+  chain: mainnet,
+  transport: http(),
+});
+
+// Create client
+const client = Client.create(account.address, {
+  env: "production",
+  enableV3: true, // Enable group chat support
+  dbPath: "path/to/local/db/file.db3", // Specify database path
+});
+
+// Sign the provided message
+const signature = await wallet.signMessage({
+  message: client.signatureText ?? "",
+});
+const signatureBytes = toBytes(signature);
+
+// Add the signature to the client
+client.addEcdsaSignature(signatureBytes);
+
+// Register client identity
+await client.registerIdentity();
 ```
 
 :::
@@ -323,9 +373,9 @@ The keys returned by `exportKeyBundle` should be treated with the utmost care as
 
 :::
 
-## Create an XMTP client with a private key
+## Create a client with a private key
 
-You can create an XMTP client with a private key using a compatible client library.
+You can create a client with a private key using a compatible client library.
 
 :::code-group
 
@@ -438,7 +488,16 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
       <th>Parameter</th>
       <th>Default</th>
       <th>Description</th>
-      <th></th>
+    </tr>
+    <tr>
+      <td>env</td>
+      <td>`dev`</td>
+      <td>
+        Connect to the specified XMTP network environment. Valid values include
+        `dev`, `production`, or `local`. For important details about working
+        with these environments, see [XMTP production and dev network
+        environments](#xmtp-network-environments).
+      </td>
     </tr>
     <tr>
       <td>appVersion</td>
@@ -455,18 +514,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         app support, especially around communicating important SDK updates,
         including deprecations and required upgrades.
       </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>env</td>
-      <td>`dev`</td>
-      <td>
-        Connect to the specified XMTP network environment. Valid values include
-        `dev`, `production`, or `local`. For important details about working
-        with these environments, see [XMTP `production` and `dev` network
-        environments](#xmtp-network-environments).
-      </td>
-      <td></td>
     </tr>
     <tr>
       <td>apiUrl</td>
@@ -475,20 +522,18 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         Manually specify an API URL to use. If specified, value of `env` will be
         ignored.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>keystoreProviders</td>
       <td>
         `[StaticKeystoreProvider, NetworkKeystoreProvider,
-        KeyGeneratorKeystoreProvider]`
+        KeyGeneratorKeystore Provider]`
       </td>
       <td>
         Override the default behavior of how the Client creates a Keystore with
         a custom provider. This can be used to get the user's private keys from
         a different storage mechanism.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>persistConversations</td>
@@ -497,7 +542,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         Maintain a cache of previously seen V2 conversations in the storage
         provider (defaults to `LocalStorage`).
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>skipContactPublishing</td>
@@ -509,19 +553,16 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         is known that a Client instance has been instantiated with this flag set
         to false at some point in the past.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>codecs</td>
       <td>`[TextCodec]`</td>
       <td>Add codecs to support additional content types.</td>
-      <td></td>
     </tr>
     <tr>
       <td>maxContentSize</td>
       <td>`100M`</td>
       <td>Maximum message content size in bytes.</td>
-      <td></td>
     </tr>
     <tr>
       <td>preCreateIdentityCallback</td>
@@ -532,7 +573,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         Identity](/protocol/signatures#sign-to-create-an-xmtp-identity) wallet
         signature is requested from the user.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>preEnableIdentityCallback</td>
@@ -543,7 +583,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         Identity](/protocol/signatures#sign-to-enable-an-xmtp-identity) wallet
         signature is requested from the user.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>useSnaps</td>
@@ -557,7 +596,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         to `false`. To learn more, see [Build with the
         Snap](/perf-ux/xmtp-metamask-snap#as-a-developer-who-wants-my-app-to-use-sign-in-with-xmtp-how-do-i-get-started).
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>basePersistence</td>
@@ -572,7 +610,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         and [Pluggable
         persistence](https://github.com/xmtp/xmtp-js/releases/tag/v11.0.0).
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>apiClientFactory</td>
@@ -585,7 +622,6 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         performance and reliability. To learn more, see [Pluggable gRPC API
         client](https://github.com/xmtp/xmtp-js/releases/tag/v11.0.0).
       </td>
-      <td></td>
     </tr>
   </table>
 </div>
@@ -596,11 +632,20 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
       <th>Parameter</th>
       <th>Default</th>
       <th>Description</th>
-      <th></th>
+    </tr>
+    <tr>
+      <td>env</td>
+      <td>`dev`</td>
+      <td>
+        Connect to the specified XMTP network environment. Valid values include
+        dev, production, or local. For important details about working with
+        these environments, see [XMTP production and dev network
+        environments](#xmtp-network-environments).
+      </td>
     </tr>
     <tr>
       <td>appVersion</td>
-      <td>undefined</td>
+      <td>`undefined`</td>
       <td>
         Add a client app version identifier that's included with API requests.
         <br />
@@ -612,53 +657,38 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         app support, especially around communicating important SDK updates,
         including deprecations and required upgrades.
       </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>env</td>
-      <td>dev</td>
-      <td>
-        Connect to the specified XMTP network environment. Valid values include
-        dev, production, or local. For important details about working with
-        these environments, see [XMTP production and dev network
-        environments](#xmtp-network-environments).
-      </td>
-      <td></td>
     </tr>
     <tr>
       <td>apiUrl</td>
-      <td>undefined</td>
+      <td>`undefined`</td>
       <td>
         Manually specify an API URL to use. If specified, value of env will be
         ignored.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>keystoreProviders</td>
       <td>
-        [StaticKeystoreProvider, NetworkKeystoreProvider,
-        KeyGeneratorKeystoreProvider]
+        `[StaticKeystoreProvider, NetworkKeystoreProvider,
+        KeyGeneratorKeystoreProvider]`
       </td>
       <td>
         Override the default behavior of how the client creates a Keystore with
         a custom provider. This can be used to get the user's private keys from
         a different storage mechanism.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>persistConversations</td>
-      <td>true</td>
+      <td>`true`</td>
       <td>
         Maintain a cache of previously seen V2 conversations in the storage
         provider (defaults to LocalStorage).
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>skipContactPublishing</td>
-      <td>false</td>
+      <td>`false`</td>
       <td>
         Do not publish the user's contact bundle to the network on client
         creation. Designed to be used in cases where the client session is
@@ -666,50 +696,77 @@ Set the `env` client option to `dev` while developing. Set it to `production` be
         is known that a client instance has been instantiated with this flag set
         to false at some point in the past.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>codecs</td>
-      <td>[TextCodec]</td>
+      <td>`[TextCodec]`</td>
       <td>Add codecs to support additional content types.</td>
-      <td></td>
     </tr>
     <tr>
       <td>maxContentSize</td>
-      <td>100M</td>
+      <td>`100M`</td>
       <td>Maximum message content size in bytes.</td>
-      <td></td>
     </tr>
     <tr>
       <td>preCreateIdentityCallback</td>
-      <td>undefined</td>
+      <td>`undefined`</td>
       <td>
         preCreateIdentityCallback is a function that will be called immediately
         before a [Create Identity wallet
         signature](/protocol/signatures#sign-to-create-an-xmtp-identity) is
         requested from the user.
       </td>
-      <td></td>
     </tr>
     <tr>
       <td>preEnableIdentityCallback</td>
-      <td>undefined</td>
+      <td>`undefined`</td>
       <td>
         preEnableIdentityCallback is a function that will be called immediately
         before an [Enable Identity wallet
         signature](/protocol/signatures#sign-to-enable-an-xmtp-identity) is
         requested from the user.
       </td>
-      <td></td>
     </tr>
   </table>
 </div>
 
 <div data-title="Kotlin">
 <table>
-<tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
-<tr><td>appVersion</td><td>`undefined`</td><td>Add a client app version identifier that's included with API requests. **Production apps are strongly encouraged to set this value.**<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>`DEV`</td><td>Connect to the specified XMTP network environment. Valid values include `DEV`, `.PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-network-environments).</td><td></td></tr>
+  <tr>
+    <th>Parameter</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>env</td>
+    <td>`DEV`</td>
+    <td>Connect to the specified XMTP network environment. Valid values include `DEV`, `.PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP production and dev network environments](#xmtp-network-environments).</td>
+  </tr>
+  <tr>
+    <td>enableV3</td>
+    <td>`false`</td>
+    <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your mobile app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.</td>
+  </tr>
+  <tr>
+    <td>appContext</td>
+    <td>null</td>
+    <td>Required if `enableV3` is set to `true`.</td>
+  </tr>
+  <tr>
+    <td>dbEncryptionKey</td>
+    <td>null</td>
+    <td>Required 32-byte array for database encryption if `enableV3` is `true`. For information about recommended key storage for Kotlin, [Android Keystore system](https://developer.android.com/privacy-and-security/keystore).</td>
+  </tr>
+    <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default.</td>
+    </tr>
+  <tr>
+    <td>appVersion</td>
+    <td>`undefined`</td>
+    <td>Add a client app version identifier that's included with API requests. <strong>Production apps are strongly encouraged to set this value.</strong><br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td>
+  </tr>
 </table>
 
 Configure `env`
@@ -729,9 +786,36 @@ val client = Client().create(account = account, options = options)
 
 <div data-title="Swift">
 <table>
-<tr><th>Parameter</th><th>Default</th><th>Description</th><th></th></tr>
-<tr><td>appVersion</td><td>`undefined`</td><td>Add a client app version identifier that's included with API requests. **Production apps are strongly encouraged to set this value.**<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td><td></td></tr>
-<tr><td>env</td><td>`dev`</td><td>Connect to the specified XMTP network environment. Valid values include `.dev`, `.production`, or `.local`. For important details about working with these environments, see [XMTP `production` and `dev` network environments](#xmtp-network-environments).</td><td></td></tr>
+  <tr>
+    <th>Parameter</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>env</td>
+    <td>`dev`</td>
+    <td>Connect to the specified XMTP network environment. Valid values include `.dev`, `.production`, or `.local`. For important details about working with these environments, see [XMTP production and dev network environments](#xmtp-network-environments).</td>
+  </tr>
+  <tr>
+    <td>enableV3</td>
+    <td>`false`</td>
+    <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.</td>
+  </tr>
+    <tr>
+    <td>dbEncryptionKey</td>
+    <td>null</td>
+    <td>Required 32-byte array for database encryption if `enableV3` is `true`. For information about recommended key storage for Swift, see [Protecting keys with the Secure Enclave](https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave).</td>
+  </tr>
+      <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default.</td>
+    </tr>
+  <tr>
+    <td>appVersion</td>
+    <td>`undefined`</td>
+    <td>Add a client app version identifier that's included with API requests. <strong>Production apps are strongly encouraged to set this value.</strong><br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP developers provide app support, especially around communicating important SDK updates, including deprecations and required upgrades.</td>
+  </tr>
 </table>
 
 Configure `env`
@@ -750,7 +834,31 @@ let client = try await Client.create(account: account, options: clientOptions)
       <th>Parameter</th>
       <th>Default</th>
       <th>Description</th>
-      <th></th>
+    </tr>
+    <tr>
+      <td>env</td>
+      <td>`dev`</td>
+      <td>
+        Connect to the specified XMTP network environment. Valid values include
+        `dev`, `production`, or `local`. For important details about working
+        with these environments, see [XMTP production and dev network
+        environments](#xmtp-network-environments).
+      </td>
+    </tr>
+    <tr>
+      <td>enableV3</td>
+      <td>`false`</td>
+      <td>To support group chat (a feature of XMTP v3), set to `true`. As a best practice, regardless of whether your app provides group chat, set `enableV3` to `true` to benefit from other aspects of the upgraded XMTP v3 protocol. Enabling v3 doesn't stop your app's support for XMTP v2 functionality.</td>
+    </tr>
+    <tr>
+      <td>dbEncryptionKey</td>
+      <td>null</td>
+      <td>Required. For secure key storage in React Native, consider using libraries like `react-native-keychain` or `expo-secure-store`. These provide cross-platform solutions for securely storing sensitive data on both iOS and Android devices.</td>
+    </tr>
+    <tr>
+      <td>dbDirectory</td>
+      <td>xmtp_db</td>
+      <td>Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default.</td>
     </tr>
     <tr>
       <td>appVersion</td>
@@ -767,17 +875,6 @@ let client = try await Client.create(account: account, options: clientOptions)
         app support, especially around communicating important SDK updates,
         including deprecations and required upgrades.
       </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td>env</td>
-      <td>`dev`</td>
-      <td>
-        Connect to the specified XMTP network environment. Valid values include
-        `dev`, `production`, or `local`. For important details about working
-        with these environments, see [XMTP `production` and `dev` network
-        environments](#xmtp-network-environments).
-      </td>
     </tr>
   </table>
 </div>
@@ -786,18 +883,14 @@ let client = try await Client.create(account: account, options: clientOptions)
 
 ## XMTP network environments
 
-XMTP identity on `dev` network is completely distinct from its XMTP identity on the `production` network, as are the messages associated with these identities.
+An XMTP identity on the `dev` network is completely distinct from its XMTP identity on the `production` network, as are the messages associated with these identities.
 
-- `production`: This network is used in production and is configured to store messages indefinitely.
+- `production`: Use this network for production messages.
 
-  - Try the web inbox at [https://xmtp.chat/](https://xmtp.chat/).
+  - To send and receive messages on the `production` network, you can use the open source Converse web app connected to the `production` network: [https://app.converse.xyz](https://app.converse.xyz).
 
-  - Send a message to our `gm` bot to get started. `gm.xmtp.eth`
+- `dev`: Use this network for development.
 
-- `dev`: XMTP may occasionally delete messages and keys from this network
+  - To send and receive messages on the `dev` network, you can use the open source Converse web app connected to the `dev` network: [https://app-preview.converse.xyz](https://app-preview.converse.xyz).
 
-  - Try the web dev inbox at [https://dev.xmtp.chat/](https://xmtp.chat/).
-
-  - Send a message to our `gm` bot to get started. `0x8DC925338C1eE1fE62c0C43404371deb701BfB55`
-
-- `local`: Use to have a client communicate with an XMTP node you are running locally. For example, an XMTP node developer can set `env` to `local` to generate client traffic to test a node running locally.
+- `local`: Use this network to have a client communicate with an XMTP node you are running locally. For example, an XMTP node developer can set `env` to `local` to generate client traffic to test a node running locally.

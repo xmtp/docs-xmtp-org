@@ -22,7 +22,7 @@ Before launching, ensure your app meets the following criteria:
 - [ ] The app should be stable and not crash frequently.
 - [ ] No visible critical bugs.
 - [ ] Make sure to use the latest [XMTP client SDK](/get-started/examples).
-- [ ] Always set an `appVersion` [value](/dms/client#configure-the-client).
+- [ ] Always set an `appVersion` [value](/client/create-client#configure-the-client).
 
 ### Support content types
 

@@ -2,7 +2,7 @@
 description: "XMTP is an open protocol, network, and standards for secure, private web3 messaging."
 ---
 
-# Build with XMTP
+# Introduction to XMTP
 
 XMTP (Extensible Message Transport Protocol) is an open protocol, network, and standards for secure, private web3 messaging.
 
@@ -54,7 +54,7 @@ Explore apps on [https://xmtp.org/](https://xmtp.org/).
 
 To send a message to an address it must have an XMTP identity already created on the network. Share this page with someone you want to message to help them get on the network if they aren't already there.
 
-In the meantime, need someone to message with? Send a message to the following address and get an immediate response from the XMTP message bot: `gm.xmtp.eth` / `0x937C0d4a6294cdfa575de17382c7076b579DC176`. You can message the ENS name or the raw 0x address.
+In the meantime, need someone to message with? Send a message to the XMTP message bot at `gm.xmtp.eth` (0x937C0d4a6294cdfa575de17382c7076b579DC176) and get an immediate `gm` reply. You can message the ENS name or the raw 0x address.
 
 ### See the [portable inbox](/protocol/portable-inbox) in action
 
