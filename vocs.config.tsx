@@ -291,42 +291,36 @@ export default defineConfig({
       collapsed: true,
       items: [
         {
-          text: "XMTP versions",
-          link: "/protocol/xmtp-versions",
+          text: "Account signatures",
+          link: "/protocol/signatures",
+        },
+        {
+          text: "Group chat",
+          link: "/protocol/v3/group-chat",
+        },
+        {
+          text: "Multi-wallet identity",
+          link: "/protocol/v3/identity",
+        },
+        {
+          text: "Message history",
+          link: "/protocol/v3/message-history",
+        },
+        {
+          text: "Smart wallet support",
+          link: "/protocol/v3/smart-wallet",
         },
         {
           text: "Portable inbox",
           link: "/protocol/portable-inbox",
         },
         {
-          text: "Account signatures",
-          link: "/protocol/signatures",
-        },
-        {
           text: "XIPs",
           link: "/protocol/xips",
         },
         {
-          text: "XMTP V3",
-          collapsed: true,
-          items: [
-            {
-              text: "Group chat",
-              link: "/protocol/v3/group-chat",
-            },
-            {
-              text: "Multi-wallet identity",
-              link: "/protocol/v3/identity",
-            },
-            {
-              text: "Message history",
-              link: "/protocol/v3/message-history",
-            },
-            {
-              text: "Smart wallet support",
-              link: "/protocol/v3/smart-wallet",
-            },
-          ],
+          text: "XMTP versions",
+          link: "/protocol/xmtp-versions",
         },
         {
           text: "XMTP V2",
