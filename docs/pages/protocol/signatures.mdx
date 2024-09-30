@@ -4,11 +4,13 @@ description: "Learn about account signature types when using XMTP"
 
 # Account signatures with XMTP
 
-Learn about the types of account signatures you might be prompted to provide when using apps built with XMTP (Extensible Message Transport Protocol).
+Learn about the types of account signatures you might be prompted to provide when using apps built with XMTP.
 
 ## Sign to create an inbox (first-time use)
 
-The first time you use an app built with XMTP, an "XMTP : Authenticate to inbox" window displays. It requests that you sign a "Create inbox" message with your wallet account. Sign the message with your wallet account to create an XMTP inbox owned by your wallet account.
+The first time you use an app built with XMTP, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Create inbox** message with your wallet account. 
+
+Sign the message with your wallet account to consent to creating an XMTP inbox owned by your wallet account.
 
 <img width="400" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/authen-to-inbox.PNG" alt="MetaMask wallet browser extension Sign this message? window showing an XMTP: Authenticate to inbox message" />
 
@@ -16,25 +18,31 @@ The first time you use an app built with XMTP, an "XMTP : Authenticate to inbox"
 
 You can add another wallet account to your inbox at any time. For example, you might have started using an app with one wallet account and now want to use the app with an additional wallet account.
 
-If you decide to add another wallet account to your inbox, an "XMTP : Authenticate to inbox" window displays. It requests that you sign a "Link address to inbox" message. Sign with the wallet account you want to add to grant it access to the inbox. You can now use your inbox to exchange messages using the wallet account you just added, as well as any existing wallet accounts.
+If you decide to add another wallet account to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. 
+
+Sign with the wallet account you want to add to consent to granting it access to the inbox. You can now use your inbox to exchange messages using the wallet account you just added.
 
 ## Sign to remove account from your inbox
 
 You can remove a wallet account from your inbox at any time.
 
-If you decide to remove a wallet account from your inbox, an "XMTP : Authenticate to inbox" window displays. It requests that you sign an "Unlink address from inbox" message. Sign with the wallet account you want to remove to unlink it from your inbox. You can no longer access your inbox using the wallet account you removed.
+If you decide to remove a wallet account from your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign an **Unlink address from inbox** message. 
+
+Sign with the wallet account you want to remove to consent to unlinking it from your inbox. You can no longer access your inbox using the wallet account you removed.
 
 ## Sign to change inbox recovery address
 
-The first time you use an app built with XMTP, the wallet account you use to create an inbox is automatically set as the inbox recovery address. You can change the recovery address at any time.
+The first time you use an app built with XMTP, the wallet account you use to create an inbox is automatically set as the inbox recovery address. You can change the recovery address to a different wallet account at any time.
 
-If you decide to change the recovery address, an "XMTP : Authenticate to inbox" window displays. It requests that you sign a "Change inbox recovery address" message. Sign with the wallet account you want to set as the recovery address to change the recovery address.
+If you decide to change the recovery address, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Change inbox recovery address** message. 
+
+Sign with the wallet account you want to set as the recovery address to consent to changing the recovery address.
 
 ## Sign to consent to receive broadcast messages
 
 When you click a **Subscribe** button built with XMTP’s consent standards, you're prompted to sign to grant your consent to receive broadcast messages from a publisher.
 
-For example, here’s the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You will typically see **Subscribe** buttons like this on a web page or in a dapp.
+For example, here’s the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
 
 ![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
 
