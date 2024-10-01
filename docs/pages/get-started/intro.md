@@ -12,7 +12,7 @@ Developers build with XMTP SDKs to provide messaging between blockchain accounts
 
 - [Authentication](/protocol/signatures) using an **XMTP identity that the user owns and controls**
 
-- End-to-end encryption of **[1:1 messages](/protocol/v2/invitation-and-message-encryption) and [group chats](/protocol/v3/group-chat#security-and-encryption) that the user owns and controls**
+- End-to-end encryption of **[1:1 messages](/protocol/v2/invitation-and-message-encryption) and [group chats](/protocol/security-encryption) that the user owns and controls**
 
 - Providing a **[portable inbox](/protocol/portable-inbox) accessible across apps** built with XMTP
 

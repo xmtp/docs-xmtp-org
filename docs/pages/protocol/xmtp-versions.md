@@ -7,7 +7,7 @@ XMTP currently has three versions: V3, V2, and V1.
 XMTP V3 refers to the latest version of XMTP, which has the following fundamental characteristics:
 
 - Supports group chat. To learn more, see [Build group chat with MLS and XMTP](/groups/build-group-chat).
-- Built on MLS (Message Layer Security), which delivers these [security and encryption guarantees](/protocol/v3/group-chat#security-and-encryption)
+- Built on MLS (Message Layer Security), which delivers these [security and encryption guarantees](/protocol/security-encryption)
 - Uses app installation-based handling. To learn more, see [Installations](/protocol/v3/identity#installations).
 - Uses [LibXMTP](https://github.com/xmtp/libxmtp)
     - Creates and manages an SDK-level local database
@@ -24,7 +24,7 @@ The following XMTP SDKs support V3 and V2:
 - [XMTP iOS](https://github.com/xmtp/xmtp-ios)
 - [XMTP Node](https://www.npmjs.com/package/@xmtp/mls-client) (experimental)
 
-To learn more about how XMTP V3 works, see the sections in [XMTP V3](/protocol/v3/group-chat).
+To learn more about how XMTP V3 works, see [Learn protocol concepts](/protocol/signatures).
 
 ## XMTP V2
 

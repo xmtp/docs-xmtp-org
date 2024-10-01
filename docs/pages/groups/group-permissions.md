@@ -27,6 +27,8 @@ You can list, add, and remove members from a group chat. Only the group chat cre
 
 There are two kinds of administrators: super admins and admins. The group creator starts as a super admin, who has the most permissions so that a normal admin cannot remove the creator or destroy a group.
 
+While group membership is inherent to the MLS group, administrators are specified through the group metadata. Updating the metadata is how you add or remove admins and specify who are admins versus super admins.
+
 Here's an overview of how group chat admin statuses work:
 
 - Everyone in a group chat is a member.
@@ -429,3 +431,9 @@ await client.contacts.allow([walletAddress]);
 ```
 
 :::
+
+## SDK method call flow to add and remove members
+
+![Add and remove members](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/add-remove.png)
+
+When you add or remove members from a group, a proposal/commit message is sent to all the installations in the group. When the commit happens, the cryptographic state of the group is changed. This allows new members to receive messages but not decrypt older ones and prevents removed members from decrypting messages after their departure.

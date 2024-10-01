@@ -462,7 +462,7 @@ For a first-time XMTP user, the process typically involves:
 
 This process requires only one visible signature from the end user, in addition to any XMTP v2 signatures.
 
-For more details, see [Group chat concepts and protocols](/protocol/v3/group-chat#security-and-encryption) and [Identity in XMTP v3](/protocol/v3/identity)
+For more details, see [Security and encryption](/protocol/security-encryption) and [Multi-wallet identity](/protocol/v3/identity).
 
 #### XMTP v2
 
