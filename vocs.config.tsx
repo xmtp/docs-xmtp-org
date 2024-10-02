@@ -295,8 +295,12 @@ export default defineConfig({
           link: "/protocol/signatures",
         },
         {
-          text: "Group chat",
-          link: "/protocol/v3/group-chat",
+          text: "Security and encryption",
+          link: "/protocol/security-encryption",
+        },
+        {
+          text: "Protocols",
+          link: "/protocol/protocols",
         },
         {
           text: "Multi-wallet identity",

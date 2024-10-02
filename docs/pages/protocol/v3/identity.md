@@ -6,14 +6,13 @@ description: "Learn about multi-wallet identity and app installation concepts"
 
 ## Summary
 
-- XMTP v3 now supports multiple wallets per user, including [smart wallets](https://community.xmtp.org/t/xip-44-smart-contract-wallet-support/627).
-- User wallets now belong to a shared Inbox with a single Inbox ID.
-- The first wallet used to create an Inbox is a _recovery wallet_.
+- User wallets belong to a shared inbox with a single inbox ID.
+- The first wallet used to create an inbox is a _recovery wallet_.
   - A recovery wallet can remove other wallets.
   - A user can use the recovery wallet to set a different recovery wallet.
-  - A user with an existing V2 wallet gets an Inbox with that wallet as the recovery wallet.
-- The Inbox can have multiple _associated wallets_ (besides the recovery wallet).
-  - Users can send a message to any name (ENS, cb.id, Farcaster ID, etc.) belonging to an associated wallet in the Inbox.
+  - A user with an existing XMTP v2 wallet gets an inbox with that wallet as the recovery wallet.
+- The inbox can have multiple _associated wallets_ (besides the recovery wallet).
+  - Users can send a message to any name (ENS, cb.id, Farcaster ID, etc.) belonging to an associated wallet in the inbox.
   - Associated wallets can add one or more _installations_ as children (one per app/device pairing).
   - Removing the wallet removes all installations that are the child of that wallet.
 - Adding/removing a wallet or installation is an _identity action_.
@@ -34,33 +33,33 @@ You can find more information on multi-wallet identity in [XIP-46](https://commu
 
 Within the Ethereum ecosystem, many people use multiple wallets, even wallets embedded inside of apps. Users are likely to have multiple wallets, even multiple identities, outside of an EVM chain.
 
-XMTP allows those users to be contacted through a single inbox for all of those identities by associating these multiple wallets with a single Inbox ID.
+XMTP allows those users to be contacted through a single inbox for all of those identities by associating these multiple wallets with a single inbox ID.
 
 ![Inbox wallets](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/inbox-wallets.png)
 
-XMTP creates a log of all the wallets associated with an Inbox ID and makes this log available through a public API. In the diagram above, this log charts the relationship between the solid lines, whereas the dotted lines will be resolved by the apps that use XMTP.
+XMTP creates a log of all the wallets associated with an inbox ID and makes this log available through a public API. In the diagram above, this log charts the relationship between the solid lines, whereas the dotted lines will be resolved by the apps that use XMTP.
 
-When a user messages another user by name, the app will use XMTP to resolve the name to an Inbox ID, starting at the bottom of the diagram and ending at the top.
+When a user messages another user by name, the app will use XMTP to resolve the name to an inbox ID, starting at the bottom of the diagram and ending at the top.
 
-When a participant is rendered in an app's UX, resolving the name from the Inbox ID will begin from the Inbox ID at the top of the tree and proceed to the name at the bottom.
+When a participant is rendered in an app's UX, resolving the name from the inbox ID will begin from the inbox ID at the top of the tree and proceed to the name at the bottom.
 
 ### Recovery wallet
 
-A recovery wallet is a single wallet in the Inbox that can manage any object in the Inbox. The first wallet used to create an Inbox is designated as the recovery wallet. Users can change their recovery wallet to a different wallet as long as the recovery wallet assents to the change.
+A recovery wallet is a single wallet in the inbox that can manage any object in the inbox. The first wallet used to create an inbox is designated as the recovery wallet. Users can change their recovery wallet to a different wallet as long as the recovery wallet assents to the change.
 
 By default, a recovery wallet is not addressable for messages. A recovery wallet can ALSO be an associated wallet, making it addressable for messages, but this is not required.
 
-When an XMTP V2 user upgrades to XMTP V3, their wallet becomes the recovery wallet of the new Inbox and is associated with the Inbox.
+When an XMTP v2 user upgrades to XMTP v3, their wallet becomes the recovery wallet of the new inbox and is associated with the inbox.
 
 ### Associated wallets
 
-![Inbox Diagram](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/inbox-diagram.png)
+![Inbox diagram](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/inbox-diagram.png)
 
-Associated wallets are additional addressable wallets in the Inbox. An associated wallet can have multiple _installations_. A user can use the wallet on multiple apps on multiple devices, and each one would have its own installation. When someone sends a message to the name associated with the wallet, it goes to all the installations in the entire Inbox, not just the installations associated with one wallet.
+Associated wallets are additional addressable wallets in the inbox. An associated wallet can have multiple _installations_. A user can use the wallet on multiple apps on multiple devices, and each one would have its own installation. When someone sends a message to the name associated with the wallet, it goes to all the installations in the entire inbox, not just the installations associated with one wallet.
 
 ### Remove wallets
 
-The recovery wallet has the authority to remove _any_ wallet from the Inbox.
+The recovery wallet has the authority to remove _any_ wallet from the inbox.
 
 When a wallet is removed, all the installations registered for that wallet are removed as well. That means the apps associated with that wallet will no longer be allowed to connect to XMTP (until they add a new wallet and register the new installation).
 
@@ -78,15 +77,15 @@ Messages sent to the installation are encrypted using the encryption key, so onl
 
 ## Update the inbox
 
-Every action that changes the Inbox is stored in a sequential log, called the _inbox log_, and that log is available to all XMTP nodes. There is a secondary log, the _address log_, that is just the address-related entries in the inbox log. The logs are accessed and validated by XMTP and are not visible to client apps. What apps can do is submit changes to the log through _identity actions_.
+Every action that changes the inbox is stored in a sequential log, called the _inbox log_, and that log is available to all XMTP nodes. There is a secondary log, the _address log_, that is just the address-related entries in the inbox log. The logs are accessed and validated by XMTP and are not visible to client apps. What apps can do is submit changes to the log through _identity actions_.
 
 ### Identity actions
 
-An update to the Inbox is called an _identity action_. An identity action can have multiple events in one action, but the inbox log only stores 256 actions.
+An update to the inbox is called an _identity action_. An identity action can have multiple events in one action, but the inbox log only stores 256 actions.
 
 An identity action starts with a header, followed by one or more events.
 
-The header contains the Inbox ID being updated and the time of the current update:
+The header contains the inbox ID being updated and the time of the current update:
 
 ```text
 XMTP : Authenticate to inbox
@@ -148,7 +147,7 @@ When an identity action needs to be signed by an installation, the SDKs (via Lib
 Coinbase or other user UX screenshot signing a new inbox action goes here
 -->
 
-For a new user, the first thing the app will need to do is create an Inbox. This will automatically register the user's wallet as the recovery address. The app will also need to add itself as an installation ("Grant messaging access to app"), which it can do in the same combined action as creating the Inbox.
+For a new user, the first thing the app will need to do is create an inbox. This will automatically register the user's wallet as the recovery address. The app will also need to add itself as an installation ("Grant messaging access to app"), which it can do in the same combined action as creating the inbox.
 
 This is what a combined create/grant action would look like:
 
@@ -168,13 +167,13 @@ For more info: https://xmtp.org/signatures/
 
 Create inbox, with or without the installation grant, will have to be signed by the recovery wallet. Installation grants have to be signed by the installation private key.
 
-### Migrate a V2 wallet
+### Migrate an XMTP v2 wallet
 
 <!--
 If there's any visible effect of migrating a wallet, screenshot goes here
 -->
 
-For an existing user with an upgraded app, XMTP will automatically migrate the V2 wallet into a new Inbox and mark that wallet as the recovery wallet. The app will still need to add itself as an installation ("Grant messaging access to app").
+For an existing user with an upgraded app, XMTP will automatically migrate the V2 wallet into a new inbox and mark that wallet as the recovery wallet. The app will still need to add itself as an installation ("Grant messaging access to app").
 
 This is what the grant action would look like:
 
@@ -194,7 +193,7 @@ The installation grant has to be signed by the wallet that was upgraded from V2 
 
 ### Add a new wallet or installation
 
-The Inbox supports multiple associated wallets and multiple associated installations per wallet. You can add and remove them individually.
+The inbox supports multiple associated wallets and multiple associated installations per wallet. You can add and remove them individually.
 
 #### Add a wallet
 
@@ -242,7 +241,7 @@ This action must be signed by the recovery wallet.
 
 ### Set a new recovery wallet
 
-You can change the recovery wallet to another wallet associated with the Inbox. You can add it beforehand or as part of a single action.
+You can change the recovery wallet to another wallet associated with the inbox. You can add it beforehand or as part of a single action.
 
 ```text
 - Change inbox recovery address
