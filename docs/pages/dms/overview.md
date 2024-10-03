@@ -250,7 +250,7 @@ yarn install @xmtp/xmtp-js
 <TabItem value="react" label="React"  attributes={{className: "react_tab"}}>
 
 ```bash
-npm i @xmtp/react-sdk
+npm install react @xmtp/react-sdk @xmtp/xmtp-js @xmtp/content-type-reaction @xmtp/content-type-remote-attachment @xmtp/content-type-reply
 ```
 
 </TabItem>
