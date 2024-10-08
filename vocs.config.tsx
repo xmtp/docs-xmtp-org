@@ -7,6 +7,39 @@ export default defineConfig({
     // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
       <>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta property="og:title" content="XMTP Documentation" />
+        <meta
+          property="og:image"
+          content="https://docs.xmtp.org/xmtp-og-card.jpeg"
+        />
+        <meta property="fc:frame" content="vNext" />
+        <meta property="of:version" content="vNext" />
+        <meta property="of:accepts:xmtp" content="vNext" />
+        <meta
+          property="of:image"
+          content="https://docs.xmtp.org/xmtp-og-card.jpeg"
+        />
+        <meta
+          property="fc:frame:image"
+          content="https://docs.xmtp.org/xmtp-og-card.jpeg"
+        />
+
+        <meta property="fc:frame:button:1" content="Docs" />
+        <meta property="fc:frame:button:1:action" content="link" />
+        <meta
+          property="fc:frame:button:1:target"
+          content="https://docs.xmtp.org/"
+        />
+
+        <meta property="fc:frame:button:2" content="Groups" />
+        <meta property="fc:frame:button:2:action" content="link" />
+        <meta
+          property="fc:frame:button:2:target"
+          content="https://docs.xmtp.org/groups/build-group-chat/"
+        />
+
         <script
           src="https://plausible.io/js/script.js"
           data-domain="docs.xmtp.org"
@@ -27,9 +60,7 @@ export default defineConfig({
     dark: "/logomark-light-purple.png",
   },
   iconUrl: "/x-mark-blue.png",
-  topNav: [
-    { text: "XMTP.org", link: "https://xmtp.org/" },
-  ],
+  topNav: [{ text: "XMTP.org", link: "https://xmtp.org/" }],
   ogImageUrl: {
     "/": "/xmtp-og-card.jpeg",
     "/docs":
@@ -86,7 +117,7 @@ export default defineConfig({
           text: "Quickstart repos",
           link: "/consent/consent-quickstarts",
         },
-      ]
+      ],
     },
     {
       text: "Build chat inboxes",
@@ -135,7 +166,7 @@ export default defineConfig({
         {
           text: "Build group chat",
           collapsed: true,
-          items: [            
+          items: [
             {
               text: "Build group chat",
               link: "/groups/build-group-chat",
@@ -152,7 +183,7 @@ export default defineConfig({
               text: "Handle group metadata",
               link: "/groups/group-metadata",
             },
-          ],  
+          ],
         },
         {
           text: "Build push notifications",
@@ -279,12 +310,12 @@ export default defineConfig({
               link: "/perf-ux/xmtp-metamask-snap",
             },
           ],
-        },    
+        },
         {
           text: "Troubleshoot",
           link: "/dms/troubleshoot",
-        },        
-      ]
+        },
+      ],
     },
     {
       text: "Learn protocol concepts",
