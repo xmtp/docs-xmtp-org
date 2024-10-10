@@ -80,6 +80,10 @@ export default defineConfig({
           link: "/consent/broadcast",
         },
         {
+          text: "Try subscribe/broadcast flow",
+          link: "/consent/subscribe-broadcast",
+        },
+        {
           text: "Quickstart repos",
           link: "/consent/consent-quickstarts",
         },
