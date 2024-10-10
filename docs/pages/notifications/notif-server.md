@@ -124,4 +124,4 @@ You can now send notifications to your device using an [XMTP push notification c
   }
   ```
 
-- If you run into any other issues or questions, don't hesitate to ask for help in the [XMTP Discord](https://discord.gg/xmtp).
+- If you run into any other issues or questions, don't hesitate to ask for help in the [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf), powered by XMTP.
