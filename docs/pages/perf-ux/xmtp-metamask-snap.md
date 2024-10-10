@@ -64,9 +64,9 @@ To learn more, see [Installing and upgrading Snaps](https://github.com/xmtp/xmtp
 
 Users of the Snap:
 
-- Email: [support@xmtp.com](mailto:support@xmtp.com)
-- Discord: [User support channel](https://discord.com/channels/831836269558235136/1149024081874784356)
+- [support@xmtp.com](mailto:support@xmtp.com)
+- [User support forum](https://community.xmtp.org/c/help/get-help-and-guidance-about-using-apps-and-services-built-with-xmtp/75)
 
 Developers building with the Snap:
 
-- Discord: [Developer support channel](https://discord.com/channels/831836269558235136/1080102336564826193)
+- [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf), powered by XMTP
