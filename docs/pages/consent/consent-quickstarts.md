@@ -1,7 +1,6 @@
+# Quickstart repos for building audience engagement with XMTP
 
-## Quickstart repos for user consent with XMTP
-
-Here are some quickstart repos to help you get started with implementing consent in your XMTP-powered apps:
+Here are some consent, subscribe, and broadcast quickstart repos to help you get started with building audience engagement solutions:
 
 - [Add consent to an existing JavaScript app](https://github.com/xmtp/xmtp-quickstart-request-inbox)  
 Learn how to integrate consent management into an existing JavaScript app.
