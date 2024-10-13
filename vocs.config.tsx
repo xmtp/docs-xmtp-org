@@ -72,6 +72,10 @@ export default defineConfig({
       collapsed: true,
       items: [
         {
+          text: "Use case",
+          link: "/consent/build-engagement",
+        },
+        {
           text: "Enable subscriptions",
           link: "/consent/subscribe",
         },
