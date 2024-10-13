@@ -28,6 +28,7 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
+    { text: "Support 💬", link: "https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf" },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -36,10 +37,6 @@ export default defineConfig({
       "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
   },
   socials: [
-    {
-      icon: "discord",
-      link: "https://discord.gg/xmtp",
-    },
     {
       icon: "github",
       link: "https://github.com/xmtp",
