@@ -72,7 +72,7 @@ export default defineConfig({
       collapsed: true,
       items: [
         {
-          text: "Real-world examples",
+          text: "Use case",
           link: "/consent/build-engagement",
         },
         {
