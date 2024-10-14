@@ -69,7 +69,7 @@ Each wallet needs at least one installation to send and receive messages. An ins
 
 ### Installation keys
 
-When you register a new installation, XMTP creates a new Ed25519 key pair generated and stored on the device. XTMP uses the Ed25519 signature algorithm and curve25519 elliptic curve. Because XMTP uses Ed25519, the public key is in the format specified in RFC8032.
+When you register a new installation, XMTP creates a new Ed25519 key pair generated and stored on the device. XMTP uses the Ed25519 signature algorithm and curve25519 elliptic curve. Because XMTP uses Ed25519, the public key is in the format specified in RFC8032.
 
 The public key of the pair is used as the XMTP _signature key_. This is the unique identifier for an XMTP installation. Messages sent by that installation are encrypted with the private key. Recipient installations use the signature key to decrypt them.
 
