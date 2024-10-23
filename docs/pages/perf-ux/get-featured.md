@@ -9,7 +9,7 @@ Before launching, ensure your app meets the following criteria:
 ### Meet performance benchmarks
 
 - [ ] Implement a [Local-first cache](/perf-ux/local-first).
-- [ ] Cache conversation list `conversations.list ()` to boost performance by 90%.
+- [ ] Cache conversation list `conversations.list()` to boost performance by 90%.
 - [ ] Serialize securely stored `DecodedMessage` histories to reduce redundant downloads and decryptions.
 - [ ] Implement message [pagination](/dms/messages#list-messages-in-a-conversation-with-pagination).
 - [ ] Compress message content with a suitable compression algorithm.
