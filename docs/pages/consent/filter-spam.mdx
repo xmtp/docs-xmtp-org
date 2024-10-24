@@ -1,40 +1,40 @@
 ---
-description: "Learn about spam filters for apps built with XMTP."
+description: "Learn about handling spam in apps built with XMTP."
 ---
 
-# Filter spam in apps built with XMTP
+# Handle spam in apps built with XMTP
 
 In any open and permissionless messaging ecosystem, spam is an inevitable reality and XMTP is no exception. However, with XMTP, spam doesn’t have to negatively impact the user experience.
 
-Implement [user consent preferences](/consent/user-consent) in your app to allow only conversations with approved contacts to display in a user's main inbox. Approved contacts include those the user initiated the conversation with or explicitly approved.
+Implement [user consent preferences](/consent/user-consent) in your app to allow only conversations with approved contacts to display in a user's main inbox. Approved contacts include those the user initiated the conversation with or explicitly accepted.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/block-accept.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/block-accept.jpg" width="400" />
 </div>
 
 While the user's main inbox only displays conversations with approved contacts, you can then handle contact requests from unknown contacts in a separate UI.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/requests-link.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/requests-link.jpg" width="400" />
 </div>
 
-These unknown contact requests may include:
+These unknown contact requests might include:
 
 - Contacts the user might know
 - Contacts the user might not know
 - Spam
 
-You can then filter these unknown contacts to identify:
+You can filter these unknown contacts to:
 
-- Contacts the user might know or want to know, and display them on a **You might know** tab, for example.
-- Contacts the user might not know and not want to know, which might include spam, and display them on a **Hidden requests** tab, for example.
+- Identify contacts the user might know or want to know, and display them on a **You might know** tab, for example.
+- Identify contacts the user might not know and not want to know, which might include spam, and display them on a **Hidden requests** tab, for example.
 
 ## Identify contacts the user might know
 
-To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between contacts. You can then display those messages on a **You might know** tab, for example. 
+To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. You can then display appropriate messages on a **You might know** tab, for example. 
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" />
 </div>
 
 For example, you can look at:
@@ -69,7 +69,7 @@ For example, you can look at:
 To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or harmful content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example. 
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="500" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" />
 </div>
 
 The decision to scan unencrypted messages is yours as the app developer. If you take this approach:
