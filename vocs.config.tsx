@@ -194,7 +194,7 @@ export default defineConfig({
               link: "/consent/consent-methods",
             },
             {
-              text: "Filter spam",
+              text: "Handle spam",
               link: "/consent/filter-spam",
             },
           ],
