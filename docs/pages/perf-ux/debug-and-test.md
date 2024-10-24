@@ -46,7 +46,7 @@ You can also set the options using environment variables prefixed with `XMTP_`. 
 
 ```sh
 $ export XMTP_ADDRESS=xmtp.eth
-$ export XMTP_ENV=production
+$ export XMPT_ENV=production
 $ npm start contacts list
 $ npm start intros list
 $ ...
