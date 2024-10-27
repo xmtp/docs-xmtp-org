@@ -30,9 +30,9 @@ Ideas:
 
 ## Resources
 
-- [MessageKit](https://message-kit.vercel.app/): Tool for creating bots with XMTP
+- [MessageKit](https://messagekit.ephemerahq.com//): Tool for creating bots with XMTP
 - [Subscriptions](/consent/subscribe): Enable subscriptions using consent proofs with XMTP
-- [Open Frames](https://message-kit.vercel.app/frames): Open Frames resources
+- [Open Frames](https://messagekit.ephemerahq.com//frames): Open Frames resources
 - [YouTube video](https://www.youtube.com/watch?v=2ijTqmo_A5c&t=213s): MessageKit Demo
 
 ## Messaging apps 💬

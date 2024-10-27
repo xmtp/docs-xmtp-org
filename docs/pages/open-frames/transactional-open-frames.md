@@ -1,6 +1,6 @@
 # Display a transactional Open Frame
 
-A transactional Open Frame enables users to trigger onchain transactions. To learn how to build a transaction Open Frame, see [Transactions](https://message-kit.vercel.app/frames/tutorials/transactions).
+A transactional Open Frame enables users to trigger onchain transactions. To learn how to build a transaction Open Frame, see [Transactions](https://messagekit.ephemerahq.com//frames/tutorials/transactions).
 
 This tutorial assumes your app already supports non-transactional Open Frames. If not, see [Get started with Open Frames](/open-frames/open-frames) to set this up first.
 
@@ -63,26 +63,23 @@ import { FramesClient } from "@xmtp/frames-client";
 
 const framesClient = new FramesClient(client);
 
- const payload = await framesClient.signFrameAction({
-			// Same payload as for other frames, + an address field
-			// Address should be the 0x address of the connected account
-      address,
-    });
+const payload = await framesClient.signFrameAction({
+  // Same payload as for other frames, + an address field
+  // Address should be the 0x address of the connected account
+  address,
+});
 
 const transactionInfo: {
-	chainId: string;
-	method: 'eth_sendTransaction';
-	params: {
-		abi: Abi | [];
-		to: `0x${string}`;
-		value?: string;
+  chainId: string;
+  method: "eth_sendTransaction";
+  params: {
+    abi: Abi | [];
+    to: `0x${string}`;
+    value?: string;
     // Needed if you are interacting with a smart contract in this transaction, e.g. in a mint scenario
-		data?: `0x${string}`;
-	};
-} = await framesClient.proxy.postTransaction(
-        target,
-        payload,
-      );
+    data?: `0x${string}`;
+  };
+} = await framesClient.proxy.postTransaction(target, payload);
 ```
 
 ## Process transaction data and receive a hash
