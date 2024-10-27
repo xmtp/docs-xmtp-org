@@ -1,12 +1,12 @@
 # Display a subscription Open Frame
 
-A subscription Open Frame enables users to subscribe to content. To learn how to build a subscription Open Frame, see [Subscribe](https://message-kit.vercel.app/frames/tutorials/subscribe).
+A subscription Open Frame enables users to subscribe to content. To learn how to build a subscription Open Frame, see [Subscribe](https://messagekit.ephemerahq.com/frames/tutorials/subscribe).
 
 This tutorial assumes your app already supports non-subscription Open Frames. If not, see [Get started with Open Frames](/open-frames/open-frames) to set this up first.
 
 ## Example subscription Open Frame
 
-Use this example [subscription Open Frame](https://subscribe-boilerplate-frame.vercel.app/) with this tutorial to try out the steps in your app. 
+Use this example [subscription Open Frame](https://subscribe-boilerplate-frame.vercel.app/) with this tutorial to try out the steps in your app.
 
 This example Open Frame uses a randomly generated wallet on the XMTP `dev` network to automatically send a "Thank you for subscribing!" message to your main inbox upon subscribing.
 
@@ -51,24 +51,21 @@ import { FramesClient } from "@xmtp/frames-client";
 
 const framesClient = new FramesClient(client);
 
- const payload = await framesClient.signFrameAction({
-			// Same payload as for other frames, + an address field
-			// Address should be the 0x address of the connected account
-      address,
-    });
+const payload = await framesClient.signFrameAction({
+  // Same payload as for other frames, + an address field
+  // Address should be the 0x address of the connected account
+  address,
+});
 
 const transactionInfo: {
-	chainId: string;
-	method: 'eth_personalSign';
-	params: {
-		abi: [];
-		to: `0x${string}`;
-		value?: string; // In the case of a subscribe frame, this will be the message that the user will consent to
-	};
-} = await framesClient.proxy.postTransaction(
-        target,
-        payload,
-      );
+  chainId: string;
+  method: "eth_personalSign";
+  params: {
+    abi: [];
+    to: `0x${string}`;
+    value?: string; // In the case of a subscribe frame, this will be the message that the user will consent to
+  };
+} = await framesClient.proxy.postTransaction(target, payload);
 ```
 
 ## Process transaction data and receive a signature
@@ -100,7 +97,7 @@ To complete the subscription flow and return metadata for a new success Frame, p
 ```tsx [TypeScript]
 const completeTransaction = await framesClient.proxy.post(
   buttonPostUrl,
-  payloadWithTxId,
+  payloadWithTxId
 );
 // Finally, set the current frame state to this new metadata/success screen
 ```

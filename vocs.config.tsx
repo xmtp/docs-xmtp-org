@@ -28,7 +28,10 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    { text: "Support 💬", link: "https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf" },
+    {
+      text: "Support 💬",
+      link: "https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf",
+    },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -59,7 +62,7 @@ export default defineConfig({
     },
     {
       text: "Build chat bots with MessageKit ↗",
-      link: "https://message-kit.vercel.app",
+      link: "https://messagekit.ephemerahq.com/",
       items: [], // Add this line
     },
     {
@@ -87,7 +90,7 @@ export default defineConfig({
           text: "Quickstart repos",
           link: "/consent/consent-quickstarts",
         },
-      ]
+      ],
     },
     {
       text: "Build chat inboxes",
@@ -136,7 +139,7 @@ export default defineConfig({
         {
           text: "Build group chat",
           collapsed: true,
-          items: [            
+          items: [
             {
               text: "Build group chat",
               link: "/groups/build-group-chat",
@@ -153,7 +156,7 @@ export default defineConfig({
               text: "Handle group metadata",
               link: "/groups/group-metadata",
             },
-          ],  
+          ],
         },
         {
           text: "Build push notifications",
@@ -280,12 +283,12 @@ export default defineConfig({
               link: "/perf-ux/xmtp-metamask-snap",
             },
           ],
-        },    
+        },
         {
           text: "Troubleshoot",
           link: "/dms/troubleshoot",
-        },        
-      ]
+        },
+      ],
     },
     {
       text: "Learn protocol concepts",
