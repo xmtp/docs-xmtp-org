@@ -1,6 +1,6 @@
 # Display a subscription Open Frame
 
-A subscription Open Frame enables users to subscribe to content. To learn how to build a subscription Open Frame, see [Subscribe](https://messagekit.ephemerahq.com//frames/tutorials/subscribe).
+A subscription Open Frame enables users to subscribe to content. To learn how to build a subscription Open Frame, see [Subscribe](https://messagekit.ephemerahq.com/frames/tutorials/subscribe).
 
 This tutorial assumes your app already supports non-subscription Open Frames. If not, see [Get started with Open Frames](/open-frames/open-frames) to set this up first.
 

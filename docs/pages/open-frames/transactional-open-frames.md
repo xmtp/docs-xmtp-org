@@ -1,6 +1,6 @@
 # Display a transactional Open Frame
 
-A transactional Open Frame enables users to trigger onchain transactions. To learn how to build a transaction Open Frame, see [Transactions](https://messagekit.ephemerahq.com//frames/tutorials/transactions).
+A transactional Open Frame enables users to trigger onchain transactions. To learn how to build a transaction Open Frame, see [Transactions](https://messagekit.ephemerahq.com/frames/tutorials/transactions).
 
 This tutorial assumes your app already supports non-transactional Open Frames. If not, see [Get started with Open Frames](/open-frames/open-frames) to set this up first.
 
