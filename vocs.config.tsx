@@ -185,11 +185,11 @@ export default defineConfig({
           ],
         },
         {
-          text: "Support user consent",
+          text: "Support spam-free inboxes",
           collapsed: true,
           items: [
             {
-              text: "Understand consent",
+              text: "User consent and spam-free inboxes",
               link: "/consent/user-consent",
             },
             {
@@ -197,7 +197,7 @@ export default defineConfig({
               link: "/consent/consent-methods",
             },
             {
-              text: "Filter spam",
+              text: "Handle unknown contacts",
               link: "/consent/filter-spam",
             },
           ],
