@@ -186,7 +186,7 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: "Understand consent",
+              text: "Spam-free inboxes and consent",
               link: "/consent/user-consent",
             },
             {

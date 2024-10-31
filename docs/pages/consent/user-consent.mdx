@@ -1,12 +1,36 @@
-# Understand user consent preferences with XMTP
+# Understand how user consent preferences enable spam-free inboxes
 
-User consent preferences enable your app to request and respect user consent preferences. With this feature, another blockchain account address registered on the XMTP network can have one of three consent preference values:
+Support user consent preferences in your app to provide your users with spam-free inboxes.
+
+With user consent preferences, a wallet address registered on the XMTP network can have one of three user consent preference values in relation to another user's wallet address:
 
 - Unknown
 - Allowed
 - Denied
 
-These values express a user's consent preferences for a contact. These consent preferences are stored privately in an encrypted consent list on the XMTP network. The consent list is accessible by all apps that a user has authorized.
+For example:
+
+1. `alix.eth` starts a conversation with `bo.eth`. At this time, `alix.eth` is unknown to `bo.eth` and you can display this conversations in a requests UI.
+
+    <div>
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/requests-tab.png" width="375px" />
+    </div>
+
+2. `bo.eth` views the message request. You can give `bo.eth` the option to **Block** or **Accept** the contact.
+
+    <div>
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/block-accept.jpg" width="375px" />
+    </div>
+
+   - If `bo.eth` accepts `alix.eth` as a contact, display their conversation in `bo.eth`'s main inbox. Because only contacts `bo.eth` accepts display in their main inbox, their inbox remains spam-free.
+
+      <div>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/messages-tab.png" width="375px" />
+      </div>
+
+   - If `bo.eth` blocks contact with `alix.eth`, remove the conversation from `bo.eth`'s view. In an appropriate location in your app, give the user the option to unblock the contact.
+
+These user consent preferences are stored privately in an encrypted consent list on the XMTP network. The consent list is accessible by all apps that a user has authorized. This means a user can accept, or block, a contact once and have that consent respected across all other XMTP apps they use.
 
 ## How user consent preferences are set
 
@@ -57,25 +81,3 @@ Your app should aim to handle consent preferences appropriately because they are
 For example, if a user blocked a contact, your app should respect the user's intent to not see messages from the blocked contact. Handling the consent preference incorrectly and showing the user messages from the blocked contact may cause the user to lose trust in your app.
 
 Be sure to load the latest consent list from the network at appropriate steps in your app flow to ensure that your app can operate using the latest data.
-
-Here are some suggestions for how your app might provide user experiences that respect user intent based on consent preferences:
-
-**Unknown**
-
-Consider displaying a conversation with an `unknown` contact on a **Requests** tab and give the user the option to block or allow the contact.
-
-<div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/requests-tab.png" width="375px" />
-</div>
-
-**Allowed**
-
-Consider displaying a conversation with an `allowed` contact on a **Messages** tab and give the user the option to block the contact.
-
-<div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/messages-tab.png" width="375px" />
-</div>
-
-**Denied**
-
-Consider removing a conversation with a `denied` contact from the user’s inbox completely. In an appropriate location in your app, give the user the option to unblock the contact.
