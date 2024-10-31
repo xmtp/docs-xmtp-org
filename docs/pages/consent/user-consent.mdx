@@ -1,6 +1,10 @@
 # Understand how user consent preferences enable spam-free inboxes
 
-Support user consent preferences in your app to provide your users with spam-free inboxes.
+In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. 
+
+However, with XMTP, you can give your users inboxes that are **spam-free spaces for chosen contacts only** by supporting user consent preferences.
+
+## Here's how it works
 
 With user consent preferences, a wallet address registered on the XMTP network can have one of three user consent preference values in relation to another user's wallet address:
 
@@ -10,23 +14,11 @@ With user consent preferences, a wallet address registered on the XMTP network c
 
 For example:
 
-1. `alix.eth` starts a conversation with `bo.eth`. At this time, `alix.eth` is unknown to `bo.eth` and you can display this conversations in a requests UI.
+1. `alix.eth` starts a conversation with `bo.eth`. At this time, `alix.eth` is unknown to `bo.eth` and the conversation displays in a message requests UI.
 
-    <div>
-    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/requests-tab.png" width="375px" />
-    </div>
+2. When `bo.eth` views the message request, they express their user consent preference to **Block** or **Accept** `alix.eth` as a contact.
 
-2. `bo.eth` views the message request. You can give `bo.eth` the option to **Block** or **Accept** the contact.
-
-    <div>
-    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/block-accept.jpg" width="375px" />
-    </div>
-
-   - If `bo.eth` accepts `alix.eth` as a contact, display their conversation in `bo.eth`'s main inbox. Because only contacts `bo.eth` accepts display in their main inbox, their inbox remains spam-free.
-
-      <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/messages-tab.png" width="375px" />
-      </div>
+   - If `bo.eth` accepts `alix.eth` as a contact, their conversation displays in `bo.eth`'s main inbox. Because only contacts `bo.eth` accepts display in their main inbox, their inbox remains spam-free.
 
    - If `bo.eth` blocks contact with `alix.eth`, remove the conversation from `bo.eth`'s view. In an appropriate location in your app, give the user the option to unblock the contact.
 
