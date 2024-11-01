@@ -93,7 +93,29 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build chat inboxes",
+      "text": "Build inboxes - V3 Alpha",
+      "collapsed": true,
+      "items": [
+        {
+          "text": "Create or build client",
+          "link": "/inboxes/create-client"
+        },
+        {
+          "text": "Build the inbox",
+          "link": "/inboxes/build-inbox"
+        },
+        {
+          "text": "Support spam-free inboxes",
+          "link": "/inboxes/support-consent"
+        },
+        {
+          "text": "Support push notifications",
+          "link": "/inboxes/push-notifications"
+        }
+      ]
+    },
+    {
+      text: "Build inboxes - V2/V3 Hybrid",
       collapsed: true,
       items: [
         {
