@@ -97,7 +97,7 @@ The XMTP SDK currently requires you to use [ethers](https://ethers.org/) or anot
 Yes, though not by default. To make them compatible, you must create a wrapper around viem. For example, see this [Hey](https://github.com/heyxyz/hey/blob/19e5911cd3b0d4f2c391d1a1180a7ea5d9335bf3/apps/web/src/hooks/useEthersWalletClient.tsx#L6) implementation.
 
 ```tsx
-import { ZERO_ADDRESS } from "@lenster/data/constants";
+import { ZERO_ADDRESS } from "@Hey/data/constants";
 import { CHAIN_ID } from "src/constants";
 import type { Address } from "viem";
 import { useWalletClient } from "wagmi";
@@ -117,7 +117,7 @@ const useEthersWalletClient = (): {
     },
     signMessage: async (message: string): Promise<string> => {
       const signature = await data?.signMessage({ message });
-      return signature ?? null; //lenster uses empty string which could be risky
+      return signature ?? null; //Hey uses empty string which could be risky
     },
   };
 
@@ -594,3 +594,4 @@ Ephemera employees work alongside other XMTP community members to build with and
 Ephemera focuses on serving developers. We build [SDKs, developer tools, and example apps](/get-started/examples) that help developers build great experiences with XMTP.
 
 Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024 and [open-sourced it](https://github.com/ephemeraHQ/converse-app) for the entire XMTP network.
+

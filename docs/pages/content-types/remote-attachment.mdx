@@ -6,21 +6,21 @@ description: Learn how to use the attachment and remote attachment content types
 
 Use the attachment and remote attachment content types to support attachments in your app. Remote attachments of any size can be sent using the `RemoteAttachmentCodec` and a storage provider.
 
+## Install the package
+
+```bash
+npm i @xmtp/content-type-remote-attachment
+```
+
+> In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
 ## Configure the content type
 
-In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+After importing the package, you can register the codec.
 
 :::code-group
 
 <div data-title="JavaScript">
-
-In the JavaScript SDK, you need to import this package first.
-
-```bash [Bash]
-npm i @xmtp/content-type-remote-attachment
-```
-
-After importing the package, you can register the codec.
 
 ```jsx [JavaScript]
 import {
@@ -38,8 +38,6 @@ xmtp.registerCodec(new RemoteAttachmentCodec());
 </div>
 
 <div data-title="React">
-
-The React SDK supports all current standards-track content types, but only text messages are enabled out of the box. Adding support for other standards-track content types requires a bit of configuration.
 
 ```jsx [JavaScript]
 import {
@@ -59,6 +57,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
   </StrictMode>,
 );
 ```
+
 </div>
 
 ```kotlin [Kotlin]
@@ -122,7 +121,7 @@ Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 ```tsx [TypeScript]
 const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
   attachment,
-  new AttachmentCodec(),
+  new AttachmentCodec()
 );
 ```
 
@@ -150,6 +149,7 @@ await conversation.send(remoteAttachment, {
   contentType: ContentTypeRemoteAttachment,
 });
 ```
+
 </div>
 
 <div data-title="React">
@@ -199,7 +199,7 @@ Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 ```tsx [TypeScript]
 const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
   attachment,
-  new AttachmentCodec(),
+  new AttachmentCodec()
 );
 ```
 
@@ -379,6 +379,7 @@ try await conversation.send(
 	)
 )
 ```
+
 </div>
 
 <div data-title="React Native">
@@ -409,6 +410,7 @@ await convo.send({
   },
 });
 ```
+
 </div>
 
 :::
@@ -443,13 +445,14 @@ Once you've created the attachment object, you can create a preview to show in t
 const objectURL = URL.createObjectURL(
   new Blob([Buffer.from(attachment.data)], {
     type: attachment.mimeType,
-  }),
+  })
 );
 
 const img = document.createElement("img");
 img.src = objectURL;
 img.title = attachment.filename;
 ```
+
 </div>
 
 <div data-title="React">
@@ -478,15 +481,15 @@ Once you've created the attachment object, you can create a preview to show in t
 const objectURL = URL.createObjectURL(
   new Blob([Buffer.from(attachment.data)], {
     type: attachment.mimeType,
-  }),
+  })
 );
 
 const img = document.createElement("img");
 img.src = objectURL;
 img.title = attachment.filename;
 ```
-</div>
 
+</div>
 
 ```kotlin [Kotlin]
 val message = newConversation.messages().first()
@@ -549,6 +552,7 @@ Display the attachment:
 ```jsx [JavaScript]
 <Image source={{ uri: attached.fileUri }} />
 ```
+
 </div>
 
 :::

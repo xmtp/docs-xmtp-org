@@ -12,18 +12,19 @@ You're welcome to provide feedback by commenting on [XIP-21: On-chain transactio
 
 :::
 
-## Configure the content type
-
-:::code-group
-
-<div data-title="JavaScript">
-<p>In the JavaScript SDK, you need to import this package first.</p>
+## Install the package
 
 ```bash [Bash]
 npm i @xmtp/content-type-transaction-reference
 ```
 
-<p>After importing the package, you can register the codec.</p>
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+:::code-group
+
+<div data-title="JavaScript">
 
 ```jsx [JavaScript]
 import {
@@ -34,6 +35,7 @@ import {
 const xmtp = await Client.create(signer, { env: "dev" });
 xmtp.registerCodec(new TransactionReferenceCodec());
 ```
+
 </div>
 
 ```text [React]
@@ -90,13 +92,17 @@ const transactionReference: TransactionReference = {
 };
 ```
 
-<p>Once you have a transaction reference, you can send it as part of your conversation:</p>
+<p>
+  Once you have a transaction reference, you can send it as part of your
+  conversation:
+</p>
 
 ```jsx [JavaScript]
 await conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
 ```
+
 </div>
 
 ```text [React]
