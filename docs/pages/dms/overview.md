@@ -250,7 +250,7 @@ yarn install @xmtp/xmtp-js
 <TabItem value="react" label="React"  attributes={{className: "react_tab"}}>
 
 ```bash
-npm i @xmtp/react-sdk
+npm install react @xmtp/react-sdk @xmtp/xmtp-js @xmtp/content-type-reaction @xmtp/content-type-remote-attachment @xmtp/content-type-reply
 ```
 
 </TabItem>
@@ -290,9 +290,9 @@ npm i @xmtp/react-native-sdk
 
 ### Need to send a test message?
 
-Message this XMTP message bot to get an immediate automated reply:
+Message this XMTP message bot to get an immediate `gm` reply:
 
-- `gm.xmtp.eth` (`0x937C0d4a6294cdfa575de17382c7076b579DC176`)
+- `gm.xmtp.eth` (0x937C0d4a6294cdfa575de17382c7076b579DC176)
 
 ### Troubleshooting
 

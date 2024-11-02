@@ -4,7 +4,7 @@ This document describes methods to add an optional signed payload to conversatio
 
 Senders ask users to produce a signature attesting to the consent update. Inbox apps can then consider this signature proof that the recipient has explicitly opted-in to receive the sender's messages.
 
-You can use this functionality to provide a **Subscribe** button like the one you can try on this [example subscribe page](https://subscribe-broadcast.vercel.app/subscribe/button). 
+You can use this functionality to provide a **Subscribe** button like the one you can try on this [example subscribe page](https://subscribe-broadcast.vercel.app/subscribe/button). This page is connected to the XMTP `dev` network.
 
 To explore the code providing the page, see the [subscribe-broadcast button repo](https://github.com/alexrisch/subscribe-broadcast/blob/main/src/app/subscribe/button/page.tsx) and [broadcast-api backend repo](https://github.com/alexrisch/broadcast-api/blob/main/src/index.ts#L51).
 

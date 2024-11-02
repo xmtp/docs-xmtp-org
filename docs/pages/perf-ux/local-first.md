@@ -14,7 +14,7 @@ Here’s an overview of how your app frontend, local storage, client SDK, and th
 
 ## Mobile apps
 
-When building a mobile app with the XMTP V3 [React Native](https://github.com/xmtp/xmtp-react-native), [Android](https://github.com/xmtp/xmtp-android), and [iOS](https://github.com/xmtp/xmtp-ios) SDKs, LibXMTP will [create and manage a local database](/protocol/v3/group-chat#local-database-and-syncing) for you.
+When building a mobile app with the XMTP V3 [React Native](https://github.com/xmtp/xmtp-react-native), [Android](https://github.com/xmtp/xmtp-android), and [iOS](https://github.com/xmtp/xmtp-ios) SDKs, LibXMTP will [create and manage a local database](/groups/build-group-chat#local-database-creation-and-syncing) for you.
 
 However, you should create and manage an additional separate local database if your app:
 

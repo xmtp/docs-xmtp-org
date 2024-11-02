@@ -54,7 +54,7 @@ Build your browser-based app with [XMTP JavaScript SDK](https://github.com/xmtp/
 
 To enable the Snap in your app, set the `useSnaps` flag to `true` as part of client creation. 
 
-To learn more, see [Configure the client](/dms/client#configure-the-client) and [SnapKeystore](https://github.com/xmtp/xmtp-js/blob/962259d7cfbbeb7995208f01eb5c5243c51f0b8e/packages/js-sdk/src/keystore/README.md#snapkeystore).
+To learn more, see [Configure the client](/client/create-client#configure-the-client) and [SnapKeystore](https://github.com/xmtp/xmtp-js/blob/962259d7cfbbeb7995208f01eb5c5243c51f0b8e/packages/js-sdk/src/keystore/README.md#snapkeystore).
 
 Upon first use, your users will be prompted to choose to use Sign in with XMTP with your app.
 
@@ -64,9 +64,9 @@ To learn more, see [Installing and upgrading Snaps](https://github.com/xmtp/xmtp
 
 Users of the Snap:
 
-- Email: [support@xmtp.com](mailto:support@xmtp.com)
-- Discord: [User support channel](https://discord.com/channels/831836269558235136/1149024081874784356)
+- [support@xmtp.com](mailto:support@xmtp.com)
+- [User support forum](https://community.xmtp.org/c/help/get-help-and-guidance-about-using-apps-and-services-built-with-xmtp/75)
 
 Developers building with the Snap:
 
-- Discord: [Developer support channel](https://discord.com/channels/831836269558235136/1080102336564826193)
+- [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf), powered by XMTP

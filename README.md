@@ -10,8 +10,8 @@ You can contribute by submitting:
 
 - A [bug report](https://github.com/xmtp/docs-xmtp-org/issues/new?assignees=jhaaaa&labels=bug%2C+documentation&projects=&template=bug_report.md&title=)
 - A [feature request](https://github.com/xmtp/docs-xmtp-org/issues/new?assignees=jhaaaa&labels=documentation%2C+enhancement&projects=&template=feature_request.md&title=)
-- A pull request
-
+- A [pull request](https://github.com/xmtp/docs-xmtp-org/pulls)
+  
 If you submit a pull request (PR), include a link to the bug report or feature request your PR addresses. If a documentation issue doesn't exist, please [open one](https://github.com/xmtp/docs-xmtp-org/issues) before you start contributing.
 
 Have a question about contributing? Post to the [XMTP Help & Resources forum](https://community.xmtp.org/c/help/9).
@@ -20,7 +20,7 @@ And lastly, when contributing, please follow the XMTP community code of conduct 
 
 ## Use the “Suggest changes to this page” link to submit a pull request
 
-Using the **Suggest changes to this page** link provides a guided flow for editing content and submitting a PR using the GitHub UI in a web browser. 
+Using the **Suggest changes to this page** link provides a guided flow for editing content and submitting a PR using the GitHub UI in a web browser.
 
 A PR is a request to add (or pull) your content updates into the project and publish them to the documentation on the site. After you submit a pull request, your proposed changes are publicly visible, meaning that anyone with a GitHub account can see them on GitHub.
 

@@ -1,6 +1,6 @@
-# Build with user consent methods with XMTP
+# Support spam-free inboxes with XMTP user consent methods
 
-Use the following methods to support user consent preferences in your app built with XMTP.
+Use the following user consent methods to [support spam-free inboxes](/consent/user-consent) in your app built with XMTP.
 
 ## Deny or allow a contact
 

@@ -29,15 +29,11 @@ Is your app using a great tool to resolve identities? Open an [issue](https://gi
 
 ### Airstack
 
-Airstack provides tools to resolve [ENS](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/resolve-identities/ens), [Farcaster](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/farcaster/resolve-farcaster-users), and [Lens](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/lens/resolve-lens-profiles) identities.
+[Airstack](https://docs.airstack.xyz/airstack-docs-and-faqs/guides/resolve-identities) provides tools to resolve Ox, ENS, Lens, and Farcaster identities.
 
-:::note[Lens v1 and v2 support]
-_Airstack currently supports identity resolution with both the new Lens V2 handle `namespace/@handlename` format and the legacy V1 `.lens` profile name_
-:::
+### ENSjs
 
-### Everyname
-
-Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, and other identities](https://docs.everyname.xyz/api/forward-social-profile).
+[ENSjs](https://github.com/ensdomains/ensjs) provides tools to resolve ENS identities.
 
 ### SimpleHash
 
@@ -45,4 +41,4 @@ Everyname provides tools to resolve [ENS, Farcaster, Lens, Unstoppable Domains, 
 
 ### Unstoppable Domains
 
-Unstoppable Domains provides tools to resolve [Unstoppable Domains](https://docs.unstoppabledomains.com/resolution/overview/) identities.
+[Unstoppable Domains](https://docs.unstoppabledomains.com/resolution/overview/) provides tools to resolve Unstoppable Domains identities.

@@ -29,8 +29,8 @@ export default defineConfig({
   iconUrl: "/x-mark-blue.png",
   topNav: [
     {
-      text: "Converse app",
-      link: "https://github.com/ephemeraHQ/converse-app",
+      text: "Support 💬",
+      link: "https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf",
     },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
@@ -41,34 +41,18 @@ export default defineConfig({
   },
   socials: [
     {
-      icon: "discord",
-      link: "https://discord.gg/xmtp",
-    },
-    {
       icon: "github",
       link: "https://github.com/xmtp",
     },
   ],
   sidebar: [
     {
-      text: "Get started",
-      collapsed: false,
+      text: "Overview",
+      collapsed: true,
       items: [
         {
           text: "Intro to XMTP",
-          link: "/",
-        },
-        {
-          text: "Developer quickstart",
-          link: "/get-started/developer-quickstart",
-        },
-        {
-          text: "SDKs and example apps",
-          link: "/get-started/examples",
-        },
-        {
-          text: "SDK references",
-          link: "/get-started/references",
+          link: "/get-started/intro",
         },
         {
           text: "FAQ",
@@ -77,24 +61,228 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build 1:1 chat",
-      collapsed: false,
+      text: "Build chat bots with MessageKit ↗",
+      link: "https://messagekit.ephemerahq.com/",
+      items: [], // Add this line
+    },
+    {
+      text: "Embed a chat widget",
+      link: "/chat-widget/chat-widget",
+      items: [], // Add this line
+    },
+    {
+      text: "Broadcast notifications",
+      collapsed: true,
       items: [
         {
+          text: "Use case",
+          link: "/consent/build-engagement",
+        },
+        {
+          text: "Enable subscriptions",
+          link: "/consent/subscribe",
+        },
+        {
+          text: "Broadcast notifications",
+          link: "/consent/broadcast",
+        },
+        {
+          text: "Quickstart repos",
+          link: "/consent/consent-quickstarts",
+        },
+      ],
+    },
+    {
+      text: "Build chat inboxes",
+      collapsed: true,
+      items: [
+        {
+          text: "Get started",
+          collapsed: false,
+          items: [
+            {
+              text: "Developer quickstart",
+              link: "/get-started/developer-quickstart",
+            },
+            {
+              text: "SDKs and example apps",
+              link: "/get-started/examples",
+            },
+            {
+              text: "SDK references",
+              link: "/get-started/references",
+            },
+          ],
+        },
+        {
           text: "Create a client",
-          link: "/dms/client",
+          link: "/client/create-client",
         },
         {
-          text: "Create a conversation",
-          link: "/dms/conversations",
+          text: "Build 1:1 chat",
+          collapsed: true,
+          items: [
+            {
+              text: "Create a 1:1 conversation",
+              link: "/dms/conversations",
+            },
+            {
+              text: "Send 1:1 messages",
+              link: "/dms/messages",
+            },
+            {
+              text: "Stream 1:1 conversations & messages",
+              link: "/dms/streams",
+            },
+          ],
         },
         {
-          text: "Send messages",
-          link: "/dms/messages",
+          text: "Build group chat",
+          collapsed: true,
+          items: [
+            {
+              text: "Build group chat",
+              link: "/groups/build-group-chat",
+            },
+            {
+              text: "Handle group consent",
+              link: "/groups/group-consent",
+            },
+            {
+              text: "Handle group permissions",
+              link: "/groups/group-permissions",
+            },
+            {
+              text: "Handle group metadata",
+              link: "/groups/group-metadata",
+            },
+          ],
         },
         {
-          text: "Stream conversations & messages",
-          link: "/dms/streams",
+          text: "Build push notifications",
+          collapsed: true,
+          items: [
+            {
+              text: "Send push notifications",
+              link: "/notifications/build-notifications",
+            },
+            {
+              text: "Set up a push notification server",
+              link: "/notifications/notif-server",
+            },
+            {
+              text: "Best practices",
+              link: "/notifications/notif-best-practices",
+            },
+            {
+              text: "Try Android example notifications",
+              link: "/notifications/notifs-android",
+            },
+            {
+              text: "Try iOS example notifications",
+              link: "/notifications/notifs-ios",
+            },
+          ],
+        },
+        {
+          text: "Support spam-free inboxes",
+          collapsed: true,
+          items: [
+            {
+              text: "User consent and spam-free inboxes",
+              link: "/consent/user-consent",
+            },
+            {
+              text: "Build with consent methods",
+              link: "/consent/consent-methods",
+            },
+            {
+              text: "Handle unknown contacts",
+              link: "/consent/filter-spam",
+            },
+          ],
+        },
+        {
+          text: "Support content types",
+          collapsed: true,
+          items: [
+            {
+              text: "Understand content types",
+              link: "/content-types/content-types",
+            },
+            {
+              text: "Remote attachment",
+              link: "/content-types/remote-attachment",
+            },
+            {
+              text: "Replies",
+              link: "/content-types/reply",
+            },
+            {
+              text: "Reactions",
+              link: "/content-types/reaction",
+            },
+            {
+              text: "Read receipts",
+              link: "/content-types/read-receipt",
+            },
+            {
+              text: "Onchain transaction references",
+              link: "/content-types/transaction-ref",
+            },
+            {
+              text: "Custom content type",
+              link: "/content-types/custom",
+            },
+          ],
+        },
+        {
+          text: "Display Open Frames",
+          collapsed: true,
+          items: [
+            {
+              text: "Get started with Open Frames",
+              link: "/open-frames/open-frames",
+            },
+            {
+              text: "Display transactional Open Frames",
+              link: "/open-frames/transactional-open-frames",
+            },
+            {
+              text: "Display subscription Open Frames",
+              link: "/open-frames/subscription-open-frames",
+            },
+          ],
+        },
+        {
+          text: "Performance & UX",
+          collapsed: true,
+          items: [
+            {
+              text: "Use local-first architecture",
+              link: "/perf-ux/local-first",
+            },
+            {
+              text: "Use optimistic sending",
+              link: "/perf-ux/optimistic-sending",
+            },
+            {
+              text: "Resolve identities",
+              link: "/perf-ux/identity-resolution",
+            },
+            {
+              text: "Performance test",
+              link: "/perf-ux/debug-and-test",
+            },
+            {
+              text: "Launch checklist",
+              link: "/perf-ux/get-featured",
+            },
+            {
+              text: "MetaMask Snap",
+              link: "/perf-ux/xmtp-metamask-snap",
+            },
+          ],
         },
         {
           text: "Troubleshoot",
@@ -103,222 +291,48 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build group chat",
-      collapsed: false,
+      text: "Learn protocol concepts",
+      collapsed: true,
       items: [
         {
-          text: "Build group chat",
-          link: "/groups/build-group-chat",
+          text: "Account signatures",
+          link: "/protocol/signatures",
         },
         {
-          text: "Handle group consent",
-          link: "/groups/group-consent",
+          text: "Security and encryption",
+          link: "/protocol/security-encryption",
         },
         {
-          text: "Handle group permissions",
-          link: "/groups/group-permissions",
+          text: "Protocols",
+          link: "/protocol/protocols",
         },
         {
-          text: "Handle group metadata",
-          link: "/groups/group-metadata",
-        },
-      ],
-    },
-    {
-      text: "Support user consent",
-      collapsed: false,
-      items: [
-        {
-          text: "Understand user consent",
-          link: "/consent/user-consent",
+          text: "Multi-wallet identity",
+          link: "/protocol/v3/identity",
         },
         {
-          text: "Build with consent methods",
-          link: "/consent/consent-methods",
+          text: "Message history",
+          link: "/protocol/v3/message-history",
         },
         {
-          text: "Add consent to existing JS app",
-          link: "/consent/consent-js",
-        },
-        {
-          text: "Add consent to existing RN app",
-          link: "/consent/consent-rn",
-        },
-        {
-          text: "Filter spam",
-          link: "/consent/filter-spam",
-        },
-        {
-          text: "Enable subscriptions",
-          link: "/consent/subscribe",
-        },
-        {
-          text: "Send broadcast messages",
-          link: "/consent/broadcast",
-        },
-        {
-          text: "Build a consent management system",
-          link: "/consent/consent-management",
-        },
-      ],
-    },
-    {
-      text: "Support content types",
-      collapsed: false,
-      items: [
-        {
-          text: "Understand content types",
-          link: "/content-types/content-types",
-        },
-        {
-          text: "Static attachment",
-          link: "/content-types/attachment",
-        },
-        {
-          text: "Remote attachment",
-          link: "/content-types/remote-attachment",
-        },
-        {
-          text: "Replies",
-          link: "/content-types/reply",
-        },
-        {
-          text: "Reactions",
-          link: "/content-types/reaction",
-        },
-        {
-          text: "Read receipts",
-          link: "/content-types/read-receipt",
-        },
-        {
-          text: "Onchain transaction references",
-          link: "/content-types/transaction-ref",
-        },
-        {
-          text: "Custom content type",
-          link: "/content-types/custom",
-        },
-      ],
-    },
-    {
-      text: "Push notifications",
-      collapsed: false,
-      items: [
-        {
-          text: "Build notifications",
-          link: "/notifications/build-notifications",
-        },
-        {
-          text: "Set up a notification server",
-          link: "/notifications/notif-server",
-        },
-        {
-          text: "Best practices",
-          link: "/notifications/notif-best-practices",
-        },
-        {
-          text: "Try Android example notifications",
-          link: "/notifications/notifs-android",
-        },
-        {
-          text: "Try iOS example notifications",
-          link: "/notifications/notifs-ios",
-        },
-      ],
-    },
-    {
-      text: "Performance & UX",
-      collapsed: false,
-      items: [
-        {
-          text: "Use local-first architecture",
-          link: "/perf-ux/local-first",
-        },
-        {
-          text: "Use optimistic sending",
-          link: "/perf-ux/optimistic-sending",
-        },
-        {
-          text: "Resolve identities",
-          link: "/perf-ux/identity-resolution",
-        },
-        {
-          text: "Performance test",
-          link: "/perf-ux/debug-and-test",
-        },
-        {
-          text: "Launch checklist",
-          link: "/perf-ux/get-featured",
-        },
-        {
-          text: "MetaMask Snap",
-          link: "/perf-ux/xmtp-metamask-snap",
-        },
-      ],
-    },
-    {
-      text: "Display Open Frames",
-      collapsed: false,
-      items: [
-        {
-          text: "Get started with Open Frames",
-          link: "/open-frames/open-frames",
-        },
-        {
-          text: "Display transactional Open Frames",
-          link: "/open-frames/transactional-open-frames",
-        },
-        {
-          text: "Display subscription Open Frames",
-          link: "/open-frames/subscription-open-frames",
-        },
-      ],
-    },
-    {
-      text: "Protocol concepts",
-      collapsed: false,
-      items: [
-        {
-          text: "XMTP versions",
-          link: "/protocol/xmtp-versions",
+          text: "Smart wallet support",
+          link: "/protocol/v3/smart-wallet",
         },
         {
           text: "Portable inbox",
           link: "/protocol/portable-inbox",
         },
         {
-          text: "Account signatures",
-          link: "/protocol/signatures",
-        },
-        {
           text: "XIPs",
           link: "/protocol/xips",
         },
         {
-          text: "XMTP V3",
-          collapsed: false,
-          items: [
-            {
-              text: "Group chat",
-              link: "/protocol/v3/group-chat",
-            },
-            {
-              text: "Multi-wallet identity",
-              link: "/protocol/v3/identity",
-            },
-            {
-              text: "Message history",
-              link: "/protocol/v3/message-history",
-            },
-            {
-              text: "Smart wallet support",
-              link: "/protocol/v3/smart-wallet",
-            },
-          ],
+          text: "XMTP versions",
+          link: "/protocol/xmtp-versions",
         },
         {
           text: "XMTP V2",
-          collapsed: false,
+          collapsed: true,
           items: [
             {
               text: "Architecture",

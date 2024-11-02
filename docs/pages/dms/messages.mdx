@@ -30,7 +30,7 @@ You might want to consider [optimistically sending messages](/perf-ux/optimistic
 const preparedTextMessage = await conversation.prepareMessage(messageText);
 //After preparing an optimistic message, use its `send` method to send it.
 try {
-  preparedMessage.send();
+  preparedTextMessage.send();
 } catch (e) {
   // handle error, enable canceling and retries (see below)
 }
@@ -70,9 +70,9 @@ export const SendMessage: React.FC<{ conversation: CachedConversation }> = ({
     async (e: React.FormEvent) => {
       e.preventDefault();
       if (peerAddress && isValidAddress(peerAddress) && message) {
-        setIsLoading(true);
+        setIsSending(true);
         await sendMessage(conversation, message);
-        setIsLoading(false);
+        setIsSending(false);
       }
     },
     [message, peerAddress, sendMessage],
@@ -275,7 +275,7 @@ const conversation = await xmtp.conversations.newConversation(
   '0x3F11b27F323b62B159D2642964fa27C46C841897'
 )
 
-for await (const page of conversation.messages(limit: 25)) {
+for await (const page of conversation.messages({limit: 25})) {
   for (const msg of page) {
     // Breaking from the outer loop will stop the client from requesting any further pages
     if (msg?.content() === 'gm') {

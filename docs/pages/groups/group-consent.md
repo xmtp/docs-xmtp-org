@@ -1,12 +1,12 @@
 # Handle user consent in group chat
 
-In addition to permissions that enable designated members to add and remove members from a group chat, user consent preferences also apply.
+In addition to permissions that enable designated members to add and remove members from a group chat, you can apply [user consent preferences](/consent/user-consent) to group chats to prevent unwanted contacts. There are consent preferences that enable a user to allow or deny contact from a group ID, inbox ID, or address in a group chat context.
 
-User consent preferences enable a user to allow or deny contact from a group ID, inbox ID, or address in a group chat context.
+For example, the Group protocol provides the `added_by_inbox_id` method to find out who has initiated the user into a group chat. Apps can compare this inboxId using the standard `isInboxIdAllowed()` or `isInboxIdDenied()` functions on the contacts to determine how and whether the group should be listed and how and whether messages are displayed based on the design of the app and the user's settings.
 
-For example, your app can check `inboxId` values using the `isInboxIdAllowed()` or `isInboxIdDenied()` functions. Then, based on your app's design and the user's settings, your app can determine how and whether a group chat and message should be displayed for a user.
-
-User consent preferences also exist in the 1:1 chat context. To learn more, see [Understand user consent](/consent/user-consent).
+:::note
+Even if an app is not displaying a group chat, LibXMTP will keep receiving group messages and store them in the local database as long as the user is a member of the group.
+:::
 
 ## Allow or deny contact by wallet in group chat
 

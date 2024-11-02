@@ -4,11 +4,11 @@ description: Learn how to build group chat with XMTP
 
 # Build group chat with MLS and XMTP
 
-Secure group chat is an important part of every messaging app. In this guide, we cover the essentials of building group chat using XMTP, from the initial step of ensuring that potential members have v3 identities to starting a new group chat to synchronizing group chat details.
+Secure group chat is an important part of every messaging app. XMTP group chat is based on the [MLS specification](https://www.rfc-editor.org/rfc/rfc9420.html).
 
-XMTP group chat is based on the [MLS specification](https://www.rfc-editor.org/rfc/rfc9420.html) and can include anywhere from 1 to 400 members.
+To learn nore, see [Security and encryption with MLS and XMTP](/protocol/security-encryption).
 
-To learn about group chat security, encryption, and other details, see [Group chat concepts and protocols](/protocol/v3/group-chat).
+In this guide, we cover the essentials of building group chat using XMTP, from the initial step of ensuring that potential members have v3 identities to starting a new group chat to synchronizing group chat details.
 
 ## Overview
 
@@ -47,13 +47,41 @@ The XMTP [JavaScript SDK](https://github.com/xmtp/xmtp-js) and [React SDK](https
 
 Web support for group chat is lagging due to technical challenges related to integrating WebAssembly (WASM) and its extensions. WASM sandbox cannot access the operating system directly, which is necessary for tasks like file reads. WASI extends WASM to allow operating system interaction, but it comes with its own set of challenges. For example, current WASI 0.2 has no built-in way to handle asynchronous operations effectively. The team is working toward solutions. 
 
+### Group size
+
+Group sizes can range from 1 to 400. XMTP expects most groups will fall into one of two profiles: 
+
+- Small groups where everyone knows each other (e.g., texting) and in which the group size is not large enough to require a lot of permissions or moderation.
+
+- Large groups of relative strangers (e.g., Discord) that often start with restricted permission and more moderation to ensure the group is not too noisy for its intended purpose.
+
+Also, a one-person group is allowed. Messages sent to the group will be broadcast to all the installations used by that person.
+
+### Local database creation and syncing
+
+When an app first calls `Client.create()` in one of the XMTP APIs, LibXMTP creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface. See [Saving keys](/client/create-client#saving-keys) for instructions on how to extract the key, store it, and pass it to `Client.create()` later.  If you want to delete your local database, call `Client.deleteLocalDatabase()`.
+
+Calling the `sync()` method on the Conversations protocol checks for welcome messages and creates a new group if one is found. The new group will not show up on the list until the app syncs. Calling the `sync()` method on the Group protocol prompts LibXMTP to pull updates from the network and push any unsent updates from the client related to the group. This will update the database for the group.
+
+In some cases, LibXMTP will perform a sync automatically. This currently includes calls to add/remove members to a group or using the stream functions. Outside of those methods, apps can call `sync()` when they choose to efficiently manage network traffic.
+
+:::info
+If your app supports [reactions](/content-types/reaction) or [replies](/content-types/reply), you should create and manage a separate [local database](/perf-ux/local-first) to store these content types. For example, you can use the device's encrypted container as the local cache to store decrypted data. This local database is key to performantly displaying reactions and replies with their referenced messages when rendering message lists.
+:::
+
+When a message is sent, it is stored in the local database with a status of `Unpublished`. `find_messages()` will display unpublished messages by default unless you filter on `DeliveryStatus`. Unpublished messages can be displayed to the user but should be marked as not yet sent in the app UI.
+
+When the app calls `sync()`, LibXMTP will make three attempts to automatically send the message to the network. If all three attempts fail, the message status will be marked as `Failed`. If it succeeds, it will be marked as `Published`.
+
+To learn more about database operations, see the [XMTP MLS README](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
 ### Push notifications
 
 Group chat supports push notifications. To learn more, see the [Build push notifications](/notifications/build-notifications).
  
-## XMTP V3 SDK example apps
+## Example apps
 
-If you’d like to dive right into exploring the code, check out the example apps in these XMTP V3 SDKs that support group chat:
+If you’d like to dive right into exploring the code, check out the example apps in these XMTP SDKs that support group chat:
 
 - XMTP React Native SDK [Example](https://github.com/xmtp/xmtp-react-native/tree/main/example)
 - XMTP Android SDK [Example](https://github.com/xmtp/xmtp-android/tree/main/example)
@@ -67,89 +95,7 @@ Take these steps to create group chats.
 
 ### Create a client that supports group chat
 
-By default, XMTP V3 clients support XMTP V2 messages, which include direct messages only. 
-
-If you want your app to support group chat offered by V3, you must explicitly configure your client to support group chat.
-
-`appContext` is used for Android only. It is required if `enableV3` is `true`.
-
-`dbEncryptionKey` is optional. For Android, if not provided, a key is created and stored for you. For iOS, if not provided, the database remains unencrypted.
-
-:::code-group
-
-```jsx [React Native]
-XMTP.Client.create(signer, {
-  env: "production,
-  enableV3: true', DEFAULT false
-  dbDirectory: "mydbdir", OPTIONAL pass in any dir otherwise, default is `xmtp_db`
-  dbEncryptionKey: 32bytearray,
-})
-```
-
-```kotlin [Kotlin]
-val client =
-    Client().create(
-        account = wallet (that implements a SigningKey),
-        options = ClientOptions(
-            ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
-            enableV3 = true, DEFAULT false
-            appContext = context, REQUIRED if enableV3 is true, so it can access the DB
-            dbDirectory = "mydbdir", OPTIONAL pass in any dir otherwise, default is `xmtp_db`
-            dbEncryptionKey = 32bytearray, OPTIONAL If not provided, we create and store one for you
-        )
-    )
-```
-
-```swift [Swift]
-let client = try await Client.create(
-				account: wallet (that implements a SigningKey),
-				options: .init(
-					api: .init(env: .production, isSecure: true),
-					enableV3: true, DEFAULT false
-					dbDirectory: "mydir", OPTIONAL Otherwise default is the documents directory as `xmtp_db`
-					dbEncryptionKey: key, OPTIONAL Otherwise null
-				)
-			)
-```
-
-```tsx [Node]
-// this API is experimental and may change in the future
-
-import { createWalletClient, http, toBytes } from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { mainnet } from "viem/chains";
-import { Client } from "@xmtp/mls-client";
-
-// create a wallet for signing
-const key = generatePrivateKey();
-const account = privateKeyToAccount(key);
-const wallet = createWalletClient({
-  account,
-  chain: mainnet,
-  transport: http(),
-});
-
-// create client
-const client = Client.create(account.address, {
-  env: "dev", // or 'production'
-  // provide a path for the local SQLite DB
-  dbPath: "path/to/local/db/file.db3",
-});
-
-// sign the provided message
-const signature = await user.wallet.signMessage({
-  // it's possible for `signatureText` to be `null` if the identity is already registered
-  message: client.signatureText!,
-});
-const signatureBytes = toBytes(signature);
-
-// add the signature to the client
-client.addEcdsaSignature(signatureBytes);
-
-// register client identity
-await client.registerIdentity();
-```
-:::
+See [Create a client](/client/create-client#create-a-client).
 
 ### Check if a user has a V3 identity
 
@@ -708,3 +654,19 @@ await group.sync();
 ```
 
 :::
+
+## SDK method call flows
+
+### Form a group chat
+
+![Forming a group](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/form-groups.png)
+
+Forming groups is fairly simple. Alix's app can use the conversation protocol to create a group with Bo and Caro. Behind the scenes, XMTP looks up every installation belonging to Bo and Caro and sends each installation a welcome message. Each installation has its own key pair, so each message is encrypted separately. 
+
+Bo and Caro's apps then see the new conversation on the list when they use the conversation protocol to sync with XMTP. They then use the group protocol to engage with individual groups.
+
+### Send and receive group chat messages
+
+![Sending and receiving](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/send-receive.png)
+
+When Alix sends a message to the group, XMTP sends the message to every installation of every group member. Other group member's apps use the group protocol to receive the message.
