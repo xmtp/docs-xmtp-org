@@ -32,19 +32,19 @@ With XMTP, you own and control your messages and are always free to use the app 
 
 Developers build messaging into their apps using the **XMTP open protocol and standards**. This makes the messaging features in these apps portable, or able to exchange information. This is what enables **all apps built with XMTP to automatically provide portable inboxes** for users.
 
-To learn more about building with XMTP, see [Quickstart for the XMTP client SDK for JavaScript](/get-started/developer-quickstart).
+To learn more about building with XMTP, see [Quickstart for the XMTP client SDK for JavaScript](https://docs.xmtp.org/get-started/developer-quickstart).
 
 ### You own and control your XMTP identity
 
 To use XMTP, you create an XMTP identity that you can use to send and receive messages with any app built with XMTP. Because you create the identity using an Ethereum account’s public and private keys that only you have access to, **you own and control your XMTP identity.**
 
-To learn more about keys and XMTP identities, see [Key generation and usage in XMTP](/protocol/v2/key-generation-and-usage).
+To learn more about keys and XMTP identities, see [Multi-wallet idenity](/protocol/v3/identity).
 
 ### You own and control your messages
 
 When you send messages with an app built with XMTP, the messages are **end-to-end encrypted** and stored on and retrieved from the **XMTP network**. Because the XMTP network is progressively decentralized and not controlled by any single entity, **you own and control your messages.**
 
-To learn more about message encryption, see [Invitation and message encryption](/protocol/v2/invitation-and-message-encryption).
+To learn more about encryption, see [Security and encryption with MLS and XMTP](/protocol/security-encryption).
 
 ### A vibrant ecosystem of apps built with XMTP
 

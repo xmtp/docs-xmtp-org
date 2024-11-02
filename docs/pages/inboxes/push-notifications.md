@@ -14,7 +14,7 @@ Join the [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/e-KZyw77
 
 With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
 
-For best practices, see [Best practices for push notifications](/notifications/notif-best-practices).
+For best practices, see [Best practices for push notifications](https://docs.xmtp.org/notifications/notif-best-practices).
 
 ### **Get a Welcome message topic ID**
 
@@ -90,10 +90,10 @@ To implement push notifications in your app, you must run a push notification se
 
 - **Continuous monitoring**: The XMTP network operates on a decentralized protocol, where messages are exchanged directly between clients. However, for push notifications, your app needs a dedicated server to continuously listen for new messages or events on the XMTP network, even when the user’s device is offline or the app is not running.
 - **Message processing**: Upon detecting new messages or events, the server processes them to determine their relevance and formats them appropriately for push notifications. This includes extracting necessary information, such as the sender’s identity and message content, to craft meaningful notifications.
-- **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](/notifications/build-notifications#understand-apple-entitlements-for-ios-apps) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user’s device.
+- **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](https://docs.xmtp.org/notifications/build-notifications#understand-apple-entitlements-for-ios-apps) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user’s device.
 
 To learn more about running a push notification server, see:
 
-- Go: [Set up a push notification server](/notifications/notif-server)
-- Android: [Try push notifications with the Android example XMTP app](/notifications/notifs-android)
-- iOS: [Try push notifications with the iOS example XMTP app](/notifications/notifs-ios) 
+- Go: [Set up a push notification server](https://docs.xmtp.org/notifications/notif-server)
+- Android: [Try push notifications with the Android example XMTP app](https://docs.xmtp.org/notifications/notifs-android)
+- iOS: [Try push notifications with the iOS example XMTP app](https://docs.xmtp.org/notifications/notifs-ios) 

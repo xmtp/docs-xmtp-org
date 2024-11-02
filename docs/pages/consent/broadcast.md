@@ -5,9 +5,9 @@ Broadcasting with XMTP allows you to send a single message to multiple recipient
 ## Prerequisites
 
 - Wallet is XMTP-enabled  
-Before sending a broadcast message, [use `canMessage`](/get-started/developer-quickstart#check-if-the-recipient-address-is-xmtp-enabled) to verify that each recipient's wallet is enabled on the XMTP network. Only XMTP-enabled wallets can receive and view messages.
+Before sending a broadcast message, [use `canMessage`](https://docs.xmtp.org/get-started/developer-quickstart#check-if-the-recipient-address-is-xmtp-enabled) to verify that each recipient's wallet is enabled on the XMTP network. Only XMTP-enabled wallets can receive and view messages.
 - User consent  
-In accordance with data privacy laws, [obtain explicit consent](/consent/user-consent) from users before sending them broadcast messages.
+In accordance with data privacy laws, [obtain explicit consent](/inboxes/support-consent) from users before sending them broadcast messages.
 
 :::warning
 Broadcast messages delivered to users who haven't provided explicit consent to receive them are more likely to be treated as spam, which significantly reduces the chances that recipients will see them.
