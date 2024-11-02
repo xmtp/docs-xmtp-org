@@ -5,9 +5,9 @@ Broadcasting with XMTP allows you to send a single message to multiple recipient
 ## Prerequisites
 
 - Wallet is XMTP-enabled  
-Before sending a broadcast message, [use `canMessage`](/get-started/developer-quickstart#check-if-the-recipient-address-is-xmtp-enabled) to verify that each recipient's wallet is enabled on the XMTP network. Only XMTP-enabled wallets can receive and view messages.
+  Before sending a broadcast message, [use `canMessage`](/get-started/developer-quickstart#check-if-the-recipient-address-is-xmtp-enabled) to verify that each recipient's wallet is enabled on the XMTP network. Only XMTP-enabled wallets can receive and view messages.
 - User consent  
-In accordance with data privacy laws, [obtain explicit consent](/consent/user-consent) from users before sending them broadcast messages.
+  In accordance with data privacy laws, [obtain explicit consent](/consent/user-consent) from users before sending them broadcast messages.
 
 :::warning
 Broadcast messages delivered to users who haven't provided explicit consent to receive them are more likely to be treated as spam, which significantly reduces the chances that recipients will see them.
@@ -15,6 +15,7 @@ Broadcast messages delivered to users who haven't provided explicit consent to r
 
 ## Use broadcast tools
 
+- Use the [Broadcast Endpoint](https://replit.com/@FabrizioGuespe/XMTP-Broadcast-Endpoint?v=1) deployed in Replit for sending simple broadcasts.
 - Use the [Broadcast SDK](https://www.npmjs.com/package/@xmtp/broadcast-sdk) to send high-volume broadcasts. The SDK helps manage [rate-limiting logic](#understand-xmtp-network-rate-limits) and enables easier broadcasting setup.
 
 - Explore the [broadcaster-app](https://github.com/alexrisch/broadcaster-app) repo for concise strategies and code samples for high-volume broadcast management, including batch processing, error handling, and rate-limit adherence.
@@ -42,7 +43,7 @@ async function sendBroadcastMessage(recipients, message) {
       console.log(`Message successfully sent to ${recipient}`);
     } else {
       console.log(
-        `Recipient ${recipient} is not activated on the XMTP network.`,
+        `Recipient ${recipient} is not activated on the XMTP network.`
       );
     }
   }
@@ -85,8 +86,8 @@ You'll get an HTTP 429 error from an XMTP network node and must wait for the nex
 If you prefer to handle rate-limiting manually, here are some tips:
 
 - Send messages in batches
-- Spread your requests over 5 minutes  
-- Use multiple IPs to make requests  
+- Spread your requests over 5 minutes
+- Use multiple IPs to make requests
 - Implement error handling that can manage rate-limiting responses from the network, including adjusting send rates and retrying failed messages.
 - Bulk `canMessage` makes API calls in 50-address batches.
 
@@ -110,7 +111,7 @@ If you prefer to handle rate-limiting manually, here are some tips:
   >
   > [Cancel]&nbsp;&nbsp;&nbsp;[**Continue**]
 
-  If it suits your use case, consider handling consent using a [**Subscribe** button with consent proofs](/consent/subscribe) on a web page or in a dapp. 
+  If it suits your use case, consider handling consent using a [**Subscribe** button with consent proofs](/consent/subscribe) on a web page or in a dapp.
 
 - **If your app allows your customers to send broadcast messages to their users**, be sure to advise your customers to get their users' consent before sending them broadcast messages. For example, you can provide this guidance during onboarding. Here's some example text you can build upon:
 
