@@ -9,11 +9,11 @@ import TabItem from "@theme/TabItem";
 
 # Get started with XMTP
 
-The [XMTP message API](/protocol/v2/architectural-overview#network-layer) revolves around a network client that allows retrieving and sending messages to other network participants.
+The [XMTP message API](https://github.com/xmtp/docs-xmtp-org/blob/main/docs/pages/protocol/v2/architectural-overview.md) revolves around a network client that allows retrieving and sending messages to other network participants.
 
-A client must be connected to a wallet on startup. If this is the very first time the client is created, the client will generate a [key bundle](/protocol/v2/key-generation-and-usage) that is used to [encrypt and authenticate messages](/protocol/v2/invitation-and-message-encryption).
+A client must be connected to a wallet on startup. If this is the very first time the client is created, the client will generate a [key bundle](https://github.com/xmtp/docs-xmtp-org/blob/main/docs/pages/protocol/v2/key-generation-and-usage.md) that is used to [encrypt and authenticate messages](https://github.com/xmtp/docs-xmtp-org/blob/main/docs/pages/protocol/v2/invitation-and-message-encryption.md).
 
-The key bundle persists encrypted in the network using a [wallet signature](/protocol/signatures). The public side of the key bundle is also regularly advertised on the network to allow parties to establish shared encryption keys.
+The key bundle persists encrypted in the network using a [wallet signature](https://github.com/xmtp/docs-xmtp-org/blob/main/docs/pages/protocol/signatures.mdx). The public side of the key bundle is also regularly advertised on the network to allow parties to establish shared encryption keys.
 
 ### Overview
 
@@ -296,4 +296,4 @@ Message this XMTP message bot to get an immediate `gm` reply:
 
 ### Troubleshooting
 
-- If you run into issues with Buffer and polyfills, see these [solutions](/get-started/faq#why-my-app-is-failing-saying-buffer-is-not-found)
+- If you run into issues with Buffer and polyfills, see these [solutions](https://github.com/xmtp/docs-xmtp-org/blob/main/docs/pages/get-started/faq.md)
