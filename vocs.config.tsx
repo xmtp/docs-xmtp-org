@@ -47,20 +47,44 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Create a client",
-          link: "/inboxes/create-client",
-        },
-        {
-          text: "Build an inbox",
+          text: "Build a chat inbox",
           link: "/inboxes/build-inbox",
         },
         {
           text: "Support spam-free inboxes",
-          link: "/inboxes/user-consent",
+          collapsed: true,
+          items: [
+            {
+              text: "How spam-free inboxes work",
+              link: "/inboxes/user-consent/user-consent",
+            },
+            {
+              text: "Support spam-free inboxes",
+              link: "/inboxes/user-consent/support-user-consent",
+            },
+          ],
         },
         {
           text: "Support push notifications",
-          link: "/inboxes/push-notifs",
+          collapsed: true,
+          items: [
+            {
+              text: "Support push notifications",
+              link: "/inboxes/push-notifs/push-notifs",
+            },
+            {
+              text: "Run a push notifications server",
+              link: "/inboxes/push-notifs/pn-server",
+            },
+            {
+              text: "Try Android push notifications",
+              link: "/inboxes/push-notifs/android-pn",
+            },
+            {
+              text: "Try iOS push notifications",
+              link: "/inboxes/push-notifs/ios-pn",
+            },
+          ],
         },
       ],
     },
