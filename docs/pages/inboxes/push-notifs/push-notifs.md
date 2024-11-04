@@ -8,19 +8,32 @@ For best practices, see [Best practices for push notifications](#best-practices-
 
 Get the topic identifier for an app installation. This topic ID tells your app where to listen on the network for push notifications about any new group chat or DM conversations.
 
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
+
 ```tsx [React Native]
 // Request
 alix.welcomeTopic()
 
 // Response
 /xmtp/mls/1/w-$installationId/proto
+
+// Replaces V2 `/xmtp/0/invite-$address/proto`
 ```
+:::
 
-*Replaces V2 `/xmtp/0/invite-$address/proto`* 
-
-## Get a V3 message topic ID
+## Get a message topic ID
 
 Get the topic identifier for a group chat or DM conversation that’s already in progress. This topic ID tells your app where to listen on the network for push notifications about any new messages in a specific group chat or DM conversation.
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 // Request
@@ -28,9 +41,10 @@ conversation.topic
 
 // Response
 /xmtp/mls/1/g-$conversationId/proto
-```
 
-*Replaces V2 `/xmtp/0/m-$addresses/proto`*
+// Replaces V2 `/xmtp/0/m-$addresses/proto`
+```
+:::
 
 ## Subscribe to topics
 
@@ -38,36 +52,63 @@ Subscribe to all relevant topics, allowing your app to monitor for push notifica
 
 This code sample retrieves all topics associated with `alix`’s conversations, for example, enabling the app to receive push notifications only for conversations in which `alix` is a part of.
 
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
+
 ```tsx [React Native]
 const conversations = await alix.conversations.listConversations()
 const topics = conversations.map((conv: any) => conv.topic)
 
 await subscribeAll([alix.welcomeTopic(), ...topics])
 ```
+:::
 
 ## Receive push notifications
 
 On receipt of a push notification, decode it:
 
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
+
 ```tsx [React Native]
 const receivedBytes = Buffer.from(received.message, 'base64').toString('utf-8')
 ```
+:::
 
 Then determine whether it’s for a new conversation or an existing one.
 
-- **If it’s a Welcome message** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `conversationFromWelcome`:
-    
+- **If it’s a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `conversationFromWelcome`:
+    :::code-group
+
+    ```js [Web]
+    SNIPPET FROM RY
+    ```
+
     ```tsx [React Native]
     const conversation = await alix.conversations.conversationFromWelcome(receivedBytes)
     ```
+    :::
     
-- **If it’s a V3 message**, find the corresponding topic, sync the conversation, and process the new message:
+- **If it’s a message for an existing conversation**, find the corresponding topic, sync the conversation, and process the new message:
     
+    :::code-group
+
+    ```js [Web]
+    SNIPPET FROM RY
+    ```
+
     ```tsx [React Native]
     const conversation = await alix.findConversationByTopic(received.topic)
     await conversation.sync()
     const message = await conversation.processMessage(receivedBytes)
     ```
+    :::
 
 ## Run a push notification server
 

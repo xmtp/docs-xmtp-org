@@ -7,7 +7,13 @@
 This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface. This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements.
 
 - For an EOA, the `convertEOAToSigner` function creates a signer that can get the account address and sign messages and has placeholder methods for wallet type, chain ID, and block number.
-    
+
+    :::code-group
+
+    ```js [Web]
+    SNIPPET FROM RY
+    ```
+
     ```tsx [React Native]
     // Example EOA
     export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
@@ -23,9 +29,16 @@ This code defines two functions that convert different types of Ethereum account
       }
     }
     ```
-    
+    :::
+
 - For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes specific implementations for wallet type and chain ID, and an optional block number computation.
     
+    :::code-group
+
+    ```js [Web]
+    SNIPPET FROM RY
+    ```
+
     ```tsx [React Native]
     // Example SCW
     export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
@@ -41,10 +54,17 @@ This code defines two functions that convert different types of Ethereum account
       };
     }
     ```
+    :::
 
 ### Create an XMTP client
 
 Create an XMTP MLS client that can use the signing capabilities provided by the `SigningKey` parameter. This `SigningKey` links the client to the appropriate EOA or SCW.
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 Client.createV3(SigningKey, {
@@ -52,13 +72,20 @@ Client.createV3(SigningKey, {
     enableV3: true,
     dbEncryptionKey: keyBytes, // 32 bytes
   })
-```
 
-*Should work the same as it does in V2 `Client.create(SigningKey, ClientOptions)`*
+// Should work the same as it does in V2 `Client.create(SigningKey, ClientOptions)`
+```
+:::
 
 ### Build an existing client
 
 Build, or resume, an existing client that's logged in and has an existing local database.
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 Client.buildV3(address, {
@@ -66,15 +93,22 @@ Client.buildV3(address, {
     enableV3: true,
     dbEncryptionKey: keyBytes, // 32 bytes
   }) 
+
+// Replaces V2 `Client.createFromKeyBundle(bundle)`
 ```
+:::
 
-*Replaces V2 `Client.createFromKeyBundle(bundle)`*
+## Check if an address is reachable
 
-## Check if an address is reachable on V3
+The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP. The `canGroupMessage` method checks each address’ compatibility, returning a response indicating whether each address can receive messages.
 
-The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP V3. The `canGroupMessage` method checks each address’ compatibility with V3, returning a response indicating whether each address can receive V3 messages. 
+Once you have the verified addresses, you can create a new conversation, whether it's a group chat or direct message (DM).
 
-Once you have the verified V3 addresses, you can create a new conversation, whether it is a group chat or direct message (DM).
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 // Request
@@ -93,17 +127,23 @@ const canMessageV3 = await alix.canGroupMessage([
   "0xBadAddress": false,
 }
 ```
+:::
 
 :::tip
-
-Regarding how to handle addresses that aren’t reachable on V3, the migration documentation in the XMTP V3 release notes will outline the next steps for addressing compatibility issues, ensuring smooth onboarding to V3 for all participants.
+Regarding how to handle addresses that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
 :::
 
 ## Create a conversation
 
 ### Create a new group chat
 
-Once you have the verified V3 addresses, create a new group chat:
+Once you have the verified addresses, create a new group chat:
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 // New Group
@@ -117,16 +157,24 @@ const group = await alix.conversations.newGroup([bo.address, caro.address], {
       permissionLevel: 'admin_only' // 'all_members' | 'admin_only'
     })
 ```
+:::
 
 ### Create a new DM
 
-Once you have the verified V3 addresses, create a new DM:
+Once you have the verified addresses, create a new DM:
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 const dm = await alix.conversations.findOrCreateDm(bo.address)
-```
 
-*Replaces V2 functionality `client.conversations.newConversation(address)`*
+// Replaces V2 functionality `client.conversations.newConversation(address)`
+```
+:::
 
 ## List conversations and messages
 
@@ -134,25 +182,45 @@ const dm = await alix.conversations.findOrCreateDm(bo.address)
 
 Get any new group chats or DMs from the network:
 
-```tsx [React Native]
-await alix.conversations.syncConversations()
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
 ```
 
-*Does not refetch existing conversations*
+```tsx [React Native]
+await alix.conversations.syncConversations()
+
+// Does not refetch existing conversations
+```
+:::
 
 ### List new messages
 
 Get new messages from the network for all existing group chats and DMs in the local database:
 
-```tsx [React Native]
-await alix.conversations.syncAllConversations()
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
 ```
 
-*Does not refetch existing messages or messages for inactive group chat conversations*
+```tsx [React Native]
+await alix.conversations.syncAllConversations()
+
+// Does not refetch existing messages or messages for inactive group chat conversations
+```
+:::
 
 ### List existing group chats or DMs
 
 Get a list of existing group chats or DMs in the local database, ordered either by `createdAt` date or `lastMessage`.
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 // List ConversationContainer items by createdAt date
@@ -169,9 +237,10 @@ await alix.conversations.listConversations({
       lastMessage: true,
     }, 
     'lastMessage') // 'createdAt' | 'lastMessage'
-```
 
-*Replaces V2 functionality `client.conversations.list()`*
+// Replaces V2 functionality `client.conversations.list()`
+```
+:::
 
 ## Stream conversations and messages
 
@@ -179,19 +248,32 @@ await alix.conversations.listConversations({
 
 Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
 
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
+
 ```tsx [React Native]
   await alix.conversations.streamConversations(
     async (conversation: ConversationContainer<any>) => {
 	    // Received a conversation
     }
   )
-```
 
-*Replaces V2 `client.conversations.stream()`*
+// Replaces V2 `client.conversations.stream()`
+```
+:::
 
 ### Stream all group chat and DM messages
 
 Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
   await alix.conversations.streamAllConversationMessages(
@@ -199,15 +281,22 @@ Listens to the network for new messages within all active group chats and DMs. W
       // Received a message
     }
   )
-```
 
-*Replaces V2 `client.conversations.streamAllMessages()`*
+// Replaces V2 `client.conversations.streamAllMessages()`
+```
+:::
 
 ## Helper methods and class interfaces
 
 ### Conversation helper methods
 
 Use these helper methods to quickly locate and access specific conversations—whether by ID, topic, group ID, or DM address—returning the appropriate ConversationContainer, group, or DM object.
+
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
 
 ```tsx [React Native]
 // Returns a ConversationContainer
@@ -218,21 +307,25 @@ await alix.conversations.findGroup(group.id)
 // Returns a DM
 await alix.conversations.findDm(bo.address)
 ```
+:::
 
 ### ConversationContainer interface
 
 Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
 
-https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/ConversationContainer.ts
+- Web: LINK FROM RY
+- React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/ConversationContainer.ts
 
 ### Group class
 
 Represents a group chat conversation, providing methods to manage group-specific functionalities such as sending messages, synchronizing state, and handling group membership.
 
-https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts
+- Web: LINK FROM RY
+- React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts
 
 ### Dm class
 
 Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
 
-https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts
+- Web: LINK FROM RY
+- React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts

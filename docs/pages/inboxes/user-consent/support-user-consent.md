@@ -6,37 +6,65 @@ Use the following methods to provide users with control over their messaging exp
 
 Get the latest consent records from the network:
 
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
+
 ```tsx [React Native]
 await alix.syncConsent()
 ```
+:::
 
 ## Get the consent state of a conversation
 
 Check the current consent state of a specific conversation:
 
-```tsx [React Native]
-await conversation.consentState()
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
 ```
 
-*Replaces V2 `client.contact.isGroupAllowed(groupId)`* 
+```tsx [React Native]
+await conversation.consentState()
+
+// Replaces V2 `client.contact.isGroupAllowed(groupId)`
+```
+:::
 
 ## Update the conversation consent state
 
 Update the consent state of a conversation to allow or deny messages:
 
-```tsx [React Native]
-await conversation.updateConsent('allowed') // 'allowed' | 'denied'
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
 ```
 
-*Replaces V2 `client.contact.allowGroups([groupIds])`*
+```tsx [React Native]
+await conversation.updateConsent('allowed') // 'allowed' | 'denied'
+
+// Replaces V2 `client.contact.allowGroups([groupIds])`
+```
+:::
 
 ## Stream consent records in real-time - coming soon
 
 Listen for real-time updates to consent records:
 
+:::code-group
+
+```js [Web]
+SNIPPET FROM RY
+```
+
 ```tsx [React Native]
 await alix.streamConsent()
 ```
+:::
 
 ## Handle unknown contacts
 
