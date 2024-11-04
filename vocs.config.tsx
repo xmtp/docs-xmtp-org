@@ -15,12 +15,12 @@ export default defineConfig({
       </>
     );
   },
-  title: "Experimnt with XMTP V3 Alpha 🧪",
+  title: "Build with XMTP",
   description:
-    "XMTP V3 brings support for Messaging Layer Security and much more. Use these docs to experiment with the latest V3 features.",
+    "XMTP is an open, secure, and resilient messaging protocol—for the next phase of the internet",
   logoUrl: {
-    light: "/logomark-light-purple-v3.png",
-    dark: "/logomark-dark-purple-v3.png",
+    light: "/logomark-light-purple.png",
+    dark: "/logomark-dark-purple.png",
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
@@ -42,6 +42,11 @@ export default defineConfig({
     },
   ],
   sidebar: [
+    {
+      text: "⚡️Documentation preview⚡️",
+      link: "", // Add this line,
+      items: [ ]
+    },
     {
       text: "Build chat inboxes",
       collapsed: false,
