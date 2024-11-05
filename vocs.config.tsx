@@ -47,6 +47,11 @@ export default defineConfig({
   ],
   sidebar: [
     {
+      text: "⚡️Preview latest docs⚡️",
+      link: "/preview",
+      items: [], // Add this line
+    },
+    {
       text: "Overview",
       collapsed: true,
       items: [
