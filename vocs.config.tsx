@@ -48,9 +48,27 @@ export default defineConfig({
       items: [ ]
     },
     {
+      text: "Intro",
+      collapsed: false,
+      items: [
+        {
+          text: "What is XMTP?",
+          link: "/intro/intro",
+        },
+        {
+          text: "FAQ",
+          link: "/intro/faq",
+        },
+      ],
+    },
+    {
       text: "Build chat inboxes",
       collapsed: false,
       items: [
+        {
+          text: "Get started",
+          link: "/inboxes/get-started",
+        },
         {
           text: "Build a chat inbox",
           link: "/inboxes/build-inbox",
@@ -98,7 +116,7 @@ export default defineConfig({
       collapsed: false,
         items: [
         {
-          text: "Protocol specs",
+          text: "XMTP MLS protocol spec",
           link: "/protocol/specs",
         },
       ],
