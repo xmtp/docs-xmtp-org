@@ -4,11 +4,9 @@ Pick your SDK:
 
 ## Web
 
-- [Browser SDK - RY TO PROVIDE URL](#TODO)
+- [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
 
-- [Node SDK - RY TO PROVIDE URL](#TODO)
-
-- [React SDK](https://github.com/xmtp/xmtp-web/tree/main/packages/react-sdk)
+- [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
 
 ## Mobile
 
