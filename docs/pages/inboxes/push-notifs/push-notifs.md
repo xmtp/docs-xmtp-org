@@ -10,11 +10,7 @@ Get the topic identifier for an app installation. This topic ID tells your app w
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
-```tsx [React Native]
+```[React Native]
 // Request
 alix.welcomeTopic()
 
@@ -40,11 +36,7 @@ Get the topic identifier for a group chat or DM conversation that’s already in
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
-```tsx [React Native]
+```[React Native]
 // Request
 conversation.topic
 
@@ -66,21 +58,17 @@ SNIPPET FROM NAOMI
 
 ## Subscribe to topics
 
-Subscribe to all relevant topics, allowing your app to monitor for push notifications about both new and ongoing conversations. 
+Subscribe to all relevant topics, allowing your app to monitor for push notifications about both new and ongoing conversations.
 
 This code sample retrieves all topics associated with `alix`’s conversations, for example, enabling the app to receive push notifications only for conversations in which `alix` is a part of.
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
-const conversations = await alix.conversations.listConversations()
-const topics = conversations.map((conv: any) => conv.topic)
+const conversations = await alix.conversations.listConversations();
+const topics = conversations.map((conv: any) => conv.topic);
 
-await subscribeAll([alix.welcomeTopic(), ...topics])
+await subscribeAll([alix.welcomeTopic(), ...topics]);
 ```
 
 ```kotlin [Kotlin]
@@ -99,12 +87,8 @@ On receipt of a push notification, decode it:
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
-const receivedBytes = Buffer.from(received.message, 'base64').toString('utf-8')
+const receivedBytes = Buffer.from(received.message, "base64").toString("utf-8");
 ```
 
 ```kotlin [Kotlin]
@@ -120,49 +104,43 @@ SNIPPET FROM NAOMI
 Then determine whether it’s for a new conversation or an existing one.
 
 - **If it’s a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `conversationFromWelcome`:
-    :::code-group
+  :::code-group
 
-    ```js [Web]
-    SNIPPET FROM RY
-    ```
+  ```tsx [React Native]
+  const conversation = await alix.conversations.conversationFromWelcome(
+    receivedBytes
+  );
+  ```
 
-    ```tsx [React Native]
-    const conversation = await alix.conversations.conversationFromWelcome(receivedBytes)
-    ```
+  ```kotlin [Kotlin]
+  SNIPPET FROM NAOMI
+  ```
 
-    ```kotlin [Kotlin]
-    SNIPPET FROM NAOMI
-    ```
+  ```swift [Swift]
+  SNIPPET FROM NAOMI
+  ```
 
-    ```swift [Swift]
-    SNIPPET FROM NAOMI
-    ```
+  :::
 
-    :::
-    
 - **If it’s a message for an existing conversation**, find the corresponding topic, sync the conversation, and process the new message:
-    
-    :::code-group
 
-    ```js [Web]
-    SNIPPET FROM RY
-    ```
+  :::code-group
 
-    ```tsx [React Native]
-    const conversation = await alix.findConversationByTopic(received.topic)
-    await conversation.sync()
-    const message = await conversation.processMessage(receivedBytes)
-    ```
+  ```tsx [React Native]
+  const conversation = await alix.findConversationByTopic(received.topic);
+  await conversation.sync();
+  const message = await conversation.processMessage(receivedBytes);
+  ```
 
-    ```kotlin [Kotlin]
-    SNIPPET FROM NAOMI
-    ```
+  ```kotlin [Kotlin]
+  SNIPPET FROM NAOMI
+  ```
 
-    ```swift [Swift]
-    SNIPPET FROM NAOMI
-    ```
+  ```swift [Swift]
+  SNIPPET FROM NAOMI
+  ```
 
-    :::
+  :::
 
 ## Run a push notification server
 

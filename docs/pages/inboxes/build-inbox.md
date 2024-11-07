@@ -8,70 +8,63 @@ This code defines two functions that convert different types of Ethereum account
 
 - For an EOA, the `convertEOAToSigner` function creates a signer that can get the account address and sign messages and has placeholder methods for wallet type, chain ID, and block number.
 
-    :::code-group
+  :::code-group
 
-    ```js [Web]
-    SNIPPET FROM RY
-    ```
+  ```tsx [React Native]
+  // Example EOA
+  export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
+    return {
+      getAddress: async () => eoaAccount.address,
+      signMessage: async (message: string | Uint8Array) =>
+        eoaAccount.signMessage({
+          message: typeof message === "string" ? message : { raw: message },
+        }),
+      walletType: () => undefined, // Default: 'EOA'
+      getChainId: () => undefined,
+      getBlockNumber: () => undefined,
+    };
+  }
+  ```
 
-    ```tsx [React Native]
-    // Example EOA
-    export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
-      return {
-        getAddress: async () => eoaAccount.address,
-        signMessage: async (message: string | Uint8Array) =>
-          eoaAccount.signMessage({
-            message: typeof message === 'string' ? message : { raw: message },
-          }),
-        walletType: () => undefined, // Default: 'EOA'
-        getChainId: () => undefined,
-        getBlockNumber: () => undefined,
-      }
-    }
-    ```
+  ```kotlin [Kotlin]
+  SNIPPET FROM NAOMI
+  ```
 
-    ```kotlin [Kotlin]
-    SNIPPET FROM NAOMI
-    ```
+  ```swift [Swift]
+  SNIPPET FROM NAOMI
+  ```
 
-    ```swift [Swift]
-    SNIPPET FROM NAOMI
-    ```
-    :::
+  :::
 
 - For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes specific implementations for wallet type and chain ID, and an optional block number computation.
-    
-    :::code-group
 
-    ```js [Web]
-    SNIPPET FROM RY
-    ```
+  :::code-group
 
-    ```tsx [React Native]
-    // Example SCW
-    export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
-      return {
-        getAddress: async () => scwAccount.address,
-        signMessage: async (message: string) => {
-          const byteArray = await scwAccount.signMessage(message)
-          return ethers.utils.hexlify(byteArray) // Convert to hex string
-        },
-        walletType: () => 'SCW',
-        getChainId: async () => 8453, // https://chainlist.org/
-        getBlockNumber: async () => undefined, // Optional: will be computed at run
-      };
-    }
-    ```
+  ```tsx [React Native]
+  // Example SCW
+  export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
+    return {
+      getAddress: async () => scwAccount.address,
+      signMessage: async (message: string) => {
+        const byteArray = await scwAccount.signMessage(message);
+        return ethers.utils.hexlify(byteArray); // Convert to hex string
+      },
+      walletType: () => "SCW",
+      getChainId: async () => 8453, // https://chainlist.org/
+      getBlockNumber: async () => undefined, // Optional: will be computed at run
+    };
+  }
+  ```
 
-    ```kotlin [Kotlin]
-    SNIPPET FROM NAOMI
-    ```
+  ```kotlin [Kotlin]
+  SNIPPET FROM NAOMI
+  ```
 
-    ```swift [Swift]
-    SNIPPET FROM NAOMI
-    ```
+  ```swift [Swift]
+  SNIPPET FROM NAOMI
+  ```
 
-    :::
+  :::
 
 ### Create an XMTP client
 
@@ -80,15 +73,17 @@ Create an XMTP MLS client that can use the signing capabilities provided by the 
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address, options /* optional */);
 ```
 
 ```tsx [React Native]
 Client.createV3(SigningKey, {
-    env: 'production', // 'local' | 'dev' | 'production'
-    enableV3: true,
-    dbEncryptionKey: keyBytes, // 32 bytes
-  })
+  env: "production", // 'local' | 'dev' | 'production'
+  enableV3: true,
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
 
 // Should work the same as it does in V2 `Client.create(SigningKey, ClientOptions)`
 ```
@@ -109,16 +104,12 @@ Build, or resume, an existing client that's logged in and has an existing local 
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
 Client.buildV3(address, {
-    env: 'production', // 'local' | 'dev' | 'production'
-    enableV3: true,
-    dbEncryptionKey: keyBytes, // 32 bytes
-  }) 
+  env: "production", // 'local' | 'dev' | 'production'
+  enableV3: true,
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
 
 // Replaces V2 `Client.createFromKeyBundle(bundle)`
 ```
@@ -142,7 +133,11 @@ Once you have the verified addresses, you can create a new conversation, whether
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+// response is a Map of string (address) => boolean (is reachable)
+const response = await client.canMessage([bo.address, caro.address]);
 ```
 
 ```tsx [React Native]
@@ -186,20 +181,26 @@ Once you have the verified addresses, create a new group chat:
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+const group = await client.conversations.newGroup(
+  [bo.address, caro.address],
+  createGroupOptions /* optional */
+);
 ```
 
 ```tsx [React Native]
 // New Group
-const group = await alix.conversations.newGroup([bo.address, caro.address])
+const group = await alix.conversations.newGroup([bo.address, caro.address]);
 
 // New Group with Metadata
 const group = await alix.conversations.newGroup([bo.address, caro.address], {
-      name: 'The Group Name',
-      imageUrlSquare: 'www.groupImage.com',
-      description: 'The description of the group',
-      permissionLevel: 'admin_only' // 'all_members' | 'admin_only'
-    })
+  name: "The Group Name",
+  imageUrlSquare: "www.groupImage.com",
+  description: "The description of the group",
+  permissionLevel: "admin_only", // 'all_members' | 'admin_only'
+});
 ```
 
 ```kotlin [Kotlin]
@@ -219,11 +220,14 @@ Once you have the verified addresses, create a new DM:
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address, options /* optional */);
+const group = await client.conversations.newDm(bo.address);
 ```
 
 ```tsx [React Native]
-const dm = await alix.conversations.findOrCreateDm(bo.address)
+const dm = await alix.conversations.findOrCreateDm(bo.address);
 
 // Replaces V2 functionality `client.conversations.newConversation(address)`
 ```
@@ -247,11 +251,14 @@ Get any new group chats or DMs from the network:
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+await client.conversations.sync();
 ```
 
 ```tsx [React Native]
-await alix.conversations.syncConversations()
+await alix.conversations.syncConversations();
 
 // Does not refetch existing conversations
 ```
@@ -273,11 +280,14 @@ Get new messages from the network for all existing group chats and DMs in the lo
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+await client.conversations.syncAll();
 ```
 
 ```tsx [React Native]
-await alix.conversations.syncAllConversations()
+await alix.conversations.syncAllConversations();
 
 // Does not refetch existing messages or messages for inactive group chat conversations
 ```
@@ -299,24 +309,31 @@ Get a list of existing group chats or DMs in the local database, ordered either 
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+const allConversations = await client.conversations.list();
+const allGroups = await client.conversations.listGroups();
+const allDms = await client.conversations.listDms();
 ```
 
 ```tsx [React Native]
 // List ConversationContainer items by createdAt date
-await alix.conversations.listConversations()
+await alix.conversations.listConversations();
 
 // List ConversationContainer items by lastMessage but only return specified fields
-await alix.conversations.listConversations({
-      members: false,
-      consentState: false,
-      description: false,
-      creatorInboxId: false,
-      addedByInboxId: false,
-      isActive: false,
-      lastMessage: true,
-    }, 
-    'lastMessage') // 'createdAt' | 'lastMessage'
+await alix.conversations.listConversations(
+  {
+    members: false,
+    consentState: false,
+    description: false,
+    creatorInboxId: false,
+    addedByInboxId: false,
+    isActive: false,
+    lastMessage: true,
+  },
+  "lastMessage"
+); // 'createdAt' | 'lastMessage'
 
 // Replaces V2 functionality `client.conversations.list()`
 ```
@@ -339,16 +356,12 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
-  await alix.conversations.streamConversations(
-    async (conversation: ConversationContainer<any>) => {
-	    // Received a conversation
-    }
-  )
+await alix.conversations.streamConversations(
+  async (conversation: ConversationContainer<any>) => {
+    // Received a conversation
+  }
+);
 
 // Replaces V2 `client.conversations.stream()`
 ```
@@ -369,16 +382,12 @@ Listens to the network for new messages within all active group chats and DMs. W
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
-  await alix.conversations.streamAllConversationMessages(
-    async (message: DecodedMessage<any>) => {
-      // Received a message
-    }
-  )
+await alix.conversations.streamAllConversationMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  }
+);
 
 // Replaces V2 `client.conversations.streamAllMessages()`
 ```
@@ -402,17 +411,30 @@ Use these helper methods to quickly locate and access specific conversations—w
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+
+// get a conversation by its ID
+const conversationById = await client.conversations.getConversationById(
+  conversationId
+);
+
+// get a message by its ID
+const messageById = await client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 ```
 
 ```tsx [React Native]
 // Returns a ConversationContainer
-await alix.conversations.findConversation(conversation.id)
-await alix.conversations.findConversationByTopic(conversation.topic)
+await alix.conversations.findConversation(conversation.id);
+await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
-await alix.conversations.findGroup(group.id)
+await alix.conversations.findGroup(group.id);
 // Returns a DM
-await alix.conversations.findDm(bo.address)
+await alix.conversations.findDm(bo.address);
 ```
 
 ```kotlin [Kotlin]
@@ -429,19 +451,16 @@ SNIPPET FROM NAOMI
 
 Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
 
-- Web: LINK FROM RY
 - React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/ConversationContainer.ts
 
 ### Group class
 
 Represents a group chat conversation, providing methods to manage group-specific functionalities such as sending messages, synchronizing state, and handling group membership.
 
-- Web: LINK FROM RY
 - React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts
 
 ### Dm class
 
 Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
 
-- Web: LINK FROM RY
 - React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts

@@ -8,12 +8,8 @@ Get the latest consent records from the network:
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
-await alix.syncConsent()
+await alix.syncConsent();
 ```
 
 ```kotlin [Kotlin]
@@ -33,11 +29,25 @@ Check the current consent state of a specific conversation:
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client, ConsentEntityType } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+
+// get consent state from the client
+const conversationConsentState = await client.contact.getConsentState(
+  ConsentEntityType.GroupId,
+  groupId
+);
+
+// or get consent state directly from a conversation
+const groupConversation = await client.conversations.findConversationById(
+  groupId
+);
+const groupConversationConsentState = await groupConversation.consentState();
 ```
 
 ```tsx [React Native]
-await conversation.consentState()
+await conversation.consentState();
 
 // Replaces V2 `client.contact.isGroupAllowed(groupId)`
 ```
@@ -59,11 +69,28 @@ Update the consent state of a conversation to allow or deny messages:
 :::code-group
 
 ```js [Web]
-SNIPPET FROM RY
+import { Client, ConsentEntityType, ConsentState } from "@xmtp/browser-sdk";
+
+const client = await Client.create(alix.address);
+
+// set consent state from the client (can set multiple states at once)
+await client.setConsentStates([
+  {
+    entityId: groupId,
+    entityType: ConsentEntityType.GroupId,
+    state: ConsentState.Allowed,
+  },
+]);
+
+// set consent state directly on a conversation
+const groupConversation = await client.conversations.findConversationById(
+  groupId
+);
+await groupConversation.updateConsentState(ConsentState.Allowed);
 ```
 
 ```tsx [React Native]
-await conversation.updateConsent('allowed') // 'allowed' | 'denied'
+await conversation.updateConsent("allowed"); // 'allowed' | 'denied'
 
 // Replaces V2 `client.contact.allowGroups([groupIds])`
 ```
@@ -84,12 +111,8 @@ Listen for real-time updates to consent records:
 
 :::code-group
 
-```js [Web]
-SNIPPET FROM RY
-```
-
 ```tsx [React Native]
-await alix.streamConsent()
+await alix.streamConsent();
 ```
 
 ```kotlin [Kotlin]
@@ -127,7 +150,7 @@ You can filter these unknown contacts to:
 
 ### Identify contacts the user might know
 
-To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. You can then display appropriate messages on a **You might know** tab, for example. 
+To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. You can then display appropriate messages on a **You might know** tab, for example.
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" />
@@ -135,7 +158,7 @@ To identify contacts the user might know or want to know, you can look for signa
 
 ### Identify contacts the user might not know, including spammy or scammy requests
 
-To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example. 
+To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example.
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" />
