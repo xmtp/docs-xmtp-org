@@ -10,7 +10,7 @@ Get the topic identifier for an app installation. This topic ID tells your app w
 
 :::code-group
 
-```[React Native]
+```tsx [React Native]
 // Request
 alix.welcomeTopic()
 
@@ -36,7 +36,7 @@ Get the topic identifier for a group chat or DM conversation that’s already in
 
 :::code-group
 
-```[React Native]
+```tsx [React Native]
 // Request
 conversation.topic
 
@@ -104,6 +104,7 @@ SNIPPET FROM NAOMI
 Then determine whether it’s for a new conversation or an existing one.
 
 - **If it’s a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `conversationFromWelcome`:
+
   :::code-group
 
   ```tsx [React Native]
