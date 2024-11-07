@@ -15,6 +15,15 @@ SNIPPET FROM RY
 ```tsx [React Native]
 await alix.syncConsent()
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Get the consent state of a conversation
@@ -32,6 +41,15 @@ await conversation.consentState()
 
 // Replaces V2 `client.contact.isGroupAllowed(groupId)`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Update the conversation consent state
@@ -49,6 +67,15 @@ await conversation.updateConsent('allowed') // 'allowed' | 'denied'
 
 // Replaces V2 `client.contact.allowGroups([groupIds])`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Stream consent records in real-time - coming soon
@@ -64,6 +91,15 @@ SNIPPET FROM RY
 ```tsx [React Native]
 await alix.streamConsent()
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Handle unknown contacts

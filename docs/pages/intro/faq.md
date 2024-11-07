@@ -63,7 +63,7 @@ Here are just a few chains that work with XMTP:
 
 ## Build with XMTP
 
-### Which languages and environments does the XMTP SDK support?
+### Which languages does the XMTP SDK support?
 
 XMTP SDKs are [available for multiple languages](/inboxes/get-started).
 
@@ -115,11 +115,7 @@ To follow and provide feedback on this work, see the [Replication tracking task]
 
 XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
 
-### What is the expected network latency for message delivery and retrieval?
-
-XMTP provides perceptibly real-time message delivery and retrieval. The network does not provide service level guarantees.
-
-## Fees
+## Does XMTP have fees?
 
 XMTP core developers and researchers are working on a specific fee model for XMTP, with the following guiding principles in mind:
 
@@ -167,7 +163,7 @@ Have questions or feedback regarding message storage and retention? Post to the 
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
 
-### What are the costs of XMTP message storage and retrieval?
+### What are XMTP message storage and retrieval costs?
 
 Messages are stored off-chain on the XMTP network, with all nodes currently hosted by Ephemera. Ephemera currently absorbs all message storage and retrieval costs.
 
@@ -193,11 +189,7 @@ Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214
 
 For this reason, XMTP supports [remote attachments](#TODO).
 
-### Does XMTP support message attachments?
-
-Yes. See [Support attachments in your app built with XMTP](#TODO).
-
-### Does XMTP support deleting and editing messages?
+### Does XMTP support message deletion and editing?
 
 Not currently. However, Ephemera is exploring ways to support message deletion and editing.
 
@@ -207,23 +199,12 @@ Have ideas about message deletion and editing? Post to the [XMTP Community Forum
 
 XMTP enables developers to implement messaging features and UX paradigms that best fit their needs. As a result, messages sent using apps built with XMTP might resemble many typical forms of communication, such as email, direct and group messaging, broadcasts, text messaging, push notifications, and more.
 
-### Does XMTP support real-time conversations?
-
-Real-time chat is a core use case for XMTP and is demonstrated by the open source Converse messenger app.
-
-- [Try the app](https://app-preview.converse.xyz/) connected to the XMTP `dev` network
-- [Try the app](https://app.converse.xyz/) connected to the XMTP `production` network
-
-To learn more about how the Converse messenger app is built, see the [converse-app repo](https://github.com/ephemeraHQ/converse-app).
-
-## Ephemera
-
-### What is Ephemera?
+## What is Ephemera?
 
 Ephemera is a web3 software company that contributes to XMTP, an open network, protocol, and standards for secure messaging between blockchain accounts.
 
 Ephemera employees work alongside other XMTP community members to build with and extend XMTP. Community [contributions and participation](https://community.xmtp.org/) are critical to the development and adoption of XMTP.
 
-Ephemera focuses on serving developers. We build [SDKs](inboxes/get-started), developer tools, and example apps that help developers build great experiences with XMTP.
+Ephemera focuses on serving developers. We build [SDKs](/inboxes/get-started), developer tools, and example apps that help developers build great experiences with XMTP.
 
 Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024 and [open-sourced it](https://github.com/ephemeraHQ/converse-app) for the entire XMTP network.

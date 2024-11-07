@@ -32,7 +32,7 @@ Explore just some of the [vibrant and diverse apps](https://xmtp.org/) in the XM
 
 ## Try an app built with XMTP
 
-One of the best ways to understand XMTP is to try an app built with XMTP.
+One of the best ways to understand XMTP is to use an app built with XMTP.
 
 Try the [Converse](https://converse.xyz/) messaging app. Converse is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
 
@@ -46,4 +46,4 @@ Try the [Converse](https://converse.xyz/) messaging app. Converse is open source
 
     - Explore the documentation on this site
     - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, the work-in-progress future node software.
-    - Explore the open source code for [Converse messenger](https://github.com/ephemeraHQ/converse-app), an app [Ephemera acquired and open sourced](https://paragraph.xyz/@ephemera/converse) for the XMTP community.
+    - Explore the open source code for [Converse messenger](https://github.com/ephemeraHQ/converse-app), an app open sourced by [Ephemera](https://paragraph.xyz/@ephemera/converse) for the XMTP community.

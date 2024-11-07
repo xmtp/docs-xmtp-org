@@ -29,6 +29,14 @@ This code defines two functions that convert different types of Ethereum account
       }
     }
     ```
+
+    ```kotlin [Kotlin]
+    SNIPPET FROM NAOMI
+    ```
+
+    ```swift [Swift]
+    SNIPPET FROM NAOMI
+    ```
     :::
 
 - For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes specific implementations for wallet type and chain ID, and an optional block number computation.
@@ -54,6 +62,15 @@ This code defines two functions that convert different types of Ethereum account
       };
     }
     ```
+
+    ```kotlin [Kotlin]
+    SNIPPET FROM NAOMI
+    ```
+
+    ```swift [Swift]
+    SNIPPET FROM NAOMI
+    ```
+
     :::
 
 ### Create an XMTP client
@@ -75,6 +92,15 @@ Client.createV3(SigningKey, {
 
 // Should work the same as it does in V2 `Client.create(SigningKey, ClientOptions)`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ### Build an existing client
@@ -96,6 +122,15 @@ Client.buildV3(address, {
 
 // Replaces V2 `Client.createFromKeyBundle(bundle)`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Check if an address is reachable
@@ -127,6 +162,15 @@ const canMessageV3 = await alix.canGroupMessage([
   "0xBadAddress": false,
 }
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 :::tip
@@ -157,6 +201,15 @@ const group = await alix.conversations.newGroup([bo.address, caro.address], {
       permissionLevel: 'admin_only' // 'all_members' | 'admin_only'
     })
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ### Create a new DM
@@ -174,6 +227,15 @@ const dm = await alix.conversations.findOrCreateDm(bo.address)
 
 // Replaces V2 functionality `client.conversations.newConversation(address)`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## List conversations and messages
@@ -193,6 +255,15 @@ await alix.conversations.syncConversations()
 
 // Does not refetch existing conversations
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ### List new messages
@@ -210,6 +281,15 @@ await alix.conversations.syncAllConversations()
 
 // Does not refetch existing messages or messages for inactive group chat conversations
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ### List existing group chats or DMs
@@ -240,6 +320,15 @@ await alix.conversations.listConversations({
 
 // Replaces V2 functionality `client.conversations.list()`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Stream conversations and messages
@@ -263,6 +352,15 @@ SNIPPET FROM RY
 
 // Replaces V2 `client.conversations.stream()`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ### Stream all group chat and DM messages
@@ -284,6 +382,15 @@ SNIPPET FROM RY
 
 // Replaces V2 `client.conversations.streamAllMessages()`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Helper methods and class interfaces
@@ -307,6 +414,15 @@ await alix.conversations.findGroup(group.id)
 // Returns a DM
 await alix.conversations.findDm(bo.address)
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ### ConversationContainer interface

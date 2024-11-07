@@ -23,6 +23,15 @@ alix.welcomeTopic()
 
 // Replaces V2 `/xmtp/0/invite-$address/proto`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Get a message topic ID
@@ -44,6 +53,15 @@ conversation.topic
 
 // Replaces V2 `/xmtp/0/m-$addresses/proto`
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Subscribe to topics
@@ -64,6 +82,15 @@ const topics = conversations.map((conv: any) => conv.topic)
 
 await subscribeAll([alix.welcomeTopic(), ...topics])
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 ## Receive push notifications
@@ -79,6 +106,15 @@ SNIPPET FROM RY
 ```tsx [React Native]
 const receivedBytes = Buffer.from(received.message, 'base64').toString('utf-8')
 ```
+
+```kotlin [Kotlin]
+SNIPPET FROM NAOMI
+```
+
+```swift [Swift]
+SNIPPET FROM NAOMI
+```
+
 :::
 
 Then determine whether it’s for a new conversation or an existing one.
@@ -93,6 +129,15 @@ Then determine whether it’s for a new conversation or an existing one.
     ```tsx [React Native]
     const conversation = await alix.conversations.conversationFromWelcome(receivedBytes)
     ```
+
+    ```kotlin [Kotlin]
+    SNIPPET FROM NAOMI
+    ```
+
+    ```swift [Swift]
+    SNIPPET FROM NAOMI
+    ```
+
     :::
     
 - **If it’s a message for an existing conversation**, find the corresponding topic, sync the conversation, and process the new message:
@@ -108,6 +153,15 @@ Then determine whether it’s for a new conversation or an existing one.
     await conversation.sync()
     const message = await conversation.processMessage(receivedBytes)
     ```
+
+    ```kotlin [Kotlin]
+    SNIPPET FROM NAOMI
+    ```
+
+    ```swift [Swift]
+    SNIPPET FROM NAOMI
+    ```
+
     :::
 
 ## Run a push notification server
