@@ -72,7 +72,13 @@ Create an XMTP MLS client that can use the signing capabilities provided by the 
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address, options /* optional */);
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address, options /* optional */);
@@ -132,7 +138,15 @@ Once you have the verified addresses, you can create a new conversation, whether
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+// response is a Map of string (address) => boolean (is reachable)
+const response = await client.canMessage([bo.address, caro.address]);
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
@@ -180,7 +194,17 @@ Once you have the verified addresses, create a new group chat:
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+const group = await client.conversations.newGroup(
+  [bo.address, caro.address],
+  createGroupOptions /* optional */
+);
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
@@ -219,7 +243,14 @@ Once you have the verified addresses, create a new DM:
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address, options /* optional */);
+const group = await client.conversations.newDm(bo.address);
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address, options /* optional */);
@@ -250,7 +281,14 @@ Get any new group chats or DMs from the network:
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+await client.conversations.sync();
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
@@ -279,7 +317,14 @@ Get new messages from the network for all existing group chats and DMs in the lo
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+await client.conversations.syncAll();
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
@@ -308,7 +353,16 @@ Get a list of existing group chats or DMs in the local database, ordered either 
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+const allConversations = await client.conversations.list();
+const allGroups = await client.conversations.listGroups();
+const allDms = await client.conversations.listDms();
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
@@ -356,6 +410,24 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 
 :::code-group
 
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
 ```tsx [React Native]
 await alix.conversations.streamConversations(
   async (conversation: ConversationContainer<any>) => {
@@ -381,6 +453,24 @@ SNIPPET FROM NAOMI
 Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
 :::code-group
+
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+const stream = await client.conversations.streamAllMessages();
+// to stream only group messages, use `client.conversations.streamAllGroupMessages()`
+// to stream only dm messages, use `client.conversations.streamAllDmMessages()`
+
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
 
 ```tsx [React Native]
 await alix.conversations.streamAllConversationMessages(
@@ -410,7 +500,24 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+
+// get a conversation by its ID
+const conversationById = await client.conversations.getConversationById(
+  conversationId
+);
+
+// get a message by its ID
+const messageById = await client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+```
+
+```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);

@@ -28,13 +28,31 @@ Check the current consent state of a specific conversation:
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client, ConsentEntityType } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+
+// get consent state from the client
+const conversationConsentState = await client.getConsentState(
+  ConsentEntityType.GroupId,
+  groupId
+);
+
+// or get consent state directly from a conversation
+const groupConversation = await client.conversations.findConversationById(
+  groupId
+);
+const groupConversationConsentState = await groupConversation.consentState();
+```
+
+```js [Browser]
 import { Client, ConsentEntityType } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
 
 // get consent state from the client
-const conversationConsentState = await client.contact.getConsentState(
+const conversationConsentState = await client.getConsentState(
   ConsentEntityType.GroupId,
   groupId
 );
@@ -68,7 +86,28 @@ Update the consent state of a conversation to allow or deny messages:
 
 :::code-group
 
-```js [Web]
+```js [Node]
+import { Client, ConsentEntityType, ConsentState } from "@xmtp/node-sdk";
+
+const client = await Client.create(alix.address);
+
+// set consent state from the client (can set multiple states at once)
+await client.setConsentStates([
+  {
+    entityId: groupId,
+    entityType: ConsentEntityType.GroupId,
+    state: ConsentState.Allowed,
+  },
+]);
+
+// set consent state directly on a conversation
+const groupConversation = await client.conversations.findConversationById(
+  groupId
+);
+await groupConversation.updateConsentState(ConsentState.Allowed);
+```
+
+```js [Browser]
 import { Client, ConsentEntityType, ConsentState } from "@xmtp/browser-sdk";
 
 const client = await Client.create(alix.address);
