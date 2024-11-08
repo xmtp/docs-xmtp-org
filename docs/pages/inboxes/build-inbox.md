@@ -57,7 +57,33 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```kotlin [Kotlin]
-  SNIPPET FROM NAOMI
+  class SCWWallet : SigningKey {
+    override val address: String
+        get() = walletAddress
+
+    override val type: WalletType
+        get() = WalletType.SCW
+
+    override var chainId: Long? = 8453, // https://chainlist.org/
+
+    override var blockNumber: Long? = null, // Optional: will be computed at run
+
+    override suspend fun signSCW(message: String): ByteArray {
+        val digest = Signature.newBuilder().build().ethHash(message)
+        val replaySafeHash = smartWallet.replaySafeHash(digest).send()
+        val signature =
+            Sign.signMessage(replaySafeHash, contractDeployerCredentials.ecKeyPair, false)
+        val signatureBytes = signature.r + signature.s + signature.v
+        val tokens = listOf(
+            Uint(BigInteger.ZERO),
+            DynamicBytes(signatureBytes)
+        )
+        val encoded = FunctionEncoder.encodeConstructor(tokens)
+        val encodedBytes = Numeric.hexStringToByteArray(encoded)
+
+        return encodedBytes
+    }
+  }
   ```
 
   ```swift [Swift]
@@ -95,7 +121,15 @@ Client.createV3(SigningKey, {
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes
+)
+val client = Client().create(
+        account = SigningKey,
+        options = options
+    )
 ```
 
 ```swift [Swift]
@@ -121,7 +155,15 @@ Client.buildV3(address, {
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes
+)
+val client = Client().build(
+        address = address,
+        options = options
+    )
 ```
 
 ```swift [Swift]
@@ -156,8 +198,7 @@ const response = await client.canMessage([bo.address, caro.address]);
 
 ```tsx [React Native]
 // Request
-const canMessageV3 = await alix.canGroupMessage([
-  '0xcaroAddress',
+const canMessage = await client.canGroupMessage([
   '0xboAddress',
   '0xV2OnlyAddress',
   '0xBadAddress',
@@ -165,7 +206,6 @@ const canMessageV3 = await alix.canGroupMessage([
 
 // Response
 {
-  "0xcaroAddress": true,
   "0xboAddress": true,
   "0xV2OnlyAddress": false,
   "0xBadAddress": false,
@@ -173,7 +213,15 @@ const canMessageV3 = await alix.canGroupMessage([
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+// Request
+val canMessage = client.canMessage(listOf('0xboAddress', '0xV2OnlyAddress','0xBadAddress'))
+
+// Response
+[
+  "0xboAddress": true,
+  "0xV2OnlyAddress": false,
+  "0xBadAddress": false,
+]
 ```
 
 ```swift [Swift]
