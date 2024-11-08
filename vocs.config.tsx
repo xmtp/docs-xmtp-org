@@ -119,6 +119,10 @@ export default defineConfig({
           text: "XMTP MLS protocol spec",
           link: "/protocol/specs",
         },
+        {
+          text: "XIPs",
+          link: "/protocol/xips",
+        },
       ],
     },
   ],
