@@ -28,7 +28,7 @@ You might want to consider [optimistically sending messages](/perf-ux/optimistic
 ```tsx [TypeScript]
 // standard (string) message
 const preparedTextMessage = await conversation.prepareMessage(messageText);
-//After preparing an optimistic message, use its `send` method to send it.
+// After preparing an optimistic message, use its `send` method to send it.
 try {
   preparedTextMessage.send();
 } catch (e) {
