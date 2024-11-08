@@ -15,12 +15,12 @@ export default defineConfig({
       </>
     );
   },
-  title: "Experimnt with XMTP V3 Alpha 🧪",
+  title: "Build with XMTP",
   description:
-    "XMTP V3 brings support for Messaging Layer Security and much more. Use these docs to experiment with the latest V3 features.",
+    "XMTP is an open, secure, and resilient messaging protocol—for the next phase of the internet",
   logoUrl: {
-    light: "/logomark-light-purple-v3.png",
-    dark: "/logomark-dark-purple-v3.png",
+    light: "/logomark-light-purple.png",
+    dark: "/logomark-dark-purple.png",
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
@@ -43,24 +43,71 @@ export default defineConfig({
   ],
   sidebar: [
     {
+      text: "⚡️Documentation preview⚡️",
+      link: "", // Add this line,
+      items: [ ]
+    },
+    {
+      text: "Intro",
+      collapsed: false,
+      items: [
+        {
+          text: "What is XMTP?",
+          link: "/intro/intro",
+        },
+        {
+          text: "FAQ",
+          link: "/intro/faq",
+        },
+      ],
+    },
+    {
       text: "Build chat inboxes",
       collapsed: false,
       items: [
         {
-          text: "Create a client",
-          link: "/inboxes/create-client",
+          text: "Get started",
+          link: "/inboxes/get-started",
         },
         {
-          text: "Build an inbox",
+          text: "Build a chat inbox",
           link: "/inboxes/build-inbox",
         },
         {
           text: "Support spam-free inboxes",
-          link: "/inboxes/user-consent",
+          collapsed: true,
+          items: [
+            {
+              text: "How spam-free inboxes work",
+              link: "/inboxes/user-consent/user-consent",
+            },
+            {
+              text: "Support spam-free inboxes",
+              link: "/inboxes/user-consent/support-user-consent",
+            },
+          ],
         },
         {
           text: "Support push notifications",
-          link: "/inboxes/push-notifs",
+          collapsed: true,
+          items: [
+            {
+              text: "Support push notifications",
+              link: "/inboxes/push-notifs/push-notifs",
+            },
+            {
+              text: "Run a push notifications server",
+              link: "/inboxes/push-notifs/pn-server",
+            },
+            {
+              text: "Try Android push notifications",
+              link: "/inboxes/push-notifs/android-pn",
+            },
+            {
+              text: "Try iOS push notifications",
+              link: "/inboxes/push-notifs/ios-pn",
+            },
+          ],
         },
       ],
     },
@@ -69,8 +116,12 @@ export default defineConfig({
       collapsed: false,
         items: [
         {
-          text: "Protocol specs",
+          text: "XMTP MLS protocol spec",
           link: "/protocol/specs",
+        },
+        {
+          text: "XIPs",
+          link: "/protocol/xips",
         },
       ],
     },

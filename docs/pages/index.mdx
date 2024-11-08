@@ -2,16 +2,29 @@ import { CustomHomePage } from "../components/CustomHomePage";
 import "../styles.css";
 
 <CustomHomePage.Root>
-  <CustomHomePage.Headline>Build with XMTP MLS Beta 🧪</CustomHomePage.Headline>
+  <CustomHomePage.Headline>Build with XMTP</CustomHomePage.Headline>
   <CustomHomePage.Subhead>
-    XMTP is an open, secure, and resilient messaging protocol.<br/><br/>XMTP MLS brings support for DMs and group chats with Messaging Layer Security, and much more.<br/><br/>Use these docs to build with the latest features.
+    XMTP is an open, secure, and resilient messaging protocol—for the next phase of the internet
   </CustomHomePage.Subhead>
   <CustomHomePage.TileGrid>
     <CustomHomePage.Tile
-      href="/get-started/developer-quickstart"
+      href="/intro/intro"
+      title="Intro to XMTP"
+      description="Get an intro to XMTP and why devs choose it to build messaging apps"
+      icon="🤝"
+    />
+    <CustomHomePage.Tile
+      href="/inboxes/get-started"
       title="Build chat inboxes"
-      description="Build standalone inbox apps with DMs and group chats built with MLS "
+      description="Build standalone inbox apps with DMs and group chats built with MLS"
       icon="📥"
+    />
+    <CustomHomePage.Tile
+      href="https://messagekit.ephemerahq.com/"
+      title="Build chat bots"
+      description="Use MessageKit to build bots that send messages in XMTP chats"
+      icon="🤖"
+      isExternal={true}
     />
     <CustomHomePage.Tile
       href="/protocol/specs"
@@ -20,9 +33,4 @@ import "../styles.css";
       icon="🧠"
     />
   </CustomHomePage.TileGrid>
-<br/>
-<br/>
-<p>🧪 The XMTP MLS SDKs are in **beta** status and ready for you to start experimenting with. We do **not** recommend using beta software in production apps. Software in this status will change as we add features, rename functions, and iterate based on feedback.</p>
-<br/>
-<p>XMTP MLS includes breaking changes from V2, most of which will be mitigated by the SDKs. Guidance about the migration path from V2 to V3 will be delivered in forthcoming XMTP MLS release notes.</p>
 </CustomHomePage.Root>
