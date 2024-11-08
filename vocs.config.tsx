@@ -125,5 +125,10 @@ export default defineConfig({
         },
       ],
     },
+    {
+      text: "Build chat bots with MessageKit ↗",
+      link: "https://messagekit.ephemerahq.com/",
+      items: [], // Add this line
+    },
   ],
 });
