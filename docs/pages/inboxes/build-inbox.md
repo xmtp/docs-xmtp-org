@@ -227,12 +227,6 @@ Here are some best practices for when to use each environment:
 
 The `PRODUCTION` network is configured to store messages indefinitely. XMTP may occasionally delete messages and keys from the `DEV` network, and will provide advance notice in the [XMTP Community Forms](https://community.xmtp.org/).
 
-
-
-
-
-
-
 ### Build an existing client
 
 Build, or resume, an existing client that's logged in and has an existing local database.
