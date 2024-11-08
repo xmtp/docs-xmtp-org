@@ -21,11 +21,19 @@ alix.welcomeTopic()
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+// Request
+Topic.userWelcome(client.installationId).description
+
+// Response
+/xmtp/mls/1/w-$installationId/proto
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+// Request
+Topic.userWelcome(client.installationId).description
+
+// Response
+/xmtp/mls/1/w-$installationId/proto
 ```
 
 :::
@@ -47,11 +55,19 @@ conversation.topic
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+// Request
+conversation.topic
+
+// Response
+/xmtp/mls/1/g-$conversationId/proto
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+// Request
+conversation.topic
+
+// Response
+/xmtp/mls/1/g-$conversationId/proto
 ```
 
 :::
@@ -72,12 +88,17 @@ await subscribeAll([alix.welcomeTopic(), ...topics]);
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+val conversations = alix.conversations.list()
+val topics = conversations.map { it.topic }.toMutableList()
+
+subscribeAll(topics.push(Topic.userWelcome(client.installationId).description))
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
-```
+let conversations = try await alix.conversations.list()
+var topics = conversations.map { $0.topic }
+
+subscribeAll(topics.append(Topic.userWelcome(client.installationId).description))```
 
 :::
 
@@ -92,11 +113,13 @@ const receivedBytes = Buffer.from(received.message, "base64").toString("utf-8");
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+val encryptedMessage = remoteMessage.data["encryptedMessage"]
+val encryptedMessageData = Base64.decode(encryptedMessage, Base64.NO_WRAP)
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+let encryptedMessage = remoteMessage.data["encryptedMessage"]
+let encryptedMessageData =  Data(base64Encoded: encryptedMessage)
 ```
 
 :::
@@ -114,11 +137,11 @@ Then determine whether it’s for a new conversation or an existing one.
   ```
 
   ```kotlin [Kotlin]
-  SNIPPET FROM NAOMI
+  val conversation = alix.conversations.fromWelcome(receivedBytes)
   ```
 
   ```swift [Swift]
-  SNIPPET FROM NAOMI
+  let conversation = try await alix.conversations.fromWelcome(receivedBytes)
   ```
 
   :::
@@ -134,11 +157,15 @@ Then determine whether it’s for a new conversation or an existing one.
   ```
 
   ```kotlin [Kotlin]
-  SNIPPET FROM NAOMI
+  val conversation = alix.findConversationByTopic(received.topic)
+  conversation.sync()
+  val message = conversation.processMessage(receivedBytes)
   ```
 
   ```swift [Swift]
-  SNIPPET FROM NAOMI
+  let conversation = try alix.findConversationByTopic(received.topic)
+  try await conversation.sync()
+  let message = try await conversation.processMessage(receivedBytes)
   ```
 
   :::
