@@ -47,7 +47,7 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "🚀 Preview XMTP V3 docs 🚀",
+      text: "⚡️ Preview XMTP V3 docs ⚡️",
       link: "/preview",
       items: [], // Add this line
     },
