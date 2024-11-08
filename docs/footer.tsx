@@ -19,14 +19,14 @@ export default function Footer() {
       <div>
       <small>
           <a
-            href="privacy"
+            href="/privacy"
             className="vocs_Anchor vocs_Link vocs_Link_accent_underlined"
           >
             Privacy policy
           </a>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <a
-            href="terms"
+            href="/terms"
             className="vocs_Anchor vocs_Link vocs_Link_accent_underlined"
           >
             Terms of service

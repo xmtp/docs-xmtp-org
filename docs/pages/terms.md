@@ -6,9 +6,9 @@ description: "We are pleased to license much of the documentation on this site u
 
 Our content licensing policies are based on those of the [Google Developer](https://developers.google.com/site-policies) website.
 
-We are pleased to license much of the documentation on [xmtp.org](https://xmtp.org/) under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.
+We are pleased to license much of the documentation on `doc.xmtp.org` under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.
 
-You will find the following notice at the bottom of pages on [xmtp.org](https://xmtp.org/):
+You will find the following notice at the bottom of pages on `docs.xmtp.org`:
 
 > CC BY 4.0
 
@@ -38,7 +38,7 @@ There are several typical ways in which this might apply:
 
 If your online work _exactly reproduces_ text or images from this site, in whole or in part, please include a paragraph at the bottom of your page that reads:
 
->Portions of this page are reproduced from work created and [shared by XMTP](https://xmtp.org/terms) and used according to terms described in the [Creative Commons 4.0 Attribution License](https://creativecommons.org/licenses/by/4.0/).
+>Portions of this page are reproduced from work created and shared by XMTP and used according to terms described in the [Creative Commons 4.0 Attribution License](https://creativecommons.org/licenses/by/4.0/).
 
 Also, please link back to the original source page so that readers can refer to it for more information.
 
@@ -46,7 +46,7 @@ Also, please link back to the original source page so that readers can refer to 
 
 If your online work shows _modified_ text or images based on the content from this site, please include a paragraph at the bottom of your page that reads:
 
->Portions of this page are modifications based on work created and [shared by XMTP](https://xmtp.org/terms) and used according to terms described in the [Creative Commons 4.0 Attribution License](https://creativecommons.org/licenses/by/4.0/).
+>Portions of this page are modifications based on work created and shared by XMTP and used according to terms described in the [Creative Commons 4.0 Attribution License](https://creativecommons.org/licenses/by/4.0/).
 
 Again, please link back to the original source page so that readers can refer to it for more information. This is even more important when the content has been modified.
 
