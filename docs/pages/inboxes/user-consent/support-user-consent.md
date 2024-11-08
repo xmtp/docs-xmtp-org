@@ -66,8 +66,6 @@ const groupConversationConsentState = await groupConversation.consentState();
 
 ```tsx [React Native]
 await conversation.consentState();
-
-// Replaces V2 `client.contact.isGroupAllowed(groupId)`
 ```
 
 ```kotlin [Kotlin]
@@ -130,8 +128,6 @@ await groupConversation.updateConsentState(ConsentState.Allowed);
 
 ```tsx [React Native]
 await conversation.updateConsent("allowed"); // 'allowed' | 'denied'
-
-// Replaces V2 `client.contact.allowGroups([groupIds])`
 ```
 
 ```kotlin [Kotlin]
