@@ -43,7 +43,7 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "⚡️Documentation preview⚡️",
+      text: "⚡️ Documentation preview ⚡️",
       link: "", // Add this line,
       items: [ ]
     },
