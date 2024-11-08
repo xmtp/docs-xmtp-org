@@ -27,11 +27,38 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```kotlin [Kotlin]
-  SNIPPET FROM NAOMI
+  class EOAWallet : SigningKey {
+    override val address: String
+        get() = walletAddress
+
+    override suspend fun sign(message: String): Signature {
+			val signature = key.sign(data)
+			return signature
+    }
+
+    override suspend fun sign(data: ByteArray): Signature {
+			val signature = key.sign(message: message)
+			return signature
+    }
+  }
   ```
 
   ```swift [Swift]
-  SNIPPET FROM NAOMI
+	public struct EOAWallet: SigningKey {
+		public var address: String {
+			walletAddress
+		}
+
+		public func sign(_ data: Data) async throws -> XMTPiOS.Signature {
+			let signature = try await key.sign(data)
+			return signature
+		}
+
+		public func sign(message: String) async throws -> XMTPiOS.Signature {
+			let signature = try await key.sign(message: message)
+			return signature
+		}
+	}
   ```
 
   :::
@@ -57,7 +84,7 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```kotlin [Kotlin]
-  class SCWWallet : SigningKey {
+  class SCWallet : SigningKey {
     override val address: String
         get() = walletAddress
 
@@ -87,7 +114,28 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```swift [Swift]
-  SNIPPET FROM NAOMI
+	public struct SCWallet: SigningKey {
+		public var address: String {
+			walletAddress
+		}
+
+    public var chainId: Int64? {
+			8453
+		}
+
+    public var blockNumber: Int64? {
+			nil
+		}
+
+    public var type: WalletType {
+			.SCW
+		}
+
+		public func signSCW(message: String) async throws -> Data {
+			let signature = try await key.sign(message: message)
+			return signature.hexStringToByteArray
+		}
+	}
   ```
 
   :::
@@ -124,7 +172,7 @@ Client.createV3(SigningKey, {
 val options = ClientOptions(
     ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
     appContext = ApplicationContext(),
-    dbEncryptionKey = keyBytes
+    dbEncryptionKey = keyBytes // 32 bytes
 )
 val client = Client().create(
         account = SigningKey,
@@ -133,7 +181,14 @@ val client = Client().create(
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.create(
+  account: SigningKey,
+  options: options
+)
 ```
 
 :::
@@ -167,7 +222,14 @@ val client = Client().build(
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.build(
+  address: address,
+  options: options
+)
 ```
 
 :::
@@ -225,7 +287,15 @@ val canMessage = client.canMessage(listOf('0xboAddress', '0xV2OnlyAddress','0xBa
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+// Request
+let canMessage = try await client.canMessage(["0xboAddress", "0xV2OnlyAddress","0xBadAddress"])
+
+// Response
+[
+  "0xboAddress": true,
+  "0xV2OnlyAddress": false,
+  "0xBadAddress": false,
+]
 ```
 
 :::
@@ -276,11 +346,29 @@ const group = await alix.conversations.newGroup([bo.address, caro.address], {
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+// New Group
+val group = alix.conversations.newGroup(listOf(bo.address, caro.address))
+
+// New Group with Metadata
+val group = alix.conversations.newGroup(listOf(bo.address, caro.address),
+  permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS, // ALL_MEMBERS | ADMIN_ONLY
+  groupName = "The Group Name",
+  groupImageUrlSquare = "www.groupImage.com",
+  groupDescription = "The description of the group",
+)
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+// New Group
+let group = try await alix.conversations.newGroup([bo.address, caro.address])
+
+// New Group with Metadata
+let group = try await alix.conversations.newGroup([bo.address, caro.address],
+  permissionLevel: .admin_only, // .all_members | .admin_only
+  groupName: "The Group Name",
+  groupImageUrlSquare: "www.groupImage.com",
+  groupDescription: "The description of the group",
+)
 ```
 
 :::
@@ -312,11 +400,17 @@ const dm = await alix.conversations.findOrCreateDm(bo.address);
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+val dm = alix.conversations.findOrCreateDm(bo.address)
+
+// calls the above function under the hood but returns a type conversation instead of a dm
+val conversation = client.conversations.newConversation(address)
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+let dm = try await alix.conversations.findOrCreateDm(with: bo.address)
+
+// calls the above function under the hood but returns a type conversation instead of a dm
+let conversation = try await client.conversations.newConversation(address)
 ```
 
 :::
@@ -350,11 +444,11 @@ await alix.conversations.syncConversations();
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+alix.conversations.sync()
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+try await alix.conversations.sync()
 ```
 
 :::
@@ -386,11 +480,11 @@ await alix.conversations.syncAllConversations();
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+alix.conversations.syncAllConversations()
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+try await alix.conversations.syncAllConversations()
 ```
 
 :::
@@ -441,11 +535,32 @@ await alix.conversations.listConversations(
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+// List conversations (both groups and dms)
+val conversations = alix.conversations.list()
+val orderFilteredConversations = client.conversations.list(consentState: ALLOWED, order: LAST_MESSAGE)
+
+// List just dms
+val conversations = alix.conversations.listDms()
+val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED, order: LAST_MESSAGE)
+
+//List just groups
+val conversations = alix.conversations.listGroups()
+val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED, order: LAST_MESSAGE)
+
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+// List conversations (both groups and dms)
+let conversations = try await alix.conversations.list()
+let orderFilteredConversations = try await client.conversations.list(consentState: .allowed, order: .last_message)
+
+// List just dms
+let conversations = try await alix.conversations.listDms()
+let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed, order: .last_message)
+
+//List just groups
+let conversations = try await alix.conversations.listGroups()
+let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed, order: .last_message)
 ```
 
 :::
@@ -482,16 +597,18 @@ await alix.conversations.streamConversations(
     // Received a conversation
   }
 );
-
-// Replaces V2 `client.conversations.stream()`
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
 ```
 
 :::
@@ -526,16 +643,18 @@ await alix.conversations.streamAllConversationMessages(
     // Received a message
   }
 );
-
-// Replaces V2 `client.conversations.streamAllMessages()`
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a message
+}
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a message
+}
 ```
 
 :::
@@ -593,11 +712,23 @@ await alix.conversations.findDm(bo.address);
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+// Returns a ConversationContainer
+alix.conversations.findConversation(conversation.id)
+alix.conversations.findConversationByTopic(conversation.topic)
+// Returns a Group
+alix.conversations.findGroup(group.id)
+// Returns a DM
+alix.conversations.findDm(bo.address)
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+// Returns a ConversationContainer
+try alix.conversations.findConversation(conversation.id)
+try alix.conversations.findConversationByTopic(conversation.topic)
+// Returns a Group
+try alix.conversations.findGroup(group.id)
+// Returns a DM
+try alix.conversations.findDm(bo.address)
 ```
 
 :::
