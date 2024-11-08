@@ -164,8 +164,6 @@ Client.createV3(SigningKey, {
   enableV3: true,
   dbEncryptionKey: keyBytes, // 32 bytes
 });
-
-// Should work the same as it does in V2 `Client.create(SigningKey, ClientOptions)`
 ```
 
 ```kotlin [Kotlin]
@@ -239,8 +237,6 @@ Client.buildV3(address, {
   enableV3: true,
   dbEncryptionKey: keyBytes, // 32 bytes
 });
-
-// Replaces V2 `Client.createFromKeyBundle(bundle)`
 ```
 
 ```kotlin [Kotlin]
@@ -429,8 +425,6 @@ const group = await client.conversations.newDm(bo.address);
 
 ```tsx [React Native]
 const dm = await alix.conversations.findOrCreateDm(bo.address);
-
-// Replaces V2 functionality `client.conversations.newConversation(address)`
 ```
 
 ```kotlin [Kotlin]
@@ -564,8 +558,6 @@ await alix.conversations.listConversations(
   },
   "lastMessage"
 ); // 'createdAt' | 'lastMessage'
-
-// Replaces V2 functionality `client.conversations.list()`
 ```
 
 ```kotlin [Kotlin]

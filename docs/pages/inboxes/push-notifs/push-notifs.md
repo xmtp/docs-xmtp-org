@@ -16,8 +16,6 @@ alix.welcomeTopic()
 
 // Response
 /xmtp/mls/1/w-$installationId/proto
-
-// Replaces V2 `/xmtp/0/invite-$address/proto`
 ```
 
 ```kotlin [Kotlin]
@@ -50,8 +48,6 @@ conversation.topic
 
 // Response
 /xmtp/mls/1/g-$conversationId/proto
-
-// Replaces V2 `/xmtp/0/m-$addresses/proto`
 ```
 
 ```kotlin [Kotlin]
