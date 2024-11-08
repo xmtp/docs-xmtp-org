@@ -1,6 +1,6 @@
 # Privacy policy
 
-[docs.xmtp.org](https://docs.xmtp.org/) does not use cookies and does not collect any personal data or personally-identifiable information (PII).
+`docs.xmtp.org` does not use cookies and does not collect any personal data or personally-identifiable information (PII).
 
 The site does use Plausible analytics to track overall trends in website traffic. Plausible does not track individual visitors. All analytics data is aggregated data only and it contains no personal information.
 
