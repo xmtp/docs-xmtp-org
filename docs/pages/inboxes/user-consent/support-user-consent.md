@@ -13,11 +13,11 @@ await alix.syncConsent();
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+alix.preferences.syncConsent()
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+try await alix.preferences.syncConsent()
 ```
 
 :::
@@ -71,11 +71,11 @@ await conversation.consentState();
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+conversation.consentState()
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+try conversation.consentState()
 ```
 
 :::
@@ -135,11 +135,11 @@ await conversation.updateConsent("allowed"); // 'allowed' | 'denied'
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+conversation.updateConsent(ALLOWED) // ALLOWED | DENIED
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
+try await conversation.updateConsent(.allowed) // .allowed | .denied
 ```
 
 :::
@@ -155,12 +155,15 @@ await alix.streamConsent();
 ```
 
 ```kotlin [Kotlin]
-SNIPPET FROM NAOMI
+alix.preferences.streamConsent().collect {
+  // Received consent
+}
 ```
 
 ```swift [Swift]
-SNIPPET FROM NAOMI
-```
+for await consent in try await alix.preferences.streamConsent() {
+  // Received consent
+}```
 
 :::
 
