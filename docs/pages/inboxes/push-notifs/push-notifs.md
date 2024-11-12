@@ -77,7 +77,7 @@ This code sample retrieves all topics associated with `alix`’s conversations, 
 :::code-group
 
 ```tsx [React Native]
-const conversations = await alix.conversations.listConversations();
+const conversations = await alix.conversations.list();
 const topics = conversations.map((conv: any) => conv.topic);
 
 await subscribeAll([alix.welcomeTopic(), ...topics]);
@@ -122,12 +122,12 @@ let encryptedMessageData =  Data(base64Encoded: encryptedMessage)
 
 Then determine whether it’s for a new conversation or an existing one.
 
-- **If it’s a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `conversationFromWelcome`:
+- **If it’s a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `fromWelcome`:
 
   :::code-group
 
   ```tsx [React Native]
-  const conversation = await alix.conversations.conversationFromWelcome(
+  const conversation = await alix.conversations.fromWelcome(
     receivedBytes
   );
   ```
