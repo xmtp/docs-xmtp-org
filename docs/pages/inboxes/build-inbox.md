@@ -159,9 +159,8 @@ const client = await Client.create(alix.address, options /* optional */);
 ```
 
 ```tsx [React Native]
-Client.createV3(SigningKey, {
+Client.create(SigningKey, {
   env: "production", // 'local' | 'dev' | 'production'
-  enableV3: true,
   dbEncryptionKey: keyBytes, // 32 bytes
 });
 ```
@@ -232,9 +231,8 @@ Build, or resume, an existing client that's logged in and has an existing local 
 :::code-group
 
 ```tsx [React Native]
-Client.buildV3(address, {
+Client.build(address, {
   env: "production", // 'local' | 'dev' | 'production'
-  enableV3: true,
   dbEncryptionKey: keyBytes, // 32 bytes
 });
 ```
@@ -290,7 +288,7 @@ const response = await client.canMessage([bo.address, caro.address]);
 
 ```tsx [React Native]
 // Request
-const canMessage = await client.canGroupMessage([
+const canMessage = await client.canMessage([
   '0xboAddress',
   '0xV2OnlyAddress',
   '0xBadAddress',
@@ -466,7 +464,7 @@ await client.conversations.sync();
 ```
 
 ```tsx [React Native]
-await alix.conversations.syncConversations();
+await alix.conversations.sync();
 
 // Does not refetch existing conversations
 ```
@@ -542,11 +540,11 @@ const allDms = await client.conversations.listDms();
 ```
 
 ```tsx [React Native]
-// List ConversationContainer items by createdAt date
-await alix.conversations.listConversations();
+// List Conversation items by createdAt date
+await alix.conversations.list();
 
-// List ConversationContainer items by lastMessage but only return specified fields
-await alix.conversations.listConversations(
+// List Conversation items by lastMessage but only return specified fields
+await alix.conversations.list(
   {
     members: false,
     consentState: false,
@@ -618,8 +616,8 @@ try {
 ```
 
 ```tsx [React Native]
-await alix.conversations.streamConversations(
-  async (conversation: ConversationContainer<any>) => {
+await alix.conversations.stream(
+  async (conversation: Conversation<any>) => {
     // Received a conversation
   }
 );
@@ -664,7 +662,7 @@ try {
 ```
 
 ```tsx [React Native]
-await alix.conversations.streamAllConversationMessages(
+await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   }
@@ -734,7 +732,7 @@ await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
 await alix.conversations.findGroup(group.id);
 // Returns a DM
-await alix.conversations.findDm(bo.address);
+await alix.conversations.findDmByAddress(bo.address);
 ```
 
 ```kotlin [Kotlin]
