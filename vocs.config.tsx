@@ -112,6 +112,11 @@ export default defineConfig({
       ],
     },
     {
+      text: "Build chat bots with MessageKit ↗",
+      link: "https://messagekit.ephemerahq.com/",
+      items: [], // Add this line
+    },
+    {
       text: "Protocol concepts",
       collapsed: false,
         items: [
@@ -120,15 +125,14 @@ export default defineConfig({
           link: "/protocol/specs",
         },
         {
+          text: "Wallet signatures",
+          link: "/protocol/signatures",
+        },
+        {
           text: "XIPs",
           link: "/protocol/xips",
         },
       ],
-    },
-    {
-      text: "Build chat bots with MessageKit ↗",
-      link: "https://messagekit.ephemerahq.com/",
-      items: [], // Add this line
     },
   ],
 });
