@@ -5,11 +5,12 @@ import { defineConfig } from "vocs";
 export default defineConfig({
   head: () => {
     // console.log(`Generating head content... ${new Date().toISOString()}`)
+    // track analytics to see if the prompt to read the latest docs is working
     return (
       <>
         <script
-          src="https://plausible.io/js/script.js"
-          data-domain="docs.xmtp.org"
+          src="https://plausible.io/js/script.outbound-links.js"
+          data-domain="docs-xmtp-org-git-xmtp-legacy-ephemerahq.vercel.app"
           defer
         />
       </>
