@@ -74,6 +74,10 @@ export default defineConfig({
           link: "/inboxes/build-inbox",
         },
         {
+          text: "Set group permissions and metadata",
+          link: "/inboxes/handle-groups",
+        },
+        {
           text: "Support spam-free inboxes",
           collapsed: true,
           items: [
