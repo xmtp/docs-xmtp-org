@@ -39,7 +39,7 @@ See [Remote attachment content type](https://github.com/xmtp/xmtp-js-content-typ
 
 Here are some decentralized social protocols that work with XMTP:
 
-- [CyberConnect](https://link3.to/cyberconnect)  
+- [CyberConnect](https://link3.to/cyber)  
   For more info, see [CyberConnect & XMTP Integration Demo App](https://github.com/cyberconnecthq/cc-xmtp-chatapp) and [Integrating XMTP into CyberConnect](https://cyberconnect.hashnode.dev/integrating-xmtp-into-cyberconnect-a-guide)
 - [Lens](https://www.lens.xyz/)  
   For more info, see the [Hey Lens app](https://github.com/heyxyz/hey) GitHub repo.

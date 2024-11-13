@@ -38,7 +38,7 @@ Implement the necessary delegate methods to handle incoming notifications and fo
 
 ## Run the notification server
 
-1. Clone and nonfigure the notification server  
+1. Clone and configure the notification server  
 If you're using the example notification server, clone the repository and follow the setup instructions. Make sure to configure it with your FCM server key.
 
 2. Run the server  
