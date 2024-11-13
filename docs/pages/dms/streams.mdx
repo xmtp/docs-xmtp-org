@@ -100,7 +100,7 @@ useEffect(() => {
     };
   };
 
-  streamConversations();
+  await streamConversations();
 }, []);
 ```
 :::
@@ -183,7 +183,7 @@ let conversation = try await client.conversations.newConversation(
   with: "0x3F11b27F323b62B159D2642964fa27C46C841897")
 
 for try await message in conversation.streamMessages() {
-  if message.senderAddress == client.address {
+  if message.senderAddress === client.address {
     // This message was sent from me
     continue
   }
