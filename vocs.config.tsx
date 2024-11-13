@@ -113,6 +113,11 @@ export default defineConfig({
             },
           ],
         },
+        {
+          text: "Display Open Frames",
+          link: "/inboxes/frames",
+        },
+
       ],
     },
     {
