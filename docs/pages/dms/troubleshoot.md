@@ -29,7 +29,7 @@ window.Buffer = window.Buffer ?? Buffer;
 - NuxtJS: `app.vue`
 
 ```tsx [TypeScript]
-//has to be on the first line of the file for it to work
+// It has to be on the first line of the file for it to work
 import "./polyfills";
 ```
 
