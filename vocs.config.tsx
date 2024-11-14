@@ -17,7 +17,7 @@ export default defineConfig({
   },
   title: "Build with XMTP",
   description:
-    "XMTP is an open, secure, and resilient messaging protocol—for the next phase of the internet",
+    "XMTP is a secure and decentralized protocol for building communication platforms for the next phase of the internet.",
   logoUrl: {
     light: "/logomark-light-purple.png",
     dark: "/logomark-dark-purple.png",
@@ -43,8 +43,8 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "⚡️ Documentation preview ⚡️",
-      link: "", // Add this line,
+      text: "📋 Documentation status",
+      link: "/doc-status",
       items: [ ]
     },
     {
