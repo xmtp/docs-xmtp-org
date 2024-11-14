@@ -24,39 +24,12 @@ npm i @xmtp/content-type-reply
 
 After importing the package, you can register the codec.
 
-<div data-title="JavaScript">
-
-```jsx [JavaScript]
-import { ContentTypeReply, ReplyCodec } from "@xmtp/content-type-reply";
-// Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReplyCodec());
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: "production",
+  codecs: [new ReplyCodec()],
+});
 ```
-
-</div>
-
-<div data-title="React">
-
-```jsx [JavaScript]
-import {
-  XMTPProvider,
-  replyContentTypeConfig,
-} from "@xmtp/react-sdk";
-
-const contentTypeConfigs = [
-  replyContentTypeConfig,
-];
-
-createRoot(document.getElementById("root") as HTMLElement).render(
-  <StrictMode>
-    <XMTPProvider contentTypeConfigs={contentTypeConfigs}>
-      <App />
-    </XMTPProvider>
-  </StrictMode>,
-);
-```
-
-</div>
 
 ```kotlin [Kotlin]
 import org.xmtp.android.library.codecs.ReplyCodec
@@ -66,13 +39,6 @@ Client.register(codec = ReplyCodec())
 
 ```swift [Swift]
 Client.register(codec: ReplyCodec())
-```
-
-```jsx [React Native]
-const client = await Client.create(signer, {
-  env: "production",
-  codecs: [new ReplyCodec()],
-});
 ```
 
 :::
@@ -87,35 +53,18 @@ Once you've created a reply, you can send it. Replies are represented as objects
 
 :::code-group
 
-```tsx [JavaScript]
-import { ContentTypeText } from "@xmtp/content-type-text";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-import type { Reply } from "@xmtp/content-type-reply";
-
-const reply: Reply = {
-  reference: someMessageID,
-  contentType: ContentTypeText,
-  content: "I concur",
-};
-
-await conversation.send(reply, {
-  contentType: ContentTypeReply,
-});
-```
-
-```tsx [React]
-import { useSendMessage } from "@xmtp/react-sdk";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-
-const { sendMessage } = useSendMessage();
-
+```jsx [React Native]
+// Assuming you have a conversation object and the ID of the message you're replying to
 const replyContent = {
-  content: "Your reply content here",
-  contentType: ContentTypeText,
-  reference: "originalMessageXmtpId",
+  reply: {
+    reference: messageId, // ID of the message you're replying to
+    content: {
+      text: "This is a reply", // Content of the reply
+    },
+  },
 };
 
-sendMessage(conversation, replyContent, ContentTypeReply);
+await conversation.send(replyContent);
 ```
 
 ```kotlin [Kotlin]
@@ -149,76 +98,23 @@ try await conversation.send(
 )
 ```
 
-```jsx [React Native]
-// Assuming you have a conversation object and the ID of the message you're replying to
-const replyContent = {
-  reply: {
-    reference: messageId, // ID of the message you're replying to
-    content: {
-      text: "This is a reply", // Content of the reply
-    },
-  },
-};
-
-await conversation.send(replyContent);
-```
-
 :::
 
 ## Receive the content type
 
 :::code-group
 
-```tsx [JavaScript]
-if (message.contentType.sameAs(ContentTypeReply)) {
-  // We've got a reply.
-  const reply: Reply = message.content;
+```jsx [React Native]
+if (message.contentTypeId === "xmtp.org/reply:1.0") {
+  const reply = message.content();
+  if (reply) {
+    const replyContent: ReplyContent = reply;
+    const replyContentType = replyContent.contentType;
+    const codec = client.codecRegistry[replyContentType];
+    const actualReplyContent = codec.decode(replyContent.content);
+  }
 }
 ```
-
-<div data-title="React">
-
-```jsx [JavaScript]
-import { ContentTypeId } from "@xmtp/react-sdk";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-
-const contentType = ContentTypeId.fromString(message.contentType);
-
-if (ContentTypeReply.sameAs(contentType)) {
-  // We've got a reply.
-  const reply = message.content as Reply;
-  // Use reply...
-}
-```
-
-**getReplies**
-
-Use to retrieve all replies for a given message. It takes a message object and returns an array of reply IDs.
-
-```jsx [JavaScript]
-import { getReplies } from "@xmtp/react-sdk";
-const replies = getReplies(message);
-```
-
-**hasReply**
-
-Use to check if a given message has any replies. It takes a message object and returns a boolean indicating whether the message has replies.
-
-```jsx [JavaScript]
-import { hasReply } from "@xmtp/react-sdk";
-const messageHasReply = hasReply(message);
-```
-
-**getOriginalMessageFromReply**
-
-Use to retrieve the original message the reply is responding to. It takes a reply message object and returns the original message object.
-
-```jsx [JavaScript]
-import { getOriginalMessageFromReply } from "@xmtp/react-sdk";
-const originalMessage = await getOriginalMessageFromReply(replyMessage, db);
-```
-
-</div>
 
 ```kotlin [Kotlin]
 if (encodedContent.type == ContentTypeReply) {
@@ -231,18 +127,6 @@ if (encodedContent.type == ContentTypeReply) {
 
 ```swift [Swift]
 let content: Reply = try message.content()
-```
-
-```jsx [React Native]
-if (message.contentTypeId === "xmtp.org/reply:1.0") {
-  const reply = message.content();
-  if (reply) {
-    const replyContent: ReplyContent = reply;
-    const replyContentType = replyContent.contentType;
-    const codec = client.codecRegistry[replyContentType];
-    const actualReplyContent = codec.decode(replyContent.content);
-  }
-}
 ```
 
 :::

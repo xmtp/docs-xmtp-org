@@ -34,19 +34,12 @@ npm i @xmtp/content-type-read-receipt
 
 :::code-group
 
-<div data-title="JavaScript">
-
-```tsx [TypeScript]
-import {
-  ContentTypeReadReceipt,
-  ReadReceiptCodec,
-} from "@xmtp/content-type-read-receipt";
-// Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReadReceiptCodec());
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: "production",
+  codecs: [new ReadReceiptCodec()],
+});
 ```
-
-</div>
 
 ```kotlin [Kotlin]
 import org.xmtp.android.library.Client
@@ -59,23 +52,14 @@ Client.register(codec = ReadReceiptCodec())
  Client.register(codec: ReadReceiptCodec())
 ```
 
-```jsx [React Native]
-const client = await Client.create(signer, {
-  env: "production",
-  codecs: [new ReadReceiptCodec()],
-});
-```
-
 :::
 
 ## Send a read receipt
 
 :::code-group
 
-```tsx [TypeScript]
-// The content of a read receipt message must be an empty object.
-
-await conversation.messages.send({}, ContentTypeReadReceipt);
+```jsx [React Native]
+await bobConversation.send({ readReceipt: {} });
 ```
 
 ```kotlin [Kotlin]
@@ -103,10 +87,6 @@ try await conversation.send(
 )
 ```
 
-```jsx [React Native]
-await bobConversation.send({ readReceipt: {} });
-```
-
 :::
 
 ## Receive a read receipt
@@ -115,10 +95,9 @@ Here's how you can receive a read receipt:
 
 :::code-group
 
-```tsx [JavaScript]
-if (message.contentType.sameAs(ContentTypeReadReceipt)) {
-  // The message is a read receipt
-  const timestamp = message.sent;
+```jsx [React Native]
+if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
+  return message.sent; //Date received
 }
 ```
 
@@ -136,12 +115,6 @@ if (message.encodedContent.type == ContentTypeReadReceipt) {
 ```swift [Swift]
 let content: ReadReceipt = try message.content()
 content.timestamp // "2019-09-26T07:58:30.996+0200"
-```
-
-```jsx [React Native]
-if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
-  return message.sent; //Date received
-}
 ```
 
 :::

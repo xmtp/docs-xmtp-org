@@ -179,7 +179,7 @@ With XMTP, these message formats are called content types. Currently, there are 
 
 The XMTP community can propose and adopt standards for other content types, either informally or through a governance process.
 
-To learn more about content types, see [Content types](#TODO).
+To learn more about content types, see [Content types](/inboxes/content-types/content-types).
 
 To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
  
@@ -187,7 +187,7 @@ To learn more about the XMTP improvement proposals governance process, see [What
 
 Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).
 
-For this reason, XMTP supports [remote attachments](#TODO).
+For this reason, XMTP supports [remote attachments](/inboxes/content-types/attachments).
 
 ### Does XMTP support message deletion and editing?
 

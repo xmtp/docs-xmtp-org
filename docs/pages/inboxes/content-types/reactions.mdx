@@ -24,42 +24,12 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="JavaScript">
-
-```jsx [JavaScript]
-import {
-  ContentTypeReaction,
-  ReactionCodec,
-} from "@xmtp/content-type-reaction";
-// Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReactionCodec());
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: "production",
+  codecs: [new ReactionCodec()],
+});
 ```
-
-</div>
-
-<div data-title="React">
-
-```jsx [JavaScript]
-import {
-  XMTPProvider,
-  reactionContentTypeConfig,
-} from "@xmtp/react-sdk";
-
-const contentTypeConfigs = [
-  reactionContentTypeConfig,
-];
-
-createRoot(document.getElementById("root") as HTMLElement).render(
-  <StrictMode>
-    <XMTPProvider contentTypeConfigs={contentTypeConfigs}>
-      <App />
-    </XMTPProvider>
-  </StrictMode>,
-);
-```
-
-</div>
 
 ```kotlin [Kotlin]
 import org.xmtp.android.library.codecs.ReactionCodec
@@ -69,13 +39,6 @@ Client.register(codec = ReactionCodec())
 
 ```swift [Swift]
 Client.register(ReactionCodec());
-```
-
-```jsx [React Native]
-const client = await Client.create(signer, {
-  env: "production",
-  codecs: [new ReactionCodec()],
-});
 ```
 
 :::
@@ -94,35 +57,18 @@ With XMTP, reactions are represented as objects with the following keys:
 
 :::code-group
 
-```tsx [JavaScript]
-const reaction = {
-  reference: someMessageID,
-  action: "added",
-  content: "smile",
+```jsx [React Native]
+// Assuming you have a conversation object and the ID of the message you're reacting to
+const reactionContent = {
+  reaction: {
+    reference: messageId, // ID of the message you're reacting to
+    action: "added", // Action can be 'added' or 'removed'
+    schema: "unicode", // Schema can be 'unicode', 'shortcode', or 'custom'
+    content: "👍", // Content of the reaction
+  },
 };
 
-await conversation.send(reaction, {
-  contentType: ContentTypeReaction,
-});
-```
-
-```jsx [React]
-  const { sendMessage } = useSendMessage();
-  const handleClick = useCallback(
-    (emoji: string) => {
-      void sendMessage<Reaction>(
-        conversation,
-        {
-          content: emoji,
-          schema: "unicode",
-          reference: message.xmtpID,
-          action: "added",
-        },
-        ContentTypeReaction,
-      );
-    },
-    [conversation, message.xmtpID, sendMessage],
-  );
+await conversation.send(reactionContent);
 ```
 
 ```kotlin [Kotlin]
@@ -159,20 +105,6 @@ try await conversation.send(
 )
 ```
 
-```jsx [React Native]
-// Assuming you have a conversation object and the ID of the message you're reacting to
-const reactionContent = {
-  reaction: {
-    reference: messageId, // ID of the message you're reacting to
-    action: "added", // Action can be 'added' or 'removed'
-    schema: "unicode", // Schema can be 'unicode', 'shortcode', or 'custom'
-    content: "👍", // Content of the reaction
-  },
-};
-
-await conversation.send(reactionContent);
-```
-
 :::
 
 ## Receive a reaction
@@ -181,50 +113,16 @@ Now that you can send a reaction, you need a way to receive a reaction. For exam
 
 :::code-group
 
-```tsx [JavaScript]
-if (message.contentType.sameAs(ContentTypeReaction)) {
-  // We've got a reaction.
-  const reaction: Reaction = message.content;
+```jsx [React Native]
+if (message.contentTypeId === "xmtp.org/reaction:1.0") {
+  const reaction = message.content();
+  return reaction;
+  //reaction.reference = id of the message being reacted to,
+  //reaction.action = 'added',
+  //reaction.schema =  'unicode',
+  //reaction.content = '💖',
 }
 ```
-
-<div data-title="React">
-
-```jsx [JavaScript]
-if (message.contentType === ContentTypeReaction.toString()) {
-  const reactionContent = message.content as Reaction;
-  // Use reactionContent...
-}
-```
-
-**useReactions**
-
-Use to fetch all reactions for a specific message. It takes a `CachedMessage` as a parameter and returns an array of `CachedReaction` objects.
-
-```jsx [JavaScript]
-import { useReactions } from "@xmtp/react-sdk";
-const reactions = useReactions(message);
-```
-
-**getReactionsByXmtpID**
-
-Use to retrieve all reactions associated with a specific XMTP ID from the database.
-
-```jsx [JavaScript]
-import { getReactionsByXmtpID } from "@xmtp/react-sdk";
-const reactions = await getReactionsByXmtpID("testXmtpId1", db);
-```
-
-**hasReaction**
-
-Use to check if a message has any reactions. It takes a `CachedMessage` as a parameter and returns a boolean indicating whether the message has reactions.
-
-```jsx [JavaScript]
-import { hasReaction } from "@xmtp/react-sdk";
-const messageHasReaction = hasReaction(originalMessage!);
-```
-
-</div>
 
 ```kotlin [Kotlin]
 if (message.contentType == ContentTypeReaction) {
@@ -236,17 +134,6 @@ if (message.contentType == ContentTypeReaction) {
 
 ```swift [Swift]
 let content: Reaction = try message.content()
-```
-
-```jsx [React Native]
-if (message.contentTypeId === "xmtp.org/reaction:1.0") {
-  const reaction = message.content();
-  return reaction;
-  //reaction.reference = id of the message being reacted to,
-  //reaction.action = 'added',
-  //reaction.schema =  'unicode',
-  //reaction.content = '💖',
-}
 ```
 
 To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
