@@ -515,6 +515,75 @@ try await alix.conversations.syncAllConversations()
 
 :::
 
+#### Handle unsupported content types
+
+As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+
+Each message is accompanied by a `contentFallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that content fallbacks are immutable and are predefined in the content type specification. In instances where `contentFallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+
+:::code-group
+
+```jsx [JavaScript]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.contentFallback !== undefined) {
+    return message.contentFallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```tsx [React]
+import { useClient, ContentTypeId } from "@xmtp/react-sdk";
+const { client } = useClient();
+
+const contentType = ContentTypeId.fromString(message.contentType);
+const codec = client.codecFor(contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.contentFallback !== undefined) {
+    return message.contentFallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```kotlin [Kotlin]
+val codec = client.codecRegistry.find(options?.contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.contentFallback != null) {
+    return message.contentFallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```swift [Swift]
+let codec = client.codecRegistry.find(for: contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.contentFallback != null) {
+    return message.contentFallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```jsx [React Native]
+//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
+const isRegistered = message.contentTypeID in client.codecRegistry;
+if (!isRegistered) {
+  // Not supported content type
+  if (message?.fallback != null) {
+    return message?.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+:::
+
 ### List existing group chats or DMs
 
 Get a list of existing group chats or DMs in the local database, ordered either by `createdAt` date or `lastMessage`.

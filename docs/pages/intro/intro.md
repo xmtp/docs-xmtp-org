@@ -1,6 +1,8 @@
 # What is XMTP?
 
-XMTP (Extensible Message Transport Protocol) is an open, permissionless, and decentralized protocol for secure and private messaging.
+XMTP (Extensible Message Transport Protocol) is a secure and decentralized protocol for building communication platforms for the next phase of the internet.
+
+XMTP is open and permissionless, empowering any developer to build end-to-end encrypted 1:1, group, and broadcast messaging experiences, and more.
 
 ## Why should I build with XMTP?
 

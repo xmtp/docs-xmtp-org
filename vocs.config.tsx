@@ -92,6 +92,40 @@ export default defineConfig({
           ],
         },
         {
+          text: "Support content types",
+          collapsed: true,
+          items: [
+            {
+              text: "Understand content types",
+              link: "/inboxes/content-types/content-types",
+            },
+            {
+              text: "Attachments",
+              link: "/inboxes/content-types/attachments",
+            },
+            {
+              text: "Reactions",
+              link: "/inboxes/content-types/reactions",
+            },
+            {
+              text: "Replies",
+              link: "/inboxes/content-types/replies",
+            },
+            {
+              text: "Read receipts",
+              link: "/inboxes/content-types/read-receipts",
+            },
+            {
+              text: "Onchain transaction references",
+              link: "/inboxes/content-types/transaction-refs",
+            },
+            {
+              text: "Custom content",
+              link: "/inboxes/content-types/custom",
+            },
+          ],
+        },
+        {
           text: "Support push notifications",
           collapsed: true,
           items: [
