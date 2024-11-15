@@ -8,7 +8,7 @@ export default defineConfig({
     return (
       <>
         <script
-          src="https://plausible.io/js/script.js"
+          src="https://plausible.io/js/script.outbound-links.js"
           data-domain="docs.xmtp.org"
           defer
         />
@@ -146,6 +146,10 @@ export default defineConfig({
               link: "/inboxes/push-notifs/ios-pn",
             },
           ],
+        },
+        {
+          text: "SDK references",
+          link: "/inboxes/references",
         },
       ],
     },
