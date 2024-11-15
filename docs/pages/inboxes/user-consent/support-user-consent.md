@@ -28,10 +28,8 @@ Check the current consent state of a specific conversation:
 
 :::code-group
 
-```js [Node]
-import { Client, ConsentEntityType } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+```js [Browser]
+import { ConsentEntityType } from "@xmtp/browser-sdk";
 
 // get consent state from the client
 const conversationConsentState = await client.getConsentState(
@@ -46,10 +44,8 @@ const groupConversation = await client.conversations.findConversationById(
 const groupConversationConsentState = await groupConversation.consentState();
 ```
 
-```js [Browser]
-import { Client, ConsentEntityType } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
+```js [Node]
+import { ConsentEntityType } from "@xmtp/node-sdk";
 
 // get consent state from the client
 const conversationConsentState = await client.getConsentState(
@@ -84,10 +80,8 @@ Update the consent state of a conversation to allow or deny messages:
 
 :::code-group
 
-```js [Node]
-import { Client, ConsentEntityType, ConsentState } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+```js [Browser]
+import { ConsentEntityType, ConsentState } from "@xmtp/browser-sdk";
 
 // set consent state from the client (can set multiple states at once)
 await client.setConsentStates([
@@ -105,10 +99,8 @@ const groupConversation = await client.conversations.findConversationById(
 await groupConversation.updateConsentState(ConsentState.Allowed);
 ```
 
-```js [Browser]
-import { Client, ConsentEntityType, ConsentState } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
+```js [Node]
+import { ConsentEntityType, ConsentState } from "@xmtp/node-sdk";
 
 // set consent state from the client (can set multiple states at once)
 await client.setConsentStates([
@@ -156,7 +148,7 @@ alix.preferences.streamConsent().collect {
 }
 ```
 
-```swift [Swift]
+````swift [Swift]
 for await consent in try await alix.preferences.streamConsent() {
   // Received consent
 }```
@@ -225,3 +217,4 @@ This flexibility enables different apps to serve different user preferences, fos
 Is your app using a great third-party or public good tool to help with spam and keep inboxes safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
 
 :::
+````
