@@ -2,7 +2,19 @@ export default function Footer() {
   return (
     <div style={{ textAlign: "center" }}>
       <div>
-        <small>
+        <small>🔔&nbsp;
+        <a
+            href="https://docs.xmtp.org/"
+            target="_blank"
+            style={{
+              "--vocs_ExternalLink_iconUrl":
+                "url(/.vocs/icons/arrow-diagonal.svg)",
+            }}
+            className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink"
+          >
+            Read the latest docs
+        </a>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a
             href="https://xmtp.org/"
             target="_blank"

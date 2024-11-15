@@ -5,50 +5,44 @@ import { defineConfig } from "vocs";
 export default defineConfig({
   head: () => {
     // console.log(`Generating head content... ${new Date().toISOString()}`)
+    // track analytics to see if the prompt to read the latest docs is working
     return (
       <>
         <script
-          src="https://plausible.io/js/script.js"
-          data-domain="docs.xmtp.org"
+          src="https://plausible.io/js/script.outbound-links.js"
+          data-domain="docs-xmtp-org-git-xmtp-legacy-ephemerahq.vercel.app"
           defer
         />
       </>
     );
   },
-  title: "XMTP Documentation",
+  title: "Legacy XMTP documentation",
   description:
-    "Documentation for XMTP, the open and secure messaging protocol for web3",
-  editLink: {
-    pattern: "https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path",
-    text: "Suggest changes to this page",
-  },
+    "This site provides documentation for legacy versions of XMTP. To learn how to build 1:1 and group chat experiences with the latest version of XMTP, see https://docs.xmtp.org/.", 
   logoUrl: {
-    light: "/logomark-dark-purple.png",
-    dark: "/logomark-light-purple.png",
+    light: "/xmtp-logo-lockup-grey-black.png",
+    dark: "/xmtp-logo-lockup-grey-white.png",
   },
-  iconUrl: "/x-mark-blue.png",
+  iconUrl: "/xmtp-logo-grey.png",
   topNav: [
     {
-      text: "Support 💬",
-      link: "https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf",
+      text: "🔔 Read the latest docs",
+      link: "https://docs.xmtp.org/",
     },
-    { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
     "/": "/xmtp-og-card.jpeg",
     "/docs":
       "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
   },
-  socials: [
-    {
-      icon: "github",
-      link: "https://github.com/xmtp",
-    },
-  ],
   sidebar: [
     {
-      text: "⚡️ Preview XMTP V3 docs ⚡️",
-      link: "/preview",
+      text: "🔔 Read the latest docs ↗",
+      link: "https://docs.xmtp.org/",
+      items: [], // Add this line
+    },
+    {
+      text: "⎯ LEGACY DOCUMENTATION ⎯",
       items: [], // Add this line
     },
     {
@@ -64,11 +58,6 @@ export default defineConfig({
           link: "/get-started/faq",
         },
       ],
-    },
-    {
-      text: "Build chat bots with MessageKit ↗",
-      link: "https://messagekit.ephemerahq.com/",
-      items: [], // Add this line
     },
     {
       text: "Embed a chat widget",
