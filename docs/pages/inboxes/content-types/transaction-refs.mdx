@@ -22,11 +22,7 @@ npm i @xmtp/content-type-transaction-reference
 
 After importing the package, you can register the codec.
 
-:::code-group
-
-<div data-title="JavaScript">
-
-```jsx [JavaScript]
+```jsx [Browser]
 import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
@@ -36,35 +32,11 @@ const xmtp = await Client.create(signer, { env: "dev" });
 xmtp.registerCodec(new TransactionReferenceCodec());
 ```
 
-</div>
-
-```text [React]
-Code sample coming soon
-```
-
-```text [Kotlin]
-Code sample coming soon
-```
-
-```text [Swift]
-Code sample coming soon
-```
-
-```text [React Native]
-Code sample coming soon
-```
-
-:::
-
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
 
-:::code-group
-
-<div data-title="JavaScript">
-
-```tsx [JavaScript]
+```tsx [Browser]
 const transactionReference: TransactionReference = {
   /**
    * Optional namespace for the networkId
@@ -91,37 +63,13 @@ const transactionReference: TransactionReference = {
   };
 };
 ```
+Once you have a transaction reference, you can send it as part of your conversation:
 
-<p>
-  Once you have a transaction reference, you can send it as part of your
-  conversation:
-</p>
-
-```jsx [JavaScript]
+```jsx [Browser]
 await conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
 ```
-
-</div>
-
-```text [React]
-Code sample coming soon
-```
-
-```text [Kotlin]
-Code sample coming soon
-```
-
-```text [Swift]
-Code sample coming soon
-```
-
-```text [React Native]
-Code sample coming soon
-```
-
-:::
 
 ## Receive a transaction reference
 
@@ -129,9 +77,7 @@ To receive and process a transaction reference, you can use the following code s
 
 To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
 
-:::code-group
-
-```tsx [JavaScript]
+```tsx [Browser]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 
@@ -143,24 +89,6 @@ if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
 const transactionRef: TransactionReference = message.content;
 // Process the transaction reference here
 ```
-
-```text [React]
-Code sample coming soon
-```
-
-```text [Kotlin]
-Code sample coming soon
-```
-
-```text [Swift]
-Code sample coming soon
-```
-
-```text [React Native]
-Code sample coming soon
-```
-
-:::
 
 ## Display the transaction reference
 

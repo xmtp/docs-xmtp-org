@@ -24,6 +24,20 @@ After importing the package, you can register the codec.
 
 :::code-group
 
+<div data-title="Browser">
+
+```jsx
+import {
+  ContentTypeReaction,
+  ReactionCodec,
+} from "@xmtp/content-type-reaction";
+// Create the XMTP client
+const xmtp = await Client.create(signer, { env: "dev" });
+xmtp.registerCodec(new ReactionCodec());
+```
+
+</div>
+
 ```jsx [React Native]
 const client = await Client.create(signer, {
   env: "production",
@@ -56,6 +70,18 @@ With XMTP, reactions are represented as objects with the following keys:
 - `schema`: Schema of the reaction (Unicode, shortcode, or custom)
 
 :::code-group
+
+```tsx [Browser]
+const reaction = {
+  reference: someMessageID,
+  action: "added",
+  content: "smile",
+};
+
+await conversation.send(reaction, {
+  contentType: ContentTypeReaction,
+});
+```
 
 ```jsx [React Native]
 // Assuming you have a conversation object and the ID of the message you're reacting to
@@ -112,6 +138,13 @@ try await conversation.send(
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 :::code-group
+
+```tsx [Browser]
+if (message.contentType.sameAs(ContentTypeReaction)) {
+  // We've got a reaction.
+  const reaction: Reaction = message.content;
+}
+```
 
 ```jsx [React Native]
 if (message.contentTypeId === "xmtp.org/reaction:1.0") {

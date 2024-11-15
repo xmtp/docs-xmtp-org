@@ -20,9 +20,16 @@ npm i @xmtp/content-type-reply
 
 ## Configure the content type
 
+After importing the package, you can register the codec.
+
 :::code-group
 
-After importing the package, you can register the codec.
+```jsx [Browser]
+import { ContentTypeReply, ReplyCodec } from "@xmtp/content-type-reply";
+// Create the XMTP client
+const xmtp = await Client.create(signer, { env: "dev" });
+xmtp.registerCodec(new ReplyCodec());
+```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -52,6 +59,22 @@ Once you've created a reply, you can send it. Replies are represented as objects
 - `content`: String representation of the reply
 
 :::code-group
+
+```tsx [Browser]
+import { ContentTypeText } from "@xmtp/content-type-text";
+import { ContentTypeReply } from "@xmtp/content-type-reply";
+import type { Reply } from "@xmtp/content-type-reply";
+
+const reply: Reply = {
+  reference: someMessageID,
+  contentType: ContentTypeText,
+  content: "I concur",
+};
+
+await conversation.send(reply, {
+  contentType: ContentTypeReply,
+});
+```
 
 ```jsx [React Native]
 // Assuming you have a conversation object and the ID of the message you're replying to
@@ -103,6 +126,13 @@ try await conversation.send(
 ## Receive the content type
 
 :::code-group
+
+```tsx [Browser]
+if (message.contentType.sameAs(ContentTypeReply)) {
+  // We've got a reply.
+  const reply: Reply = message.content;
+}
+```
 
 ```jsx [React Native]
 if (message.contentTypeId === "xmtp.org/reply:1.0") {

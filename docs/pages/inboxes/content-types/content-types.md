@@ -24,24 +24,20 @@ An app built with XMTP uses the `TextCodec` (plain text) standard content type b
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [Browser]
 await conversation.send("gm");
 ```
 
-```jsx [React]
-await sendMessage(conversation, "gm");
-```
-
-```swift [Swift]
-try await conversation.send(content: "gm")
+```jsx [React Native]
+await conversation.send("gm");
 ```
 
 ```kotlin [Kotlin]
 conversation.send(text = "gm")
 ```
 
-```jsx [React Native]
-await conversation.send("gm");
+```swift [Swift]
+try await conversation.send(content: "gm")
 ```
 
 :::
