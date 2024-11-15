@@ -37,6 +37,72 @@ Create the custom content type by creating a new file
 
 :::code-group
 
+```jsx [Browser]
+// A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-js/pull/509/files
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+import type { ContentCodec, EncodedContent } from "@xmtp/content-type-primitives";
+
+// Create a unique identifier for your content type
+export const ContentTypeMultiplyNumbers = new ContentTypeId({
+  authorityId: 'your.domain',
+  typeId: 'multiply-number',
+  versionMajor: 1,
+  versionMinor: 0,
+})
+
+// Define the MultiplyNumbers class
+export class MultiplyNumbers {
+  public num1: number
+  public num2: number
+  public result: number | undefined
+
+  constructor(num1: number, num2: number, result?: number) {
+    this.num1 = num1
+    this.num2 = num2
+    this.result = result
+  }
+}
+
+// Define the MultiplyCodec class
+export class ContentTypeMultiplyNumberCodec
+  implements ContentCodec<MultiplyNumbers>
+{
+  get contentType(): ContentTypeId {
+    return ContentTypeMultiplyNumbers
+  }
+
+  // The encode method accepts an object of MultiplyNumbers and encodes it as a byte array
+  encode(numbers: MultiplyNumbers): EncodedContent {
+    const { num1, num2 } = numbers
+    return {
+      type: ContentTypeMultiplyNumbers,
+      parameters: {},
+      content: new TextEncoder().encode(JSON.stringify({ num1, num2 })),
+    }
+  }
+
+  // The decode method decodes the byte array, parses the string into numbers (num1, num2), and returns their product
+  decode(encodedContent: EncodedContent): MultiplyNumbers {
+    const decodedContent = new TextDecoder().decode(encodedContent.content)
+    const { num1, num2 } = JSON.parse(decodedContent)
+    return new MultiplyNumbers(num1, num2, num1 * num2)
+  }
+
+  fallback(content: MultiplyNumbers): string | undefined {
+    return `Can’t display number content types. Number was ${JSON.stringify(
+      content
+    )}`
+    // return undefined to indicate that this content type should not be displayed if it's not supported by a client
+  }
+
+  // Set to true to enable push notifications for interoperable content types.
+  // Receiving clients must handle this field appropriately.
+  shouldPush(): boolean {
+    return true;
+  }
+}
+```
+
 ```jsx [React Native]
 import { content } from '@xmtp/proto'
 
@@ -203,6 +269,17 @@ Import and register the custom content type.
 
 :::code-group
 
+```jsx [Browser]
+import { ContentTypeMultiplyNumberCodec } from "./xmtp-content-type-multiply-number";
+
+const client = await Client.create({
+  env: "production",
+  codecs: [new ContentTypeMultiplyNumberCodec()],
+});
+//or
+client.registerCodec(new ContentTypeMultiplyNumberCodec());
+```
+
 ```jsx [React Native]
 import { ContentTypeMultiplyNumberCodec } from "./xmtp-content-type-number";
 
@@ -229,6 +306,14 @@ Client.register(codec: ContentTypeMultiplyNumberCodec())
 Send a message using the custom content type. This code sample demonstrates how to use the `MultiplyCodec` custom content type to perform multiplication operations.
 
 :::code-group
+
+```jsx [Browser]
+const numbersToMultiply = new MultiplyNumbers(2, 3);
+
+conversation.send(numbersToMultiply, {
+  contentType: ContentTypeMultiplyNumbers,
+});
+```
 
 ```jsx [React Native]
 const multiplyNumbers = new MultiplyNumbers(3, 7);
@@ -266,6 +351,12 @@ To handle unsupported content types, see the [fallback](/inboxes/build-inbox/#ha
 
 :::code-group
 
+```jsx [Browser]
+if (message.contentType.sameAs(ContentTypeMultiplyNumber)) {
+  return message.content; // 21
+}
+```
+
 ```jsx [React Native]
 // Because of this message content is now a function which returns the actual content. 
 // You can get that content by call `message.content()` now instead of message.content. 
@@ -298,7 +389,7 @@ Be aware that a custom content type may not be automatically recognized or suppo
 
 Create a new file, `xmtp-content-type-transaction-hash.tsx`. This file hosts the `TransactionHash` class for encoding and decoding the custom content type.
 
-```jsx [JavaScript]
+```jsx [Browser]
 import { ContentTypeId } from "@xmtp/xmtp-js";
 
 export const ContentTypeTransactionHash = new ContentTypeId({
@@ -331,7 +422,7 @@ export class ContentTypeTransactionHashCodec {
 
 ### Import and register the custom content type
 
-```jsx [JavaScript]
+```jsx [Browser]
 import {
   ContentTypeTransactionHash,
   ContentTypeTransactionHashCodec,
@@ -347,7 +438,7 @@ xmtp.registerCodec(new ContentTypeTransactionHashCodec());
 
 This code sample demonstrates how to use the `TransactionHash` content type to send a transaction.
 
-```jsx [JavaScript]
+```jsx [Browser]
 // Create a wallet from a known private key
 const wallet = new ethers.Wallet(privateKey);
 console.log(`Wallet address: ${wallet.address}`);
@@ -393,7 +484,7 @@ await conversation
 
 Add an async renderer for the custom content type.
 
-```jsx [JavaScript]
+```jsx [Browser]
 if (message.contentType.sameAs(ContentTypeTransactionHash)) {
   // Handle ContentTypeAttachment
   return (

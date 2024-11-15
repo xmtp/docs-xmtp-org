@@ -34,6 +34,20 @@ npm i @xmtp/content-type-read-receipt
 
 :::code-group
 
+<div data-title="Browser">
+
+```tsx
+import {
+  ContentTypeReadReceipt,
+  ReadReceiptCodec,
+} from "@xmtp/content-type-read-receipt";
+// Create the XMTP client
+const xmtp = await Client.create(signer, { env: "dev" });
+xmtp.registerCodec(new ReadReceiptCodec());
+```
+
+</div>
+
 ```jsx [React Native]
 const client = await Client.create(signer, {
   env: "production",
@@ -57,6 +71,12 @@ Client.register(codec = ReadReceiptCodec())
 ## Send a read receipt
 
 :::code-group
+
+```jsx [Browser]
+// The content of a read receipt message must be an empty object.
+
+await conversation.messages.send({}, ContentTypeReadReceipt);
+```
 
 ```jsx [React Native]
 await bobConversation.send({ readReceipt: {} });
@@ -94,6 +114,13 @@ try await conversation.send(
 Here's how you can receive a read receipt:
 
 :::code-group
+
+```tsx [Browser]
+if (message.contentType.sameAs(ContentTypeReadReceipt)) {
+  // The message is a read receipt
+  const timestamp = message.sent;
+}
+```
 
 ```jsx [React Native]
 if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {

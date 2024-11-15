@@ -28,6 +28,23 @@ After importing the package, you can register the codec.
 
 :::code-group
 
+<div data-title="Browser">
+
+```jsx
+import {
+  ContentTypeAttachment,
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+  ContentTypeRemoteAttachment,
+} from "@xmtp/content-type-remote-attachment";
+// Create the XMTP client
+const xmtp = await Client.create(signer, { env: "dev" });
+xmtp.registerCodec(new AttachmentCodec());
+xmtp.registerCodec(new RemoteAttachmentCodec());
+```
+
+</div>
+
 ```jsx [React Native]
 const client = await Client.create(signer, {
   env: "production",
@@ -55,11 +72,76 @@ Client.register(RemoteAttachmentCodec());
 
 :::code-group
 
+<div data-title="Browser">
+Load the file. This example uses a web browser to load the file:
+
+```jsx
+//image is the uploaded event.target.files[0];
+const data = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    if (reader.result instanceof ArrayBuffer) {
+      resolve(reader.result);
+    } else {
+      reject(new Error("Not an ArrayBuffer"));
+    }
+  };
+  reader.readAsArrayBuffer(image);
+});
+```
+
+Create an attachment object:
+
+```tsx
+// Local file details
+const attachment = {
+  filename: image?.name,
+  mimeType: image?.type,
+  data: new Uint8Array(data),
+};
+```
+
+Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+
+```tsx
+const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
+  attachment,
+  new AttachmentCodec()
+);
+```
+
+Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs. For example, the [xmtp.chat](https://xmtp.chat/) example app uses web3.storage. (This information is shared for educational purposes only and is not an endorsement.)
+
+<p>Now that you have a `url`, you can create a `RemoteAttachment`:</p>
+
+```jsx
+const remoteAttachment = {
+  url: url,
+  contentDigest: encryptedEncoded.digest,
+  salt: encryptedEncoded.salt,
+  nonce: encryptedEncoded.nonce,
+  secret: encryptedEncoded.secret,
+  scheme: "https://",
+  filename: attachment.filename,
+  contentLength: attachment.data.byteLength,
+};
+```
+
+Now that you have a remote attachment, you can send it:
+
+```tsx
+await conversation.send(remoteAttachment, {
+  contentType: ContentTypeRemoteAttachment,
+});
+```
+
+</div>
+
 <div data-title="React Native">
 
 This method takes a `DecryptedLocalAttachment` object as an argument:
 
-```jsx [JavaScript]
+```jsx
 const { encryptedLocalFileUri, metadata } = await alice.encryptAttachment({
   fileUri: `file://${file}`,
   mimeType: "text/plain",
@@ -68,13 +150,13 @@ const { encryptedLocalFileUri, metadata } = await alice.encryptAttachment({
 
 Upload an encrypted file to a remote server:
 
-```jsx [JavaScript]
+```jsx
 let url = await uploadFile(encryptedLocalFileUri);
 ```
 
 Send a remote attachment message:
 
-```jsx [JavaScript]
+```jsx
 await convo.send({
   remoteAttachment: {
     ...metadata,
@@ -202,11 +284,45 @@ Now that you can receive a remote attachment, you need a way to receive a remote
 
 :::code-group
 
+<div data-title="Browser">
+
+```tsx
+import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+
+if (message.contentType.sameAs(RemoteAttachmentContentType)) {
+  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+}
+```
+
+You now have the original attachment:
+
+```bash [Bash]
+attachment.filename // => "screenshot.png"
+attachment.mimeType // => "image/png",
+attachment.data // => [the PNG data]
+```
+
+Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+
+```tsx
+const objectURL = URL.createObjectURL(
+  new Blob([Buffer.from(attachment.data)], {
+    type: attachment.mimeType,
+  })
+);
+
+const img = document.createElement("img");
+img.src = objectURL;
+img.title = attachment.filename;
+```
+
+</div>
+
 <div data-title="React Native">
 
 On the receiving end, you can use the `decryptAttachment` method to decrypt the downloaded file. This method takes an `EncryptedLocalAttachment` object as an argument and returns a `DecryptedLocalAttachment` object.
 
-```jsx [JavaScript]
+```jsx
 if (message.contentTypeId === "xmtp.org/remoteStaticAttachment:1.0") {
   // Now we can decrypt the downloaded file using the message metadata.
   const attached = await xmtp_client.decryptAttachment({
@@ -222,7 +338,7 @@ if (message.contentTypeId === "xmtp.org/remoteStaticAttachment:1.0") {
 
 Display the attachment:
 
-```jsx [JavaScript]
+```jsx
 <Image source={{ uri: attached.fileUri }} />
 ```
 
@@ -290,6 +406,16 @@ npm i @xmtp/content-type-remote-attachment
 ### Import and register
 
 :::code-group
+
+```jsx [Browser]
+import {
+  ContentTypeAttachment,
+  AttachmentCodec,
+} from "@xmtp/content-type-remote-attachment";
+// Create the XMTP client
+const xmtp = await Client.create(signer, { env: "dev" });
+xmtp.registerCodec(new AttachmentCodec());
+```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {

@@ -523,7 +523,7 @@ Each message is accompanied by a `contentFallback` property, which offers a desc
 
 :::code-group
 
-```jsx [JavaScript]
+```jsx [Browser]
 const codec = client.codecFor(content.contentType);
 if (!codec) {
   /*Not supported content type*/
@@ -534,16 +534,13 @@ if (!codec) {
 }
 ```
 
-```tsx [React]
-import { useClient, ContentTypeId } from "@xmtp/react-sdk";
-const { client } = useClient();
-
-const contentType = ContentTypeId.fromString(message.contentType);
-const codec = client.codecFor(contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.contentFallback !== undefined) {
-    return message.contentFallback;
+```jsx [React Native]
+//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
+const isRegistered = message.contentTypeID in client.codecRegistry;
+if (!isRegistered) {
+  // Not supported content type
+  if (message?.fallback != null) {
+    return message?.fallback;
   }
   // Handle other types like ReadReceipts which are not meant to be displayed
 }
@@ -571,17 +568,6 @@ if (!codec) {
 }
 ```
 
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
 :::
 
 ### List existing group chats or DMs
