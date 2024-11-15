@@ -89,7 +89,7 @@ If you prefer to handle rate-limiting manually, here are some tips:
 - Spread your requests over 5 minutes
 - Use multiple IPs to make requests
 - Implement error handling that can manage rate-limiting responses from the network, including adjusting send rates and retrying failed messages.
-- Bulk `canMessage` makes API calls in 50-address batches.
+- Bulk `canMessage` make API calls in 50-address batches.
 
 ## Broadcast best practices
 
