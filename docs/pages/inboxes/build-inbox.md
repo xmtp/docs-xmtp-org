@@ -815,7 +815,7 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 :::code-group
 
-```js [Node]
+```js [Browser]
 // get a conversation by its ID
 const conversationById = await client.conversations.getConversationById(
   conversationId
@@ -828,7 +828,7 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 ```
 
-```js [Browser]
+```js [Node]
 // get a conversation by its ID
 const conversationById = await client.conversations.getConversationById(
   conversationId
