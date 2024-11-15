@@ -35,9 +35,9 @@ Here's an overview of how group chat admin statuses work:
 
 - Everyone in a group chat is a member.
 - A member can be granted admin or super admin status.  
-If the member's admin or super admin status is removed, they are still a member of the group chat. 
+  If the member's admin or super admin status is removed, they are still a member of the group chat.
 - By default, only a member with super admin can add and remove admin and super admin statuses.  
-Also by default, the group creator is the only member with super admin status.
+  Also by default, the group creator is the only member with super admin status.
 
 :::info
 
@@ -49,15 +49,17 @@ By design, checking admin permission status by wallet address is not supported. 
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const isAdmin = group.isAdmin(inboxId);
+```
 
+```js [Node]
 const isAdmin = group.isAdmin(inboxId);
 ```
 
 ```tsx [React Native]
 // Assume group is an existing group chat object for client
-const isAdmin = await.group.isAdmin(adminClient.inboxID)
+const isAdmin = await.group.isAdmin(adminClient.inboxID);
 ```
 
 ```kotlin [Kotlin]
@@ -76,9 +78,11 @@ try group.isAdmin(client.inboxID)
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+```
 
+```js [Node]
 const isSuperAdmin = group.isSuperAdmin(inboxId);
 ```
 
@@ -102,9 +106,11 @@ try group.isSuperAdmin(inboxid: inboxID)
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const admins = group.admins;
+```
 
+```js [Node]
 const admins = group.admins;
 ```
 
@@ -127,9 +133,11 @@ try group.listAdmins()
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const superAdmins = group.superAdmins;
+```
 
+```js [Node]
 const superAdmins = group.superAdmins;
 ```
 
@@ -152,9 +160,11 @@ try group.listSuperAdmins()
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.addAdmin(inboxId);
+```
 
+```js [Node]
 await group.addAdmin(inboxId);
 ```
 
@@ -176,9 +186,11 @@ try await group.addAdmin(inboxid: inboxID)
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.addSuperAdmin(inboxId);
+```
 
+```js [Node]
 await group.addSuperAdmin(inboxId);
 ```
 
@@ -200,9 +212,11 @@ try await group.addSuperAdmin(inboxid: inboxID)
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.removeAdmin(inboxId);
+```
 
+```js [Node]
 await group.removeAdmin(inboxId);
 ```
 
@@ -224,6 +238,14 @@ try await group.removeAdmin(inboxid: inboxid)
 
 :::code-group
 
+```js [Browser]
+await group.removeSuperAdmin(inboxId);
+```
+
+```js [Node]
+await group.removeSuperAdmin(inboxId);
+```
+
 ```tsx [React Native]
 await group.removeSuperAdmin(client.inboxId);
 ```
@@ -244,9 +266,11 @@ try await group.removeSuperAdmin(inboxid: inboxID)
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.addMembersByInboxId([inboxId]);
+```
 
+```js [Node]
 await group.addMembersByInboxId([inboxId]);
 ```
 
@@ -268,9 +292,11 @@ try await group.addMembersByInboxId(inboxIds: [inboxId])
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.addMembers([walletAddress]);
+```
 
+```js [Node]
 await group.addMembers([walletAddress]);
 ```
 
@@ -292,9 +318,11 @@ try await group.addMembers(addresses: [walletAddress])
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.removeMembersByInboxId([inboxId]);
+```
 
+```js [Node]
 await group.removeMembersByInboxId([inboxId]);
 ```
 
@@ -316,9 +344,11 @@ try await group.removeMemberInboxIds(inboxIds: [inboxId])
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.removeMembers([walletAddress]);
+```
 
+```js [Node]
 await group.removeMembers([walletAddress]);
 ```
 
@@ -340,9 +370,11 @@ try await group.removeMembers(addresses: [walletAddress])
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const inboxId = await client.findInboxIdByAddress(address);
+```
 
+```js [Node]
 const inboxId = await client.getInboxIdByAddress(address);
 ```
 
@@ -373,9 +405,20 @@ try await client.inboxIdFromAddress(address: peerAddress)
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+// sync group first
+await group.sync();
 
+// get group members
+const members = await group.members();
+
+// map inbox ID to account addresses
+const inboxIdAddressMap = new Map(
+  members.map((member) => [member.inboxId, member.accountAddresses])
+);
+```
+
+```js [Node]
 // sync group first
 await group.sync();
 
@@ -384,7 +427,7 @@ const members = group.members;
 
 // map inbox ID to account addresses
 const inboxIdAddressMap = new Map(
-  members.map((member) => [member.inboxId, member.accountAddresses]),
+  members.map((member) => [member.inboxId, member.accountAddresses])
 );
 ```
 
@@ -408,16 +451,18 @@ let peerMembers = try Conversation.group(group).peerAddresses.sorted()
 
 :::code-group
 
-```js [Node]
-// note that this can only be done with the JS SDK (@xmtp/xmtp-js)
+```js [Browser]
+const addedByInboxId = group.addedByInboxId;
+```
 
-await client.contacts.allow([walletAddress]);
+```js [Node]
+const addedByInboxId = group.addedByInboxId;
 ```
 
 ```tsx [React Native]
 // this API is experimental and may change in the future
 
-const addedByInboxId =await group.addedByInboxId();
+const addedByInboxId = await group.addedByInboxId();
 ```
 
 ```kotlin [Kotlin]
@@ -444,14 +489,16 @@ Group chats can have metadata, like names and images. Metadata can help users mo
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const groupName = group.name;
+```
 
+```js [Node]
 const groupName = group.name;
 ```
 
 ```tsx [React Native]
-const groupName =await group.groupName();
+const groupName = await group.groupName();
 ```
 
 ```kotlin [Kotlin]
@@ -468,9 +515,11 @@ try group.groupname()
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+await group.updateName("New Group Name");
+```
 
+```js [Node]
 await group.updateName("New Group Name");
 ```
 
@@ -492,9 +541,11 @@ try await group.updateGroupName(groupname: "New Group Name")
 
 :::code-group
 
-```js [Node]
-// this API is experimental and may change in the future
+```js [Browser]
+const groupImageUrl = group.imageUrl;
+```
 
+```js [Node]
 const groupImageUrl = group.imageUrl;
 ```
 
@@ -517,8 +568,10 @@ try group.groupImageUrlSquare()
 :::code-group
 
 ```js [Node]
-// this API is experimental and may change in the future
+await group.updateImageUrl("newurl.com");
+```
 
+```js [Node]
 await group.updateImageUrl("newurl.com");
 ```
 

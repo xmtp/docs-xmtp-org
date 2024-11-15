@@ -2,13 +2,39 @@
 
 ## Create or build a client
 
-### Create an account SigningKey
+### Create an account signer
 
 This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface. This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements.
 
 - For an EOA, the `convertEOAToSigner` function creates a signer that can get the account address and sign messages and has placeholder methods for wallet type, chain ID, and block number.
 
   :::code-group
+
+  ```tsx [Browser]
+  import type { Signer } from "@xmtp/browser-sdk";
+
+  const accountAddress = "0x...";
+
+  const signer: Signer = {
+    getAddress: () => accountAddress,
+    signMessage: async (message) => {
+      // return value from a signing method here
+    },
+  };
+  ```
+
+  ```tsx [Node]
+  import type { Signer } from "@xmtp/node-sdk";
+
+  const accountAddress = "0x...";
+
+  const signer: Signer = {
+    getAddress: () => accountAddress,
+    signMessage: async (message) => {
+      // return value from a signing method here
+    },
+  };
+  ```
 
   ```tsx [React Native]
   // Example EOA
@@ -32,33 +58,33 @@ This code defines two functions that convert different types of Ethereum account
         get() = walletAddress
 
     override suspend fun sign(message: String): Signature {
-			val signature = key.sign(data)
-			return signature
+  		val signature = key.sign(data)
+  		return signature
     }
 
     override suspend fun sign(data: ByteArray): Signature {
-			val signature = key.sign(message: message)
-			return signature
+  		val signature = key.sign(message: message)
+  		return signature
     }
   }
   ```
 
   ```swift [Swift]
-	public struct EOAWallet: SigningKey {
-		public var address: String {
-			walletAddress
-		}
+  public struct EOAWallet: SigningKey {
+  	public var address: String {
+  		walletAddress
+  	}
 
-		public func sign(_ data: Data) async throws -> XMTPiOS.Signature {
-			let signature = try await key.sign(data)
-			return signature
-		}
+  	public func sign(_ data: Data) async throws -> XMTPiOS.Signature {
+  		let signature = try await key.sign(data)
+  		return signature
+  	}
 
-		public func sign(message: String) async throws -> XMTPiOS.Signature {
-			let signature = try await key.sign(message: message)
-			return signature
-		}
-	}
+  	public func sign(message: String) async throws -> XMTPiOS.Signature {
+  		let signature = try await key.sign(message: message)
+  		return signature
+  	}
+  }
   ```
 
   :::
@@ -66,6 +92,42 @@ This code defines two functions that convert different types of Ethereum account
 - For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes specific implementations for wallet type and chain ID, and an optional block number computation.
 
   :::code-group
+
+  ```tsx [Browser]
+  import type { Signer } from "@xmtp/browser-sdk";
+
+  const accountAddress = "0x...";
+
+  const signer: Signer = {
+    getAddress: () => accountAddress,
+    signMessage: async (message) => {
+      // return value from a signing method here
+    },
+    // these methods are required for smart contract wallets
+    // block number is optional
+    getBlockNumber: () => undefined,
+    // this example uses the Base chain
+    getChainId: () => BigInt(8453),
+  };
+  ```
+
+  ```tsx [Node]
+  import type { Signer } from "@xmtp/node-sdk";
+
+  const accountAddress = "0x...";
+
+  const signer: Signer = {
+    getAddress: () => accountAddress,
+    signMessage: async (message) => {
+      // return value from a signing method here
+    },
+    // these methods are required for smart contract wallets
+    // block number is optional
+    getBlockNumber: () => undefined,
+    // this example uses the Base chain
+    getChainId: () => BigInt(8453),
+  };
+  ```
 
   ```tsx [React Native]
   // Example SCW
@@ -114,28 +176,28 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```swift [Swift]
-	public struct SCWallet: SigningKey {
-		public var address: String {
-			walletAddress
-		}
+  public struct SCWallet: SigningKey {
+  	public var address: String {
+  		walletAddress
+  	}
 
     public var chainId: Int64? {
-			8453
-		}
+  		8453
+  	}
 
     public var blockNumber: Int64? {
-			nil
-		}
+  		nil
+  	}
 
     public var type: WalletType {
-			.SCW
-		}
+  		.SCW
+  	}
 
-		public func signSCW(message: String) async throws -> Data {
-			let signature = try await key.sign(message: message)
-			return signature.hexStringToByteArray
-		}
-	}
+  	public func signSCW(message: String) async throws -> Data {
+  		let signature = try await key.sign(message: message)
+  		return signature.hexStringToByteArray
+  	}
+  }
   ```
 
   :::
@@ -146,16 +208,47 @@ Create an XMTP MLS client that can use the signing capabilities provided by the 
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
+```tsx [Browser]
+import { Client, type Signer } from "@xmtp/browser-sdk";
 
-const client = await Client.create(alix.address, options /* optional */);
+const accountAddress = "0x...";
+const signer: Signer = {
+  getAddress: () => accountAddress,
+  signMessage: async (message) => {
+    // return value from a signing method here
+  },
+};
+
+// this value should be generated once per installation and stored securely
+const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  encryptionKey,
+  options /* optional */
+);
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
+```tsx [Node]
+import { Client, type Signer } from "@xmtp/node-sdk";
+import { getRandomValues } from "node:crypto";
 
-const client = await Client.create(alix.address, options /* optional */);
+const accountAddress = "0x...";
+const signer: Signer = {
+  getAddress: () => accountAddress,
+  signMessage: async (message) => {
+    // return value from a signing method here
+  },
+};
+
+// this value should be generated once per installation and stored securely
+const encryptionKey = getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  encryptionKey,
+  options /* optional */
+);
 ```
 
 ```tsx [React Native]
@@ -194,13 +287,13 @@ let client = try await Client.create(
 
 You can configure an XMTP client with these parameters of `Client.create`:
 
-| Parameter       | Default                | Description                                  |
-| --------------- | ---------------------- | -------------------------------------------- |
-| env             | `DEV`                  | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments). |
-| appContext      | `REQUIRED`             | The app context used to create and access the local database. |
-| dbEncryptionKey | `REQUIRED`             | A 32-byte `ByteArray` used to encrypt the local database. |
-| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `message-history.production.ephemera.network` |
-| appVersion      | `undefined`            | Add a client app version identifier that's included with API requests.<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide support to app developers, especially around communicating important SDK updates, including deprecations and required updates. |
+| Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments).                                                                                                                                                                     |
+| appContext      | `REQUIRED`                                      | The app context used to create and access the local database.                                                                                                                                                                                                                                                                                                                                                                                              |
+| dbEncryptionKey | `REQUIRED`                                      | A 32-byte `ByteArray` used to encrypt the local database.                                                                                                                                                                                                                                                                                                                                                                                                  |
+| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `message-history.production.ephemera.network`                                                                                                                                                                                                                                                                                 |
+| appVersion      | `undefined`                                     | Add a client app version identifier that's included with API requests.<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide support to app developers, especially around communicating important SDK updates, including deprecations and required updates. |
 
 #### XMTP DEV, PRODUCTION, and LOCAL network environments
 
@@ -264,26 +357,24 @@ let client = try await Client.build(
 
 ## Check if an address is reachable
 
-The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP. The `canGroupMessage` method checks each address’ compatibility, returning a response indicating whether each address can receive messages.
+The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP. The `canMessage` method checks each address’ compatibility, returning a response indicating whether each address can receive messages.
 
 Once you have the verified addresses, you can create a new conversation, whether it's a group chat or direct message (DM).
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
-// response is a Map of string (address) => boolean (is reachable)
-const response = await client.canMessage([bo.address, caro.address]);
-```
-
 ```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
-const client = await Client.create(alix.address);
 // response is a Map of string (address) => boolean (is reachable)
-const response = await client.canMessage([bo.address, caro.address]);
+const response = await Client.canMessage([bo.address, caro.address]);
+```
+
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+// response is a Map of string (address) => boolean (is reachable)
+const response = await Client.canMessage([bo.address, caro.address]);
 ```
 
 ```tsx [React Native]
@@ -340,20 +431,14 @@ Once you have the verified addresses, create a new group chat:
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+```js [Browser]
 const group = await client.conversations.newGroup(
   [bo.address, caro.address],
   createGroupOptions /* optional */
 );
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
+```js [Node]
 const group = await client.conversations.newGroup(
   [bo.address, caro.address],
   createGroupOptions /* optional */
@@ -407,17 +492,11 @@ Once you have the verified addresses, create a new DM:
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address, options /* optional */);
+```js [Browser]
 const group = await client.conversations.newDm(bo.address);
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address, options /* optional */);
+```js [Node]
 const group = await client.conversations.newDm(bo.address);
 ```
 
@@ -449,17 +528,11 @@ Get any new group chats or DMs from the network:
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+```js [Browser]
 await client.conversations.sync();
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
+```js [Node]
 await client.conversations.sync();
 ```
 
@@ -485,17 +558,11 @@ Get new messages from the network for all existing group chats and DMs in the lo
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+```js [Browser]
 await client.conversations.syncAll();
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
+```js [Node]
 await client.conversations.syncAll();
 ```
 
@@ -523,7 +590,18 @@ Each message is accompanied by a `contentFallback` property, which offers a desc
 
 :::code-group
 
-```jsx [Browser]
+```js [Browser]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.contentFallback !== undefined) {
+    return message.contentFallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```js [Node]
 const codec = client.codecFor(content.contentType);
 if (!codec) {
   /*Not supported content type*/
@@ -576,19 +654,13 @@ Get a list of existing group chats or DMs in the local database, ordered either 
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+```js [Browser]
 const allConversations = await client.conversations.list();
 const allGroups = await client.conversations.listGroups();
 const allDms = await client.conversations.listDms();
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
+```js [Node]
 const allConversations = await client.conversations.list();
 const allGroups = await client.conversations.listGroups();
 const allDms = await client.conversations.listDms();
@@ -653,9 +725,6 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 :::code-group
 
 ```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
 const stream = await client.conversations.stream();
 // to stream only groups, use `client.conversations.streamGroups()`
 // to stream only dms, use `client.conversations.streamDms()`
@@ -671,11 +740,9 @@ try {
 ```
 
 ```tsx [React Native]
-await alix.conversations.stream(
-  async (conversation: Conversation<any>) => {
-    // Received a conversation
-  }
-);
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
 ```
 
 ```kotlin [Kotlin]
@@ -699,12 +766,14 @@ Listens to the network for new messages within all active group chats and DMs. W
 :::code-group
 
 ```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
+// stream all messages from all conversations
 const stream = await client.conversations.streamAllMessages();
-// to stream only group messages, use `client.conversations.streamAllGroupMessages()`
-// to stream only dm messages, use `client.conversations.streamAllDmMessages()`
+
+// stream only group messages
+const stream = await client.conversations.streamAllGroupMessages();
+
+// stream only dm messages
+const stream = await client.conversations.streamAllDmMessages();
 
 try {
   for await (const message of stream) {
@@ -746,11 +815,7 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 :::code-group
 
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-const client = await Client.create(alix.address);
-
+```js [Browser]
 // get a conversation by its ID
 const conversationById = await client.conversations.getConversationById(
   conversationId
@@ -763,11 +828,7 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 ```
 
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-const client = await Client.create(alix.address);
-
+```js [Node]
 // get a conversation by its ID
 const conversationById = await client.conversations.getConversationById(
   conversationId
