@@ -431,14 +431,14 @@ Once you have the verified addresses, create a new group chat:
 
 :::code-group
 
-```js [Node]
+```js [Browser]
 const group = await client.conversations.newGroup(
   [bo.address, caro.address],
   createGroupOptions /* optional */
 );
 ```
 
-```js [Browser]
+```js [Node]
 const group = await client.conversations.newGroup(
   [bo.address, caro.address],
   createGroupOptions /* optional */
@@ -492,11 +492,11 @@ Once you have the verified addresses, create a new DM:
 
 :::code-group
 
-```js [Node]
+```js [Browser]
 const group = await client.conversations.newDm(bo.address);
 ```
 
-```js [Browser]
+```js [Node]
 const group = await client.conversations.newDm(bo.address);
 ```
 
@@ -528,11 +528,11 @@ Get any new group chats or DMs from the network:
 
 :::code-group
 
-```js [Node]
+```js [Browser]
 await client.conversations.sync();
 ```
 
-```js [Browser]
+```js [Node]
 await client.conversations.sync();
 ```
 
