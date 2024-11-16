@@ -443,7 +443,7 @@ const group = await client.conversations.newGroup(
 ```
 
 ```js [Node]
-const group = await client.conversations.newGroup(
+const group = await client.conversations.newConversation(
   [bo.address, caro.address],
   createGroupOptions /* optional */
 );
