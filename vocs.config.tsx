@@ -45,7 +45,7 @@ export default defineConfig({
     {
       text: "📋 Documentation status",
       link: "/doc-status",
-      items: [ ]
+      items: [],
     },
     {
       text: "Intro",
@@ -154,14 +154,14 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build chat bots with MessageKit ↗",
+      text: "Build agents with MessageKit ↗",
       link: "https://messagekit.ephemerahq.com/",
       items: [], // Add this line
     },
     {
       text: "Protocol concepts",
       collapsed: false,
-        items: [
+      items: [
         {
           text: "XMTP MLS protocol spec",
           link: "/protocol/specs",
