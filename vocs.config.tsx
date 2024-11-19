@@ -25,8 +25,8 @@ export default defineConfig({
   iconUrl: "/x-mark-blue.png",
   topNav: [
     {
-      text: "Support 💬",
-      link: "https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf",
+      text: "Dev Support",
+      link: "https://community.xmtp.org/c/dev-support/76",
     },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
