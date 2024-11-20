@@ -283,7 +283,7 @@ let client = try await Client.create(
 
 :::
 
-When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface. 
+When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
@@ -296,7 +296,7 @@ You can configure an XMTP client with these parameters of `Client.create`:
 | env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments).                                                                                                                                                                     |
 | appContext      | `REQUIRED`                                      | The app context used to create and access the local database.                                                                                                                                                                                                                                                                                                                                                                                              |
 | dbEncryptionKey | `REQUIRED`                                      | A 32-byte `ByteArray` used to encrypt the local database.                                                                                                                                                                                                                                                                                                                                                                                                  |
-| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`                                                                                                                                                                                                                                                                                 |
+| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`                                                                                                                                                                                                                                                                         |
 | appVersion      | `undefined`                                     | Add a client app version identifier that's included with API requests.<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide support to app developers, especially around communicating important SDK updates, including deprecations and required updates. |
 
 #### XMTP DEV, PRODUCTION, and LOCAL network environments
@@ -443,7 +443,7 @@ const group = await client.conversations.newGroup(
 ```
 
 ```js [Node]
-const group = await client.conversations.newConversation(
+const group = await client.conversations.newGroup(
   [bo.address, caro.address],
   createGroupOptions /* optional */
 );
