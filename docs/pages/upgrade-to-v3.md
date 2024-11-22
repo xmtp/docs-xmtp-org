@@ -3,15 +3,14 @@
 The process to upgrade an app built with XMTP V2 to V3 is designed to be straightforward, with most functions in V3 working as they did in V2. However, there are some notable differences, which we cover here.
 
 :::info[Key takeaways]
-- Most core methods from V2 work similarly in V3, with some notable differences that are covered in this document.
-- We recommend that apps upgrade directly to V3, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. [Learn more](/upgrade-to-v3#faq)
-- To ensure continuity, Ephemera will provide a website where people can sign in with their V2 identities to access their V2 messages in a read-only format.
-
+- **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
+- **We recommend that apps upgrade directly to V3**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. To learn more, see the [FAQ](/upgrade-to-v3#faq).
+- **V2 is scheduled for deprecation in Q2 2025**, after which all V2 conversations and messages will become read-only. To ensure users can still access their V2 communications, [Ephemera](https://ephemerahq.com/) will launch a dedicated website where users can sign in with their V2 identities to view their messages. Additional details will be shared as the deprecation date approaches.
 :::
 
-## Core methods work similarly between V2 and V3
+## Core methods from V2 work in a similar way in V3
 
-Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work similarly in V3. 
+Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work in a similar way in V3. 
 
 However, a key difference is that prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
 
