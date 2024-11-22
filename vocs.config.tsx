@@ -48,6 +48,11 @@ export default defineConfig({
       items: [],
     },
     {
+      text: "🚀 Upgrade to XMTP V3",
+      link: "/upgrade-to-v3",
+      items: [],
+    },
+    {
       text: "Intro",
       collapsed: false,
       items: [
