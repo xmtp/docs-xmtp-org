@@ -2,7 +2,7 @@
 
 Use the following methods to provide users with control over their messaging experience, ensuring their inboxes are tailored to their preferences and spam-free.
 
-## Get new consent records from the network - coming soon
+## Get new consent records from the network
 
 Get the latest consent records from the network:
 
