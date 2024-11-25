@@ -152,7 +152,7 @@ await client.preferences.streamConsent()
 
 ```kotlin [Kotlin]
 client.preferences.streamConsent().collect {
-  // Received ConsentListEntry
+  // Received ConsentRecord
 }
 ```
 
