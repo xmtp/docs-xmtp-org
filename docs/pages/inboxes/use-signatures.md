@@ -39,7 +39,7 @@ You can sign something with XMTP keys. For example, you can sign with XMTP keys 
 :::code-group
 
 ```js [Node]
-CODE SNIPPET COMING
+const signature = client.signWithInstallationKey(signatureText);
 ```
 
 ```jsx [React Native]
