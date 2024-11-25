@@ -136,7 +136,7 @@ try await conversation.updateConsent(.allowed) // .allowed | .denied
 
 :::
 
-## Stream consent records in real-time - coming soon
+## Stream consent records in real-time
 
 Listen for real-time updates to consent records:
 
@@ -152,7 +152,7 @@ await client.preferences.streamConsent()
 
 ```kotlin [Kotlin]
 client.preferences.streamConsent().collect {
-  // Received consent
+  // Received ConsentListEntry
 }
 ```
 
@@ -160,6 +160,127 @@ client.preferences.streamConsent().collect {
 for await consent in try await client.preferences.streamConsent() {
   // Received consent
 }```
+
+:::
+
+## Update consent for an individual
+
+Update the consent state of a individual in a group chat:
+
+:::tip[Note]
+You may want to allow your users to deny or allow users on an individual bases. And then update a group chat UI to hide the messages from denied individuals.
+:::
+
+:::code-group
+
+```js [Browser]
+import { ConsentEntityType, ConsentState } from "@xmtp/browser-sdk";
+
+await client.setConsentStates([
+  {
+    entityId: inboxId,
+    entityType: ConsentEntityType.InboxId,
+    state: ConsentState.Denied,
+  },
+]);
+```
+
+```js [Node]
+import { ConsentEntityType, ConsentState } from "@xmtp/node-sdk";
+
+// set consent state from the client (can set multiple states at once)
+await client.setConsentStates([
+  {
+    entityId: inboxId,
+    entityType: ConsentEntityType.InboxId,
+    state: ConsentState.Denied,
+  },
+]);
+```
+
+```tsx [React Native]
+await client.preferences.setConsentState(
+  new ConsentRecord(inboxId, 'inbox_id', 'denied')
+)
+```
+
+```kotlin [Kotlin]
+client.preferences.setConsentState(
+    listOf(
+        ConsentRecord(
+            inboxId,
+            EntryType.INBOX_ID,
+            ConsentState.DENIED
+        )
+    )
+)
+```
+
+```swift [Swift]
+try await client.preferences.setConsentState(
+  entries: [
+    ConsentRecord(
+      value: inboxID, 
+      entryType: .inbox_id,
+      consentType: .denied)
+  ])
+```
+
+:::
+
+## Get consent for an individual
+
+Get the consent state of a individual in a group chat:
+
+:::tip[Note]
+You may want to allow your users to deny or allow users on an individual bases. And then update a group chat UI to hide the messages from denied individuals.
+:::
+
+:::code-group
+
+```js [Browser]
+import { ConsentEntityType } from "@xmtp/browser-sdk";
+
+const inboxConsentState = await client.getConsentState(
+  ConsentEntityType.InboxId,
+  inboxId
+);
+```
+
+```js [Node]
+import { ConsentEntityType } from "@xmtp/node-sdk";
+
+const inboxConsentState = await client.getConsentState(
+  ConsentEntityType.InboxId,
+  inboxId
+);
+```
+
+```tsx [React Native]
+// Get consent directly on the member
+const memberConsentStates = (await group.members()).map(
+  (member) => member.consentState()
+)
+
+// Get consent from the inboxId
+const inboxConsentState = await client.preferences.inboxIdConsentState(inboxId)
+```
+
+```kotlin [Kotlin]
+// Get consent directly on the member
+val memberConsentStates = group.members().map { it.consentState }
+
+// Get consent from the inboxId
+val inboxConsentState = client.preferences.inboxIdState(inboxId)
+```
+
+```swift [Swift]
+// Get consent directly on the member
+let memberConsentStates = try await group.members.map(\.consentState)
+
+// Get consent from the inboxId
+let inboxConsentState = try await client.preferences.inboxIdState(inboxId: inboxId)
+```
 
 :::
 
