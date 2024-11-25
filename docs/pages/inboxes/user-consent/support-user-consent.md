@@ -6,18 +6,22 @@ Use the following methods to provide users with control over their messaging exp
 
 Get the latest consent records from the network:
 
+:::tip[Note]
+Consent syncing is backed by XMTPs history system. Syncing will only work if a history sync url is specified on client create. By default a Ephemera hosted history sync server is provided.
+:::
+
 :::code-group
 
 ```tsx [React Native]
-await alix.syncConsent();
+await client.preferences.syncConsent()
 ```
 
 ```kotlin [Kotlin]
-alix.preferences.syncConsent()
+client.preferences.syncConsent()
 ```
 
 ```swift [Swift]
-try await alix.preferences.syncConsent()
+try await client.preferences.syncConsent()
 ```
 
 :::
@@ -136,20 +140,24 @@ try await conversation.updateConsent(.allowed) // .allowed | .denied
 
 Listen for real-time updates to consent records:
 
+:::tip[Note]
+Consent streaming is backed by XMTPs history system. Streaming will only work if a history sync url is specified on client create. By default a Ephemera hosted history sync server is provided.
+:::
+
 :::code-group
 
 ```tsx [React Native]
-await alix.streamConsent();
+await client.preferences.streamConsent()
 ```
 
 ```kotlin [Kotlin]
-alix.preferences.streamConsent().collect {
+client.preferences.streamConsent().collect {
   // Received consent
 }
 ```
 
 ````swift [Swift]
-for await consent in try await alix.preferences.streamConsent() {
+for await consent in try await client.preferences.streamConsent() {
   // Received consent
 }```
 
