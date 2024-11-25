@@ -62,6 +62,8 @@ let signature = try client.signWithInstallationKey(message: "message")
 
 :::code-group
 
+```js [Node]
+const isValidSignature = client.verifySignedWithInstallationKey(signatureText, signature);
 ```jsx [React Native]
 const isVerified = await client.verifySignature("message", signature)
 ```
