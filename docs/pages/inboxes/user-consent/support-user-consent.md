@@ -7,7 +7,7 @@ Use the following methods to provide users with control over their messaging exp
 Get the latest consent records from the network:
 
 :::tip[Note]
-Consent syncing is backed by XMTPs history system. Syncing will only work if a history sync url is specified on client create. By default a Ephemera hosted history sync server is provided.
+Consent syncing is backed by XMTPs history system. Syncing will only work if a history sync url is specified on client create. By default a Ephemera hosted history sync server is set.
 :::
 
 :::code-group
