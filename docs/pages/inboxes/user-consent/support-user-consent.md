@@ -284,15 +284,35 @@ let inboxConsentState = try await client.preferences.inboxIdState(inboxId: inbox
 
 :::
 
+## See who created and added you to a group
+
+Get the inboxId of the individual who added you to a group or created the group to check the consent state for it:
+
+```tsx [React Native]
+group.addedByInboxId
+await group.creatorInboxId()
+```
+
+```kotlin [Kotlin]
+group.addedByInboxId()
+group.creatorInboxId()
+```
+
+```swift [Swift]
+try await group.addedByInboxId()
+try await group.creatorInboxId()
+```
+
+
 ## Handle unknown contacts
 
-With user consent preferences, a wallet address registered on the XMTP network can have one of three user consent preference values in relation to another user's wallet address:
+With user consent preferences, a inboxId registered on the XMTP network or conversationId can have one of three user consent preference values in relation to another user's inboxId:
 
 - Unknown
 - Allowed
 - Denied
 
-You can implement user consent preferences to give your users inboxes that are **spam-free spaces for allowed contacts only**.
+You can implement user consent preferences to give your users inboxes that are **spam-free spaces for allowed conversations and contacts only**.
 
 You can then handle message requests from unknown contacts in a separate UI.
 
