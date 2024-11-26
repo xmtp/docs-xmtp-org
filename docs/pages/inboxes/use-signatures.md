@@ -32,37 +32,9 @@ let signature = try client.signWithInstallationKey(message: signatureText)
 
 :::
 
-## Verify with an XMTP key externally
+## Verify with the same installation that signed
 
- You can sign with an XMTP keys to verify that a payload was sent by a trusted sender. 
-
-:::code-group
-
-```js [Node]
-const isValidSignature = client.verifySignedWithPrivateKey(signatureText, signature, installationId);
-```
-
-```kotlin [Kotlin]
-val isVerified = client.verifySignatureWithInstallationId(
-            signatureText, 
-            signature, 
-            installationId
-      )
-```
-
-```swift [Swift]
-let isVerified = try client.verifySignatureWithInstallationId(
-                message: signatureText,
-                signature: signature,
-                installationId: installationId
-            )
-```
-
-:::
-
-## Verify with XMTP key locally
-
- You can also sign with XMTP keys to verify that a payload was sent by a trusted sender. 
+ You can also sign with XMTP keys and verify that a payload was sent by the same client. 
 
 :::code-group
 
@@ -84,6 +56,34 @@ let isVerified = try client.verifySignature(
             signature: signature
         )
 
+```
+
+:::
+
+## Verify with the same inboxId that signed
+
+ You can sign with an XMTP keys installationId and then pass that signature and installationId to another installationId on the same inboxId to verify the signature was sent by a trusted sender. 
+
+:::code-group
+
+```js [Node]
+const isValidSignature = client.verifySignedWithPrivateKey(signatureText, signature, installationId);
+```
+
+```kotlin [Kotlin]
+val isVerified = client.verifySignatureWithInstallationId(
+            signatureText, 
+            signature, 
+            installationId
+      )
+```
+
+```swift [Swift]
+let isVerified = try client.verifySignatureWithInstallationId(
+                message: signatureText,
+                signature: signature,
+                installationId: installationId
+            )
 ```
 
 :::
