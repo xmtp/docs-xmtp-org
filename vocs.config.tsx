@@ -160,7 +160,10 @@ export default defineConfig({
           text: "Use signatures",
           link: "/inboxes/use-signatures",
         },
-
+        {
+          text: "Debug your app",
+          link: "/inboxes/debug-your-app",
+        },
         {
           text: "SDK references",
           link: "/inboxes/references",
