@@ -1,0 +1,210 @@
+# Manage XMTP inboxes
+
+The first time someone uses your app with a wallet address they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the wallet address. To do this, you [create a client](https://docs.xmtp.org/inboxes/build-inbox#create-an-xmtp-client) for their wallet address. 
+
+The client creates an inbox ID and installation ID associated with the wallet address. By default, this wallet address is designated as the recovery address. A recovery address will always have the same inbox ID and cannot be reassigned to a different inbox ID.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/0fa5d2dd3c00fb25c0adb7a615408574eb6864a7/docs/pages/img/create-inbox-install.png" width="250px" />
+</div>
+
+When you make subsequent calls to create a client for the same wallet address and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/0fa5d2dd3c00fb25c0adb7a615408574eb6864a7/docs/pages/img/add-installation.png" width="250px" />
+</div>
+
+You can enable a user to add multiple wallet addresses to their inbox. Added addresses use the same inbox ID and the installation ID of the installation used to add the address.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/0fa5d2dd3c00fb25c0adb7a615408574eb6864a7/docs/pages/img/add-address.png" width="350px" />
+</div>
+
+You can enable a user to remove a wallet address from their inbox. You cannot remove the recovery wallet address.
+
+## Add a wallet address to an inbox
+
+:::code-group
+
+```jsx [React Native]
+await client.addAccount(walletToAdd)
+```
+
+```kotlin [Kotlin]
+client.addAccount(walletToAdd)
+```
+
+```swift [Swift]
+try await client.addAccount(newAccount: walletToAdd)
+```
+
+:::
+
+## Remove a wallet address from an inbox
+
+:::tip[Note]
+ A recovery address cannot be removed. For example, if an inbox has only one associated wallet address, that address serves as the recovery address and cannot be removed.
+:::
+
+:::code-group
+
+```jsx [React Native]
+await client.removeAccount(recoveryWallet, addressToRemove)
+```
+
+```kotlin [Kotlin]
+client.removeAccount(recoveryWallet, addressToRemove)
+```
+
+```swift [Swift]
+try await client.removeAccount(recoveryAccount: recoveryWallet, addressToRemove: addressToRemove)
+```
+
+:::
+
+## Revoke all other installations
+
+You can revoke all installations other than the currently accessed installation.
+
+For example, consider a user using this current installation:
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install.png" width="350px" />
+</div>
+
+When the user revokes all other installations, the action removes all installations other than the current installation:
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install.png" width="350px" />
+</div>
+
+:::code-group
+
+```jsx [React Native]
+await client.revokeAllOtherInstallations(recoveryWallet)
+```
+
+```kotlin [Kotlin]
+client.revokeAllOtherInstallations(recoveryWallet)
+```
+
+```swift [Swift]
+try await client.revokeAllOtherInstallations(signingKey: recoveryWallet)
+```
+
+:::
+
+## View the inbox state
+
+Find an `inboxId` for an address:
+
+:::code-group
+
+```jsx [React Native]
+const inboxId = await client.inboxIdFromAddress(address)
+```
+
+```kotlin [Kotlin]
+val inboxId = client.inboxIdFromAddress(address)
+```
+
+```swift [Swift]
+let inboxId = try await client.inboxIdFromAddress(address: address)
+```
+
+:::
+
+View the state of any inbox to see the addresses, installations, and other information associated with the `inboxId`.
+
+**Request**
+
+:::code-group
+
+```jsx [React Native]
+const state = await client.inboxState(true)
+const states = await client.inboxStates(true, [inboxId, inboxId])
+```
+
+```kotlin [Kotlin]
+val state = client.inboxState(true) 
+val states = client.inboxStatesForInboxIds(true, listOf(inboxID, inboxID))
+```
+
+```swift [Swift]
+let state = try await client.inboxState(refreshFromNetwork: true)
+let states = try await client.inboxStatesForInboxIds(
+	refreshFromNetwork: true,
+	inboxIds: [inboxID, inboxID]
+)
+```
+:::
+
+**Response**
+
+```json
+InboxState
+{
+	recoveryAddress: string,
+	addresses: string[],
+	installations: string[],
+	inboxId: string,
+}
+```
+
+## FAQ
+
+### What happens when a user removes a wallet address?
+
+Consider an inbox with four associated wallet addresses:
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/four-addresses.png" width="650px" />
+</div>
+
+If the user removes an address from the inbox, the address no longer has access to the inbox it was removed from.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/removed-address.png" width="650px" />
+</div>
+
+The address can no longer be added to or used to access conversations in that inbox. If someone sends a message to the address, the message is not associated with the original inbox. If the user logs in to a new installation with the address, this will create a new inbox ID.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox.png" width="650px" />
+</div>
+
+### How is the recovery address used?
+
+The recovery address and its signer can be used to sign transactions that remove addresses and revoke installations.
+
+For example, Alix can give Bo access to their inbox so Bo can see their groups and conversations and respond for Alix.
+
+If Alix decides they no longer want Bo have access to their inbox, Alix can use their recovery address signer to remove Bo. 
+
+However, while Bo has access to Alix's inbox, Bo cannot remove Alix from their own inbox because Bo does not have access to Alix's recovery address signer.
+
+### If a user created two inboxes using two wallet addresses, is there a way to combine the inboxes?
+
+If a user logs in with wallet address 0x62EE...309c and creates inbox 1 and then logs in with wallet address 0xd0e4...DCe8 and creates inbox 2; there is no way to combine inbox 1 and 2.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/0fa5d2dd3c00fb25c0adb7a615408574eb6864a7/docs/pages/img/two-inboxes.png" width="350px" />
+</div>
+
+You can add wallet address 0xd0e4...DCe8 to inbox 1, but both address 0x62EE...309c and 0xd0e4...DCe8 would then have access to inbox 1 only. Wallet address 0xd0e4...DCe8 would no longer be able to access inbox 2. 
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/0fa5d2dd3c00fb25c0adb7a615408574eb6864a7/docs/pages/img/two-inbox-remap-address.png" width="350px" />
+</div>
+
+To help users avoid this state, ensure that your UX surfaces their ability to add multiple wallet addresses to a single inbox.
+
+### What happens if I remove a wallet address from an inbox ID and then initiate a client with the private key of the removed address?
+
+**Does the client create a new inbox ID or does it match it with the original inbox ID the address was removed from?**
+
+The wallet address used to initiate a client should be matched to its original inbox ID. 
+
+You do have the ability to rotate inbox IDs if a user reaches the limit of 257 identity actions (adding, removing, or revoking addresses or installations). Hopefully, users won’t reach this limit, but if they do, inbox IDs have a nonce and can be created an infinite number of times. 
+
+However, anytime a new inbox ID is created for an address, the conversations and messages in any existing inbox ID associated with the address are lost.

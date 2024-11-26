@@ -79,8 +79,8 @@ export default defineConfig({
           link: "/inboxes/build-inbox",
         },
         {
-          text: "Set group permissions and metadata",
-          link: "/inboxes/handle-groups",
+          text: "Manage inboxes",
+          link: "/inboxes/manage-inboxes",
         },
         {
           text: "Support spam-free inboxes",
@@ -152,6 +152,15 @@ export default defineConfig({
             },
           ],
         },
+        {
+          text: "Set group permissions and metadata",
+          link: "/inboxes/handle-groups",
+        },
+        {
+          text: "Use signatures",
+          link: "/inboxes/use-signatures",
+        },
+
         {
           text: "SDK references",
           link: "/inboxes/references",
