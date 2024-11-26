@@ -6,18 +6,22 @@ Use the following methods to provide users with control over their messaging exp
 
 Get the latest consent records from the network:
 
+:::tip[Note]
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/build-inbox#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+:::
+
 :::code-group
 
 ```tsx [React Native]
-await alix.syncConsent();
+await client.preferences.syncConsent()
 ```
 
 ```kotlin [Kotlin]
-alix.preferences.syncConsent()
+client.preferences.syncConsent()
 ```
 
 ```swift [Swift]
-try await alix.preferences.syncConsent()
+try await client.preferences.syncConsent()
 ```
 
 :::
@@ -132,38 +136,183 @@ try await conversation.updateConsent(.allowed) // .allowed | .denied
 
 :::
 
-## Stream consent records in real-time - coming soon
+## Stream consent records in real-time
 
 Listen for real-time updates to consent records:
+
+:::tip[Note]
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/build-inbox#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+:::
 
 :::code-group
 
 ```tsx [React Native]
-await alix.streamConsent();
+await client.preferences.streamConsent()
 ```
 
 ```kotlin [Kotlin]
-alix.preferences.streamConsent().collect {
+client.preferences.streamConsent().collect {
+  // Received ConsentRecord
+}
+```
+
+```swift [Swift]
+for await consent in try await client.preferences.streamConsent() {
   // Received consent
 }
 ```
 
-````swift [Swift]
-for await consent in try await alix.preferences.streamConsent() {
-  // Received consent
-}```
+:::
+
+## Update consent for an individual in a group chat
+
+Update the consent state for an individual in a group chat:
+
+:::tip[Note]
+You may want to enable users to deny or allow a users on an individual basis. You can then update the group chat UI to hide messages from denied individuals.
+:::
+
+:::code-group
+
+```js [Browser]
+import { ConsentEntityType, ConsentState } from "@xmtp/browser-sdk";
+
+await client.setConsentStates([
+  {
+    entityId: inboxId,
+    entityType: ConsentEntityType.InboxId,
+    state: ConsentState.Denied,
+  },
+]);
+```
+
+```js [Node]
+import { ConsentEntityType, ConsentState } from "@xmtp/node-sdk";
+
+// set consent state from the client (can set multiple states at once)
+await client.setConsentStates([
+  {
+    entityId: inboxId,
+    entityType: ConsentEntityType.InboxId,
+    state: ConsentState.Denied,
+  },
+]);
+```
+
+```tsx [React Native]
+await client.preferences.setConsentState(
+  new ConsentRecord(inboxId, 'inbox_id', 'denied')
+)
+```
+
+```kotlin [Kotlin]
+client.preferences.setConsentState(
+    listOf(
+        ConsentRecord(
+            inboxId,
+            EntryType.INBOX_ID,
+            ConsentState.DENIED
+        )
+    )
+)
+```
+
+```swift [Swift]
+try await client.preferences.setConsentState(
+  entries: [
+    ConsentRecord(
+      value: inboxID, 
+      entryType: .inbox_id,
+      consentType: .denied)
+  ])
+```
 
 :::
 
+## Get the consent state of an individual in a group chat
+
+Get the consent state of an individual in a group chat:
+
+:::tip[Note]
+You may want to enable users to deny or allow a users on an individual basis. You can then update the group chat UI to hide messages from denied individuals.
+:::
+
+:::code-group
+
+```js [Browser]
+import { ConsentEntityType } from "@xmtp/browser-sdk";
+
+const inboxConsentState = await client.getConsentState(
+  ConsentEntityType.InboxId,
+  inboxId
+);
+```
+
+```js [Node]
+import { ConsentEntityType } from "@xmtp/node-sdk";
+
+const inboxConsentState = await client.getConsentState(
+  ConsentEntityType.InboxId,
+  inboxId
+);
+```
+
+```tsx [React Native]
+// Get consent directly on the member
+const memberConsentStates = (await group.members()).map(
+  (member) => member.consentState()
+)
+
+// Get consent from the inboxId
+const inboxConsentState = await client.preferences.inboxIdConsentState(inboxId)
+```
+
+```kotlin [Kotlin]
+// Get consent directly on the member
+val memberConsentStates = group.members().map { it.consentState }
+
+// Get consent from the inboxId
+val inboxConsentState = client.preferences.inboxIdState(inboxId)
+```
+
+```swift [Swift]
+// Get consent directly on the member
+let memberConsentStates = try await group.members.map(\.consentState)
+
+// Get consent from the inboxId
+let inboxConsentState = try await client.preferences.inboxIdState(inboxId: inboxId)
+```
+
+:::
+
+## See who created and added you to a group
+
+Get the inbox ID of the individual who added you to a group or created the group to check the consent state for it:
+
+```tsx [React Native]
+group.addedByInboxId
+await group.creatorInboxId()
+```
+
+```kotlin [Kotlin]
+group.addedByInboxId()
+group.creatorInboxId()
+```
+
+```swift [Swift]
+try await group.addedByInboxId()
+try await group.creatorInboxId()
+```
+
 ## Handle unknown contacts
 
-With user consent preferences, a wallet address registered on the XMTP network can have one of three user consent preference values in relation to another user's wallet address:
+With user consent preferences, an inbox ID or conversation ID can have one of three user consent preference values in relation to another user's inbox ID:
 
 - Unknown
 - Allowed
 - Denied
 
-You can implement user consent preferences to give your users inboxes that are **spam-free spaces for allowed contacts only**.
+You can implement user consent preferences to give your users inboxes that are **spam-free spaces for allowed conversations and contacts only**.
 
 You can then handle message requests from unknown contacts in a separate UI.
 
@@ -217,4 +366,3 @@ This flexibility enables different apps to serve different user preferences, fos
 Is your app using a great third-party or public good tool to help with spam and keep inboxes safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
 
 :::
-````
