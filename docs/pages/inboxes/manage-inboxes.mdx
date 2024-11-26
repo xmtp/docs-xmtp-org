@@ -2,7 +2,7 @@
 
 The first time someone uses your app with a wallet address they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the wallet address. To do this, you [create a client](https://docs.xmtp.org/inboxes/build-inbox#create-an-xmtp-client) for their wallet address. 
 
-The client creates an inbox ID and installation ID associated with the wallet address. By default, this wallet address is designated as the recovery address. A recovery address will always have the same inbox ID and cannot be reassigned to a different inbox ID. 
+The client creates an inbox ID and installation ID associated with the wallet address. By default, this wallet address is designated as the recovery address. A recovery address will always have the same inbox ID and cannot be reassigned to a different inbox ID.
 
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/0fa5d2dd3c00fb25c0adb7a615408574eb6864a7/docs/pages/img/create-inbox-install.png" width="250px" />
@@ -69,13 +69,13 @@ You can revoke all installations other than the currently accessed installation.
 For example, consider a user using this current installation:
 
 <div>
-  <img src="NEED THIS" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install.png" width="350px" />
 </div>
 
 When the user revokes all other installations, the action removes all installations other than the current installation:
 
 <div>
-  <img src="NEED THIS" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install.png" width="350px" />
 </div>
 
 :::code-group
@@ -158,16 +158,20 @@ InboxState
 Consider an inbox with four associated wallet addresses:
 
 <div>
-  <img src="NEED THIS" width="250px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/four-addresses.png" width="650px" />
 </div>
 
 If the user removes an address from the inbox, the address no longer has access to the inbox it was removed from.
 
 <div>
-  <img src="NEED THIS" width="250px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/removed-address.png" width="650px" />
 </div>
 
 The address can no longer be added to or used to access conversations in that inbox. If someone sends a message to the address, the message is not associated with the original inbox. If the user logs in to a new installation with the address, this will create a new inbox ID.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox.png" width="650px" />
+</div>
 
 ### How is the recovery address used?
 
