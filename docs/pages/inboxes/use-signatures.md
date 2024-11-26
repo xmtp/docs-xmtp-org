@@ -8,30 +8,6 @@ To learn about the end user signing experience with apps built with XMTP, see [W
 
 When a user creates, adds, removes, or revokes an XMTP inbox’s address or installation, a signature from an external wallet is required.
 
-## Verify with an external wallet
-
- You can sign with an external wallet to verify that a payload was sent by a trusted sender. 
-
-:::code-group
-
-```kotlin [Kotlin]
-val isVerified = client.verifySignatureWithInstallationId(
-            "message", 
-            signature, 
-            installationId
-      )
-```
-
-```swift [Swift]
-let isVerified = try client.verifySignatureWithInstallationId(
-                message: "message",
-                signature: signature,
-                installationId: installationId
-            )
-```
-
-:::
-
 ## Sign with an XMTP key
 
 You can sign something with XMTP keys. For example, you can sign with XMTP keys to send a payload to a backend.
@@ -43,20 +19,48 @@ const signature = client.signWithInstallationKey(signatureText);
 ```
 
 ```jsx [React Native]
-const signature = await client.signWithInstallationKey("message")
+const signature = await client.signWithInstallationKey(signatureText)
 ```
 
 ```kotlin [Kotlin]
-val signature = client.signWithInstallationKey("message")
+val signature = client.signWithInstallationKey(signatureText)
 ```
 
 ```swift [Swift]
-let signature = try client.signWithInstallationKey(message: "message")
+let signature = try client.signWithInstallationKey(message: signatureText)
 ```
 
 :::
 
-## Verify with XMTP keys
+## Verify with an XMTP key externally
+
+ You can sign with an XMTP keys to verify that a payload was sent by a trusted sender. 
+
+:::code-group
+
+```js [Node]
+const isValidSignature = client.verifySignedWithPrivateKey(signatureText, signature, installationId);
+```
+
+```kotlin [Kotlin]
+val isVerified = client.verifySignatureWithInstallationId(
+            signatureText, 
+            signature, 
+            installationId
+      )
+```
+
+```swift [Swift]
+let isVerified = try client.verifySignatureWithInstallationId(
+                message: signatureText,
+                signature: signature,
+                installationId: installationId
+            )
+```
+
+:::
+
+## Verify with XMTP key locally
 
  You can also sign with XMTP keys to verify that a payload was sent by a trusted sender. 
 
@@ -67,16 +71,16 @@ const isValidSignature = client.verifySignedWithInstallationKey(signatureText, s
 ```
 
 ```jsx [React Native]
-const isVerified = await client.verifySignature("message", signature)
+const isVerified = await client.verifySignature(signatureText, signature)
 ```
 
 ```kotlin [Kotlin]
-val isVerified = client.verifySignature("message", signature)
+val isVerified = client.verifySignature(signatureText, signature)
 ```
 
 ```swift [Swift]
 let isVerified = try client.verifySignature(
-            message: "message", 
+            message: signatureText, 
             signature: signature
         )
 
