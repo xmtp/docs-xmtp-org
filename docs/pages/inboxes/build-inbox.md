@@ -359,6 +359,31 @@ let client = try await Client.build(
 
 :::
 
+### Log out a client
+
+When you log a user out of your app, you can give them the option to delete their local database.
+
+:::tip[Important]
+If the user chooses to delete their local database, they will have to create a new installation the next time they log in and will lose all of their messages.
+:::
+
+:::code-group
+
+```tsx [React Native]
+  await client.deleteLocalDatabase()
+  await Client.dropClient(client.installationId)
+```
+
+```kotlin [Kotlin]
+  client.deleteLocalDatabase()
+```
+
+```swift [Swift]
+  try await client.deleteLocalDatabase()
+```
+
+:::
+
 ## Check if an address is reachable
 
 The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP. The `canMessage` method checks each address’ compatibility, returning a response indicating whether each address can receive messages.
@@ -541,24 +566,26 @@ await client.conversations.sync();
 ```
 
 ```tsx [React Native]
-await alix.conversations.sync();
-
-// Does not refetch existing conversations
+await client.conversations.sync();
 ```
 
 ```kotlin [Kotlin]
-alix.conversations.sync()
+client.conversations.sync()
 ```
 
 ```swift [Swift]
-try await alix.conversations.sync()
+try await client.conversations.sync()
 ```
 
 :::
 
 ### List new messages
 
-Get new messages from the network for all existing group chats and DMs in the local database:
+Get all new messages and conversations from the network:
+
+:::tip[Note]
+Syncing does not refetch existing messages and conversations. It also does not fetch messages for group chats you are no longer a part of.
+:::
 
 :::code-group
 
@@ -571,17 +598,15 @@ await client.conversations.syncAll();
 ```
 
 ```tsx [React Native]
-await alix.conversations.syncAllConversations();
-
-// Does not refetch existing messages or messages for inactive group chat conversations
+await client.conversations.syncAllConversations();
 ```
 
 ```kotlin [Kotlin]
-alix.conversations.syncAllConversations()
+client.conversations.syncAllConversations()
 ```
 
 ```swift [Swift]
-try await alix.conversations.syncAllConversations()
+try await client.conversations.syncAllConversations()
 ```
 
 :::
