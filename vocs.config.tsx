@@ -24,10 +24,6 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    {
-      text: "Dev Support",
-      link: "https://community.xmtp.org/c/dev-support/76",
-    },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -37,6 +33,10 @@ export default defineConfig({
   },
   socials: [
     {
+      icon: 'discord',
+      link: 'https://discord.gg/N3smtr5upp',
+   },
+   {
       icon: "github",
       link: "https://github.com/xmtp",
     },
@@ -160,7 +160,10 @@ export default defineConfig({
           text: "Use signatures",
           link: "/inboxes/use-signatures",
         },
-
+        {
+          text: "Debug your app",
+          link: "/inboxes/debug-your-app",
+        },
         {
           text: "SDK references",
           link: "/inboxes/references",
