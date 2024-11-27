@@ -359,12 +359,15 @@ let client = try await Client.build(
 
 :::
 
-### Log a client out
-When you log a user out of your app you can give the user the option to delete their local database or not.
+### Log out a client
 
-:::tip
-If you delete the users local database they will have to make a new installation the next time they log in and will loose all their messages.
+When you log a user out of your app, you can give them the option to delete their local database.
+
+:::tip[Important]
+If the user chooses to delete their local database, they will have to create a new installation the next time they log in and will lose all of their messages.
 :::
+
+:::code-group
 
 ```tsx [React Native]
   await client.deleteLocalDatabase()
@@ -379,7 +382,7 @@ If you delete the users local database they will have to make a new installation
   try await client.deleteLocalDatabase()
 ```
 
-
+:::
 
 ## Check if an address is reachable
 
@@ -581,7 +584,7 @@ try await client.conversations.sync()
 Get all new messages and conversations from the network:
 
 :::tip[Note]
-Syncing does not refetch existing messages and conversations or messages for group chats you are no longer a part of.
+Syncing does not refetch existing messages and conversations. It also does not fetch messages for group chats you are no longer a part of.
 :::
 
 :::code-group
