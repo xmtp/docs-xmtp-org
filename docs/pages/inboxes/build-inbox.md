@@ -359,6 +359,28 @@ let client = try await Client.build(
 
 :::
 
+### Log a client out
+When you log a user out of your app you can give the user the option to delete their local database or not.
+
+:::tip
+If you delete the users local database they will have to make a new installation the next time they log in and will loose all their messages.
+:::
+
+```tsx [React Native]
+  await client.deleteLocalDatabase()
+  await Client.dropClient(client.installationId)
+```
+
+```kotlin [Kotlin]
+  client.deleteLocalDatabase()
+```
+
+```swift [Swift]
+  try await client.deleteLocalDatabase()
+```
+
+
+
 ## Check if an address is reachable
 
 The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP. The `canMessage` method checks each address’ compatibility, returning a response indicating whether each address can receive messages.
