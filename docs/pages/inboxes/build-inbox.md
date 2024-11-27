@@ -541,24 +541,26 @@ await client.conversations.sync();
 ```
 
 ```tsx [React Native]
-await alix.conversations.sync();
-
-// Does not refetch existing conversations
+await client.conversations.sync();
 ```
 
 ```kotlin [Kotlin]
-alix.conversations.sync()
+client.conversations.sync()
 ```
 
 ```swift [Swift]
-try await alix.conversations.sync()
+try await client.conversations.sync()
 ```
 
 :::
 
 ### List new messages
 
-Get new messages from the network for all existing group chats and DMs in the local database:
+Get all new messages and conversations from the network:
+
+:::tip[Note]
+Syncing does not refetch existing messages and conversations or messages for group chats you are no longer a part of.
+:::
 
 :::code-group
 
@@ -571,17 +573,15 @@ await client.conversations.syncAll();
 ```
 
 ```tsx [React Native]
-await alix.conversations.syncAllConversations();
-
-// Does not refetch existing messages or messages for inactive group chat conversations
+await client.conversations.syncAllConversations();
 ```
 
 ```kotlin [Kotlin]
-alix.conversations.syncAllConversations()
+client.conversations.syncAllConversations()
 ```
 
 ```swift [Swift]
-try await alix.conversations.syncAllConversations()
+try await client.conversations.syncAllConversations()
 ```
 
 :::
