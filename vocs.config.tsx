@@ -76,6 +76,10 @@ export default defineConfig({
           link: "/inboxes/build-inbox",
         },
         {
+          text: "Enable device sync",
+          link: "/inboxes/device-sync",
+        },
+        {
           text: "Manage inboxes",
           link: "/inboxes/manage-inboxes",
         },
