@@ -1,51 +1,80 @@
-# Set group chat permissions and metadata
-
-## Handle group chat permissions
+# Manage group permissions
 
 Robust group chat permissions are key to providing users with a friendly and safe group chat experience.
 
-### Available permissions and options
+## Understand the group permissions system
 
-These are the permissions allowed for a group:
+### Member statuses
 
-- Add member
-- Remove member
-- Update metadata
-- Add admin
-- Remove admin
-- Update permissions
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
 
-These are the permission options available for each permission:
+- Member
+  - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- Admin
+- Super admin
 
-- Unspecified
-- Allow
-- Deny
-- Allow if admin or super admin
-- Allow if super admin
+### Options
 
-You can list, add, and remove members from a group chat. Only the group chat creator (super admin) has permission to add or remove members. This restriction ensures that only authorized individuals can modify the participant list.
+Use options to assign a role to a permission. These are the available options:
 
-### Manage group chat admins
+- All members
+- Admin only
+    - Includes super admins
+- Super admin only
 
-There are two kinds of administrators: super admins and admins. The group creator starts as a super admin, who has the most permissions so that a normal admin cannot remove the creator or destroy a group.
+### Permissions
 
-While group membership is inherent to the MLS group, administrators are specified through the group metadata. Updating the metadata is how you add or remove admins and specify who are admins versus super admins.
+Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
 
-Here's an overview of how group chat admin statuses work:
+- Grant admin status to a member
+- Remove admin status from a member
+- Add a member to the group
+- Remove a member from the group
+- Update [group metadata](/inboxes/group-metadata), such as group name, description, and image
+- Update group permissions on an item-by-item basis, such as calling `updateGroupNamePermission` or`updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
 
-- Everyone in a group chat is a member.
-- A member can be granted admin or super admin status.  
-  If the member's admin or super admin status is removed, they are still a member of the group chat.
-- By default, only a member with super admin can add and remove admin and super admin statuses.  
-  Also by default, the group creator is the only member with super admin status.
+The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
 
-:::info
+- Grant super admin status to a member
+- Remove super admin status from a member
+
+## How the group permissions system works
+
+When a group is created, all groups have the same permissions and options set:
+
+- There is one super admin, and it is the group creator
+- There are no admins
+- Each user added to the group starts out as a member
+
+The super admin has all of the [available permissions](https://www.notion.so/Updates-to-group-permissions-docs-15030823ce92805481f4d8915e7dd693?pvs=21) and can use them to adjust the group’s permissions and options.
+
+As the app developer, you can provide a UI that enables group participants to make further adjustments. For example, you can give the super admin the following options when creating the group:
+
+- Add members
+- Update group metadata
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" />
+</div>
+
+You can use member statuses, options, and permissions to create a custom policy set.
+
+If you aren’t opinionated and don’t set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
+
+- Add member - All members
+- Remove member - Admin only
+- Add admin - Super admin only
+- Remove admin - Super admin only
+- Update group permissions - Super admin only
+- Update group metadata - All members
+
+To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Manage group chat admins
 
 By design, checking admin permission status by wallet address is not supported. Instead, look up the `inboxID` for that wallet address, then use the calls below.
 
-:::
-
-#### Check if inbox ID is an admin
+### Check if inbox ID is an admin
 
 :::code-group
 
@@ -74,7 +103,7 @@ try group.isAdmin(client.inboxID)
 
 :::
 
-#### Check if inbox ID is a super admin
+### Check if inbox ID is a super admin
 
 :::code-group
 
@@ -102,7 +131,7 @@ try group.isSuperAdmin(inboxid: inboxID)
 
 :::
 
-#### List admins
+### List admins
 
 :::code-group
 
@@ -129,7 +158,7 @@ try group.listAdmins()
 
 :::
 
-#### List super admins
+### List super admins
 
 :::code-group
 
@@ -156,7 +185,7 @@ try group.listSuperAdmins()
 
 :::
 
-#### Add admin status to inbox ID
+### Add admin status to inbox ID
 
 :::code-group
 
@@ -182,7 +211,7 @@ try await group.addAdmin(inboxid: inboxID)
 
 :::
 
-#### Add super admin status to inbox ID
+### Add super admin status to inbox ID
 
 :::code-group
 
@@ -208,7 +237,7 @@ try await group.addSuperAdmin(inboxid: inboxID)
 
 :::
 
-#### Remove admin status from inbox ID
+### Remove admin status from inbox ID
 
 :::code-group
 
@@ -234,7 +263,7 @@ try await group.removeAdmin(inboxid: inboxid)
 
 :::
 
-#### Remove super admin status from inbox ID
+### Remove super admin status from inbox ID
 
 :::code-group
 
@@ -260,9 +289,9 @@ try await group.removeSuperAdmin(inboxid: inboxID)
 
 :::
 
-### Manage group chat membership
+## Manage group chat membership
 
-#### Add members by inbox ID
+### Add members by inbox ID
 
 :::code-group
 
@@ -288,7 +317,7 @@ try await group.addMembersByInboxId(inboxIds: [inboxId])
 
 :::
 
-#### Add members by address
+### Add members by address
 
 :::code-group
 
@@ -314,7 +343,7 @@ try await group.addMembers(addresses: [walletAddress])
 
 :::
 
-#### Remove members by inbox ID
+### Remove members by inbox ID
 
 :::code-group
 
@@ -340,7 +369,7 @@ try await group.removeMemberInboxIds(inboxIds: [inboxId])
 
 :::
 
-#### Remove members by address
+### Remove members by address
 
 :::code-group
 
@@ -366,7 +395,7 @@ try await group.removeMembers(addresses: [walletAddress])
 
 :::
 
-#### Get inbox IDs for members
+### Get inbox IDs for members
 
 :::code-group
 
@@ -401,7 +430,7 @@ try await client.inboxIdFromAddress(address: peerAddress)
 
 :::
 
-#### Get addresses for members
+### Get addresses for members
 
 :::code-group
 
@@ -447,7 +476,7 @@ let peerMembers = try Conversation.group(group).peerAddresses.sorted()
 
 :::
 
-#### Get the inbox ID that added the current member
+### Get the inbox ID that added the current member
 
 :::code-group
 
@@ -480,111 +509,3 @@ try await group.addedByInboxId();
 ![Add and remove members](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/add-remove.png)
 
 When you add or remove members from a group, a proposal/commit message is sent to all the installations in the group. When the commit happens, the cryptographic state of the group is changed. This allows new members to receive messages but not decrypt older ones and prevents removed members from decrypting messages after their departure.
-
-## Handle group chat metadata
-
-Group chats can have metadata, like names and images. Metadata can help users more easily identify their group chats. You can also set group chat metadata when [creating a group chat](/inboxes/build-inbox#create-a-new-group-chat).
-
-### Get a group chat name
-
-:::code-group
-
-```js [Browser]
-const groupName = group.name;
-```
-
-```js [Node]
-const groupName = group.name;
-```
-
-```tsx [React Native]
-const groupName = await group.groupName();
-```
-
-```kotlin [Kotlin]
-group.name
-```
-
-```swift [Swift]
-try group.groupname()
-```
-
-:::
-
-### Update a group chat name
-
-:::code-group
-
-```js [Browser]
-await group.updateName("New Group Name");
-```
-
-```js [Node]
-await group.updateName("New Group Name");
-```
-
-```tsx [React Native]
-await group.updateName("New Group Name");
-```
-
-```kotlin [Kotlin]
-group.updateGroupName("New Group Name")
-```
-
-```swift [Swift]
-try await group.updateGroupName(groupname: "New Group Name")
-```
-
-:::
-
-### Get a group chat image URL
-
-:::code-group
-
-```js [Browser]
-const groupImageUrl = group.imageUrl;
-```
-
-```js [Node]
-const groupImageUrl = group.imageUrl;
-```
-
-```tsx [React Native]
-const groupName = await group.imageUrlSquare();
-```
-
-```kotlin [Kotlin]
-group.imageURLSquare
-```
-
-```swift [Swift]
-try group.groupImageUrlSquare()
-```
-
-:::
-
-### Update a group chat image URL
-
-:::code-group
-
-```js [Node]
-await group.updateImageUrl("newurl.com");
-```
-
-```js [Node]
-await group.updateImageUrl("newurl.com");
-```
-
-```tsx [React Native]
-await group.updateImageUrlSquare("ImageURL");
-```
-
-```kotlin [Kotlin]
-group.updateGroupImageUrlSquare("newurl.com")
-```
-
-```swift [Swift]
-try await group.updateGroupImageUrlSquare(imageUrlSquare: "newurl.com")
-```
-
-:::

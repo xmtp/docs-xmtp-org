@@ -150,8 +150,12 @@ export default defineConfig({
           ],
         },
         {
-          text: "Set group permissions and metadata",
-          link: "/inboxes/handle-groups",
+          text: "Manage group permissions",
+          link: "/inboxes/group-permissions",
+        },
+        {
+          text: "Manage group metadata",
+          link: "/inboxes/group-metadata",
         },
         {
           text: "Use signatures",
