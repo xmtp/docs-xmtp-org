@@ -1,6 +1,6 @@
 # Manage group chat metadata
 
-Group chats can have metadata, like names and images. Metadata can help users more easily identify their group chats. You can also set group chat metadata when [creating a group chat](/inboxes/build-inbox#create-a-new-group-chat).
+Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/inboxes/build-inbox#create-a-new-group-chat), and get and update metadata using these methods.
 
 ## Get a group chat name
 
@@ -50,6 +50,58 @@ group.updateGroupName("New Group Name")
 
 ```swift [Swift]
 try await group.updateGroupName(groupname: "New Group Name")
+```
+
+:::
+
+## Get a group chat description
+
+:::code-group
+
+```js [Browser]
+const groupDescription = group.description;
+```
+
+```js [Node]
+const groupDescription = group.description;
+```
+
+```tsx [React Native]
+const groupDescription = await group.groupDescription();
+```
+
+```kotlin [Kotlin]
+group.description
+```
+
+```swift [Swift]
+try group.groupdescription()
+```
+
+:::
+
+## Update a group chat description
+
+:::code-group
+
+```js [Browser]
+await group.updateGroupDescription("New Group Description");
+```
+
+```js [Node]
+await group.updateGroupDescription("New Group Description");
+```
+
+```tsx [React Native]
+await group.updateGroupDescription("New Group Description");
+```
+
+```kotlin [Kotlin]
+group.updateGroupDescription("New Group Description")
+```
+
+```swift [Swift]
+try await group.updateGroupDescription(groupdescription: "New Group Description")
 ```
 
 :::
