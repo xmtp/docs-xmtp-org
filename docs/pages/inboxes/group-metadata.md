@@ -75,7 +75,7 @@ group.description
 ```
 
 ```swift [Swift]
-try group.groupdescription()
+try group.groupDescription()
 ```
 
 :::
