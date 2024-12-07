@@ -101,7 +101,7 @@ group.updateGroupDescription("New Group Description")
 ```
 
 ```swift [Swift]
-try await group.updateGroupDescription(groupdescription: "New Group Description")
+try await group.updateGroupDescription(groupDescription: "New Group Description")
 ```
 
 :::
