@@ -8,7 +8,7 @@ This historical data includes:
 - Conversation messages
 - Consent state
 
-History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is an existing app installation to provide the data.
+History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is an existing online app installation to provide the data.
 
 ## Enable history sync
 
@@ -136,3 +136,19 @@ A sync worker is a spawned background worker that listens for sync events, and p
 ### History server
 
 A history server acts as a bucket that holds encrypted sync payloads. The URL location of these payloads and the password (cipher encryption key) to decrypt these payloads is sent over the sync group for the recipient to decrypt.
+
+## FAQ
+
+### A user logged into a new app installation and doesn't see their conversations. What's going on?
+
+The history sync feature uses a [sync worker](#sync-worker) that runs every 30 minutes to add any new app installations to a user's existing conversations. It may take up to 30 minutes for all of a user's conversations to appear.
+
+You can give users a way to call sync conversations to enable them to get their conversations instantly from a pre-existing and online app installation.
+
+### A user logged into a new app installation and sees their conversations, but no messages. What's going on?
+
+Ensure that you've initiated a call to sync messages and that you've opened a pre-existing and online app installation to receive the sync and begin the syncing process.
+
+### I called a sync method (messages, consent state, or conversations), but nothing is happening. What's going on?
+
+After requesting a sync for one app installation, you must open a pre-existing and online app installation to receive the sync and begin the syncing process.
