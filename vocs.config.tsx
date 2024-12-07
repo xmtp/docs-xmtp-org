@@ -76,6 +76,10 @@ export default defineConfig({
           link: "/inboxes/build-inbox",
         },
         {
+          text: "Enable history sync",
+          link: "/inboxes/history-sync",
+        },
+        {
           text: "Manage inboxes",
           link: "/inboxes/manage-inboxes",
         },
