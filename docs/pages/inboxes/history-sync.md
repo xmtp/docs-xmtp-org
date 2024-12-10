@@ -8,7 +8,7 @@ This historical data includes:
 - Conversation messages
 - Consent state
 
-History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is an existing online app installation to provide the data.
+History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is a pre-existing and online app installation to provide the data.
 
 ## Enable history sync
 
@@ -83,7 +83,7 @@ code sample needed
 
 ### Sync messages
 
-Use this method to sync message history.
+Use this method to sync conversation and message history.
 
 :::code-group
 
@@ -141,14 +141,20 @@ A history server acts as a bucket that holds encrypted sync payloads. The URL lo
 
 ### A user logged into a new app installation and doesn't see their conversations. What's going on?
 
-We currently have a debounce feature that checks for new installations max once every 30 minutes. We have an [open issue](https://github.com/xmtp/libxmtp/issues/1309) to fix this and make the groups appear almost instantly. If you can't wait for the timeout to pass, you can send a message on the old device, and this will circumvent the cool-down timer.
+A debounce feature checks for new app installations, at most, once every 30 minutes. To circumvent the cool-down timer, send a message using a pre-existing app installation. 
 
-You can give users a way to call sync conversations to enable them to get their conversations instantly from a pre-existing and online app installation.
+Once [this issue](https://github.com/xmtp/libxmtp/issues/1309) is resolved, conversations will appear almost instantly.
 
 ### A user logged into a new app installation and sees their conversations, but no messages. What's going on?
 
-Ensure that you've initiated a call to sync messages and that you've opened a pre-existing and online app installation to receive the sync and begin the syncing process.
+Ensure that you've initiated a call to [sync messages](#sync-messages) and that the pre-existing app installation is online to receive the sync request, process and encrypt the payload, upload it to the history server, and send a sync reply message to the new app installation.
 
 ### I called a sync method (messages, consent state, or conversations), but nothing is happening. What's going on?
 
-After requesting a sync for one app installation, you must open a pre-existing and online app installation to receive the sync and begin the syncing process.
+After requesting a sync for one app installation, ensure that the pre-existing app installation is online to receive the sync request.
+
+### When should I request a manual sync?
+
+If automatic history sync didn't work and the user wants to force a new sync.
+
+For example, you can provide a **Force sync now** option in your app's sync settings. This language helps indicate that history sync is built to run automatically, but can run manually, if needed.
