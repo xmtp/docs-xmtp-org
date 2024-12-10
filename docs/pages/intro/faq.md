@@ -115,7 +115,9 @@ To follow and provide feedback on this work, see the [Replication tracking task]
 
 XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
 
-## Does XMTP have fees?
+## Fees
+
+### Does XMTP have fees?
 
 XMTP core developers and researchers are working on a specific fee model for XMTP, with the following guiding principles in mind:
 
@@ -129,9 +131,9 @@ Have questions or feedback about the fee model for XMTP? See [XMTP fees: Guiding
 
 ### Has XMTP undergone a security audit?
 
-A security audit of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) will begin in Q4 2024. The audit will be performed by [NCC Group](https://www.nccgroup.com/).
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024. 
 
-The [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`) was verified by [CertiK](https://www.certik.com/company/about) on Feb 6, 2023. Read their [XMTP security assessment](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/REP-final-20230207T000355Z.pdf).
+See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
 ## Storage
 
