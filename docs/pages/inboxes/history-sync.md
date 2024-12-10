@@ -141,7 +141,7 @@ A history server acts as a bucket that holds encrypted sync payloads. The URL lo
 
 ### A user logged into a new app installation and doesn't see their conversations. What's going on?
 
-The history sync feature uses a [sync worker](#sync-worker) that runs every 30 minutes to add any new app installations to a user's existing conversations. It may take up to 30 minutes for all of a user's conversations to appear.
+We currently have a debounce feature that checks for new installations max once every 30 minutes. We have an [open issue](https://github.com/xmtp/libxmtp/issues/1309) to fix this and make the groups appear almost instantly. If you can't wait for the timeout to pass, you can send a message on the old device, and this will circumvent the cool-down timer.
 
 You can give users a way to call sync conversations to enable them to get their conversations instantly from a pre-existing and online app installation.
 
