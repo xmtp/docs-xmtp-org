@@ -55,7 +55,6 @@ Here are just a few chains that work with XMTP:
 - [Base](https://base.org/)
 - [(BNB) Chain](https://www.bnbchain.org/)
 - [Ethereum](https://ethereum.org/)
-- [Hermez](https://docs.hermez.io/Hermez_1.0/about/scalability/)
 - [zk-EVM](https://linea.build/)
 - [Optimism](https://www.optimism.io/)
 - [Polygon](https://polygon.technology/)
