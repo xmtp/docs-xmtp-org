@@ -111,7 +111,17 @@ code sample needed
 
 ## How history sync works
 
-When your app initializes an XMTP client and a `historySyncUrl` client option is present, history sync automatically triggers an initial sync request, pulling all conversation state history into the new app installation and merging it with the existing app installations in the sync group.
+When your app initializes an XMTP client and a `historySyncUrl` client option is present, history sync automatically triggers an initial sync request and creates an encrypted payload.
+
+<div>
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step1.png" width="600px" />
+</div>
+
+History sync then uploads the payload, sends a sync reply, and pulls all conversation state history into the new app installation, merging it with the existing app installations in the sync group.
+
+<div>
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step2.png" width="600px" />
+</div>
 
 Ongoing updates to history are streamed automatically. Updates, whether for user consent preferences or messages, are sent across the sync group, ensuring all app installations have up-to-date information.
 
