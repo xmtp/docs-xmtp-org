@@ -8,6 +8,12 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 - **V2 is scheduled for deprecation in Q2 2025**, after which all V2 conversations and messages will become read-only. To ensure users can still access their V2 communications, [Ephemera](https://ephemerahq.com/) will launch a dedicated website where users can sign in with their V2 identities to view their messages. Additional details will be shared as the deprecation date approaches.
 :::
 
+## Upgrade availability
+
+- 🟢 **The mobile app upgrade path is ready** and documented here. This includes apps built with React Native, Kotlin, or Swift.
+
+- 🟡 The web app upgrade path is coming soon.
+
 ## Core methods from V2 work in a similar way in V3
 
 Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work in a similar way in V3. 
