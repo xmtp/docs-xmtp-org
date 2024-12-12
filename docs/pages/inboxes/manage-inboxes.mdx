@@ -211,7 +211,9 @@ However, anytime a new inbox ID is created for an address, the conversations and
 
 ### I have multiple addresses associated with one inbox ID. If I log in with any one of these addresses, does it access that inbox ID, or does it create a new inbox ID?
 
-Let's say that you create a client with an address 0x62EE...309c. Inbox ID 1 is generated from that address 0x62EE...309c. 
+The address accesses that inbox ID and does not create a new inbox ID.
+
+For example, let's say that you create a client with an address 0x62EE...309c. Inbox ID 1 is generated from that address 0x62EE...309c. 
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-address1.png" width="150px" />
@@ -221,7 +223,7 @@ If you then add a different address 0xd0e4...DCe8 to inbox ID 1, address 0xd0e4.
 
 If you then log into a new app installation with address 0xd0e4...DCe8, it accesses inbox ID 1 and does not create a new inbox ID.
 
-Once address 0xd0e4...DCe8  has been associated with inbox ID 1, it can then be used to log into inbox ID 1 using a new app installation.
+Once address 0xd0e4...DCe8 has been associated with inbox ID 1, it can then be used to log into inbox ID 1 using a new app installation.
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-address1-address2.png" width="350px" />
