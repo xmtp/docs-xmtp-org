@@ -76,7 +76,7 @@ See the [XMTP brand guidelines](https://github.com/xmtp/brand) GitHub repo.
 
 ## Network
 
-See [Network FAQ](/network/network#FAQ).
+See [Network FAQ](/network/network-faq).
 
 ## Fees
 
