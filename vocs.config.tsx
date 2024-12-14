@@ -177,6 +177,16 @@ export default defineConfig({
       items: [], // Add this line
     },
     {
+      text: "Network concepts",
+      collapsed: false,
+      items: [
+        {
+          text: "Learn about the network",
+          link: "/network/network",
+        },
+      ],
+    },
+    {
       text: "Protocol concepts",
       collapsed: false,
       items: [
