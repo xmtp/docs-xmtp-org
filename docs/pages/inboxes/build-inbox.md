@@ -902,20 +902,20 @@ try alix.conversations.findDm(bo.address)
 
 :::
 
-### ConversationContainer interface
+### Conversation union type
 
 Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
 
-- React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/ConversationContainer.ts
+- React Native: [Conversation.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Conversation.ts)
 
 ### Group class
 
 Represents a group chat conversation, providing methods to manage group-specific functionalities such as sending messages, synchronizing state, and handling group membership.
 
-- React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts
+- React Native: [Group.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts)
 
 ### Dm class
 
 Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
 
-- React Native: https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts
+- React Native: [Dm.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts)
