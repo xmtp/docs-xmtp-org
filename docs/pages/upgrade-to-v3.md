@@ -24,7 +24,7 @@ To learn more, see [Build a chat inbox](/inboxes/build-inbox).
 
 ## Local databases mean no need to export/import topic data
 
-- In V2, we needed to manually create and manage a local database. Additionally, the contact, invite, and conversation topic data required to present messages to the user were dependent on the export/import of topic data to and from the network.
+- In V2, we needed to manually create and manage a local database for performance. Additionally, when moving across different SDKS to increase performance you could export a topic and then import the topic into the other SDK shortening the performance loop. This was particularly present when handling push notifications in RN applications allowing the speed of exporting and importing a conversation across sdks.
 - In V3, a client automatically creates and manages a local database. And all of the data (keys, welcomes, and conversations) the client needs to present messages to the user are either stored locally or automatically synchronized from the network. To learn more, see [XMTP MLS protocol specification](https://docs.xmtp.org/protocol/specs).
 
 ## Loading messages
