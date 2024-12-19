@@ -13,15 +13,15 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 :::code-group
 
 ```tsx [React Native]
-await client.preferences.syncConsent()
+await client.conversations.syncAllConversations()
 ```
 
 ```kotlin [Kotlin]
-client.preferences.syncConsent()
+client.conversations.syncAllConversations()
 ```
 
 ```swift [Swift]
-try await client.preferences.syncConsent()
+try await client.conversations.syncAllConversations()
 ```
 
 :::
