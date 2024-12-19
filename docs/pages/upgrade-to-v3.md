@@ -25,7 +25,7 @@ To learn more, see [Build a chat inbox](/inboxes/build-inbox).
 ## Local databases mean no need to export/import topic data
 
 - In V2, we needed to manually create and manage a local database for performance. Additionally, when moving across different SDKS to increase performance you could export a topic and then import the topic into the other SDK shortening the performance loop. This was particularly present when handling push notifications in RN applications allowing the speed of exporting and importing a conversation across sdks.
-- In V3, a client automatically creates and manages a local database. And all of the data (keys, welcomes, and conversations) the client needs to present messages to the user are either stored locally or automatically synchronized from the network. To learn more, see [XMTP MLS protocol specification](https://docs.xmtp.org/protocol/specs).
+- In V3, a client automatically creates and manages a local database per installation so performance issues are no longer a problem. When moving across installations it is advised to use message history to easily move data between installations. In the case of React Native push notifications the database is accessible from both the native layer and react native.
 
 ## Loading messages
 
