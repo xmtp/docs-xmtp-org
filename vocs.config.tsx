@@ -80,6 +80,10 @@ export default defineConfig({
           link: "/inboxes/manage-inboxes",
         },
         {
+          text: "Enable history sync",
+          link: "/inboxes/history-sync",
+        },
+        {
           text: "Support spam-free inboxes",
           collapsed: true,
           items: [
