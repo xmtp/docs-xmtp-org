@@ -8,6 +8,7 @@ To follow and provide feedback on the engineering work covered in this FAQ, see 
 
 - To learn about the testnet and how the XMTP network will be decentralized, see [Decentralizing XMTP](https://xmtp.org/decentralizing-xmtp).
 - To learn about xmtpd (XMTP daemon), the node software that powers the testnet and will power the mainnet of the decentralized XMTP network, see the [xmtpd repo](https://github.com/xmtp/xmtpd).
+- To learn about how xmtpd can be run on Helm and Terraform infrastructure, see the [xmtpd-infrastructure repo](https://github.com/xmtp/xmtpd-infrastructure).
 
 All of the nodes in the `dev` and `production` XMTP network environments are still operated by [Ephemera](https://ephemerahq.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
 
