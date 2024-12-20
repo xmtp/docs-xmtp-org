@@ -24,7 +24,8 @@ To learn more, see [Build a chat inbox](/inboxes/build-inbox).
 
 ## Local databases mean no need to export/import topic data
 
-In V3, a client creates and manages a local database. For this reason, we no longer need to export or import topic data.
+- In V2, we needed to manually create and manage a local database for performance. Additionally, when moving across different SDKs, you could export a topic and then import it into the other SDK to shorten the performance loop. This was particularly useful when handling push notifications in React Native apps to increase the speed of exporting and importing a conversation across SDKs.
+- In V3, a client automatically creates and manages a local database per installation, so performance issues are no longer an issue. When moving across installations, use message history to move data between installations. In the case of React Native push notifications, the database is accessible from both the native layer and React Native.
 
 ## Loading messages
 

@@ -76,43 +76,7 @@ See the [XMTP brand guidelines](https://github.com/xmtp/brand) GitHub repo.
 
 ## Network
 
-### Is the XMTP network decentralized?
-
-Currently, [Ephemera](https://ephemerahq.com/) (the company) operates all of the network nodes in the two available XMTP network environments: `dev` and `production`.
-
-These network nodes operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
-
-- Cuba
-- Iran
-- North Korea 
-- Syria
-- The Crimea, Donetsk People’s Republic, and Luhansk People’s Republic regions of Ukraine
-
-To explore the software for the nodes that currently form the XMTP network, see the [xmtp-node-go repo](https://github.com/xmtp/xmtp-node-go).
-
-Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanisms include:
-
-- An onchain smart contract node registry, which lists the currently active set of XMTP nodes
-- An off-chain broadcast network of nodes run by a set of independent third parties, which handles the majority of the messaging data (loosely ordered, low latency)
-- A series of onhain smart contracts on an XMTP L3, which handles account information and the most critical messaging data (strictly ordered, medium latency)
-
-To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the `xmtpd` repo.
-
-### Is XMTP a blockchain?
-
-XMTP is not a blockchain. Nodes on the XMTP network run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
-
-Ephemera is researching various consensus protocols that would allow the network to operate in a decentralized fashion while maintaining its current emphasis on user privacy and low-latency message delivery.
-
-### Will I be able to run my own XMTP node?
-
-Ephemera is in the process of building the replication mechanisms required to enable third-parties to run XMTP nodes and participate in network decentralization.
-
-To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
-
-### Does XMTP have a token?
-
-XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
+See [Network FAQ](/network/network-faq).
 
 ## Fees
 
