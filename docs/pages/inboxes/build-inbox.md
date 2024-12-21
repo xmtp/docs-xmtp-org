@@ -745,6 +745,92 @@ let orderFilteredConversations = try await client.conversations.listGroups(conse
 
 :::
 
+## Retrieve a wallet address from an inbox ID
+
+An XMTP inbox ID can have an array of addresses associated with it. To retrieve an address from an inbox ID, use the `inboxState` method. This retrieves the current state of the inbox, which includes the primary address associated with it.
+
+### Best practices
+
+When displaying an address for an inbox ID, consider these best practices:
+	
+- For 1:1 chats: Display the primary address or name associated with the inbox ID.
+- For group chats: Display the name of the group, or enable users to choose the one address they want to display from the associated addresses.
+
+Displaying multiple addresses for an inbox ID can create a misleading UX for users. For example, it could make a 1:1 chat appear to have more than two participants.
+
+### Retrieve the state of a single inbox ID
+
+:::code-group
+
+```tsx [Browser]
+need code sample
+```
+
+```tsx [Node]
+need code sample
+```
+
+```tsx [React Native]
+// @param {boolean} refreshFromNetwork - If you want to refresh the current state of in the inbox from the network or not.
+// @returns {Promise<InboxState>} A Promise resolving to a InboxState.
+
+async inboxState(refreshFromNetwork: boolean): Promise<InboxState> {
+  return await XMTPModule.getInboxState(
+    this.installationId,
+    refreshFromNetwork
+  )
+}
+```
+
+```tsx [Kotlin]
+need code sample
+```
+
+```tsx [Swift]
+need code sample
+```
+
+:::
+
+### Retrieve the state of multiple inbox IDs
+
+:::code-group
+
+```tsx [Browser]
+need code sample
+```
+
+```tsx [Node]
+need code sample
+```
+
+```tsx [React Native]
+// @param {InboxId[]} inboxIds - The inboxIds to get the associate inbox states for.
+// @param {boolean} refreshFromNetwork - If you want to refresh the current state the inbox from the network or not.
+// @returns {Promise<InboxState[]>} A Promise resolving to a list of InboxState.
+
+async inboxStates(
+  refreshFromNetwork: boolean,
+  inboxIds: InboxId[]
+): Promise<InboxState[]> {
+  return await XMTPModule.getInboxStates(
+    this.installationId,
+    refreshFromNetwork,
+    inboxIds
+  )
+}
+```
+
+```tsx [Kotlin]
+need code sample
+```
+
+```tsx [Swift]
+need code sample
+```
+
+:::
+
 ## Stream conversations and messages
 
 ### Stream all group chats and DMs
