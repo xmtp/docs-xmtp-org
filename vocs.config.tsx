@@ -181,20 +181,32 @@ export default defineConfig({
       items: [], // Add this line
     },
     {
-      text: "Network FAQ",
-      link: "/network/network-faq",
-    },
-    {
       text: "Protocol concepts",
       collapsed: false,
       items: [
         {
-          text: "XMTP MLS protocol spec",
-          link: "/protocol/specs",
+          text: "Encryption",
+          link: "/protocol/encryption",
+        },
+        {
+          text: "Identity",
+          link: "/protocol/identity",
+        },
+        {
+          text: "Consent",
+          link: "/protocol/consent",
+        },
+        {
+          text: "Network",
+          link: "/protocol/network",
         },
         {
           text: "Wallet signatures",
           link: "/protocol/signatures",
+        },
+        {
+          text: "XMTP MLS protocol spec",
+          link: "/protocol/specs",
         },
         {
           text: "XIPs",
