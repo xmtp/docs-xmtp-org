@@ -37,10 +37,11 @@ The following permissions can be assigned by super admins only. This helps ensur
 
 - Grant super admin status to a member
 - Remove super admin status from a member
+- Update group permissions
 
 ## How the group permissions system works
 
-When a group is created, all groups have the same permissions and options set:
+When a group is created, all groups have the same initial member "roles" set:
 
 - There is one super admin, and it is the group creator
 - There are no admins
@@ -48,7 +49,7 @@ When a group is created, all groups have the same permissions and options set:
 
 The super admin has all of the [available permissions](#permissions) and can use them to adjust the group’s permissions and options.
 
-As the app developer, you can provide a UI that enables group participants to make further adjustments. For example, you can give the super admin the following options when creating the group:
+As the app developer, you can provide a UI that enables group participants to make further adjustments. For example, you can give the super admin the following permission options for group members when creating the group:
 
 - Add members
 - Update group metadata
@@ -57,7 +58,16 @@ As the app developer, you can provide a UI that enables group participants to ma
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" />
 </div>
 
-You can use member statuses, options, and permissions to create a custom policy set.
+You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
+
+| Permission | Allow all | Deny all  | Admin only | Super admin only |
+| --- | --- | --- | --- | --- |
+| Add member | ✅ | ✅ | ✅ | ✅ |
+| Remove member | ✅ | ✅ | ✅ | ✅ |
+| Add admin | ❌ | ✅ | ✅ | ✅ |
+| Remove admin | ❌ | ✅ | ✅ | ✅ |
+| Update group permissions | ❌ | ❌ | ❌ | ✅ |
+| Update group metadata | ✅ | ✅ | ✅ | ✅ |
 
 If you aren’t opinionated and don’t set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
 
