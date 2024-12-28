@@ -25,8 +25,8 @@ XMTP agents come with a ready to use client that uses XMTP providing end-to-end 
 - **E2EE**: End to end MLS encryption
 - **Multi-agent**: Support multi-agent through group chats
 - **Interoperable**: Works across all platforms and frontends
-- **Trusted**: Decentralized, open source
-- **Anonymous**: By default every identity is ephemeral and anonymous.
+- **Trusted**: Decentralized, open source-
+- **Anonymous**: By default user identity is anonymous.
 
 ### Installation
 
