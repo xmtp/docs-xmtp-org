@@ -188,7 +188,7 @@ export default defineConfig({
         },
         {
           text: "Plugins",
-          link: "/agents/plugin",
+          link: "/agents/plugins",
         },
         {
           text: "Build with MessageKit ↗",
