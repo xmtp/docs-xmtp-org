@@ -1,3 +1,5 @@
+# Compliance
+
 XMTP facilitates compliance with key data protection regulations:
 
 **1. General Data Protection Regulation (GDPR)**

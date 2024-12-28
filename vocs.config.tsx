@@ -183,8 +183,8 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Encryption",
-          link: "/agents/e2ee",
+          text: "Security & interoperability",
+          link: "/agents/secure-agents",
         },
         {
           text: "Build with MessageKit ↗",

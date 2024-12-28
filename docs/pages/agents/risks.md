@@ -1,3 +1,7 @@
+# Potential risks
+
+These are some of the potential risks that agent messages are exposed in traditional web architectures.
+
 ### **1. Man-in-the-Middle (MitM) Attacks**
 
 MitM attacks occur when an attacker intercepts the communication between the client and backend where the LLM service lies. This could involve stealing sensitive information, injecting malicious data, or altering the transmitted data.

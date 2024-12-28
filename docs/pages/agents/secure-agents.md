@@ -1,4 +1,4 @@
-# End-to-end encrypted messaging
+# Secure interoperable agents
 
 AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, analogous to the web’s rise in the 2000s. Just as Cloudflare and https secured web traffic, messaging will need robust scalable end-to-end encrypted messages to protect sensitive information.
 
