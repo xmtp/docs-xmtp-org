@@ -24,7 +24,10 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    { text: "Dev support", link: "https://community.xmtp.org/c/dev-support/76" },
+    {
+      text: "Dev support",
+      link: "https://community.xmtp.org/c/dev-support/76",
+    },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -33,7 +36,7 @@ export default defineConfig({
       "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
   },
   socials: [
-   {
+    {
       icon: "github",
       link: "https://github.com/xmtp",
     },
@@ -176,9 +179,26 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build agents with MessageKit ↗",
-      link: "https://messagekit.ephemerahq.com/",
-      items: [], // Add this line
+      text: "Agent communication",
+      collapsed: false,
+      items: [
+        {
+          text: "Encryption",
+          link: "/agents/e2ee",
+        },
+        {
+          text: "Build with MessageKit ↗",
+          link: "https://message-kit.org/",
+        },
+        {
+          text: "Risks ",
+          link: "/agents/risks",
+        },
+        {
+          text: "Compliance",
+          link: "/agents/compliance",
+        },
+      ],
     },
     {
       text: "Network FAQ",
