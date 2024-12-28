@@ -184,7 +184,7 @@ export default defineConfig({
       items: [
         {
           text: "Security & interoperability",
-          link: "/agents/secure-agents",
+          link: "/agents/e2ee",
         },
         {
           text: "Plugins",
