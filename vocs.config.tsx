@@ -187,16 +187,12 @@ export default defineConfig({
           link: "/agents/secure-agents",
         },
         {
+          text: "Plugins",
+          link: "/agents/plugin",
+        },
+        {
           text: "Build with MessageKit ↗",
           link: "https://message-kit.org/",
-        },
-        {
-          text: "Risks ",
-          link: "/agents/risks",
-        },
-        {
-          text: "Compliance",
-          link: "/agents/compliance",
         },
       ],
     },

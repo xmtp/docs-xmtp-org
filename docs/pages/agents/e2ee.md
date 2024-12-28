@@ -18,7 +18,7 @@ More concrete sensitive data could include credit card details, private keys and
 
 ## XMTP
 
-XMTP agents come with a ready to use client that uses XMTP providing end-to-end encrypted messaging for every agent intereaction, crucial for privacy, security, and compliance provided by the XMTP network.
+XMTP provides end-to-end encrypted messaging for agent interactions, crucial for privacy, security, and compliance. Without it, messages are exposed to many security risks
 
 ### Features:
 
@@ -28,33 +28,49 @@ XMTP agents come with a ready to use client that uses XMTP providing end-to-end 
 - **Trusted**: Decentralized, open source-
 - **Anonymous**: By default user identity is anonymous.
 
-### Installation
+## Frequently Asked Questions
 
-Install the `xmtp` package
+### 1. What are the risks of not using end-to-end encryption for agent interactions?
 
-```bash [cmd]
-bun install xmtp
-```
+These are some of the potential risks that agent messages are exposed in traditional web architectures.
 
-### Usage
+**1. Man-in-the-Middle (MitM) Attacks**
 
-This is how you can use the `xmtp` package to create an agent and handle messages.
+MitM attacks occur when an attacker intercepts the communication between the client and backend where the LLM service lies. This could involve stealing sensitive information, injecting malicious data, or altering the transmitted data.
 
-- `WALLET_PRIVATE_KEY`: This will encrypt all messages and make it available through its public address or ens domain.
+**Potential Threats:**
 
-```tsx
-import { XMTP } from "xmtp";
+- **Data Interception:** The attacker captures sensitive data, including user queries and chatbot responses, potentially exposing personal or confidential information.
+- **Data Manipulation:** The attacker modifies user queries or responses. This could lead to incorrect actions or responses.
+- **Command Injection:** Malicious instructions injected by an attacker could trigger unintended backend actions, potentially compromising the system.
 
-const xmtp = new XMTP(onMessage, {
-  encryptionKey: WALLET_PRIVATE_KEY,
-});
-await xmtp.init();
-const onMessage = async (message, user) => {
-  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
-  // Your AI model response
-  await xmtp.send({
-    message: response,
-    originalMessage: message,
-  });
-};
-```
+**2. Prompt Injection**
+
+An attacker may inject malicious prompts into user queries by intercepting the request from in-between, resulting in disastrous actions (in the case of an Agentic AI system).
+
+- https://arxiv.org/pdf/2410.14728
+
+**3. Cross-Site Scripting (XSS)**
+
+An attacker injects malicious scripts into the chatbot interface or backend responses, exploiting vulnerabilities in the web app.
+
+**Potential Threats:**
+
+- Stealing session tokens, cookies, or sensitive data via the malicious script.
+- Performing unauthorized actions on behalf of the user by exploiting session data.
+
+### 2. How does XMTP facilitate compliance?
+
+XMTP facilitates compliance with key data protection regulations:
+
+**1. General Data Protection Regulation (GDPR)**
+
+- **Data Protection by Design**: XMTP's end-to-end encryption ensures that personal data is secured throughout its lifecycle, aligning with GDPR's requirement for data protection measures to be integrated into processing activities.
+- **Data Subject Rights**: XMTP's architecture supports efficient management of data access and deletion requests, aiding compliance with GDPR mandates on user rights.
+
+**2. California Consumer Privacy Act (CCPA)**
+
+- **Data Security Measures**: By implementing robust encryption, XMTP helps protect personal information, addressing CCPA's emphasis on reasonable security procedures to prevent unauthorized access.
+- **Transparency and User Control**: XMTP's open-source nature allows organizations to maintain transparency in their communication systems, building trust with users and supporting CCPA's requirements for consumer rights.
+
+By integrating XMTP, organizations can enhance their compliance posture with both GDPR and CCPA, mitigating legal risks and building consumer trust.
