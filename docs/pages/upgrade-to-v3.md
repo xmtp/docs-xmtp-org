@@ -30,7 +30,7 @@ To learn more, see [Build a chat inbox](/inboxes/build-inbox).
 ## Loading messages
 
 - In V2, we used `listBatchMessages` to load all messages across conversations to help performantly load a conversation list in descending order by last message.
-- In V3, because there is a local database. we can simply use `list(order: .lastMessage)`.
+- In V3, because there is a local database, we can simply use `list()`, which returns a list of conversations in descending order by last message, or by a conversation's `createdAt` value if it has no messages.
 
 ## Push notification differences
 
@@ -74,7 +74,7 @@ In V3, we have installation-specific key bundles that are stored securely in the
 
 | Purpose | V2 method | V3 equivalent |
 | --- | --- | --- |
-| Loading messages | `listBatchMessages` | `list(order: .lastMessage)` |
+| Loading messages | `listBatchMessages` | `list()` |
 | Push notification decryption | `fromInvite`, `fromIntro` | `fromWelcome` |
 | Get topic IDs for push notifications | `/xmtp/0/invite-$address/proto` | `/xmtp/mls/1/w-$installationId/proto` |
 | Create client | `client.createFromKeyBundle` | `client.build` |
