@@ -123,5 +123,3 @@ You can now send notifications to your device using an [XMTP push notification c
    }
   }
   ```
-
-- If you run into any other issues or questions, don't hesitate to post to the [XMTP Dev Support forum](https://community.xmtp.org/c/dev-support/76).

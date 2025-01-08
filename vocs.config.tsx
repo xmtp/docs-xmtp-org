@@ -24,7 +24,7 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    { text: "Dev support", link: "https://community.xmtp.org/c/dev-support/76" },
+    { text: "Dev support", link: "https://github.com/xmtp" },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
