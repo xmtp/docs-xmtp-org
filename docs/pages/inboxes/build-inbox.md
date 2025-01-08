@@ -679,7 +679,7 @@ if (!codec) {
 
 ### List existing group chats or DMs
 
-Get a list of existing group chats or DMs in the local database, ordered either by `createdAt` date or `lastMessage`.
+Get a list of existing group chats or DMs in the local database. By default, the conversations are listed in descending order by their `lastMessage` created at value. If a conversation does not contain any messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
@@ -696,10 +696,10 @@ const allDms = await client.conversations.listDms();
 ```
 
 ```tsx [React Native]
-// List Conversation items by createdAt date
+// List Conversation items
 await alix.conversations.list();
 
-// List Conversation items by lastMessage but only return specified fields
+// List Conversation items but only return specified fields
 await alix.conversations.list(
   {
     members: false,
@@ -710,37 +710,36 @@ await alix.conversations.list(
     isActive: false,
     lastMessage: true,
   },
-  "lastMessage"
-); // 'createdAt' | 'lastMessage'
+);
 ```
 
 ```kotlin [Kotlin]
 // List conversations (both groups and dms)
 val conversations = alix.conversations.list()
-val orderFilteredConversations = client.conversations.list(consentState: ALLOWED, order: LAST_MESSAGE)
+val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
 
 // List just dms
 val conversations = alix.conversations.listDms()
-val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED, order: LAST_MESSAGE)
+val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
 
 //List just groups
 val conversations = alix.conversations.listGroups()
-val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED, order: LAST_MESSAGE)
+val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
 
 ```
 
 ```swift [Swift]
 // List conversations (both groups and dms)
 let conversations = try await alix.conversations.list()
-let orderFilteredConversations = try await client.conversations.list(consentState: .allowed, order: .last_message)
+let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
 
 // List just dms
 let conversations = try await alix.conversations.listDms()
-let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed, order: .last_message)
+let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
 
 //List just groups
 let conversations = try await alix.conversations.listGroups()
-let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed, order: .last_message)
+let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
 ```
 
 :::
