@@ -2,6 +2,15 @@
 
 ## Create or build a client
 
+An XMTP API client provides a way for apps to interact with the XMTP network. The API client:
+
+1. Fetches data from the XMTP network
+2. Decrypts and validates data
+3. Stores data in the SQLite DB that it creates and manages
+4. Surfaces data through bindings
+
+![XMTP API client stack](/docs/public/client-stack.jpg)
+
 ### Create an account signer
 
 This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface. This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements.
