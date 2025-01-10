@@ -12,7 +12,7 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 
 - 🟢 **The mobile app upgrade path is ready** and documented here. This includes apps built with React Native, Kotlin, or Swift.
 
-- 🟡 The web app upgrade path is coming soon.
+- 🟢 **The web app upgrade path is ready** and documentation is coming soon.
 
 ## Core methods from V2 work in a similar way in V3
 
