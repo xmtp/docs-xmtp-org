@@ -1,5 +1,13 @@
 # Build a chat inbox
 
+This guide walks you through the steps to build a chat inbox using the XMTP SDK. 
+
+:::tip[Learn to build with XMTP.chat]
+
+Learn to build a chat inbox with the help of [XMTP.chat](https://xmtp.chat/), an interactive developer tool and chat app.
+
+:::
+
 ## Create or build a client
 
 ### Create an account signer
