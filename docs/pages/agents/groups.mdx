@@ -2,7 +2,7 @@ import { CustomHomePage } from "../../components/CustomHomePage";
 
 # Groups
 
-MessageKit allows agents to interact inside XMTP groups. Make sure you follow the [guidelines](/agents/guidelines) for building responsible group agents on XMTP.
+Agents can interact inside XMTP groups. Make sure you follow the [Guidelines](/agents/guidelines) for building responsible group agents on XMTP.
 
 :::info
 You need to **add the agent to the group as a member**.
@@ -42,7 +42,7 @@ These are some example methods for creating and managing groups for ensuring rel
 export async function removeFromGroup(
   groupId: string,
   client: Client,
-  senderAddress: string,
+  senderAddress: string
 ): Promise<{ code: number; message: string }> {
   try {
     let lowerAddress = senderAddress.toLowerCase();
@@ -52,8 +52,9 @@ export async function removeFromGroup(
         code: 400,
         message: "You don't seem to have a XMTP identity ",
       };
-    const conversation =
-      await client.conversations.getConversationById(groupId);
+    const conversation = await client.conversations.getConversationById(
+      groupId
+    );
     console.warn("removing from group", conversation?.id);
     await conversation?.sync();
     await conversation?.removeMembers([lowerAddress]);
@@ -95,7 +96,7 @@ export async function addToGroup(
   groupId: string,
   client: Client,
   address: string,
-  asAdmin: boolean = false,
+  asAdmin: boolean = false
 ): Promise<{ code: number; message: string }> {
   try {
     let lowerAddress = address.toLowerCase();

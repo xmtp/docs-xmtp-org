@@ -1,10 +1,6 @@
-# Username resolution
+## Identity resolution
 
-Message Kit provides powerful username resolution capabilities through its resolver system. This allows applications to handle various types of identifiers including ENS domain and Converse usernames.
-
-## Identity
-
-Each messages comes with a sender object that contains the address, name, and avatar of the sender.
+Each message comes with a sender object that contains the address, name, and avatar of the sender.
 
 - `inboxId`: A unique identifier for the user's message inbox. This remains consistent across different installations.
 - `address`: The primary blockchain address associated with the sender. This is typically an Ethereum address.
@@ -20,7 +16,7 @@ Each messages comes with a sender object that contains the address, name, and av
 - **Website Header Tag** - Inbox ID from Converse (e.g., `xmtp=0x123...`)
 - **Website Txt record** - Inbox ID from Converse (e.g., `meta="xmtp" content="0x123...`)
 
-### Example
+### Message example
 
 ```tsx
 let textMessage: userMessage = {
@@ -40,8 +36,6 @@ await xmtp.send(textMessage);
 
 The resolver provides a `getUserInfo` function that returns detailed information about a user:
 
-> Is already included in MessageKit
-
 ```typescript
 import { getUserInfo } from "xmtp";
 const userInfo = await getUserInfo(identifier);
@@ -56,7 +50,7 @@ The resolver returns a `UserInfo` object containing:
 - `avatar` - Profile picture URL if available
 - `converseEndpoint` - Converse profile endpoint
 
-## Availability
+## User Availability
 
 Returns `true` if user has XMTP enabled
 
@@ -64,7 +58,7 @@ Returns `true` if user has XMTP enabled
 const isOnXMTP = await xmtp.isOnXMTP(address);
 ```
 
-## Caching
+## Cache Management
 
 The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
 
