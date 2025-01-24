@@ -8,6 +8,22 @@ Learn to build a chat inbox with the help of [XMTP.chat](https://xmtp.chat/), an
 
 :::
 
+## Pick your SDK
+
+### Web
+
+- [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
+
+- [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
+
+### Mobile
+
+- [React Native SDK](https://github.com/xmtp/xmtp-react-native) 
+
+- [Kotlin SDK](https://github.com/xmtp/xmtp-android)
+
+- [Swift SDK](https://github.com/xmtp/xmtp-ios)
+
 ## Create or build a client
 
 ### Create an account signer

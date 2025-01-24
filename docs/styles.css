@@ -72,7 +72,7 @@ small + ul.TabbedList {
 
 .custom-homepage-subhead-text {
   font-size: 1.25rem;
-  line-height: 1.5;
+  line-height: 1.25;
   display: inline-block;
 }
 
@@ -94,7 +94,7 @@ small + ul.TabbedList {
 .custom-homepage-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .custom-homepage-tile {
@@ -102,7 +102,7 @@ small + ul.TabbedList {
   background-color: var(--vocs-color-bg-soft);
   border: 1px solid var(--vocs-color-border);
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   text-decoration: none;
   color: var(--vocs-color-text);
   transition: all 0.3s ease;

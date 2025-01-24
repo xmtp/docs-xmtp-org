@@ -59,6 +59,10 @@ export default defineConfig({
           link: "/intro/intro",
         },
         {
+          text: "XMTP Improvement Proposals",
+          link: "/intro/xips",
+        },
+        {
           text: "FAQ",
           link: "/intro/faq",
         },
@@ -68,10 +72,6 @@ export default defineConfig({
       text: "Build chat inboxes",
       collapsed: false,
       items: [
-        {
-          text: "Get started",
-          link: "/inboxes/get-started",
-        },
         {
           text: "Build a chat inbox",
           link: "/inboxes/build-inbox",
@@ -184,22 +184,31 @@ export default defineConfig({
     {
       text: "Network FAQ",
       link: "/network/network-faq",
+      items: [], // Add this line
     },
     {
       text: "Protocol concepts",
       collapsed: false,
       items: [
         {
-          text: "XMTP MLS protocol spec",
-          link: "/protocol/specs",
+          text: "Encryption ↗",
+          link: "https://xmtp.org/encryption",
+        },
+        {
+          text: "Identity ↗",
+          link: "https://xmtp.org/identity",
+        },
+        {
+          text: "Consent ↗",
+          link: "https://xmtp.org/consent",
+        },
+        {
+          text: "Decentralization ↗",
+          link: "https://xmtp.org/decentralizing-xmtp",
         },
         {
           text: "Wallet signatures",
           link: "/protocol/signatures",
-        },
-        {
-          text: "XIPs",
-          link: "/protocol/xips",
         },
       ],
     },

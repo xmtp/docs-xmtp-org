@@ -22,7 +22,7 @@ If another app wants to display your custom content type, they must implement yo
 
 For more common content types, you can usually find a [standard](/inboxes/content-types/content-types#standard-content-types) or [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content type to serve your needs.
 
-If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
+If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/intro/xips).
 
 This document describes how to build custom content types using two examples:
 
