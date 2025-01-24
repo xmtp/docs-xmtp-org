@@ -1,6 +1,6 @@
 # What is XMTP?
 
-XMTP (Extensible Message Transport Protocol) is a secure and decentralized protocol for building communication platforms for the next phase of the internet.
+XMTP (Extensible Message Transport Protocol) is the largest and most secure decentralized messaging network
 
 XMTP is open and permissionless, empowering any developer to build end-to-end encrypted 1:1, group, and broadcast messaging experiences, and more.
 
@@ -32,11 +32,9 @@ Build with XMTP to:
 
 One of the best ways to understand XMTP is to use an app built with XMTP.
 
-Try the [Converse](https://converse.xyz/) messaging app. Converse is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
+- Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
-## What can I build?
-
-Explore just some of the [vibrant and diverse apps](https://xmtp.org/) in the XMTP ecosystem.
+- Try the [Converse](https://converse.xyz/) messaging app. Converse is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
 
 ## Join the XMTP community
 
@@ -44,7 +42,7 @@ Explore just some of the [vibrant and diverse apps](https://xmtp.org/) in the XM
 
     - Explore the documentation on this site
     - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, the work-in-progress future node software.
-    - Explore the open source code for [Converse messenger](https://github.com/ephemeraHQ/converse-app), an app open sourced by [Ephemera](https://paragraph.xyz/@ephemera/converse) for the XMTP community.
+    - Explore the open source code for [xmtp.chat](https://github.com/xmtp/xmtp-js/tree/main/apps/xmtp.chat), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
 - **XMTP is for everyone**
 
