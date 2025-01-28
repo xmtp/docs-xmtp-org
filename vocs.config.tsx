@@ -177,11 +177,6 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build agents ↗",
-      link: "https://github.com/ephemeraHQ/xmtp-agents",
-      items: [], // Add this line
-    },
-    {
       text: "Network FAQ",
       link: "/network/network-faq",
       items: [], // Add this line
