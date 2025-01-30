@@ -1,0 +1,81 @@
+# Messaging security properties with XMTP 
+
+XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
+
+- Advanced cryptographic techniques
+- Secure key management practices
+- MLS ([Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html))
+
+Specifically, XMTP messaging provides the following comprehensive security properties. In the following sectins, **group** refers to the MLS concept of a group, which includes both 1:1 and group conversations.
+
+## A deep dive into messaging security properties
+
+### Message confidentiality
+
+Ensures that the contents of messages in transit can't be read without the corresponding encryption keys.
+
+Message confidentiality is achieved through symmetric encryption, ensuring that only intended recipients can read the message content. [AEAD](#cryptographic-tools-in-use) (Authenticated Encryption with Associated Data) is used to encrypt the message content, providing robust protection against unauthorized access.
+
+## Forward secrecy
+
+Ensures that even if current session keys are compromised, past messages remain secure. 
+
+MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
+
+## Post-compromise security
+
+Ensures that future messages remain secure even if current encryption keys are compromised.
+
+XMTP uses regular key rotation achieved through a commit mechanism with a specific update path in MLS, meaning a new group secret is encrypted to all other members. This essentially resets the key and an attacker with the old state can't derive the new secret, as long as the private key from the leaf node in the ratchet tree construction hasn't been compromised. This ensures forward secrecy and protection against future compromises.
+
+## Message authentication
+
+Validates the identity of the participants in the conversation, preventing impersonation.
+
+XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender’s identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
+
+## Message integrity
+
+Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered. 
+
+XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
+
+## User anonymity
+
+Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
+
+User anonymity is achieved through a combination of the following functions:
+
+- MLS Welcome messages encrypt the sender metadata and group ID, protecting the social graph.
+
+- XMTP adds a layer of encryption to MLS Welcome messages using [HPKE](#cryptographic-tools-in-use) (Hybrid Public Key Encryption). This prevents multiple recipients of the same Welcome message from being correlated to the same group.
+
+- XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
+
+- XMTP’s backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
+
+It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
+
+XMTP currently hides the sender of Welcome messages (used to add users to a group) but doesn't hide the Welcome message recipients. This makes it possible to determine how many groups a user was invited to but not whether the user did anything about the invitations.
+
+## Cryptographic tools in use
+
+XMTP messaging uses the ciphersuite _MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519_.
+
+Here is a summary of individual cryptographic tools used to collectively ensure that XMTP messaging is secure, authenticated, and tamper-proof:
+
+- [HPKE](https://www.rfc-editor.org/rfc/rfc9180.html)
+
+    Used to encrypt Welcome messages, protect the identities of group invitees, and maintain the confidentiality of group membership. We use the ciphersuite HPKEX25519.
+
+- [AEAD](https://developers.google.com/tink/aead)
+
+    Used to ensure both confidentiality and integrity of messages. In particular, we use the ciphersuite CHACHA20POLY1305.
+
+- [SHA3_256 and SHA2_256](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf)
+
+    XMTP uses two cryptographic hash functions to ensure data integrity and provide strong cryptographic binding. SHA3_256 is used in the multi-wallet identity structure. SHA2_256 is used in MLS. The ciphersuite is SHA256.
+
+- [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
+
+    Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
