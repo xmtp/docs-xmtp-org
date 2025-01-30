@@ -41,7 +41,7 @@ Sign the **XMTP : Authenticate to inbox** message with your wallet address to co
 
 You can add another wallet address to your inbox at any time. For example, you might have started using an app with one wallet address and now want to use the app with an additional wallet address.
 
-If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. for example:
+If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. For example:
 
 ```text
 - Link address to inbox
