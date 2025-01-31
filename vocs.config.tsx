@@ -186,6 +186,10 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
+          text: "Security",
+          link: "/protocol/security",
+        },
+        {
           text: "Encryption ↗",
           link: "https://xmtp.org/encryption",
         },
