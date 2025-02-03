@@ -77,6 +77,10 @@ export default defineConfig({
           link: "/inboxes/build-inbox",
         },
         {
+          text: "Send disappearing messages",
+          link: "/inboxes/disappearing-messages",
+        },
+        {
           text: "Manage inboxes",
           link: "/inboxes/manage-inboxes",
         },
