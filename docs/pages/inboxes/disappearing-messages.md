@@ -15,22 +15,33 @@ Therefore, disappearing messages should be understood as best-effort, app-level 
 
 Here is a high-level view of the disappearing messages flow:
 
-1. When a 1:1 or group chat conversation is created or updated, a user with appropriate permissions can set disappearing message conditions for messages sent in the conversation. This includes:
-   - `from_ns`: Starting timestamp from which the message lifespan is calculated
-   - `in_ns`: Duration for which the message should remain visible to conversation participants
+1. When a 1:1 or group chat conversation is created or updated, a user with appropriate permissions can set disappearing message conditions for messages sent in the conversation.
 2. In a conversation with disappearing message conditions, a sender creates a message. The message abides by disappearing message metadata set for the conversation.
 3. The message is sent over the XMTP network.
-4. The recipients’ apps with disappearing message support receive the message and check the expiration conditions.
+4. The recipients’ apps with disappearing message support receive the message and check the expiration conditions set for the conversation.
 5. If the message hasn't expired, the app displays the message in the messaging UI.
 6. If the message has expired, the message is removed from (or not displayed in the first place in) the conversation participants’ app UIs and is deleted from the apps’ local storage.
 
-### Enable disappearing messages
+### Enable disappearing messages for a conversation
 
-When creating or updating a 1:1 or group chat conversation, provide users with a way to enable disappearing messages and expiration conditions for a conversation.
+When creating or updating a conversation, enable users with appropriate permissions to set disappearing message expiration conditions.
+
+This includes setting the following conditions expressed in nanoseconds (ns):
+
+- `from_ns`: Starting timestamp from which the message lifespan is calculated
+- `in_ns`: Duration of time during which the message should remain visible to conversation participants
+
+For example:
+
+1. Set `from_ns` to the current time, such as `1738620126404999936` (nanoseconds since the Unix epoch of January 1, 1970).
+2. Set `in_ns` to the message lifespan, such as 1800000000000000 (30 minutes).
+3. Use `from_ns` and `in_ns` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
+
+To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
 
 ### Send a disappearing message
 
-When sending a message, it abides by message expiration conditions set by the conversation. For example:
+When sending a message, it abides by message expiration conditions set for the conversation. For example:
 
 ```text
 // Example: disappearing message with an expiration time based on a 
@@ -41,10 +52,10 @@ When sending a message, it abides by message expiration conditions set by the co
 
 On the receiving side, your app needs to:
 
-1. Check for disappearing message metadata on each incoming message. For example:
+1. Check for disappearing message metadata set for the conversation. For example:
     
     ```text
-    // Example: check for disappearing message metadata
+    // Example: check for disappearing message on the message's parent conversation
     ```
     
 2. Display the message if the current time is before the expiration time. For example:
