@@ -92,7 +92,6 @@ There are some nuances to how push notifications can be handled once received by
     
     For example, without the user notification entitlement, the app cannot decrypt and modify the push notification before displaying it to the user. The notification arrives on the device, and iOS handles displaying it automatically. You can decrypt the content after the notification is shown, but you cannot intercept it before display and decide not to show it, for example.
     
-
 ## Understand HMAC keys and push notifications
 
 XMTP uses Hash-based Message Authentication Code (HMAC) keys for ~~conversation membership, message authentication, and~~ push notifications. A user holds the HMAC keys for any conversation they join, but an outside observer only sees the keys without knowing who owns them. For instance, suppose Alix has HMAC key #1, and we also see HMAC keys #2 and #3. If Alix discloses that they hold key #1, then we know key #1 belongs to them. However, we have no way of knowing who holds keys #2 or #3 unless those individuals reveal that information. This design preserves privacy while enabling secure communication.
