@@ -74,7 +74,7 @@ On the receiving side, your app needs to:
 A worker runs every one second to clean up expired disappearing messages. The worker also updates the message expiration policy to align with any updated policy values. For example:
 
 ```text
-// Example: Use the worker that runs every two seconds 
+// Example: Use the worker that runs every one second
 // to clean up expired messages based on group disappearing settings. 
 // The worker will also update the message expiration policy to align 
 // with any updated disappearing message policy values.
