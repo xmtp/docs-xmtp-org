@@ -75,7 +75,7 @@ A worker runs every one second to clean up expired disappearing messages. The wo
 
 ```text
 // Example: Use the worker that runs every one second
-// to clean up expired messages based on conversation(group/dm) disappearing settings. 
+// to clean up expired messages based on conversation (group/dm) disappearing settings. 
 // The worker will also update the message expiration policy to align 
 // with any updated disappearing message policy values.
 ```
