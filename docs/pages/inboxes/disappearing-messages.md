@@ -71,7 +71,7 @@ On the receiving side, your app needs to:
 
 ### Periodically check message expiration time
 
-A worker runs every two seconds to clean up expired disappearing messages. The worker also updates the message expiration policy to align with any updated policy values. For example:
+A worker runs every one second to clean up expired disappearing messages. The worker also updates the message expiration policy to align with any updated policy values. For example:
 
 ```text
 // Example: Use the worker that runs every two seconds 
