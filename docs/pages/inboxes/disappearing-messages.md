@@ -13,15 +13,6 @@ Therefore, disappearing messages should be understood as best-effort, app-level 
 
 ## Implement disappearing messages
 
-Here is a high-level view of the disappearing messages flow:
-
-1. When a 1:1 or group chat conversation is created or updated, a user with appropriate permissions can set disappearing message conditions for messages sent in the conversation.
-2. In a conversation with disappearing message conditions, a sender creates a message. The message abides by disappearing message metadata set for the conversation.
-3. The message is sent over the XMTP network.
-4. The recipients’ apps with disappearing message support receive the message and check the expiration conditions set for the conversation.
-5. If the message hasn't expired, the app displays the message in the messaging UI.
-6. If the message has expired, the message is removed from (or not displayed in the first place in) the conversation participants’ app UIs and is deleted from the apps’ local storage.
-
 ### Enable disappearing messages for a conversation
 
 When creating or updating a conversation, enable users with appropriate permissions to set disappearing message expiration conditions.
@@ -48,50 +39,26 @@ When sending a message, it abides by message expiration conditions set for the c
 // countdown start time and expiration countdown
 ```
 
+### Automatic deletion from local storage
+
+A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
+
+```text
+// Example: The worker runs every one second to clean up expired messages
+// based on disappearing message conditions set at the conversation level.
+```
+
+#### Automatic removal from UI
+
+Expired messages do not require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
+
 ### Receive a disappearing message
 
-On the receiving side, your app needs to:
+On the receiving side, your app doesn't need to check expiration conditions manually. Receive and process messages as usual, and the background worker handles message expiration cleanup.
 
-1. Check for disappearing message metadata set for the conversation. For example:
-    
-    ```text
-    // Example: check for disappearing message on the message's parent conversation
-    ```
-    
-2. Display the message if the current time is before the expiration time. For example:
-    
-    ```text
-    // Example: Check is the current time is before the expiration time
-    ```
-    
-    Here are some tips for displaying disappearing messages in your app to ensure that users understand which messages use the feature and what to expect.
-    
-    - **Use a distinct visual style**: You might style disappearing messages differently from regular messages (e.g., a different background color or icon) so users understand they're short-lived.
-    - **Display a countdown**: Show a small countdown that indicates how much time remains before the message disappears.
+### UX tips for disappearing messages
 
-### Periodically check message expiration time
+To ensure that users understand which messages are disappearing messages and their behavior, consider implementing:
 
-A worker runs every one second to clean up expired disappearing messages. The worker also updates the message expiration policy to align with any updated policy values. For example:
-
-```text
-// Example: Use the worker that runs every one second
-// to clean up expired messages based on conversation (group/dm) disappearing settings. 
-// The worker will also update the message expiration policy to align 
-// with any updated disappearing message policy values.
-```
-
-### Remove a message from the app UI
-
-If the expiration time has passed, remove the message from the app UI. For example:
-
-```text
-// Example: remove the message from your UI
-```
-
-### Delete a message from local storage
-
-If the expiration time has passed, delete the message from local storage. For example:
-
-```text
-// Example: delete the message from local storage
-```
+- A distinct visual style: Style disappearing messages differently from regular messages (e.g., a different background color or icon) to indicate their temporary nature.
+- A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
