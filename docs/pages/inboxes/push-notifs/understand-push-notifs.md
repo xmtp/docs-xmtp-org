@@ -94,7 +94,7 @@ There are some nuances to how push notifications can be handled once received by
     
 ## Understand HMAC keys and push notifications
 
-XMTP uses Hash-based Message Authentication Code (HMAC) keys for ~~conversation membership, message authentication, and~~ push notifications. A user holds the HMAC keys for any conversation they join, but an outside observer only sees the keys without knowing who owns them. For instance, suppose Alix has HMAC key #1, and we also see HMAC keys #2 and #3. If Alix discloses that they hold key #1, then we know key #1 belongs to them. However, we have no way of knowing who holds keys #2 or #3 unless those individuals reveal that information. This design preserves privacy while enabling secure communication.
+XMTP uses Hash-based Message Authentication Code (HMAC) keys for push notifications. A user holds the HMAC keys for any conversation they join, but an outside observer only sees the keys without knowing who owns them. For instance, suppose Alix has HMAC key #1, and we also see HMAC keys #2 and #3. If Alix discloses that they hold key #1, then we know key #1 belongs to them. However, we have no way of knowing who holds keys #2 or #3 unless those individuals reveal that information. This design preserves privacy while enabling secure communication.
 
 The HMAC key is derived from a generated root HMAC key, the message’s group ID, and the number of 30-day periods since the Unix epoch, along with some salt. Anytime a user gets a new installation, they get new HMAC keys for it. In this case, how do the user’s older installations learn about the user’s new installation HMAC key so they can properly decrypt and route certain messages and push notifications for that newly added installation?
 
