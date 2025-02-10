@@ -230,6 +230,14 @@ This code defines two functions that convert different types of Ethereum account
 
 Create an XMTP MLS client that can use the signing capabilities provided by the `SigningKey` parameter. This `SigningKey` links the client to the appropriate EOA or SCW.
 
+#### 🎥 walkthrough: Create a client
+
+This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+#### Create a client
+
 :::code-group
 
 ```tsx [Browser]
@@ -311,7 +319,7 @@ When an app first calls `Client.create()`, a client creates a local database to
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
-#### Configure an XMTP client
+##### Configure an XMTP client
 
 You can configure an XMTP client with these parameters of `Client.create`:
 
@@ -603,13 +611,21 @@ try await client.conversations.sync()
 
 :::
 
-### List new messages
+### Sync
 
-Get all new messages and conversations from the network:
+Sync all new messages and conversations from the network.
 
 :::tip[Note]
 Syncing does not refetch existing messages and conversations. It also does not fetch messages for group chats you are no longer a part of.
 :::
+
+#### 🎥 walkthrough: Syncing
+
+This video provides a walkthrough of syncing, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+#### Sync
 
 :::code-group
 
