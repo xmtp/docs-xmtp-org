@@ -6,16 +6,20 @@ Disappearing message behavior is enforced by apps, meaning that apps are respons
 
 However, it's important to understand that:
 
-- A conversation participant using an app that doesn't support disappearing messages will not experience disappearing message behavior.
+- A conversation participant using an app that doesn't support disappearing messages won't experience disappearing message behavior.
 - Messages aren't deleted from the XMTP network.
 
+:::tip
+
 Therefore, disappearing messages should be understood as best-effort, app-level privacy that helps avoid leaving an easily accessible record in a messaging UI. However, it's not a guaranteed, system-wide “message self-destruct.”
+
+:::
 
 ## Implement disappearing messages
 
 ### Enable disappearing messages for a conversation
 
-When creating or updating a conversation, enable users with appropriate permissions to set disappearing message expiration conditions.
+When creating or updating a conversation, admins can set disappearing message expiration conditions.
 
 This includes setting the following conditions expressed in nanoseconds (ns):
 
@@ -34,23 +38,39 @@ To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bi
 
 When sending a message, it abides by message expiration conditions set for the conversation. For example:
 
-```text
-// Example: disappearing message with an expiration time based on a 
-// countdown start time and expiration countdown
+:::code-group
+
+```tsx [Browser]
+// add code sample
 ```
+
+```tsx [Node]
+// add code sample
+```
+
+```tsx [React Native]
+// add code sample
+```
+
+```kotlin [Kotlin]
+// add code sample
+```
+
+```swift [Swift]
+// add code sample
+```
+
+:::
 
 ### Automatic deletion from local storage
 
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
-```text
-// Example: The worker runs every one second to clean up expired messages
-// based on disappearing message conditions set at the conversation level.
-```
+To learn more about the background worker, see [link to background worker code](#todo).
 
 #### Automatic removal from UI
 
-Expired messages do not require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
+Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
 
 ### Receive a disappearing message
 
