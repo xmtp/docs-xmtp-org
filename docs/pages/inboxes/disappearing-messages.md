@@ -66,7 +66,7 @@ When sending a message, it abides by message expiration conditions set for the c
 
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
-To learn more about the background worker, see [link to background worker code](#todo).
+To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
 
 #### Automatic removal from UI
 
