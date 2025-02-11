@@ -19,7 +19,7 @@ Therefore, disappearing messages should be understood as best-effort, app-level 
 
 ### Enable disappearing messages for a conversation
 
-When creating or updating a conversation, admins can set disappearing message expiration conditions.
+When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
 
 This includes setting the following conditions expressed in nanoseconds (ns):
 
