@@ -114,12 +114,52 @@ You can now send notifications to your device using an [XMTP push notification c
   ```
 - Here is a piece of code that points to the ports and network. Be sure to use TLS like this `./dev/run --xmtp-listener-tls --api`.
 
-```jsx
-static func envToUrl(env: XMTPEnvironment) -> String {
-switch env {
-   case XMTPEnvironment.local: return "http://localhost:5556/"
-   case XMTPEnvironment.dev: return "https://dev.xmtp.network:5556/"
-   case XMTPEnvironment.production: return "https://production.xmtp.network:5556/"
-}
-}
-```
+   :::code-group
+
+   ```tsx [Browser]
+   export const ApiUrls = {
+   local: "http://localhost:5555",
+   dev: "https://dev.xmtp.network",
+   production: "https://production.xmtp.network",
+   } as const;
+
+   export const HistorySyncUrls = {
+   local: "http://localhost:5558",
+   dev: "https://message-history.dev.ephemera.network",
+   production: "https://message-history.production.ephemera.network",
+   } as const;
+   ```
+
+   ```tsx [Node]
+   export const ApiUrls = {
+   local: "http://localhost:5556",
+   dev: "https://grpc.dev.xmtp.network:443",
+   production: "https://grpc.production.xmtp.network:443",
+   } as const;
+   ```
+
+   ```tsx [React Native]
+   const ApiUrls = {
+   local: 'http://localhost:5556',
+   dev: 'https://grpc.dev.xmtp.network:443',
+   production: 'https://grpc.production.xmtp.network:443'
+   }
+   ```
+
+   ```kotlin [Kotlin]
+   enum ApiUrls {
+      static let local = "http://localhost:5556"
+      static let dev = "https://grpc.dev.xmtp.network:443"
+      static let production = "https://grpc.production.xmtp.network:443"
+   }
+   ```
+
+   ```swift [Swift]
+   object ApiUrls {
+      const val local = "http://localhost:5556"
+      const val dev = "https://grpc.dev.xmtp.network:443"
+      const val production = "https://grpc.production.xmtp.network:443"
+   }
+   ```
+
+   :::
