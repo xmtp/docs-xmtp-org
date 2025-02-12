@@ -24,13 +24,13 @@ When creating or updating a conversation, only group admins and DM participants 
 This includes setting the following conditions expressed in nanoseconds (ns):
 
 - `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
-- `disappearDurationInNs`: Duration of time during which the message should remain visible to conversation participants
+- `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
 
 For example:
 
 1. Set `disappearStartingAtNs` to the current time, such as `1738620126404999936` (nanoseconds since the Unix epoch of January 1, 1970).
-2. Set `disappearDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
-3. Use `disappearStartingAtNs` and `disappearDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
+2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
+3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
 
 To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
 
@@ -55,7 +55,7 @@ await client.conversations.newConversation(
 			{ 
                 disappearingMessageSettings: DisappearingMessageSettings(
 			        disappearStartingAtNs: 1738620126404999936,
-			        disappearDurationInNs: 1800000000000000
+			        retentionDurationInNs: 1800000000000000
 		        )
             }
 	)
@@ -65,7 +65,7 @@ await client.conversations.newGroup(
 			{ 
                 disappearingMessageSettings: DisappearingMessageSettings(
 			        disappearStartingAtNs: 1738620126404999936,
-			        disappearDurationInNs: 1800000000000000
+			        retentionDurationInNs: 1800000000000000
 		        )
             }
 	)
@@ -76,16 +76,16 @@ await client.conversations.newGroup(
 client.conversations.newConversation(
 			address,
 			disappearingMessageSettings = DisappearingMessageSettings(
-			disappearStartingAtNs: 1738620126404999936,
-			disappearDurationInNs: 1800000000000000
+			disappearStartingAtNs = 1738620126404999936,
+			retentionDurationInNs = 1800000000000000
 		)
 	)
 // Group
 client.conversations.newGroup(
 			[address],
 			disappearingMessageSettings = DisappearingMessageSettings(
-			disappearStartingAtNs: 1738620126404999936,
-			disappearDurationInNs: 1800000000000000
+			disappearStartingAtNs = 1738620126404999936,
+			retentionDurationInNs = 1800000000000000
 		)
 	)
 ```
@@ -96,7 +96,7 @@ try await client.conversations.newConversation(
 			with: address,
 			disappearingMessageSettings: DisappearingMessageSettings(
 			disappearStartingAtNs: 1738620126404999936,
-			disappearDurationInNs: 1800000000000000
+			retentionDurationInNs: 1800000000000000
 		)
 	)
 // Group
@@ -104,7 +104,7 @@ try await client.conversations.newGroup(
 			with: [address],
 			disappearingMessageSettings: DisappearingMessageSettings(
 			disappearStartingAtNs: 1738620126404999936,
-			disappearDurationInNs: 1800000000000000
+			retentionDurationInNs: 1800000000000000
 		)
 	)
 ```
