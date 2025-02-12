@@ -170,7 +170,7 @@ Then determine whether it’s for a new conversation or an existing one.
 
 As soon as your apps receive a user preference update event indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
 
-```tsx
+```kotlin [Kotlin]
 conversations.allTopics.forEach { -> topic
 val hmacKeysResult = conversations.getHmacKeys()
 val hmacKeys = hmacKeysResult.hmacKeysMap
