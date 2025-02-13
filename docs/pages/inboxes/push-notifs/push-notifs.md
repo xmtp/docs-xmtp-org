@@ -2,8 +2,6 @@
 
 With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
 
-For best practices, see [Best practices for push notifications](#best-practices-for-push-notifications).
-
 ## Get a Welcome message topic ID
 
 Get the topic identifier for an app installation. This topic ID tells your app where to listen on the network for push notifications about any new group chat or DM conversations.
@@ -203,8 +201,9 @@ To implement push notifications in your app, you must run a push notification se
 - **Message processing**: Upon detecting new messages or events, the server processes them to determine their relevance and formats them appropriately for push notifications. This includes extracting necessary information, such as the sender’s identity and message content, to craft meaningful notifications.
 - **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](#understand-apple-entitlements-for-ios-apps) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user’s device.
 
-To learn more about running a push notification server, see:
+To learn more about running a push notification server, see [Understand push notifications with XMTP](/inboxes/push-notifs/understand-push-notifs).
 
-- Go: [Set up a push notification server](/inboxes/push-notifs/pn-server)
-- Android: [Try push notifications with the Android example XMTP app](/inboxes/push-notifs/android-pn)
-- iOS: [Try push notifications with the iOS example XMTP app](/inboxes/push-notifs/ios-pn)
+Then you can:
+- [Set up a Go push notification server](/inboxes/push-notifs/pn-server)
+- [Try push notifications with the Android example XMTP app](/inboxes/push-notifs/android-pn)
+- [Try push notifications with the iOS example XMTP app](/inboxes/push-notifs/ios-pn)
