@@ -137,6 +137,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: "Understand push notifications",
+              link: "/inboxes/push-notifs/understand-push-notifs",
+            },
+            {
               text: "Support push notifications",
               link: "/inboxes/push-notifs/push-notifs",
             },
