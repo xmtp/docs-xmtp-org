@@ -17,6 +17,8 @@ Therefore, disappearing messages should be understood as best-effort, app-level 
 
 ## Implement disappearing messages
 
+When sending a message, it abides by disappearing message settings for the conversation.
+
 ### Enable disappearing messages for a conversation
 
 When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
@@ -34,96 +36,83 @@ For example:
 
 To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
 
-### Set disappearing message setting on conversation create
+### Set disappearing message settings on conversation create
 
-When sending a message, it abides by message expiration conditions set for the conversation. For example:
+For example:
 
 :::code-group
-
-```tsx [Browser]
-// add code sample
-```
-
-```tsx [Node]
-// add code sample
-```
 
 ```tsx [React Native]
 // DM
 await client.conversations.newConversation(
-			address,
-			{ 
-                disappearingMessageSettings: DisappearingMessageSettings(
-			        disappearStartingAtNs: 1738620126404999936,
-			        retentionDurationInNs: 1800000000000000
-		        )
-            }
-	)
+  address,
+  { 
+    disappearingMessageSettings: DisappearingMessageSettings(
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    )
+  }
+)
+
 // Group
 await client.conversations.newGroup(
-			[address],
-			{ 
-                disappearingMessageSettings: DisappearingMessageSettings(
-			        disappearStartingAtNs: 1738620126404999936,
-			        retentionDurationInNs: 1800000000000000
-		        )
-            }
-	)
+  [address],
+  { 
+    disappearingMessageSettings: DisappearingMessageSettings(
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    )
+  }
+)
 ```
 
 ```kotlin [Kotlin]
 // DM
 client.conversations.newConversation(
-			address,
-			disappearingMessageSettings = DisappearingMessageSettings(
-			disappearStartingAtNs = 1738620126404999936,
-			retentionDurationInNs = 1800000000000000
-		)
-	)
+    address,
+    disappearingMessageSettings = DisappearingMessageSettings(
+        disappearStartingAtNs = 1738620126404999936,
+        retentionDurationInNs = 1800000000000000
+    )
+)
+
 // Group
 client.conversations.newGroup(
-			[address],
-			disappearingMessageSettings = DisappearingMessageSettings(
-			disappearStartingAtNs = 1738620126404999936,
-			retentionDurationInNs = 1800000000000000
-		)
-	)
+    [address],
+    disappearingMessageSettings = DisappearingMessageSettings(
+        disappearStartingAtNs = 1738620126404999936,
+        retentionDurationInNs = 1800000000000000
+    )
+)
 ```
 
 ```swift [Swift]
 // DM
 try await client.conversations.newConversation(
-			with: address,
-			disappearingMessageSettings: DisappearingMessageSettings(
-			disappearStartingAtNs: 1738620126404999936,
-			retentionDurationInNs: 1800000000000000
-		)
-	)
+    with: address,
+    disappearingMessageSettings: DisappearingMessageSettings(
+        disappearStartingAtNs: 1738620126404999936,
+        retentionDurationInNs: 1800000000000000
+    )
+)
+
 // Group
 try await client.conversations.newGroup(
-			with: [address],
-			disappearingMessageSettings: DisappearingMessageSettings(
-			disappearStartingAtNs: 1738620126404999936,
-			retentionDurationInNs: 1800000000000000
-		)
-	)
+    with: [address],
+    disappearingMessageSettings: DisappearingMessageSettings(
+        disappearStartingAtNs: 1738620126404999936,
+        retentionDurationInNs: 1800000000000000
+    )
+)
 ```
 
 :::
 
-### Update disappearing message setting on a existing conversation
+### Update disappearing message settings for an existing conversation
 
-When sending a message, it abides by message expiration conditions set for the conversation. For example:
+For example:
 
 :::code-group
-
-```tsx [Browser]
-// add code sample
-```
-
-```tsx [Node]
-// add code sample
-```
 
 ```tsx [React Native]
 await conversation.updateDisappearingMessageSettings(updatedSettings)
@@ -142,19 +131,11 @@ try await conversation.clearDisappearingMessageSettings()
 
 :::
 
-### Get a conversations disappearing message setting
+### Get the disappearing message settings for a conversation
 
-When sending a message, it abides by message expiration conditions set for the conversation. For example:
+For example:
 
 :::code-group
-
-```tsx [Browser]
-// add code sample
-```
-
-```tsx [Node]
-// add code sample
-```
 
 ```tsx [React Native]
 conversation.disappearingMessageSettings
