@@ -2,22 +2,21 @@
 
 Disappearing messages are messages that are intended to be visible to users for only a short period of time. After the message expiration time passes, the messages are removed from the UI and deleted from local storage so the messages are no longer accessible to conversation participants.
 
-Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. Conversation participants using apps that support disappearing messages will have a UX that honors the message expiration conditions. 
+## App-level disappearing messages vs. network-level message expiration
 
-However, it's important to understand that:
+Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network. 
 
-- A conversation participant using an app that doesn't support disappearing messages won't experience disappearing message behavior.
-- Messages aren't deleted from the XMTP network.
+Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months.
 
-:::tip
+To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
 
-Therefore, disappearing messages should be understood as best-effort, app-level privacy that helps avoid leaving an easily accessible record in a messaging UI. However, it's not a guaranteed, system-wide “message self-destruct.”
-
-:::
+Disappearing messages can be understood as app-level privacy that helps avoid leaving an easily accessible record in a messaging UI, while XMTP mainnet message expiration is the mechanism by which messages are deleted from the network.
 
 ## Implement disappearing messages
 
-When sending a message, it abides by disappearing message settings for the conversation.
+Conversation participants using apps that support disappearing messages will have a UX that honors the message expiration conditions. Conversation participants using apps that don't support disappearing messages won't experience disappearing message behavior.
+
+Messages abide by the disappearing message settings for the conversation.
 
 ### Enable disappearing messages for a conversation
 
