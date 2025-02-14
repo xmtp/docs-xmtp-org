@@ -141,6 +141,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: "Understand push notifications",
+              link: "/inboxes/push-notifs/understand-push-notifs",
+            },
+            {
               text: "Support push notifications",
               link: "/inboxes/push-notifs/push-notifs",
             },
@@ -179,6 +183,11 @@ export default defineConfig({
           link: "/inboxes/references",
         },
       ],
+    },
+    {
+      text: "Build agents ↗",
+      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
+      items: [], // Add this line
     },
     {
       text: "Network FAQ",
