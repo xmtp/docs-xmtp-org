@@ -77,6 +77,10 @@ export default defineConfig({
           link: "/inboxes/build-inbox",
         },
         {
+          text: "Send disappearing messages",
+          link: "/inboxes/disappearing-messages",
+        },
+        {
           text: "Manage inboxes",
           link: "/inboxes/manage-inboxes",
         },
@@ -179,6 +183,11 @@ export default defineConfig({
           link: "/inboxes/references",
         },
       ],
+    },
+    {
+      text: "Build agents ↗",
+      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
+      items: [], // Add this line
     },
     {
       text: "Network FAQ",
