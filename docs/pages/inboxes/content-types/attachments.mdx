@@ -1,26 +1,30 @@
 ---
-description: Learn how to use the attachment and remote attachment content types to support attachments in your app built with XMTP
+description: Learn how to use the remote attachment, multiple remote attachment, or attachment content types to support attachments in your app built with XMTP
 ---
 
 # Support attachments in your app built with XMTP
 
-Use the remote attachment or attachment content type to support attachments in your app.
+Use the remote attachment, multiple remote attachments, or attachment content type to support attachments in your app.
 
-- Use the [remote attachment content type](#support-remote-attachments-of-any-size) to send attachments of any size.
+- Use the [remote attachment content type](#support-remote-attachments-of-any-size) to send one remote attachment of any size.
+
+- Use the [multiple remote attachments content type](#support-multiple-remote-attachments-of-any-size-in-a-message) to send multiple remote attachments of any size.
 
 - Use the [attachment content type](#support-attachments-smaller-than-1mb) to send attachments smaller than 1MB.
 
 ## Support remote attachments of any size
 
-Remote attachments of any size can be sent using the `RemoteAttachmentCodec` and a storage provider.
+One remote attachment of any size can be sent in a message using the `RemoteAttachmentCodec` and a storage provider.
+
+To send multiple remote attachments of any size in a single message, see [Support multiple remote attachments of any size in a message](#support-multiple-remote-attachments-of-any-size-in-a-message).
 
 ### Install the package
+
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
 ```bash
 npm i @xmtp/content-type-remote-attachment
 ```
-
-> In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
 ### Configure the content type
 
@@ -110,7 +114,7 @@ const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
 );
 ```
 
-Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs. For example, the [xmtp.chat](https://xmtp.chat/) example app uses web3.storage. (This information is shared for educational purposes only and is not an endorsement.)
+Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
 
 <p>Now that you have a `url`, you can create a `RemoteAttachment`:</p>
 
@@ -280,7 +284,7 @@ try await conversation.send(
 
 ### Receive, decode, and decrypt a remote attachment
 
-Now that you can receive a remote attachment, you need a way to receive a remote attachment. For example:
+Now that you can send a remote attachment, you need a way to receive it. For example:
 
 :::code-group
 
@@ -385,6 +389,221 @@ struct ContentView: View {
 :::
 
 To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
+
+## Support multiple remote attachments of any size
+
+Multiple remote attachments of any size can be sent in a single message using the `MultiRemoteAttachmentCodec` and a storage provider.
+
+### Create multiple attachment objects
+
+Each attachment in the attachments array contains a URL that points to an encrypted `EncodedContent` object. The content must be accessible by an HTTP `GET` request to the URL.
+
+:::code-group
+
+```ts [Browser]
+code sample needed
+```
+
+```ts [Node]
+code sample needed
+```
+
+```ts [React Native]
+const attachment1: DecryptedLocalAttachment = {
+  fileUri: "content://media/external/images/media/image-1.png",
+  mimeType: "image/png",
+  filename: "image-1.png"
+}
+
+const attachment2: DecryptedLocalAttachment = {
+  fileUri: "content://media/external/images/media/image-2.png",
+  mimeType: "image/png",
+  filename: "image-2.png"
+}
+```
+
+```kotlin [Kotlin]
+code sample needed
+```
+
+```swift [Swift]
+code sample needed
+```
+
+:::
+
+### Encrypt and upload multiple attachments to a remote server
+
+:::code-group
+
+```ts [Browser]
+code sample needed
+```
+
+```ts [Node]
+code sample needed
+```
+
+```ts [React Native]
+const remoteAttachments: RemoteAttachmentInfo[] = []
+  for (const attachment of [attachment1, attachment2]) {
+    // Encrypt the attachment and receive the local URI of the encrypted file
+    const { encryptedLocalFileUri, metadata } = await alix.encryptAttachment(attachment)
+
+    // Upload the attachment to a remote server and receive the URL
+    const url = testUploadAttachmentForUrl(encryptedLocalFileUri)
+
+    // Build the remote attachment info
+    const remoteAttachmentInfo =
+      MultiRemoteAttachmentCodec.buildMultiRemoteAttachmentInfo(url, metadata)
+    remoteAttachments.push(remoteAttachmentInfo)
+  }
+```
+
+```kotlin [Kotlin]
+code sample needed
+```
+
+```swift [Swift]
+code sample needed
+```
+
+:::
+
+### Send a message with multiple remote attachments
+
+:::code-group
+
+```ts [Browser]
+code sample needed
+```
+
+```ts [Node]
+code sample needed
+```
+
+```ts [React Native]
+await convo.send({
+    multiRemoteAttachment: {
+      attachments: remoteAttachments,
+    },
+  })
+```
+
+```kotlin [Kotlin]
+code sample needed
+```
+
+```swift [Swift]
+code sample needed
+```
+
+:::
+
+### Decode a message with multiple remote attachments
+
+:::code-group
+
+```ts [Browser]
+code sample needed
+```
+
+```ts [Node]
+code sample needed
+```
+
+```ts [React Native]
+const message = (await group.messages()).first()
+if (message.contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0') {
+    const multiRemoteAttachment: MultiRemoteAttachment = message.content()
+}
+```
+
+```kotlin [Kotlin]
+code sample needed
+```
+
+```swift [Swift]
+code sample needed
+```
+
+:::
+
+### Download and decrypt the attachments
+
+:::code-group
+
+```ts [Browser]
+code sample needed
+```
+
+```ts [Node]
+code sample needed
+```
+
+```ts [React Native]
+const decryptedAttachments: DecryptedLocalAttachment[] = []
+for (const attachment of multiRemoteAttachment.attachments) {
+    // Downloading the encrypted payload from the attachment URL and save the local file
+    const encryptedFileLocalURIAfterDownload: string = downloadFromUrlForLocalUri(
+      attachment.url
+    )
+    // Decrypt the local file
+    const decryptedLocalAttachment = await alix.decryptAttachment({
+      encryptedLocalFileUri: encryptedFileLocalURIAfterDownload,
+      metadata: {
+        secret: attachment.secret,
+        salt: attachment.salt,
+        nonce: attachment.nonce,
+        contentDigest: attachment.contentDigest,
+        filename: attachment.filename,
+      } as RemoteAttachmentContent,
+    })
+    decryptedAttachments.push(decryptedLocalAttachment)
+  }
+```
+
+```kotlin [Kotlin]
+code sample needed
+```
+
+```swift [Swift]
+code sample needed
+```
+
+:::
+
+### Display the attachments
+
+Use the file URIs in the decrypted attachments objects to display the attachments.
+
+:::code-group
+
+```ts [Browser]
+code sample needed
+```
+
+```ts [Node]
+code sample needed
+```
+
+```ts [React Native]
+const attachment1 = decryptedAttachments[0]
+const attachment2 = decryptedAttachments[1]
+
+<Image source={{ uri: attachment1.fileUri }} />
+<Image source={{ uri: attachment2.fileUri }} />
+```
+
+```kotlin [Kotlin]
+code sample needed
+```
+
+```swift [Swift]
+code sample needed
+```
+
+:::
 
 ## Support attachments smaller than 1MB
 
