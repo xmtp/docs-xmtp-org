@@ -394,6 +394,32 @@ To handle unsupported content types, refer to the [fallback](/inboxes/build-inbo
 
 Multiple remote attachments of any size can be sent in a single message using the `MultiRemoteAttachmentCodec` and a storage provider.
 
+### Register necessary codecs
+
+:::code-group
+
+```tsx [React Native]
+export const registerCodecs = () => {
+  Client.register(new AttachmentCodec());
+  Client.register(new RemoteAttachmentCodec());
+  Client.register(new MultiRemoteAttachmentCodec());
+};
+```
+
+```kotin [Kotlin]
+Client.register(codec = AttachmentCodec())
+Client.register(codec = RemoteAttachmentCodec())
+Client.register(codec = MultiRemoteAttachmentCodec())
+```
+
+```swift [Swift]
+Client.register(codec: AttachmentCodec())
+Client.register(codec: RemoteAttachmentCodec()) 
+Client.register(codec: MultiRemoteAttachmentCodec())
+```
+
+:::
+
 ### Create multiple attachment objects
 
 Each attachment in the attachments array contains a URL that points to an encrypted `EncodedContent` object. The content must be accessible by an HTTP `GET` request to the URL.
@@ -423,11 +449,31 @@ const attachment2: DecryptedLocalAttachment = {
 ```
 
 ```kotlin [Kotlin]
-code sample needed
+val attachment1 = Attachment(
+    filename = "test1.txt",
+    mimeType = "text/plain",
+    data = "hello world".toByteStringUtf8(),
+)
+
+val attachment2 = Attachment(
+    filename = "test2.txt",
+    mimeType = "text/plain",
+    data = "hello world".toByteStringUtf8(),
+)
 ```
 
 ```swift [Swift]
-code sample needed
+let attachment1 = Attachment(
+    filename: "test1.txt",
+    mimeType: "text/plain", 
+    data: Data("hello world".utf8)
+)
+
+let attachment2 = Attachment(
+    filename: "test2.txt",
+    mimeType: "text/plain",
+    data: Data("hello world".utf8)
+)
 ```
 
 :::
@@ -461,11 +507,35 @@ const remoteAttachments: RemoteAttachmentInfo[] = []
 ```
 
 ```kotlin [Kotlin]
-code sample needed
+val attachmentCodec = AttachmentCodec()
+val remoteAttachmentInfos: MutableList<RemoteAttachmentInfo> = ArrayList()
+
+for (attachment: Attachment in listOf(attachment1, attachment2)) {
+    val encodedBytes = attachmentCodec.encode(attachment).toByteArray()
+    val encryptedAttachment = MultiRemoteAttachmentCodec.encryptBytesForLocalAttachment(encodedBytes, attachment.filename)
+    val url = testUploadEncryptedPayload(encryptedAttachment.payload.toByteArray())
+    val remoteAttachmentInfo = MultiRemoteAttachmentCodec.buildRemoteAttachmentInfo(encryptedAttachment, URL(url))
+    remoteAttachmentInfos.add(remoteAttachmentInfo)
+}
 ```
 
 ```swift [Swift]
-code sample needed
+var remoteAttachmentInfos: [MultiRemoteAttachment.RemoteAttachmentInfo] = []
+
+for att in [attachment1, attachment2] {
+    // 1) Encode the attachment to raw bytes
+    let encodedBytes = try AttachmentCodec().encode(content: att).serializedData()
+    // 2) Encrypt the bytes locally
+    let encrypted = try MultiRemoteAttachmentCodec.encryptBytesForLocalAttachment(encodedBytes, filename: att.filename)
+    // 3) "Upload" it, and get a random https:// URL back
+    let urlString = fakeUpload(encrypted.payload)
+    // 4) Build a RemoteAttachmentInfo for that URL
+    let info = try MultiRemoteAttachmentCodec.buildRemoteAttachmentInfo(
+        encryptedAttachment: encrypted,
+        remoteUrl: URL(string: urlString)!
+    )
+    remoteAttachmentInfos.append(info)
+}
 ```
 
 :::
@@ -491,11 +561,20 @@ await convo.send({
 ```
 
 ```kotlin [Kotlin]
-code sample needed
+val multiRemoteAttachment = MultiRemoteAttachment(remoteAttachments = remoteAttachmentInfos.toList())
+
+runBlocking {
+    aliceConversation.send(
+        content = multiRemoteAttachment,
+        options = SendOptions(contentType = ContentTypeMultiRemoteAttachment),
+    )
+}
 ```
 
 ```swift [Swift]
-code sample needed
+let multiRemoteAttachment = MultiRemoteAttachment(remoteAttachments: remoteAttachmentInfos)
+let encodedContent = try MultiRemoteAttachmentCodec().encode(content: multiRemoteAttachment)
+_ = try await alixConversation.send(encodedContent: encodedContent)
 ```
 
 :::
@@ -520,11 +599,24 @@ if (message.contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0') {
 ```
 
 ```kotlin [Kotlin]
-code sample needed
+val loadedMultiRemoteAttachment: FfiMultiRemoteAttachment = messages[0].content()!!
+
+val remoteAttachments = loadedMultiRemoteAttachment.attachments.map { attachment ->
+    RemoteAttachment(
+        url = URL(attachment.url),
+        filename = attachment.filename,
+        contentDigest = attachment.contentDigest,
+        nonce = attachment.nonce.toByteString(),
+        scheme = attachment.scheme,
+        salt = attachment.salt.toByteString(),
+        secret = attachment.secret.toByteString(),
+        contentLength = attachment.contentLength?.toInt(),
+    )
+}
 ```
 
 ```swift [Swift]
-code sample needed
+let loadedMultiRemoteAttachment: MultiRemoteAttachment = try received.content()
 ```
 
 :::
@@ -564,11 +656,51 @@ for (const attachment of multiRemoteAttachment.attachments) {
 ```
 
 ```kotlin [Kotlin]
-code sample needed
+val textAttachments: MutableList<Attachment> = ArrayList()
+
+for (remoteAttachment: RemoteAttachment in remoteAttachments) {
+    val url = remoteAttachment.url.toString()
+    // Simulate Download
+    val encryptedPayload: ByteArray = encryptedPayloadUrls[url]!!
+    // Combine encrypted payload with RemoteAttachmentInfo
+    val encryptedAttachment: EncryptedEncodedContent = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(remoteAttachment, encryptedPayload)
+    // Decrypt payload
+    val encodedContent: EncodedContent = MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
+    // Convert EncodedContent to Attachment
+    val attachment = attachmentCodec.decode(encodedContent)
+    textAttachments.add(attachment)
+}
 ```
 
 ```swift [Swift]
-code sample needed
+var decodedAttachments: [Attachment] = []
+for info in loadedMultiRemoteAttachment.remoteAttachments {
+    let remoteAttachment = try RemoteAttachment(
+        url: info.url,
+        contentDigest: info.contentDigest,
+        secret: info.secret,
+        salt: info.salt,
+        nonce: info.nonce,
+        scheme: RemoteAttachment.Scheme(rawValue: info.scheme) ?? .https,
+        contentLength: Int(info.contentLength),
+        filename: info.filename
+    )
+
+    // Download the encrypted payload
+    guard let downloadedPayload = encryptedPayloads[remoteAttachment.url] else {
+        XCTFail("No stored payload for \(remoteAttachment.url)")
+        return
+    }
+
+    let encryptedAttachment = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(
+        remoteAttachment: remoteAttachment,
+        encryptedPayload: downloadedPayload
+    )
+
+    let decodedContent = try MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
+    let finalAttachment: Attachment = try decodedContent.decoded()
+    decodedAttachments.append(finalAttachment)
+}
 ```
 
 :::
@@ -596,11 +728,16 @@ const attachment2 = decryptedAttachments[1]
 ```
 
 ```kotlin [Kotlin]
-code sample needed
+    assertEquals(textAttachments[0].filename, "test1.txt")
+    assertEquals(textAttachments[1].filename, "test2.txt")
+} else {
+    AssertionError("expected a MultiRemoteAttachment message")
+}
 ```
 
 ```swift [Swift]
-code sample needed
+decodedAttachments[0].filename // "test1.txt"
+decodedAttachments[1].filename // "test2.txt"
 ```
 
 :::
