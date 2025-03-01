@@ -6,7 +6,7 @@ description: "We are pleased to license much of the documentation on this site u
 
 Our content licensing policies are based on those of the [Google Developer](https://developers.google.com/site-policies) website.
 
-We are pleased to license much of the documentation on `doc.xmtp.org` under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.
+We are pleased to license much of the documentation on `docs.xmtp.org` under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.
 
 You will find the following notice at the bottom of pages on `docs.xmtp.org`:
 
