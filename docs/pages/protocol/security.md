@@ -6,7 +6,7 @@ XMTP delivers end-to-end encrypted 1:1 and group chat using the following resour
 - Secure key management practices
 - MLS ([Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html))
 
-Specifically, XMTP messaging provides the following comprehensive security properties. In the following sectins, **group** refers to the MLS concept of a group, which includes both 1:1 and group conversations.
+Specifically, XMTP messaging provides the following comprehensive security properties. In the following sections, **group** refers to the MLS concept of a group, which includes both 1:1 and group conversations.
 
 ## A deep dive into messaging security properties
 
