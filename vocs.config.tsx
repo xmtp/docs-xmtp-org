@@ -190,8 +190,8 @@ export default defineConfig({
       items: [], // Add this line
     },
     {
-      text: "Network FAQ",
-      link: "/network/network-faq",
+      text: "Run a network node",
+      link: "/network/run-a-node",
       items: [], // Add this line
     },
     {
