@@ -4,7 +4,11 @@ With XMTP, you can use various types of signatures to sign and verify payloads.
 
 ## Sign with an external wallet
 
+jhaaaa
+
 When a user creates, adds, removes, or revokes an XMTP inbox’s address or installation, a signature from an external wallet is required.
+
+jhaaaa
 
 ## Sign with an XMTP key
 

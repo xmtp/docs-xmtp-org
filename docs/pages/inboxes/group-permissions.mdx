@@ -31,7 +31,7 @@ Permissions are the actions a group chat participant can be allowed to take. The
 - Add a member to the group
 - Remove a member from the group
 - Update [group metadata](/inboxes/group-metadata), such as group name, description, and image
-- Update group permissions on an item-by-item basis, such as calling `updateGroupNamePermission` or`updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or`updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
 
 The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
 
@@ -81,8 +81,6 @@ If you aren’t opinionated and don’t set any permissions and options, groups 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
 
 ## Manage group chat admins
-
-By design, checking admin permission status by wallet address is not supported. Instead, look up the `inboxID` for that wallet address, then use the calls below.
 
 ### Check if inbox ID is an admin
 
@@ -327,32 +325,6 @@ try await group.addMembersByInboxId(inboxIds: [inboxId])
 
 :::
 
-### Add members by address
-
-:::code-group
-
-```js [Browser]
-await group.addMembers([walletAddress]);
-```
-
-```js [Node]
-await group.addMembers([walletAddress]);
-```
-
-```tsx [React Native]
-await group.addMembers([walletAddress]);
-```
-
-```kotlin [Kotlin]
-group.addMembers(listOf(walletAddress))
-```
-
-```swift [Swift]
-try await group.addMembers(addresses: [walletAddress])
-```
-
-:::
-
 ### Remove members by inbox ID
 
 :::code-group
@@ -379,42 +351,16 @@ try await group.removeMemberInboxIds(inboxIds: [inboxId])
 
 :::
 
-### Remove members by address
-
-:::code-group
-
-```js [Browser]
-await group.removeMembers([walletAddress]);
-```
-
-```js [Node]
-await group.removeMembers([walletAddress]);
-```
-
-```tsx [React Native]
-await group.removeMembers([walletAddress]);
-```
-
-```kotlin [Kotlin]
-group.removeMembers(listOf(walletAddress))
-```
-
-```swift [Swift]
-try await group.removeMembers(addresses: [walletAddress])
-```
-
-:::
-
 ### Get inbox IDs for members
 
 :::code-group
 
 ```js [Browser]
-const inboxId = await client.findInboxIdByAddress(address);
+const inboxId = await client.findInboxIdByIdentity(identity);
 ```
 
 ```js [Node]
-const inboxId = await client.getInboxIdByAddress(address);
+const inboxId = await client.getInboxIdByIdentity(identity);
 ```
 
 ```tsx [React Native]
@@ -427,7 +373,7 @@ val inboxIds = members.map { it.inboxId }
 
 OR
 
-val inboxId = client.inboxIdFromAddress(peerAddress)
+val inboxId = client.inboxIdFromIdentity(peerIdentity)
 ```
 
 ```swift [Swift]
@@ -435,12 +381,12 @@ let members = try group.members.map(\.inboxId).sorted()
 
 OR
 
-try await client.inboxIdFromAddress(address: peerAddress)
+try await client.inboxIdFromIdentity(identity: peerIdentity)
 ```
 
 :::
 
-### Get addresses for members
+### Get identities for members
 
 :::code-group
 
@@ -451,9 +397,9 @@ await group.sync();
 // get group members
 const members = await group.members();
 
-// map inbox ID to account addresses
-const inboxIdAddressMap = new Map(
-  members.map((member) => [member.inboxId, member.accountAddresses])
+// map inbox ID to account identity
+const inboxIdIdentityMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentity])
 );
 ```
 
@@ -464,24 +410,24 @@ await group.sync();
 // get group members
 const members = group.members;
 
-// map inbox ID to account addresses
-const inboxIdAddressMap = new Map(
-  members.map((member) => [member.inboxId, member.accountAddresses])
+// map inbox ID to account identity
+const inboxIdIdentityMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentity])
 );
 ```
 
 ```tsx [React Native]
 const members = await group.members();
-const addresses = members.map((member) => member.addresses);
+const identities = members.map((member) => member.identities);
 ```
 
 ```kotlin [Kotlin]
 val members = group.members()
-val addresses = members.map { it.addresses }
+val identities = members.map { it.identities }
 ```
 
 ```swift [Swift]
-let peerMembers = try Conversation.group(group).peerAddresses.sorted()
+let peerMembers = try Conversation.group(group).peerIdentities.sorted()
 ```
 
 :::
@@ -505,7 +451,7 @@ const addedByInboxId = await group.addedByInboxId();
 ```
 
 ```kotlin [Kotlin]
-val addedByAddress = group.addedByInboxId();
+val addedByInboxId = group.addedByInboxId();
 ```
 
 ```swift [Swift]

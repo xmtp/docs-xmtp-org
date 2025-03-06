@@ -3,6 +3,7 @@
 The process to upgrade an app built with XMTP V2 to V3 is designed to be straightforward, with most functions in V3 working as they did in V2. However, there are some notable differences, which we cover here.
 
 :::info[Key takeaways]
+- **Primary XMTP identifier is now a flexible identity object, not an Ethereum address** as covered in this document.
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
 - **We recommend that apps upgrade directly to V3**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. To learn more, see the [FAQ](/upgrade-to-v3#faq).
 - ⛔️ **Rolling brownouts of the V2 network start on April 1, 2025. V2 will be deprecated on May 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP 53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
@@ -16,11 +17,98 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 
 - 🟢 **The agent upgrade path is ready**. For detailed guidance, [open an issue](https://github.com/xmtp/xmtp-js/issues) in the Node SDK GitHub repo.
 
+## Primary XMTP identifier is now a flexible identity object, not an Ethereum address
+
+XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to a more flexible identity model. This change allows for broader support of different authentication mechanisms, including the currently supported Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs), as well as future support for Passkeys.
+
+Instead of assuming an Ethereum address as the unique identifier, developers now define an identity object that explicitly includes the identity type (kind) and the identifier.
+
+With this new model, apps reference identities or inbox IDs, rather than Ethereum addresses. Some identity types (like Passkeys) do not have an associated address, so identities and inbox IDs provide a consistent way to identify users across different authentication methods.
+
+This change ensures that XMTP identities are more extensible and adaptable, accommodating future improvements in authentication methods while maintaining backward compatibility for Ethereum-based accounts.
+
+### Example: Supporting multiple identity types
+
+With this new model, an app can now distinguish different identity types when creating a signer
+
+:::tip
+
+Passkeys are not yet supported and are referenced here just to illustrate the flexibility of the new identity model.
+
+:::
+
+```tsx
+function createSigner(account): Signer {
+  return {
+    getIdentity: async () => ({
+      kind: account.isSCW ? "ETHEREUM" : "PASSKEY",
+      identifier: account.address || account.passkeyId,
+    }),
+    signMessage: async (message) => {
+      return account.signMessage(message);
+    },
+    getChainId: account.isSCW ? () => BigInt(8453) : undefined,
+    getBlockNumber: account.isSCW ? () => undefined : undefined,
+  };
+}
+```
+
+### Before: Using getAddress()
+
+Previously, developers used `getAddress()` to retrieve an account’s Ethereum address:
+
+```tsx
+const signer: Signer = {
+  getAddress: () => "0x123...",
+  signMessage: async (message) => {
+    // return signed message
+  },
+};
+```
+
+While this approach worked for EOAs, it assumed that all accounts were Ethereum addresses and did not allow for other identity types.
+
+### After: Using getIdentity()
+
+Now, `getIdentity()` returns an identity object, allowing for multiple types of accounts:
+
+```tsx
+const signer: Signer = {
+  getIdentity: () => ({
+    kind: "ETHEREUM", // Identity type (ETHEREUM, PASSKEY, etc.)
+    identifier: "0x123...", // Account identifier
+  }),
+  signMessage: async (message) => {
+    // return signed message
+  },
+};
+```
+
+### Before: newConveration()
+
+Previously, developers used an Ethereum address to create a new DM conversation:
+
+```tsx
+const dm = await alix.conversations.findOrCreateDm(bo.address);
+```
+
+### After: newConveration()
+
+Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an address.
+
+```tsx
+const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
+```
+
 ## Core methods from V2 work in a similar way in V3
 
 Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work in a similar way in V3. 
 
-However, a key difference is that prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
+However, key differences include:
+
+- `newConversation` no longer takes addresses, but rather inbox IDs, as covered in [Primary XMTP identifier is now a flexible identity object, not an Ethereum address](#primary-xmtp-identifier-is-now-a-flexible-identity-object-not-an-ethereum-address)
+
+- Prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
 
 To learn more, see [Build a chat inbox](/inboxes/build-inbox).
 
@@ -72,7 +160,18 @@ In V3, we have installation-specific key bundles that are stored securely in the
 - In V2, we managed consent via `client.contacts.consentList`.
 - In V3, we can manage consent via `client.preferences.getAddressConsent(address)`. However, we recommend that you now manage consent at the conversation level by `conversationId`. To learn more, see [Support user consent preferences](/inboxes/user-consent/support-user-consent#support-user-consent-preferences-to-provide-spam-free-inboxes).
 
+<<<<<<<<<We're no longer doing consent based on address. It's going to be based on inbox id like there just needs to be like
+a really clear call out of the transition from inbox id to Doc.>>>>>>>>>
+
 ## Summary of notable changes
+
+<<<<<<<<<<<<If you want to still do it by address, like a new conversation. We will still allow that, and I can give you the code snippet for it. It'll be new conversation with identity.
+and then the identity will be like it'll be like a map, or whatever of like ethereum
+and then the ethereum address.
+So instead of being a string, it's like,
+yeah. So like, if you give me like,
+maybe it's in this section. I can. I can do the code snippets of like the difference between the 2.
+>>>>>>>>>>>>
 
 | Purpose | V2 method | V3 equivalent |
 | --- | --- | --- |

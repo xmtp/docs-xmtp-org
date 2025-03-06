@@ -102,11 +102,15 @@ This is one of the jobs of the [history sync](/inboxes/history-sync) feature. It
 
 ## Understand DM stitching and push notifications
 
+jhaaaa
+
 Consider a scenario where `alix.eth` using an existing installation #1 to create a conversation with `bo.eth` and sends them a DM. And then `alix.eth` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/inboxes/history-sync) to bring in their existing conversations, `alix.eth` creates a new conversation with `bo.eth` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of addresses, `alix.eth` and `bo.eth`, resulting in a confusing DM UX like this one:
 
 ![No DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/no-dm-stitching.png)
 
 XMTP implements DM stitching to ensure that even if there are multiple DMs with the same pair of addresses under the hood, your users see only one DM conversation with messages displayed appropriately.
+
+jhaaaa
 
 For example, with DM stitching, instead of seeing two separate DM conversations between `alix.eth` and `bo.eth` with one message each, `alix.eth` sees one DM conversation between `alix.eth` and `bo.eth` with two messages in both installations #1 and #2
 
@@ -129,7 +133,7 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
 
 ### DM stitching considerations for push notifications
 
-DM stitching addresses provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
+DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
 
 Let’s take DM conversations alix-bo-1 and alix-bo-3 between `alix.eth` and `bo.eth`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics. 
 
