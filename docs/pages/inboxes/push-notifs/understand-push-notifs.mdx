@@ -108,17 +108,13 @@ This video provides a walkthrough of direct message (DM) stitching, covering the
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/YF5m_mTY6mw?si=EH0S4eP0GPEAafIw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-jhaaaa how to handle examples where we use ens names
-
-Consider a scenario where `alix.eth` using an existing installation #1 to create a conversation with `bo.eth` and sends them a DM. And then `alix.eth` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/inboxes/history-sync) to bring in their existing conversations, `alix.eth` creates a new conversation with `bo.eth` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of addresses, `alix.eth` and `bo.eth`, resulting in a confusing DM UX like this one:
+Consider a scenario where `alix.id` using an existing installation #1 to create a conversation with `bo.id` and sends them a DM. And then `alix.id` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/inboxes/history-sync) to bring in their existing conversations, `alix.id` creates a new conversation with `bo.id` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of identities, `alix.id` and `bo.id`, resulting in a confusing DM UX like this one:
 
 ![No DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/no-dm-stitching.png)
 
-XMTP implements DM stitching to ensure that even if there are multiple DMs with the same pair of addresses under the hood, your users see only one DM conversation with messages displayed appropriately.
+XMTP implements DM stitching to ensure that even if there are multiple DMs with the same pair of identities under the hood, your users see only one DM conversation with messages displayed appropriately.
 
-jhaaaa
-
-For example, with DM stitching, instead of seeing two separate DM conversations between `alix.eth` and `bo.eth` with one message each, `alix.eth` sees one DM conversation between `alix.eth` and `bo.eth` with two messages in both installations #1 and #2
+For example, with DM stitching, instead of seeing two separate DM conversations between `alix.id` and `bo.id` with one message each, `alix.id` sees one DM conversation between `alix.id` and `bo.id` with two messages in both installations #1 and #2
 
 ![With DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/with-dm-stitching.png)
 
@@ -132,16 +128,16 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
         
         Any messages sent in any of these DM conversations will display in all of these DM conversations.
         
-        For example, `alix.eth` sends a message in alix-bo-1. `bo.eth` is on alix-bo-3, but can still see messages sent in alix-bo-1.
+        For example, `alix.id` sends a message in alix-bo-1. `bo.id` is on alix-bo-3, but can still see messages sent in alix-bo-1.
         
 2. When sending messages in a DM conversation, all installations in that DM will eventually converge to sending them to the same MLS group, even if they originally start off using different ones.
-    - For example, `bo.eth` sends a message in alix-bo-3. `alix.eth` is on alix-bo-1, but can still see messages from alix-bo-3. When `alix.eth` sends a reply to `bo.eth`, it uses the most recently used DM conversation, alix-bo-3. In this way, all messaging will eventually move to alix-bo-3, and 1 and 2 will slowly fade away due to non-use.
+    - For example, `bo.id` sends a message in alix-bo-3. `alix.id` is on alix-bo-1, but can still see messages from alix-bo-3. When `alix.id` sends a reply to `bo.id`, it uses the most recently used DM conversation, alix-bo-3. In this way, all messaging will eventually move to alix-bo-3, and 1 and 2 will slowly fade away due to non-use.
 
 ### DM stitching considerations for push notifications
 
 DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
 
-Let’s take DM conversations alix-bo-1 and alix-bo-3 between `alix.eth` and `bo.eth`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics. 
+Let’s take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics. 
 
 Therefore, when subscribing a DM conversations to push notifications, you should subscribe to a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
 

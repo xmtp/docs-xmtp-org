@@ -331,9 +331,7 @@ You can filter these unknown contacts to:
 
 jhaaa for identities that don't have addresses -- what kind of onchain data signals can devs use?
 
-To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. You can then display appropriate messages on a **You might know** tab, for example.
-
-jhaaaa
+To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. You can then display appropriate messages on a **You might know** tab, for example. 
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" />
@@ -343,9 +341,7 @@ jhaaaa
 
 jhaaaa for identities that don't have addresses -- what kind of onchain data signals can devs use?
 
-To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example.
-
-jhaaaa
+To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example. 
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" />
@@ -363,9 +359,7 @@ XMTP is a decentralized, open protocol built to ensure private, secure, and cens
 
 jhaaaa for identities that don't have addresses -- what kind of onchain data signals can devs use?
 
-The protocol can analyze onchain data signals, such as shared activity between wallet addresses, to infer potential affinities between addresses. However, because all XMTP repositories are open source, malicious actors could inspect these methods and develop workarounds to bypass them.
-
-jhaaaa
+The protocol can analyze onchain data signals, such as shared activity between wallet addresses, to infer potential affinities between addresses. However, because all XMTP repositories are open source, malicious actors could inspect these methods and develop workarounds to bypass them. 
 
 Additionally, applying spam filtering or content moderation directly at the protocol level would introduce centralization, which goes against the decentralized, permissionless, and open ethos of XMTP and web3. A protocol-driven approach could limit interoperability and trust by imposing subjective rules about content across all apps.
 

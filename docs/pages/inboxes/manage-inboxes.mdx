@@ -30,6 +30,12 @@ You can enable a user to remove an identity from their inbox. You cannot remove 
 
 ## Add an identity to an inbox
 
+:::warning[Warning]
+
+This function is delicate and should be used with caution. Adding an identity to an inbox ID B when it's already associated with an inbox ID A will cause the identity to lose access to inbox ID A.
+
+:::
+
 :::code-group
 
 ```jsx [React Native]
