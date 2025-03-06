@@ -10,7 +10,7 @@ Build with XMTP to:
 
 - **Deliver secure and private messaging**
 
-    Using the [Messaging Layer Security](/protocol/specs) (MLS) standard, a newly ratified [IETF](https://www.ietf.org/about/introduction/) standard, XMTP provides end-to-end encrypted messaging with forward secrecy and post-compromise security.
+    Using the [Messaging Layer Security](/protocol/security) (MLS) standard, a newly ratified [IETF](https://www.ietf.org/about/introduction/) standard, XMTP provides end-to-end encrypted messaging with forward secrecy and post-compromise security.
 
 - **Provide spam-free inboxes**
 
