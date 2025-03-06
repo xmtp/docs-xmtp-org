@@ -202,7 +202,7 @@ remoteAttachment.filename = attachment.filename
 Send a remote attachment and set the `contentType`:
 
 ```kotlin [Kotlin]
-val newConversation = client.conversations.newConversation(walletAddress)
+val newConversation = client.conversations.newConversation(accountIdentity)
 
 newConversation.send(
 content = remoteAttachment,
@@ -269,7 +269,7 @@ try await conversation.send(
 	content: remoteAttachment,
 	options: .init(
 		contentType: ContentTypeRemoteAttachment,
-		contentFallback: "a description of the image"
+		fallback: "a description of the image"
 	)
 )
 ```

@@ -30,17 +30,22 @@ Learn to build a chat inbox with the help of [XMTP.chat](https://xmtp.chat/), an
 
 This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface. This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements.
 
-- For an EOA, the `convertEOAToSigner` function creates a signer that can get the account address and sign messages and has placeholder methods for wallet type, chain ID, and block number.
+jhaaaa these EOA and SCW code samples include "address" in the comments to callout when the kind is Ethereum and the identifier is an Ethereum address. Is this OK or have I misunderstood?
+
+- For an EOA, the `convertEOAToSigner` function creates a signer that can get the account identity and sign messages and has placeholder methods for chain ID and block number.
 
   :::code-group
 
   ```tsx [Browser]
   import type { Signer } from "@xmtp/browser-sdk";
 
-  const accountAddress = "0x...";
+  const accountIdentity = {
+    kind: "ETHEREUM", // Specifies the identity type
+    identifier: "0x...", // Ethereum address as the identifier
+  };
 
   const signer: Signer = {
-    getAddress: () => accountAddress,
+    getIdentity: () => accountIdentity,
     signMessage: async (message) => {
       // return value from a signing method here
     },
@@ -50,10 +55,13 @@ This code defines two functions that convert different types of Ethereum account
   ```tsx [Node]
   import type { Signer } from "@xmtp/node-sdk";
 
-  const accountAddress = "0x...";
+  const accountIdentity = {
+    kind: "ETHEREUM", // Specifies the identity type
+    identifier: "0x...", // Ethereum address as the identifier
+  };
 
   const signer: Signer = {
-    getAddress: () => accountAddress,
+    getIdentity: () => accountIdentity,
     signMessage: async (message) => {
       // return value from a signing method here
     },
@@ -61,15 +69,17 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```tsx [React Native]
-  // Example EOA
+  // Example EOA Signer
   export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
     return {
-      getAddress: async () => eoaAccount.address,
+      getIdentity: async () => ({
+        kind: "ETHEREUM", // Specifies the identity type
+        identifier: eoaAccount.address, // Ethereum address as the identifier
+      }),
       signMessage: async (message: string | Uint8Array) =>
         eoaAccount.signMessage({
           message: typeof message === "string" ? message : { raw: message },
         }),
-      walletType: () => undefined, // Default: 'EOA'
       getChainId: () => undefined,
       getBlockNumber: () => undefined,
     };
@@ -77,150 +87,144 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```kotlin [Kotlin]
-  class EOAWallet : SigningKey {
-    override val address: String
-        get() = walletAddress
+  class EOAWallet(override val identity: Identity) : SigningKey {
+      override val type: SignerType
+          get() = SignerType.EOA
 
-    override suspend fun sign(message: String): Signature {
-  		val signature = key.sign(data)
-  		return signature
-    }
+      override suspend fun sign(message: String): SignatureOuterClass.Signature {
+          return key.sign(message)
+      }
 
-    override suspend fun sign(data: ByteArray): Signature {
-  		val signature = key.sign(message: message)
-  		return signature
-    }
+      override suspend fun sign(data: ByteArray): SignatureOuterClass.Signature {
+          return key.sign(data)
+      }
   }
   ```
 
   ```swift [Swift]
   public struct EOAWallet: SigningKey {
-  	public var address: String {
-  		walletAddress
-  	}
+      public var identity: Identity
 
-  	public func sign(_ data: Data) async throws -> XMTPiOS.Signature {
-  		let signature = try await key.sign(data)
-  		return signature
-  	}
+      public func sign(_ data: Data) async throws -> XMTPiOS.Signature {
+          let signature = try await key.sign(data)
+          return signature
+      }
 
-  	public func sign(message: String) async throws -> XMTPiOS.Signature {
-  		let signature = try await key.sign(message: message)
-  		return signature
-  	}
+      public func sign(message: String) async throws -> XMTPiOS.Signature {
+          let signature = try await key.sign(message: message)
+          return signature
+      }
   }
   ```
 
   :::
 
-- For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes specific implementations for wallet type and chain ID, and an optional block number computation.
+- For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes a specific implementation for chain ID and an optional block number computation.
 
   :::code-group
 
   ```tsx [Browser]
   import type { Signer } from "@xmtp/browser-sdk";
 
-  const accountAddress = "0x...";
+  const accountIdentity = {
+    kind: "ETHEREUM", // Specifies the identity type
+    identifier: "0x...", // Smart Contract Wallet address
+  };
 
   const signer: Signer = {
-    getAddress: () => accountAddress,
+    getIdentity: () => accountIdentity,
     signMessage: async (message) => {
       // return value from a signing method here
     },
-    // these methods are required for smart contract wallets
-    // block number is optional
-    getBlockNumber: () => undefined,
-    // this example uses the Base chain
-    getChainId: () => BigInt(8453),
+    // These methods are required for smart contract wallets
+    getBlockNumber: () => undefined, // Optional block number
+    getChainId: () => BigInt(8453), // Example: Base chain ID
   };
   ```
 
   ```tsx [Node]
   import type { Signer } from "@xmtp/node-sdk";
 
-  const accountAddress = "0x...";
+  const accountIdentity = {
+    kind: "ETHEREUM", // Specifies the identity type
+    identifier: "0x...", // Smart Contract Wallet address
+  };
 
   const signer: Signer = {
-    getAddress: () => accountAddress,
+    getIdentity: () => accountIdentity,
     signMessage: async (message) => {
       // return value from a signing method here
     },
-    // these methods are required for smart contract wallets
-    // block number is optional
-    getBlockNumber: () => undefined,
-    // this example uses the Base chain
-    getChainId: () => BigInt(8453),
+    // These methods are required for smart contract wallets
+    getBlockNumber: () => undefined, // Optional block number
+    getChainId: () => BigInt(8453), // Example: Base chain ID
   };
   ```
 
   ```tsx [React Native]
-  // Example SCW
+  // Example SCW Signer
   export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
     return {
-      getAddress: async () => scwAccount.address,
+      getIdentity: async () => ({
+        kind: "ETHEREUM", // Specifies the identity type
+        identifier: scwAccount.address, // Smart Contract Wallet address
+      }),
       signMessage: async (message: string) => {
         const byteArray = await scwAccount.signMessage(message);
         return ethers.utils.hexlify(byteArray); // Convert to hex string
       },
-      walletType: () => "SCW",
       getChainId: async () => 8453, // https://chainlist.org/
-      getBlockNumber: async () => undefined, // Optional: will be computed at run
+      getBlockNumber: async () => undefined, // Optional: will be computed at runtime
     };
   }
   ```
 
   ```kotlin [Kotlin]
-  class SCWallet : SigningKey {
-    override val address: String
-        get() = walletAddress
+  class SCWallet(override val identity: Identity) : SigningKey {
+      override val type: SignerType
+          get() = SignerType.SCW
 
-    override val type: WalletType
-        get() = WalletType.SCW
+      override var chainId: Long? = 8453 // https://chainlist.org/
+      override var blockNumber: Long? = null // Optional: will be computed at runtime
 
-    override var chainId: Long? = 8453, // https://chainlist.org/
+      override suspend fun signSCW(message: String): ByteArray {
+          val digest = Signature.newBuilder().build().ethHash(message)
+          val replaySafeHash = smartWallet.replaySafeHash(digest).send()
+          val signature =
+              Sign.signMessage(replaySafeHash, contractDeployerCredentials.ecKeyPair, false)
+          val signatureBytes = signature.r + signature.s + signature.v
+          val tokens = listOf(
+              Uint(BigInteger.ZERO),
+              DynamicBytes(signatureBytes)
+          )
+          val encoded = FunctionEncoder.encodeConstructor(tokens)
+          val encodedBytes = Numeric.hexStringToByteArray(encoded)
 
-    override var blockNumber: Long? = null, // Optional: will be computed at run
-
-    override suspend fun signSCW(message: String): ByteArray {
-        val digest = Signature.newBuilder().build().ethHash(message)
-        val replaySafeHash = smartWallet.replaySafeHash(digest).send()
-        val signature =
-            Sign.signMessage(replaySafeHash, contractDeployerCredentials.ecKeyPair, false)
-        val signatureBytes = signature.r + signature.s + signature.v
-        val tokens = listOf(
-            Uint(BigInteger.ZERO),
-            DynamicBytes(signatureBytes)
-        )
-        val encoded = FunctionEncoder.encodeConstructor(tokens)
-        val encodedBytes = Numeric.hexStringToByteArray(encoded)
-
-        return encodedBytes
-    }
+          return encodedBytes
+      }
   }
   ```
 
   ```swift [Swift]
   public struct SCWallet: SigningKey {
-  	public var address: String {
-  		walletAddress
-  	}
+      public var identity: Identity
 
-    public var chainId: Int64? {
-  		8453
-  	}
+      public var chainId: Int64? {
+          8453
+      }
 
-    public var blockNumber: Int64? {
-  		nil
-  	}
+      public var blockNumber: Int64? {
+          nil
+      }
 
-    public var type: WalletType {
-  		.SCW
-  	}
+      public var type: SignerType {
+          .SCW
+      }
 
-  	public func signSCW(message: String) async throws -> Data {
-  		let signature = try await key.sign(message: message)
-  		return signature.hexStringToByteArray
-  	}
+      public func signSCW(message: String) async throws -> Data {
+          let signature = try await key.sign(message: message)
+          return signature.hexStringToByteArray
+      }
   }
   ```
 
@@ -243,15 +247,19 @@ This video provides a walkthrough of creating a client, covering the key ideas d
 ```tsx [Browser]
 import { Client, type Signer } from "@xmtp/browser-sdk";
 
-const accountAddress = "0x...";
+const accountIdentity = {
+  kind: "ETHEREUM", // Specifies the identity type
+  identifier: "0x...", // Ethereum address as the identifier
+};
+
 const signer: Signer = {
-  getAddress: () => accountAddress,
+  getIdentity: () => accountIdentity,
   signMessage: async (message) => {
     // return value from a signing method here
   },
 };
 
-// this value should be generated once per installation and stored securely
+// This value should be generated once per installation and stored securely
 const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
@@ -265,15 +273,19 @@ const client = await Client.create(
 import { Client, type Signer } from "@xmtp/node-sdk";
 import { getRandomValues } from "node:crypto";
 
-const accountAddress = "0x...";
+const accountIdentity = {
+  kind: "ETHEREUM", // Specifies the identity type
+  identifier: "0x...", // Ethereum address as the identifier
+};
+
 const signer: Signer = {
-  getAddress: () => accountAddress,
+  getIdentity: () => accountIdentity,
   signMessage: async (message) => {
     // return value from a signing method here
   },
 };
 
-// this value should be generated once per installation and stored securely
+// This value should be generated once per installation and stored securely
 const encryptionKey = getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
@@ -323,13 +335,16 @@ To learn more about database operations, see the [XMTP MLS protocol spec](https
 
 You can configure an XMTP client with these parameters of `Client.create`:
 
+jhaaaa how about keystoreProviders, persistConversations, skipContactPublishing, codecs, maxContentSize, preCreateIdentityCallback, preEnableIdentityCallback, basePersistence, apiClientFactory
+
 | Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments).                                                                                                                                                                     |
-| appContext      | `REQUIRED`                                      | The app context used to create and access the local database.                                                                                                                                                                                                                                                                                                                                                                                              |
-| dbEncryptionKey | `REQUIRED`                                      | A 32-byte `ByteArray` used to encrypt the local database.                                                                                                                                                                                                                                                                                                                                                                                                  |
-| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`                                                                                                                                                                                                                                                                         |
-| appVersion      | `undefined`                                     | Add a client app version identifier that's included with API requests.<br/>For example, you can use the following format: `appVersion: APP_NAME + '/' + APP_VERSION`.<br/>Setting this value provides telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide support to app developers, especially around communicating important SDK updates, including deprecations and required updates. |
+| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments). |
+| apiURL             | undefined                                           | Manually specify an API URL to use. If specified, value of `env` will be ignored. |
+| appContext (Android-only)     | null                                      | Required. The app context used to create and access the local database. |
+| dbEncryptionKey | null                                      | Required. A 32-byte `ByteArray` used to encrypt the local database.    |
+| dbDirectory | xmtp_db                                      | Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default. |
+| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`. |
 
 #### XMTP DEV, PRODUCTION, and LOCAL network environments
 
@@ -360,7 +375,7 @@ Build, or resume, an existing client that's logged in and has an existing local 
 :::code-group
 
 ```tsx [React Native]
-Client.build(address, {
+Client.build(identity, {
   env: "production", // 'local' | 'dev' | 'production'
   dbEncryptionKey: keyBytes, // 32 bytes
 });
@@ -373,7 +388,7 @@ val options = ClientOptions(
     dbEncryptionKey = keyBytes
 )
 val client = Client().build(
-        address = address,
+        identity = identity,
         options = options
     )
 ```
@@ -384,7 +399,7 @@ let options = ClientOptions.init(
   dbEncryptionKey: keyBytes // 32 bytes
 )
 let client = try await Client.build(
-  address: address,
+  identity: identity,
   options: options
 )
 ```
@@ -416,104 +431,104 @@ If the user chooses to delete their local database, they will have to create a n
 
 :::
 
-## Check if an address is reachable
+## Check if an identity is reachable
 
-The first step to creating a conversation is to verify that participants’ addresses are reachable on XMTP. The `canMessage` method checks each address’ compatibility, returning a response indicating whether each address can receive messages.
+The first step to creating a conversation is to verify that participants’ identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
 
-Once you have the verified addresses, you can create a new conversation, whether it's a group chat or direct message (DM).
+Once you have the verified identities, you can create a new conversation, whether it's a group chat or direct message (DM).
 
 :::code-group
 
 ```js [Browser]
 import { Client } from "@xmtp/browser-sdk";
 
-// response is a Map of string (address) => boolean (is reachable)
-const response = await Client.canMessage([bo.address, caro.address]);
+// response is a Map of string (identity) => boolean (is reachable)
+const response = await Client.canMessage([bo.identity, caro.identity]);
 ```
 
 ```js [Node]
 import { Client } from "@xmtp/node-sdk";
 
-// response is a Map of string (address) => boolean (is reachable)
-const response = await Client.canMessage([bo.address, caro.address]);
+// response is a Map of string (identity) => boolean (is reachable)
+const response = await Client.canMessage([bo.identity, caro.identity]);
 ```
 
 ```tsx [React Native]
 // Request
 const canMessage = await client.canMessage([
-  '0xboAddress',
-  '0xV2OnlyAddress',
-  '0xBadAddress',
+  '0xboIdentity',
+  '0xV2OnlyIdentity',
+  '0xBadIdentity',
 ])
 
 // Response
 {
-  "0xboAddress": true,
-  "0xV2OnlyAddress": false,
-  "0xBadAddress": false,
+  "0xboIdentity": true,
+  "0xV2OnlyIdentity": false,
+  "0xBadIdentity": false,
 }
 ```
 
 ```kotlin [Kotlin]
 // Request
-val canMessage = client.canMessage(listOf('0xboAddress', '0xV2OnlyAddress','0xBadAddress'))
+val canMessage = client.canMessage(listOf('0xboIdentity', '0xV2OnlyIdentity','0xBadIdentity'))
 
 // Response
 [
-  "0xboAddress": true,
-  "0xV2OnlyAddress": false,
-  "0xBadAddress": false,
+  "0xboIdentity": true,
+  "0xV2OnlyIdentity": false,
+  "0xBadIdentity": false,
 ]
 ```
 
 ```swift [Swift]
 // Request
-let canMessage = try await client.canMessage(["0xboAddress", "0xV2OnlyAddress","0xBadAddress"])
+let canMessage = try await client.canMessage(["0xboIdentity", "0xV2OnlyIdentity","0xBadIdentity"])
 
 // Response
 [
-  "0xboAddress": true,
-  "0xV2OnlyAddress": false,
-  "0xBadAddress": false,
+  "0xboIdentity": true,
+  "0xV2OnlyIdentity": false,
+  "0xBadIdentity": false,
 ]
 ```
 
 :::
 
 :::tip
-Regarding how to handle addresses that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
+Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
 :::
 
 ## Create a conversation
 
 ### Create a new group chat
 
-Once you have the verified addresses, create a new group chat:
+Once you have the verified identities, create a new group chat:
 
 :::code-group
 
 ```js [Browser]
 const group = await client.conversations.newGroup(
-  [bo.address, caro.address],
+  [bo.identity, caro.identity],
   createGroupOptions /* optional */
 );
 ```
 
 ```js [Node]
 const group = await client.conversations.newGroup(
-  [bo.address, caro.address],
+  [bo.identity, caro.identity],
   createGroupOptions /* optional */
 );
 ```
 
 ```tsx [React Native]
 // New Group
-const group = await alix.conversations.newGroup([bo.address, caro.address]);
+const group = await alix.conversations.newGroup([bo.identity, caro.identity]);
 
 // New Group with Metadata
-const group = await alix.conversations.newGroup([bo.address, caro.address], {
+const group = await alix.conversations.newGroup([bo.identity, caro.identity], {
   name: "The Group Name",
-  imageUrlSquare: "www.groupImage.com",
+  imageUrl: "www.groupImage.com",
   description: "The description of the group",
   permissionLevel: "admin_only", // 'all_members' | 'admin_only'
 });
@@ -521,27 +536,27 @@ const group = await alix.conversations.newGroup([bo.address, caro.address], {
 
 ```kotlin [Kotlin]
 // New Group
-val group = alix.conversations.newGroup(listOf(bo.address, caro.address))
+val group = alix.conversations.newGroup(listOf(bo.identity, caro.identity))
 
 // New Group with Metadata
-val group = alix.conversations.newGroup(listOf(bo.address, caro.address),
+val group = alix.conversations.newGroup(listOf(bo.identity, caro.identity),
   permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS, // ALL_MEMBERS | ADMIN_ONLY
-  groupName = "The Group Name",
-  groupImageUrlSquare = "www.groupImage.com",
-  groupDescription = "The description of the group",
+  Name = "The Group Name",
+  ImageUrl = "www.groupImage.com",
+  Description = "The description of the group",
 )
 ```
 
 ```swift [Swift]
 // New Group
-let group = try await alix.conversations.newGroup([bo.address, caro.address])
+let group = try await alix.conversations.newGroup([bo.identity, caro.identity])
 
 // New Group with Metadata
-let group = try await alix.conversations.newGroup([bo.address, caro.address],
+let group = try await alix.conversations.newGroup([bo.identity, caro.identity],
   permissionLevel: .admin_only, // .all_members | .admin_only
-  groupName: "The Group Name",
-  groupImageUrlSquare: "www.groupImage.com",
-  groupDescription: "The description of the group",
+  Name: "The Group Name",
+  ImageUrl: "www.groupImage.com",
+  Description: "The description of the group",
 )
 ```
 
@@ -549,34 +564,34 @@ let group = try await alix.conversations.newGroup([bo.address, caro.address],
 
 ### Create a new DM
 
-Once you have the verified addresses, create a new DM:
+Once you have the verified identity, get its inbox ID and create a new DM:
 
 :::code-group
 
 ```js [Browser]
-const group = await client.conversations.newDm(bo.address);
+const group = await client.conversations.newDm(bo.inboxId);
 ```
 
 ```js [Node]
-const group = await client.conversations.newDm(bo.address);
+const group = await client.conversations.newDm(bo.inboxId);
 ```
 
 ```tsx [React Native]
-const dm = await alix.conversations.findOrCreateDm(bo.address);
+const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
 ```
 
 ```kotlin [Kotlin]
-val dm = alix.conversations.findOrCreateDm(bo.address)
+val dm = alix.conversations.findOrCreateDm(bo.inboxId)
 
 // calls the above function under the hood but returns a type conversation instead of a dm
-val conversation = client.conversations.newConversation(address)
+val conversation = client.conversations.newConversation(inboxId)
 ```
 
 ```swift [Swift]
-let dm = try await alix.conversations.findOrCreateDm(with: bo.address)
+let dm = try await alix.conversations.findOrCreateDm(with: bo.inboxId)
 
 // calls the above function under the hood but returns a type conversation instead of a dm
-let conversation = try await client.conversations.newConversation(address)
+let conversation = try await client.conversations.newConversation(inboxId)
 ```
 
 :::
@@ -655,7 +670,7 @@ try await client.conversations.syncAllConversations()
 
 As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
 
-Each message is accompanied by a `contentFallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that content fallbacks are immutable and are predefined in the content type specification. In instances where `contentFallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
 
 :::code-group
 
@@ -663,8 +678,8 @@ Each message is accompanied by a `contentFallback` property, which offers a desc
 const codec = client.codecFor(content.contentType);
 if (!codec) {
   /*Not supported content type*/
-  if (message.contentFallback !== undefined) {
-    return message.contentFallback;
+  if (message.fallback !== undefined) {
+    return message.fallback;
   }
   // Handle other types like ReadReceipts which are not meant to be displayed
 }
@@ -674,8 +689,8 @@ if (!codec) {
 const codec = client.codecFor(content.contentType);
 if (!codec) {
   /*Not supported content type*/
-  if (message.contentFallback !== undefined) {
-    return message.contentFallback;
+  if (message.fallback !== undefined) {
+    return message.fallback;
   }
   // Handle other types like ReadReceipts which are not meant to be displayed
 }
@@ -697,8 +712,8 @@ if (!isRegistered) {
 val codec = client.codecRegistry.find(options?.contentType)
 if (!codec) {
   /*Not supported content type*/
-  if (message.contentFallback != null) {
-    return message.contentFallback
+  if (message.fallback != null) {
+    return message.fallback
   }
   // Handle other types like ReadReceipts which are not meant to be displayed
 }
@@ -708,8 +723,8 @@ if (!codec) {
 let codec = client.codecRegistry.find(for: contentType)
 if (!codec) {
   /*Not supported content type*/
-  if (message.contentFallback != null) {
-    return message.contentFallback
+  if (message.fallback != null) {
+    return message.fallback
   }
   // Handle other types like ReadReceipts which are not meant to be displayed
 }
@@ -885,7 +900,9 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 
 ### Conversation helper methods
 
-Use these helper methods to quickly locate and access specific conversations—whether by ID, topic, group ID, or DM address—returning the appropriate ConversationContainer, group, or DM object.
+Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
+
+jhaaaa ConvoId should be renamed to conversationId - jha: docs did not include any instances of convoId
 
 :::code-group
 
@@ -922,7 +939,7 @@ await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
 await alix.conversations.findGroup(group.id);
 // Returns a DM
-await alix.conversations.findDmByAddress(bo.address);
+await alix.conversations.findDmByIdentity(bo.identity);
 ```
 
 ```kotlin [Kotlin]
@@ -932,7 +949,7 @@ alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 alix.conversations.findGroup(group.id)
 // Returns a DM
-alix.conversations.findDm(bo.address)
+alix.conversations.findDm(bo.identity);
 ```
 
 ```swift [Swift]
@@ -942,7 +959,7 @@ try alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 try alix.conversations.findGroup(group.id)
 // Returns a DM
-try alix.conversations.findDm(bo.address)
+try alix.conversations.findDm(bo.identity)
 ```
 
 :::

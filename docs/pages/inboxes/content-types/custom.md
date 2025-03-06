@@ -438,6 +438,8 @@ xmtp.registerCodec(new ContentTypeTransactionHashCodec());
 
 This code sample demonstrates how to use the `TransactionHash` content type to send a transaction.
 
+jhaaaa
+
 ```jsx [Browser]
 // Create a wallet from a known private key
 const wallet = new ethers.Wallet(privateKey);
@@ -479,6 +481,8 @@ await conversation
     console.log("Error sending transaction data: ", error);
   });
 ```
+
+jhaaaa
 
 ### Use the result of the hash
 

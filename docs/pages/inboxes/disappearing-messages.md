@@ -39,6 +39,8 @@ To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bi
 
 For example:
 
+jhaaaa
+
 :::code-group
 
 ```tsx [React Native]
@@ -106,6 +108,8 @@ try await client.conversations.newGroup(
 ```
 
 :::
+
+jhaaaa
 
 ### Update disappearing message settings for an existing conversation
 
