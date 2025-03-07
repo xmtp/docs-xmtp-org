@@ -497,7 +497,8 @@ const remoteAttachments: RemoteAttachmentInfo[] = []
     const { encryptedLocalFileUri, metadata } = await alix.encryptAttachment(attachment)
 
     // Upload the attachment to a remote server and receive the URL
-    const url = testUploadAttachmentForUrl(encryptedLocalFileUri)
+    // (Integrator must supply upload from local uri and return url functionality!)
+    const url = uploadAttachmentForUrl(encryptedLocalFileUri)
 
     // Build the remote attachment info
     const remoteAttachmentInfo =
@@ -511,9 +512,14 @@ val attachmentCodec = AttachmentCodec()
 val remoteAttachmentInfos: MutableList<RemoteAttachmentInfo> = ArrayList()
 
 for (attachment: Attachment in listOf(attachment1, attachment2)) {
+    // 1) Encode the attachment to raw bytes
     val encodedBytes = attachmentCodec.encode(attachment).toByteArray()
+    // 2) Encrypt the bytes locally
     val encryptedAttachment = MultiRemoteAttachmentCodec.encryptBytesForLocalAttachment(encodedBytes, attachment.filename)
-    val url = testUploadEncryptedPayload(encryptedAttachment.payload.toByteArray())
+    // 3) "Upload" it, and get a url string back
+    // (Integrator must supply upload from local uri and return url functionality!)
+    val url = uploadEncryptedPayload(encryptedAttachment.payload.toByteArray())
+    // 4) Build a RemoteAttachmentInfo for that URL and encryptedAttachment
     val remoteAttachmentInfo = MultiRemoteAttachmentCodec.buildRemoteAttachmentInfo(encryptedAttachment, URL(url))
     remoteAttachmentInfos.add(remoteAttachmentInfo)
 }
@@ -527,9 +533,10 @@ for att in [attachment1, attachment2] {
     let encodedBytes = try AttachmentCodec().encode(content: att).serializedData()
     // 2) Encrypt the bytes locally
     let encrypted = try MultiRemoteAttachmentCodec.encryptBytesForLocalAttachment(encodedBytes, filename: att.filename)
-    // 3) "Upload" it, and get a random https:// URL back
+    // 3) "Upload" it, and get a url string back
+    // (Integrator must supply upload from local uri and return url functionality!)
     let urlString = fakeUpload(encrypted.payload)
-    // 4) Build a RemoteAttachmentInfo for that URL
+    // 4) Build a RemoteAttachmentInfo for that URL and encryptedAttachment
     let info = try MultiRemoteAttachmentCodec.buildRemoteAttachmentInfo(
         encryptedAttachment: encrypted,
         remoteUrl: URL(string: urlString)!
@@ -574,12 +581,12 @@ runBlocking {
 ```swift [Swift]
 let multiRemoteAttachment = MultiRemoteAttachment(remoteAttachments: remoteAttachmentInfos)
 let encodedContent = try MultiRemoteAttachmentCodec().encode(content: multiRemoteAttachment)
-_ = try await alixConversation.send(encodedContent: encodedContent)
+try await alixConversation.send(encodedContent: encodedContent)
 ```
 
 :::
 
-### Decode a message with multiple remote attachments
+### Recognize and decode a multi remote attachment
 
 :::code-group
 
@@ -592,36 +599,38 @@ code sample needed
 ```
 
 ```ts [React Native]
-const message = (await group.messages()).first()
-if (message.contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0') {
-    const multiRemoteAttachment: MultiRemoteAttachment = message.content()
+const messages = await conversation.messages()
+if (messages.size > 0 && messages[0].contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0') {
+  // Decode the raw content back into a MultiRemoteAttachment
+    const multiRemoteAttachment: MultiRemoteAttachment = messages[0].content()
+
+    // See next section for download, and decrypt the attachments
 }
 ```
 
 ```kotlin [Kotlin]
-val loadedMultiRemoteAttachment: FfiMultiRemoteAttachment = messages[0].content()!!
+val messages = runBlocking { conversation.messages() }
+if (messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMultiRemoteAttachment)) {
+    // Decode the raw content back into a MultiRemoteAttachment
+  val multiRemoteAttachment: FfiMultiRemoteAttachment = messages[0].content()!!
 
-val remoteAttachments = loadedMultiRemoteAttachment.attachments.map { attachment ->
-    RemoteAttachment(
-        url = URL(attachment.url),
-        filename = attachment.filename,
-        contentDigest = attachment.contentDigest,
-        nonce = attachment.nonce.toByteString(),
-        scheme = attachment.scheme,
-        salt = attachment.salt.toByteString(),
-        secret = attachment.secret.toByteString(),
-        contentLength = attachment.contentLength?.toInt(),
-    )
+  // See next section for download, and decrypt the attachments
 }
 ```
 
 ```swift [Swift]
-let loadedMultiRemoteAttachment: MultiRemoteAttachment = try received.content()
+let messages = try await conversation.messages()
+if messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMultiRemoteAttachment.id) {
+  // Decode the raw content back into a MultiRemoteAttachment
+  let multiRemoteAttachment: MultiRemoteAttachment = try messages[0].content()
+
+  // See next section for download, and decrypt the attachments
+}
 ```
 
 :::
 
-### Download and decrypt the attachments
+### Decode, download, and decrypt the attachments
 
 :::code-group
 
@@ -635,9 +644,11 @@ code sample needed
 
 ```ts [React Native]
 const decryptedAttachments: DecryptedLocalAttachment[] = []
+
 for (const attachment of multiRemoteAttachment.attachments) {
     // Downloading the encrypted payload from the attachment URL and save the local file
-    const encryptedFileLocalURIAfterDownload: string = downloadFromUrlForLocalUri(
+    // (Integrator must supply download from url and save to local Uri functionality!)
+    const encryptedFileLocalURIAfterDownload: string = downloadFromUrl(
       attachment.url
     )
     // Decrypt the local file
@@ -656,56 +667,73 @@ for (const attachment of multiRemoteAttachment.attachments) {
 ```
 
 ```kotlin [Kotlin]
-val textAttachments: MutableList<Attachment> = ArrayList()
+val decryptedAttachments: MutableList<Attachment> = ArrayList()
 
-for (remoteAttachment: RemoteAttachment in remoteAttachments) {
-    val url = remoteAttachment.url.toString()
-    // Simulate Download
-    val encryptedPayload: ByteArray = encryptedPayloadUrls[url]!!
-    // Combine encrypted payload with RemoteAttachmentInfo
-    val encryptedAttachment: EncryptedEncodedContent = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(remoteAttachment, encryptedPayload)
-    // Decrypt payload
-    val encodedContent: EncodedContent = MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
-    // Convert EncodedContent to Attachment
-    val attachment = attachmentCodec.decode(encodedContent)
-    textAttachments.add(attachment)
+for (remoteAttachmentInfo: FfiRemoteAttachmentInfo in multiRemoteAttachment.attachments) {
+  // convert to FfiRemoteAttachmentInfo to RemoteAttachment
+  val remoteAttachment = RemoteAttachment(
+    url = URL(remoteAttachmentInfo.url),
+    filename = remoteAttachmentInfo.filename,
+    contentDigest = remoteAttachmentInfo.contentDigest,
+    nonce = remoteAttachmentInfo.nonce.toByteString(),
+    scheme = remoteAttachmentInfo.scheme,
+    salt = remoteAttachmentInfo.salt.toByteString(),
+    secret = remoteAttachmentInfo.secret.toByteString(),
+    contentLength = remoteAttachmentInfo.contentLength?.toInt(),
+  )
+  // Download the encrypted payload (Integrator must supply download from url functionality!)
+  val url = remoteAttachment.url.toString()
+  val encryptedPayload: ByteArray = downloadFromUrl(url)
+
+  // Combine encrypted payload with RemoteAttachment to create an EncryptedEncodedContent Object
+  val encryptedAttachment: EncryptedEncodedContent = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(remoteAttachment, encryptedPayload)
+  
+  // Decrypt payload
+  val encodedContent: EncodedContent = MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
+  
+  // Convert EncodedContent to Attachment
+  val attachment = attachmentCodec.decode(encodedContent)
+  decryptedAttachments.add(attachment)
 }
 ```
 
 ```swift [Swift]
-var decodedAttachments: [Attachment] = []
-for info in loadedMultiRemoteAttachment.remoteAttachments {
+var decryptedAttachments: [Attachment] = []
+
+for remoteAttachmentInfo in multiRemoteAttachment.remoteAttachments {
+    // convert to RemoteAttachmentInfo to RemoteAttachment
     let remoteAttachment = try RemoteAttachment(
-        url: info.url,
-        contentDigest: info.contentDigest,
-        secret: info.secret,
-        salt: info.salt,
-        nonce: info.nonce,
-        scheme: RemoteAttachment.Scheme(rawValue: info.scheme) ?? .https,
-        contentLength: Int(info.contentLength),
-        filename: info.filename
+        url: remoteAttachmentInfo.url,
+        contentDigest: remoteAttachmentInfo.contentDigest,
+        secret: remoteAttachmentInfo.secret,
+        salt: remoteAttachmentInfo.salt,
+        nonce: remoteAttachmentInfo.nonce,
+        scheme: RemoteAttachment.Scheme(rawValue: remoteAttachmentInfo.scheme) ?? .https,
+        contentLength: Int(remoteAttachmentInfo.contentLength),
+        filename: remoteAttachmentInfo.filename
     )
 
-    // Download the encrypted payload
-    guard let downloadedPayload = encryptedPayloads[remoteAttachment.url] else {
-        XCTFail("No stored payload for \(remoteAttachment.url)")
-        return
-    }
+    // Download the encrypted payload (Integrator must supply download from url functionality!)
+    guard let encryptedPayload = downloadFromUrl(remoteAttachment.url)
 
+    // Combine encrypted payload with RemoteAttachment to create an EncryptedEncodedContent Object
     let encryptedAttachment = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(
         remoteAttachment: remoteAttachment,
         encryptedPayload: downloadedPayload
     )
 
-    let decodedContent = try MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
-    let finalAttachment: Attachment = try decodedContent.decoded()
-    decodedAttachments.append(finalAttachment)
+    // Decrypt payload
+    let encodedContent = try MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
+
+    // Convert EncodedContent to Attachment
+    let attachment: Attachment = try encodedContent.decoded()
+    decryptedAttachments.append(attachment)
 }
 ```
 
 :::
 
-### Display the attachments
+### Accessing the unencrypted attachments
 
 Use the file URIs in the decrypted attachments objects to display the attachments.
 
@@ -720,6 +748,7 @@ code sample needed
 ```
 
 ```ts [React Native]
+// Example showing displaying attachments if you they represent images
 const attachment1 = decryptedAttachments[0]
 const attachment2 = decryptedAttachments[1]
 
@@ -728,16 +757,16 @@ const attachment2 = decryptedAttachments[1]
 ```
 
 ```kotlin [Kotlin]
-    assertEquals(textAttachments[0].filename, "test1.txt")
-    assertEquals(textAttachments[1].filename, "test2.txt")
-} else {
-    AssertionError("expected a MultiRemoteAttachment message")
-}
+// Example showing accessing filenames of final decrypted attachments
+assertEquals(decryptedAttachments[0].filename, "test1.txt")
+assertEquals(decryptedAttachments[1].filename, "test2.txt")
+
 ```
 
 ```swift [Swift]
-decodedAttachments[0].filename // "test1.txt"
-decodedAttachments[1].filename // "test2.txt"
+// Example showing accessing filenames of final decrypted attachments
+XCTAssertEqual(decryptedAttachments[0].filename, "test1.txt")
+XCTAssertEqual(decryptedAttachments[1].filename, "test2.txt")
 ```
 
 :::
