@@ -3,7 +3,7 @@
 The process to upgrade an app built with XMTP V2 to V3 is designed to be straightforward, with most functions in V3 working as they did in V2. However, there are some notable differences, which we cover here.
 
 :::info[Key takeaways]
-- **Primary XMTP identifier is now a flexible identity object, not an Ethereum address** as covered in this document.
+- **Primary XMTP identifier is now an inboxId instead of an Ethereum address**. As covered further in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
 - **We recommend that apps upgrade directly to V3**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. To learn more, see the [FAQ](/upgrade-to-v3#faq).
 - ⛔️ **Rolling brownouts of the V2 network start on April 1, 2025. V2 will be deprecated on May 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP 53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
@@ -19,12 +19,27 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 
 ## Primary XMTP identifier is now a flexible identity object, not an Ethereum address
 
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to a more flexible identity model. This change allows for broader support of different authentication mechanisms, including the currently supported Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs), as well as future support for Passkeys.
+XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs), as well as future support for Passkeys.
 
-Instead of assuming an Ethereum address as the unique identifier, developers now define an identity object that explicitly includes the identity type (kind) and the identifier.
+Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. Inboxes will have a list of identity objects that explicitly includes the identity type (kind) and the identifier.
 
-With this new model, apps reference identities or inbox IDs, rather than Ethereum addresses. Some identity types (like Passkeys) do not have an associated address, so identities and inbox IDs provide a consistent way to identify users across different authentication methods.
+With this new model, apps reference users by inbox IDs, rather than Ethereum addresses. An `inboxId` will have a list of identities. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
 
+For example:
+
+```json
+[
+  {
+    "kind": "ETHEREUM",
+    "identifier": "0x1234567890abcdef1234567890abcdef12345678",
+    "relyingPartner": null
+  },
+  {
+    "kind": "PASSKEY",
+    "identifier": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMk",
+    "relyingPartner": "NameOfAppUsedToCreatePasskey"
+  }
+]
 This change ensures that XMTP identities are more extensible and adaptable, accommodating future improvements in authentication methods while maintaining backward compatibility for Ethereum-based accounts.
 
 ### Example: Supporting multiple identity types
