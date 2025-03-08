@@ -102,6 +102,12 @@ This is one of the jobs of the [history sync](/inboxes/history-sync) feature. It
 
 ## Understand DM stitching and push notifications
 
+🎥 walkthrough: DM stitching
+
+This video provides a walkthrough of direct message (DM) stitching, covering the key ideas discussed in this section. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/YF5m_mTY6mw?si=EH0S4eP0GPEAafIw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 Consider a scenario where `alix.eth` using an existing installation #1 to create a conversation with `bo.eth` and sends them a DM. And then `alix.eth` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/inboxes/history-sync) to bring in their existing conversations, `alix.eth` creates a new conversation with `bo.eth` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of addresses, `alix.eth` and `bo.eth`, resulting in a confusing DM UX like this one:
 
 ![No DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/no-dm-stitching.png)
