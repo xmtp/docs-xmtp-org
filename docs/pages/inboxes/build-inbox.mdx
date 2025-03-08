@@ -30,8 +30,6 @@ Learn to build a chat inbox with the help of [XMTP.chat](https://xmtp.chat/), an
 
 This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface. This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements.
 
-jhaaaa these EOA and SCW code samples include "address" in the comments to call out when the kind is Ethereum and the identifier is an Ethereum address. Is this OK or have I misunderstood?
-
 - For an EOA, the `convertEOAToSigner` function creates a signer that can get the account identity and sign messages and has placeholder methods for chain ID and block number.
 
   :::code-group
@@ -520,17 +518,17 @@ const group = await client.conversations.newGroup(
 
 ```js [Node]
 const group = await client.conversations.newGroup(
-  [bo.identity, caro.identity],
+  [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 ```
 
 ```tsx [React Native]
 // New Group
-const group = await alix.conversations.newGroup([bo.identity, caro.identity]);
+const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId]);
 
 // New Group with Metadata
-const group = await alix.conversations.newGroup([bo.identity, caro.identity], {
+const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
   name: "The Group Name",
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
@@ -540,10 +538,10 @@ const group = await alix.conversations.newGroup([bo.identity, caro.identity], {
 
 ```kotlin [Kotlin]
 // New Group
-val group = alix.conversations.newGroup(listOf(bo.identity, caro.identity))
+val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId))
 
 // New Group with Metadata
-val group = alix.conversations.newGroup(listOf(bo.identity, caro.identity),
+val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId),
   permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS, // ALL_MEMBERS | ADMIN_ONLY
   Name = "The Group Name",
   ImageUrl = "www.groupImage.com",
@@ -553,10 +551,10 @@ val group = alix.conversations.newGroup(listOf(bo.identity, caro.identity),
 
 ```swift [Swift]
 // New Group
-let group = try await alix.conversations.newGroup([bo.identity, caro.identity])
+let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId])
 
 // New Group with Metadata
-let group = try await alix.conversations.newGroup([bo.identity, caro.identity],
+let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   permissionLevel: .admin_only, // .all_members | .admin_only
   Name: "The Group Name",
   ImageUrl: "www.groupImage.com",
@@ -906,8 +904,6 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 
 Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
 
-jhaaaa ConvoId should be renamed to conversationId - jha: docs did not include any instances of convoId
-
 :::code-group
 
 ```js [Browser]
@@ -943,7 +939,7 @@ await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
 await alix.conversations.findGroup(group.id);
 // Returns a DM
-await alix.conversations.findDmByIdentity(bo.identity);
+await alix.conversations.findDmByInboxId(bo.inboxId);
 ```
 
 ```kotlin [Kotlin]
@@ -953,7 +949,7 @@ alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 alix.conversations.findGroup(group.id)
 // Returns a DM
-alix.conversations.findDm(bo.identity);
+alix.conversations.findDm(bo.inboxId);
 ```
 
 ```swift [Swift]
@@ -963,7 +959,7 @@ try alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 try alix.conversations.findGroup(group.id)
 // Returns a DM
-try alix.conversations.findDm(bo.identity)
+try alix.conversations.findDm(bo.inboxId)
 ```
 
 :::
