@@ -21,7 +21,7 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 
 XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs), as well as future support for Passkeys.
 
-Instead of assuming an Ethereum address as the unique identifier, developers now define an identity object that explicitly includes the identity type (kind) and the identifier.
+Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. Inboxes will have a list of identity objects that explicitly includes the identity type (kind) and the identifier.
 
 With this new model, apps reference identities or inbox IDs, rather than Ethereum addresses. Some identity types (like Passkeys) do not have an associated address, so identities and inbox IDs provide a consistent way to identify users across different authentication methods.
 
