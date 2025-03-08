@@ -471,7 +471,11 @@ const canMessage = await client.canMessage([
 
 ```kotlin [Kotlin]
 // Request
-val canMessage = client.canMessage(listOf('0xboIdentity', '0xV2OnlyIdentity','0xBadIdentity'))
+val boIdentity = Identity(ETHEREUM, '0xboAddress')
+val v2Identity = Identity(ETHEREUM, '0xV2OnlyAddress')
+val badIdentity = Identity(ETHEREUM, '0xBadAddress')
+
+val canMessage = client.canMessage(listOf(boIdentity, v2Identity, badIdentity))
 
 // Response
 [
