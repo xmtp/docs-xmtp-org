@@ -513,7 +513,7 @@ Once you have the verified identities, create a new group chat:
 
 ```js [Browser]
 const group = await client.conversations.newGroup(
-  [bo.identity, caro.identity],
+  [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 ```
