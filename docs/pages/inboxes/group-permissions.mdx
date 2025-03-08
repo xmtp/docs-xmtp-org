@@ -356,11 +356,11 @@ try await group.removeMemberInboxIds(inboxIds: [inboxId])
 :::code-group
 
 ```js [Browser]
-const inboxId = await client.findInboxIdByIdentity(identity);
+const inboxId = await client.findInboxIdByIdentities([bo.identity, caro.identity]);
 ```
 
 ```js [Node]
-const inboxId = await client.getInboxIdByIdentity(identity);
+const inboxId = await client.getInboxIdByIdentities([bo.identity, caro.identity]);
 ```
 
 ```tsx [React Native]
