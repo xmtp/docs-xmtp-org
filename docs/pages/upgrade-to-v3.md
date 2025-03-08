@@ -25,6 +25,21 @@ Instead of assuming an Ethereum address as the unique identifier, developers sho
 
 With this new model, apps reference users by inbox IDs, rather than Ethereum addresses. An `inboxId` will have a list of identities. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
 
+For example:
+
+```json
+[
+  {
+    "kind": "ETHEREUM",
+    "identifier": "0x1234567890abcdef1234567890abcdef12345678",
+    "relyingPartner": null
+  },
+  {
+    "kind": "PASSKEY",
+    "identifier": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMk",
+    "relyingPartner": "NameOfAppUsedToCreatePasskey"
+  }
+]
 This change ensures that XMTP identities are more extensible and adaptable, accommodating future improvements in authentication methods while maintaining backward compatibility for Ethereum-based accounts.
 
 ### Example: Supporting multiple identity types
