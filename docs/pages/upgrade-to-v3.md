@@ -40,6 +40,8 @@ For example:
     "relyingPartner": "NameOfAppUsedToCreatePasskey"
   }
 ]
+```
+
 This change ensures that XMTP identities are more extensible and adaptable, accommodating future improvements in authentication methods while maintaining backward compatibility for Ethereum-based accounts.
 
 ### Example: Supporting multiple identity types
