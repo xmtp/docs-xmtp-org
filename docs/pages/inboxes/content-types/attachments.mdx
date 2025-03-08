@@ -426,14 +426,6 @@ Each attachment in the attachments array contains a URL that points to an encryp
 
 :::code-group
 
-```ts [Browser]
-code sample needed
-```
-
-```ts [Node]
-code sample needed
-```
-
 ```ts [React Native]
 const attachment1: DecryptedLocalAttachment = {
   fileUri: "content://media/external/images/media/image-1.png",
@@ -481,14 +473,6 @@ let attachment2 = Attachment(
 ### Encrypt and upload multiple attachments to a remote server
 
 :::code-group
-
-```ts [Browser]
-code sample needed
-```
-
-```ts [Node]
-code sample needed
-```
 
 ```ts [React Native]
 const remoteAttachments: RemoteAttachmentInfo[] = []
@@ -551,14 +535,6 @@ for att in [attachment1, attachment2] {
 
 :::code-group
 
-```ts [Browser]
-code sample needed
-```
-
-```ts [Node]
-code sample needed
-```
-
 ```ts [React Native]
 await convo.send({
     multiRemoteAttachment: {
@@ -589,14 +565,6 @@ try await alixConversation.send(encodedContent: encodedContent)
 ### Recognize and decode a multi remote attachment
 
 :::code-group
-
-```ts [Browser]
-code sample needed
-```
-
-```ts [Node]
-code sample needed
-```
 
 ```ts [React Native]
 const messages = await conversation.messages()
@@ -633,14 +601,6 @@ if messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMul
 ### Decode, download, and decrypt the attachments
 
 :::code-group
-
-```ts [Browser]
-code sample needed
-```
-
-```ts [Node]
-code sample needed
-```
 
 ```ts [React Native]
 const decryptedAttachments: DecryptedLocalAttachment[] = []
@@ -738,14 +698,6 @@ for remoteAttachmentInfo in multiRemoteAttachment.remoteAttachments {
 Use the file URIs in the decrypted attachments objects to display the attachments.
 
 :::code-group
-
-```ts [Browser]
-code sample needed
-```
-
-```ts [Node]
-code sample needed
-```
 
 ```ts [React Native]
 // Example showing displaying attachments if they represent images
