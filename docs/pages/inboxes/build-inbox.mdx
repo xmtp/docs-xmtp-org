@@ -333,8 +333,6 @@ To learn more about database operations, see the [XMTP MLS protocol spec](https
 
 You can configure an XMTP client with these parameters of `Client.create`:
 
-jhaaaa how about keystoreProviders, persistConversations, skipContactPublishing, codecs, maxContentSize, preCreateIdentityCallback, preEnableIdentityCallback, basePersistence, apiClientFactory
-
 | Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments). |
@@ -454,16 +452,16 @@ const response = await Client.canMessage([bo.identity, caro.identity]);
 ```tsx [React Native]
 // Request
 const canMessage = await client.canMessage([
-  '0xboIdentity',
-  '0xV2OnlyIdentity',
-  '0xBadIdentity',
+  'boIdentity',
+  'v2OnlyIdentity',
+  'badIdentity',
 ])
 
 // Response
 {
-  "0xboIdentity": true,
-  "0xV2OnlyIdentity": false,
-  "0xBadIdentity": false,
+  "boIdentity": true,
+  "v2OnlyIdentity": false,
+  "badIdentity": false,
 }
 ```
 
@@ -489,9 +487,9 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 
 // Response
 [
-  "0xboIdentity": true,
-  "0xV2OnlyIdentity": false,
-  "0xBadIdentity": false,
+  "boIdentity": true,
+  "v2OnlyIdentity": false,
+  "badIdentity": false,
 ]
 ```
 

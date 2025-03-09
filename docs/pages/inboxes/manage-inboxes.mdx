@@ -87,13 +87,13 @@ You can revoke all installations other than the currently accessed installation.
 For example, consider a user using this current installation:
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install-id.png" width="350px" />
 </div>
 
 When the user revokes all other installations, the action removes their identity's access to all installations other than the current installation:
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install-id.png" width="350px" />
 </div>
 
 :::code-group
@@ -159,7 +159,11 @@ let states = try await client.inboxStatesForInboxIds(
 
 **Sample response**
 
-jhaaaa add note that passkeys not yet supported - just an example
+:::tip
+
+Passkeys are not yet supported and are referenced here just to illustrate the flexibility of the inbox-based model.
+
+:::
 
 ```json
 InboxState
@@ -201,7 +205,7 @@ If the user removes an identity from the inbox, the identity no longer has acces
 The identity can no longer be added to or used to access conversations in that inbox. If someone sends a message to the identity, the message is not associated with the original inbox. If the user logs in to a new installation with the identity, this will create a new inbox ID.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox.png" width="650px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox-id.png" width="650px" />
 </div>
 
 ### How is the recovery identity used?

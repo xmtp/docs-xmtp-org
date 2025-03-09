@@ -329,8 +329,6 @@ You can filter these unknown contacts to:
 
 ### Identify contacts the user might know
 
-jhaaa for identities that don't have addresses -- what kind of onchain data signals can devs use?
-
 To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. 
 
 ```kotlin
@@ -364,8 +362,6 @@ The decision to scan unencrypted messages is yours as the app developer. If you 
 ### Why is content moderation handled by apps and not XMTP?
 
 XMTP is a decentralized, open protocol built to ensure private, secure, and censorship-resistant communication. As such, XMTP can't read unencrypted messages, and therefore, it also can't scan or filter message contents for spammy or scammy material.
-
-jhaaaa for identities that don't have addresses -- what kind of onchain data signals can devs use?
 
 The protocol can analyze onchain data signals, such as shared activity between wallet addresses, to infer potential affinities between addresses. However, because all XMTP repositories are open source, malicious actors could inspect these methods and develop workarounds to bypass them. 
 

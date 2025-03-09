@@ -50,7 +50,7 @@ With this new model, an app can now distinguish different identity types when cr
 
 :::tip
 
-Passkeys are not yet supported and are referenced here just to illustrate the flexibility of the new identity model.
+Passkeys are not yet supported and are referenced here just to illustrate the flexibility of the new inbox-based model.
 
 :::
 
@@ -175,20 +175,9 @@ In V3, we have installation-specific key bundles that are stored securely in the
 ## Managing consent
 
 - In V2, we managed consent via `client.contacts.consentList`.
-- In V3, we can manage consent via `client.preferences.getAddressConsent(address)`. However, we recommend that you now manage consent at the conversation level by `conversationId`. To learn more, see [Support user consent preferences](/inboxes/user-consent/support-user-consent#support-user-consent-preferences-to-provide-spam-free-inboxes).
-
-<<<<<<<<<We're no longer doing consent based on address. It's going to be based on inbox id like there just needs to be like
-a really clear call out of the transition from inbox id to Doc.>>>>>>>>>
+- In V3, we can manage consent via `client.preferences.getInboxIdConsent(inboxId)`. However, we recommend that you now manage consent at the conversation level by `conversationId`. To learn more, see [Support user consent preferences](/inboxes/user-consent/support-user-consent#support-user-consent-preferences-to-provide-spam-free-inboxes).
 
 ## Summary of notable changes
-
-<<<<<<<<<<<<If you want to still do it by address, like a new conversation. We will still allow that, and I can give you the code snippet for it. It'll be new conversation with identity.
-and then the identity will be like it'll be like a map, or whatever of like ethereum
-and then the ethereum address.
-So instead of being a string, it's like,
-yeah. So like, if you give me like,
-maybe it's in this section. I can. I can do the code snippets of like the difference between the 2.
->>>>>>>>>>>>
 
 | Purpose | V2 method | V3 equivalent |
 | --- | --- | --- |
@@ -198,7 +187,7 @@ maybe it's in this section. I can. I can do the code snippets of like the differ
 | Create client | `client.createFromKeyBundle` | `client.build` |
 | Sign a message | `client.privateKeyBundle.sign(message)` | `client.signWithInstallationKey(message)` |
 | Verify a signature | `Signature.verify(signature)` | `client.verifyInstallationSignature(message, signature, installationId)` |
-| Manage consent | `client.contacts.consentList` | `client.preferences.getAddressConsent(address)` |
+| Manage consent | `client.contacts.consentList` | `client.preferences.getInboxIdConsent(inboxId)` |
 
 ## FAQ
 
