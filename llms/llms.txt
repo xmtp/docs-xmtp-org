@@ -1,3 +1,17 @@
+# XMTP Full Documentation
+
+## Instructions for AI Tools
+
+This documentation includes code samples for multiple SDKs. Please use the code samples that correspond to the SDK you are working with:
+
+- For **xmtp-react-native**, use the code samples marked with `[React Native]`.
+- For **xmtp-android**, use the code samples marked with `[Kotlin]`.
+- For **xmtp-ios**, use the code samples marked with `[Swift]`.
+- For **xmtp-js** in a browser environment, use the code samples marked with `[Browser]`.
+- For **xmtp-js** in a Node.js environment, use the code samples marked with `[Node]`.
+
+Ensure that you select the correct code block to avoid compatibility issues.
+
 ## doc-status.md
 # XMTP documentation status
 
