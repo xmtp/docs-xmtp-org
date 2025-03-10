@@ -1,6 +1,6 @@
 # Manage XMTP inboxes
 
-With XMTP, a user can have one or more inboxes they use to access their messages. An inbox can have multiple identities associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
+With XMTP, a user can have one or more inboxes they use to access their messages. An inbox can have multiple identities associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
 
 All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
 
@@ -159,12 +159,6 @@ let states = try await client.inboxStatesForInboxIds(
 
 **Sample response**
 
-:::tip
-
-Passkeys are not yet supported and are referenced here just to illustrate the flexibility of the inbox-based model.
-
-:::
-
 ```json
 InboxState
 {
@@ -176,7 +170,7 @@ InboxState
       "relyingPartner": "string"
     },
     {
-      "kind": "PASSKEY",
+      "kind": "PASSKEY",  // not yet supported; provided as an example only.
       "identifier": "string",
       "relyingPartner": "string"
     }

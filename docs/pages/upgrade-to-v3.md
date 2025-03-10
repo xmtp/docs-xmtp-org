@@ -3,9 +3,9 @@
 The process to upgrade an app built with XMTP V2 to V3 is designed to be straightforward, with most functions in V3 working as they did in V2. However, there are some notable differences, which we cover here.
 
 :::info[Key takeaways]
-- **Primary XMTP identifier is now an inboxId instead of an Ethereum address**. As covered further in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
+- **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
-- **We recommend that apps upgrade directly to V3**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. To learn more, see the [FAQ](/upgrade-to-v3#faq).
+- **We recommend that apps upgrade directly to XMTP V3**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. To learn more, see the [FAQ](/upgrade-to-v3#faq).
 - ⛔️ **Rolling brownouts of the V2 network start on April 1, 2025. V2 will be deprecated on May 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP 53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 :::
 
@@ -17,13 +17,11 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 
 - 🟢 **The agent upgrade path is ready**. For detailed guidance, [open an issue](https://github.com/xmtp/xmtp-js/issues) in the Node SDK GitHub repo.
 
-## Primary XMTP identifier is now a flexible identity object, not an Ethereum address
+## Primary XMTP identifier is now an inbox ID, not an Ethereum address
 
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs), as well as future support for Passkeys.
+XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/build-inbox#create-an-account-signer), as well as future support for Passkeys and other identity types.
 
-Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. Inboxes will have a list of identity objects that explicitly includes the identity type (kind) and the identifier.
-
-With this new model, apps reference users by inbox IDs, rather than Ethereum addresses. An `inboxId` will have a list of identities. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
+Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. An `inboxId` has a list of identity objects that explicitly includes the identity type (kind) and identifier. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
 
 For example:
 
@@ -35,7 +33,7 @@ For example:
     "relyingPartner": null
   },
   {
-    "kind": "PASSKEY",
+    "kind": "PASSKEY", // not yet supported; provided as an example only.
     "identifier": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMk",
     "relyingPartner": "NameOfAppUsedToCreatePasskey"
   }
@@ -46,19 +44,13 @@ This change ensures that XMTP identities are more extensible and adaptable, acco
 
 ### Example: Supporting multiple identity types
 
-With this new model, an app can now distinguish different identity types when creating a signer
-
-:::tip
-
-Passkeys are not yet supported and are referenced here just to illustrate the flexibility of the new inbox-based model.
-
-:::
+With this new model, an app can now distinguish different identity types when creating a signer.
 
 ```tsx
 function createSigner(account): Signer {
   return {
     getIdentity: async () => ({
-      kind: account.isSCW ? "ETHEREUM" : "PASSKEY",
+      kind: account.isSCW ? "ETHEREUM" : "PASSKEY", // Passkeys are not yet supported; provided as an example only.
       identifier: account.address || account.passkeyId,
     }),
     signMessage: async (message) => {
@@ -92,7 +84,7 @@ Now, `getIdentity()` returns an identity object, allowing for multiple types of 
 ```tsx
 const signer: Signer = {
   getIdentity: () => ({
-    kind: "ETHEREUM", // Identity type (ETHEREUM, PASSKEY, etc.)
+    kind: "ETHEREUM", // Identity type [ETHEREUM, PASSKEY (passkeys are not yet supported), etc.]
     identifier: "0x123...", // Account identifier
   }),
   signMessage: async (message) => {
@@ -111,7 +103,7 @@ const dm = await alix.conversations.findOrCreateDm(bo.address);
 
 ### After: newConveration()
 
-Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an address.
+Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
 
 ```tsx
 const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
@@ -123,7 +115,7 @@ Most core methods from V2, such as `newConversation`, `list`, `stream`, and `str
 
 However, key differences include:
 
-- `newConversation` no longer takes addresses, but rather inbox IDs, as covered in [Primary XMTP identifier is now a flexible identity object, not an Ethereum address](#primary-xmtp-identifier-is-now-a-flexible-identity-object-not-an-ethereum-address)
+- `newConversation` no longer takes addresses, but rather inbox IDs, as covered in [Primary XMTP identifier is now an inboxId, not an Ethereum address](#primary-xmtp-identifier-is-now-an-inbox-id-not-an-ethereum-address)
 
 - Prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
 
@@ -181,6 +173,7 @@ In V3, we have installation-specific key bundles that are stored securely in the
 
 | Purpose | V2 method | V3 equivalent |
 | --- | --- | --- |
+| Create a new conversation | `findOrCreateDm(bo.address);` | `findOrCreateDm(bo.inboxId);` |
 | Loading messages | `listBatchMessages` | `list()` |
 | Push notification decryption | `fromInvite`, `fromIntro` | `fromWelcome` |
 | Get topic IDs for push notifications | `/xmtp/0/invite-$address/proto` | `/xmtp/mls/1/w-$installationId/proto` |
@@ -221,7 +214,7 @@ V3 delivers an enhanced encryption scheme that is even more secure than V2, layi
 
 We recommend that apps upgrade directly to V3, giving people access to a pure V3+ messaging experience.
 
-To ensure continuity, Ephemera plans to provide a website where people can sign in with their V2 identities to access their V2 conversations and messages in a read-only format.
+To ensure continuity, users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 
 ### Can I use V2 conversations to seed the conversation list in my app built with V3?
 
