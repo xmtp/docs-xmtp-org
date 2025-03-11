@@ -325,28 +325,28 @@ try await group.addMembersByInboxId(inboxIds: [inboxId])
 
 :::
 
-### Remove members by inbox ID
+### Remove member by inbox ID
 
 :::code-group
 
 ```js [Browser]
-await group.removeMembersByInboxId([inboxId]);
+await group.removeMemberByInboxId([inboxId]);
 ```
 
 ```js [Node]
-await group.removeMembersByInboxId([inboxId]);
+await group.removeMemberByInboxId([inboxId]);
 ```
 
 ```tsx [React Native]
-await group.removeMemberInboxIds([inboxId]);
+await group.removeMemberByInboxIds([inboxId]);
 ```
 
 ```kotlin [Kotlin]
-group.removeMemberInboxIds(listOf(inboxId))
+group.removeMemberByInboxIds(listOf(inboxId))
 ```
 
 ```swift [Swift]
-try await group.removeMemberInboxIds(inboxIds: [inboxId])
+try await group.removeMemberByInboxIds(inboxIds: [inboxId])
 ```
 
 :::
