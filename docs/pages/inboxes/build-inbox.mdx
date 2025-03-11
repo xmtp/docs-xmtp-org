@@ -185,7 +185,7 @@ This code defines two functions that convert different types of Ethereum account
       override var chainId: Long? = 8453 // https://chainlist.org/ 
       override var blockNumber: Long? = null // Optional: will be computed at runtime 
 
-      override suspend fun signSCW(message: String): ByteArray {  
+      override suspend fun sign(message: String): ByteArray {  
           val digest = Signature.newBuilder().build().ethHash(message) 
           val replaySafeHash = smartWallet.replaySafeHash(digest).send() 
           val signature = 
