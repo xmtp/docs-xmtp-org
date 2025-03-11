@@ -30,7 +30,6 @@ For example:
   {
     "kind": "ETHEREUM",
     "identifier": "0x1234567890abcdef1234567890abcdef12345678",
-    "relyingPartner": null
   },
   {
     "kind": "PASSKEY", // not yet supported; provided as an example only.
