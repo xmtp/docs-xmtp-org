@@ -219,7 +219,7 @@ This code defines two functions that convert different types of Ethereum account
           .SCW 
       }
 
-      public func signSCW(message: String) async throws -> Data { 
+      public func sign(message: String) async throws -> Data { 
           let signature = try await key.sign(message: message)
           return signature.hexStringToByteArray 
       } 
