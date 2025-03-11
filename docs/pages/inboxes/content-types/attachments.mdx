@@ -206,7 +206,7 @@ remoteAttachment.filename = attachment.filename
 Send a remote attachment and set the `contentType`:
 
 ```kotlin [Kotlin]
-val newConversation = client.conversations.newConversation(accountIdentity)
+val newConversation = client.conversations.newConversation(inboxId)
 
 newConversation.send(
 content = remoteAttachment,
