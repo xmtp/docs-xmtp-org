@@ -554,9 +554,9 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId])
 // New Group with Metadata
 let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   permissionLevel: .admin_only, // .all_members | .admin_only
-  Name: "The Group Name",
-  ImageUrl: "www.groupImage.com",
-  Description: "The description of the group",
+  name: "The Group Name",
+  imageUrl: "www.groupImage.com",
+  description: "The description of the group",
 )
 ```
 
