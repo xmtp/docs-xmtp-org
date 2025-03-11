@@ -34,7 +34,6 @@ For example:
   {
     "kind": "PASSKEY", // not yet supported; provided as an example only.
     "identifier": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMk",
-    "relyingPartner": "NameOfAppUsedToCreatePasskey"
   }
 ]
 ```
