@@ -127,7 +127,7 @@ group.imageURL
 ```
 
 ```swift [Swift]
-try group.groupImageUrl()
+try group.imageUrl()
 ```
 
 :::
