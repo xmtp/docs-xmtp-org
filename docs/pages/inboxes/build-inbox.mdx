@@ -89,17 +89,11 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```kotlin [Kotlin] 
-  class EOAWallet(override val identity: Identity) : SigningKey { 
-      override val type: SignerType 
-          get() = SignerType.EOA 
-
-      override suspend fun sign(message: String): SignatureOuterClass.Signature { 
-          return key.sign(message)
+  class EOAWallet(override val identity: Identity) : SigningKey {
+      override suspend fun sign(message: String): SignedData {
+          val signature = key.sign(message = message)
+          return SignedData(signature)
       }
-
-      override suspend fun sign(data: ByteArray): SignatureOuterClass.Signature { 
-          return key.sign(data)
-      } 
   }
   ```
 
@@ -177,17 +171,20 @@ This code defines two functions that convert different types of Ethereum account
   ```
 
   ```kotlin [Kotlin] 
-  class SCWallet(override val identity: Identity) : SigningKey { 
-      override val type: SignerType 
-          get() = SignerType.SCW 
+  class SCWallet(override val identity: Identity) : SigningKey {
+      override val publicIdentity: Identity
+          get() = identity
 
-      override var chainId: Long? = 8453 // https://chainlist.org/ 
-      override var blockNumber: Long? = null // Optional: will be computed at runtime 
+      override val type: SignerType
+          get() = SignerType.SCW
 
-      override suspend fun sign(message: String): SignedData { 
-         val signature = key.sign(message)
-         return SignedData(signature)
-      } 
+      override var chainId: Long? = 8453 // https://chainlist.org/
+      override var blockNumber: Long? = null // Optional: will be computed at runtime
+
+      override suspend fun sign(message: String): SignedData {
+          val signature = key.sign(message)
+          return SignedData(signature)
+      }
   }
   ```
 
