@@ -184,20 +184,9 @@ This code defines two functions that convert different types of Ethereum account
       override var chainId: Long? = 8453 // https://chainlist.org/ 
       override var blockNumber: Long? = null // Optional: will be computed at runtime 
 
-      override suspend fun sign(message: String): ByteArray {  
-          val digest = Signature.newBuilder().build().ethHash(message) 
-          val replaySafeHash = smartWallet.replaySafeHash(digest).send() 
-          val signature = 
-              Sign.signMessage(replaySafeHash, contractDeployerCredentials.ecKeyPair, false) 
-          val signatureBytes = signature.r + signature.s + signature.v 
-          val tokens = listOf( 
-              Uint(BigInteger.ZERO), 
-              DynamicBytes(signatureBytes) 
-          )
-          val encoded = FunctionEncoder.encodeConstructor(tokens) 
-          val encodedBytes = Numeric.hexStringToByteArray(encoded) 
-
-          return encodedBytes 
+      override suspend fun sign(message: String): SignedData { 
+         val signature = key.sign(message)
+         return SignedData(signature)
       } 
   }
   ```
