@@ -5,17 +5,23 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 :::info[Key takeaways]
 - **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
-- **We recommend that apps upgrade directly to XMTP V3**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network. To learn more, see the [FAQ](/upgrade-to-v3#faq).
+- **We recommend that apps [upgrade directly to XMTP V3](#upgrade-directly-to-xmtp-v3)**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network.
 - ⛔️ **Rolling brownouts of the V2 network start on April 1, 2025. V2 will be deprecated on May 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 :::
 
-## Upgrade availability
+## Upgrade directly to XMTP V3
 
-- 🟢 **The mobile app upgrade path is ready**. This includes apps built with React Native, Kotlin, or Swift.
+🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.0** following the detailed instructions in these release notes:
+- [React Native](https://github.com/xmtp/xmtp-js/releases/tag/v4.0.0)
+- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/v4.0.0)
+- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/v4.0.0)
 
-- 🟢 **The web app upgrade path is ready**. For detailed guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
+🟢 For web apps, **upgrade to an XMTP web SDK >=v1.0.0** following the detailed instructions in these release notes:
+- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/v1.0.0)
+- [Node](https://github.com/xmtp/xmtp-js/releases/tag/v1.0.0)
+- For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
 
-- 🟢 **The agent upgrade path is ready**. For detailed guidance, explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the XMTP Node SDK.
+🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.
 
 ## Primary XMTP identifier is now an inbox ID, not an Ethereum address
 
