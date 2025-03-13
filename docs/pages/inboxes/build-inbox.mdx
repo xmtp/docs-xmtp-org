@@ -75,9 +75,13 @@ This code defines two functions that convert different types of Ethereum account
         identifier: eoaAccount.address, // Ethereum address as the identifier 
       }), 
       signMessage: async (message: string | Uint8Array) => 
-        eoaAccount.signMessage({ 
+        const signature = eoaAccount.signMessage({ 
           message: typeof message === "string" ? message : { raw: message }, 
         }), 
+        
+       return {
+        signature,
+      }
       getChainId: () => undefined, 
       getBlockNumber: () => undefined, 
     }; 
