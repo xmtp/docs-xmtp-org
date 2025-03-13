@@ -103,14 +103,9 @@ This code defines two functions that convert different types of Ethereum account
   public struct EOAWallet: SigningKey { 
       public var identity: Identity 
 
-      public func sign(_ data: Data) async throws -> XMTPiOS.Signature { 
-          let signature = try await key.sign(data) 
-          return signature 
-      }
-
-      public func sign(message: String) async throws -> XMTPiOS.Signature { 
+      public func sign(message: String) async throws -> SignedData { 
           let signature = try await key.sign(message: message) 
-          return signature 
+          return SignedData(signature)
       } 
   }
   ```
