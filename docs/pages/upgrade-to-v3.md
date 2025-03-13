@@ -5,8 +5,9 @@ The process to upgrade an app built with XMTP V2 to V3 is designed to be straigh
 :::info[Key takeaways]
 - **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
-- **We recommend that apps [upgrade directly to XMTP V3](#upgrade-directly-to-xmtp-v3)**, giving people access to a pure V3+ messaging experience with stronger encryption and laying the foundation for decentralization of the network.
-- ⛔️ **Rolling brownouts of the V2 network start on April 1, 2025. V2 will be deprecated on May 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
+- **For mobile apps**,[upgrade to an XMTP mobile SDK >=v4.0.0](#upgrade-directly-to-xmtp-v3).
+- **For web apps**, [upgrade to an XMTP web SDK >=v1.0.0](#upgrade-directly-to-xmtp-v3).
+- ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 :::
 
 ## Upgrade directly to XMTP V3
