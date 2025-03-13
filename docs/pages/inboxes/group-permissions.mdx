@@ -459,9 +459,3 @@ try await group.addedByInboxId();
 ```
 
 :::
-
-### SDK method call flow to add and remove members
-
-![Add and remove members](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/add-remove.png)
-
-When you add or remove members from a group, a proposal/commit message is sent to all the installations in the group. When the commit happens, the cryptographic state of the group is changed. This allows new members to receive messages but not decrypt older ones and prevents removed members from decrypting messages after their departure.
