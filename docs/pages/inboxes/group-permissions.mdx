@@ -304,23 +304,23 @@ try await group.removeSuperAdmin(inboxid: inboxID)
 :::code-group
 
 ```js [Browser]
-await group.addMembersByInboxId([inboxId]);
+await group.addMembers([inboxId]);
 ```
 
 ```js [Node]
-await group.addMembersByInboxId([inboxId]);
+await group.addMembers([inboxId]);
 ```
 
 ```tsx [React Native]
-await group.addMemberInboxIds([inboxId]);
+await group.addMembers([inboxId]);
 ```
 
 ```kotlin [Kotlin]
-group.addMembersByInboxIds(listOf(client.inboxId))
+group.addMembers(listOf(client.inboxId))
 ```
 
 ```swift [Swift]
-try await group.addMembersByInboxId(inboxIds: [inboxId])
+try await group.addMembers(inboxIds: [inboxId])
 ```
 
 :::
