@@ -68,28 +68,33 @@ This code defines two functions that convert different types of Ethereum account
 
   ```tsx [React Native] 
   // Example EOA Signer 
-  export function convertEOAToSigner(eoaAccount: EOAAccount): Signer { 
-    return { 
-      getIdentity: async () => ({ 
-        kind: "ETHEREUM", // Specifies the identity type 
-        identifier: eoaAccount.address, // Ethereum address as the identifier 
-      }), 
-      signMessage: async (message: string | Uint8Array) => 
-        const signature = eoaAccount.signMessage({ 
-          message: typeof message === "string" ? message : { raw: message }, 
-        }), 
-        
-       return {
-        signature,
-      }
-      getChainId: () => undefined, 
-      getBlockNumber: () => undefined, 
-    }; 
-  } 
+  export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
+    return {
+      getIdentifier: async () => new PublicIdentity(eoaAccount.address, 'ETHEREUM'),
+      getChainId: () => undefined, // Provide a chain ID if available or return undefined
+      getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
+      signerType: () => 'EOA', // "EOA" indicates an externally owned account
+      signMessage: async (message: string) => {
+        const signature = await eoaAccount.signMessage(message)
+
+        return {
+          signature,
+        }
+      },
+    }
+  }
   ```
 
   ```kotlin [Kotlin] 
-  class EOAWallet(override val identity: Identity) : SigningKey {
+  class EOAWallet : SigningKey {
+      override val publicIdentity: PublicIdentity
+        get() = PublicIdentity(
+            IdentityKind.ETHEREUM,
+            key.publicAddress
+        )
+      override val type: SignerType
+        get() = SignerType.EOA
+      
       override suspend fun sign(message: String): SignedData {
           val signature = key.sign(message = message)
           return SignedData(signature)
@@ -99,7 +104,11 @@ This code defines two functions that convert different types of Ethereum account
 
   ```swift [Swift] 
   public struct EOAWallet: SigningKey { 
-      public var identity: Identity 
+      public var identity: PublicIdentity {
+        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+      }
+
+      public var type: SignerType { .EOA }
 
       public func sign(message: String) async throws -> SignedData { 
           let signature = try await key.sign(message: message) 
@@ -154,35 +163,39 @@ This code defines two functions that convert different types of Ethereum account
 
   ```tsx [React Native] 
   // Example SCW Signer 
-  export function convertSCWToSigner(scwAccount: SCWAccount): Signer { 
-    return { 
-      getIdentity: async () => ({ 
-        kind: "ETHEREUM", // Specifies the identity type 
-        identifier: scwAccount.address, // Smart Contract Wallet address 
-      }),
-      signMessage: async (message: string) => { 
+  export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
+    return {
+      getIdentifier: async () => new PublicIdentity(scwAccount.address, 'ETHEREUM'),
+      getChainId: () => 8453, // https://chainlist.org/ 
+      getBlockNumber: () => undefined, // Optional: will be computed at runtime
+      signerType: () => 'SCW', // "SCW" indicates an externally owned account
+      signMessage: async (message: string) => {
         const byteArray = await scwAccount.signMessage(message); 
-        return ethers.utils.hexlify(byteArray); // Convert to hex string 
+        const signature = ethers.utils.hexlify(byteArray); // Convert to hex string 
+        
+        return {
+          signature,
+        }
       },
-      getChainId: async () => 8453, // https://chainlist.org/ 
-      getBlockNumber: async () => undefined, // Optional: will be computed at runtime 
-    }; 
-  } 
+    }
+  }
   ```
 
   ```kotlin [Kotlin] 
-  class SCWallet(override val identity: Identity) : SigningKey {
-      override val publicIdentity: Identity
-          get() = identity
-
+    class SCWallet : SigningKey {
+      override val publicIdentity: PublicIdentity
+        get() = PublicIdentity(
+            IdentityKind.ETHEREUM,
+            key.publicAddress
+        )
       override val type: SignerType
-          get() = SignerType.SCW
+        get() = SignerType.SCW
 
       override var chainId: Long? = 8453 // https://chainlist.org/
       override var blockNumber: Long? = null // Optional: will be computed at runtime
-
+      
       override suspend fun sign(message: String): SignedData {
-          val signature = key.sign(message)
+          val signature = key.sign(message = message)
           return SignedData(signature)
       }
   }
@@ -190,8 +203,10 @@ This code defines two functions that convert different types of Ethereum account
 
   ```swift [Swift] 
   public struct SCWallet: SigningKey { 
-      public var identity: Identity 
-
+      public var identity: PublicIdentity {
+        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+      }
+      
       public var chainId: Int64? { 
           8453 
       } 
@@ -200,13 +215,11 @@ This code defines two functions that convert different types of Ethereum account
           nil 
       } 
 
-      public var type: SignerType { 
-          .SCW 
-      }
+      public var type: SignerType { .SCW }
 
-      public func sign(message: String) async throws -> Data { 
+      public func sign(message: String) async throws -> SignedData { 
           let signature = try await key.sign(message: message)
-          return signature.hexStringToByteArray 
+          return SignedData(signature.hexStringToByteArray )
       } 
   } 
   ```
