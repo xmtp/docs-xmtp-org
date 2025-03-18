@@ -46,17 +46,17 @@ export default defineConfig({
       items: [],
     },
     {
-      text: "🚀 Upgrade to XMTP V3-CORE",
+      text: "Upgrade to a stable XMTP V3 SDK",
       collapsed: false,
       items: [
         {
-          text: "From XMTP V2 to V3-CORE",
-          link: "/upgrade-to-v3",
+          text: "From a legacy XMTP V2 SDK",
+          link: "/upgrade-from-legacy-V2",
           items: [],
         },
         {
-          text: "From XMTP V3 to V3-CORE",
-          link: "/upgrade-to-v3-core",
+          text: "From a legacy XMTP V3 SDK",
+          link: "/upgrade-from-legacy-V3",
           items: [],
         },
       ],

@@ -1,21 +1,24 @@
-# Upgrade from XMTP V3 to XMTP V3-CORE
+# Upgrade from a legacy XMTP V3 SDK to a stable XMTP V3 SDK
 
-This document is for you if you are building on XMTP V3, which includes apps using:
+This document is for you if you are upgrading from a legacy XMTP V3 SDK. Legacy XMTP V3 SDKs include:
 
-- An XMTP v3.x.x mobile SDK
-- An XMTP v0.x.x browser or node SDK
+- Browser SDK v0.x.x
+- Node SDK v0.x.x
+- React Native SDK v3.x.x
+- Android SDK v3.x.x
+- iOS SDK v3.x.x
 
-:::tip[Building on XMTP V2?]
+:::tip[Upgrading from a legacy XMTP V2 SDK?]
 
-If you are building an app on XMTP V3, which includes apps using an XMTP v2.x.x mobile SDK or the XMTP-JS SDK, see [Upgrade from XMTP V2 to XMTP V3-CORE](/upgrade-to-v3).
+Legacy XMTP V2 SDKs include JavaScript SDK vx.x.x, React Native SDK &lt;v3, Android SDK &lt;v3, and iOS SDK &lt;v3. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V2 SDK](/upgrade-from-legacy-V2). 
 
 :::
 
-XMTP V3-CORE provides support for the features expected by modern messaging apps while laying a strong foundation for the future. This is a stable and performant release that will allow for new features and is not expected to receive breaking changes in the near-term.
+XMTP V3 provides support for the features expected by modern messaging apps while laying a strong foundation for the future. This is a stable and performant release that will allow for new features and is not expected to receive breaking changes in the near-term.
 
-## Upgrade to XMTP V3-CORE
+## Upgrade to XMTP V3 stable
 
-The process to upgrade an app built with XMTP V3 to V3-CORE is designed to be straightforward, with most functions in V3-CORE working as they did in V3. However, there are some notable differences, which we cover here and in these release notes.
+The process to upgrade an app built with a legacy XMTP V3 SDK to a stable V3 SDK is designed to be straightforward, with most functions in stable V3 working as they did in legacy V3. However, there are some notable differences, which we cover here and in these release notes:
 
 🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.0** following the detailed instructions in these release notes:
 - [React Native](https://github.com/xmtp/xmtp-js/releases/tag/v4.0.0)

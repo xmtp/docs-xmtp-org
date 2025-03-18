@@ -1,27 +1,29 @@
-# Upgrade from XMTP V2 to XMTP V3-CORE
+# Upgrade from a legacy XMTP V2 SDK to a stable XMTP V3 SDK
 
-This document is for you if you are building on XMTP V2, which includes apps using:
+This document is for you if you are upgrading from a legacy XMTP V2 SDK. Legacy XMTP V2 SDKs include:
 
-- An XMTP v2.x.x mobile SDK
-- The XMTP-JS SDK
+- JavaScript SDK vx.x.x
+- React Native SDK &lt;v3
+- Android SDK &lt;v3
+- iOS SDK &lt;v3
 
-:::tip[Already building on XMTP V3?]
+:::tip[Upgrading from a legacy XMTP V3 SDK?]
 
-If you are already building an app on XMTP V3, which includes apps using an XMTP v3.x.x mobile SDK or an XMTP v0.x.x browser or node SDK, see [Upgrade from XMTP V3 to XMTP V3-CORE](/upgrade-to-v3-core).
+Legacy XMTP V3 SDKs include Browser SDK v0.x.x, Node SDK v0.x.x, React Native SDK v3.x.x, Android SDK v3.x.x, and iOS SDK v3.x.x. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V3 SDK](/upgrade-from-legacy-V3).
 
 :::
 
-XMTP V3-CORE provides support for the features expected by modern messaging apps while laying a strong foundation for the future. This is a stable and performant release that will allow for new features and is not expected to receive breaking changes in the near-term.
+XMTP V3 provides support for the features expected by modern messaging apps while laying a strong foundation for the future. This is a stable and performant release that will allow for new features and is not expected to receive breaking changes in the near-term.
 
-As developers on V2 explore XMTP V3-CORE, many have found that its new architecture provides an opportunity to rethink and refine their approach to messaging. While upgrading from V2 is possible, some teams chose to rebuild with V3-CORE from the start to take full advantage of its performance, security, and scalability improvements. Evaluate your needs and consider the path that makes the most sense for your app.
+As developers on V2 explore XMTP V3, many have found that its new architecture provides an opportunity to rethink and refine their approach to messaging. While upgrading from V2 is possible, some teams chose to rebuild with V3 from the start to take full advantage of its performance, security, and scalability improvements. Evaluate your needs and consider the path that makes the most sense for your app.
 
 :::info[Key takeaways]
-- **Most core methods from V2 work in a similar way in V3-CORE**, with some notable differences that are covered in this document.
+- **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
 - **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
 - ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 :::
 
-## Upgrade to XMTP V3-CORE
+## Upgrade to XMTP V3
 
 🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.0** following the detailed instructions in these release notes:
 - [React Native](https://github.com/xmtp/xmtp-js/releases/tag/v4.0.0)
@@ -31,7 +33,7 @@ As developers on V2 explore XMTP V3-CORE, many have found that its new architect
 🟢 For web apps, **upgrade to an XMTP web SDK >=v1.0.0** following the detailed instructions in these release notes:
 - [Browser](https://github.com/xmtp/xmtp-js/releases/tag/v1.0.0)
 - [Node](https://github.com/xmtp/xmtp-js/releases/tag/v1.0.0)
-- For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3-CORE.
+- For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
 
 🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.
 
@@ -125,9 +127,9 @@ Now, developers can use `inboxId` to create a new DM conversation because with t
 const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
 ```
 
-## Core methods from V2 work in a similar way in V3-CORE
+## Core methods from V2 work in a similar way in V3
 
-Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work in a similar way in V3-CORE. 
+Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work in a similar way in V3. 
 
 However, key differences include:
 
