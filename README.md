@@ -100,7 +100,7 @@ After you've submitted your PR, the `docs.xmtp.org` team will review your PR and
 - Accept your PR, but request some changes before publishing your contribution
 - Not accept your PR and explain why
 
-The `docs.xmtp.org` team includes technical writers, product managers, developers, designers, and other XMTP subject matter experts. The team reviews documentation PRs based on a few criteria, including:
+The `docs.xmtp.org` team includes technical writers, product managers, developers, designers, and other XMTP subject-matter experts. The team reviews documentation PRs based on a few criteria, including:
 
 - Accuracy
 - Audience needs
