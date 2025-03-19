@@ -46,9 +46,20 @@ export default defineConfig({
       items: [],
     },
     {
-      text: "🚀 Upgrade to XMTP V3",
-      link: "/upgrade-to-v3",
-      items: [],
+      text: "Upgrade to a stable XMTP V3 SDK",
+      collapsed: false,
+      items: [
+        {
+          text: "From a legacy XMTP V2 SDK",
+          link: "/upgrade-from-legacy-V2",
+          items: [],
+        },
+        {
+          text: "From a legacy XMTP V3 SDK",
+          link: "/upgrade-from-legacy-V3",
+          items: [],
+        },
+      ],
     },
     {
       text: "Intro",
@@ -75,6 +86,10 @@ export default defineConfig({
         {
           text: "Build a chat inbox",
           link: "/inboxes/build-inbox",
+        },
+        {
+          text: "Send disappearing messages",
+          link: "/inboxes/disappearing-messages",
         },
         {
           text: "Manage inboxes",
@@ -137,6 +152,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: "Understand push notifications",
+              link: "/inboxes/push-notifs/understand-push-notifs",
+            },
+            {
               text: "Support push notifications",
               link: "/inboxes/push-notifs/push-notifs",
             },
@@ -178,18 +197,22 @@ export default defineConfig({
     },
     {
       text: "Build agents ↗",
-      link: "https://github.com/ephemeraHQ/xmtp-agents",
+      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
       items: [], // Add this line
     },
     {
-      text: "Network FAQ",
-      link: "/network/network-faq",
+      text: "Run a network node",
+      link: "/network/run-a-node",
       items: [], // Add this line
     },
     {
       text: "Protocol concepts",
       collapsed: false,
       items: [
+        {
+          text: "Security",
+          link: "/protocol/security",
+        },
         {
           text: "Encryption ↗",
           link: "https://xmtp.org/encryption",

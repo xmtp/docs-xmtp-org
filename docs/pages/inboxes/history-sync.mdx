@@ -11,6 +11,12 @@ This historical data includes:
 
 History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is a pre-existing and online app installation to provide the data.
 
+## 🎥 walkthrough: History sync
+
+This video provides a walkthrough of history sync, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/_FtNqtjk-ls?si=uZ_Mnh9phF6y2h-O" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
 ## Enable history sync
 
 History sync is enabled by default and runs automatically. When [creating a client](/inboxes/build-inbox#create-an-xmtp-client), the `historySyncUrl` client option is dynamically set to a default history sync server URL based on your `env` client option setting.
@@ -46,7 +52,7 @@ History syncs are accomplished using these components:
 
 ### Sync group
 
-A sync group is a special [Messaging Layer Security](/protocol/specs) group that includes all of the user’s devices. The sync group is used to send serialized sync messages across the user's devices. The sync group is filtered out of most queries by default so they don’t appear in the user’s inbox.
+A sync group is a special [Messaging Layer Security](/protocol/security) group that includes all of the user’s devices. The sync group is used to send serialized sync messages across the user's devices. The sync group is filtered out of most queries by default so they don’t appear in the user’s inbox.
 
 ### Sync worker
 
