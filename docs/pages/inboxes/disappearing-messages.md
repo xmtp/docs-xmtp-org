@@ -44,8 +44,8 @@ For example:
 ```tsx [React Native]
 // DM
 await client.conversations.newConversation(
-  address,
-  { 
+  inboxId,
+  {
     disappearingMessageSettings: DisappearingMessageSettings(
       disappearStartingAtNs: 1738620126404999936,
       retentionDurationInNs: 1800000000000000
@@ -55,7 +55,7 @@ await client.conversations.newConversation(
 
 // Group
 await client.conversations.newGroup(
-  [address],
+  [inboxId],
   { 
     disappearingMessageSettings: DisappearingMessageSettings(
       disappearStartingAtNs: 1738620126404999936,
@@ -68,7 +68,7 @@ await client.conversations.newGroup(
 ```kotlin [Kotlin]
 // DM
 client.conversations.newConversation(
-    address,
+    inboxId,
     disappearingMessageSettings = DisappearingMessageSettings(
         disappearStartingAtNs = 1738620126404999936,
         retentionDurationInNs = 1800000000000000
@@ -77,7 +77,7 @@ client.conversations.newConversation(
 
 // Group
 client.conversations.newGroup(
-    [address],
+    [inboxId],
     disappearingMessageSettings = DisappearingMessageSettings(
         disappearStartingAtNs = 1738620126404999936,
         retentionDurationInNs = 1800000000000000
@@ -88,7 +88,7 @@ client.conversations.newGroup(
 ```swift [Swift]
 // DM
 try await client.conversations.newConversation(
-    with: address,
+    with: inboxId,
     disappearingMessageSettings: DisappearingMessageSettings(
         disappearStartingAtNs: 1738620126404999936,
         retentionDurationInNs: 1800000000000000
@@ -97,7 +97,7 @@ try await client.conversations.newConversation(
 
 // Group
 try await client.conversations.newGroup(
-    with: [address],
+    with: [inboxId],
     disappearingMessageSettings: DisappearingMessageSettings(
         disappearStartingAtNs: 1738620126404999936,
         retentionDurationInNs: 1800000000000000

@@ -12,7 +12,7 @@ This video provides a walkthrough of consent, covering the key ideas discussed i
 
 ## How user consent preferences work
 
-With user consent preferences, a wallet address registered on the XMTP network can have one of three user consent preference values in relation to another user's wallet address:
+With user consent preferences, an identity registered on the XMTP network can have one of three user consent preference values in relation to another user's identity:
 
 - Unknown
 - Allowed
@@ -20,13 +20,13 @@ With user consent preferences, a wallet address registered on the XMTP network c
 
 For example:
 
-1. `alix.eth` starts a conversation with `bo.eth`. At this time, `alix.eth` is unknown to `bo.eth` and the conversation displays in a message requests UI.
+1. `alix.id` starts a conversation with `bo.id`. At this time, `alix.id` is unknown to `bo.id` and the conversation displays in a message requests UI.
 
-2. When `bo.eth` views the message request, they express their user consent preference to **Block** or **Accept** `alix.eth` as a contact.
+2. When `bo.id` views the message request, they express their user consent preference to **Block** or **Accept** `alix.id` as a contact.
 
-   - If `bo.eth` accepts `alix.eth` as a contact, their conversation displays in `bo.eth`'s main inbox. Because only contacts `bo.eth` accepts display in their main inbox, their inbox remains spam-free.
+   - If `bo.id` accepts `alix.id` as a contact, their conversation displays in `bo.id`'s main inbox. Because only contacts `bo.id` accepts display in their main inbox, their inbox remains spam-free.
 
-   - If `bo.eth` blocks contact with `alix.eth`, remove the conversation from `bo.eth`'s view. In an appropriate location in your app, give the user the option to unblock the contact.
+   - If `bo.id` blocks contact with `alix.id`, remove the conversation from `bo.id`'s view. In an appropriate location in your app, give the user the option to unblock the contact.
 
 Your app should aim to handle consent preferences appropriately because they are an expression of user intent.
 
