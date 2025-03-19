@@ -45,11 +45,11 @@ await group.updateName("New Group Name");
 ```
 
 ```kotlin [Kotlin]
-group.updateGroupName("New Group Name")
+group.updateName("New Group Name")
 ```
 
 ```swift [Swift]
-try await group.updateGroupName(groupname: "New Group Name")
+try await group.updateName(groupname: "New Group Name")
 ```
 
 :::
@@ -85,23 +85,23 @@ try group.groupDescription()
 :::code-group
 
 ```js [Browser]
-await group.updateGroupDescription("New Group Description");
+await group.updateDescription("New Group Description");
 ```
 
 ```js [Node]
-await group.updateGroupDescription("New Group Description");
+await group.updateDescription("New Group Description");
 ```
 
 ```tsx [React Native]
-await group.updateGroupDescription("New Group Description");
+await group.updateDescription("New Group Description");
 ```
 
 ```kotlin [Kotlin]
-group.updateGroupDescription("New Group Description")
+group.updateDescription("New Group Description")
 ```
 
 ```swift [Swift]
-try await group.updateGroupDescription(groupDescription: "New Group Description")
+try await group.updateDescription(Description: "New Group Description")
 ```
 
 :::
@@ -119,15 +119,15 @@ const groupImageUrl = group.imageUrl;
 ```
 
 ```tsx [React Native]
-const groupName = await group.imageUrlSquare();
+const groupName = await group.imageUrl();
 ```
 
 ```kotlin [Kotlin]
-group.imageURLSquare
+group.imageURL
 ```
 
 ```swift [Swift]
-try group.groupImageUrlSquare()
+try group.imageUrl()
 ```
 
 :::
@@ -145,15 +145,15 @@ await group.updateImageUrl("newurl.com");
 ```
 
 ```tsx [React Native]
-await group.updateImageUrlSquare("ImageURL");
+await group.updateImageUrl("ImageURL");
 ```
 
 ```kotlin [Kotlin]
-group.updateGroupImageUrlSquare("newurl.com")
+group.updateImageUrl("newurl.com")
 ```
 
 ```swift [Swift]
-try await group.updateGroupImageUrlSquare(imageUrlSquare: "newurl.com")
+try await group.updateImageUrl(imageUrl: "newurl.com")
 ```
 
 :::

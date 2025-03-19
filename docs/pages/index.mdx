@@ -4,14 +4,13 @@ import "../styles.css";
 <CustomHomePage.Root>
   <CustomHomePage.Headline>Build with XMTP</CustomHomePage.Headline>
   <CustomHomePage.Subhead>
-    XMTP is a secure and decentralized protocol for building communication
-    platforms for the next phase of the internet.
+    The largest and most secure decentralized messaging network
   </CustomHomePage.Subhead>
   <CustomHomePage.TileGrid>
     <CustomHomePage.Tile
-      href="/upgrade-to-v3"
+      href="/upgrade-from-legacy-V2"
       title="Upgrade to XMTP V3"
-      description="Get tips for upgrading to XMTP V3 and understand key differences from V2"
+      description="Get tips for upgrading from a legacy SDK to a stable XMTP V3 SDK"
       icon="🚀"
     />
     <CustomHomePage.Tile
@@ -21,23 +20,42 @@ import "../styles.css";
       icon="🤝"
     />
     <CustomHomePage.Tile
-      href="/inboxes/get-started"
+      href="/inboxes/build-inbox"
       title="Build chat inboxes"
       description="Build standalone inbox apps with 1:1 and group chats built with MLS"
       icon="📥"
     />
     <CustomHomePage.Tile
-      href="https://messagekit.ephemerahq.com/"
-      title="Build chat agents"
-      description="Use MessageKit to build agents that send messages in XMTP apps"
+      href="https://xmtp.chat/"
+      title="Build with xmtp.chat"
+      description="Build an inbox app with the help of this interactive developer tool and chat app"
+      icon="🧑🏽‍💻"
+      isExternal={true}
+    />
+    <CustomHomePage.Tile
+      href="https://github.com/ephemeraHQ/xmtp-agent-examples"
+      title="Build agents"
+      description="Explore examples of agents built with the XMTP Node SDK"
       icon="🤖"
       isExternal={true}
     />
     <CustomHomePage.Tile
-      href="/protocol/specs"
+      href="/network/run-a-node"
+      title="Run an XMTP node"
+      description="Learn about network nodes and how to become a registered node operator"
+      icon="🕸️"
+    />
+    <CustomHomePage.Tile
+      href="/protocol/security"
       title="Learn protocol concepts"
       description="Dive deeper into XMTP by learning about key protocol concepts"
       icon="🧠"
+    />
+    <CustomHomePage.Tile
+      href="/intro/xips"
+      title="Review XIPs"
+      description="Read and provide feedback on the latest XMTP Improvement Proposals"
+      icon="⚒️"
     />
   </CustomHomePage.TileGrid>
 </CustomHomePage.Root>

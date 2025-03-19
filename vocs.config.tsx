@@ -24,7 +24,8 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    { text: "Dev support", link: "https://community.xmtp.org/c/dev-support/76" },
+    { text: "XMTP.chat", link: "https://xmtp.chat/" },
+    { text: "Dev support", link: "https://github.com/xmtp" },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -45,9 +46,20 @@ export default defineConfig({
       items: [],
     },
     {
-      text: "🚀 Upgrade to XMTP V3",
-      link: "/upgrade-to-v3",
-      items: [],
+      text: "Upgrade to a stable XMTP V3 SDK",
+      collapsed: false,
+      items: [
+        {
+          text: "From a legacy XMTP V2 SDK",
+          link: "/upgrade-from-legacy-V2",
+          items: [],
+        },
+        {
+          text: "From a legacy XMTP V3 SDK",
+          link: "/upgrade-from-legacy-V3",
+          items: [],
+        },
+      ],
     },
     {
       text: "Intro",
@@ -56,6 +68,10 @@ export default defineConfig({
         {
           text: "What is XMTP?",
           link: "/intro/intro",
+        },
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/intro/xips",
         },
         {
           text: "FAQ",
@@ -68,16 +84,20 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Get started",
-          link: "/inboxes/get-started",
-        },
-        {
           text: "Build a chat inbox",
           link: "/inboxes/build-inbox",
         },
         {
+          text: "Send disappearing messages",
+          link: "/inboxes/disappearing-messages",
+        },
+        {
           text: "Manage inboxes",
           link: "/inboxes/manage-inboxes",
+        },
+        {
+          text: "Enable history sync",
+          link: "/inboxes/history-sync",
         },
         {
           text: "Support spam-free inboxes",
@@ -132,6 +152,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: "Understand push notifications",
+              link: "/inboxes/push-notifs/understand-push-notifs",
+            },
+            {
               text: "Support push notifications",
               link: "/inboxes/push-notifs/push-notifs",
             },
@@ -172,8 +196,13 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build agents with MessageKit ↗",
-      link: "https://messagekit.ephemerahq.com/",
+      text: "Build agents ↗",
+      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
+      items: [], // Add this line
+    },
+    {
+      text: "Run a network node",
+      link: "/network/run-a-node",
       items: [], // Add this line
     },
     {
@@ -181,16 +210,28 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "XMTP MLS protocol spec",
-          link: "/protocol/specs",
+          text: "Security",
+          link: "/protocol/security",
+        },
+        {
+          text: "Encryption ↗",
+          link: "https://xmtp.org/encryption",
+        },
+        {
+          text: "Identity ↗",
+          link: "https://xmtp.org/identity",
+        },
+        {
+          text: "Consent ↗",
+          link: "https://xmtp.org/consent",
+        },
+        {
+          text: "Decentralization ↗",
+          link: "https://xmtp.org/decentralizing-xmtp",
         },
         {
           text: "Wallet signatures",
           link: "/protocol/signatures",
-        },
-        {
-          text: "XIPs",
-          link: "/protocol/xips",
         },
       ],
     },

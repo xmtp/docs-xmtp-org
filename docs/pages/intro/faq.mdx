@@ -38,13 +38,13 @@ XMTP can be used with EVM-compatible wallet apps that support ECDSA signing on t
 
 The XMTP SDK **does not** include a wallet app abstraction, as XMTP assumes that developers have a way to obtain a wallet app connection.
 
-### Chains
+### Chains 
 
-XMTP works with externally owned accounts (EOAs) on Ethereum and Ethereum side-chains and L2s.
+XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s. 
 
-Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.)
+Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.) 
 
-For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP.
+For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP. 
 
 XMTP is also chain-agnostic, so multi-chain support is possible.
 
@@ -55,7 +55,6 @@ Here are just a few chains that work with XMTP:
 - [Base](https://base.org/)
 - [(BNB) Chain](https://www.bnbchain.org/)
 - [Ethereum](https://ethereum.org/)
-- [Hermez](https://docs.hermez.io/Hermez_1.0/about/scalability/)
 - [zk-EVM](https://linea.build/)
 - [Optimism](https://www.optimism.io/)
 - [Polygon](https://polygon.technology/)
@@ -65,11 +64,15 @@ Here are just a few chains that work with XMTP:
 
 ### Which languages does the XMTP SDK support?
 
-XMTP SDKs are [available for multiple languages](/inboxes/get-started).
+XMTP SDKs are [available for multiple languages](/inboxes/build-inbox/#pick-your-sdk).
 
 ### Which web3 libraries does the XMTP SDK require?
 
 The XMTP SDK currently requires you to use [ethers](https://ethers.org/) or another web3 library capable of supplying an [ethers Signer](https://docs.ethers.io/v5/api/signer/), such as [wagmi](https://wagmi.sh/).
+
+### What is the invalid key package error?
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hNlby-SfPzw?si=V7LqaBxk-i4xhbNC" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
 ### Where can I get official XMTP brand assets?
 
@@ -77,45 +80,11 @@ See the [XMTP brand guidelines](https://github.com/xmtp/brand) GitHub repo.
 
 ## Network
 
-### Is the XMTP network decentralized?
+See [Network FAQ](/network/run-a-node/#faq-about-the-xmtp-network).
 
-Currently, [Ephemera](https://ephemerahq.com/) (the company) operates all of the network nodes in the two available XMTP network environments: `dev` and `production`.
+## Fees
 
-These network nodes operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
-
-- Cuba
-- Iran
-- North Korea 
-- Syria
-- The Crimea, Donetsk People’s Republic, and Luhansk People’s Republic regions of Ukraine
-
-To explore the software for the nodes that currently form the XMTP network, see the [xmtp-node-go repo](https://github.com/xmtp/xmtp-node-go).
-
-Ephemera is in the process of building the replication and incentive mechanisms required to decentralize the network. These mechanisms include:
-
-- An onchain smart contract node registry, which lists the currently active set of XMTP nodes
-- An off-chain broadcast network of nodes run by a set of independent third parties, which handles the majority of the messaging data (loosely ordered, low latency)
-- A series of onhain smart contracts on an XMTP L3, which handles account information and the most critical messaging data (strictly ordered, medium latency)
-
-To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the `xmtpd` repo.
-
-### Is XMTP a blockchain?
-
-XMTP is not a blockchain. Nodes on the XMTP network run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
-
-Ephemera is researching various consensus protocols that would allow the network to operate in a decentralized fashion while maintaining its current emphasis on user privacy and low-latency message delivery.
-
-### Will I be able to run my own XMTP node?
-
-Ephemera is in the process of building the replication mechanisms required to enable third-parties to run XMTP nodes and participate in network decentralization.
-
-To follow and provide feedback on this work, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
-
-### Does XMTP have a token?
-
-XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
-
-## Does XMTP have fees?
+### Does XMTP have fees?
 
 XMTP core developers and researchers are working on a specific fee model for XMTP, with the following guiding principles in mind:
 
@@ -129,9 +98,9 @@ Have questions or feedback about the fee model for XMTP? See [XMTP fees: Guiding
 
 ### Has XMTP undergone a security audit?
 
-A security audit of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) will begin in Q4 2024. The audit will be performed by [NCC Group](https://www.nccgroup.com/).
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024. 
 
-The [XMTP JavaScript SDK](https://github.com/xmtp/xmtp-js) (`xmtp-js`) was verified by [CertiK](https://www.certik.com/company/about) on Feb 6, 2023. Read their [XMTP security assessment](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/REP-final-20230207T000355Z.pdf).
+See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
 ## Storage
 
@@ -205,6 +174,6 @@ Ephemera is a web3 software company that contributes to XMTP, an open network, p
 
 Ephemera employees work alongside other XMTP community members to build with and extend XMTP. Community [contributions and participation](https://community.xmtp.org/) are critical to the development and adoption of XMTP.
 
-Ephemera focuses on serving developers. We build [SDKs](/inboxes/get-started), developer tools, and example apps that help developers build great experiences with XMTP.
+Ephemera focuses on serving developers. We build [SDKs](/inboxes/build-inbox/#pick-your-sdk), developer tools, and example apps that help developers build great experiences with XMTP.
 
 Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024 and [open-sourced it](https://github.com/ephemeraHQ/converse-app) for the entire XMTP network.
