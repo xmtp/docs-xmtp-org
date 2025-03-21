@@ -594,6 +594,44 @@ let conversation = try await client.conversations.newConversation(inboxId)
 
 :::
 
+## Send a message
+
+Once you have the group chat or DM conversation, send a message in the conversation.
+
+:::code-group
+
+```tsx [React Native]
+// For a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+await dm.send("Hello world");
+
+// OR for a group chat
+const group = await client.conversations.newGroup([recipientInboxId1, recipientInboxId2]);
+await group.send("Hello everyone");
+```
+
+```kotlin [Kotlin]
+// For a DM conversation
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+dm.send(text = "Hello world")
+
+// OR for a group chat
+val group = client.conversations.newGroup(listOf(recipientInboxId1, recipientInboxId2))
+group.send(text = "Hello everyone")
+```
+
+```swift [Swift]
+// For a DM conversation
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+try await dm.send(content: "Hello world")
+
+// OR for a group chat
+let group = try await client.conversations.newGroup([recipientInboxId1, recipientInboxId2])
+try await group.send(content: "Hello everyone")
+```
+
+:::
+
 ## List conversations and messages
 
 ### List new group chats or DMs
