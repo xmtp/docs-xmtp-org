@@ -1,0 +1,200 @@
+# Create an XMTP client
+
+Create an XMTP MLS client that can use the signing capabilities provided by the `SigningKey` parameter. This `SigningKey` links the client to the appropriate EOA or SCW.
+
+## 🎥 walkthrough: Create a client
+
+This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+## Create a client
+
+:::code-group
+
+```tsx [Browser]
+import { Client, type Signer } from "@xmtp/browser-sdk";
+
+const accountIdentity = {
+  kind: "ETHEREUM", // Specifies the identity type
+  identifier: "0x...", // Ethereum address as the identifier
+};
+
+const signer: Signer = {
+  getIdentity: () => accountIdentity,
+  signMessage: async (message) => {
+    // return value from a signing method here
+  },
+};
+
+// This value should be generated once per installation and stored securely
+const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  encryptionKey,
+  options /* optional */
+);
+```
+
+```tsx [Node]
+import { Client, type Signer } from "@xmtp/node-sdk";
+import { getRandomValues } from "node:crypto";
+
+const accountIdentity = {
+  kind: "ETHEREUM", // Specifies the identity type
+  identifier: "0x...", // Ethereum address as the identifier
+};
+
+const signer: Signer = {
+  getIdentity: () => accountIdentity,
+  signMessage: async (message) => {
+    // return value from a signing method here
+  },
+};
+
+// This value should be generated once per installation and stored securely
+const encryptionKey = getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  encryptionKey,
+  options /* optional */
+);
+```
+
+```tsx [React Native]
+Client.create(SigningKey, {
+  env: "production", // 'local' | 'dev' | 'production'
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+```
+
+```kotlin [Kotlin]
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes // 32 bytes
+)
+val client = Client().create(
+        account = SigningKey,
+        options = options
+    )
+```
+
+```swift [Swift]
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.create(
+  account: SigningKey,
+  options: options
+)
+```
+
+:::
+
+When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface.
+
+To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+### Configure an XMTP client
+
+You can configure an XMTP client with these parameters of `Client.create`:
+
+| Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV and PRODUCTION network environments](#xmtp-dev-and-production-network-environments). |
+| apiURL             | undefined                                           | Manually specify an API URL to use. If specified, value of `env` will be ignored. |
+| appContext (Android-only)     | null                                      | Required. The app context used to create and access the local database. |
+| dbEncryptionKey | null                                      | Required. A 32-byte `ByteArray` used to encrypt the local database.    |
+| dbDirectory | xmtp_db                                      | Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default. |
+| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`. |
+
+### XMTP DEV and PRODUCTION network environments
+
+XMTP provides `DEV` and `PRODUCTION` network environments to support the development phases of your project.
+
+The `PRODUCTION` and `DEV` networks are completely separate and not interchangeable.
+
+For example, an XMTP identity on the `DEV` network is completely distinct from the XMTP identity on the `PRODUCTION` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `DEV` network can't be accessed from or moved to the `PRODUCTION` network, and vice versa.
+
+:::tip
+When you [create a client](/inboxes/build-inbox/#create-an-xmtp-client), it connects to the XMTP `DEV` environment by default. Use the `env` parameter to explicitly set your client's network environment.
+:::
+
+Here are some best practices for when to use each environment:
+
+- `DEV`: Use to have a client communicate with the `DEV` network. As a best practice, set `env` to `DEV` while developing and testing your app. Follow this best practice to isolate test messages to `DEV` inboxes.
+
+- `PRODUCTION`: Use to have a client communicate with the `PRODUCTION` network. As a best practice, set `env` to `PRODUCTION` when your app is serving real users. Follow this best practice to isolate messages between real-world users to `PRODUCTION` inboxes.
+
+The `PRODUCTION` network is configured to store messages indefinitely. XMTP may occasionally delete messages and keys from the `DEV` network, and will provide advance notice in the [XMTP Community Forms](https://community.xmtp.org/).
+
+You can also use a `LOCAL` value to have a client communicate with an XMTP node you are running locally. For example, an XMTP node developer can set `env` to `LOCAL` to generate client traffic to test a node running locally.
+
+jhaaaa Add link to a doc about how to setup a local environment
+
+## Build an existing client
+
+Build, or resume, an existing client that's logged in and has an existing local database.
+
+:::code-group
+
+```tsx [React Native]
+Client.build(identity, {
+  env: "production", // 'local' | 'dev' | 'production'
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+```
+
+```kotlin [Kotlin]
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes
+)
+val client = Client().build(
+        identity = identity,
+        options = options
+    )
+```
+
+```swift [Swift]
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.build(
+  identity: identity,
+  options: options
+)
+```
+
+:::
+
+## Log out a client
+
+When you log a user out of your app, you can give them the option to delete their local database.
+
+:::tip[Important]
+If the user chooses to delete their local database, they will have to create a new installation the next time they log in and will lose all of their messages.
+:::
+
+:::code-group
+
+```tsx [React Native]
+  await client.deleteLocalDatabase()
+  await Client.dropClient(client.installationId)
+```
+
+```kotlin [Kotlin]
+  client.deleteLocalDatabase()
+```
+
+```swift [Swift]
+  try await client.deleteLocalDatabase()
+```
+
+:::

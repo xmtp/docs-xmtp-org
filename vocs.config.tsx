@@ -84,12 +84,24 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Build a chat inbox",
-          link: "/inboxes/build-inbox",
+          text: "Pick an SDK",
+          link: "/inboxes/pick-an-sdk",
         },
         {
-          text: "Send disappearing messages",
-          link: "/inboxes/disappearing-messages",
+          text: "Create an EOA or SCW signer",
+          link: "/inboxes/create-a-signer",
+        },
+        {
+          text: "Create a client",
+          link: "/inboxes/create-a-client",
+        },
+        {
+          text: "Create conversations",
+          link: "/inboxes/create-conversations",
+        },
+        {
+          text: "Stream and list",
+          link: "/inboxes/stream-and-list",
         },
         {
           text: "Manage inboxes",
@@ -180,6 +192,10 @@ export default defineConfig({
         {
           text: "Manage group metadata",
           link: "/inboxes/group-metadata",
+        },
+        {
+          text: "Send disappearing messages",
+          link: "/inboxes/disappearing-messages",
         },
         {
           text: "Use signatures",

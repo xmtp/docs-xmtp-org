@@ -1,0 +1,231 @@
+# Stream and list conversations and messages
+
+## List new conversations
+
+Get any new group chat or DM conversations from the network:
+
+:::code-group
+
+```js [Browser]
+await client.conversations.sync();
+```
+
+```js [Node]
+await client.conversations.sync();
+```
+
+```tsx [React Native]
+await client.conversations.sync();
+```
+
+```kotlin [Kotlin]
+client.conversations.sync()
+```
+
+```swift [Swift]
+try await client.conversations.sync()
+```
+
+:::
+
+## Sync all new messages and conversations
+
+Sync all new messages and conversations from the network.
+
+:::tip[Note]
+Syncing does not refetch existing messages and conversations. It also does not fetch messages for group chats you are no longer a part of.
+:::
+
+### 🎥 walkthrough: Syncing
+
+This video provides a walkthrough of syncing, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+### Sync
+
+:::code-group
+
+```js [Browser]
+await client.conversations.syncAll();
+```
+
+```js [Node]
+await client.conversations.syncAll();
+```
+
+```tsx [React Native]
+await client.conversations.syncAllConversations();
+```
+
+```kotlin [Kotlin]
+client.conversations.syncAllConversations()
+```
+
+```swift [Swift]
+try await client.conversations.syncAllConversations()
+```
+
+:::
+
+## List existing group chats or DMs
+
+Get a list of existing group chats or DMs in the local database. By default, the conversations are listed in descending order by their `lastMessage` created at value. If a conversation does not contain any messages, the conversation is ordered by its `createdAt` value.
+
+:::code-group
+
+```js [Browser]
+const allConversations = await client.conversations.list();
+const allGroups = await client.conversations.listGroups();
+const allDms = await client.conversations.listDms();
+```
+
+```js [Node]
+const allConversations = await client.conversations.list();
+const allGroups = await client.conversations.listGroups();
+const allDms = await client.conversations.listDms();
+```
+
+```tsx [React Native]
+// List Conversation items
+await alix.conversations.list();
+
+// List Conversation items but only return specified fields
+await alix.conversations.list(
+  {
+    members: false,
+    consentState: false,
+    description: false,
+    creatorInboxId: false,
+    addedByInboxId: false,
+    isActive: false,
+    lastMessage: true,
+  },
+);
+```
+
+```kotlin [Kotlin]
+// List conversations (both groups and dms)
+val conversations = alix.conversations.list()
+val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
+
+// List just dms
+val conversations = alix.conversations.listDms()
+val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
+
+//List just groups
+val conversations = alix.conversations.listGroups()
+val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
+
+```
+
+```swift [Swift]
+// List conversations (both groups and dms)
+let conversations = try await alix.conversations.list()
+let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
+
+// List just dms
+let conversations = try await alix.conversations.listDms()
+let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
+
+//List just groups
+let conversations = try await alix.conversations.listGroups()
+let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
+```
+
+:::
+
+## Stream all group chats and DMs
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Node]
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream all group chat and DM messages
+
+Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+:::code-group
+
+```js [Node]
+// stream all messages from all conversations
+const stream = await client.conversations.streamAllMessages();
+
+// stream only group messages
+const stream = await client.conversations.streamAllGroupMessages();
+
+// stream only dm messages
+const stream = await client.conversations.streamAllDmMessages();
+
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  }
+);
+```
+
+```kotlin [Kotlin]
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a message
+}
+```
+
+```swift [Swift]
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a message
+}
+```
+
+:::
