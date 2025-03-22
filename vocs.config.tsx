@@ -41,23 +41,16 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "📋 Documentation status",
-      link: "/doc-status",
-      items: [],
-    },
-    {
       text: "Upgrade to a stable XMTP V3 SDK",
       collapsed: false,
       items: [
         {
           text: "From a legacy XMTP V2 SDK",
           link: "/upgrade-from-legacy-V2",
-          items: [],
         },
         {
           text: "From a legacy XMTP V3 SDK",
           link: "/upgrade-from-legacy-V3",
-          items: [],
         },
       ],
     },
@@ -100,16 +93,20 @@ export default defineConfig({
           link: "/inboxes/create-conversations",
         },
         {
-          text: "Stream and list",
-          link: "/inboxes/stream-and-list",
+          text: "Send messages",
+          link: "/inboxes/send-messages",
         },
         {
-          text: "Manage inboxes",
-          link: "/inboxes/manage-inboxes",
+          text: "List, stream, and sync",
+          link: "/inboxes/list-stream-and-sync",
         },
         {
           text: "Enable history sync",
           link: "/inboxes/history-sync",
+        },
+        {
+          text: "Manage inboxes",
+          link: "/inboxes/manage-inboxes",
         },
         {
           text: "Support spam-free inboxes",
@@ -194,10 +191,6 @@ export default defineConfig({
           link: "/inboxes/group-metadata",
         },
         {
-          text: "Send disappearing messages",
-          link: "/inboxes/disappearing-messages",
-        },
-        {
           text: "Use signatures",
           link: "/inboxes/use-signatures",
         },
@@ -250,6 +243,11 @@ export default defineConfig({
           link: "/protocol/signatures",
         },
       ],
+    },
+    {
+      text: "💬 Doc feedback",
+      link: "/doc-feedback",
+      items: [],
     },
   ],
 });

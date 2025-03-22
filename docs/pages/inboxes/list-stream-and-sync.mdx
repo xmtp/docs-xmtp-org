@@ -1,4 +1,4 @@
-# Stream and list conversations and messages
+# List, stream, and sync conversations and messages
 
 ## List new conversations
 
@@ -24,46 +24,6 @@ client.conversations.sync()
 
 ```swift [Swift]
 try await client.conversations.sync()
-```
-
-:::
-
-## Sync all new messages and conversations
-
-Sync all new messages and conversations from the network.
-
-:::tip[Note]
-Syncing does not refetch existing messages and conversations. It also does not fetch messages for group chats you are no longer a part of.
-:::
-
-### 🎥 walkthrough: Syncing
-
-This video provides a walkthrough of syncing, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
-
-### Sync
-
-:::code-group
-
-```js [Browser]
-await client.conversations.syncAll();
-```
-
-```js [Node]
-await client.conversations.syncAll();
-```
-
-```tsx [React Native]
-await client.conversations.syncAllConversations();
-```
-
-```kotlin [Kotlin]
-client.conversations.syncAllConversations()
-```
-
-```swift [Swift]
-try await client.conversations.syncAllConversations()
 ```
 
 :::
@@ -229,3 +189,41 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 ```
 
 :::
+
+## Sync all new conversations and messages
+
+Sync all new conversations and messages from the network.
+
+:::tip[Note]
+Syncing does not refetch existing conversations and messages. It also does not fetch messages for group chats you are no longer a part of.
+:::
+
+:::code-group
+
+```js [Browser]
+await client.conversations.syncAll();
+```
+
+```js [Node]
+await client.conversations.syncAll();
+```
+
+```tsx [React Native]
+await client.conversations.syncAllConversations();
+```
+
+```kotlin [Kotlin]
+client.conversations.syncAllConversations()
+```
+
+```swift [Swift]
+try await client.conversations.syncAllConversations()
+```
+
+:::
+
+### 🎥 walkthrough: Syncing
+
+This video provides a walkthrough of syncing, covering the key ideas discussed in this doc.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
