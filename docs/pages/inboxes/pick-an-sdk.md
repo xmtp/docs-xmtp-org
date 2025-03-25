@@ -4,9 +4,13 @@ Choose the appropriate XMTP SDK based on your app platform and development needs
 
 ## Web
 
-These SDKs are designed for web-based app, offering seamless integration with browser and server environments.
+This SDK is designed for web-based apps, offering seamless integration with browser environments.
 
 - [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
+
+## Server
+
+This SDK is designed for backend applications, offering seamless integration with server environments.
 
 - [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
 

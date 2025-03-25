@@ -1,33 +1,5 @@
 # List, stream, and sync conversations and messages
 
-## List new conversations
-
-Get any new group chat or DM conversations from the network:
-
-:::code-group
-
-```js [Browser]
-await client.conversations.sync();
-```
-
-```js [Node]
-await client.conversations.sync();
-```
-
-```tsx [React Native]
-await client.conversations.sync();
-```
-
-```kotlin [Kotlin]
-client.conversations.sync()
-```
-
-```swift [Swift]
-try await client.conversations.sync()
-```
-
-:::
-
 ## List existing group chats or DMs
 
 Get a list of existing group chats or DMs in the local database. By default, the conversations are listed in descending order by their `lastMessage` created at value. If a conversation does not contain any messages, the conversation is ordered by its `createdAt` value.
@@ -186,6 +158,34 @@ alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */).coll
 for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */) {
   // Received a message
 }
+```
+
+:::
+
+## Sync conversations
+
+Get any new group chat or DM conversations from the network:
+
+:::code-group
+
+```js [Browser]
+await client.conversations.sync();
+```
+
+```js [Node]
+await client.conversations.sync();
+```
+
+```tsx [React Native]
+await client.conversations.sync();
+```
+
+```kotlin [Kotlin]
+client.conversations.sync()
+```
+
+```swift [Swift]
+try await client.conversations.sync()
 ```
 
 :::

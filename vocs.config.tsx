@@ -101,7 +101,7 @@ export default defineConfig({
           link: "/inboxes/list-stream-and-sync",
         },
         {
-          text: "Enable history sync",
+          text: "History sync",
           link: "/inboxes/history-sync",
         },
         {
