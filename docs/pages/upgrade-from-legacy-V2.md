@@ -137,7 +137,7 @@ However, key differences include:
 
 - Prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
 
-To learn more, see [Build a chat inbox](/inboxes/build-inbox).
+To learn more, see [Build a chat inbox](/inboxes/pick-an-sdk).
 
 ## Local databases mean no need to export/import topic data
 

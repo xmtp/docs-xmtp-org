@@ -7,7 +7,7 @@ Use the following methods to provide users with control over their messaging exp
 Get the latest consent records from the network:
 
 :::tip[Note]
-Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/build-inbox#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/create-a-client/#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
 :::
 
 :::code-group
@@ -141,7 +141,7 @@ try await conversation.updateConsent(.allowed) // .allowed | .denied
 Listen for real-time updates to consent records:
 
 :::tip[Note]
-Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/build-inbox#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/create-a-client/#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
 :::
 
 :::code-group
