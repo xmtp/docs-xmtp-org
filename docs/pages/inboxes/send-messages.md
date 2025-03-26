@@ -36,6 +36,183 @@ try await group.send(content: "Hello everyone")
 
 :::
 
+## Optimistically send messages
+
+When a user sends a message with XMTP, they might experience a slight delay between sending the message and seeing their sent message display in their app UI.
+
+Typically, the slight delay is caused by the app needing to wait for the XMTP network to finish processing the message before the app can display the message in its UI.
+
+Messaging without optimistic sending:
+
+![Messaging without optimistic sending. Note the slight delay after clicking Send.](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/without-opt-sending.gif)
+
+Note the slight delay after clicking **Send**.
+
+Implement optimistic sending to immediately display the sent message in the sender’s UI while processing the message in the background. This provides the user with immediate feedback and enables them to continue messaging without waiting for their previous message to finish processing.
+
+Messaging with optimistic sending:
+
+![Messaging with optimistic sending. The message displays immediately for the sender, with a checkmark indicator displaying once the message has been successfully sent.](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/with-opt-sending.gif)
+
+The message displays immediately for the sender, with a checkmark indicator displaying once the message has been successfully sent.
+
+### Key UX considerations
+
+- After initially sending a message optimistically, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
+
+- If an optimistically sent message fails to send, give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
+
+### 1. Optimistically send a message locally
+
+There are two steps to optimistically send a message:
+
+1. Send the message locally so it can display immediately in the sender's UI.
+2. Send the message to the XMTP network so it can be delivered to the recipient.
+
+:::code-group
+
+```tsx [Browser]
+// Send a message optimistically (displays immediately in the sender's UI)
+conversation.sendOptimistic("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+conversation.sendOptimistic(customContent, contentType);
+```
+
+```tsx [Node]
+// Send a message optimistically (displays immediately in the sender's UI)
+conversation.sendOptimistic("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+conversation.sendOptimistic(customContent, contentType);
+```
+
+```tsx [React Native]
+Code sample coming soon.
+```
+
+```kotlin [Kotlin]
+// Send a message optimistically (displays immediately in the sender's UI)
+conversation.sendOptimistic("Hello world")
+
+// For custom content types, specify the content type
+val customContent = mapOf("foo" to "bar")
+val contentType = ContentTypeId(
+    authorityId = "example",
+    typeId = "test",
+    versionMajor = 1,
+    versionMinor = 0
+)
+conversation.sendOptimistic(customContent, contentType)
+```
+
+```swift [Swift]
+// Send a message optimistically (displays immediately in the sender's UI)
+try await conversation.sendOptimistic("Hello world")
+
+// For custom content types, specify the content type
+let customContent = ["foo": "bar"]
+let contentType = ContentTypeId(
+    authorityId: "example",
+    typeId: "test",
+    versionMajor: 1,
+    versionMinor: 0
+)
+try await conversation.sendOptimistic(customContent, contentType: contentType)
+```
+
+:::
+
+### 2. Publish an optimistically sent message to the network
+
+After optimistically sending a message locally, use `publishMessages` to publish the message to the XMTP network so it can be delivered to recipients.
+
+Be sure to publish messages to the network in the order the user sent them. For example, if a message is still being published when a user attempts to optimistically send another message, wait for the current message to be published to the network before publishing the next message.
+
+:::code-group
+
+```tsx [Browser]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+async function sendMessageWithOptimisticUI(conversation, messageText) {
+  try {
+    // Add message to UI immediately
+    conversation.sendOptimistic(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
+```
+
+```tsx [Node]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+async function sendMessageWithOptimisticUI(conversation, messageText) {
+  try {
+    // Add message to UI immediately
+    conversation.sendOptimistic(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
+```
+
+```tsx [React Native]
+Code sample coming soon.
+```
+
+```kotlin [Kotlin]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText: String): Boolean {
+    return try {
+        // Add message to UI immediately
+        conversation.sendOptimistic(messageText)
+        
+        // Actually send the message to the network
+        conversation.publishMessages()
+        true
+    } catch (error: Exception) {
+        Log.e("XMTP", "Failed to send message: ${error.message}", error)
+        false
+    }
+}
+```
+
+```swift [Swift]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String) async throws -> Bool {
+    do {
+        // Add message to UI immediately
+        try await conversation.sendOptimistic(messageText)
+        
+        // Actually send the message to the network
+        try await conversation.publishMessages()
+        return true
+    } catch {
+        print("Failed to send message: \(error)")
+        return false
+    }
+}
+```
+
+:::
+
 ## Handle unsupported content types
 
 As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
