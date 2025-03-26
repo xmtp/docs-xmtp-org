@@ -39,7 +39,7 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 
 ## Primary XMTP identifier is now an inbox ID, not an Ethereum address
 
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/build-inbox#create-an-account-signer), as well as future support for Passkeys and other identity types.
+XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/create-a-signer), as well as future support for Passkeys and other identity types.
 
 Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. An `inboxId` has a list of identity objects that explicitly includes the identity type (kind) and identifier. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
 
@@ -137,7 +137,7 @@ However, key differences include:
 
 - Prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
 
-To learn more, see [Build a chat inbox](/inboxes/build-inbox).
+To learn more, see [Build a chat inbox](/inboxes/pick-an-sdk).
 
 ## Local databases mean no need to export/import topic data
 

@@ -1,6 +1,6 @@
 # Manage group chat metadata
 
-Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/inboxes/build-inbox#create-a-new-group-chat), and get and update metadata using these methods.
+Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/inboxes/create-conversations/#create-a-new-group-chat), and get and update metadata using these methods.
 
 ## Get a group chat name
 
