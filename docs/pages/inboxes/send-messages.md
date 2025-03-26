@@ -48,7 +48,7 @@ Messaging without optimistic sending:
 
 Note the slight delay after clicking **Send**.
 
-Implement optimistic sending to immediately display the sent message in the sender’s UI while processing the message in the background. This provides the user with immediate feedback and enables them to continue messaging without waiting for their previous message to finish processing.
+Implement optimistic sending to be able to immediately display the sent message in the sender’s UI while processing the message in the background. This provides the user with immediate feedback and enables them to continue messaging without waiting for their previous message to finish processing.
 
 Messaging with optimistic sending:
 
@@ -56,23 +56,21 @@ Messaging with optimistic sending:
 
 The message displays immediately for the sender, with a checkmark indicator displaying once the message has been successfully sent.
 
-### Key UX considerations
-
-- After initially sending a message optimistically, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
-
-- If an optimistically sent message fails to send, give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
-
-### 1. Optimistically send a message locally
+### How it works
 
 There are two steps to optimistically send a message:
 
-1. Send the message locally so it can display immediately in the sender's UI.
-2. Send the message to the XMTP network so it can be delivered to the recipient.
+1. Send the message to the local database so you can display it immediately in the sender's UI.
+2. Publish the message to the XMTP network so it can be delivered to the recipient.
+
+### 1. Optimistically send a message locally
+
+Send the message to the local database. This ensures that the message will be there when you query for messages and can immediately display the message in the sender's UI.
 
 :::code-group
 
 ```tsx [Browser]
-// Send a message optimistically (displays immediately in the sender's UI)
+// Optimistically send the message to the local database
 conversation.sendOptimistic("Hello world");
 
 // For custom content types, specify the content type
@@ -82,7 +80,7 @@ conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [Node]
-// Send a message optimistically (displays immediately in the sender's UI)
+// Optimistically send the message to the local database
 conversation.sendOptimistic("Hello world");
 
 // For custom content types, specify the content type
@@ -92,11 +90,11 @@ conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [React Native]
-Code sample coming soon.
+Code sample coming
 ```
 
 ```kotlin [Kotlin]
-// Send a message optimistically (displays immediately in the sender's UI)
+// Optimistically send the message to the local database
 conversation.sendOptimistic("Hello world")
 
 // For custom content types, specify the content type
@@ -111,7 +109,7 @@ conversation.sendOptimistic(customContent, contentType)
 ```
 
 ```swift [Swift]
-// Send a message optimistically (displays immediately in the sender's UI)
+// Optimistically send the message to the local database
 try await conversation.sendOptimistic("Hello world")
 
 // For custom content types, specify the content type
@@ -129,9 +127,7 @@ try await conversation.sendOptimistic(customContent, contentType: contentType)
 
 ### 2. Publish an optimistically sent message to the network
 
-After optimistically sending a message locally, use `publishMessages` to publish the message to the XMTP network so it can be delivered to recipients.
-
-Be sure to publish messages to the network in the order the user sent them. For example, if a message is still being published when a user attempts to optimistically send another message, wait for the current message to be published to the network before publishing the next message.
+After optimistically sending a message, use `publishMessages` to publish the message to the XMTP network so it can be delivered to recipients.
 
 :::code-group
 
@@ -172,7 +168,7 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 ```
 
 ```tsx [React Native]
-Code sample coming soon.
+Code sample coming
 ```
 
 ```kotlin [Kotlin]
@@ -212,6 +208,12 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
 ```
 
 :::
+
+### Key UX considerations for optimistically sent messages
+
+- After optimistically sending a message, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
+  - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to dipslay in the UI.
+- If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
 
 ## Handle unsupported content types
 
