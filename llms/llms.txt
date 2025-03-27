@@ -12,20 +12,7 @@ This documentation includes code samples for multiple SDKs. Please use the code 
 
 Ensure that you select the correct code block to avoid compatibility issues.
 
-## doc-status.md
-# XMTP documentation status
-
-We’re excited to share documentation for the latest version of XMTP.
-
-We'll be continuously releasing new and updated documentation. To follow along, see this [tracking issue](https://github.com/xmtp/docs-xmtp-org/issues/74).
-
-Not seeing the specific documentation you need? [Open an issue](https://github.com/xmtp/docs-xmtp-org/issues/new/choose). We ❤️ doc requests.
-
-The XMTP SDKs will continue to evolve as we add features, rename functions, and iterate based on community feedback.
-
-Onward builders! 🫡
-
-## index.mdx
+## pages/index.mdx
 import { CustomHomePage } from "../components/CustomHomePage";
 import "../styles.css";
 
@@ -48,7 +35,7 @@ import "../styles.css";
       icon="🤝"
     />
     <CustomHomePage.Tile
-      href="/inboxes/build-inbox"
+      href="/inboxes/pick-an-sdk"
       title="Build chat inboxes"
       description="Build standalone inbox apps with 1:1 and group chats built with MLS"
       icon="📥"
@@ -89,7 +76,7 @@ import "../styles.css";
 </CustomHomePage.Root>
 
 
-## privacy.md
+## pages/privacy.md
 # Privacy policy
 
 `docs.xmtp.org` does not use cookies and does not collect any personal data or personally-identifiable information (PII).
@@ -103,7 +90,18 @@ To learn more about the data Plausible tracks, see the [Plausible Data Policy](h
 If you have any questions about this privacy policy, post to the [XMTP Community Forums](https://community.xmtp.org/).
 
 
-## terms.md
+## pages/doc-feedback.md
+# Documentation feedback
+
+We’re excited to share documentation for the latest version of XMTP.
+
+We continuously release new and updated documentation.
+
+Not seeing the specific documentation you need? [Open an issue](https://github.com/xmtp/docs-xmtp-org/issues/new/choose). We ❤️ doc requests.
+
+Onward builders! 🫡
+
+## pages/terms.md
 ---
 description: "We are pleased to license much of the documentation on this site under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit."
 ---
@@ -112,7 +110,7 @@ description: "We are pleased to license much of the documentation on this site u
 
 Our content licensing policies are based on those of the [Google Developer](https://developers.google.com/site-policies) website.
 
-We are pleased to license much of the documentation on `doc.xmtp.org` under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.
+We are pleased to license much of the documentation on `docs.xmtp.org` under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.
 
 You will find the following notice at the bottom of pages on `docs.xmtp.org`:
 
@@ -161,7 +159,7 @@ Again, please link back to the original source page so that readers can refer to
 If you produce non-hypertext works, such as books, audio, or video, we ask that you make a best effort to include a spoken or written attribution in the spirit of the messages above.
 
 
-## upgrade-from-legacy-V2.md
+## pages/upgrade-from-legacy-V2.md
 # Upgrade from a legacy XMTP V2 SDK to a stable XMTP V3 SDK
 
 This document is for you if you are upgrading from a legacy XMTP V2 SDK. Legacy XMTP V2 SDKs include:
@@ -203,7 +201,7 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 
 ## Primary XMTP identifier is now an inbox ID, not an Ethereum address
 
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/build-inbox#create-an-account-signer), as well as future support for Passkeys and other identity types.
+XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/create-a-signer), as well as future support for Passkeys and other identity types.
 
 Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. An `inboxId` has a list of identity objects that explicitly includes the identity type (kind) and identifier. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
 
@@ -301,7 +299,7 @@ However, key differences include:
 
 - Prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
 
-To learn more, see [Build a chat inbox](/inboxes/build-inbox).
+To learn more, see [Build a chat inbox](/inboxes/pick-an-sdk).
 
 ## Local databases mean no need to export/import topic data
 
@@ -405,7 +403,7 @@ While we don’t recommend it, you can store V2 conversations in a local databas
 We don’t recommend using this approach because not all of the peer addresses may be reachable on the V3 network, which means that only some conversations would be seeded.
 
 
-## upgrade-from-legacy-V3.md
+## pages/upgrade-from-legacy-V3.md
 # Upgrade from a legacy XMTP V3 SDK to a stable XMTP V3 SDK
 
 This document is for you if you are upgrading from a legacy XMTP V3 SDK. Legacy XMTP V3 SDKs include:
@@ -442,7 +440,7 @@ The process to upgrade an app built with a legacy XMTP V3 SDK to a stable V3 SDK
 
 ## Primary XMTP identifier is now an inbox ID, not an Ethereum address
 
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/build-inbox#create-an-account-signer), as well as future support for Passkeys and other identity types.
+XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/create-a-signer), as well as future support for Passkeys and other identity types.
 
 Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. An `inboxId` has a list of identity objects that explicitly includes the identity type (kind) and identifier. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
 
@@ -531,7 +529,7 @@ const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
 ```
 
 
-## intro.md
+## pages/intro/intro.md
 # What is XMTP?
 
 XMTP (Extensible Message Transport Protocol) is the largest and most secure decentralized messaging network
@@ -582,7 +580,7 @@ One of the best ways to understand XMTP is to use an app built with XMTP.
 
     - [Join the conversation](https://community.xmtp.org/) and become part of the movement to redefine digital communications.
 
-## faq.mdx
+## pages/intro/faq.mdx
 # FAQ about XMTP
 
 Get answers to the most frequently asked questions about XMTP.
@@ -609,7 +607,7 @@ Here are some options for connecting wallets to your app built with XMTP:
 Here are some options for storing encrypted message payload content:
 
 - [IPFS](https://ipfs.io/)
-- [ThirdwebStorage](https://portal.thirdweb.com/storage)
+- [ThirdwebStorage](https://portal.thirdweb.com/infrastructure/storage/how-storage-works)
 - [web3.storage](https://web3.storage/)
 
 ### Wallet apps
@@ -649,7 +647,7 @@ Here are just a few chains that work with XMTP:
 
 ### Which languages does the XMTP SDK support?
 
-XMTP SDKs are [available for multiple languages](/inboxes/build-inbox/#pick-your-sdk).
+XMTP SDKs are [available for multiple languages](/inboxes/pick-an-sdk).
 
 ### Which web3 libraries does the XMTP SDK require?
 
@@ -759,12 +757,12 @@ Ephemera is a web3 software company that contributes to XMTP, an open network, p
 
 Ephemera employees work alongside other XMTP community members to build with and extend XMTP. Community [contributions and participation](https://community.xmtp.org/) are critical to the development and adoption of XMTP.
 
-Ephemera focuses on serving developers. We build [SDKs](/inboxes/build-inbox/#pick-your-sdk), developer tools, and example apps that help developers build great experiences with XMTP.
+Ephemera focuses on serving developers. We build [SDKs](/inboxes/pick-an-sdk), developer tools, and example apps that help developers build great experiences with XMTP.
 
 Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024 and [open-sourced it](https://github.com/ephemeraHQ/converse-app) for the entire XMTP network.
 
 
-## xips.md
+## pages/intro/xips.md
 # XMTP Improvement Proposals (XIPs)
 
 An XIP is a design document that proposes a new feature for XMTP or its processes or environment.
@@ -782,7 +780,7 @@ To review the latest XIPs, see [Improvement Proposals](https://community.xmtp.or
 To learn more about XIPs and how to participate in the process, including authoring an XIP of your own, see [XIP purpose, process, and guidelines](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md).
 
 
-## run-a-node.mdx
+## pages/network/run-a-node.mdx
 # Run an XMTP network node
 
 A testnet of the decentralized XMTP network was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
@@ -838,7 +836,7 @@ To learn more, see [XIP-54: XMTP network node operator qualification criteria](h
 XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
 
 
-## signatures.md
+## pages/protocol/signatures.md
 ---
 description: "Learn about wallet signature types when using XMTP"
 ---
@@ -882,7 +880,7 @@ Sign the **XMTP : Authenticate to inbox** message with your wallet address to co
 
 You can add another wallet address to your inbox at any time. For example, you might have started using an app with one wallet address and now want to use the app with an additional wallet address.
 
-If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. for example:
+If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. For example:
 
 ```text
 - Link address to inbox
@@ -932,7 +930,7 @@ When you provide consent, you're adding the publisher's address to your personal
 To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/inboxes/user-consent/user-consent).
 
 
-## security.mdx
+## pages/protocol/security.mdx
 # Messaging security properties with XMTP 
 
 XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
@@ -1024,7 +1022,996 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
     Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
 
 
-## group-permissions.mdx
+## pages/inboxes/send-messages.md
+# Send messages
+
+Once you have the group chat or DM conversation, you can send messages in the conversation.
+
+:::code-group
+
+```tsx [React Native]
+// For a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+await dm.send("Hello world");
+
+// OR for a group chat
+const group = await client.conversations.newGroup([recipientInboxId1, recipientInboxId2]);
+await group.send("Hello everyone");
+```
+
+```kotlin [Kotlin]
+// For a DM conversation
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+dm.send(text = "Hello world")
+
+// OR for a group chat
+val group = client.conversations.newGroup(listOf(recipientInboxId1, recipientInboxId2))
+group.send(text = "Hello everyone")
+```
+
+```swift [Swift]
+// For a DM conversation
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+try await dm.send(content: "Hello world")
+
+// OR for a group chat
+let group = try await client.conversations.newGroup([recipientInboxId1, recipientInboxId2])
+try await group.send(content: "Hello everyone")
+```
+
+:::
+
+## Optimistically send messages
+
+When a user sends a message with XMTP, they might experience a slight delay between sending the message and seeing their sent message display in their app UI.
+
+Typically, the slight delay is caused by the app needing to wait for the XMTP network to finish processing the message before the app can display the message in its UI.
+
+Messaging without optimistic sending:
+
+![Messaging without optimistic sending. Note the slight delay after clicking Send.](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/without-opt-sending.gif)
+
+Note the slight delay after clicking **Send**.
+
+Implement optimistic sending to be able to immediately display the sent message in the sender’s UI while processing the message in the background. This provides the user with immediate feedback and enables them to continue messaging without waiting for their previous message to finish processing.
+
+Messaging with optimistic sending:
+
+![Messaging with optimistic sending. The message displays immediately for the sender, with a checkmark indicator displaying once the message has been successfully sent.](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/with-opt-sending.gif)
+
+The message displays immediately for the sender, with a checkmark indicator displaying once the message has been successfully sent.
+
+### How it works
+
+There are two steps to optimistically send a message:
+
+1. Send the message to the local database so you can display it immediately in the sender's UI.
+2. Publish the message to the XMTP network so it can be delivered to the recipient.
+
+### 1. Optimistically send a message locally
+
+Send the message to the local database. This ensures that the message will be there when you query for messages and can immediately display the message in the sender's UI.
+
+:::code-group
+
+```tsx [Browser]
+// Optimistically send the message to the local database
+conversation.sendOptimistic("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+conversation.sendOptimistic(customContent, contentType);
+```
+
+```tsx [Node]
+// Optimistically send the message to the local database
+conversation.sendOptimistic("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+conversation.sendOptimistic(customContent, contentType);
+```
+
+```tsx [React Native]
+Code sample coming
+```
+
+```kotlin [Kotlin]
+// Optimistically send the message to the local database
+conversation.sendOptimistic("Hello world")
+
+// For custom content types, specify the content type
+val customContent = mapOf("foo" to "bar")
+val contentType = ContentTypeId(
+    authorityId = "example",
+    typeId = "test",
+    versionMajor = 1,
+    versionMinor = 0
+)
+conversation.sendOptimistic(customContent, contentType)
+```
+
+```swift [Swift]
+// Optimistically send the message to the local database
+try await conversation.sendOptimistic("Hello world")
+
+// For custom content types, specify the content type
+let customContent = ["foo": "bar"]
+let contentType = ContentTypeId(
+    authorityId: "example",
+    typeId: "test",
+    versionMajor: 1,
+    versionMinor: 0
+)
+try await conversation.sendOptimistic(customContent, contentType: contentType)
+```
+
+:::
+
+### 2. Publish an optimistically sent message to the network
+
+After optimistically sending a message, use `publishMessages` to publish the message to the XMTP network so it can be delivered to recipients.
+
+:::code-group
+
+```tsx [Browser]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+async function sendMessageWithOptimisticUI(conversation, messageText) {
+  try {
+    // Add message to UI immediately
+    conversation.sendOptimistic(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
+```
+
+```tsx [Node]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+async function sendMessageWithOptimisticUI(conversation, messageText) {
+  try {
+    // Add message to UI immediately
+    conversation.sendOptimistic(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
+```
+
+```tsx [React Native]
+Code sample coming
+```
+
+```kotlin [Kotlin]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText: String): Boolean {
+    return try {
+        // Add message to UI immediately
+        conversation.sendOptimistic(messageText)
+        
+        // Actually send the message to the network
+        conversation.publishMessages()
+        true
+    } catch (error: Exception) {
+        Log.e("XMTP", "Failed to send message: ${error.message}", error)
+        false
+    }
+}
+```
+
+```swift [Swift]
+// Publish all pending optimistically sent messages to the network
+// Call this only after using sendOptimistic to send a message locally
+func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String) async throws -> Bool {
+    do {
+        // Add message to UI immediately
+        try await conversation.sendOptimistic(messageText)
+        
+        // Actually send the message to the network
+        try await conversation.publishMessages()
+        return true
+    } catch {
+        print("Failed to send message: \(error)")
+        return false
+    }
+}
+```
+
+:::
+
+### Key UX considerations for optimistically sent messages
+
+- After optimistically sending a message, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
+  - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to dipslay in the UI.
+- If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
+
+## Handle unsupported content types
+
+As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+
+Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+
+:::code-group
+
+```js [Browser]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```js [Node]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```jsx [React Native]
+//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
+const isRegistered = message.contentTypeID in client.codecRegistry;
+if (!isRegistered) {
+  // Not supported content type
+  if (message?.fallback != null) {
+    return message?.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```kotlin [Kotlin]
+val codec = client.codecRegistry.find(options?.contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```swift [Swift]
+let codec = client.codecRegistry.find(for: contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+:::
+
+## Support disappearing messages
+
+Disappearing messages are messages that are intended to be visible to users for only a short period of time. After the message expiration time passes, the messages are removed from the UI and deleted from local storage so the messages are no longer accessible to conversation participants.
+
+### App-level disappearing messages vs. network-level message expiration
+
+Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network. 
+
+Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
+
+To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
+
+Disappearing messages can be understood as app-level privacy that helps avoid leaving an easily accessible record in a messaging UI, while XMTP mainnet message expiration is the mechanism by which messages are deleted from the network.
+
+### Enable disappearing messages for a conversation
+
+Conversation participants using apps that support disappearing messages will have a UX that honors the message expiration conditions. Conversation participants using apps that don't support disappearing messages won't experience disappearing message behavior.
+
+Messages abide by the disappearing message settings for the conversation.
+
+When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
+
+This includes setting the following conditions expressed in nanoseconds (ns):
+
+- `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
+- `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
+
+For example:
+
+1. Set `disappearStartingAtNs` to the current time, such as `1738620126404999936` (nanoseconds since the Unix epoch of January 1, 1970).
+2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
+3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
+
+To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
+
+
+### Set disappearing message settings on conversation create
+
+For example:
+
+:::code-group
+
+```tsx [React Native]
+// DM
+await client.conversations.newConversation(
+  inboxId,
+  {
+    disappearingMessageSettings: DisappearingMessageSettings(
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    )
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    disappearingMessageSettings: DisappearingMessageSettings(
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    )
+  }
+)
+```
+
+```kotlin [Kotlin]
+// DM
+client.conversations.newConversation(
+    inboxId,
+    disappearingMessageSettings = DisappearingMessageSettings(
+        disappearStartingAtNs = 1738620126404999936,
+        retentionDurationInNs = 1800000000000000
+    )
+)
+
+// Group
+client.conversations.newGroup(
+    [inboxId],
+    disappearingMessageSettings = DisappearingMessageSettings(
+        disappearStartingAtNs = 1738620126404999936,
+        retentionDurationInNs = 1800000000000000
+    )
+)
+```
+
+```swift [Swift]
+// DM
+try await client.conversations.newConversation(
+    with: inboxId,
+    disappearingMessageSettings: DisappearingMessageSettings(
+        disappearStartingAtNs: 1738620126404999936,
+        retentionDurationInNs: 1800000000000000
+    )
+)
+
+// Group
+try await client.conversations.newGroup(
+    with: [inboxId],
+    disappearingMessageSettings: DisappearingMessageSettings(
+        disappearStartingAtNs: 1738620126404999936,
+        retentionDurationInNs: 1800000000000000
+    )
+)
+```
+
+:::
+
+### Update disappearing message settings for an existing conversation
+
+For example:
+
+:::code-group
+
+```tsx [React Native]
+await conversation.updateDisappearingMessageSettings(updatedSettings)
+await conversation.clearDisappearingMessageSettings()
+```
+
+```kotlin [Kotlin]
+conversation.updateDisappearingMessageSettings(updatedSettings)
+conversation.clearDisappearingMessageSettings()
+```
+
+```swift [Swift]
+try await conversation.updateDisappearingMessageSettings(updatedSettings)
+try await conversation.clearDisappearingMessageSettings()
+```
+
+:::
+
+### Get the disappearing message settings for a conversation
+
+For example:
+
+:::code-group
+
+```tsx [React Native]
+conversation.disappearingMessageSettings
+conversation.isDisappearingMessagesEnabled()
+```
+
+```kotlin [Kotlin]
+conversation.disappearingMessageSettings
+conversation.isDisappearingMessagesEnabled
+```
+
+```swift [Swift]
+conversation.disappearingMessageSettings
+try conversation.isDisappearingMessagesEnabled()
+```
+
+:::
+
+### Automatic deletion from local storage
+
+A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
+
+To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+
+### Automatic removal from UI
+
+Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
+
+### Receive a disappearing message
+
+On the receiving side, your app doesn't need to check expiration conditions manually. Receive and process messages as usual, and the background worker handles message expiration cleanup.
+
+### UX tips for disappearing messages
+
+To ensure that users understand which messages are disappearing messages and their behavior, consider implementing:
+
+- A distinct visual style: Style disappearing messages differently from regular messages (e.g., a different background color or icon) to indicate their temporary nature.
+- A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
+
+
+## pages/inboxes/list-stream-and-sync.mdx
+# List, stream, and sync conversations and messages
+
+## List existing group chats or DMs
+
+Get a list of existing group chats or DMs in the local database. By default, the conversations are listed in descending order by their `lastMessage` created at value. If a conversation does not contain any messages, the conversation is ordered by its `createdAt` value.
+
+:::code-group
+
+```js [Browser]
+const allConversations = await client.conversations.list();
+const allGroups = await client.conversations.listGroups();
+const allDms = await client.conversations.listDms();
+```
+
+```js [Node]
+const allConversations = await client.conversations.list();
+const allGroups = await client.conversations.listGroups();
+const allDms = await client.conversations.listDms();
+```
+
+```tsx [React Native]
+// List Conversation items
+await alix.conversations.list();
+
+// List Conversation items but only return specified fields
+await alix.conversations.list(
+  {
+    members: false,
+    consentState: false,
+    description: false,
+    creatorInboxId: false,
+    addedByInboxId: false,
+    isActive: false,
+    lastMessage: true,
+  },
+);
+```
+
+```kotlin [Kotlin]
+// List conversations (both groups and dms)
+val conversations = alix.conversations.list()
+val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
+
+// List just dms
+val conversations = alix.conversations.listDms()
+val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
+
+//List just groups
+val conversations = alix.conversations.listGroups()
+val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
+
+```
+
+```swift [Swift]
+// List conversations (both groups and dms)
+let conversations = try await alix.conversations.list()
+let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
+
+// List just dms
+let conversations = try await alix.conversations.listDms()
+let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
+
+//List just groups
+let conversations = try await alix.conversations.listGroups()
+let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
+```
+
+:::
+
+## Stream all group chats and DMs
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Node]
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream all group chat and DM messages
+
+Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+:::code-group
+
+```js [Node]
+// stream all messages from all conversations
+const stream = await client.conversations.streamAllMessages();
+
+// stream only group messages
+const stream = await client.conversations.streamAllGroupMessages();
+
+// stream only dm messages
+const stream = await client.conversations.streamAllDmMessages();
+
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  }
+);
+```
+
+```kotlin [Kotlin]
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a message
+}
+```
+
+```swift [Swift]
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a message
+}
+```
+
+:::
+
+## Sync
+
+### 🎥 walkthrough: Syncing
+
+This video provides a walkthrough of syncing, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+:::tip[Note]
+Syncing does not refetch existing conversations and messages. It also does not fetch messages for group chats you are no longer a part of.
+:::
+
+### Sync conversation
+
+Get all new messages and group updates (name, description, etc.) for a specific conversation from the network.
+
+:::code-group
+
+```js [Browser]
+await client.conversation.sync();
+```
+
+```js [Node]
+await client.conversation.sync();
+```
+
+```tsx [React Native]
+await client.conversation.sync();
+```
+
+```kotlin [Kotlin]
+client.conversation.sync()
+```
+
+```swift [Swift]
+try await client.conversation.sync()
+```
+
+:::
+
+## Sync conversations
+
+Get any new group chat or DM conversations from the network.
+
+:::code-group
+
+```js [Browser]
+await client.conversations.sync();
+```
+
+```js [Node]
+await client.conversations.sync();
+```
+
+```tsx [React Native]
+await client.conversations.sync();
+```
+
+```kotlin [Kotlin]
+client.conversations.sync()
+```
+
+```swift [Swift]
+try await client.conversations.sync()
+```
+
+:::
+
+## Sync all new conversations, messages, and updates
+
+Sync all new group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network. We recommend that you run this sync in the background and call it more frequently than not.
+
+:::code-group
+
+```js [Browser]
+await client.conversations.syncAll();
+```
+
+```js [Node]
+await client.conversations.syncAll();
+```
+
+```tsx [React Native]
+await client.conversations.syncAllConversations();
+```
+
+```kotlin [Kotlin]
+client.conversations.syncAllConversations()
+```
+
+```swift [Swift]
+try await client.conversations.syncAllConversations()
+```
+
+:::
+
+## Handle unsupported content types
+
+As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+
+Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+
+:::code-group
+
+```js [Browser]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```js [Node]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```jsx [React Native]
+//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
+const isRegistered = message.contentTypeID in client.codecRegistry;
+if (!isRegistered) {
+  // Not supported content type
+  if (message?.fallback != null) {
+    return message?.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```kotlin [Kotlin]
+val codec = client.codecRegistry.find(options?.contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```swift [Swift]
+let codec = client.codecRegistry.find(for: contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+:::
+
+
+## pages/inboxes/create-a-client.mdx
+# Create an XMTP client
+
+Create an XMTP MLS client that can use the signing capabilities provided by the `SigningKey` parameter. This `SigningKey` links the client to the appropriate EOA or SCW.
+
+## 🎥 walkthrough: Create a client
+
+This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+## Create a client
+
+:::code-group
+
+```tsx [Browser]
+import { Client, type Signer } from "@xmtp/browser-sdk";
+
+const accountIdentity = {
+  kind: "ETHEREUM", // Specifies the identity type
+  identifier: "0x...", // Ethereum address as the identifier
+};
+
+const signer: Signer = {
+  getIdentity: () => accountIdentity,
+  signMessage: async (message) => {
+    // return value from a signing method here
+  },
+};
+
+// This value should be generated once per installation and stored securely
+const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  encryptionKey,
+  options /* optional */
+);
+```
+
+```tsx [Node]
+import { Client, type Signer } from "@xmtp/node-sdk";
+import { getRandomValues } from "node:crypto";
+
+const accountIdentity = {
+  kind: "ETHEREUM", // Specifies the identity type
+  identifier: "0x...", // Ethereum address as the identifier
+};
+
+const signer: Signer = {
+  getIdentity: () => accountIdentity,
+  signMessage: async (message) => {
+    // return value from a signing method here
+  },
+};
+
+// This value should be generated once per installation and stored securely
+const encryptionKey = getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  encryptionKey,
+  options /* optional */
+);
+```
+
+```tsx [React Native]
+Client.create(SigningKey, {
+  env: "production", // 'local' | 'dev' | 'production'
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+```
+
+```kotlin [Kotlin]
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes // 32 bytes
+)
+val client = Client().create(
+        account = SigningKey,
+        options = options
+    )
+```
+
+```swift [Swift]
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.create(
+  account: SigningKey,
+  options: options
+)
+```
+
+:::
+
+When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface.
+
+To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+### Configure an XMTP client
+
+You can configure an XMTP client with these parameters of `Client.create`:
+
+| Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV and PRODUCTION network environments](#xmtp-dev-and-production-network-environments). |
+| apiURL             | undefined                                           | Manually specify an API URL to use. If specified, value of `env` will be ignored. |
+| appContext (Android-only)     | null                                      | Required. The app context used to create and access the local database. |
+| dbEncryptionKey | null                                      | Required. A 32-byte `ByteArray` used to encrypt the local database.    |
+| dbDirectory | xmtp_db                                      | Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default. |
+| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`. |
+
+### XMTP DEV and PRODUCTION network environments
+
+XMTP provides `DEV` and `PRODUCTION` network environments to support the development phases of your project.
+
+The `PRODUCTION` and `DEV` networks are completely separate and not interchangeable.
+
+For example, an XMTP identity on the `DEV` network is completely distinct from the XMTP identity on the `PRODUCTION` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `DEV` network can't be accessed from or moved to the `PRODUCTION` network, and vice versa.
+
+:::tip
+When you [create a client](/inboxes/create-a-client), it connects to the XMTP `DEV` environment by default. Use the `env` parameter to explicitly set your client's network environment.
+:::
+
+Here are some best practices for when to use each environment:
+
+- `DEV`: Use to have a client communicate with the `DEV` network. As a best practice, set `env` to `DEV` while developing and testing your app. Follow this best practice to isolate test messages to `DEV` inboxes.
+
+- `PRODUCTION`: Use to have a client communicate with the `PRODUCTION` network. As a best practice, set `env` to `PRODUCTION` when your app is serving real users. Follow this best practice to isolate messages between real-world users to `PRODUCTION` inboxes.
+
+The `PRODUCTION` network is configured to store messages indefinitely. XMTP may occasionally delete messages and keys from the `DEV` network, and will provide advance notice in the [XMTP Community Forms](https://community.xmtp.org/).
+
+You can also use a `LOCAL` value to have a client communicate with an XMTP node you are running locally. For example, an XMTP node developer can set `env` to `LOCAL` to generate client traffic to test a node running locally.
+
+## Build an existing client
+
+Build, or resume, an existing client that's logged in and has an existing local database.
+
+:::code-group
+
+```tsx [React Native]
+Client.build(identity, {
+  env: "production", // 'local' | 'dev' | 'production'
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+```
+
+```kotlin [Kotlin]
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes
+)
+val client = Client().build(
+        identity = identity,
+        options = options
+    )
+```
+
+```swift [Swift]
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.build(
+  identity: identity,
+  options: options
+)
+```
+
+:::
+
+## Log out a client
+
+When you log a user out of your app, you can give them the option to delete their local database.
+
+:::tip[Important]
+If the user chooses to delete their local database, they will have to create a new installation the next time they log in and will lose all of their messages.
+:::
+
+:::code-group
+
+```tsx [React Native]
+  await client.deleteLocalDatabase()
+  await Client.dropClient(client.installationId)
+```
+
+```kotlin [Kotlin]
+  client.deleteLocalDatabase()
+```
+
+```swift [Swift]
+  try await client.deleteLocalDatabase()
+```
+
+:::
+
+
+## pages/inboxes/group-permissions.mdx
 # Manage group permissions
 
 Robust group chat permissions are key to providing users with a friendly and safe group chat experience.
@@ -1058,7 +2045,7 @@ Permissions are the actions a group chat participant can be allowed to take. The
 - Add a member to the group
 - Remove a member from the group
 - Update [group metadata](/inboxes/group-metadata), such as group name, description, and image
-- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or`updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
 
 The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
 
@@ -1123,7 +2110,7 @@ const isAdmin = group.isAdmin(inboxId);
 
 ```tsx [React Native]
 // Assume group is an existing group chat object for client
-const isAdmin = await.group.isAdmin(adminClient.inboxID);
+const isAdmin = await group.isAdmin(adminClient.inboxID);
 ```
 
 ```kotlin [Kotlin]
@@ -1488,185 +2475,7 @@ try await group.addedByInboxId();
 :::
 
 
-## disappearing-messages.md
-# Support disappearing messages with XMTP
-
-Disappearing messages are messages that are intended to be visible to users for only a short period of time. After the message expiration time passes, the messages are removed from the UI and deleted from local storage so the messages are no longer accessible to conversation participants.
-
-## App-level disappearing messages vs. network-level message expiration
-
-Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network. 
-
-Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
-
-To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
-
-Disappearing messages can be understood as app-level privacy that helps avoid leaving an easily accessible record in a messaging UI, while XMTP mainnet message expiration is the mechanism by which messages are deleted from the network.
-
-## Implement disappearing messages
-
-Conversation participants using apps that support disappearing messages will have a UX that honors the message expiration conditions. Conversation participants using apps that don't support disappearing messages won't experience disappearing message behavior.
-
-Messages abide by the disappearing message settings for the conversation.
-
-### Enable disappearing messages for a conversation
-
-When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
-
-This includes setting the following conditions expressed in nanoseconds (ns):
-
-- `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
-- `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
-
-For example:
-
-1. Set `disappearStartingAtNs` to the current time, such as `1738620126404999936` (nanoseconds since the Unix epoch of January 1, 1970).
-2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
-3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
-
-To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
-
-### Set disappearing message settings on conversation create
-
-For example:
-
-:::code-group
-
-```tsx [React Native]
-// DM
-await client.conversations.newConversation(
-  inboxId,
-  {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
-)
-
-// Group
-await client.conversations.newGroup(
-  [inboxId],
-  { 
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
-)
-```
-
-```kotlin [Kotlin]
-// DM
-client.conversations.newConversation(
-    inboxId,
-    disappearingMessageSettings = DisappearingMessageSettings(
-        disappearStartingAtNs = 1738620126404999936,
-        retentionDurationInNs = 1800000000000000
-    )
-)
-
-// Group
-client.conversations.newGroup(
-    [inboxId],
-    disappearingMessageSettings = DisappearingMessageSettings(
-        disappearStartingAtNs = 1738620126404999936,
-        retentionDurationInNs = 1800000000000000
-    )
-)
-```
-
-```swift [Swift]
-// DM
-try await client.conversations.newConversation(
-    with: inboxId,
-    disappearingMessageSettings: DisappearingMessageSettings(
-        disappearStartingAtNs: 1738620126404999936,
-        retentionDurationInNs: 1800000000000000
-    )
-)
-
-// Group
-try await client.conversations.newGroup(
-    with: [inboxId],
-    disappearingMessageSettings: DisappearingMessageSettings(
-        disappearStartingAtNs: 1738620126404999936,
-        retentionDurationInNs: 1800000000000000
-    )
-)
-```
-
-:::
-
-### Update disappearing message settings for an existing conversation
-
-For example:
-
-:::code-group
-
-```tsx [React Native]
-await conversation.updateDisappearingMessageSettings(updatedSettings)
-await conversation.clearDisappearingMessageSettings()
-```
-
-```kotlin [Kotlin]
-conversation.updateDisappearingMessageSettings(updatedSettings)
-conversation.clearDisappearingMessageSettings()
-```
-
-```swift [Swift]
-try await conversation.updateDisappearingMessageSettings(updatedSettings)
-try await conversation.clearDisappearingMessageSettings()
-```
-
-:::
-
-### Get the disappearing message settings for a conversation
-
-For example:
-
-:::code-group
-
-```tsx [React Native]
-conversation.disappearingMessageSettings
-conversation.isDisappearingMessagesEnabled()
-```
-
-```kotlin [Kotlin]
-conversation.disappearingMessageSettings
-conversation.isDisappearingMessagesEnabled
-```
-
-```swift [Swift]
-conversation.disappearingMessageSettings
-try conversation.isDisappearingMessagesEnabled()
-```
-
-:::
-
-### Automatic deletion from local storage
-
-A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
-
-To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
-
-#### Automatic removal from UI
-
-Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
-
-### Receive a disappearing message
-
-On the receiving side, your app doesn't need to check expiration conditions manually. Receive and process messages as usual, and the background worker handles message expiration cleanup.
-
-### UX tips for disappearing messages
-
-To ensure that users understand which messages are disappearing messages and their behavior, consider implementing:
-
-- A distinct visual style: Style disappearing messages differently from regular messages (e.g., a different background color or icon) to indicate their temporary nature.
-- A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
-
-
-## history-sync.mdx
+## pages/inboxes/history-sync.mdx
 # Enable history sync for apps built with XMTP
 
 Enable the history sync feature to give your users a way to sync decrypted historical data from an existing app installation to a new app installation.
@@ -1688,7 +2497,7 @@ This video provides a walkthrough of history sync, covering the key ideas discus
 
 ## Enable history sync
 
-History sync is enabled by default and runs automatically. When [creating a client](/inboxes/build-inbox#create-an-xmtp-client), the `historySyncUrl` client option is dynamically set to a default history sync server URL based on your `env` client option setting.
+History sync is enabled by default and runs automatically. When [creating a client](/inboxes/create-a-client), the `historySyncUrl` client option is dynamically set to a default history sync server URL based on your `env` client option setting.
 
 - When `env` is set to `dev`, the `historySyncUrl` is set to `https://message-history.dev.ephemera.network/`
 - When `env` is set to `production`, the `historySyncUrl` is set to `https://message-history.production.ephemera.network`
@@ -1752,10 +2561,10 @@ Ensure that you've initiated a call to [sync messages](#sync-messages) and that 
 After requesting a sync for one app installation, ensure that the pre-existing app installation is online to receive the sync request.
 
 
-## group-metadata.md
+## pages/inboxes/group-metadata.md
 # Manage group chat metadata
 
-Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/inboxes/build-inbox#create-a-new-group-chat), and get and update metadata using these methods.
+Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/inboxes/create-conversations/#create-a-new-group-chat), and get and update metadata using these methods.
 
 ## Get a group chat name
 
@@ -1914,989 +2723,7 @@ try await group.updateImageUrl(imageUrl: "newurl.com")
 :::
 
 
-## build-inbox.mdx
-# Build a chat inbox
-
-This guide walks you through the steps to build a chat inbox using the XMTP SDK. 
-
-:::tip[Learn to build with XMTP.chat]
-
-Learn to build a chat inbox with the help of [XMTP.chat](https://xmtp.chat/), an interactive developer tool and chat app.
-
-:::
-
-## Pick your SDK
-
-### Web
-
-- [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
-
-- [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
-
-### Mobile
-
-- [React Native SDK](https://github.com/xmtp/xmtp-react-native) 
-
-- [Kotlin SDK](https://github.com/xmtp/xmtp-android)
-
-- [Swift SDK](https://github.com/xmtp/xmtp-ios)
-
-## Create or build a client
-
-### Create an account signer 
-
-This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface. This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements. `SigningKey` now supports only one sign method: `sign(signatureText: String): SignedData`.
-
-- For an EOA, the `convertEOAToSigner` function creates a signer that can get the account identity and sign messages and has placeholder methods for chain ID and block number. 
-
-  :::code-group 
-
-  ```tsx [Browser] 
-  import type { Signer } from "@xmtp/browser-sdk"; 
-
-  const accountIdentity = { 
-    kind: "ETHEREUM", // Specifies the identity type 
-    identifier: "0x...", // Ethereum address as the identifier 
-  }; 
-
-  const signer: Signer = { 
-    getIdentity: () => accountIdentity, 
-    signMessage: async (message) => { 
-      // return value from a signing method here 
-    }, 
-  }; 
-  ```
-
-  ```tsx [Node] 
-  import type { Signer } from "@xmtp/node-sdk"; 
-
-  const accountIdentity = { 
-    kind: "ETHEREUM", // Specifies the identity type 
-    identifier: "0x...", // Ethereum address as the identifier 
-  }; 
-
-  const signer: Signer = { 
-    getIdentity: () => accountIdentity, 
-    signMessage: async (message) => { 
-      // return value from a signing method here 
-    }, 
-  }; 
-  ```
-
-  ```tsx [React Native] 
-  // Example EOA Signer 
-  export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
-    return {
-      getIdentifier: async () => new PublicIdentity(eoaAccount.address, 'ETHEREUM'),
-      getChainId: () => undefined, // Provide a chain ID if available or return undefined
-      getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
-      signerType: () => 'EOA', // "EOA" indicates an externally owned account
-      signMessage: async (message: string) => {
-        const signature = await eoaAccount.signMessage(message)
-
-        return {
-          signature,
-        }
-      },
-    }
-  }
-  ```
-
-  ```kotlin [Kotlin] 
-  class EOAWallet : SigningKey {
-      override val publicIdentity: PublicIdentity
-        get() = PublicIdentity(
-            IdentityKind.ETHEREUM,
-            key.publicAddress
-        )
-      override val type: SignerType
-        get() = SignerType.EOA
-      
-      override suspend fun sign(message: String): SignedData {
-          val signature = key.sign(message = message)
-          return SignedData(signature)
-      }
-  }
-  ```
-
-  ```swift [Swift] 
-  public struct EOAWallet: SigningKey { 
-      public var identity: PublicIdentity {
-        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
-      }
-
-      public var type: SignerType { .EOA }
-
-      public func sign(message: String) async throws -> SignedData { 
-          let signature = try await key.sign(message: message) 
-          return SignedData(signature)
-      } 
-  }
-  ```
-
-  :::
-
-- For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes a specific implementation for chain ID and an optional block number computation.
-
-  :::code-group 
-
-  ```tsx [Browser] 
-  import type { Signer } from "@xmtp/browser-sdk"; 
-
-  const accountIdentity = { 
-    kind: "ETHEREUM", // Specifies the identity type 
-    identifier: "0x...", // Smart Contract Wallet address 
-  }; 
-
-  const signer: Signer = { 
-    getIdentity: () => accountIdentity, 
-    signMessage: async (message) => { 
-      // return value from a signing method here 
-    }, 
-    // These methods are required for smart contract wallets 
-    getBlockNumber: () => undefined, // Optional block number 
-    getChainId: () => BigInt(8453), // Example: Base chain ID 
-  };
-  ```
-
-  ```tsx [Node]
-  import type { Signer } from "@xmtp/node-sdk";
-
-  const accountIdentity = { 
-    kind: "ETHEREUM", // Specifies the identity type 
-    identifier: "0x...", // Smart Contract Wallet address 
-  };
-
-  const signer: Signer = { 
-    getIdentity: () => accountIdentity, 
-    signMessage: async (message) => { 
-      // return value from a signing method here 
-    },
-    // These methods are required for smart contract wallets 
-    getBlockNumber: () => undefined, // Optional block number 
-    getChainId: () => BigInt(8453), // Example: Base chain ID 
-  }; 
-  ```
-
-  ```tsx [React Native] 
-  // Example SCW Signer 
-  export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
-    return {
-      getIdentifier: async () => new PublicIdentity(scwAccount.address, 'ETHEREUM'),
-      getChainId: () => 8453, // https://chainlist.org/ 
-      getBlockNumber: () => undefined, // Optional: will be computed at runtime
-      signerType: () => 'SCW', // "SCW" indicates an externally owned account
-      signMessage: async (message: string) => {
-        const byteArray = await scwAccount.signMessage(message); 
-        const signature = ethers.utils.hexlify(byteArray); // Convert to hex string 
-        
-        return {
-          signature,
-        }
-      },
-    }
-  }
-  ```
-
-  ```kotlin [Kotlin] 
-    class SCWallet : SigningKey {
-      override val publicIdentity: PublicIdentity
-        get() = PublicIdentity(
-            IdentityKind.ETHEREUM,
-            key.publicAddress
-        )
-      override val type: SignerType
-        get() = SignerType.SCW
-
-      override var chainId: Long? = 8453 // https://chainlist.org/
-      override var blockNumber: Long? = null // Optional: will be computed at runtime
-      
-      override suspend fun sign(message: String): SignedData {
-          val signature = key.sign(message = message)
-          return SignedData(signature)
-      }
-  }
-  ```
-
-  ```swift [Swift] 
-  public struct SCWallet: SigningKey { 
-      public var identity: PublicIdentity {
-        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
-      }
-      
-      public var chainId: Int64? { 
-          8453 
-      } 
-
-      public var blockNumber: Int64? { 
-          nil 
-      } 
-
-      public var type: SignerType { .SCW }
-
-      public func sign(message: String) async throws -> SignedData { 
-          let signature = try await key.sign(message: message)
-          return SignedData(signature.hexStringToByteArray )
-      } 
-  } 
-  ```
-
-  :::
-
-### Create an XMTP client
-
-Create an XMTP MLS client that can use the signing capabilities provided by the `SigningKey` parameter. This `SigningKey` links the client to the appropriate EOA or SCW.
-
-#### 🎥 walkthrough: Create a client
-
-This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
-
-#### Create a client
-
-:::code-group
-
-```tsx [Browser]
-import { Client, type Signer } from "@xmtp/browser-sdk";
-
-const accountIdentity = {
-  kind: "ETHEREUM", // Specifies the identity type
-  identifier: "0x...", // Ethereum address as the identifier
-};
-
-const signer: Signer = {
-  getIdentity: () => accountIdentity,
-  signMessage: async (message) => {
-    // return value from a signing method here
-  },
-};
-
-// This value should be generated once per installation and stored securely
-const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
-
-const client = await Client.create(
-  signer,
-  encryptionKey,
-  options /* optional */
-);
-```
-
-```tsx [Node]
-import { Client, type Signer } from "@xmtp/node-sdk";
-import { getRandomValues } from "node:crypto";
-
-const accountIdentity = {
-  kind: "ETHEREUM", // Specifies the identity type
-  identifier: "0x...", // Ethereum address as the identifier
-};
-
-const signer: Signer = {
-  getIdentity: () => accountIdentity,
-  signMessage: async (message) => {
-    // return value from a signing method here
-  },
-};
-
-// This value should be generated once per installation and stored securely
-const encryptionKey = getRandomValues(new Uint8Array(32));
-
-const client = await Client.create(
-  signer,
-  encryptionKey,
-  options /* optional */
-);
-```
-
-```tsx [React Native]
-Client.create(SigningKey, {
-  env: "production", // 'local' | 'dev' | 'production'
-  dbEncryptionKey: keyBytes, // 32 bytes
-});
-```
-
-```kotlin [Kotlin]
-val options = ClientOptions(
-    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
-    appContext = ApplicationContext(),
-    dbEncryptionKey = keyBytes // 32 bytes
-)
-val client = Client().create(
-        account = SigningKey,
-        options = options
-    )
-```
-
-```swift [Swift]
-let options = ClientOptions.init(
-  api: .init(env: .production, isSecure: true),
-  dbEncryptionKey: keyBytes // 32 bytes
-)
-let client = try await Client.create(
-  account: SigningKey,
-  options: options
-)
-```
-
-:::
-
-When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface.
-
-To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
-
-##### Configure an XMTP client
-
-You can configure an XMTP client with these parameters of `Client.create`:
-
-| Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV, PRODUCTION, and LOCAL network environments](#xmtp-dev-production-and-local-network-environments). |
-| apiURL             | undefined                                           | Manually specify an API URL to use. If specified, value of `env` will be ignored. |
-| appContext (Android-only)     | null                                      | Required. The app context used to create and access the local database. |
-| dbEncryptionKey | null                                      | Required. A 32-byte `ByteArray` used to encrypt the local database.    |
-| dbDirectory | xmtp_db                                      | Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default. |
-| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`. |
-
-#### XMTP DEV, PRODUCTION, and LOCAL network environments
-
-XMTP provides `DEV`, `PRODUCTION`, and `LOCAL` network environments to support the development phases of your project.
-
-The `PRODUCTION` and `DEV` networks are completely separate and not interchangeable.
-
-For example, an XMTP identity on the `DEV` network is completely distinct from the XMTP identity on the `PRODUCTION` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `DEV` network can't be accessed from or moved to the `PRODUCTION` network, and vice versa.
-
-:::tip
-When you [create a client](/inboxes/build-inbox/#create-an-xmtp-client), it connects to the XMTP `DEV` environment by default. Use the `env` parameter to explicitly set your client's network environment.
-:::
-
-Here are some best practices for when to use each environment:
-
-- `DEV`: Use to have a client communicate with the `DEV` network. As a best practice, set `env` to `DEV` while developing and testing your app. Follow this best practice to isolate test messages to `DEV` inboxes.
-
-- `PRODUCTION`: Use to have a client communicate with the `PRODUCTION` network. As a best practice, set `env` to `PRODUCTION` when your app is serving real users. Follow this best practice to isolate messages between real-world users to `PRODUCTION` inboxes.
-
-- `LOCAL`: Use to have a client communicate with an XMTP node you are running locally. For example, an XMTP node developer can set `env` to `LOCAL` to generate client traffic to test a node running locally.
-
-The `PRODUCTION` network is configured to store messages indefinitely. XMTP may occasionally delete messages and keys from the `DEV` network, and will provide advance notice in the [XMTP Community Forms](https://community.xmtp.org/).
-
-### Build an existing client
-
-Build, or resume, an existing client that's logged in and has an existing local database.
-
-:::code-group
-
-```tsx [React Native]
-Client.build(identity, {
-  env: "production", // 'local' | 'dev' | 'production'
-  dbEncryptionKey: keyBytes, // 32 bytes
-});
-```
-
-```kotlin [Kotlin]
-val options = ClientOptions(
-    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
-    appContext = ApplicationContext(),
-    dbEncryptionKey = keyBytes
-)
-val client = Client().build(
-        identity = identity,
-        options = options
-    )
-```
-
-```swift [Swift]
-let options = ClientOptions.init(
-  api: .init(env: .production, isSecure: true),
-  dbEncryptionKey: keyBytes // 32 bytes
-)
-let client = try await Client.build(
-  identity: identity,
-  options: options
-)
-```
-
-:::
-
-### Log out a client
-
-When you log a user out of your app, you can give them the option to delete their local database.
-
-:::tip[Important]
-If the user chooses to delete their local database, they will have to create a new installation the next time they log in and will lose all of their messages.
-:::
-
-:::code-group
-
-```tsx [React Native]
-  await client.deleteLocalDatabase()
-  await Client.dropClient(client.installationId)
-```
-
-```kotlin [Kotlin]
-  client.deleteLocalDatabase()
-```
-
-```swift [Swift]
-  try await client.deleteLocalDatabase()
-```
-
-:::
-
-## Check if an identity is reachable
-
-The first step to creating a conversation is to verify that participants’ identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
-
-Once you have the verified identities, you can create a new conversation, whether it's a group chat or direct message (DM).
-
-:::code-group
-
-```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
-
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
-```
-
-```js [Node]
-import { Client } from "@xmtp/node-sdk";
-
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
-```
-
-```tsx [React Native]
-// Request
-const canMessage = await client.canMessage([
-  boIdentity,
-  v2OnlyIdentity,
-  badIdentity,
-])
-
-// Response
-{
-  "0xboAddress": true,
-  "0xV2OnlyAddress": false,
-  "0xBadAddress": false,
-}
-```
-
-```kotlin [Kotlin]
-// Request
-val boIdentity = Identity(ETHEREUM, '0xboAddress')
-val v2Identity = Identity(ETHEREUM, '0xV2OnlyAddress')
-val badIdentity = Identity(ETHEREUM, '0xBadAddress')
-
-val canMessage = client.canMessage(listOf(boIdentity, v2Identity, badIdentity))
-
-// Response
-[
-  "0xboAddress": true,
-  "0xV2OnlyAddress": false,
-  "0xBadAddress": false,
-]
-```
-
-```swift [Swift]
-// Request
-let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIdentity])
-
-// Response
-[
-  "0xboAddress": true,
-  "0xV2OnlyAddress": false,
-  "0xBadAddress": false,
-]
-```
-
-:::
-
-:::tip
-Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
-:::
-
-## Create a conversation
-
-### Create a new group chat
-
-Once you have the verified identities, create a new group chat:
-
-:::code-group
-
-```js [Browser]
-const group = await client.conversations.newGroup(
-  [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
-);
-```
-
-```js [Node]
-const group = await client.conversations.newGroup(
-  [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
-);
-```
-
-```tsx [React Native]
-// New Group
-const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId]);
-
-// New Group with Metadata
-const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
-  name: "The Group Name",
-  imageUrl: "www.groupImage.com",
-  description: "The description of the group",
-  permissionLevel: "admin_only", // 'all_members' | 'admin_only'
-});
-```
-
-```kotlin [Kotlin]
-// New Group
-val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId))
-
-// New Group with Metadata
-val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId),
-  permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS, // ALL_MEMBERS | ADMIN_ONLY
-  name = "The Group Name",
-  imageUrl = "www.groupImage.com",
-  description = "The description of the group",
-)
-```
-
-```swift [Swift]
-// New Group
-let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId])
-
-// New Group with Metadata
-let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
-  permissionLevel: .admin_only, // .all_members | .admin_only
-  name: "The Group Name",
-  imageUrl: "www.groupImage.com",
-  description: "The description of the group",
-)
-```
-
-:::
-
-### Create a new DM
-
-Once you have the verified identity, get its inbox ID and create a new DM:
-
-:::code-group
-
-```js [Browser]
-const group = await client.conversations.newDm(bo.inboxId);
-```
-
-```js [Node]
-const group = await client.conversations.newDm(bo.inboxId);
-```
-
-```tsx [React Native]
-const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
-```
-
-```kotlin [Kotlin]
-val dm = alix.conversations.findOrCreateDm(bo.inboxId)
-
-// calls the above function under the hood but returns a type conversation instead of a dm
-val conversation = client.conversations.newConversation(inboxId)
-```
-
-```swift [Swift]
-let dm = try await alix.conversations.findOrCreateDm(with: bo.inboxId)
-
-// calls the above function under the hood but returns a type conversation instead of a dm
-let conversation = try await client.conversations.newConversation(inboxId)
-```
-
-:::
-
-## List conversations and messages
-
-### List new group chats or DMs
-
-Get any new group chats or DMs from the network:
-
-:::code-group
-
-```js [Browser]
-await client.conversations.sync();
-```
-
-```js [Node]
-await client.conversations.sync();
-```
-
-```tsx [React Native]
-await client.conversations.sync();
-```
-
-```kotlin [Kotlin]
-client.conversations.sync()
-```
-
-```swift [Swift]
-try await client.conversations.sync()
-```
-
-:::
-
-### Sync
-
-Sync all new messages and conversations from the network.
-
-:::tip[Note]
-Syncing does not refetch existing messages and conversations. It also does not fetch messages for group chats you are no longer a part of.
-:::
-
-#### 🎥 walkthrough: Syncing
-
-This video provides a walkthrough of syncing, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
-
-#### Sync
-
-:::code-group
-
-```js [Browser]
-await client.conversations.syncAll();
-```
-
-```js [Node]
-await client.conversations.syncAll();
-```
-
-```tsx [React Native]
-await client.conversations.syncAllConversations();
-```
-
-```kotlin [Kotlin]
-client.conversations.syncAllConversations()
-```
-
-```swift [Swift]
-try await client.conversations.syncAllConversations()
-```
-
-:::
-
-#### Handle unsupported content types
-
-As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
-
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
-
-:::code-group
-
-```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-:::
-
-### List existing group chats or DMs
-
-Get a list of existing group chats or DMs in the local database. By default, the conversations are listed in descending order by their `lastMessage` created at value. If a conversation does not contain any messages, the conversation is ordered by its `createdAt` value.
-
-:::code-group
-
-```js [Browser]
-const allConversations = await client.conversations.list();
-const allGroups = await client.conversations.listGroups();
-const allDms = await client.conversations.listDms();
-```
-
-```js [Node]
-const allConversations = await client.conversations.list();
-const allGroups = await client.conversations.listGroups();
-const allDms = await client.conversations.listDms();
-```
-
-```tsx [React Native]
-// List Conversation items
-await alix.conversations.list();
-
-// List Conversation items but only return specified fields
-await alix.conversations.list(
-  {
-    members: false,
-    consentState: false,
-    description: false,
-    creatorInboxId: false,
-    addedByInboxId: false,
-    isActive: false,
-    lastMessage: true,
-  },
-);
-```
-
-```kotlin [Kotlin]
-// List conversations (both groups and dms)
-val conversations = alix.conversations.list()
-val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
-
-// List just dms
-val conversations = alix.conversations.listDms()
-val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
-
-//List just groups
-val conversations = alix.conversations.listGroups()
-val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
-
-```
-
-```swift [Swift]
-// List conversations (both groups and dms)
-let conversations = try await alix.conversations.list()
-let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
-
-// List just dms
-let conversations = try await alix.conversations.listDms()
-let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
-
-//List just groups
-let conversations = try await alix.conversations.listGroups()
-let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
-```
-
-:::
-
-## Stream conversations and messages
-
-### Stream all group chats and DMs
-
-Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
-
-:::code-group
-
-```js [Node]
-const stream = await client.conversations.stream();
-// to stream only groups, use `client.conversations.streamGroups()`
-// to stream only dms, use `client.conversations.streamDms()`
-
-try {
-  for await (const conversation of stream) {
-    // Received a conversation
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
-}
-```
-
-```tsx [React Native]
-await alix.conversations.stream(async (conversation: Conversation<any>) => {
-  // Received a conversation
-});
-```
-
-```kotlin [Kotlin]
-alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
-  // Received a conversation
-}
-```
-
-```swift [Swift]
-for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
-  // Received a conversation
-}
-```
-
-:::
-
-### Stream all group chat and DM messages
-
-Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
-
-:::warning[Important]
-
-The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
-
-:::
-
-:::code-group
-
-```js [Node]
-// stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages();
-
-// stream only group messages
-const stream = await client.conversations.streamAllGroupMessages();
-
-// stream only dm messages
-const stream = await client.conversations.streamAllDmMessages();
-
-try {
-  for await (const message of stream) {
-    // Received a message
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
-}
-```
-
-```tsx [React Native]
-await alix.conversations.streamAllMessages(
-  async (message: DecodedMessage<any>) => {
-    // Received a message
-  }
-);
-```
-
-```kotlin [Kotlin]
-alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
-  // Received a message
-}
-```
-
-```swift [Swift]
-for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */) {
-  // Received a message
-}
-```
-
-:::
-
-## Helper methods and class interfaces
-
-### Conversation helper methods
-
-Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
-
-:::code-group
-
-```js [Browser]
-// get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
-
-// get a message by its ID
-const messageById = await client.conversations.getMessageById(messageId);
-
-// get a 1:1 conversation by a peer's inbox ID
-const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
-```
-
-```js [Node]
-// get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
-
-// get a message by its ID
-const messageById = await client.conversations.getMessageById(messageId);
-
-// get a 1:1 conversation by a peer's inbox ID
-const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
-```
-
-```tsx [React Native]
-// Returns a ConversationContainer
-await alix.conversations.findConversation(conversation.id);
-await alix.conversations.findConversationByTopic(conversation.topic);
-// Returns a Group
-await alix.conversations.findGroup(group.id);
-// Returns a DM
-await alix.conversations.findDmByIdentity(bo.identity);
-```
-
-```kotlin [Kotlin]
-// Returns a ConversationContainer
-alix.conversations.findConversation(conversation.id)
-alix.conversations.findConversationByTopic(conversation.topic)
-// Returns a Group
-alix.conversations.findGroup(group.id)
-// Returns a DM
-alix.conversations.findDmbyInboxId(bo.inboxId);
-```
-
-```swift [Swift]
-// Returns a ConversationContainer
-try alix.conversations.findConversation(conversation.id)
-try alix.conversations.findConversationByTopic(conversation.topic)
-// Returns a Group
-try alix.conversations.findGroup(group.id)
-// Returns a DM
-try alix.conversations. findDmbyInboxId(bo.inboxId)
-```
-
-:::
-
-### Conversation union type
-
-Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
-
-- React Native: [Conversation.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Conversation.ts)
-
-### Group class
-
-Represents a group chat conversation, providing methods to manage group-specific functionalities such as sending messages, synchronizing state, and handling group membership.
-
-- React Native: [Group.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts)
-
-### Dm class
-
-Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
-
-- React Native: [Dm.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts)
-
-
-## references.md
+## pages/inboxes/references.md
 ---
 description: "Access reference documentation for each XMTP client SDK"
 ---
@@ -2910,14 +2737,38 @@ Use these reference docs as guides to integrating the capabilities of XMTP SDKs 
 - [Reference docs](https://xmtp.github.io/xmtp-android/) for the [Kotlin SDK](https://github.com/xmtp/xmtp-android)
 
 
-## manage-inboxes.mdx
-# Manage XMTP inboxes
+## pages/inboxes/pick-an-sdk.md
+# Pick an SDK
+
+Choose the appropriate XMTP SDK based on your app platform and development needs.
+
+## Web
+
+This SDK is designed for web-based apps, offering seamless integration with browser environments: [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
+
+## Server
+
+This SDK is designed for backend applications, offering seamless integration with server environments: [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
+
+## Mobile
+
+These SDKs provide native support for mobile app development across different platforms and frameworks.
+
+- [React Native SDK](https://github.com/xmtp/xmtp-react-native) 
+
+- [Kotlin SDK](https://github.com/xmtp/xmtp-android)
+
+- [Swift SDK](https://github.com/xmtp/xmtp-ios)
+
+
+## pages/inboxes/manage-inboxes.mdx
+# Manage XMTP inboxes and installations
 
 With XMTP, a user can have one or more inboxes they use to access their messages. An inbox can have multiple identities associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
 
 All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
 
-The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the identity. To do this, you [create a client](/inboxes/build-inbox#create-an-xmtp-client) for their identity. 
+The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity. 
 
 The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
 
@@ -3188,7 +3039,260 @@ To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox 
 If you are interested in providing this functionality in your app and want some guidance, post to the [XMTP Community Forums](https://community.xmtp.org).
 
 
-## debug-your-app.md
+## pages/inboxes/create-conversations.md
+# Create conversations
+
+## Check if an identity is reachable
+
+The first step to creating a conversation is to verify that participants’ identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
+
+Once you have the verified identities, you can create a new conversation, whether it's a group chat or direct message (DM).
+
+:::code-group
+
+```js [Browser]
+import { Client } from "@xmtp/browser-sdk";
+
+// response is a Map of string (identity) => boolean (is reachable)
+const response = await Client.canMessage([bo.identity, caro.identity]);
+```
+
+```js [Node]
+import { Client } from "@xmtp/node-sdk";
+
+// response is a Map of string (identity) => boolean (is reachable)
+const response = await Client.canMessage([bo.identity, caro.identity]);
+```
+
+```tsx [React Native]
+// Request
+const canMessage = await client.canMessage([
+  boIdentity,
+  v2OnlyIdentity,
+  badIdentity,
+])
+
+// Response
+{
+  "0xboAddress": true,
+  "0xV2OnlyAddress": false,
+  "0xBadAddress": false,
+}
+```
+
+```kotlin [Kotlin]
+// Request
+val boIdentity = Identity(ETHEREUM, '0xboAddress')
+val v2Identity = Identity(ETHEREUM, '0xV2OnlyAddress')
+val badIdentity = Identity(ETHEREUM, '0xBadAddress')
+
+val canMessage = client.canMessage(listOf(boIdentity, v2Identity, badIdentity))
+
+// Response
+[
+  "0xboAddress": true,
+  "0xV2OnlyAddress": false,
+  "0xBadAddress": false,
+]
+```
+
+```swift [Swift]
+// Request
+let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIdentity])
+
+// Response
+[
+  "0xboAddress": true,
+  "0xV2OnlyAddress": false,
+  "0xBadAddress": false,
+]
+```
+
+:::
+
+:::tip
+Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
+:::
+
+## Create a new group chat
+
+Once you have the verified identities, create a new group chat:
+
+:::code-group
+
+```js [Browser]
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+```
+
+```js [Node]
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+```
+
+```tsx [React Native]
+// New Group
+const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId]);
+
+// New Group with Metadata
+const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
+  name: "The Group Name",
+  imageUrl: "www.groupImage.com",
+  description: "The description of the group",
+  permissionLevel: "admin_only", // 'all_members' | 'admin_only'
+});
+```
+
+```kotlin [Kotlin]
+// New Group
+val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId))
+
+// New Group with Metadata
+val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId),
+  permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS, // ALL_MEMBERS | ADMIN_ONLY
+  name = "The Group Name",
+  imageUrl = "www.groupImage.com",
+  description = "The description of the group",
+)
+```
+
+```swift [Swift]
+// New Group
+let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId])
+
+// New Group with Metadata
+let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
+  permissionLevel: .admin_only, // .all_members | .admin_only
+  name: "The Group Name",
+  imageUrl: "www.groupImage.com",
+  description: "The description of the group",
+)
+```
+
+:::
+
+## Create a new DM
+
+Once you have the verified identity, get its inbox ID and create a new DM:
+
+:::code-group
+
+```js [Browser]
+const group = await client.conversations.newDm(bo.inboxId);
+```
+
+```js [Node]
+const group = await client.conversations.newDm(bo.inboxId);
+```
+
+```tsx [React Native]
+const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
+```
+
+```kotlin [Kotlin]
+val dm = alix.conversations.findOrCreateDm(bo.inboxId)
+
+// calls the above function under the hood but returns a type conversation instead of a dm
+val conversation = client.conversations.newConversation(inboxId)
+```
+
+```swift [Swift]
+let dm = try await alix.conversations.findOrCreateDm(with: bo.inboxId)
+
+// calls the above function under the hood but returns a type conversation instead of a dm
+let conversation = try await client.conversations.newConversation(inboxId)
+```
+
+:::
+
+## Conversation helper methods
+
+Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
+
+:::code-group
+
+```js [Browser]
+// get a conversation by its ID
+const conversationById = await client.conversations.getConversationById(
+  conversationId
+);
+
+// get a message by its ID
+const messageById = await client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+```
+
+```js [Node]
+// get a conversation by its ID
+const conversationById = await client.conversations.getConversationById(
+  conversationId
+);
+
+// get a message by its ID
+const messageById = await client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+```
+
+```tsx [React Native]
+// Returns a ConversationContainer
+await alix.conversations.findConversation(conversation.id);
+await alix.conversations.findConversationByTopic(conversation.topic);
+// Returns a Group
+await alix.conversations.findGroup(group.id);
+// Returns a DM
+await alix.conversations.findDmByIdentity(bo.identity);
+```
+
+```kotlin [Kotlin]
+// Returns a ConversationContainer
+alix.conversations.findConversation(conversation.id)
+alix.conversations.findConversationByTopic(conversation.topic)
+// Returns a Group
+alix.conversations.findGroup(group.id)
+// Returns a DM
+alix.conversations.findDmbyInboxId(bo.inboxId);
+```
+
+```swift [Swift]
+// Returns a ConversationContainer
+try alix.conversations.findConversation(conversation.id)
+try alix.conversations.findConversationByTopic(conversation.topic)
+// Returns a Group
+try alix.conversations.findGroup(group.id)
+// Returns a DM
+try alix.conversations. findDmbyInboxId(bo.inboxId)
+```
+
+:::
+
+## Conversation union type
+
+Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
+
+- React Native: [Conversation.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Conversation.ts)
+
+## Group class
+
+Represents a group chat conversation, providing methods to manage group-specific functionalities such as sending messages, synchronizing state, and handling group membership.
+
+- React Native: [Group.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Group.ts)
+
+## Dm class
+
+Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
+
+- React Native: [Dm.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts)
+
+
+## pages/inboxes/debug-your-app.md
 # Debug your inbox app
 
 You can use the XMTP Debug tool to stress and burn-in test your inbox app on the `local` and `dev` XMTP environments.
@@ -3196,7 +3300,215 @@ You can use the XMTP Debug tool to stress and burn-in test your inbox app on the
 To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_debug/README.md).
 
 
-## use-signatures.md
+## pages/inboxes/create-a-signer.md
+# Create a EOA or SCW signer 
+
+This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface.
+
+This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements. `SigningKey` now supports only one sign method: `sign(signatureText: String): SignedData`.
+
+## Create an EOA signer
+
+For an EOA, the `convertEOAToSigner` function creates a signer that can get the account identity and sign messages and has placeholder methods for chain ID and block number. 
+
+:::code-group 
+
+```tsx [Browser] 
+import type { Signer } from "@xmtp/browser-sdk"; 
+
+const accountIdentity = { 
+  kind: "ETHEREUM", // Specifies the identity type 
+  identifier: "0x...", // Ethereum address as the identifier 
+}; 
+
+const signer: Signer = { 
+  getIdentity: () => accountIdentity, 
+  signMessage: async (message) => { 
+    // return value from a signing method here 
+  }, 
+}; 
+```
+
+```tsx [Node] 
+import type { Signer } from "@xmtp/node-sdk"; 
+
+const accountIdentity = { 
+  kind: "ETHEREUM", // Specifies the identity type 
+  identifier: "0x...", // Ethereum address as the identifier 
+}; 
+
+const signer: Signer = { 
+  getIdentity: () => accountIdentity, 
+  signMessage: async (message) => { 
+    // return value from a signing method here 
+  }, 
+}; 
+```
+
+```tsx [React Native] 
+// Example EOA Signer 
+export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
+  return {
+    getIdentifier: async () => new PublicIdentity(eoaAccount.address, 'ETHEREUM'),
+    getChainId: () => undefined, // Provide a chain ID if available or return undefined
+    getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
+    signerType: () => 'EOA', // "EOA" indicates an externally owned account
+    signMessage: async (message: string) => {
+      const signature = await eoaAccount.signMessage(message)
+
+      return {
+        signature,
+      }
+    },
+  }
+}
+```
+
+```kotlin [Kotlin] 
+class EOAWallet : SigningKey {
+    override val publicIdentity: PublicIdentity
+      get() = PublicIdentity(
+          IdentityKind.ETHEREUM,
+          key.publicAddress
+      )
+    override val type: SignerType
+      get() = SignerType.EOA
+    
+    override suspend fun sign(message: String): SignedData {
+        val signature = key.sign(message = message)
+        return SignedData(signature)
+    }
+}
+```
+
+```swift [Swift] 
+public struct EOAWallet: SigningKey { 
+    public var identity: PublicIdentity {
+      return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+    }
+
+    public var type: SignerType { .EOA }
+
+    public func sign(message: String) async throws -> SignedData { 
+        let signature = try await key.sign(message: message) 
+        return SignedData(signature)
+    } 
+}
+```
+
+:::
+
+## Create an SCW signer
+
+For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes a specific implementation for chain ID and an optional block number computation.
+
+:::code-group 
+
+```tsx [Browser] 
+import type { Signer } from "@xmtp/browser-sdk"; 
+
+const accountIdentity = { 
+  kind: "ETHEREUM", // Specifies the identity type 
+  identifier: "0x...", // Smart Contract Wallet address 
+}; 
+
+const signer: Signer = { 
+  getIdentity: () => accountIdentity, 
+  signMessage: async (message) => { 
+    // return value from a signing method here 
+  }, 
+  // These methods are required for smart contract wallets 
+  getBlockNumber: () => undefined, // Optional block number 
+  getChainId: () => BigInt(8453), // Example: Base chain ID 
+};
+```
+
+```tsx [Node]
+import type { Signer } from "@xmtp/node-sdk";
+
+const accountIdentity = { 
+  kind: "ETHEREUM", // Specifies the identity type 
+  identifier: "0x...", // Smart Contract Wallet address 
+};
+
+const signer: Signer = { 
+  getIdentity: () => accountIdentity, 
+  signMessage: async (message) => { 
+    // return value from a signing method here 
+  },
+  // These methods are required for smart contract wallets 
+  getBlockNumber: () => undefined, // Optional block number 
+  getChainId: () => BigInt(8453), // Example: Base chain ID 
+}; 
+```
+
+```tsx [React Native] 
+// Example SCW Signer 
+export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
+  return {
+    getIdentifier: async () => new PublicIdentity(scwAccount.address, 'ETHEREUM'),
+    getChainId: () => 8453, // https://chainlist.org/ 
+    getBlockNumber: () => undefined, // Optional: will be computed at runtime
+    signerType: () => 'SCW', // "SCW" indicates an externally owned account
+    signMessage: async (message: string) => {
+      const byteArray = await scwAccount.signMessage(message); 
+      const signature = ethers.utils.hexlify(byteArray); // Convert to hex string 
+      
+      return {
+        signature,
+      }
+    },
+  }
+}
+```
+
+```kotlin [Kotlin] 
+  class SCWallet : SigningKey {
+    override val publicIdentity: PublicIdentity
+      get() = PublicIdentity(
+          IdentityKind.ETHEREUM,
+          key.publicAddress
+      )
+    override val type: SignerType
+      get() = SignerType.SCW
+
+    override var chainId: Long? = 8453 // https://chainlist.org/
+    override var blockNumber: Long? = null // Optional: will be computed at runtime
+    
+    override suspend fun sign(message: String): SignedData {
+        val signature = key.sign(message = message)
+        return SignedData(signature)
+    }
+}
+```
+
+```swift [Swift] 
+public struct SCWallet: SigningKey { 
+    public var identity: PublicIdentity {
+      return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+    }
+    
+    public var chainId: Int64? { 
+        8453 
+    } 
+
+    public var blockNumber: Int64? { 
+        nil 
+    } 
+
+    public var type: SignerType { .SCW }
+
+    public func sign(message: String) async throws -> SignedData { 
+        let signature = try await key.sign(message: message)
+        return SignedData(signature.hexStringToByteArray )
+    } 
+} 
+```
+
+:::
+
+
+## pages/inboxes/use-signatures.md
 # Use signatures with XMTP
 
 With XMTP, you can use various types of signatures to sign and verify payloads.
@@ -3286,7 +3598,7 @@ let isVerified = try client.verifySignatureWithInstallationId(
 :::
 
 
-## ios-pn.md
+## pages/inboxes/push-notifs/ios-pn.md
 # Try push notifications with the iOS example XMTP app
 
 This guide describes how to set up push notifications for the [XMTP iOS example app](https://github.com/xmtp/xmtp-ios/tree/main/XMTPiOSExample) built with the [xmtp-ios SDK](https://github.com/xmtp/xmtp-ios) using Firebase Cloud Messaging (FCM) and a custom notification server.
@@ -3339,7 +3651,7 @@ Start the server locally or deploy it to a hosting service.
 - Decode a notification envelope  
 When you receive a push notification, you may want to decode the notification envelope to display a message preview or other information.
 
-## push-notifs.md
+## pages/inboxes/push-notifs/push-notifs.md
 # Support push notifications
 
 With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
@@ -3551,7 +3863,7 @@ Then you can:
 - [Try push notifications with the iOS example XMTP app](/inboxes/push-notifs/ios-pn)
 
 
-## pn-server.md
+## pages/inboxes/push-notifs/pn-server.md
 # Run a push notification server for an app built with XMTP
 
 This guide supplements the [core instructions](https://github.com/xmtp/example-notification-server-go/blob/np/export-kotlin-proto-code/README.md#local-setup) provided in the `example-notification-server-go` repository. The guide aims to address some common setup misconceptions and issues. 
@@ -3718,7 +4030,7 @@ You can now send notifications to your device using an [XMTP push notification c
 
    :::
 
-## understand-push-notifs.mdx
+## pages/inboxes/push-notifs/understand-push-notifs.mdx
 # Understand push notifications with XMTP
 
 With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
@@ -3867,7 +4179,7 @@ For example, you must consider that with DM stitching, the conversation is movin
 Also, you must consider that a welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.
 
 
-## android-pn.md
+## pages/inboxes/push-notifs/android-pn.md
 # Try push notifications with the Android example XMTP app
 
 This guide describes how to set up push notifications for the [XMTP Android example app](https://github.com/xmtp/xmtp-android/tree/main/example) built with the [xmtp-android SDK](https://github.com/xmtp/xmtp-android) using Firebase Cloud Messaging (FCM) and a custom notification server.
@@ -3989,7 +4301,7 @@ val envelope = getEnvelopeFromXMTP()
 val decodedMessage = conversation.decode(envelope)
 ```
 
-## support-user-consent.md
+## pages/inboxes/user-consent/support-user-consent.md
 # Support user consent preferences to provide spam-free inboxes
 
 Use the following methods to provide users with control over their messaging experience, ensuring their inboxes are tailored to their preferences and spam-free.
@@ -3999,7 +4311,7 @@ Use the following methods to provide users with control over their messaging exp
 Get the latest consent records from the network:
 
 :::tip[Note]
-Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/build-inbox#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/create-a-client/#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
 :::
 
 :::code-group
@@ -4133,7 +4445,7 @@ try await conversation.updateConsent(.allowed) // .allowed | .denied
 Listen for real-time updates to consent records:
 
 :::tip[Note]
-Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/build-inbox#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/create-a-client/#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
 :::
 
 :::code-group
@@ -4370,7 +4682,7 @@ Is your app using a great third-party or public good tool to help with spam and 
 :::
 
 
-## user-consent.mdx
+## pages/inboxes/user-consent/user-consent.mdx
 # Understand how user consent preferences support spam-free inboxes
 
 In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception.
@@ -4452,7 +4764,7 @@ Conversation created in an app on an SDK version **without** user consent suppor
 - There are no scenarios in which a user consent preference will be set to `denied`.
 
 
-## read-receipts.mdx
+## pages/inboxes/content-types/read-receipts.mdx
 ---
 description: Learn how to use the read receipt content type to support read receipts in your app built with XMTP
 ---
@@ -4603,7 +4915,7 @@ content.timestamp // "2019-09-26T07:58:30.996+0200"
 
 ## Display a read receipt
 
-`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/build-inbox/#handle-unsupported-content-types) section.
+`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
 
 ## Notifications and read receipts
 
@@ -4617,7 +4929,7 @@ The read receipt is provided as an **empty message** whose timestamp provides th
 
 You can use a read receipt timestamp to calculate the time since the last message was read. While iterating through messages, you can be sure that the last message was read at the timestamp of the read receipt if the string of the timestamp is lower.
 
-## attachments.mdx
+## pages/inboxes/content-types/attachments.mdx
 ---
 description: Learn how to use the remote attachment, multiple remote attachment, or attachment content types to support attachments in your app built with XMTP
 ---
@@ -5008,7 +5320,7 @@ struct ContentView: View {
 
 :::
 
-To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
 
 ## Support multiple remote attachments of any size
 
@@ -5435,7 +5747,7 @@ if (message.contentType.sameAs(ContentTypeAttachment)) {
 ```
 
 
-## content-types.md
+## pages/inboxes/content-types/content-types.md
 # Understand content types with XMTP
 
 When you build an app with XMTP, all messages are encoded with a content type to ensure that an XMTP client knows how to encode and decode messages, ensuring interoperability and consistent display of messages across apps.
@@ -5499,7 +5811,7 @@ Any developer building with XMTP can create a custom content type and immediatel
 
 To learn more, see [Build custom content types](/inboxes/content-types/custom).
 
-## replies.mdx
+## pages/inboxes/content-types/replies.mdx
 ---
 description: Learn how to use the reply content type to support quote replies in your app built with XMTP
 ---
@@ -5663,7 +5975,7 @@ let content: Reply = try message.content()
 
 :::
 
-To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
 
 ## Display the reply
 
@@ -5672,7 +5984,7 @@ For example, in Discord, users can reply to individual messages, and the reply p
 
 Note that the user experience of replies in iMessage and Slack follows more of a threaded pattern, where messages display in logical groupings, or threads. This reply content type doesn't support the threaded pattern. If you'd like to request support for a threaded reply pattern, [post an XIP idea](https://community.xmtp.org/c/development/ideas/54).
 
-## transaction-refs.mdx
+## pages/inboxes/content-types/transaction-refs.mdx
 ---
 description: Learn how to implement an onchain transaction reference content type
 ---
@@ -5750,7 +6062,7 @@ await conversation.messages.send(transactionReference, {
 
 To receive and process a transaction reference, you can use the following code samples.
 
-To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
 
 ```tsx [Browser]
 // Assume `loadLastMessage` is a thing you have
@@ -5769,7 +6081,7 @@ const transactionRef: TransactionReference = message.content;
 
 Displaying a transaction reference typically involves rendering details such as the transaction hash, network ID, and any relevant metadata. Because the exact UI representation can vary based on your app's design, you might want to fetch on-chain data before showing it to the user.
 
-## custom.md
+## pages/inboxes/content-types/custom.md
 ---
 description: Learn how to build custom content types
 ---
@@ -5797,7 +6109,7 @@ For more common content types, you can usually find a [standard](/inboxes/conten
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/intro/xips).
 
 
-## reactions.mdx
+## pages/inboxes/content-types/reactions.mdx
 ---
 description: Learn how to use the reaction content type to support reactions in your app built with XMTP
 ---
@@ -5969,7 +6281,7 @@ if (message.contentType == ContentTypeReaction) {
 let content: Reaction = try message.content()
 ```
 
-To handle unsupported content types, refer to the [fallback](/inboxes/build-inbox/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
 
 ## Display the reaction
 
@@ -5979,3 +6291,6 @@ Generally, reactions should be interpreted as emoji. So, "smile" would translate
 
 Reactions have `shouldPush` set to `false`, which means that reactions do not trigger push notifications as long as the notification server respects this flag.
 
+# Summary
+
+This documentation contains 39 files.
