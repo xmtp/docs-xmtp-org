@@ -1,24 +1,23 @@
 # Use XMTP documentation with AI coding assistants
 
-Here are instructions for integrating the XMTP documentation (llms.txt) with popular AI coding assistants:
+Here are instructions for integrating the XMTP documentation `llms.txt` file with common AI coding assistants.
 
-## Sourcegraph Cody
+## Cody
 
-1. Add as a context file:
+Add `llms.txt` as a context file:
 
-- Open Cody in your IDE (VS Code, JetBrains, etc.)
-- Go to Cody settings
-- Under "Context" or "Additional Context", add the URL to the raw llms.txt file:
+1. Open Cody in your IDE.
+2. Go to Cody settings.
+3. Under "Context" or "Additional Context", add the URL to the `llms.txt` file. For example:
 
+  ```json
+    "cody.agentic.context.experimentalOptions": {
+    "additionalUrls": [
+      "https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms.txt",
+    ]
   ```
-  https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms.txt
-  ```
 
-- Alternatively, download the file locally and add it as a local context file
-
-### Use with Cody Chat
-
-When asking questions about XMTP, you can explicitly reference the documentation:
+In most cases, Cody should automatically use the XMTP documentation context without an explicit prompt, as long as Cody can detect that your question is clearly about XMTP. That said, an explicit reference can help. For example:
 
 ```
 Using the XMTP documentation context, how do I create a new conversation in React Native?
@@ -26,26 +25,22 @@ Using the XMTP documentation context, how do I create a new conversation in Reac
 
 ## Cursor
 
-Cursor has support for external context.
+### Add as a knowledge file
 
-1. Add as a knowledge file:
-- In Cursor, go to Settings > AI > Knowledge
-- Click "Add Knowledge"
-- Select "File" and upload the llms.txt file
-- Name it "XMTP Documentation"
+1. In Cursor, go to Settings > AI > Knowledge
+2. Click "Add Knowledge"
+3. Select "File" and upload the llms.txt file
+4. Name it "XMTP Documentation"
 
-2. Using in queries:
-- When asking questions, use the /knowledge command:
+### Use in queries
+
+- When asking questions, use the `/knowledge` command:
 
   ```
   /knowledge XMTP Documentation How do I create a group chat in Swift?
   ```
 
-- Or enable the knowledge file for the current chat session using the knowledge panel
-
-3. Automatic context:
-- Alternatively, download the file to your project
-- Cursor will automatically include relevant parts when you ask XMTP-related questions
+- Enable the knowledge file for the current chat session using the knowledge panel
 
 ## GitHub Copilot
 

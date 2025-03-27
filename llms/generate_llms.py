@@ -14,8 +14,13 @@ def extract_content_from_md(file_path):
 
 # Main function to generate the llms.txt file by combining all markdown files
 # from the specified directory
-def generate_llms_txt(directory, output_file='llms.txt'):
+def generate_llms_txt(directory, output_file='llms/llms.txt'):  # Updated default path to include llms/ directory
     processed_files = []
+    
+    # Make sure the output directory exists
+    output_dir = os.path.dirname(output_file)
+    if output_dir and not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     
     try:
         with open(output_file, 'w', encoding='utf-8') as llms_file:
@@ -61,7 +66,7 @@ def generate_llms_txt(directory, output_file='llms.txt'):
 # Script entry point
 if __name__ == "__main__":
     # Update the path to the docs directory
-    docs_directory = os.path.join('..', 'docs')
+    docs_directory = 'docs'  # Changed from os.path.join('..', 'docs')
     
     # Check if the docs directory exists
     if not os.path.isdir(docs_directory):
@@ -70,7 +75,8 @@ if __name__ == "__main__":
         sys.exit(1)
     
     # Generate the llms.txt file and get the list of processed files
-    processed_files = generate_llms_txt(docs_directory, 'llms.txt')
+    # Specify the output file to be in the llms directory
+    processed_files = generate_llms_txt(docs_directory, 'llms/llms.txt')
     
     # Exit with error if no files were processed
     if not processed_files:
