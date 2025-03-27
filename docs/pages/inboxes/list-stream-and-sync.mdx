@@ -22,7 +22,8 @@ const allDms = await client.conversations.listDms();
 // List Conversation items
 await alix.conversations.list();
 
-// List Conversation items but only return specified fields
+// List Conversation items and return only the fields set to true. Optimize data transfer
+// by requesting only the fields the app needs.
 await alix.conversations.list(
   {
     members: false,
@@ -66,6 +67,15 @@ let orderFilteredConversations = try await client.conversations.listGroups(conse
 ```
 
 :::
+
+## List a user's active conversations
+
+The `isActive()` method determines whether the current user is still an active member of a group conversation. For example:
+
+- When a user is added to a group, `isActive()` returns `true` for that user
+- When a user is removed from a group, `isActive()` returns `false` for that user
+
+You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
 
 ## Stream all group chats and DMs
 
