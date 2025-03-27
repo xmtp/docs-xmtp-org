@@ -1,10 +1,10 @@
-# Manage XMTP inboxes
+# Manage XMTP inboxes and installations
 
 With XMTP, a user can have one or more inboxes they use to access their messages. An inbox can have multiple identities associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
 
 All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
 
-The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the identity. To do this, you [create a client](/inboxes/build-inbox#create-an-xmtp-client) for their identity. 
+The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity. 
 
 The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
 

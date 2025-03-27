@@ -41,23 +41,16 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "📋 Documentation status",
-      link: "/doc-status",
-      items: [],
-    },
-    {
       text: "Upgrade to a stable XMTP V3 SDK",
       collapsed: false,
       items: [
         {
           text: "From a legacy XMTP V2 SDK",
           link: "/upgrade-from-legacy-V2",
-          items: [],
         },
         {
           text: "From a legacy XMTP V3 SDK",
           link: "/upgrade-from-legacy-V3",
-          items: [],
         },
       ],
     },
@@ -84,20 +77,36 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Build a chat inbox",
-          link: "/inboxes/build-inbox",
+          text: "Pick an SDK",
+          link: "/inboxes/pick-an-sdk",
         },
         {
-          text: "Send disappearing messages",
-          link: "/inboxes/disappearing-messages",
+          text: "Create an EOA or SCW signer",
+          link: "/inboxes/create-a-signer",
+        },
+        {
+          text: "Create a client",
+          link: "/inboxes/create-a-client",
+        },
+        {
+          text: "Create conversations",
+          link: "/inboxes/create-conversations",
+        },
+        {
+          text: "Send messages",
+          link: "/inboxes/send-messages",
+        },
+        {
+          text: "List, stream, and sync",
+          link: "/inboxes/list-stream-and-sync",
+        },
+        {
+          text: "History sync",
+          link: "/inboxes/history-sync",
         },
         {
           text: "Manage inboxes",
           link: "/inboxes/manage-inboxes",
-        },
-        {
-          text: "Enable history sync",
-          link: "/inboxes/history-sync",
         },
         {
           text: "Support spam-free inboxes",
@@ -234,6 +243,11 @@ export default defineConfig({
           link: "/protocol/signatures",
         },
       ],
+    },
+    {
+      text: "💬 Doc feedback",
+      link: "/doc-feedback",
+      items: [],
     },
   ],
 });
