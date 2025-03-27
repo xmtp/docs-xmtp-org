@@ -12,9 +12,9 @@ def extract_content_from_md(file_path):
         print(f"Error reading file {file_path}: {e}")
         return f"Error: Could not read content from {file_path}"
 
-# Main function to generate the llms.txt file by combining all markdown files
+# Main function to generate the llms-full.txt file by combining all markdown files
 # from the specified directory
-def generate_llms_txt(directory, output_file='llms/llms.txt'):  # Updated default path to include llms/ directory
+def generate_llms_txt(directory, output_file='llms/llms-full.txt'):  # Updated filename to llms-full.txt
     processed_files = []
     
     # Make sure the output directory exists
@@ -66,7 +66,7 @@ def generate_llms_txt(directory, output_file='llms/llms.txt'):  # Updated defaul
 # Script entry point
 if __name__ == "__main__":
     # Update the path to the docs directory
-    docs_directory = 'docs'  # Changed from os.path.join('..', 'docs')
+    docs_directory = 'docs'
     
     # Check if the docs directory exists
     if not os.path.isdir(docs_directory):
@@ -74,9 +74,8 @@ if __name__ == "__main__":
         print("Make sure you're running this script from the correct location.")
         sys.exit(1)
     
-    # Generate the llms.txt file and get the list of processed files
-    # Specify the output file to be in the llms directory
-    processed_files = generate_llms_txt(docs_directory, 'llms/llms.txt')
+    # Generate the llms-full.txt file and get the list of processed files
+    processed_files = generate_llms_txt(docs_directory, 'llms/llms-full.txt')
     
     # Exit with error if no files were processed
     if not processed_files:

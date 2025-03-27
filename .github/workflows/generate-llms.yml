@@ -23,15 +23,15 @@ jobs:
           python -m pip install --upgrade pip
           # Add any other dependencies your script might need
 
-      - name: Run generate_llms.py
-        run: python llms/generate_llms.py
+      - name: Run generate_llms_full.py
+        run: python llms/generate_llms_full.py
 
       - name: Commit and push changes
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
-          git add llms/llms.txt
-          git commit -m "Update llms.txt"
+          git add llms/llms-full.txt
+          git commit -m "Update llms-full.txt"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
