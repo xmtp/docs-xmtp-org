@@ -70,6 +70,10 @@ export default defineConfig({
           text: "FAQ",
           link: "/intro/faq",
         },
+        {
+          text: "Build with LLMs",
+          link: "/intro/build-with-llms",
+        },
       ],
     },
     {
