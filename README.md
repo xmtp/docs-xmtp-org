@@ -104,7 +104,7 @@ The `docs.xmtp.org` team includes technical writers, product managers, developer
 
 - Accuracy
 - Audience needs
-- Adherence to [documentation style guidance](#documentation-style-guidance)
+- Adherence to [documentation style guidance](#follow-xmtp-documentation-style-guidance)
 
 ## Follow XMTP documentation style guidance
 
