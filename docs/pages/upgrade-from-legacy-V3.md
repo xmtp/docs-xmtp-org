@@ -20,10 +20,10 @@ XMTP V3 provides support for the features expected by modern messaging apps whil
 
 The process to upgrade an app built with a legacy XMTP V3 SDK to a stable V3 SDK is designed to be straightforward, with most functions in stable V3 working as they did in legacy V3. However, there are some notable differences, which we cover here and in these release notes:
 
-🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.1.0** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.1.0)
-- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.1.0)
-- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.1.0)
+🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
+- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.2)
+- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.3)
+- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.4)
 
 🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.0** following the detailed instructions in these release notes:
 - [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%401..2)
