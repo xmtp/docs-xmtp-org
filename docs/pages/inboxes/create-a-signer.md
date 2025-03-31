@@ -4,7 +4,7 @@ XMTP SDKs support message signing with 2 different types of Ethereum accounts: E
 
 ## Create an Externally Owned Account signer
 
-The EOA signer must have 3 properties: the account type, a function that returns the account identitier, and a function that signs messages.
+The EOA signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
 
 :::code-group
 
