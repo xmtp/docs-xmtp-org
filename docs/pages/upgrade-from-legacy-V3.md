@@ -2,11 +2,11 @@
 
 This document is for you if you are upgrading from a legacy XMTP V3 SDK. Legacy XMTP V3 SDKs include:
 
-- Browser SDK v0.x.x-&lt;v1.1.0
-- Node SDK v0.x.x-&lt;v1.1.0
-- React Native SDK v3.x.x-&lt;v4.1.0
-- Android SDK v3.x.x-&lt;v4.1.0
-- iOS SDK v3.x.x-&lt;v4.1.0
+- Browser SDK v0.x.x-&lt;v1.1.4
+- Node SDK v0.x.x-&lt;v1.0.5
+- React Native SDK v3.x.x-&lt;v4.0.2
+- Android SDK v3.x.x-&lt;v4.0.3
+- iOS SDK v3.x.x-&lt;v4.0.4
 
 :::tip[Upgrading from a legacy XMTP V2 SDK?]
 
