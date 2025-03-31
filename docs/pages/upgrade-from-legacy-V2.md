@@ -25,10 +25,10 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 
 ## Upgrade to XMTP V3
 
-🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.1.0** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.1.0)
-- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.1.0)
-- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.1.0)
+🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
+- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.2)
+- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.3)
+- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.4)
 
 🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.0** following the detailed instructions in these release notes:
 - [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%401.1.0)
