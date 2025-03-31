@@ -273,11 +273,11 @@ public struct ClientOptions {
 
 XMTP provides developer and production network environments. These networks are completely separate and not interchangeable.
 
+For example, an XMTP identity on the developer network is completely distinct from the XMTP identity on the production network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the developer network can't be accessed from or moved to the production network, and vice versa.
+
 :::tip
 When you create a client, it connects to the XMTP developer network by default. Set your client's network environment using the appropriate client option.
 :::
-
-For example, an XMTP identity on the developer network is completely distinct from the XMTP identity on the production network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the developer network can't be accessed from or moved to the production network, and vice versa.
 
 The production network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the developer network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
 
