@@ -1,0 +1,40 @@
+name: Generate LLMS Documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Run generate_llms_full.py
+        run: python llms/generate_llms_full.py
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update llms-full.txt
+          title: Update llms-full.txt
+          body: |
+            This PR updates the llms-full.txt file with the latest documentation.
+            
+            Automated PR created by GitHub Actions.
+          branch: update-llms-full
+          base: main
+          delete-branch: true
