@@ -1141,13 +1141,22 @@ try await group.updateImageUrl(imageUrl: "newurl.com")
 ## pages/inboxes/create-a-client.mdx
 # Create an XMTP client
 
-Create an XMTP MLS client that can use the signing capabilities provided by the `SigningKey` parameter. This `SigningKey` links the client to the appropriate EOA or SCW.
+Create an XMTP client that can use the signing capabilities provided by the [signer](/inboxes/create-a-signer). This signer links the client to the appropriate EOA or SCW.
 
 ## 🎥 walkthrough: Create a client
 
 This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
 
 ## Create a client
 
@@ -1156,25 +1165,16 @@ This video provides a walkthrough of creating a client, covering the key ideas d
 ```tsx [Browser]
 import { Client, type Signer } from "@xmtp/browser-sdk";
 
-const accountIdentity = {
-  kind: "ETHEREUM", // Specifies the identity type
-  identifier: "0x...", // Ethereum address as the identifier
-};
+// create a signer
+const signer: Signer = { /* ... */ };
 
-const signer: Signer = {
-  getIdentity: () => accountIdentity,
-  signMessage: async (message) => {
-    // return value from a signing method here
-  },
-};
-
-// This value should be generated once per installation and stored securely
+// this value should be generated once per installation and stored securely
 const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
   signer,
   encryptionKey,
-  options /* optional */
+  options, // optional
 );
 ```
 
@@ -1182,30 +1182,21 @@ const client = await Client.create(
 import { Client, type Signer } from "@xmtp/node-sdk";
 import { getRandomValues } from "node:crypto";
 
-const accountIdentity = {
-  kind: "ETHEREUM", // Specifies the identity type
-  identifier: "0x...", // Ethereum address as the identifier
-};
+// create a signer
+const signer: Signer = { /* ... */ };
 
-const signer: Signer = {
-  getIdentity: () => accountIdentity,
-  signMessage: async (message) => {
-    // return value from a signing method here
-  },
-};
-
-// This value should be generated once per installation and stored securely
+// this value should be generated once per installation and stored securely
 const encryptionKey = getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
   signer,
   encryptionKey,
-  options /* optional */
+  options, // optional
 );
 ```
 
 ```tsx [React Native]
-Client.create(SigningKey, {
+Client.create(signer, {
   env: "production", // 'local' | 'dev' | 'production'
   dbEncryptionKey: keyBytes, // 32 bytes
 });
@@ -1236,44 +1227,204 @@ let client = try await Client.create(
 
 :::
 
-When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the keys from the `Signer` interface.
+When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the key provided when creating the client.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
 ### Configure an XMTP client
 
-You can configure an XMTP client with these parameters of `Client.create`:
+You can configure an XMTP client with these options passed to `Client.create`:
 
-| Parameter       | Default                                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| --------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| env             | `DEV`                                           | Connect to the specified XMTP network environment. Valid values include `DEV`, `PRODUCTION`, or `LOCAL`. For important details about working with these environments, see [XMTP DEV and PRODUCTION network environments](#xmtp-dev-and-production-network-environments). |
-| apiURL             | undefined                                           | Manually specify an API URL to use. If specified, value of `env` will be ignored. |
-| appContext (Android-only)     | null                                      | Required. The app context used to create and access the local database. |
-| dbEncryptionKey | null                                      | Required. A 32-byte `ByteArray` used to encrypt the local database.    |
-| dbDirectory | xmtp_db                                      | Optional. Specify a database directory. If no directory is specified, the value is set to `xmtp_db` by default. |
-| historySyncUrl  | `https://message-history.dev.ephemera.network/` | The history sync URL used to specify where history can be synced from other devices on the network. For production apps, use `https://message-history.production.ephemera.network`. |
+:::code-group
 
-### XMTP DEV and PRODUCTION network environments
+```tsx [Browser]
+import type { ContentCodec } from "@xmtp/content-type-primitives";
 
-XMTP provides `DEV` and `PRODUCTION` network environments to support the development phases of your project.
+type ClientOptions = {
+  /**
+   * Specify which XMTP environment to connect to. (default: `dev`)
+   */
+  env?: "local" | "dev" | "production";
+  /**
+   * apiUrl can be used to override the `env` flag and connect to a
+   * specific endpoint
+   */
+  apiUrl?: string;
+  /**
+   * historySyncUrl can be used to override the `env` flag and connect to a
+   * specific endpoint for syncing history
+   */
+  historySyncUrl?: string;
+  /**
+   * Allow configuring codecs for additional content types
+   */
+  codecs?: ContentCodec[];
+  /**
+   * Path to the local DB
+   */
+  dbPath?: string;
+  /**
+   * Enable structured JSON logging
+   */
+  structuredLogging?: boolean;
+  /**
+   * Enable performance metrics
+   */
+  performanceLogging?: boolean;
+  /**
+   * Logging level
+   */
+  loggingLevel?: "off" | "error" | "warn" | "info" | "debug" | "trace";
+  /**
+   * Disable automatic registration when creating a client
+   */
+  disableAutoRegister?: boolean;
+};
 
-The `PRODUCTION` and `DEV` networks are completely separate and not interchangeable.
+```
 
-For example, an XMTP identity on the `DEV` network is completely distinct from the XMTP identity on the `PRODUCTION` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `DEV` network can't be accessed from or moved to the `PRODUCTION` network, and vice versa.
+```tsx [Node]
+import type { ContentCodec } from "@xmtp/content-type-primitives";
 
-:::tip
-When you [create a client](/inboxes/create-a-client), it connects to the XMTP `DEV` environment by default. Use the `env` parameter to explicitly set your client's network environment.
+type ClientOptions = {
+  /**
+   * Specify which XMTP environment to connect to. (default: `dev`)
+   */
+  env?: "local" | "dev" | "production";
+  /**
+   * apiUrl can be used to override the `env` flag and connect to a
+   * specific endpoint
+   */
+  apiUrl?: string;
+  /**
+   * historySyncUrl can be used to override the `env` flag and connect to a
+   * specific endpoint for syncing history
+   */
+  historySyncUrl?: string;
+  /**
+   * Path to the local DB
+   */
+  dbPath?: string;
+  /**
+   * Allow configuring codecs for additional content types
+   */
+  codecs?: ContentCodec[];
+  /**
+   * Enable structured JSON logging
+   */
+  structuredLogging?: boolean;
+  /**
+   * Logging level
+   */
+  loggingLevel?: LogLevel;
+  /**
+   * Disable automatic registration when creating a client
+   */
+  disableAutoRegister?: boolean;
+};
+```
+
+```tsx [React Native]
+import type { ContentCodec } from "@xmtp/react-native-sdk";
+
+type ClientOptions = {
+  /**
+   * Specify which XMTP environment to connect to. (default: `dev`)
+   */
+  env: 'local' | 'dev' | 'production'
+  /**
+   * REQUIRED specify the encryption key for the database. The encryption key must be exactly 32 bytes.
+   */
+  dbEncryptionKey: Uint8Array
+  /**
+   * Set optional callbacks for handling identity setup
+   */
+  preAuthenticateToInboxCallback?: () => Promise<void> | void
+  /**
+   * OPTIONAL specify the XMTP managed database directory
+   */
+  dbDirectory?: string
+  /**
+   * OPTIONAL specify a url to sync message history from
+   */
+  historySyncUrl?: string
+  /**
+   * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
+   */
+  customLocalHost?: string
+  /**
+   * Allow configuring codecs for additional content types
+   */
+  codecs?: ContentCodec[]
+}
+```
+
+```kotlin [Kotlin]
+import android.content.Context
+
+typealias PreEventCallback = suspend () -> Unit
+
+data class ClientOptions(
+    val api: Api = Api(),
+    val preAuthenticateToInboxCallback: PreEventCallback? = null,
+    val appContext: Context,
+    val dbEncryptionKey: ByteArray,
+    val historySyncUrl: String? = when (api.env) {
+        XMTPEnvironment.PRODUCTION -> "https://message-history.production.ephemera.network/"
+        XMTPEnvironment.LOCAL -> "http://0.0.0.0:5558"
+        else -> "https://message-history.dev.ephemera.network/"
+    },
+    val dbDirectory: String? = null,
+) {
+    data class Api(
+        val env: XMTPEnvironment = XMTPEnvironment.DEV,
+        val isSecure: Boolean = true,
+    )
+}
+```
+
+```swift [Swift]
+import LibXMTP
+
+public struct ClientOptions {
+	// Specify network options
+	public struct Api {
+		/// Specify which XMTP network to connect to. Defaults to ``.dev``
+		public var env: XMTPEnvironment = .dev
+
+		/// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
+		public var isSecure: Bool = true
+	}
+
+	public var api = Api()
+	public var codecs: [any ContentCodec] = []
+
+	/// `preAuthenticateToInboxCallback` will be called immediately before an Auth Inbox signature is requested from the user
+	public var preAuthenticateToInboxCallback: PreEventCallback?
+
+	public var dbEncryptionKey: Data
+	public var dbDirectory: String?
+	public var historySyncUrl: String?
+}
+```
+
 :::
 
-Here are some best practices for when to use each environment:
+### XMTP network environments
 
-- `DEV`: Use to have a client communicate with the `DEV` network. As a best practice, set `env` to `DEV` while developing and testing your app. Follow this best practice to isolate test messages to `DEV` inboxes.
+XMTP provides developer and production network environments. These networks are completely separate and not interchangeable.
 
-- `PRODUCTION`: Use to have a client communicate with the `PRODUCTION` network. As a best practice, set `env` to `PRODUCTION` when your app is serving real users. Follow this best practice to isolate messages between real-world users to `PRODUCTION` inboxes.
+For example, an XMTP identity on the developer network is completely distinct from the XMTP identity on the production network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the developer network can't be accessed from or moved to the production network, and vice versa.
 
-The `PRODUCTION` network is configured to store messages indefinitely. XMTP may occasionally delete messages and keys from the `DEV` network, and will provide advance notice in the [XMTP Community Forms](https://community.xmtp.org/).
+:::tip
+When you create a client, it connects to the XMTP developer network by default. Set your client's network environment using the appropriate client option.
+:::
 
-You can also use a `LOCAL` value to have a client communicate with an XMTP node you are running locally. For example, an XMTP node developer can set `env` to `LOCAL` to generate client traffic to test a node running locally.
+The production network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the developer network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
+
+You can also use a local network to have a client communicate with an XMTP node you are running locally.
+
+During development, it's highly recommended to use a local network environment for speed and reliability.
 
 ## Build an existing client
 
@@ -1323,17 +1474,33 @@ If the user chooses to delete their local database, they will have to create a n
 
 :::code-group
 
+```tsx [Browser]
+/**
+ * The Browser SDK client does not currently support deleting the local database.
+ */
+
+// this method only terminates the client's associated web worker
+client.close();
+```
+
+```tsx [Node]
+/**
+ * The Node SDK client does not have a method to delete the local database.
+ * Simply delete the local database file from the file system.
+ */
+```
+
 ```tsx [React Native]
-  await client.deleteLocalDatabase()
-  await Client.dropClient(client.installationId)
+await client.deleteLocalDatabase();
+await Client.dropClient(client.installationId);
 ```
 
 ```kotlin [Kotlin]
-  client.deleteLocalDatabase()
+client.deleteLocalDatabase()
 ```
 
 ```swift [Swift]
-  try await client.deleteLocalDatabase()
+try await client.deleteLocalDatabase()
 ```
 
 :::
@@ -3355,70 +3522,73 @@ let isVerified = try client.verifySignatureWithInstallationId(
 
 
 ## pages/inboxes/create-a-signer.md
-# Create a EOA or SCW signer 
+# Create a EOA or SCW signer
 
-This code defines two functions that convert different types of Ethereum accounts—Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)—into a unified `Signer` interface.
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
 
-This ensures that both account types conform to a common interface for message signing and deriving shared secrets as per MLS (Message Layer Security) requirements. `SigningKey` now supports only one sign method: `sign(signatureText: String): SignedData`.
+## Create an Externally Owned Account signer
 
-## Create an EOA signer
+The EOA signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
 
-For an EOA, the `convertEOAToSigner` function creates a signer that can get the account identity and sign messages and has placeholder methods for chain ID and block number. 
+:::code-group
 
-:::code-group 
+```tsx [Browser]
+import type { Signer, Identifier } from "@xmtp/browser-sdk";
 
-```tsx [Browser] 
-import type { Signer } from "@xmtp/browser-sdk"; 
+const accountIdentifier: Identifier = {
+  identifier: "0x...", // Ethereum address as the identifier
+  identifierKind: "Ethereum", // Specifies the identity type
+};
 
-const accountIdentity = { 
-  kind: "ETHEREUM", // Specifies the identity type 
-  identifier: "0x...", // Ethereum address as the identifier 
-}; 
-
-const signer: Signer = { 
-  getIdentity: () => accountIdentity, 
-  signMessage: async (message) => { 
-    // return value from a signing method here 
-  }, 
-}; 
+const signer: Signer = {
+  type: "EOA",
+  getIdentifier: () => accountIdentifier,
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+};
 ```
 
-```tsx [Node] 
-import type { Signer } from "@xmtp/node-sdk"; 
+```tsx [Node]
+import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
 
-const accountIdentity = { 
-  kind: "ETHEREUM", // Specifies the identity type 
-  identifier: "0x...", // Ethereum address as the identifier 
-}; 
+const accountIdentifier: Identifier = {
+  identifier: "0x...", // Ethereum address as the identifier
+  identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
+};
 
-const signer: Signer = { 
-  getIdentity: () => accountIdentity, 
-  signMessage: async (message) => { 
-    // return value from a signing method here 
-  }, 
-}; 
+const signer: Signer = {
+  type: "EOA",
+  getIdentity: () => accountIdentifier,
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+};
 ```
 
-```tsx [React Native] 
-// Example EOA Signer 
+```tsx [React Native]
+// Example EOA Signer
 export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
   return {
-    getIdentifier: async () => new PublicIdentity(eoaAccount.address, 'ETHEREUM'),
+    getIdentifier: async () =>
+      new PublicIdentity(eoaAccount.address, "ETHEREUM"),
     getChainId: () => undefined, // Provide a chain ID if available or return undefined
     getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
-    signerType: () => 'EOA', // "EOA" indicates an externally owned account
+    signerType: () => "EOA", // "EOA" indicates an externally owned account
     signMessage: async (message: string) => {
-      const signature = await eoaAccount.signMessage(message)
+      const signature = await eoaAccount.signMessage(message);
 
       return {
         signature,
-      }
+      };
     },
-  }
+  };
 }
 ```
 
-```kotlin [Kotlin] 
+```kotlin [Kotlin]
 class EOAWallet : SigningKey {
     override val publicIdentity: PublicIdentity
       get() = PublicIdentity(
@@ -3427,7 +3597,7 @@ class EOAWallet : SigningKey {
       )
     override val type: SignerType
       get() = SignerType.EOA
-    
+
     override suspend fun sign(message: String): SignedData {
         val signature = key.sign(message = message)
         return SignedData(signature)
@@ -3435,88 +3605,91 @@ class EOAWallet : SigningKey {
 }
 ```
 
-```swift [Swift] 
-public struct EOAWallet: SigningKey { 
+```swift [Swift]
+public struct EOAWallet: SigningKey {
     public var identity: PublicIdentity {
       return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
     }
 
     public var type: SignerType { .EOA }
 
-    public func sign(message: String) async throws -> SignedData { 
-        let signature = try await key.sign(message: message) 
+    public func sign(message: String) async throws -> SignedData {
+        let signature = try await key.sign(message: message)
         return SignedData(signature)
-    } 
+    }
 }
 ```
 
 :::
 
-## Create an SCW signer
+## Create a Smart Contract Wallet signer
 
-For an SCW, the `convertSCWToSigner` function similarly creates a signer but includes a specific implementation for chain ID and an optional block number computation.
+The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against.
 
-:::code-group 
+If a function is not provided to retrieve the block number, the latest block number will be used.
 
-```tsx [Browser] 
-import type { Signer } from "@xmtp/browser-sdk"; 
+:::code-group
 
-const accountIdentity = { 
-  kind: "ETHEREUM", // Specifies the identity type 
-  identifier: "0x...", // Smart Contract Wallet address 
-}; 
+```tsx [Browser]
+import type { Signer, Identifier } from "@xmtp/browser-sdk";
 
-const signer: Signer = { 
-  getIdentity: () => accountIdentity, 
-  signMessage: async (message) => { 
-    // return value from a signing method here 
-  }, 
-  // These methods are required for smart contract wallets 
-  getBlockNumber: () => undefined, // Optional block number 
-  getChainId: () => BigInt(8453), // Example: Base chain ID 
+const accountIdentifier: Identifier = {
+  identifier: "0x...", // Ethereum address as the identifier
+  identifierKind: "Ethereum", // Specifies the identity type
+};
+
+const signer: Signer = {
+  type: "SCW",
+  getIdentifier: () => accountIdentifier,
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+  getChainId: () => BigInt(8453), // Example: Base chain ID
 };
 ```
 
 ```tsx [Node]
-import type { Signer } from "@xmtp/node-sdk";
+import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
 
-const accountIdentity = { 
-  kind: "ETHEREUM", // Specifies the identity type 
-  identifier: "0x...", // Smart Contract Wallet address 
+const accountIdentifier: Identifier = {
+  identifier: "0x...", // Ethereum address as the identifier
+  identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
-const signer: Signer = { 
-  getIdentity: () => accountIdentity, 
-  signMessage: async (message) => { 
-    // return value from a signing method here 
+const signer: Signer = {
+  type: "SCW",
+  getIdentity: () => accountIdentifier,
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
   },
-  // These methods are required for smart contract wallets 
-  getBlockNumber: () => undefined, // Optional block number 
-  getChainId: () => BigInt(8453), // Example: Base chain ID 
-}; 
+  getChainId: () => BigInt(8453), // Example: Base chain ID
+};
 ```
 
-```tsx [React Native] 
-// Example SCW Signer 
+```tsx [React Native]
+// Example SCW Signer
 export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
   return {
-    getIdentifier: async () => new PublicIdentity(scwAccount.address, 'ETHEREUM'),
-    getChainId: () => 8453, // https://chainlist.org/ 
+    getIdentifier: async () =>
+      new PublicIdentity(scwAccount.address, "ETHEREUM"),
+    getChainId: () => 8453, // https://chainlist.org/
     getBlockNumber: () => undefined, // Optional: will be computed at runtime
-    signerType: () => 'SCW', // "SCW" indicates an externally owned account
+    signerType: () => "SCW", // "SCW" indicates smart contract wallet account
     signMessage: async (message: string) => {
-      const byteArray = await scwAccount.signMessage(message); 
-      const signature = ethers.utils.hexlify(byteArray); // Convert to hex string 
-      
+      const byteArray = await scwAccount.signMessage(message);
+      const signature = ethers.utils.hexlify(byteArray); // Convert to hex string
+
       return {
         signature,
-      }
+      };
     },
-  }
+  };
 }
 ```
 
-```kotlin [Kotlin] 
+```kotlin [Kotlin]
   class SCWallet : SigningKey {
     override val publicIdentity: PublicIdentity
       get() = PublicIdentity(
@@ -3528,7 +3701,7 @@ export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
 
     override var chainId: Long? = 8453 // https://chainlist.org/
     override var blockNumber: Long? = null // Optional: will be computed at runtime
-    
+
     override suspend fun sign(message: String): SignedData {
         val signature = key.sign(message = message)
         return SignedData(signature)
@@ -3536,27 +3709,27 @@ export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
 }
 ```
 
-```swift [Swift] 
-public struct SCWallet: SigningKey { 
+```swift [Swift]
+public struct SCWallet: SigningKey {
     public var identity: PublicIdentity {
       return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
     }
-    
-    public var chainId: Int64? { 
-        8453 
-    } 
 
-    public var blockNumber: Int64? { 
-        nil 
-    } 
+    public var chainId: Int64? {
+        8453
+    }
+
+    public var blockNumber: Int64? {
+        nil
+    }
 
     public var type: SignerType { .SCW }
 
-    public func sign(message: String) async throws -> SignedData { 
+    public func sign(message: String) async throws -> SignedData {
         let signature = try await key.sign(message: message)
         return SignedData(signature.hexStringToByteArray )
-    } 
-} 
+    }
+}
 ```
 
 :::
