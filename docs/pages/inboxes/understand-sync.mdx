@@ -16,11 +16,11 @@ This video provides a walkthrough of key concepts required to implement syncing 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
-## Sync messaging data history across devices and apps
+## Sync messaging data history across devices
 
-**I use an XMTP app on my phone. When I log into the same XMTP app on my tablet, I want to see all of my conversations, messages, and consent preferences there, too.**
+**Goal**: My user uses an XMTP app on their phone. When they log into the same XMTP app on their tablet, I want them to see all of their conversations, messages, and consent preferences there, too.
 
-You can achieve this user experience using [history sync](/inboxes/history-sync) and by prompting the user for explicit actions in your app UI.
+**How to achieve it**: Use [history sync](/inboxes/history-sync) and by prompting the user for explicit actions in your app UI.
 
 History sync is enabled by default. 
 
@@ -28,45 +28,53 @@ History sync requires that both devices (phone and tablet in this case) be onlin
 
 To guide the user through using their devices to perform the history sync, you can implement a UX like the following:
 
-1. In the app on the requesting device (tablet, in this case), give the user a way to request an import of their messaging data history.
+1. In the app on the requesting device, give the user a way to request an import of their messaging data history.
 
-   <div>
-   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/requestor.png" width="300px" />
-   </div>
+   <figure>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/requestor.png" width="300px" />
+      <figurecaption><em>Requesting device</em></figurecaption>
+   </figure>
 
-2. Give the user a way to verify that they want to perform the import.
+2. Prompt the user to verify that they want to perform the import.
 
-   <div>
-   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/confirm-request.png" width="300px" />
-   </div>
+   <figure>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/confirm-request.png" width="300px" />
+      <figurecaption><em>Requesting device</em></figurecaption>
+   </figure>
 
-3. In the app on the providing device (phone, in this case), notify the user of the history import request.
+3. Show the user that the import was requested.
 
-   <div>
-   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/provider.png" width="300px" />
-   </div>
+   <figure>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/provider.png" width="300px" />
+      <figurecaption><em>Requesting device</em></figurecaption>
+   </figure>
 
-4. Give the user a way to confirm or deny the history import request.
+4. In the app on the provider device, prompt the user to confirm or deny the import request.
 
-   <div>
-   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/provider-confirm.png" width="300px" />
-   </div>
+   <figure>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/provider-confirm.png" width="300px" />
+      <figurecaption><em>Provider device</em></figurecaption>
+   </figure>
 
-5. In the app on the requesting device, import the history and display the progress of the import.
+5. In the app on the requesting device, start the import and display its progress.
 
-   <div>
-   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/requestor-import-progress.png" width="300px" />
-   </div>
+   <figure>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/requestor-import-progress.png" width="300px" />
+      <figurecaption><em>Requesting device</em></figurecaption>
+   </figure>
 
-6. Once the import is complete, apps on both the phone and tablet should have the same conversations, messages, and consent preferences.
+6. Once the import is complete, apps on both the requesting and provider devices should have the same conversations, messages, and consent preferences.
 
-   <div>
-   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/sync-complete.png" width="625px" />
-   </div>
+   <figure>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/sync-complete.png" width="625px" />
+      <figurecaption><em>Requesting device and provider device</em></figurecaption>
+   </figure>
 
-**I use App ABC built with XMTP. When I log into App XYZ, also built with XMTP, I want to see all of my conversations, messages, and consent preferences there, too.**
+## Sync messaging data history across apps
 
-You can achieve this user experience using [history sync](/inboxes/history-sync) and by prompting the user for explicit actions in your app UI.
+**Goal**: My user uses App ABC built with XMTP. When they log into App XYZ, also built with XMTP, I want them to see all of their conversations, messages, and consent preferences there, too.
+
+**How to achieve it**: You can achieve this user experience using [history sync](/inboxes/history-sync) and by prompting the user for explicit actions in your app UI.
 
 History sync is enabled by default. 
 
@@ -74,36 +82,40 @@ History sync requires that both the apps be online to enable the user's conversa
 
 To guide the user through using their apps to perform the sync, you can implement a UX like the following:
 
-1. In the requesting app (App XYZ, in this case) give the user a way to request an import of their messaging data history.
-2. Give the user a way to verify that they want to perform the import.
-3. In the providing app (App ABC, in this case) notify the user of the history import request.
-4. Give the user a way to confirm or deny the history import request.
-5. In the requesting app, import the history and display the progress of the import.
-6. Once the import is complete, both apps should have the same conversations, messages, and consent preferences.
+1. In the requesting app (App XYZ) give the user a way to request an import of their messaging data history.
+2. Prompt the user to verify that they want to perform the import.
+3. Show the user that the import was requested.
+4. In the provider app (App ABC), prompt the user to confirm or deny the import request.
+5. In the requesting app, start the import and display its progress.
+6. Once the import is complete, both App ABC and App XYZ should have the same conversations, messages, and consent preferences.
+
+For app UI mockups, see the examples in [Sync messaging data history across devices](#sync-messaging-data-history-across-devices).
 
 ## Prevent syncing with malicious apps
 
-**I want to protect my users from syncing their messaging data history with a malicious app.**
+**Scenario**: I want to protect my users from syncing their messaging data history with a malicious app.
 
-Consider making history sync an opt-in feature for users. This gives you the opportunity to educate your users about how history sync works before offering them the option to use it.
+**How to achieve it**: Consider making history sync an opt-in feature for users. This gives you the opportunity to educate your users about how history sync works before offering them the option to use it.
 
 After a user opts-in to history sync, you can guide the user through using their apps to perform the sync using the UX described in the previous section.
 
 This can help ensure that users sync their messaging data history with only the apps they trust.
 
-## Block users across apps and devices
+## Block users across apps
 
-**When I block a user on App ABC, I want them to also be blocked on App XYZ**
+**Scenario**: When my user blocks a user on App ABC, I want the user to also be blocked on App XYZ.
 
-When the user blocks a user in App ABC, the app should publish the user block consent record by calling `sync` on the user's [sync group](/inboxes/history-sync#sync-group).
+**How to achieve it**: When the user blocks a user in App ABC, the app should publish the user block consent record by calling `sync` on the user's [sync group](/inboxes/history-sync#sync-group).
 
 When the user subsequently opens App XYZ, the app should call `sync` on the user's sync group to be able to get the user block consent record.
 
 Alternatively, the apps can call `syncAll` on the sync group instead of `sync`.
 
-**When I block someone on my phone, I want them to also be blocked on my tablet.**
+## Block users across devices
 
-When the user blocks a user in an on app their phone, the app should publish the user block consent record by calling `sync` on the user's [sync group](/inboxes/history-sync#sync-group).
+**Scenario**: When my user blocks someone on their phone, I want the user to also be block on their tablet.
+
+**How to achieve it**: When the user blocks a user in an on app their phone, the app should publish the user block consent record by calling `sync` on the user's [sync group](/inboxes/history-sync#sync-group).
 
 When the user subsequently opens the same app on their tablet, the app should call `sync` on the user's sync group to be able to get the user block consent record.
 
@@ -111,20 +123,22 @@ Alternatively, the apps can call `syncAll` on the sync group instead of `sync`.
 
 ## Currently unsupported recovery scenarios
 
-**I used an app built with XTMP on my phone, and then deleted the app. I want to reinstall the app and get access to all of my messaging data history.**
+**Scenario**: My user used an app built with XTMP on their phone, and then deleted the app. I want them to be able to reinstall the app and get access to all of their messaging data history.
 
 Currently, this is not possible. This may be possible in the future with a backups feature.
 
-**I used an app built with XMTP on my phone. I lost my phone and got a new one. I want to install the app on my new phone and get access to all of my messaging data history.**
+**Scenario**: My user used an app built with XMTP on their phone. They lost their phone and got a new one. I want them to be able to install the app on their new phone and get access to all of their messaging data history.
 
 Currently, this is not possible. This may be possible in the future with a backups feature.
 
-**I lost access to my app built with XMTP (deleted it or lost my phone) and then reinstalled the app. I know I can get back access to all of my messaging data history, but I see some of my pre-existing conversations showing up in the app.**
+**Scenario**: My user lost access to an app built with XMTP (deleted it or lost their phone) and then reinstalled the app. I know they can't get back access to all of their messaging data history, but they see *some* of their pre-existing conversations showing up in the app.
 
-The user may see some of their pre-existing conversations display in the app and be able to send and receive new messages in them. This behavior may lead the user to believe that all of their messaging data history is syncing. However, the only conversations that will show up in their app are the conversations they have with users who open their app built with XMTP. For example:
+The user may see some of their pre-existing conversations display in the app and be able to send and receive new messages in them. 
+
+This behavior may lead the user to believe that all of their messaging data history is syncing. However, the only conversations that will show up in their app are the conversations they have with other users who open their apps built with XMTP. For example:
 
 1. Alix is in a DM and 4 group chats with Bo and a DM with Caro.
 2. Alix deletes and reintalls their app.
-3. Bo opens their app, which runs sync. Sync looks to see if any members of conversations have new installations, finds Alix's new installation, and adds Alix to the DM and 4 group chats they have with Bo.
+3. Bo opens their app, which runs sync. Sync looks to see if any members of their conversations have new installations, finds Alix's new installation, and adds Alix to the DM and 4 group chats they have with Bo.
 4. Alix opens her app, which runs sync and displays the DM and 4 group chats with Bo that their new installation was added to.
 5. Caro doesn't open their app, so it can't run sync. Therefore, it doesn't find Alix's new installation and doesn't add Alix to their DM.
