@@ -27,12 +27,8 @@ import { Client, type Signer } from "@xmtp/browser-sdk";
 // create a signer
 const signer: Signer = { /* ... */ };
 
-// this value should be generated once per installation and stored securely
-const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
-
 const client = await Client.create(
   signer,
-  encryptionKey,
   options, // optional
 );
 ```
@@ -122,6 +118,10 @@ type ClientOptions = {
    * Path to the local DB
    */
   dbPath?: string;
+  /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
   /**
    * Enable structured JSON logging
    */
@@ -290,6 +290,16 @@ During development, it's highly recommended to use a local network environment f
 Build, or resume, an existing client that's logged in and has an existing local database.
 
 :::code-group
+
+```tsx [Browser]
+import { Client, type Identifier } from "@xmtp/browser-sdk";
+
+const identifier: Identifier = {
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  identifierKind: "Ethereum",
+};
+const client = await Client.build(identifier, options);
+```
 
 ```tsx [React Native]
 Client.build(identity, {
