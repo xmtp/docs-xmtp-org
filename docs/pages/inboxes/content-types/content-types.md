@@ -50,6 +50,7 @@ Here are standards-track content types that you can review, test, and adopt in y
 
 - [Attachment content type](/inboxes/content-types/attachments/#support-attachments-smaller-than-1mb): Use to send attachments smaller than 1MB.
 - [Remote attachment content type](/inboxes/content-types/attachments#support-remote-attachments-of-any-size): Use to send attachments of any size.
+- [Multiple remote attachments content type](/inboxes/content-types/attachments#support-multiple-remote-attachments-of-any-size): Use to send attachments of any size.
 - [Read receipt content type](/inboxes/content-types/read-receipts): Use to send a read receipt, which is a `timestamp` that indicates when a message was read. 
 - [Reaction content type](/inboxes/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message. 
 - [Reply content type](/inboxes/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
