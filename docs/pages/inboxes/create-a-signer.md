@@ -100,11 +100,22 @@ public struct EOAWallet: SigningKey {
 
 ## Create a Smart Contract Wallet signer
 
-The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against.
+The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
 
-If a function is not provided to retrieve the block number, the latest block number will be used.
+Here is a list of supported chain IDs:
 
-The details of creating a SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
+- chain_rpc_1     = string
+- chain_rpc_8453  = string
+- chain_rpc_42161 = string
+- chain_rpc_10    = string
+- chain_rpc_137   = string
+- chain_rpc_324   = string
+- chain_rpc_59144 = string
+- chain_rpc_480   = string
+
+Need support for a different chain ID? Please post your request to the [XMTP Community Forums](https://community.xmtp.org/c/general/ideas/54).
+
+The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
 - **Wallet provider integration**: Different wallet providers (Safe, Argent, Rainbow, etc.) have different methods for signing messages. See the wallet provider documentation for more details.
 
