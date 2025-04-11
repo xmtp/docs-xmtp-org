@@ -1,6 +1,6 @@
 # XMTP Improvement Proposals (XIPs)
 
-An XIP is a design document that proposes a new feature for XMTP or its processes or environment.
+An XIP is a design document that proposes a new feature or improvement for XMTP or its processes or environment.
 
 XIPs intend to be the primary mechanisms for:
 
