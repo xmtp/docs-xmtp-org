@@ -104,9 +104,11 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 If a function is not provided to retrieve the block number, the latest block number will be used.
 
-Here are some key details about how to use the SCW signer:
+The details of creating a SCW signer are highly dependent on the wallet provider, but here are some guidelines around creating an SCW signer:
 
 - **Add an Ethereum-specific prefix**: Before signing, Ethereum requires a specific prefix to be added to the message. To learn more, see [ERC-191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191). Many libraries, such as ethers.js, web3.js, and viem, will add the prefix for you, so make sure you don’t add the prefix twice.
+
+https://viem.sh/docs/actions/wallet/signMessage.html
 
 - **Hash the prefixed message with Keccak-256**: The prefixed message is hashed using the Keccak-256 algorithm, which is Ethereum's standard hashing algorithm. This step creates a fixed-length representation of the message, ensuring consistency and security.
 
@@ -116,22 +118,28 @@ Here are some key details about how to use the SCW signer:
 :::code-group
 
 ```tsx [Browser]
-import type { Signer, Identifier } from "@xmtp/browser-sdk";
- 
-const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
-  identifierKind: "Ethereum", // Specifies the identity type
-};
- 
-const signer: Signer = {
-  type: "SCW",
-  getIdentifier: () => accountIdentifier,
-  signMessage: async (message: string): Uint8Array => {
-    // typically, signing methods return a hex string
-    // this string must be converted to bytes and returned in this function
-  },
-  getChainId: () => BigInt(8453), // Example: Base chain ID
-};
+export const createSCWSigner = (
+  address: `0x${string}`,
+  walletClient: WalletClient,
+  chainId: bigint,
+): Signer => {
+  return {
+    type: "SCW",
+    getIdentifier: () => ({
+      identifier: address.toLowerCase(),
+      identifierKind: "Ethereum",
+    }),
+    signMessage: async (message: string) => {
+      const signature = await walletClient.signMessage({
+        account: address,
+        message,
+      });
+      return toBytes(signature);
+    },
+    getChainId: () => {
+      return chainId;
+    },
+  };
 ```
 
 ```tsx [Node]
