@@ -104,17 +104,22 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 If a function is not provided to retrieve the block number, the latest block number will be used.
 
-The details of creating a SCW signer are highly dependent on the wallet provider, but here are some guidelines around creating an SCW signer:
+The details of creating a SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
-- **Add an Ethereum-specific prefix**: Before signing, Ethereum requires a specific prefix to be added to the message. To learn more, see [ERC-191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191). Many libraries, such as ethers.js, web3.js, and viem, will add the prefix for you, so make sure you don’t add the prefix twice.
+- **Wallet provider integration**: Different wallet providers (Safe, Argent, Rainbow, etc.) have different methods for signing messages. See the wallet provider documentation for more details.
 
-https://viem.sh/docs/actions/wallet/signMessage.html
+- **Library selection**: Choose a library that supports your wallet provider (e.g., viem, ethers.js, web3.js). Each library has its own API for interacting with wallets. See the library documentation for more details.
 
-- **Hash the prefixed message with Keccak-256**: The prefixed message is hashed using the Keccak-256 algorithm, which is Ethereum's standard hashing algorithm. This step creates a fixed-length representation of the message, ensuring consistency and security.
+- **Add an Ethereum-specific prefix**: Before signing, Ethereum requires a specific prefix to be added to the message. To learn more, see [ERC-191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191). Libraries and wallet providers might add the prefix for you, so make sure you don't add the prefix twice.
+
+- **Hash the prefixed message with Keccak-256**: The prefixed message is hashed using the Keccak-256 algorithm, which is Ethereum's standard hashing algorithm. This step creates a fixed-length representation of the message, ensuring consistency and security. Note that some wallet providers might handle this hashing internally.
 
 - **Sign the replay-safe hash**: The replay-safe hash is signed using the private key of the SCW. This generates a cryptographic signature that proves ownership of the wallet and ensures the integrity of the message.
 
-- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing. This ensures that the signature can be used seamlessly within the XMTP client.
+- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing.
+
+The code snippets below are examples only and will need to be adapted based on your specific wallet provider and library.
+
 :::code-group
 
 ```tsx [Browser]
