@@ -104,16 +104,25 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 If a function is not provided to retrieve the block number, the latest block number will be used.
 
+Here are some key details about how to use the SCW signer:
+
+- **Add an Ethereum-specific prefix**: Before signing, Ethereum requires a specific prefix to be added to the message. To learn more, see [ERC-191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191). Many libraries, such as ethers.js, web3.js, and viem, will add the prefix for you, so make sure you don’t add the prefix twice.
+
+- **Hash the prefixed message with Keccak-256**: The prefixed message is hashed using the Keccak-256 algorithm, which is Ethereum's standard hashing algorithm. This step creates a fixed-length representation of the message, ensuring consistency and security.
+
+- **Sign the replay-safe hash**: The replay-safe hash is signed using the private key of the SCW. This generates a cryptographic signature that proves ownership of the wallet and ensures the integrity of the message.
+
+- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing. This ensures that the signature can be used seamlessly within the XMTP client.
 :::code-group
 
 ```tsx [Browser]
 import type { Signer, Identifier } from "@xmtp/browser-sdk";
-
+ 
 const accountIdentifier: Identifier = {
   identifier: "0x...", // Ethereum address as the identifier
   identifierKind: "Ethereum", // Specifies the identity type
 };
-
+ 
 const signer: Signer = {
   type: "SCW",
   getIdentifier: () => accountIdentifier,
