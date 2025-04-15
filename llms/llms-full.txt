@@ -4321,7 +4321,7 @@ struct ContentView: View {
 
 :::
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
 
 ## Support multiple remote attachments of any size
 
@@ -4920,7 +4920,7 @@ if (message.contentType == ContentTypeReaction) {
 let content: Reaction = try message.content()
 ```
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
 
 ## Display the reaction
 
@@ -5094,7 +5094,7 @@ let content: Reply = try message.content()
 
 :::
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
 
 ## Display the reply
 
@@ -5240,7 +5240,7 @@ content.timestamp // "2019-09-26T07:58:30.996+0200"
 
 ## Display a read receipt
 
-`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
+`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
 
 ## Notifications and read receipts
 
@@ -5332,7 +5332,7 @@ await conversation.messages.send(transactionReference, {
 
 To receive and process a transaction reference, you can use the following code samples.
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
 
 ```tsx [Browser]
 // Assume `loadLastMessage` is a thing you have

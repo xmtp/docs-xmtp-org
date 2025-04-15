@@ -101,12 +101,22 @@ export default defineConfig({
           link: "/inboxes/send-messages",
         },
         {
-          text: "List, stream, and sync",
-          link: "/inboxes/list-stream-and-sync",
+          text: "List and stream",
+          link: "/inboxes/list-and-stream",
         },
-        {
-          text: "History sync",
-          link: "/inboxes/history-sync",
+    {
+          text: "Sync",
+          collapsed: true,
+          items: [
+            {
+              text: "Sync conversations and messages",
+              link: "/inboxes/sync-and-syncall",
+            },
+            {
+              text: "History sync",
+              link: "/inboxes/history-sync",
+            },    
+          ],
         },
         {
           text: "Manage inboxes",
