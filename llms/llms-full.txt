@@ -810,7 +810,7 @@ XMTP core developers and researchers are working on a specific fee model for XMT
 - Infrastructure costs for the network must remain low even when decentralized, and comparable to the costs for an equivalent centralized messaging service.
 - There must be a low "take rate": the biggest driver of cost must be infrastructure costs, with any remaining cost returned to the network.
 
-Have questions or feedback about the fee model for XMTP? See [XMTP fees: Guiding principles and FAQ](https://community.xmtp.org/t/xmtp-fees-guiding-principles-and-faq/795) in the XMTP Community Forums.
+Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging fee collection](https://community.xmtp.org/t/xip-57-messaging-fee-collection/876) in the XMTP Community Forums.
 
 ## Security
 
@@ -894,7 +894,7 @@ Ephemera employees work alongside other XMTP community members to build with and
 
 Ephemera focuses on serving developers. We build [SDKs](/inboxes/pick-an-sdk), developer tools, and example apps that help developers build great experiences with XMTP.
 
-Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024 and [open-sourced it](https://github.com/ephemeraHQ/converse-app) for the entire XMTP network.
+Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024. Converse is now [Convos](https://github.com/ephemeraHQ/convos-app), open-sourced for the entire XMTP network.
 
 
 ## pages/intro/intro.md
@@ -902,7 +902,7 @@ Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2
 
 XMTP (Extensible Message Transport Protocol) is the largest and most secure decentralized messaging network
 
-XMTP is open and permissionless, empowering any developer to build end-to-end encrypted 1:1, group, and broadcast messaging experiences, and more.
+XMTP is open and permissionless, empowering any developer to build end-to-end encrypted 1:1, group, and agent messaging experiences, and more.
 
 ## Why should I build with XMTP?
 
@@ -910,11 +910,11 @@ Build with XMTP to:
 
 - **Deliver secure and private messaging**
 
-    Using the [Messaging Layer Security](/protocol/security) (MLS) standard, a newly ratified [IETF](https://www.ietf.org/about/introduction/) standard, XMTP provides end-to-end encrypted messaging with forward secrecy and post-compromise security.
+    Using the [Messaging Layer Security](/protocol/security) (MLS) standard, a ratified [IETF](https://www.ietf.org/about/introduction/) standard, XMTP provides end-to-end encrypted messaging with forward secrecy and post-compromise security.
 
 - **Provide spam-free inboxes**
 
-    In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP [user consent preferences](/inboxes/user-consent/user-consent), developers can give their users spam-free inboxes for chosen contacts only.
+    In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP [user consent preferences](/inboxes/user-consent/user-consent), developers can give their users spam-free inboxes displaying conversations with chosen contacts only.
 
 - **Build on native crypto rails**
     
@@ -934,14 +934,14 @@ One of the best ways to understand XMTP is to use an app built with XMTP.
 
 - Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
-- Try the [Converse](https://converse.xyz/) messaging app. Converse is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
+- Try the [Convos](https://www.convos.org/open) messaging app. Convos is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
 
 ## Join the XMTP community
 
 - **XMTP builds in the open**
 
     - Explore the documentation on this site
-    - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, the work-in-progress future node software.
+    - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, node software powering the XMTP testnet.
     - Explore the open source code for [xmtp.chat](https://github.com/xmtp/xmtp-js/tree/main/apps/xmtp.chat), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
 - **XMTP is for everyone**
@@ -961,7 +961,7 @@ If you’re using an LLM tool that allows custom context, you can upload or poin
 ## pages/intro/xips.md
 # XMTP Improvement Proposals (XIPs)
 
-An XIP is a design document that proposes a new feature for XMTP or its processes or environment.
+An XIP is a design document that proposes a new feature or improvement for XMTP or its processes or environment.
 
 XIPs intend to be the primary mechanisms for:
 
@@ -1168,13 +1168,21 @@ import { Client, type Signer } from "@xmtp/browser-sdk";
 // create a signer
 const signer: Signer = { /* ... */ };
 
-// this value should be generated once per installation and stored securely
-const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
+/**
+ * The database encryption key is optional but strongly recommended for
+ * secure local storage of the database.
+ *
+ * This value must be consistent when creating a client with an existing
+ * database.
+ */
+const dbEncryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
   signer,
-  encryptionKey,
-  options, // optional
+  // client options
+  {
+    dbEncryptionKey,
+  },
 );
 ```
 
@@ -1185,13 +1193,21 @@ import { getRandomValues } from "node:crypto";
 // create a signer
 const signer: Signer = { /* ... */ };
 
-// this value should be generated once per installation and stored securely
-const encryptionKey = getRandomValues(new Uint8Array(32));
+/**
+ * The database encryption key is optional but strongly recommended for
+ * secure local storage of the database.
+ *
+ * This value must be consistent when creating a client with an existing
+ * database.
+ */
+const dbEncryptionKey = getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
   signer,
-  encryptionKey,
-  options, // optional
+  // client options
+  {
+    dbEncryptionKey,
+  },
 );
 ```
 
@@ -1264,6 +1280,10 @@ type ClientOptions = {
    */
   dbPath?: string;
   /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
+  /**
    * Enable structured JSON logging
    */
   structuredLogging?: boolean;
@@ -1305,6 +1325,10 @@ type ClientOptions = {
    * Path to the local DB
    */
   dbPath?: string;
+  /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -1431,6 +1455,26 @@ During development, it's highly recommended to use a local network environment f
 Build, or resume, an existing client that's logged in and has an existing local database.
 
 :::code-group
+
+```tsx [Browser]
+import { Client, type Identifier } from "@xmtp/browser-sdk";
+
+const identifier: Identifier = {
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  identifierKind: "Ethereum",
+};
+const client = await Client.build(identifier, options);
+```
+
+```tsx [Node]
+import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
+
+const identifier: Identifier = {
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  identifierKind: IdentifierKind.Ethereum,
+};
+const client = await Client.build(identifier, options);
+```
 
 ```tsx [React Native]
 Client.build(identity, {
@@ -2314,12 +2358,23 @@ conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [React Native]
-Code sample coming
+// Optimistically send the message to the local database
+await conversation.prepareMessage("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = new ContentTypeId({
+  authorityId: "example",
+  typeId: "test",
+  versionMajor: 1,
+  versionMinor: 0
+});
+await conversation.prepareMessage(customContent, contentType);
 ```
 
 ```kotlin [Kotlin]
 // Optimistically send the message to the local database
-conversation.sendOptimistic("Hello world")
+conversation.prepareMessage("Hello world")
 
 // For custom content types, specify the content type
 val customContent = mapOf("foo" to "bar")
@@ -2329,12 +2384,12 @@ val contentType = ContentTypeId(
     versionMajor = 1,
     versionMinor = 0
 )
-conversation.sendOptimistic(customContent, contentType)
+conversation.prepareMessage(customContent, contentType)
 ```
 
 ```swift [Swift]
 // Optimistically send the message to the local database
-try await conversation.sendOptimistic("Hello world")
+try await conversation.prepareMessage("Hello world")
 
 // For custom content types, specify the content type
 let customContent = ["foo": "bar"]
@@ -2344,7 +2399,7 @@ let contentType = ContentTypeId(
     versionMajor: 1,
     versionMinor: 0
 )
-try await conversation.sendOptimistic(customContent, contentType: contentType)
+try await conversation.prepareMessage(customContent, contentType: contentType)
 ```
 
 :::
@@ -2392,16 +2447,30 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 ```
 
 ```tsx [React Native]
-Code sample coming
+// Publish all pending optimistically sent messages to the network
+// Call this only after using prepareMessage to send a message locally
+async function sendMessageWithOptimisticUI(conversation: Conversation, messageText: string): Promise<boolean> {
+  try {
+    // Add message to UI immediately
+    await conversation.prepareMessage(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
 ```
 
 ```kotlin [Kotlin]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using prepareMessage to send a message locally
 suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText: String): Boolean {
     return try {
         // Add message to UI immediately
-        conversation.sendOptimistic(messageText)
+        conversation.prepareMessage(messageText)
         
         // Actually send the message to the network
         conversation.publishMessages()
@@ -2415,11 +2484,11 @@ suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText:
 
 ```swift [Swift]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using prepareMessage to send a message locally
 func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String) async throws -> Bool {
     do {
         // Add message to UI immediately
-        try await conversation.sendOptimistic(messageText)
+        try await conversation.prepareMessage(messageText)
         
         // Actually send the message to the network
         try await conversation.publishMessages()
@@ -3624,29 +3693,62 @@ public struct EOAWallet: SigningKey {
 
 ## Create a Smart Contract Wallet signer
 
-The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against.
+The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
 
-If a function is not provided to retrieve the block number, the latest block number will be used.
+Here is a list of supported chain IDs:
+
+- chain_rpc_1     = string
+- chain_rpc_8453  = string
+- chain_rpc_42161 = string
+- chain_rpc_10    = string
+- chain_rpc_137   = string
+- chain_rpc_324   = string
+- chain_rpc_59144 = string
+- chain_rpc_480   = string
+
+Need support for a different chain ID? Please post your request to the [XMTP Community Forums](https://community.xmtp.org/c/general/ideas/54).
+
+The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
+
+- **Wallet provider integration**: Different wallet providers (Safe, Argent, Rainbow, etc.) have different methods for signing messages. See the wallet provider documentation for more details.
+
+- **Library selection**: Choose a library that supports your wallet provider (e.g., viem, ethers.js, web3.js). Each library has its own API for interacting with wallets. See the library documentation for more details.
+
+- **Add an Ethereum-specific prefix**: Before signing, Ethereum requires a specific prefix to be added to the message. To learn more, see [ERC-191: Signed Data Standard](https://eips.ethereum.org/EIPS/eip-191). Libraries and wallet providers might add the prefix for you, so make sure you don't add the prefix twice.
+
+- **Hash the prefixed message with Keccak-256**: The prefixed message is hashed using the Keccak-256 algorithm, which is Ethereum's standard hashing algorithm. This step creates a fixed-length representation of the message, ensuring consistency and security. Note that some wallet providers might handle this hashing internally.
+
+- **Sign the replay-safe hash**: The replay-safe hash is signed using the private key of the SCW. This generates a cryptographic signature that proves ownership of the wallet and ensures the integrity of the message.
+
+- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing.
+
+The code snippets below are examples only and will need to be adapted based on your specific wallet provider and library.
 
 :::code-group
 
 ```tsx [Browser]
-import type { Signer, Identifier } from "@xmtp/browser-sdk";
-
-const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
-  identifierKind: "Ethereum", // Specifies the identity type
-};
-
-const signer: Signer = {
-  type: "SCW",
-  getIdentifier: () => accountIdentifier,
-  signMessage: async (message: string): Uint8Array => {
-    // typically, signing methods return a hex string
-    // this string must be converted to bytes and returned in this function
-  },
-  getChainId: () => BigInt(8453), // Example: Base chain ID
-};
+export const createSCWSigner = (
+  address: `0x${string}`,
+  walletClient: WalletClient,
+  chainId: bigint,
+): Signer => {
+  return {
+    type: "SCW",
+    getIdentifier: () => ({
+      identifier: address.toLowerCase(),
+      identifierKind: "Ethereum",
+    }),
+    signMessage: async (message: string) => {
+      const signature = await walletClient.signMessage({
+        account: address,
+        message,
+      });
+      return toBytes(signature);
+    },
+    getChainId: () => {
+      return chainId;
+    },
+  };
 ```
 
 ```tsx [Node]
@@ -3816,6 +3918,7 @@ Here are standards-track content types that you can review, test, and adopt in y
 
 - [Attachment content type](/inboxes/content-types/attachments/#support-attachments-smaller-than-1mb): Use to send attachments smaller than 1MB.
 - [Remote attachment content type](/inboxes/content-types/attachments#support-remote-attachments-of-any-size): Use to send attachments of any size.
+- [Multiple remote attachments content type](/inboxes/content-types/attachments#support-multiple-remote-attachments-of-any-size): Use to send attachments of any size.
 - [Read receipt content type](/inboxes/content-types/read-receipts): Use to send a read receipt, which is a `timestamp` that indicates when a message was read. 
 - [Reaction content type](/inboxes/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message. 
 - [Reply content type](/inboxes/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
@@ -4842,11 +4945,11 @@ Use a local database to store replies. This will enable your app to performantly
 
 ### Install the package
 
+In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
+
 ```bash
 npm i @xmtp/content-type-reply
 ```
-
-> In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
 
 ## Configure the content type
 
@@ -6414,6 +6517,36 @@ Conversation created in an app on an SDK version **without** user consent suppor
 - There are no scenarios in which a user consent preference will be set to `denied`.
 
 
+## pages/network/network-nodes.mdx
+# XMTP testnet nodes
+
+For real-time statuses of nodes in the XMTP testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
+
+The following table lists the nodes currently registered to power the XMTP testnet.
+
+|  | Node operator | Node address |
+|-----|---------------|--------------|
+| 1 | Artifact Capital | xmtp.artifact.systems:443 |
+| 2 | Encapsulate | lb.validator.xmtp.testnet.encapsulate.xyz:443 |
+| 3 | Ethereum Name Service (ENS) | grpc.ens-xmtp.com:443 |
+| 4 | Laminated Labs | xmtp.validators.laminatedlabs.net:443 |
+| 5 | Next.id | xmtp.nextnext.id:443 |
+| 6 | Nodle | xmtpd.nodleprotocol.io:443 |
+| 7 | Ephemera | grpc.testnet.xmtp.network:443 |
+| 8 | Ephemera | grpc2.testnet.xmtp.network:443 |
+
+Here is a map of node locations:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden" }}>
+  <iframe
+    src="https://www.google.com/maps/d/embed?mid=18y4nFTXQKdgiSJCQbEGl5dojPoHL3LQ&ehbc=2E312F&noprof=1"
+    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+    allowFullScreen=""
+    loading="lazy"
+  ></iframe>
+</div>
+
+
 ## pages/network/run-a-node.mdx
 # Run an XMTP network node
 
@@ -6472,4 +6605,4 @@ XMTP does not currently have a token. Disregard any information regarding airdro
 
 # Summary
 
-This documentation contains 40 files.
+This documentation contains 41 files.

@@ -27,13 +27,21 @@ import { Client, type Signer } from "@xmtp/browser-sdk";
 // create a signer
 const signer: Signer = { /* ... */ };
 
-// this value should be generated once per installation and stored securely
-const encryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
+/**
+ * The database encryption key is optional but strongly recommended for
+ * secure local storage of the database.
+ *
+ * This value must be consistent when creating a client with an existing
+ * database.
+ */
+const dbEncryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
   signer,
-  encryptionKey,
-  options, // optional
+  // client options
+  {
+    dbEncryptionKey,
+  },
 );
 ```
 
@@ -44,13 +52,21 @@ import { getRandomValues } from "node:crypto";
 // create a signer
 const signer: Signer = { /* ... */ };
 
-// this value should be generated once per installation and stored securely
-const encryptionKey = getRandomValues(new Uint8Array(32));
+/**
+ * The database encryption key is optional but strongly recommended for
+ * secure local storage of the database.
+ *
+ * This value must be consistent when creating a client with an existing
+ * database.
+ */
+const dbEncryptionKey = getRandomValues(new Uint8Array(32));
 
 const client = await Client.create(
   signer,
-  encryptionKey,
-  options, // optional
+  // client options
+  {
+    dbEncryptionKey,
+  },
 );
 ```
 
@@ -123,6 +139,10 @@ type ClientOptions = {
    */
   dbPath?: string;
   /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
+  /**
    * Enable structured JSON logging
    */
   structuredLogging?: boolean;
@@ -164,6 +184,10 @@ type ClientOptions = {
    * Path to the local DB
    */
   dbPath?: string;
+  /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -290,6 +314,26 @@ During development, it's highly recommended to use a local network environment f
 Build, or resume, an existing client that's logged in and has an existing local database.
 
 :::code-group
+
+```tsx [Browser]
+import { Client, type Identifier } from "@xmtp/browser-sdk";
+
+const identifier: Identifier = {
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  identifierKind: "Ethereum",
+};
+const client = await Client.build(identifier, options);
+```
+
+```tsx [Node]
+import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
+
+const identifier: Identifier = {
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  identifierKind: IdentifierKind.Ethereum,
+};
+const client = await Client.build(identifier, options);
+```
 
 ```tsx [React Native]
 Client.build(identity, {

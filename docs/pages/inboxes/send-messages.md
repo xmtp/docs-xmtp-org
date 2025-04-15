@@ -90,12 +90,23 @@ conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [React Native]
-Code sample coming
+// Optimistically send the message to the local database
+await conversation.prepareMessage("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = new ContentTypeId({
+  authorityId: "example",
+  typeId: "test",
+  versionMajor: 1,
+  versionMinor: 0
+});
+await conversation.prepareMessage(customContent, contentType);
 ```
 
 ```kotlin [Kotlin]
 // Optimistically send the message to the local database
-conversation.sendOptimistic("Hello world")
+conversation.prepareMessage("Hello world")
 
 // For custom content types, specify the content type
 val customContent = mapOf("foo" to "bar")
@@ -105,12 +116,12 @@ val contentType = ContentTypeId(
     versionMajor = 1,
     versionMinor = 0
 )
-conversation.sendOptimistic(customContent, contentType)
+conversation.prepareMessage(customContent, contentType)
 ```
 
 ```swift [Swift]
 // Optimistically send the message to the local database
-try await conversation.sendOptimistic("Hello world")
+try await conversation.prepareMessage("Hello world")
 
 // For custom content types, specify the content type
 let customContent = ["foo": "bar"]
@@ -120,7 +131,7 @@ let contentType = ContentTypeId(
     versionMajor: 1,
     versionMinor: 0
 )
-try await conversation.sendOptimistic(customContent, contentType: contentType)
+try await conversation.prepareMessage(customContent, contentType: contentType)
 ```
 
 :::
@@ -168,16 +179,30 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 ```
 
 ```tsx [React Native]
-Code sample coming
+// Publish all pending optimistically sent messages to the network
+// Call this only after using prepareMessage to send a message locally
+async function sendMessageWithOptimisticUI(conversation: Conversation, messageText: string): Promise<boolean> {
+  try {
+    // Add message to UI immediately
+    await conversation.prepareMessage(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
 ```
 
 ```kotlin [Kotlin]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using prepareMessage to send a message locally
 suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText: String): Boolean {
     return try {
         // Add message to UI immediately
-        conversation.sendOptimistic(messageText)
+        conversation.prepareMessage(messageText)
         
         // Actually send the message to the network
         conversation.publishMessages()
@@ -191,11 +216,11 @@ suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText:
 
 ```swift [Swift]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using prepareMessage to send a message locally
 func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String) async throws -> Bool {
     do {
         // Add message to UI immediately
-        try await conversation.sendOptimistic(messageText)
+        try await conversation.prepareMessage(messageText)
         
         // Actually send the message to the network
         try await conversation.publishMessages()

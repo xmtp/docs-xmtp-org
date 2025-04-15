@@ -228,9 +228,18 @@ export default defineConfig({
       items: [], // Add this line
     },
     {
-      text: "Run a network node",
-      link: "/network/run-a-node",
-      items: [], // Add this line
+      text: "Network",
+      collapsed: false,
+      items: [
+        {
+          text: "Run a network node",
+          link: "/network/run-a-node",
+        },
+        {
+          text: "Testnet nodes",
+          link: "/network/network-nodes",
+        },
+      ],
     },
     {
       text: "Protocol concepts",
