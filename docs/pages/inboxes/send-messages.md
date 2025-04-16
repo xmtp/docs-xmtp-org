@@ -4,6 +4,22 @@ Once you have the group chat or DM conversation, you can send messages in the co
 
 :::code-group
 
+```tsx [Browser]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```
+
+```tsx [Node]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```
+
 ```tsx [React Native]
 // For a DM conversation
 const dm = await client.conversations.findOrCreateDm(recipientInboxId);
@@ -348,6 +364,54 @@ For example:
 
 :::code-group
 
+```js [Browser]
+// DM
+await client.conversations.newConversation(
+  inboxId,
+  {
+    disappearingMessageSettings: {
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    }
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    disappearingMessageSettings: {
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    }
+  }
+)
+```
+
+```js [Node]
+// DM
+await client.conversations.newConversation(
+  inboxId,
+  {
+    disappearingMessageSettings: {
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    }
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    disappearingMessageSettings: {
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    }
+  }
+)
+```
+
 ```tsx [React Native]
 // DM
 await client.conversations.newConversation(
@@ -420,6 +484,28 @@ For example:
 
 :::code-group
 
+```tsx [Browser]
+// Update disappearing message settings
+await conversation.updateDisappearingMessageSettings({
+  disappearStartingAtNs: 1738620126404999936,
+  retentionDurationInNs: 1800000000000000
+})
+
+// Clear disappearing message settings
+await conversation.clearDisappearingMessageSettings()
+```
+
+```tsx [Node]
+// Update disappearing message settings
+await conversation.updateDisappearingMessageSettings({
+  disappearStartingAtNs: 1738620126404999936,
+  retentionDurationInNs: 1800000000000000
+})
+
+// Clear disappearing message settings
+await conversation.clearDisappearingMessageSettings()
+```
+
 ```tsx [React Native]
 await conversation.updateDisappearingMessageSettings(updatedSettings)
 await conversation.clearDisappearingMessageSettings()
@@ -442,6 +528,22 @@ try await conversation.clearDisappearingMessageSettings()
 For example:
 
 :::code-group
+
+```tsx [Browser]
+// Get the disappearing message settings
+const settings = conversation.disappearingMessageSettings
+
+// Check if disappearing messages are enabled
+const isEnabled = conversation.isDisappearingMessagesEnabled()
+```
+
+```tsx [Node]
+// Get the disappearing message settings
+const settings = conversation.disappearingMessageSettings
+
+// Check if disappearing messages are enabled
+const isEnabled = conversation.isDisappearingMessagesEnabled()
+```
 
 ```tsx [React Native]
 conversation.disappearingMessageSettings

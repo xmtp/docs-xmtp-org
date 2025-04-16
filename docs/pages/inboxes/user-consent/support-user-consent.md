@@ -12,6 +12,16 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 
 :::code-group
 
+```tsx [Browser]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAllConversations()
+```
+
+```tsx [Node]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAllConversations()
+```
+
 ```tsx [React Native]
 await client.conversations.syncAllConversations()
 ```
@@ -145,6 +155,36 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 :::
 
 :::code-group
+
+```tsx [Browser]
+// Stream consent records in real-time
+const stream = await client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
+
+```tsx [Node]
+// Stream consent records in real-time
+const stream = client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
 
 ```tsx [React Native]
 await client.preferences.streamConsent()
@@ -288,6 +328,22 @@ let inboxConsentState = try await client.preferences.inboxIdState(inboxId: inbox
 ## See who created and added you to a group
 
 Get the inbox ID of the individual who added you to a group or created the group to check the consent state for it:
+
+```tsx [Browser]
+// Get the inbox ID of the person who added you to the group
+const addedByInboxId = group.addedByInboxId
+
+// Get the inbox ID of the person who created the group
+const creatorInboxId = await group.creatorInboxId()
+```
+
+```tsx [Node]
+// Get the inbox ID of the person who added you to the group
+const addedByInboxId = group.addedByInboxId
+
+// Get the inbox ID of the person who created the group
+const creatorInboxId = await group.creatorInboxId()
+```
 
 ```tsx [React Native]
 group.addedByInboxId
