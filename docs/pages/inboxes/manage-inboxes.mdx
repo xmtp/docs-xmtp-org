@@ -37,11 +37,13 @@ This function is delicate and should be used with caution. Adding an identity to
 :::code-group
 
 ```tsx [Browser]
-await client.unsafe_addAccount(identityToAdd)
+// where identityToAdd is a signer for the identity to add
+await client.unsafe_addAccount(identityToAdd, true)
 ```
 
 ```tsx [Node]
-await client.unsafe_addAccount(identityToAdd)
+// where identityToAdd is a signer for the identity to add
+await client.unsafe_addAccount(identityToAdd, true)
 ```
 
 ```jsx [React Native]
@@ -67,11 +69,11 @@ try await client.addAccount(newAccount: identityToAdd)
 :::code-group
 
 ```tsx [Browser]
-await client.removeAccount(recoveryIdentity, identityToRemove)
+await client.removeAccount(identifier)
 ```
 
 ```tsx [Node]
-await client.removeAccount(recoveryIdentity, identityToRemove)
+await client.removeAccount(identifier)
 ```
 
 ```jsx [React Native]
@@ -115,11 +117,11 @@ When the user revokes all other installations, the action removes their identity
 :::code-group
 
 ```tsx [Browser]
-await client.revokeAllOtherInstallations(recoveryIdentity)
+await client.revokeAllOtherInstallations
 ```
 
 ```tsx [Node]
-await client.revokeAllOtherInstallations(recoveryIdentity)
+await client.revokeAllOtherInstallations
 ```
 
 ```jsx [React Native]
@@ -171,13 +173,13 @@ View the state of any inbox to see the identities, installations, and other info
 :::code-group
 
 ```tsx [Browser]
-const state = await client.preferences.inboxState(true)
-const states = await client.preferences.inboxStateFromInboxIds(true, [inboxId, inboxId])
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
 ```
 
 ```tsx [Node]
-const state = await client.preferences.inboxState(true)
-const states = await client.preferences.inboxStateFromInboxIds(true, [inboxId, inboxId])
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
 ```
 
 ```jsx [React Native]

@@ -329,22 +329,6 @@ let inboxConsentState = try await client.preferences.inboxIdState(inboxId: inbox
 
 Get the inbox ID of the individual who added you to a group or created the group to check the consent state for it:
 
-```tsx [Browser]
-// Get the inbox ID of the person who added you to the group
-const addedByInboxId = group.addedByInboxId
-
-// Get the inbox ID of the person who created the group
-const creatorInboxId = await group.creatorInboxId()
-```
-
-```tsx [Node]
-// Get the inbox ID of the person who added you to the group
-const addedByInboxId = group.addedByInboxId
-
-// Get the inbox ID of the person who created the group
-const creatorInboxId = await group.creatorInboxId()
-```
-
 ```tsx [React Native]
 group.addedByInboxId
 await group.creatorInboxId()

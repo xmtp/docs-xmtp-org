@@ -366,12 +366,12 @@ For example:
 
 ```js [Browser]
 // DM
-await client.conversations.newConversation(
+await client.conversations.newDm(
   inboxId,
   {
-    disappearingMessageSettings: {
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
     }
   }
 )
@@ -380,9 +380,9 @@ await client.conversations.newConversation(
 await client.conversations.newGroup(
   [inboxId],
   { 
-    disappearingMessageSettings: {
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
     }
   }
 )
@@ -390,12 +390,12 @@ await client.conversations.newGroup(
 
 ```js [Node]
 // DM
-await client.conversations.newConversation(
+await client.conversations.newDm(
   inboxId,
   {
-    disappearingMessageSettings: {
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
     }
   }
 )
@@ -404,9 +404,9 @@ await client.conversations.newConversation(
 await client.conversations.newGroup(
   [inboxId],
   { 
-    disappearingMessageSettings: {
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
     }
   }
 )
@@ -486,24 +486,18 @@ For example:
 
 ```tsx [Browser]
 // Update disappearing message settings
-await conversation.updateDisappearingMessageSettings({
-  disappearStartingAtNs: 1738620126404999936,
-  retentionDurationInNs: 1800000000000000
-})
+await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n)
 
 // Clear disappearing message settings
-await conversation.clearDisappearingMessageSettings()
+await conversation.removeMessageDisappearingSettings()
 ```
 
 ```tsx [Node]
 // Update disappearing message settings
-await conversation.updateDisappearingMessageSettings({
-  disappearStartingAtNs: 1738620126404999936,
-  retentionDurationInNs: 1800000000000000
-})
+await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n)
 
 // Clear disappearing message settings
-await conversation.clearDisappearingMessageSettings()
+await conversation.removeMessageDisappearingSettings()
 ```
 
 ```tsx [React Native]
@@ -531,17 +525,16 @@ For example:
 
 ```tsx [Browser]
 // Get the disappearing message settings
-const settings = conversation.disappearingMessageSettings
+const settings = await conversation.messageDisappearingSettings()
 
 // Check if disappearing messages are enabled
-const isEnabled = conversation.isDisappearingMessagesEnabled()
+const isEnabled = await conversation.isDisappearingMessagesEnabled()
 ```
 
 ```tsx [Node]
 // Get the disappearing message settings
-const settings = conversation.disappearingMessageSettings
+const settings = conversation.messageDisappearingSettings()
 
-// Check if disappearing messages are enabled
 const isEnabled = conversation.isDisappearingMessagesEnabled()
 ```
 
