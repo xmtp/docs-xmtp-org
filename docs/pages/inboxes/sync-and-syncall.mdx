@@ -1,7 +1,7 @@
-# Sync conversations and messages
+# Sync conversations, messages, and sync groups
 
 :::tip[Note]
-Syncing does not refetch existing conversations and messages. It also does not fetch messages for group chats you are no longer a part of.
+Syncing can't refetch existing conversations, messages, or sync group updates. It also can't fetch messages for group chats a user is no longer a member of.
 :::
 
 ## 🎥 walkthrough: Syncing
@@ -68,7 +68,7 @@ try await client.conversations.sync()
 
 ## Sync all new conversations, messages, and updates
 
-Sync all new group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network. We recommend that you run this sync in the background and call it more frequently than not.
+Sync all new group chat and DM conversations, messages, and installation-related sync group updates (consent states, HMAC keys, etc.) from the network. We recommend that you run this sync in the background and call it more frequently than not.
 
 :::code-group
 
@@ -90,6 +90,34 @@ client.conversations.syncAllConversations()
 
 ```swift [Swift]
 try await client.conversations.syncAllConversations()
+```
+
+:::
+
+## Sync a sync group
+
+A [sync group](/inboxes/history-sync#sync-group) is a special Messaging Layer Security group that includes all of a user's devices. Its primary role is to deliver installation-related updates (consent states, HMAC keys, etc.) across devices. Use this dedicated operation to update the sync group state without needing to call the full `syncAll` process.
+
+:::code-group
+
+```js [Browser]
+await client.syncGroup.sync();
+```
+
+```js [Node]
+await client.syncGroup.sync();
+```
+
+```tsx [React Native]
+await client.syncGroup.sync();
+```
+
+```kotlin [Kotlin]
+client.syncGroup.sync()
+```
+
+```swift [Swift]
+try await client.syncGroup.sync()
 ```
 
 :::
