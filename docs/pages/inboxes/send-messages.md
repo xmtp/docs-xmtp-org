@@ -370,8 +370,8 @@ await client.conversations.newDm(
   inboxId,
   {
     messageDisappearingSettings: {
-      fromNs: 1738620126404999936,
-      inNs: 1800000000000000
+      fromNs: 1738620126404999936n,
+      inNs: 1800000000000000n
     }
   }
 )
@@ -381,8 +381,8 @@ await client.conversations.newGroup(
   [inboxId],
   { 
     messageDisappearingSettings: {
-      fromNs: 1738620126404999936,
-      inNs: 1800000000000000
+      fromNs: 1738620126404999936n,
+      inNs: 1800000000000000n
     }
   }
 )
@@ -494,7 +494,7 @@ await conversation.removeMessageDisappearingSettings()
 
 ```tsx [Node]
 // Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n)
+await conversation.updateMessageDisappearingSettings(1738620126404999936, 1800000000000000)
 
 // Clear disappearing message settings
 await conversation.removeMessageDisappearingSettings()

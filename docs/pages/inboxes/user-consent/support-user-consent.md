@@ -14,12 +14,12 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 
 ```tsx [Browser]
 // Sync all conversations to get the latest consent records
-await client.conversations.syncAllConversations()
+await client.conversations.syncAll()
 ```
 
 ```tsx [Node]
 // Sync all conversations to get the latest consent records
-await client.conversations.syncAllConversations()
+await client.conversations.syncAll()
 ```
 
 ```tsx [React Native]
