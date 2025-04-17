@@ -2032,6 +2032,22 @@ Once you have the group chat or DM conversation, you can send messages in the co
 
 :::code-group
 
+```tsx [Browser]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```
+
+```tsx [Node]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```
+
 ```tsx [React Native]
 // For a DM conversation
 const dm = await client.conversations.findOrCreateDm(recipientInboxId);
@@ -2376,6 +2392,54 @@ For example:
 
 :::code-group
 
+```js [Browser]
+// DM
+await client.conversations.newDm(
+  inboxId,
+  {
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936n,
+      inNs: 1800000000000000n
+    }
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936n,
+      inNs: 1800000000000000n
+    }
+  }
+)
+```
+
+```js [Node]
+// DM
+await client.conversations.newDm(
+  inboxId,
+  {
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
+    }
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
+    }
+  }
+)
+```
+
 ```tsx [React Native]
 // DM
 await client.conversations.newConversation(
@@ -2448,6 +2512,22 @@ For example:
 
 :::code-group
 
+```tsx [Browser]
+// Update disappearing message settings
+await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n)
+
+// Clear disappearing message settings
+await conversation.removeMessageDisappearingSettings()
+```
+
+```tsx [Node]
+// Update disappearing message settings
+await conversation.updateMessageDisappearingSettings(1738620126404999936, 1800000000000000)
+
+// Clear disappearing message settings
+await conversation.removeMessageDisappearingSettings()
+```
+
 ```tsx [React Native]
 await conversation.updateDisappearingMessageSettings(updatedSettings)
 await conversation.clearDisappearingMessageSettings()
@@ -2470,6 +2550,21 @@ try await conversation.clearDisappearingMessageSettings()
 For example:
 
 :::code-group
+
+```tsx [Browser]
+// Get the disappearing message settings
+const settings = await conversation.messageDisappearingSettings()
+
+// Check if disappearing messages are enabled
+const isEnabled = await conversation.isDisappearingMessagesEnabled()
+```
+
+```tsx [Node]
+// Get the disappearing message settings
+const settings = conversation.messageDisappearingSettings()
+
+const isEnabled = conversation.isDisappearingMessagesEnabled()
+```
 
 ```tsx [React Native]
 conversation.disappearingMessageSettings
@@ -2549,6 +2644,14 @@ This function is delicate and should be used with caution. Adding an identity to
 
 :::code-group
 
+```tsx [Browser]
+await client.unsafe_addAccount(signer, true)
+```
+
+```tsx [Node]
+await client.unsafe_addAccount(signer, true)
+```
+
 ```jsx [React Native]
 await client.addAccount(identityToAdd)
 ```
@@ -2570,6 +2673,14 @@ try await client.addAccount(newAccount: identityToAdd)
 :::
 
 :::code-group
+
+```tsx [Browser]
+await client.removeAccount(identifier)
+```
+
+```tsx [Node]
+await client.removeAccount(identifier)
+```
 
 ```jsx [React Native]
 await client.removeAccount(recoveryIdentity, identityToRemove)
@@ -2611,6 +2722,14 @@ When the user revokes all other installations, the action removes their identity
 
 :::code-group
 
+```tsx [Browser]
+await client.revokeAllOtherInstallations()
+```
+
+```tsx [Node]
+await client.revokeAllOtherInstallations()
+```
+
 ```jsx [React Native]
 await client.revokeAllOtherInstallations(recoveryIdentity)
 ```
@@ -2631,6 +2750,14 @@ Find an `inboxId` for an identity:
 
 :::code-group
 
+```tsx [Browser]
+const inboxState = await client.preferences.inboxState()
+```
+
+```tsx [Node]
+const inboxState = await client.preferences.inboxState()
+```
+
 ```jsx [React Native]
 const inboxId = await client.inboxIdFromIdentity(identity)
 ```
@@ -2650,6 +2777,16 @@ View the state of any inbox to see the identities, installations, and other info
 **Sample request**
 
 :::code-group
+
+```tsx [Browser]
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+```
+
+```tsx [Node]
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+```
 
 ```jsx [React Native]
 const state = await client.inboxState(true)
@@ -3436,6 +3573,20 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 
 :::code-group
 
+```js [Browser]
+const stream = await client.conversations.stream();
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
 ```js [Node]
 const stream = await client.conversations.stream();
 // to stream only groups, use `client.conversations.streamGroups()`
@@ -3482,6 +3633,20 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::
 
 :::code-group
+
+```js [Browser]
+const stream = await client.conversations.streamAllMessages();
+
+try {
+  for await (const message of stream) {
+    // Received a message
+    console.log("New message:", message);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
 
 ```js [Node]
 // stream all messages from all conversations
@@ -6071,6 +6236,16 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 
 :::code-group
 
+```tsx [Browser]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAll()
+```
+
+```tsx [Node]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAll()
+```
+
 ```tsx [React Native]
 await client.conversations.syncAllConversations()
 ```
@@ -6204,6 +6379,36 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 :::
 
 :::code-group
+
+```tsx [Browser]
+// Stream consent records in real-time
+const stream = await client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
+
+```tsx [Node]
+// Stream consent records in real-time
+const stream = client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
 
 ```tsx [React Native]
 await client.preferences.streamConsent()
