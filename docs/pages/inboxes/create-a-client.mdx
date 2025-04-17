@@ -21,6 +21,8 @@ This video provides a walkthrough of creating a client, covering the key ideas d
 
 To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
 
+### How it works
+
 When you call `Client.create()`, the following steps happen under the hood:
 
 1. Extracts the `signer` and retrieves the wallet address from it.
@@ -34,7 +36,19 @@ When you call `Client.create()`, the following steps happen under the hood:
       - If the `dbEncryptionKey` doesn't match, it creates a new local database and encrypts it with the provided key.
 4. Returns the XMTP client, ready to send and receive messages.
 
+### Store the database encryption key
+
+The `dbEncryptionKey` is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client. 
+
 As long as the local database and encryption key remain intact, you can use [`Client.build()`](#build-an-existing-client) to rehydrate the same client without re-signing.
+
+This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
+
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call, the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/history-sync).
+
+To ensure seamless app experiences, persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
