@@ -37,13 +37,11 @@ This function is delicate and should be used with caution. Adding an identity to
 :::code-group
 
 ```tsx [Browser]
-// where identityToAdd is a signer for the identity to add
-await client.unsafe_addAccount(identityToAdd, true)
+await client.unsafe_addAccount(signer, true)
 ```
 
 ```tsx [Node]
-// where identityToAdd is a signer for the identity to add
-await client.unsafe_addAccount(identityToAdd, true)
+await client.unsafe_addAccount(signer, true)
 ```
 
 ```jsx [React Native]
@@ -117,11 +115,11 @@ When the user revokes all other installations, the action removes their identity
 :::code-group
 
 ```tsx [Browser]
-await client.revokeAllOtherInstallations
+await client.revokeAllOtherInstallations()
 ```
 
 ```tsx [Node]
-await client.revokeAllOtherInstallations
+await client.revokeAllOtherInstallations()
 ```
 
 ```jsx [React Native]
