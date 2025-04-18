@@ -74,7 +74,9 @@ Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 rele
 
 ## Create a new group chat
 
-Once you have the verified identities, create a new group chat:
+Once you have the verified identities, create a new group chat.
+
+Group creation is optimistic, so the call resolves immediately, even if some invitees are offline. Invitations are queued and delivered as each invitee comes online, so you don’t need a live network connection to every invitee at group creation time.
 
 :::code-group
 
