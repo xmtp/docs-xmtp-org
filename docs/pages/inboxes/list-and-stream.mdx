@@ -83,6 +83,20 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 
 :::code-group
 
+```js [Browser]
+const stream = await client.conversations.stream();
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
 ```js [Node]
 const stream = await client.conversations.stream();
 // to stream only groups, use `client.conversations.streamGroups()`
@@ -129,6 +143,20 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::
 
 :::code-group
+
+```js [Browser]
+const stream = await client.conversations.streamAllMessages();
+
+try {
+  for await (const message of stream) {
+    // Received a message
+    console.log("New message:", message);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
 
 ```js [Node]
 // stream all messages from all conversations
