@@ -197,12 +197,22 @@ export default defineConfig({
           ],
         },
         {
-          text: "Manage group permissions",
-          link: "/inboxes/group-permissions",
-        },
-        {
-          text: "Manage group metadata",
-          link: "/inboxes/group-metadata",
+          text: "Manage group chats",
+          collapsed: true,
+          items: [
+            {
+              text: "Support group invite links",
+              link: "/inboxes/support-group-invite-links",
+            },
+            {
+              text: "Manage group permissions",
+              link: "/inboxes/group-permissions",
+            },
+            {
+              text: "Manage group metadata",
+              link: "/inboxes/group-metadata",
+            },
+          ],
         },
         {
           text: "Use signatures",
