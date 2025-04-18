@@ -12,6 +12,16 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 
 :::code-group
 
+```tsx [Browser]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAll()
+```
+
+```tsx [Node]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAll()
+```
+
 ```tsx [React Native]
 await client.conversations.syncAllConversations()
 ```
@@ -145,6 +155,36 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 :::
 
 :::code-group
+
+```tsx [Browser]
+// Stream consent records in real-time
+const stream = await client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
+
+```tsx [Node]
+// Stream consent records in real-time
+const stream = client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
 
 ```tsx [React Native]
 await client.preferences.streamConsent()
