@@ -1143,9 +1143,9 @@ try await group.updateImageUrl(imageUrl: "newurl.com")
 
 Create an XMTP client that can use the signing capabilities provided by the [signer](/inboxes/create-a-signer). This signer links the client to the appropriate EOA or SCW.
 
-## 🎥 walkthrough: Create a client
+## Understand creating and building a client
 
-This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+This video provides a walkthrough of creating and building a client.
 
 <iframe
   width="560"
@@ -1158,7 +1158,40 @@ This video provides a walkthrough of creating a client, covering the key ideas d
   allowFullScreen
 ></iframe>
 
+### How it works
+
+When you call `Client.create()`, the following steps happen under the hood:
+
+1. Extracts the `signer` and retrieves the wallet address from it.
+2. Checks the XMTP identity ledger to find an inbox ID associated with the signer address. The inbox ID serves as the user's identity on the XMTP network.
+   1. If it doesn't find an existing inbox ID, it requests a wallet signature to register the identity and create an inbox ID.
+   2. If it finds an existing inbox ID, it uses the existing inbox ID.
+3. Checks if a local SQLite database exists. This database contains the identity's installation state and message data.
+   1. If it doesn't find an existing local database, it creates one and encrypts it with the provided `dbEncryptionKey`.
+   2. If it finds an existing local database, it checks to see if the provided `dbEncryptionKey` is a match.
+      - If the `dbEncryptionKey` matches, it uses the existing local database.
+      - If the `dbEncryptionKey` doesn't match, it creates a new local database and encrypts it with the provided key.
+4. Returns the XMTP client, ready to send and receive messages.
+
+### Keep the database encryption key safe
+
+The `dbEncryptionKey` is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client. 
+
+As long as the local database and encryption key remain intact, you can use [`Client.build()`](#build-an-existing-client) to rehydrate the same client without re-signing.
+
+This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
+
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call, the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/history-sync).
+
+To ensure seamless app experiences, persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch.
+
+To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
 ## Create a client
+
+To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
 
 :::code-group
 
@@ -1242,10 +1275,6 @@ let client = try await Client.create(
 ```
 
 :::
-
-When an app first calls `Client.create()`, a client creates a local database to manage messaging between the app and the network. In subsequent calls, it loads the existing database. The database is encrypted using the key provided when creating the client.
-
-To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
 ### Configure an XMTP client
 
@@ -1436,23 +1465,21 @@ public struct ClientOptions {
 
 ### XMTP network environments
 
-XMTP provides developer and production network environments. These networks are completely separate and not interchangeable.
+XMTP provides `dev` and `production` network environments. These networks are completely separate and not interchangeable.
 
-For example, an XMTP identity on the developer network is completely distinct from the XMTP identity on the production network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the developer network can't be accessed from or moved to the production network, and vice versa.
+For example, an XMTP identity on the `dev` network is completely distinct from the XMTP identity on the `production` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `dev` network can't be accessed from or moved to the `production` network, and vice versa.
 
 :::tip
-When you create a client, it connects to the XMTP developer network by default. Set your client's network environment using the appropriate client option.
+When you create a client, it connects to the XMTP `dev` network by default. Set your client's network environment using the appropriate [client option](#configure-an-xmtp-client).
 :::
 
-The production network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the developer network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
+The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
 
-You can also use a local network to have a client communicate with an XMTP node you are running locally.
-
-During development, it's highly recommended to use a local network environment for speed and reliability.
+You can also use a `local` network to have a client communicate with an XMTP node you are running locally. During development, it's highly recommended to use a `local` network environment for speed and reliability.
 
 ## Build an existing client
 
-Build, or resume, an existing client that's logged in and has an existing local database.
+Build, or resume, an existing client (created using [`Client.create()`](#create-a-client)) that's logged in and has an existing local database.
 
 :::code-group
 
@@ -1513,7 +1540,7 @@ let client = try await Client.build(
 When you log a user out of your app, you can give them the option to delete their local database.
 
 :::tip[Important]
-If the user chooses to delete their local database, they will have to create a new installation the next time they log in and will lose all of their messages.
+If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in. 
 :::
 
 :::code-group
