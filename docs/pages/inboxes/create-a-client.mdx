@@ -2,9 +2,9 @@
 
 Create an XMTP client that can use the signing capabilities provided by the [signer](/inboxes/create-a-signer). This signer links the client to the appropriate EOA or SCW.
 
-## ðŸŽ¥ walkthrough: Create a client
+## Understand creating and building a client
 
-This video provides a walkthrough of creating a client, covering the key ideas discussed in this doc.
+This video provides a walkthrough of creating and building a client.
 
 <iframe
   width="560"
@@ -16,10 +16,6 @@ This video provides a walkthrough of creating a client, covering the key ideas d
   referrerPolicy="strict-origin-when-cross-origin"
   allowFullScreen
 ></iframe>
-
-## Create a client
-
-To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
 
 ### How it works
 
@@ -36,7 +32,7 @@ When you call `Client.create()`, the following steps happen under the hood:
       - If the `dbEncryptionKey` doesn't match, it creates a new local database and encrypts it with the provided key.
 4. Returns the XMTP client, ready to send and receive messages.
 
-### Store the database encryption key
+### Keep the database encryption key safe
 
 The `dbEncryptionKey` is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client. 
 
@@ -51,6 +47,10 @@ Creating a new installation requires a new identity registration and signatureâ€
 To ensure seamless app experiences, persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+## Create a client
+
+To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
 
 :::code-group
 
