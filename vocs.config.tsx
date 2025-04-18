@@ -109,6 +109,10 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
+              text: "Understand sync",
+              link: "/inboxes/understand-sync",
+            },
+            {
               text: "Sync conversations and messages",
               link: "/inboxes/sync-and-syncall",
             },
