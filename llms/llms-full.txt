@@ -1173,6 +1173,10 @@ When you call `Client.create()`, the following steps happen under the hood:
       - If the `dbEncryptionKey` doesn't match, it creates a new local database and encrypts it with the provided key.
 4. Returns the XMTP client, ready to send and receive messages.
 
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/client-create.png" width="400px" />
+</div>
+
 ### Keep the database encryption key safe
 
 The `dbEncryptionKey` is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client. 
