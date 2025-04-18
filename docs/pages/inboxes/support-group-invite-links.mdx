@@ -1,3 +1,6 @@
+import Zoom from 'react-medium-image-zoom'
+import 'react-medium-image-zoom/dist/styles.css'
+
 # Support group chat invite links
 
 This document provides suggested paths you might take to provide XMTP group chat invite links in your app. These are just proposals and the actual implementation direction and details are specific to your app and your goals.
@@ -19,15 +22,21 @@ These diagrams help illustrate the sequence of interactions between users and pa
 
 #### Option 1: Automatic join via silent push notification to the link creator
 
-![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png)
+<Zoom>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png" alt="Sequence diagram for Automatic join via silent push notification to the link creator" />
+</Zoom>
 
 #### Option 2: Automatic join via silent push notification to all group members
 
-![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png)
+<Zoom>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png" alt="Sequence diagram for Automatic join via silent push notification to all group members" />
+</Zoom>
 
 #### Option 3: Manual join via push notification to the link creator
 
-![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png)
+<Zoom>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png" alt="Sequence diagram for Manual join via push notification to the link creator" />
+</Zoom>
 
 ## Create a group invite link
 
