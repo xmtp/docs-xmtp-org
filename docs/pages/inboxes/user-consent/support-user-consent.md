@@ -2,29 +2,39 @@
 
 Use the following methods to provide users with control over their messaging experience, ensuring their inboxes are tailored to their preferences and spam-free.
 
-## Get new consent records from the network 
- 
-Get the latest consent records from the network: 
- 
-:::tip[Note] 
-Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/create-a-client/#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set. 
-::: 
- 
-:::code-group 
- 
-```tsx [React Native] 
-await client.conversations.syncAllConversations() 
-``` 
- 
-```kotlin [Kotlin] 
-client.conversations.syncAllConversations() 
-``` 
- 
-```swift [Swift] 
-try await client.conversations.syncAllConversations() 
-``` 
- 
-::: 
+## Get new consent records from the network
+
+Get the latest consent records from the network:
+
+:::tip[Note]
+Consent syncing is backed by XMTP's history system. Syncing works only if a [history sync URL](/inboxes/create-a-client/#configure-an-xmtp-client) is specified on client create. By default, the URL to an Ephemera-hosted history sync server is set.
+:::
+
+:::code-group
+
+```tsx [Browser]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAll()
+```
+
+```tsx [Node]
+// Sync all conversations to get the latest consent records
+await client.conversations.syncAll()
+```
+
+```tsx [React Native]
+await client.conversations.syncAllConversations()
+```
+
+```kotlin [Kotlin]
+client.conversations.syncAllConversations()
+```
+
+```swift [Swift]
+try await client.conversations.syncAllConversations()
+```
+
+:::
 
 ## Get the consent state of a conversation
 
@@ -145,6 +155,36 @@ Consent syncing is backed by XMTP's history system. Syncing works only if a [his
 :::
 
 :::code-group
+
+```tsx [Browser]
+// Stream consent records in real-time
+const stream = await client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
+
+```tsx [Node]
+// Stream consent records in real-time
+const stream = client.preferences.streamConsent()
+
+try {
+  for await (const updates of stream) {
+    // Received consent updates
+    console.log("Consent updates:", updates)
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error)
+}
+```
 
 ```tsx [React Native]
 await client.preferences.streamConsent()
