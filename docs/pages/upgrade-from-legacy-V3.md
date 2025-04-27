@@ -2,8 +2,8 @@
 
 This document is for you if you are upgrading from a legacy XMTP V3 SDK. Legacy XMTP V3 SDKs include:
 
-- Browser SDK v0.x.x-&lt;v2.0.6
-- Node SDK v0.x.x-&lt;v2.0.11
+- Browser SDK v0.x.x-&lt;v2.0.11
+- Node SDK v0.x.x-&lt;v2.0.6
 - React Native SDK v3.x.x-&lt;v4.0.5
 - Android SDK v3.x.x-&lt;v4.0.5
 - iOS SDK v3.x.x-&lt;v4.0.7
@@ -26,8 +26,8 @@ The process to upgrade an app built with a legacy XMTP V3 SDK to a stable V3 SDK
 - [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
 
 🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.4** or **upgrade to an XMTP node SDK >=v1.0.5** following the detailed instructions in these release notes:
-- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%402.0.6)
-- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%402.0.11)
+- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%402.0.11)
+- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%402.0.6)
 - For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
 
 🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.
