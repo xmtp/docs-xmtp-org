@@ -34,7 +34,7 @@ One of the best ways to understand XMTP is to use an app built with XMTP.
 
 - Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
-- Try the [Convos](https://www.convos.org/open) messaging app. Convos is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
+- Try the [Convos](https://www.convos.org/) messaging app. Convos is open source courtesy of [Ephemera](https://ephemerahq.com/), the company stewarding the development and adoption of XMTP.
 
 ## Join the XMTP community
 

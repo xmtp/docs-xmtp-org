@@ -2,6 +2,15 @@
 
 Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/inboxes/create-conversations/#create-a-new-group-chat), and get and update metadata using these methods.
 
+## Updatable group chat metadata
+
+The following group chat metadata can be updated:
+
+- `group_name`: The name of the group chat
+- `description`: A description of the group chat
+- `image_url`: A URL pointing to an image for the group chat
+- `disappearing_message_settings`: Settings for disappearing messages in the group chat. To learn more about disappearing messages, see [Support disappearing messages](/inboxes/send-messages#support-disappearing-messages)
+
 ## Get a group chat name
 
 :::code-group
@@ -136,7 +145,7 @@ try group.imageUrl()
 
 :::code-group
 
-```js [Node]
+```js [Browser]
 await group.updateImageUrl("newurl.com");
 ```
 
