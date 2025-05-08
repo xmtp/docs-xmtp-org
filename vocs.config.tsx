@@ -113,7 +113,7 @@ export default defineConfig({
               link: "/inboxes/sync-and-syncall",
             },
             {
-              text: "History sync",
+              text: "Device sync",
               link: "/inboxes/history-sync",
             },    
           ],
