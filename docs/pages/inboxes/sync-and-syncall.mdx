@@ -1,7 +1,7 @@
-# Sync conversations, messages, and local installation state
+# Sync conversations, messages, and device groups
 
 :::tip[Note]
-Syncing can't refetch existing conversations, messages, or instllation state group updates. It also can't fetch messages for group chats a user is no longer a member of.
+Syncing can't refetch existing conversations, messages, or device group updates. It also can't fetch messages for group chats a user is no longer a member of.
 :::
 
 ## 🎥 walkthrough: Syncing
@@ -66,9 +66,9 @@ try await client.conversations.sync()
 
 :::
 
-## Sync conversations, messages, and local installation state
+## Sync conversations and messages
 
-Sync group chat and DM conversations, messages, and local state across a user's installations. This includes [installation state group](/inboxes/history-sync#installation-state-group) updates (consent states, HMAC keys, and history transfer requests). We recommend that you run this sync in the background and call it more frequently than not.
+Sync group chat and DM conversations and messages. We recommend that you run this sync in the background and call it more frequently than not.
 
 :::code-group
 
@@ -94,9 +94,9 @@ try await client.conversations.syncAllConversations()
 
 :::
 
-## Sync an installation state group
+## Sync a device group
 
-An [installation state group](/inboxes/history-sync#installation-state-group) is a special Messaging Layer Security group that includes all of a user's installations (devices). Its primary role is to deliver installation-related updates (consent states, HMAC keys, and history transfer requests) across a user's multiple installations. Use this dedicated operation to update the installation state group without needing to call the full `syncAll` process.
+A [device group](/inboxes/history-sync#device-group) is a special Messaging Layer Security group that includes all of a user's devices. Its primary role is to deliver updates (consent states, HMAC keys, and consent and message archive requests) across a user's multiple devices.
 
 :::code-group
 
