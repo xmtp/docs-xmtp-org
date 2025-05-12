@@ -74,7 +74,7 @@ Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 rele
 
 ## Create a new group chat
 
-Once you have the verified identities, create a new group chat:
+Once you have the verified identities, create a new group chat. The maximum group chat size is 220 members.
 
 :::code-group
 
