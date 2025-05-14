@@ -5,7 +5,7 @@ function shouldShowPopup() {
   const lastVisit = Number(localStorage.getItem("lastVisit") || "0");
   const sessionCount = Number(localStorage.getItem("sessionCount") || "0");
 
-  const THIRTY_MINUTES = 5 * 1000;
+  const THIRTY_MINUTES = 30 * 60 * 1000;
 
   // If this is a new session (30+ min later), increment session count
   if (now - lastVisit > THIRTY_MINUTES) {
