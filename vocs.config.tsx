@@ -12,6 +12,10 @@ export default defineConfig({
           data-domain="docs.xmtp.org"
           defer
         />
+        <script
+          src="/popup.js"
+          async
+        />
       </>
     );
   },
