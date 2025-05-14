@@ -1,22 +1,113 @@
-// public/popup.js
+function shouldShowPopup() {
+  if (localStorage.getItem("popupDismissed") === "true") return false;
+
+  const now = Date.now();
+  const lastVisit = Number(localStorage.getItem("lastVisit") || "0");
+  const sessionCount = Number(localStorage.getItem("sessionCount") || "0");
+
+  const THIRTY_MINUTES = 5 * 1000;
+
+  // If this is a new session (30+ min later), increment session count
+  if (now - lastVisit > THIRTY_MINUTES) {
+    localStorage.setItem("sessionCount", (sessionCount + 1).toString());
+  }
+
+  // Update last visit time
+  localStorage.setItem("lastVisit", now.toString());
+
+  // Show only on the 3rd session
+  return sessionCount + 1 === 3;
+}
 
 function createPopup() {
   const popup = document.createElement("div");
   popup.innerHTML = `
-    <div style="position: fixed; bottom: 20px; right: 20px; background: white; border: 1px solid #ccc; padding: 1rem; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
-      <p>This is your test popup! 🎉</p>
-      <button id="close-popup">Close</button>
+    <div style="
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 320px;
+      font-family: sans-serif;
+      z-index: 1000;
+    ">
+      <button id="popup-close" aria-label="Don't show again" style="
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        border: none;
+        background: none;
+        font-size: 1.2rem;
+        color: #888;
+        cursor: pointer;
+      ">×</button>
+      <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">Got feedback?</h3>
+      <p style="margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.4;">
+        We'd love to hear what you think about these docs.
+      </p>
+      <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+        <button id="popup-dismiss" style="
+          background: none;
+          border: none;
+          color: #666;
+          font-size: 0.85rem;
+          cursor: pointer;
+          padding: 0.4rem 0.6rem;
+        ">Maybe later</button>
+        <button id="popup-feedback" style="
+          background: #4f46e5;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          font-size: 0.85rem;
+          padding: 0.4rem 0.8rem;
+          cursor: pointer;
+        ">Give feedback</button>
+      </div>
     </div>
   `;
+
   document.body.appendChild(popup);
 
-  document.getElementById("close-popup")?.addEventListener("click", () => {
+  // X: Never show again
+  document.getElementById("popup-close")?.addEventListener("click", () => {
+    localStorage.setItem("popupDismissed", "true");
+    popup.remove();
+  });
+
+  // Maybe later: Reset counters
+  document.getElementById("popup-dismiss")?.addEventListener("click", () => {
+    localStorage.removeItem("sessionCount");
+    localStorage.removeItem("lastVisit");
+    popup.remove();
+  });
+
+  // Feedback: Never show again
+  document.getElementById("popup-feedback")?.addEventListener("click", () => {
+    localStorage.setItem("popupDismissed", "true");
+    window.open("https://example.com/survey", "_blank"); // Replace with real link later
     popup.remove();
   });
 }
 
 if (typeof window !== "undefined") {
   window.addEventListener("DOMContentLoaded", () => {
-    createPopup(); // always show popup on page load
+    if (shouldShowPopup()) {
+      createPopup();
+    }
   });
 }
+
+window.addEventListener("beforeunload", () => {
+  const popupStillVisible = document.getElementById("popup-feedback") !== null;
+
+  if (popupStillVisible) {
+    // Treat it like "Maybe later"
+    localStorage.removeItem("sessionCount");
+    localStorage.removeItem("lastVisit");
+  }
+});
