@@ -68,15 +68,13 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 
 :::
 
-:::tip
-Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
-:::
-
 ## Create a new group chat
 
 Once you have the verified identities, create a new group chat.
 
-Group creation is optimistic, so the call resolves immediately, even if some invitees are offline. Invitations are queued and delivered as each invitee comes online, so you don’t need a live network connection to every invitee at group creation time.
+:::tip
+If intended members of a group chat don't have verified identities yet, use [optimistic group chat creation](#optimistically-create-a-group-chat) instead, which enables a user to create a group chat now and add members later.
+:::
 
 :::code-group
 
@@ -131,6 +129,47 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
 )
+```
+
+:::
+
+## Optimistically create a group chat
+
+Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
+
+The group chat is created with just a name and is stored only in the app's local storage. The group chat is visible only to the creator in the app installation they used to create it.
+
+When you want to add members, you use [`addMembers()`](/inboxes/group-permissions#add-members-by-inbox-id) with a list of inbox IDs.
+
+After adding members, you need to call [`sync()`](/inboxes/sync-and-syncall#sync-a-specific-conversation) to synchronize the group chat with the network.
+
+Once synced, the group chat becomes visible to the added members. The group chat will also then be visible across other app installations.
+
+:::code-group
+
+```js [Browser]
+
+```
+
+```js [Node]
+
+```
+
+```tsx [React Native]
+
+```
+
+```kotlin [Kotlin]
+// Create optimistic group (stays local)
+val optimisticGroup = boClient.conversations.newGroupOptimistic(groupName = "Testing")
+
+// Later, add members and sync
+optimisticGroup.addMembers(listOf(alixClient.inboxId))
+optimisticGroup.sync()
+```
+
+```swift [Swift]
+
 ```
 
 :::
