@@ -66,6 +66,50 @@ conversation.topic
 
 :::
 
+## List push topics for a DM conversation
+
+Lists topics for a specific DM conversation.
+
+:::code-group
+
+```tsx [React Native]
+conversation.getPushTopics()
+```
+
+```kotlin [Kotlin]
+conversation.getPushTopics()
+```
+
+```swift [Swift]
+conversation.getPushTopics()
+```
+
+:::
+
+## List push topics for all conversations
+
+Lists topics for all group chat and DM conversations, including duplicate DM conversations.
+
+Duplicate DM conversations can occur when a user creates new conversations with the same contact from different installations or devices. While DM stitching automatically combines these conversations into a single view for users, each duplicate conversation maintains its own push notification topic. Ensure that users receive push notifications for messages sent through any of the stitched conversations, even as the system gradually consolidates them into a single conversation.
+
+To learn more, see [Understand DM stitching and push notifications](/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
+
+:::code-group
+
+```tsx [React Native]
+conversations.allPushTopics()
+```
+
+```kotlin [Kotlin]
+conversations.allPushTopics()
+```
+
+```swift [Swift]
+conversations.allPushTopics()
+```
+
+:::
+
 ## Subscribe to topics
 
 Subscribe to all relevant topics, allowing your app to monitor for push notifications about both new and ongoing conversations.
@@ -190,6 +234,32 @@ PushNotificationTokenManager.xmtpPush.subscribeWithMetadata(subscription)
 ```
 
 This ensures that older installations (or your XMTP push notification server code) now know about and resubscribe to all conversations for all of the new HMAC keys.
+
+## Get HMAC keys for a conversation
+
+Gets the HMAC keys for a specific group chat or DM conversation. 
+
+For DM conversations, the response includes HMAC keys for all topics associated with the conversation. This is necessary because a single DM conversation can have multiple underlying topics due to DM stitching, where multiple conversations between the same participants are combined into one view.
+
+For example, if Alix and Bo have a conversation that was created from two different installations, there might be two topics (`topic1` and `topic2`) for what appears as a single conversation to the user. The response will include HMAC keys for both topics to ensure push notifications work correctly regardless of which topic the message was sent through.
+
+To learn more, see [Understand DM stitching and push notifications](/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
+
+:::code-group
+
+```tsx [React Native]
+conversation.getHmacKeys()
+```
+
+```kotlin [Kotlin]
+conversation.getHmacKeys()
+```
+
+```swift [Swift]
+conversation.getHmacKeys()
+```
+
+:::
 
 ## Run a push notification server
 
