@@ -92,7 +92,7 @@ Lists topics for all group chat and DM conversations, including duplicate DM con
 
 Duplicate DM conversations can occur when a user creates new conversations with the same contact from different installations or devices. While DM stitching automatically combines these conversations into a single view for users, each duplicate conversation maintains its own push notification topic. Ensure that users receive push notifications for messages sent through any of the stitched conversations, even as the system gradually consolidates them into a single conversation.
 
-To learn more, see [Understand DM stitching and push notifications](/docs/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
+To learn more, see [Understand DM stitching and push notifications](/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
 
 :::code-group
 
@@ -243,7 +243,7 @@ For DM conversations, the response includes HMAC keys for all topics associated 
 
 For example, if Alix and Bo have a conversation that was created from two different installations, there might be two topics (`topic1` and `topic2`) for what appears as a single conversation to the user. The response will include HMAC keys for both topics to ensure push notifications work correctly regardless of which topic the message was sent through.
 
-To learn more, see [Understand DM stitching and push notifications](/docs/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
+To learn more, see [Understand DM stitching and push notifications](/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
 
 :::code-group
 
