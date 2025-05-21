@@ -68,7 +68,9 @@ try await client.conversations.sync()
 
 ## Sync all new conversations, messages, and updates
 
-Sync all new group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network. We recommend that you run this sync in the background and call it more frequently than not.
+Sync all new group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network.
+
+By default, conversations with a consent state of `denied` are filtered out.
 
 :::code-group
 
