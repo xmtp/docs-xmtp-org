@@ -38,4 +38,27 @@ You can use file logging to debug complex issues. It keeps a 6-hour window of lo
 
 A client has a function called `getNetworkStatistics`. 
 
-You can use it to see which and how many calls are going across the network. This information can help you better manage network usage and debug potential rate limiting issues.
+You can use it to see which and how many API, identity, and streaming calls are going across the network. This information can help you better manage network usage and debug potential rate limiting issues.
+
+Here's a view of some example aggregate stats:
+
+```text
+Aggregate Stats:
+============ Api Stats ============
+UploadKeyPackage        1
+FetchKeyPackage         2
+SendGroupMessages       5
+SendWelcomeMessages     1
+QueryGroupMessages      7
+QueryWelcomeMessages    0
+SubscribeMessages       0
+SubscribeWelcomes       0
+============ Identity ============
+PublishIdentityUpdate    1
+GetIdentityUpdatesV2     4
+GetInboxIds             2
+VerifySCWSignatures     0
+============ Stream ============
+SubscribeMessages        0
+SubscribeWelcomes       0
+```
