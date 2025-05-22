@@ -2,7 +2,7 @@
 
 ## Check if an identity is reachable
 
-The first step to creating a conversation is to verify that participants’ identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
+The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
 
 Once you have the verified identities, you can create a new conversation, whether it's a group chat or direct message (DM).
 
@@ -73,7 +73,7 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 Once you have the verified identities, create a new group chat.
 
 :::tip
-If intended members of a group chat don't have verified identities yet, use [optimistic group chat creation](#optimistically-create-a-group-chat) instead, which enables a user to create a group chat now and add members later.
+If you need better performance and offline support, consider using [optimistic group chat creation](#optimistically-create-a-group-chat) instead. This approach enables instant group creation and message preparation, even when offline or before adding members.
 :::
 
 :::code-group
@@ -133,17 +133,23 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 :::
 
-## Optimistically create a group chat
+## Optimistically create a new group chat
+
+Optimistic group creation enables instant group chat creation and message preparation, even when offline or before adding members. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
 
 Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
 
-The group chat is created with just a name and is stored only in the app's local storage. The group chat is visible only to the creator in the app installation they used to create it.
+The group chat can be created with any number of [standard options](/inboxes/group-metadata#updatable-group-chat-metadata), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
+
+You can prepare messages for the optimistic group chat immediately using `prepareMessage()`. As with the group chat itself, these messages are stored locally only.
 
 When you want to add members, you use [`addMembers()`](/inboxes/group-permissions#add-members-by-inbox-id) with a list of inbox IDs.
 
-After adding members, you need to call [`sync()`](/inboxes/sync-and-syncall#sync-a-specific-conversation) to synchronize the group chat with the network.
+Adding a member will automatically sync the group chat to the network. Once synced, the group chat becomes visible to the added members and across other app installations.
 
-Once synced, the group chat becomes visible to the added members. The group chat will also then be visible across other app installations.
+After adding members, you must explicitly call `publishMessages()` to send any prepared messages to the network.
+
+To learn more about optimistically sending messages using `prepareMessage()` and `publishMessages()`, see [Optimistically send messages](/inboxes/send-messages#optimistically-send-messages).
 
 :::code-group
 
@@ -163,13 +169,12 @@ Once synced, the group chat becomes visible to the added members. The group chat
 // Create optimistic group (stays local)
 val optimisticGroup = boClient.conversations.newGroupOptimistic(groupName = "Testing")
 
+// Prepare a message (stays local)
+optimisticGroup.prepareMessage("Hello group!")
+
 // Later, add members and sync
-optimisticGroup.addMembers(listOf(alixClient.inboxId))
-optimisticGroup.sync()
-```
-
-```swift [Swift]
-
+optimisticGroup.addMembers(listOf(alixClient.inboxId)) // also syncs group to the network
+optimisticGroup.publishMessages() // Publish prepared messages
 ```
 
 :::
