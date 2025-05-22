@@ -73,7 +73,7 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 Once you have the verified identities, create a new group chat.
 
 :::tip
-If you need better performance and offline support, consider using [optimistic group chat creation](#optimistically-create-a-group-chat) instead. This approach enables instant group creation and message preparation, even when offline or before adding members.
+If you need offline support, consider using [optimistic group chat creation](#optimistically-create-a-group-chat) instead. This approach enables instant group creation and message preparation, even when offline or before adding members.
 :::
 
 :::code-group
