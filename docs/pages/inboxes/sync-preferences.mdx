@@ -1,29 +1,26 @@
 # Sync preferences
 
-Preference sync gives your users a way to sync the following preference-related information across multiple existing app installations:
+Preference sync enables you to sync the following preference-related information across multiple existing app installations:
 
-- Conversation consent states
-- HMAC keys (for push notifications)
+- Conversation [consent preferences](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set)
+- HMAC keys (for [push notifications](/inboxes/push-notifs/understand-push-notifs))
 
 ## Databases used by preference sync
 
 Each xmtpd node contains:
 
-- A welcomes database
-- A group messages database
+- A **welcomes database**: Keeps a ledger of all groups an inbox ID is a part of.
+- A **group messages database**: Keeps a ledger of all messages in the groups an inbox ID is a part of.
 
 <div>
   <img alt="databases in each xmtpd node" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/xmtpd-dbs.png" width="300px" />
 </div>
 
-- **Welcomes database**: Keeps a ledger of all groups an inbox ID is a part of.
-- **Group messages database**: Keeps a ledger of all messages in the groups an inbox ID is a part of.
-
 In the welcomes database, the groups are of these types:
 
-- **1:1 chat**: A group that handles conversations between the inbox ID and one other user.
-- **Group chat**: A group that handles conversations between the inbox ID and multiple other users.
-- **Preferences group**: A group that handles syncing preferences between the inbox ID's existing app installations.
+- **1:1 chat**: A group that handles conversations between an inbox ID and one other user.
+- **Group chat**: A group that handles conversations between an inbox ID and multiple other users.
+- **Preferences**: A group that handles syncing preferences between an inbox ID's existing app installations.
 
 One-to-one chat, group chat, and preferences groups in the welcome database are updated by apps as follows:
 
@@ -80,12 +77,14 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
     
 2. This sends a message to the preferences group in the group message database. This is not an actual chat message, but a serialized proto message that is not shown to app users.
     
-   ![image.png](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png)
+   <div>
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" />
+   </div>    
     
 3. When Installation B calls `preferences.sync`, `syncAll`, or `streamAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
     
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-gm.png" width="200px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" />
    </div> 
     
 4. Likewise, when Installation C calls `preferences.sync`, `syncAll`, or `streamAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
@@ -94,11 +93,15 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" />
    </div>   
 
-Preferences sync handles syncing HMAC keys in the same way. For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync`, `syncAll`, or `streamAll`, the sync worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
+Preferences sync handles syncing HMAC keys in the same way.
+
+For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync`, `syncAll`, or `streamAll`, the sync worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
 
 ## Sync preferences
 
-As a lighter-weight alternative to calling `syncAll` or `streamAll`, use this call to sync preferences only across installations in a preferences group. 
+Use this call to sync preferences (consent preferences and HMAC keys) across app installations in a preferences group. 
+
+This is a lighter-weight alternative to syncing preferences using [`syncAll`](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences).
 
 :::code-group
 
@@ -111,15 +114,15 @@ await client.preferences.sync();
 ```
 
 ```tsx [React Native]
-
+await client.preferences.sync()
 ```
 
 ```kotlin [Kotlin]
-
+await client.preferences.sync()
 ```
 
 ```swift [Swift]
-
+try await client.preferences.sync()
 ```
 
 :::
