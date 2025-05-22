@@ -2,11 +2,11 @@
 
 ## List existing conversations
 
-Get a list of existing conversations in the local database.
-
-Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
+Get a list of existing group chat and DM conversations in the local database.
 
 By default, conversations with a consent state of `denied` are filtered out.
+
+Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
@@ -142,11 +142,11 @@ Listens for new messages on the network in all active group chat and DM conversa
 
 When a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
-By default, `streamAll` streams only conversations with a consent state of `allowed` or `unknown`.
+By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or denied.
 
 To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
 
-We recommend streaming messages for `allowed` conversations `[Allowed]` only. This ensures that spammy conversations with a consent state of `unknown` don't take up networking resources.
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources.
 
 :::warning[Important]
 
@@ -157,7 +157,7 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::code-group
 
 ```js [Browser]
-const stream = await client.conversations.streamAllMessages([Allowed]);
+const stream = await client.conversations.streamAllMessages([ConsentState.ALLOWED]);
  
 try {
   for await (const message of stream) {
@@ -172,13 +172,13 @@ try {
 
 ```js [Node]
 // stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages();
+const stream = await client.conversations.streamAllMessages([ConsentState.ALLOWED]);
  
 // stream only group messages
-const stream = await client.conversations.streamAllGroupMessages();
+const stream = await client.conversations.streamAllGroupMessages([ConsentState.ALLOWED]);
  
 // stream only dm messages
-const stream = await client.conversations.streamAllDmMessages();
+const stream = await client.conversations.streamAllDmMessages([ConsentState.ALLOWED]);
  
 try {
   for await (const message of stream) {
@@ -194,7 +194,8 @@ try {
 await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
-  }
+  },
+  { consentState: [ConsentState.ALLOWED] }
 );
 ```
 
