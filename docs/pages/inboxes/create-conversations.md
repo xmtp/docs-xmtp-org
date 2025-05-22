@@ -135,7 +135,7 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation, even when offline or before adding members. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
 
 Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
 
@@ -175,6 +175,10 @@ optimisticGroup.prepareMessage("Hello group!")
 // Later, add members and sync
 optimisticGroup.addMembers(listOf(alixClient.inboxId)) // also syncs group to the network
 optimisticGroup.publishMessages() // Publish prepared messages
+```
+
+```swift [Swift]
+
 ```
 
 :::
