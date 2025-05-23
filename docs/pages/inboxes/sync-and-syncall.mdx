@@ -66,15 +66,16 @@ try await client.conversations.sync()
 
 :::
 
-## Sync all new conversations, messages, and updates
+## Sync all new welcomes, conversations, messages, and updates
 
-Sync all new group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network.
+Sync all new welcomes, group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network.
 
-By default, `syncAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or denied.
+By default, `syncAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
 We recommend syncing messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
 
 To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+
 
 :::code-group
 

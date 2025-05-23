@@ -4,7 +4,7 @@
 
 Get a list of existing group chat and DM conversations in the local database.
 
-By default, `list` returns only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or denied.
+By default, `list` returns only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
 We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
 
@@ -146,7 +146,7 @@ Listens for new messages on the network in all active group chat and DM conversa
 
 When a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
-By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or denied.
+By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
 We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources.
 
