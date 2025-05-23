@@ -4,27 +4,31 @@
 
 Get a list of existing group chat and DM conversations in the local database.
 
-By default, conversations with a consent state of `denied` are filtered out.
+By default, `list` returns only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or denied.
+
+We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
+
+To list all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
 
 Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
 ```js [Browser]
-const allConversations = await client.conversations.list();
-const allGroups = await client.conversations.listGroups();
-const allDms = await client.conversations.listDms();
+const allConversations = await client.conversations.list([ConsentState.ALLOWED]);
+const allGroups = await client.conversations.listGroups([ConsentState.ALLOWED]);
+const allDms = await client.conversations.listDms([ConsentState.ALLOWED]);
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list();
-const allGroups = await client.conversations.listGroups();
-const allDms = await client.conversations.listDms();
+const allConversations = await client.conversations.list([ConsentState.ALLOWED]);
+const allGroups = await client.conversations.listGroups([ConsentState.ALLOWED]);
+const allDms = await client.conversations.listDms([ConsentState.ALLOWED]);
 ```
 
 ```tsx [React Native]
 // List Conversation items
-await alix.conversations.list();
+await alix.conversations.list([ConsentState.ALLOWED]);
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
@@ -144,9 +148,9 @@ When a new message is sent to any of these conversations, the callback is trigge
 
 By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or denied.
 
-To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
-
 We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources.
+
+To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
 
 :::warning[Important]
 
