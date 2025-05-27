@@ -10,6 +10,12 @@ To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_d
 
 ## Forked group debugging tool
 
+:::tip[Preventing forks is XMTP’s responsibility]
+
+This tool helps you identify potential forked groups in your app, but preventing forks in the first place is XMTP's responsibility. This diagnostic tool is just a temporary aid, not a shift in responsibility to your app.
+
+:::
+
 A conversation now has `getDebugInformation`. You can use this to see:
 
 - The MLS epoch of a group chat conversation for a member
@@ -75,27 +81,27 @@ Use the `XXXXXXXX` function to return an individual statistic as a number. For e
 
 | Statistic | Description |
 |-----------|-------------|
-| UploadKeyPackage | Number of key packages being uploaded. |
-| FetchKeyPackage | Number of key packages being fetched. |
-| SendGroupMessages | Number of messages being sent to group chat and DM conversations. |
-| SendWelcomeMessages | Number of welcome messages being sent. |
-| QueryGroupMessages | Number of queries being made to fetch messages being sent to group chat and DM conversations. |
-| QueryWelcomeMessages | Number of queries being made to fetch welcome messages. |
-| SubscribeMessages | Number of message subscription requests being made. |
-| SubscribeWelcomes | Number of welcome message subscription requests being made. |
+| UploadKeyPackage | Number of times key packages have been uploaded. |
+| FetchKeyPackage | Number of times key packages have been fetched. |
+| SendGroupMessages | Number of times messages have been sent to group chat and DM conversations. |
+| SendWelcomeMessages | Number of times welcome messages have been sent. |
+| QueryGroupMessages | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
+| QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages. |
+| SubscribeMessages | Number of times message subscription requests have been made. |
+| SubscribeWelcomes | Number of times welcome message subscription requests have been made. |
 
 #### Identity statistics
 
 | Statistic | Description |
 |-----------|-------------|
-| PublishIdentityUpdate | Number of identity updates being published. |
-| GetIdentityUpdatesV2 | Number of identity updates being fetched. |
-| GetInboxIds | Number of inbox ID queries being made. |
-| VerifySCWSignatures | Number of smart contract wallet signature verifications being performed. |
+| PublishIdentityUpdate | Number of times identity updates have been published. |
+| GetIdentityUpdatesV2 | Number of times identity updates have been fetched. |
+| GetInboxIds | Number of times inbox ID queries have been made. |
+| VerifySCWSignatures | Number of times smart contract wallet signature verifications have been performed. |
 
 #### Stream statistics
 
 | Statistic | Description |
 |-----------|-------------|
-| SubscribeMessages | Number of message subscription requests being made. |
-| SubscribeWelcomes | Number of welcome message subscription requests being made. |
+| SubscribeMessages | Number of times message subscription requests have been made. |
+| SubscribeWelcomes | Number of times welcome message subscription requests have been made. |
