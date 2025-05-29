@@ -153,23 +153,41 @@ To learn more about optimistically sending messages using `prepareMessage()` and
 
 :::code-group
 
-```js [Browser]
+```tsx [Browser]
+// create optimistic group (stays local)
+const optimisticGroup = await alixClient.conversations.newGroupOptimistic();
 
+// send optimistic message (stays local)
+await optimisticGroup.sendOptimistic("gm");
+
+// later, sync the group by adding members
+await optimisticGroup.addMembers([boClient.inboxId]);
+// or publishing messages
+await optimisticGroup.publishMessages();
 ```
 
-```js [Node]
+```ts [Node]
+// create optimistic group (stays local)
+const optimisticGroup = client.conversations.newGroupOptimistic();
 
+// send optimistic message (stays local)
+optimisticGroup.sendOptimistic("gm");
+
+// later, sync the group by adding members
+await optimisticGroup.addMembers([boClient.inboxId]);
+// or publishing messages
+await optimisticGroup.publishMessages();
 ```
 
 ```tsx [React Native]
-const optimisticGroup = await boClient.conversations.newGroupOptimistic()
+const optimisticGroup = await boClient.conversations.newGroupOptimistic();
 
 // Prepare a message (stays local)
-await optimisticGroup.prepareMessage("Hello group!")
+await optimisticGroup.prepareMessage("Hello group!");
 
 // Later, add members and sync
-await  optimisticGroup.addMembers([alixClient.inboxId]) // also syncs group to the network
-await  optimisticGroup.publishMessages() // Publish prepared messages
+await optimisticGroup.addMembers([alixClient.inboxId]); // also syncs group to the network
+await optimisticGroup.publishMessages(); // Publish prepared messages
 ```
 
 ```kotlin [Kotlin]
