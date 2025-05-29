@@ -204,7 +204,7 @@ await alix.conversations.streamAllMessages(
 ```
 
 ```kotlin [Kotlin]
-alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: [ALLOWED]).collect {
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
   // Received a message
 }
 ```
