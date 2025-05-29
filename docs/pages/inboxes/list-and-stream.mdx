@@ -176,7 +176,7 @@ try {
 
 ```js [Node]
 // stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages([ConsentState.ALLOWED]);
+const stream = await client.conversations.streamAllMessages(["allowed"]);
  
 // stream only group messages
 const stream = await client.conversations.streamAllGroupMessages([ConsentState.ALLOWED]);
