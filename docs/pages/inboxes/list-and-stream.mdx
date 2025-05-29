@@ -28,7 +28,7 @@ const allDms = await client.conversations.listDms([ConsentState.ALLOWED]);
 
 ```tsx [React Native]
 // List Conversation items
-await alix.conversations.list([ConsentState.ALLOWED]);
+await alix.conversations.list(["allowed"]);
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
