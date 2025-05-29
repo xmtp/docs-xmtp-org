@@ -72,7 +72,7 @@ Sync all new welcomes, group chat and DM conversations, messages, and installati
 
 By default, `syncAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
-We recommend syncing messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience. Or store unwanted spam messages in the users local database.
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
 
 To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
 
