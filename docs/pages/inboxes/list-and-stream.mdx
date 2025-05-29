@@ -179,7 +179,7 @@ try {
 const stream = await client.conversations.streamAllMessages(["allowed"]);
  
 // stream only group messages
-const stream = await client.conversations.streamAllGroupMessages([ConsentState.ALLOWED]);
+const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
  
 // stream only dm messages
 const stream = await client.conversations.streamAllDmMessages([ConsentState.ALLOWED]);
