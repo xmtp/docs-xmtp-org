@@ -161,7 +161,7 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::code-group
 
 ```js [Browser]
-const stream = await client.conversations.streamAllMessages([ConsentState.ALLOWED]);
+const stream = await client.conversations.streamAllMessages(["allowed"]);
  
 try {
   for await (const message of stream) {
