@@ -162,7 +162,14 @@ To learn more about optimistically sending messages using `prepareMessage()` and
 ```
 
 ```tsx [React Native]
+const optimisticGroup = await boClient.conversations.newGroupOptimistic()
 
+// Prepare a message (stays local)
+await optimisticGroup.prepareMessage("Hello group!")
+
+// Later, add members and sync
+await  optimisticGroup.addMembers([alixClient.inboxId]) // also syncs group to the network
+await  optimisticGroup.publishMessages() // Publish prepared messages
 ```
 
 ```kotlin [Kotlin]
