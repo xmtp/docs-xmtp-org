@@ -178,7 +178,15 @@ optimisticGroup.publishMessages() // Publish prepared messages
 ```
 
 ```swift [Swift]
+// Create optimistic group (stays local)
+let optimisticGroup = try await boClient.conversations.newGroupOptimistic(groupName: "Testing")
 
+// Prepare a message (stays local)
+try await optimisticGroup.prepareMessage("Hello group!")
+
+// Later, add members and sync
+try await  optimisticGroup.addMembers([alixClient.inboxId]) // also syncs group to the network
+try await  optimisticGroup.publishMessages() // Publish prepared messages
 ```
 
 :::
