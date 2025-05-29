@@ -148,7 +148,7 @@ When a new message is sent to any of these conversations, the callback is trigge
 
 By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
-We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. Or store unwanted spam messages in the users local database.
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
 
 To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
 
