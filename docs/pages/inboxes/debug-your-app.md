@@ -42,7 +42,7 @@ You can use file logging to debug complex issues. It keeps a 6-hour window of lo
 
 ## Network statistics
 
-A client has a function called `getNetworkStatistics`. These statistics are maintained per client instance, so each app installation has its own separate counters.
+A client has a function called `client.debugInformation` These statistics are maintained per client instance, so each app installation has its own separate counters.
 
 You can use these statistics to see which and how many API, identity, and streaming calls are going across the network at any moment. This information can help you better manage network usage and debug potential rate limiting issues.
 
