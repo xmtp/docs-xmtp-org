@@ -21,9 +21,9 @@ const allDms = await client.conversations.listDms(["allowed"]);
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list([ConsentState.ALLOWED]);
-const allGroups = await client.conversations.listGroups([ConsentState.ALLOWED]);
-const allDms = await client.conversations.listDms([ConsentState.ALLOWED]);
+const allConversations = await client.conversations.list(["allowed"]);
+const allGroups = await client.conversations.listGroups(["allowed"]);
+const allDms = await client.conversations.listDms(["allowed"]);
 ```
 
 ```tsx [React Native]
