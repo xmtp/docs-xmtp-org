@@ -80,7 +80,7 @@ To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, 
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll([ConsentState.ALLOWED]);
+await client.conversations.syncAll(["allowed"]);
 ```
 
 ```js [Node]
