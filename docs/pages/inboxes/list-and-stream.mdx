@@ -182,7 +182,7 @@ const stream = await client.conversations.streamAllMessages(["allowed"]);
 const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
  
 // stream only dm messages
-const stream = await client.conversations.streamAllDmMessages([ConsentState.ALLOWED]);
+const stream = await client.conversations.streamAllDmMessages(["allowed"]);
  
 try {
   for await (const message of stream) {
