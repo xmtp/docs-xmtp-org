@@ -38,17 +38,32 @@ Forked groups are not recoverable. Your options are to:
 
 ## File logging
 
-You can use file logging to debug complex issues. It keeps a 6-hour window of logs that get written and rolled every hour.
+These file logging functions enable the XMTP rust process to write directly to persistent log files that roll during every hour of active usage and provide a 6-hour window of logs. This can be especially helpful when debugging group chat errors and other complex issues.
+
+The file logs complement Android and iOS system logs, which rely on memory buffer constraints, but often don't go back far enough to help catch when an issue occurs.
+
+To use file logging, call the following static functions:
+
+- `Client.activatePersistentLibXMTPLogWriter()`: Use to activate the file logging feature.
+  - We recommend using `LogLevel.Debug`, `LogRotation.Hourly`, and a `logMaxFiles` value of 5-10. Log files can grow to ~100mb each with active clients on debug level in an hour of usage.
+- `Client.getXMTPLogFilePaths()`: Use to get the full paths of log files written so far. This is useful for passing to iOS or Android Share functions.
+- Here are additional helper static functions in the XMTP Client object:
+  - `deactivatePersistentLibXMTPLogWriter()`
+  - `isLogWriterActive()`
+  - `readXMTPLogFile()`
+  - `clearXMTPLogs()`
+
+For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/ephemeraHQ/convos-app/pull/6) to the Convos app, built with XMTP.
 
 ## Network statistics
 
-A client has a function called `client.debugInformation` These statistics are maintained per client instance, so each app installation has its own separate counters.
+You can use these statistics to see which and how many API, identity, and streaming calls are going across the network, which can help you better manage network usage and debug potential rate limiting issues.
 
-You can use these statistics to see which and how many API, identity, and streaming calls are going across the network at any moment. This information can help you better manage network usage and debug potential rate limiting issues.
+A client has a function called `client.debugInformation` These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
 
 ### Get aggregated statistics
 
-Use the `XXXXXXXX` function to return these aggregated statistics.
+Use the `client.debugInformation.aggregateStatistics` function to return these aggregated statistics.
 
 ```text
 Aggregate Stats:
@@ -59,8 +74,6 @@ SendGroupMessages       5
 SendWelcomeMessages     1
 QueryGroupMessages      7
 QueryWelcomeMessages    0
-SubscribeMessages       0
-SubscribeWelcomes       0
 ============ Identity ============
 PublishIdentityUpdate    1
 GetIdentityUpdatesV2     4
@@ -73,7 +86,7 @@ SubscribeWelcomes       0
 
 ### Get an individual statistic
 
-Use the `XXXXXXXX` function to return an individual statistic as a number. For example, you can just `xxxxxx` to track `uploadKeypackage` only.
+You can return an individual statistic as a number. For example, you can run `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeypackage` only.
 
 ### Statistic descriptions
 
@@ -87,8 +100,6 @@ Use the `XXXXXXXX` function to return an individual statistic as a number. For e
 | SendWelcomeMessages | Number of times welcome messages have been sent. |
 | QueryGroupMessages | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
 | QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages. |
-| SubscribeMessages | Number of times message subscription requests have been made. |
-| SubscribeWelcomes | Number of times welcome message subscription requests have been made. |
 
 #### Identity statistics
 
@@ -103,5 +114,5 @@ Use the `XXXXXXXX` function to return an individual statistic as a number. For e
 
 | Statistic | Description |
 |-----------|-------------|
-| SubscribeMessages | Number of times message subscription requests have been made. |
-| SubscribeWelcomes | Number of times welcome message subscription requests have been made. |
+| SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
+| SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations. |
