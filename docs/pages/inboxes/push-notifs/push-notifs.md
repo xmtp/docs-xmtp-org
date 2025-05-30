@@ -210,7 +210,7 @@ Then determine whether it’s for a new conversation or an existing one.
 
 ## Resubscribe to topics to get new HMAC keys
 
-As soon as your apps receive a user preference update event indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
+As soon as your apps receive a [user preference update event](/inboxes/sync-preferences) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
 
 ```kotlin [Kotlin]
 conversations.allTopics.forEach { -> topic
