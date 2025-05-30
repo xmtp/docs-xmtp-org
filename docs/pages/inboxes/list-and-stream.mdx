@@ -132,9 +132,9 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 :::
 
-## Stream all group chat and DM messages
+## Stream all group chat and DM messages and preferences
 
-Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+Listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
 :::warning[Important]
 
