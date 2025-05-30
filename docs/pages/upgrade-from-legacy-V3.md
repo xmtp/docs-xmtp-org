@@ -2,11 +2,11 @@
 
 This document is for you if you are upgrading from a legacy XMTP V3 SDK. Legacy XMTP V3 SDKs include:
 
-- Browser SDK v0.x.x
-- Node SDK v0.x.x
-- React Native SDK v3.x.x
-- Android SDK v3.x.x
-- iOS SDK v3.x.x
+- Browser SDK v0.x.x-&lt;v2.0.11
+- Node SDK v0.x.x-&lt;v2.0.6
+- React Native SDK v3.x.x-&lt;v4.0.5
+- Android SDK v3.x.x-&lt;v4.0.5
+- iOS SDK v3.x.x-&lt;v4.0.7
 
 :::tip[Upgrading from a legacy XMTP V2 SDK?]
 
@@ -20,14 +20,14 @@ XMTP V3 provides support for the features expected by modern messaging apps whil
 
 The process to upgrade an app built with a legacy XMTP V3 SDK to a stable V3 SDK is designed to be straightforward, with most functions in stable V3 working as they did in legacy V3. However, there are some notable differences, which we cover here and in these release notes:
 
-🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.0** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.0)
-- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.0)
-- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.0)
+🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
+- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.5)
+- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.5)
+- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
 
-🟢 For web apps, **upgrade to an XMTP web SDK >=v1.0.0** following the detailed instructions in these release notes:
-- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%401.0.0)
-- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%401.0.0)
+🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.4** or **upgrade to an XMTP node SDK >=v1.0.5** following the detailed instructions in these release notes:
+- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%402.0.11)
+- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%402.0.6)
 - For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
 
 🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.

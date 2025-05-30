@@ -4,6 +4,22 @@ Once you have the group chat or DM conversation, you can send messages in the co
 
 :::code-group
 
+```tsx [Browser]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```
+
+```tsx [Node]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```
+
 ```tsx [React Native]
 // For a DM conversation
 const dm = await client.conversations.findOrCreateDm(recipientInboxId);
@@ -90,12 +106,23 @@ conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [React Native]
-Code sample coming
+// Optimistically send the message to the local database
+await conversation.prepareMessage("Hello world");
+
+// For custom content types, specify the content type
+const customContent = { foo: "bar" };
+const contentType = new ContentTypeId({
+  authorityId: "example",
+  typeId: "test",
+  versionMajor: 1,
+  versionMinor: 0
+});
+await conversation.prepareMessage(customContent, contentType);
 ```
 
 ```kotlin [Kotlin]
 // Optimistically send the message to the local database
-conversation.sendOptimistic("Hello world")
+conversation.prepareMessage("Hello world")
 
 // For custom content types, specify the content type
 val customContent = mapOf("foo" to "bar")
@@ -105,12 +132,12 @@ val contentType = ContentTypeId(
     versionMajor = 1,
     versionMinor = 0
 )
-conversation.sendOptimistic(customContent, contentType)
+conversation.prepareMessage(customContent, contentType)
 ```
 
 ```swift [Swift]
 // Optimistically send the message to the local database
-try await conversation.sendOptimistic("Hello world")
+try await conversation.prepareMessage("Hello world")
 
 // For custom content types, specify the content type
 let customContent = ["foo": "bar"]
@@ -120,7 +147,7 @@ let contentType = ContentTypeId(
     versionMajor: 1,
     versionMinor: 0
 )
-try await conversation.sendOptimistic(customContent, contentType: contentType)
+try await conversation.prepareMessage(customContent, contentType: contentType)
 ```
 
 :::
@@ -168,16 +195,30 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 ```
 
 ```tsx [React Native]
-Code sample coming
+// Publish all pending optimistically sent messages to the network
+// Call this only after using prepareMessage to send a message locally
+async function sendMessageWithOptimisticUI(conversation: Conversation, messageText: string): Promise<boolean> {
+  try {
+    // Add message to UI immediately
+    await conversation.prepareMessage(messageText);
+    
+    // Actually send the message to the network
+    await conversation.publishMessages();
+    return true;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+    return false;
+  }
+}
 ```
 
 ```kotlin [Kotlin]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using prepareMessage to send a message locally
 suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText: String): Boolean {
     return try {
         // Add message to UI immediately
-        conversation.sendOptimistic(messageText)
+        conversation.prepareMessage(messageText)
         
         // Actually send the message to the network
         conversation.publishMessages()
@@ -191,11 +232,11 @@ suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText:
 
 ```swift [Swift]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using prepareMessage to send a message locally
 func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String) async throws -> Bool {
     do {
         // Add message to UI immediately
-        try await conversation.sendOptimistic(messageText)
+        try await conversation.prepareMessage(messageText)
         
         // Actually send the message to the network
         try await conversation.publishMessages()
@@ -323,6 +364,54 @@ For example:
 
 :::code-group
 
+```js [Browser]
+// DM
+await client.conversations.newDm(
+  inboxId,
+  {
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936n,
+      inNs: 1800000000000000n
+    }
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936n,
+      inNs: 1800000000000000n
+    }
+  }
+)
+```
+
+```js [Node]
+// DM
+await client.conversations.newDm(
+  inboxId,
+  {
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
+    }
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  { 
+    messageDisappearingSettings: {
+      fromNs: 1738620126404999936,
+      inNs: 1800000000000000
+    }
+  }
+)
+```
+
 ```tsx [React Native]
 // DM
 await client.conversations.newConversation(
@@ -395,6 +484,22 @@ For example:
 
 :::code-group
 
+```tsx [Browser]
+// Update disappearing message settings
+await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n)
+
+// Clear disappearing message settings
+await conversation.removeMessageDisappearingSettings()
+```
+
+```tsx [Node]
+// Update disappearing message settings
+await conversation.updateMessageDisappearingSettings(1738620126404999936, 1800000000000000)
+
+// Clear disappearing message settings
+await conversation.removeMessageDisappearingSettings()
+```
+
 ```tsx [React Native]
 await conversation.updateDisappearingMessageSettings(updatedSettings)
 await conversation.clearDisappearingMessageSettings()
@@ -417,6 +522,21 @@ try await conversation.clearDisappearingMessageSettings()
 For example:
 
 :::code-group
+
+```tsx [Browser]
+// Get the disappearing message settings
+const settings = await conversation.messageDisappearingSettings()
+
+// Check if disappearing messages are enabled
+const isEnabled = await conversation.isDisappearingMessagesEnabled()
+```
+
+```tsx [Node]
+// Get the disappearing message settings
+const settings = conversation.messageDisappearingSettings()
+
+const isEnabled = conversation.isDisappearingMessagesEnabled()
+```
 
 ```tsx [React Native]
 conversation.disappearingMessageSettings

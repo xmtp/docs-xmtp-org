@@ -6,20 +6,6 @@ description: Learn how to use the read receipt content type to support read rece
 
 Use the read receipt content type to support read receipts in your app. A read receipt is a `timestamp` that indicates when a message was read. It is sent as a message and can be used to calculate the time since the last message was read.
 
-:::warning
-
-This standards-track content type is in **Alpha** status because this implementation doesn't work efficiently with the current protocol architecture. This inefficiency will be addressed in a future protocol release.
-
-Until then, if you must support read receipts, we recommend that you use this implementation and **not build your own custom content type.**
-
-:::
-
-:::tip[Open for feedback]
-
-You're welcome to provide feedback on the [Proposal for read receipts content type](https://community.xmtp.org/t/proposal-for-read-receipts-content-type/594) XIP idea.
-
-:::
-
 ## Provide an opt-out option
 
 While this is a per-app decision, the best practice is to provide users with the option to opt out of sending read receipts. If a user opts out, when they read a message, a read receipt will not be sent to the sender of the message.
@@ -148,7 +134,7 @@ content.timestamp // "2019-09-26T07:58:30.996+0200"
 
 ## Display a read receipt
 
-`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/list-stream-and-sync/#handle-unsupported-content-types) section.
+`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
 
 ## Notifications and read receipts
 
