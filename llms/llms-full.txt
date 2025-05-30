@@ -1819,30 +1819,37 @@ try await client.conversations.sync()
 
 :::
 
-## Sync all new conversations, messages, and updates
+## Sync all new welcomes, conversations, messages, and updates
 
-Sync all new group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network. We recommend that you run this sync in the background and call it more frequently than not.
+Sync all new welcomes, group chat and DM conversations, messages, and installation-related updates (consent states, HMAC keys, etc.) from the network.
+
+By default, `syncAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+
 
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll();
+await client.conversations.syncAll(["allowed"]);
 ```
 
 ```js [Node]
-await client.conversations.syncAll();
+await client.conversations.syncAll(["allowed"]);
 ```
 
 ```tsx [React Native]
-await client.conversations.syncAllConversations();
+await client.conversations.syncAllConversations(["allowed"]);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations()
+client.conversations.syncAllConversations(consentState: listOf(ConsentState.ALLOWED))
 ```
 
 ```swift [Swift]
-try await client.conversations.syncAllConversations()
+try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
 :::
@@ -2371,27 +2378,35 @@ These SDKs provide native support for mobile app development across different pl
 ## pages/inboxes/list-and-stream.mdx
 # List and stream conversations and messages
 
-## List existing group chats or DMs
+## List existing conversations
 
-Get a list of existing group chats or DMs in the local database. By default, the conversations are listed in descending order by their `lastMessage` created at value. If a conversation does not contain any messages, the conversation is ordered by its `createdAt` value.
+Get a list of existing group chat and DM conversations in the local database.
+
+By default, `list` returns only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
+
+To list all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+
+Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
 ```js [Browser]
-const allConversations = await client.conversations.list();
-const allGroups = await client.conversations.listGroups();
-const allDms = await client.conversations.listDms();
+const allConversations = await client.conversations.list(["allowed"]);
+const allGroups = await client.conversations.listGroups(["allowed"]);
+const allDms = await client.conversations.listDms(["allowed"]);
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list();
-const allGroups = await client.conversations.listGroups();
-const allDms = await client.conversations.listDms();
+const allConversations = await client.conversations.list(["allowed"]);
+const allGroups = await client.conversations.listGroups(["allowed"]);
+const allDms = await client.conversations.listDms(["allowed"]);
 ```
 
 ```tsx [React Native]
 // List Conversation items
-await alix.conversations.list();
+await alix.conversations.list(["allowed"]);
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
@@ -2505,7 +2520,15 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 ## Stream all group chat and DM messages
 
-Listens to the network for new messages within all active group chats and DMs. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+Listens for new messages on the network in all active group chat and DM conversations, as well as new conversations regardless of when the stream was started.
+
+When a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
 
 :::warning[Important]
 
@@ -2516,8 +2539,8 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::code-group
 
 ```js [Browser]
-const stream = await client.conversations.streamAllMessages();
-
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
 try {
   for await (const message of stream) {
     // Received a message
@@ -2531,14 +2554,14 @@ try {
 
 ```js [Node]
 // stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages();
-
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
 // stream only group messages
-const stream = await client.conversations.streamAllGroupMessages();
-
+const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
+ 
 // stream only dm messages
-const stream = await client.conversations.streamAllDmMessages();
-
+const stream = await client.conversations.streamAllDmMessages(["allowed"]);
+ 
 try {
   for await (const message of stream) {
     // Received a message
@@ -2553,18 +2576,19 @@ try {
 await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
-  }
+  },
+  { consentState: ["allowed"] }
 );
 ```
 
 ```kotlin [Kotlin]
-alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
   // Received a message
 }
 ```
 
 ```swift [Swift]
-for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */) {
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
   // Received a message
 }
 ```
