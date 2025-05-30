@@ -36,6 +36,14 @@ This function is delicate and should be used with caution. Adding an identity to
 
 :::code-group
 
+```tsx [Browser]
+await client.unsafe_addAccount(signer, true)
+```
+
+```tsx [Node]
+await client.unsafe_addAccount(signer, true)
+```
+
 ```jsx [React Native]
 await client.addAccount(identityToAdd)
 ```
@@ -57,6 +65,14 @@ try await client.addAccount(newAccount: identityToAdd)
 :::
 
 :::code-group
+
+```tsx [Browser]
+await client.removeAccount(identifier)
+```
+
+```tsx [Node]
+await client.removeAccount(identifier)
+```
 
 ```jsx [React Native]
 await client.removeAccount(recoveryIdentity, identityToRemove)
@@ -98,6 +114,14 @@ When the user revokes all other installations, the action removes their identity
 
 :::code-group
 
+```tsx [Browser]
+await client.revokeAllOtherInstallations()
+```
+
+```tsx [Node]
+await client.revokeAllOtherInstallations()
+```
+
 ```jsx [React Native]
 await client.revokeAllOtherInstallations(recoveryIdentity)
 ```
@@ -118,6 +142,14 @@ Find an `inboxId` for an identity:
 
 :::code-group
 
+```tsx [Browser]
+const inboxState = await client.preferences.inboxState()
+```
+
+```tsx [Node]
+const inboxState = await client.preferences.inboxState()
+```
+
 ```jsx [React Native]
 const inboxId = await client.inboxIdFromIdentity(identity)
 ```
@@ -137,6 +169,16 @@ View the state of any inbox to see the identities, installations, and other info
 **Sample request**
 
 :::code-group
+
+```tsx [Browser]
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+```
+
+```tsx [Node]
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+```
 
 ```jsx [React Native]
 const state = await client.inboxState(true)
