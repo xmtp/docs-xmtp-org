@@ -70,7 +70,7 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 
 ## Create a new group chat
 
-Once you have the verified identities, create a new group chat.
+Once you have the verified identities, create a new group chat. The maximum group chat size is 220 members.
 
 :::tip
 If you want to provide faster and offline group creation, consider using [optimistic group chat creation](#optimistically-create-a-group-chat) instead. This approach enables instant group creation and message preparation before adding members and even when offline.
