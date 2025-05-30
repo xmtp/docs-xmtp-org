@@ -26,29 +26,29 @@ When you call `Client.create()`, the following steps happen under the hood:
    1. If it doesn't find an existing inbox ID, it requests a wallet signature to register the identity and create an inbox ID.
    2. If it finds an existing inbox ID, it uses the existing inbox ID.
 3. Checks if a local SQLite database exists. This database contains the identity's installation state and message data.
-   1. If it doesn't find an existing local database, it creates one and encrypts it with the provided `dbEncryptionKey`.
-   2. If it finds an existing local database, it checks to see if the provided `dbEncryptionKey` is a match.
-      - If the `dbEncryptionKey` matches, it uses the existing local database.
-      - If the `dbEncryptionKey` doesn't match, it creates a new local database and encrypts it with the provided key.
+   1. If it doesn't find an existing local database, it creates one. On non-web platforms, it encrypts the database with the provided `dbEncryptionKey`.
+   2. If it finds an existing local database:
+      - **For the Node, React Native, Android, and iOS SDKs**: It checks if the provided `dbEncryptionKey` matches. If it matches, it uses the existing database. If not, it creates a new database encrypted with the provided key.
+      - **For the Browser SDK**: A `dbEncryptionKey` is not used for encryption due to technical limitations in web environments. Be aware that the database is not encrypted.
 4. Returns the XMTP client, ready to send and receive messages.
-
-<div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/client-create.png" width="400px" />
-</div>
 
 ### Keep the database encryption key safe
 
-The `dbEncryptionKey` is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client. 
+The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
+
+The encryption key is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client.
 
 As long as the local database and encryption key remain intact, you can use [`Client.build()`](#build-an-existing-client) to rehydrate the same client without re-signing.
 
 This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
 
-If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call, the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
 
 Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/history-sync).
 
-To ensure seamless app experiences, persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch.
+To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
+
+The `dbEncryptionKey` client option is not used by the Browser SDK for due to technical limitations in web environments. In this case, be aware that the database is not encrypted.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
@@ -64,20 +64,11 @@ import { Client, type Signer } from "@xmtp/browser-sdk";
 // create a signer
 const signer: Signer = { /* ... */ };
 
-/**
- * The database encryption key is optional but strongly recommended for
- * secure local storage of the database.
- *
- * This value must be consistent when creating a client with an existing
- * database.
- */
-const dbEncryptionKey = window.crypto.getRandomValues(new Uint8Array(32));
-
 const client = await Client.create(
   signer,
   // client options
   {
-    dbEncryptionKey,
+  // Note: dbEncryptionKey is not used for encryption in browser environments
   },
 );
 ```
