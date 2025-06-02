@@ -14,6 +14,8 @@ The client creates an inbox ID and installation ID associated with the identity.
 
 When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
 
+An identity can have up to 25 app installations before it needs to [revoke an installation](#revoke-an-installation).
+
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
 </div>
@@ -95,6 +97,34 @@ try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRem
 This video provides a walkthrough of revoking installations, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/MIw9x1Z4WXw?si=4bcbfkHTDvsM0uDG" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+### Revoke an installation
+
+You can revoke a specific installation other than the currently accessed installation.
+
+:::code-group
+
+```tsx [Browser]
+
+```
+
+```tsx [Node]
+
+```
+
+```jsx [React Native]
+
+```
+
+```kotlin [Kotlin]
+
+```
+
+```swift [Swift]
+
+```
+
+:::
 
 ### Revoke all other installations
 
