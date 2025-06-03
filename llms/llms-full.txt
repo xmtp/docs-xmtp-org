@@ -308,7 +308,7 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 :::info[Key takeaways]
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
 - **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
-- ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
+- ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 23, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 :::
 
 ## Upgrade to XMTP V3
