@@ -1731,7 +1731,7 @@ When you create a client, it connects to the XMTP `dev` network by default. Set 
 
 The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
 
-You can also use a `local` network to have a client communicate with an XMTP node you are running locally. During development, it's highly recommended to use a `local` network environment for speed and reliability.
+You can use a `local` network environment to have a client communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
 
 ## Build an existing client
 
