@@ -1,0 +1,333 @@
+# Payer Services
+
+Payer Services are how your application can cover the cost of sending messages on the XMTP network on behalf of your users. You can think of a Payer Service as a proxy that pays for and forwards messages to the XMTP network.
+
+A Payer Service is hosted on your infrastructure, since it contains sensitive information such as your Payer Private Key.
+
+XMTP provides a standard implementation of the Payer Service that you can extend to meet your unique needs. Once your Payer Service is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your web or mobile app.
+
+## A minimal example
+
+This is all the code you need to create the most bare bones Payer Service. The service will configure itself from command line flags or environment variables, and begin receiving traffic on ports `5050` and `5055`.
+
+This minimal example will authorize every request it receives with no limits. In a real production app, you will want to make sure that you only approve requests from your own users.
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+
+	"github.com/xmtp/xmtpd/pkg/payer"
+)
+
+func main() {
+	payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+		Build()
+	if err != nil {
+		log.Fatalf("Failed to build payer service: %v", err)
+	}
+
+	err = payerService.Serve(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to serve payer service: %v", err)
+	}
+}
+```
+
+## Configuring your Payer Service
+
+You can provide the configuration options for your Payer Service either directly in your code, via command line flag, or through environment variables.
+
+| Name                     | Required | Command Line Flag                      | Environment Variable             | Info                                                                                               |
+| ------------------------ | -------- | -------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Payer Portal    |
+| App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                        |
+| Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                    |
+| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your Payer Service will run in. Valid values are `local`, `testnet`, and `mainnet` |
+| Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                  |
+| Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                      |
+
+{/* TODO:nm: Include all non-required options */}
+
+## Funding your Payer
+
+The private key for your Payer Service is an Ethereum account that is expected to be funded in the Payer Portal.
+
+Read more about [funding your Payer Service](https://docs.xmtp.org/network/fund-your-payer-service).
+
+## Authenticating Users
+
+You can think of the Payer Service is an extension of your client application. If you already have a system for authenticating user requests in your application, you should use it in your Payer Service. For example, many apps use [JSON Web Tokens](https://jwt.io) (JWTs) to authenticate client requests to servers.
+
+You can use any authentication scheme you like to authenticate requests from your client to the Payer Service.
+
+### In your client
+
+When creating a XMTP client, you can optionally provide an `payerAuthTokenFetcher` as part of client configuration.
+
+The value returned by this function will be included all client requests to the Payer Service. The `fetchAuthToken` function will be called before the first request is made to the Payer Service, and after any request to the Payer Service fails due to a `PermissionDenied` error.
+
+### Creating a `payerAuthTokenFetcher`
+
+A Payer Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
+
+:::code-group
+
+```tsx [Browser]
+import type { PayerAuthTokenFetcher } from "@xmtp/browser-sdk";
+
+const authTokenFetcher: PayerAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    // Get the auth token from your app somehow
+    return "my-auth-token";
+  },
+};
+```
+
+```tsx [Node]
+import type { PayerAuthTokenFetcher } from "@xmtp/node-sdk";
+
+const authTokenFetcher: PayerAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return "my-auth-token";
+  },
+};
+```
+
+```tsx [React Native]
+import type { PayerAuthTokenFetcher } from "@xmtp/react-native-sdk";
+
+const authTokenFetcher: PayerAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return "my-auth-token";
+  },
+};
+```
+
+```kotlin [Kotlin]
+class MyAuthTokenFetcher : PayerAuthTokenFetcher {
+    override suspend fun fetchAuthToken(): String {
+        return "my-auth-token"
+    }
+}
+```
+
+```swift [Swift]
+public struct MyAuthTokenFetcher: PayerAuthTokenFetcher {
+    public func fetchAuthToken() async throws -> String {
+        return "my-auth-token"
+    }
+}
+```
+
+:::
+
+### In the Payer Service
+
+The `PayerServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `payer.Identity` struct, which identifies the user in a way that is unique to your application.
+
+This identity will then be used for rate limiting, and will be passed to your `AuthorizePublishFn` as additional context.
+
+:::code-group
+
+```go [IP Address]
+//  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
+payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+	WithIdentityFn(payer.IPIdentityFn).
+	Build()
+```
+
+```go [JWT]
+package main
+
+import (
+	"context"
+	"errors"
+	"log"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/xmtp/xmtpd/pkg/payer"
+)
+
+const EXPECTED_ISSUER = "my-app.com"
+
+var (
+	ErrMissingToken     = errors.New("missing JWT token")
+	ErrInvalidToken     = errors.New("invalid JWT token")
+	ErrInvalidSignature = errors.New("invalid token signature")
+)
+
+// jwtIdentityFn creates an identity function that verifies JWTs
+func jwtIdentityFn(publicKey []byte) payer.IdentityFn {
+	return func(ctx context.Context) (payer.Identity, error) {
+		authHeader := payer.AuthorizationHeaderFromContext(ctx)
+		if authHeader == "" {
+			return payer.Identity{}, payer.NewUnauthenticatedError(
+				"Missing JWT token",
+				ErrMissingToken,
+			)
+		}
+
+		// Parse and verify the token
+		token, err := jwt.ParseWithClaims(
+			authHeader,
+			&jwt.RegisteredClaims{},
+			func(token *jwt.Token) (interface{}, error) {
+				// Verify signing method
+				if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+					return nil, payer.NewPermissionDeniedError(
+						"Invalid signing method",
+						ErrInvalidSignature,
+					)
+				}
+				return publicKey, nil
+			},
+			jwt.WithIssuer(EXPECTED_ISSUER),
+		)
+		if err != nil {
+			return payer.Identity{}, payer.NewPermissionDeniedError("failed to validate token", err)
+		}
+
+		// Extract claims
+		claims, ok := token.Claims.(*jwt.RegisteredClaims)
+		if !ok || !token.Valid {
+			return payer.Identity{}, payer.NewPermissionDeniedError(
+				"failed to validate token",
+				ErrInvalidToken,
+			)
+		}
+
+		userID, err := claims.GetSubject()
+		if err != nil {
+			return payer.Identity{}, payer.NewPermissionDeniedError(
+				"failed to get subject from token",
+				err,
+			)
+		}
+
+		// Return identity based on JWT claims
+		return payer.NewUserIdentity(userID), nil
+	}
+}
+
+func main() {
+	// In a real application, this would be a secure key loaded from environment/config
+	publicKey := []byte("your-applications-public-key")
+
+	payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+		WithIdentityFn(jwtIdentityFn(publicKey)).
+		Build()
+	if err != nil {
+		log.Fatalf("Failed to build payer service: %v", err)
+	}
+
+	err = payerService.Serve(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to serve payer service: %v", err)
+	}
+}
+
+```
+
+:::
+
+## Authorizing requests
+
+Now that you have an identity for the caller of your API, you can use it to authorize requests. We provide some helpers to handle common authorization patterns, such as rate limiting.
+
+You can add multiple authorizers to your Payer Service. All authorizers will be called in parallel. The first authorizer (based on the order they are added) that returns `false` or an error will cause the request to be rejected.
+
+:::code-group
+
+```go [IP Allowlist]
+package main
+
+import (
+	"context"
+	"log"
+	"slices"
+
+	"github.com/xmtp/xmtpd/pkg/payer"
+)
+
+func main() {
+	payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+		WithAuthorizers(func(ctx context.Context, identity payer.Identity, req payer.PublishRequest) (bool, error) {
+			// A simple authorization function that allows only the IP 127.0.0.1
+			allowedIPs := []string{"127.0.0.1"}
+			if !slices.Contains(allowedIPs, identity.Identity) {
+				return false, payer.ErrUnauthorized
+			}
+			return true, nil
+		}).
+		Build() // This will gather all the config from environment variables and flags
+	if err != nil {
+		log.Fatalf("Failed to build payer service: %v", err)
+	}
+
+	err = payerService.Serve(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to serve payer service: %v", err)
+	}
+}
+```
+
+```go [Rate Limiter]
+package main
+
+import (
+	"context"
+	"log"
+	"time"
+
+	"github.com/xmtp/xmtpd/pkg/payer"
+)
+
+func main() {
+	cfg := payer.MustLoadConfig()
+
+	payerService, err := payer.NewPayerServiceBuilder(cfg).
+		// Rate limit to allow 50 requests per minute and 10,000 requests per day
+		WithAuthorizers(payer.NewRateLimitAuthorizer(cfg, payer.RateLimit{
+			MaxRequests: 50,
+			Window:      time.Minute,
+		}), payer.NewRateLimitAuthorizer(cfg, payer.RateLimit{
+			MaxRequests: 10000,
+			Window:      time.Hour * 24,
+		})).
+		Build()
+	if err != nil {
+		log.Fatalf("Failed to build payer service: %v", err)
+	}
+
+	err = payerService.Serve(context.Background())
+	if err != nil {
+		log.Fatalf("Failed to serve payer service: %v", err)
+	}
+}
+
+```
+
+:::
+
+## Metrics and Observability
+
+If the Payer Service is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
+
+## Deployment
+
+You can deploy the Payer Service on your infrastructure of choice.
+
+We provide a Docker Image that corresponds to the bare bones example above, that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
+
+```bash
+docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/payer-service-example:latest
+```
+
+Most production applications will require some level of customization to authorize user requests. We provide a sample Dockerfile in the [`examples/docker`](https://link-goes-here) directory that you can use as a starting point.
+
+### Requirements
+
+The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
