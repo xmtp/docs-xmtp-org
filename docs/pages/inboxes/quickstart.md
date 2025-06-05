@@ -1,13 +1,13 @@
 # Quickstart: Build an app with XMTP
 
-This quickstart provides a map to building a complete messaging app with XMTP including support for:
+This quickstart provides a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
 - Real-time push notifications
 - Spam-free inboxes using user consent preferences
 
-:::tip
+:::tip[🤖 Building an agent?]
 
 Want to build an agent that works in messaging apps built with XMTP? Explore the examples and docs in [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples).
 
@@ -29,10 +29,12 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
    Need an SDK for a different platform? Let us know in [Ideas & Improvements](https://community.xmtp.org/c/general/ideas/54) in the XMTP Community Forums.
 
 2. [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
-   
+
+3. You can [use llms-full.txt](http://localhost:5173/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
+
 ## 💬 Phase II: Build core messaging
 
-1. [Create an EAO or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer)
+1. [Create an EOA or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer)
 
 2. [Create an XMTP client](/inboxes/create-a-client)
 
@@ -45,7 +47,7 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
 
 6. Manage group chat [permissions](/inboxes/group-permissions) and [metadata](/inboxes/group-metadata).
 
-## 🔁 Phase III: Keep conversations and messages up to date
+## 🔁 Phase III: Manage conversations and messages
 
 1. [List existing conversations](/inboxes/list-and-stream#list-existing-conversations) from local storage.
 
@@ -60,7 +62,10 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
 ## 💅🏽 Phase IV: Enhance the user experience
 
 1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts.  
-   You can use these consent values to appropriately filter user conversations. For example, conversations with **unknown** contacts can go to a possible spam tab and only conversations with **allowed** contacts can go to a user's main inbox.
+   You can use these consent values to filter conversations. For example:
+   - Conversations with **allowed** contacts go to a user's main inbox
+   - Conversations with **unknown** contacts go to a possible spam tab
+   - Conversations with **denied** contacts are hidden from view.
   
 2. Support rich [content types](/inboxes/content-types/content-types)
    - [Attachments](/inboxes/content-types/attachments)
@@ -88,3 +93,9 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
   - [Swift SDK](https://github.com/xmtp/xmtp-ios)
   - [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
   - [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
+
+## Learn more
+
+- [Understand and manage inboxes and installations](/inboxes/manage-inboxes)
+
+- [Use signatures](/inboxes/use-signatures) to sign and verify payloads
