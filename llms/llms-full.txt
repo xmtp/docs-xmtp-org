@@ -533,19 +533,20 @@ We don’t recommend using this approach because not all of the peer addresses m
 # XMTP testnet nodes
 
 For real-time statuses of nodes in the XMTP testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
-
 The following table lists the nodes currently registered to power the XMTP testnet.
 
 |  | Node operator | Node address |
 |-----|---------------|--------------|
 | 1 | Artifact Capital | xmtp.artifact.systems:443 |
-| 2 | Encapsulate | lb.validator.xmtp.testnet.encapsulate.xyz:443 |
-| 3 | Ethereum Name Service (ENS) | grpc.ens-xmtp.com:443 |
-| 4 | Laminated Labs | xmtp.validators.laminatedlabs.net:443 |
-| 5 | Next.id | xmtp.nextnext.id:443 |
-| 6 | Nodle | xmtpd.nodleprotocol.io:443 |
-| 7 | Ephemera | grpc.testnet.xmtp.network:443 |
-| 8 | Ephemera | grpc2.testnet.xmtp.network:443 |
+| 2 | Crystal One | xmtp.node-op.com:443 |
+| 3 | Emerald Onion | xmtp.disobey.net:443 |
+| 4 | Encapsulate | lb.validator.xmtp.testnet.encapsulate.xyz:443 |
+| 5 | Ethereum Name Service (ENS) | grpc.ens-xmtp.com:443 |
+| 6 | Laminated Labs | xmtp.validators.laminatedlabs.net:443 |
+| 7 | Next.id | xmtp.nextnext.id:443 |
+| 8 | Nodle | xmtpd.nodleprotocol.io:443 |
+| 9 | Ephemera | grpc.testnet.xmtp.network:443 |
+| 10 | Ephemera | grpc2.testnet.xmtp.network:443 |
 
 Here is a map of node locations:
 
@@ -558,11 +559,12 @@ Here is a map of node locations:
   ></iframe>
 </div>
 
+A purple pin indicates that the node is operated by a non-profit organization.
 
 ## pages/network/run-a-node.mdx
 # Run an XMTP network node
 
-A testnet of the decentralized XMTP network was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
+A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
 
 To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/decentralizing-xmtp).
 
