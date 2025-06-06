@@ -180,3 +180,40 @@ table td {
   vertical-align: top;
   padding: 4px; /* Add padding for more margin */
 }
+
+/* ====== NESTED LIST CONTENT SPACING FIXES ====== */
+
+/* Core rules for paragraphs within list items */
+.vocs_Content li p {
+  margin-top: 0.75rem;
+}
+
+.vocs_Content li p:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.vocs_Content li > p:first-child {
+  margin-top: 0;
+}
+
+/* Nested lists and general list content spacing */
+li > ul:not(:last-child),
+li > ol:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+/* Key fix: paragraphs following nested lists */
+li ul ~ p,
+li ol ~ p {
+  margin-top: 1rem !important;
+}
+
+/* Nested list items spacing */
+li li:not(:last-child) {
+  margin-bottom: 0.25rem;
+}
+
+/* Code groups */
+.vocs_CodeBlock {
+  margin: 1rem 0;
+}
