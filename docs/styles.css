@@ -183,39 +183,19 @@ table td {
 
 /* ====== NESTED LIST CONTENT SPACING FIXES ====== */
 
-/* Core rules for paragraphs within list items - increased spacing */
-.vocs_Content li p {
-  margin-top: 1.5rem;
-}
-
 .vocs_Content li p:not(:last-child) {
   margin-bottom: 0.5rem;
 }
 
-.vocs_Content li > p:first-child {
-  margin-top: 0;
-}
-
-/* Add more space between consecutive paragraphs within the same list item */
-.vocs_ListItem .vocs_Paragraph + .vocs_Paragraph {
+/* Handles paragraphs following nested lists. */
+li ul ~ p,
+li ol ~ p {
   margin-top: 0.5rem !important;
 }
 
-/* Nested lists and general list content spacing */
-li > ul:not(:last-child),
-li > ol:not(:last-child) {
-  margin-bottom: 0.5rem;
-}
-
-/* Key fix: paragraphs following nested lists */
-li ul ~ p,
-li ol ~ p {
-  margin-top: 1rem !important;
-}
-
-/* Nested list items spacing */
-li li:not(:last-child) {
-  margin-bottom: 0.25rem;
+/* Handles a paragraph within the same list item */
+.vocs_ListItem .vocs_Paragraph + .vocs_Paragraph {
+  margin-top: 0.5rem !important;
 }
 
 /* Code groups */
