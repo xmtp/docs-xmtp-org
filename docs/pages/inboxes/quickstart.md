@@ -7,9 +7,9 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 - Real-time push notifications
 - Spam-free inboxes using user consent preferences
 
-:::tip[🤖 Building an agent?]
+:::tip[🤖 Building an agent instead?]
 
-Want to build an agent that works in messaging apps built with XMTP? Explore the examples and docs in [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples).
+Explore the examples and docs in [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples).
 
 :::
 
@@ -32,22 +32,26 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
 
 3. You can [use llms-full.txt](http://localhost:5173/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
+
 ## 💬 Phase II: Build core messaging
 
-1. [Create an EOA or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer)
+1. [Create an EOA or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer).
 
-2. [Create an XMTP client](/inboxes/create-a-client)
+2. [Create an XMTP client](/inboxes/create-a-client).
 
-3. [Check if an identity is reachable on XMTP](/inboxes/create-conversations#check-if-an-identity-is-reachable)
+3. [Check if an identity is reachable on XMTP](/inboxes/create-conversations#check-if-an-identity-is-reachable).
 
-4. Create a [group chat](/inboxes/create-conversations#create-a-new-group-chat) or [direct message](/inboxes/create-conversations#create-a-new-dm) (DM) conversation.  
+4. Create a [group chat](/inboxes/create-conversations#create-a-new-group-chat) or [direct message](/inboxes/create-conversations#create-a-new-dm) (DM) conversation. 
+   
    With XMTP, "conversation" refers to both group chat and DM conversations.
 
 5. [Send messages](/inboxes/send-messages) in a conversation.
 
 6. Manage group chat [permissions](/inboxes/group-permissions) and [metadata](/inboxes/group-metadata).
 
-## 🔁 Phase III: Manage conversations and messages
+7. [Manage identities, inboxes, and installations](/inboxes/manage-inboxes).
+
+## 📩 Phase III: Manage conversations and messages
 
 1. [List existing conversations](/inboxes/list-and-stream#list-existing-conversations) from local storage.
 
@@ -61,13 +65,14 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
 
 ## 💅🏽 Phase IV: Enhance the user experience
 
-1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts.  
-   You can use these consent values to filter conversations. For example:
+1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts. You can use these consent values to filter conversations. For example:
+   
    - Conversations with **allowed** contacts go to a user's main inbox
    - Conversations with **unknown** contacts go to a possible spam tab
    - Conversations with **denied** contacts are hidden from view.
   
-2. Support rich [content types](/inboxes/content-types/content-types)
+2. Support rich [content types](/inboxes/content-types/content-types).
+   
    - [Attachments](/inboxes/content-types/attachments)
      - Single remote attachment
      - Multiple remote attachments
@@ -77,25 +82,20 @@ Want to build an agent that works in messaging apps built with XMTP? Explore the
    - [Read receipts](/inboxes/content-types/read-receipts)
    - [Onchain transaction references](/inboxes/content-types/transaction-refs)
 
-3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs)
+3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs).
 
 ## 🧪 Phase V: Test and debug
 
-- [Stress and burn-in test](/inboxes/debug-your-app#xmtp-debug) your inbox app
+- [Stress and burn-in test](/inboxes/debug-your-app#xmtp-debug) your inbox app.
 
-- [Enable file logging](/inboxes/debug-your-app#file-logging)
+- [Enable file logging](/inboxes/debug-your-app#file-logging).
 
-- [Capture network statistics](/inboxes/debug-your-app#network-statistics)
+- [Capture network statistics](/inboxes/debug-your-app#network-statistics).
 
 - Found a bug or need support? Please file an issue in the relevant SDK repo:
+  
   - [React Native SDK](https://github.com/xmtp/xmtp-react-native)
   - [Kotlin SDK](https://github.com/xmtp/xmtp-android)
   - [Swift SDK](https://github.com/xmtp/xmtp-ios)
   - [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
   - [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
-
-## Learn more
-
-- [Understand and manage inboxes and installations](/inboxes/manage-inboxes)
-
-- [Use signatures](/inboxes/use-signatures) to sign and verify payloads
