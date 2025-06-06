@@ -181,106 +181,24 @@ table td {
   padding: 4px; /* Add padding for more margin */
 }
 
-/* ==================== NESTED LIST CONTENT SPACING FIXES ==================== */
+/* ====== NESTED LIST CONTENT SPACING FIXES ====== */
 
-/* Core rules for paragraphs within list items */
-.vocs_Content li p {
-  margin-top: 0.75rem;
+.vocs_Content li p:not(:last-child) {
   margin-bottom: 0.5rem;
 }
 
-.vocs_Content li > p:first-child {
-  margin-top: 0;
-}
-
-.vocs_Content li > p:last-child {
-  margin-bottom: 0;
-}
-
-/* Nested lists and general list content spacing */
-li > ul,
-li > ol,
-li pre,
-li code {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-/* Remove margins for first and last elements in lists */
-li > ul:last-child,
-li > ol:last-child,
-li > pre:last-child,
-li > code:last-child {
-  margin-bottom: 0;
-}
-
-li > pre:first-child,
-li > code:first-child {
-  margin-top: 0;
-}
-
-/* Key fix: paragraphs following nested lists */
+/* Handles paragraphs following nested lists. */
 li ul ~ p,
 li ol ~ p {
-  margin-top: 1rem !important;
+  margin-top: 0.5rem !important;
 }
 
-/* Nested list items spacing */
-li li {
-  margin-bottom: 0.25rem;
-}
-
-li li:last-child {
-  margin-bottom: 0;
-}
-
-/* ==================== VOCS CODE BLOCK SPACING FIXES ==================== */
-
-/* Remove spacing between code titles and code blocks */
-.vocs_CodeTitle,
-li .vocs_CodeTitle,
-li .vocs_CodeTitle *,
-li * .vocs_CodeTitle {
-  margin-bottom: 0 !important;
-}
-
-/* Remove top margin from code blocks following titles */
-.vocs_CodeTitle + .vocs_Pre,
-.vocs_CodeTitle ~ .vocs_Pre,
-.vocs_Content .vocs_CodeTitle + .vocs_Pre,
-li .vocs_CodeTitle + .vocs_Pre,
-li [class*="CodeTitle"] + [class*="Pre"],
-li [class*="CodeTitle"] ~ [class*="Pre"] {
-  margin-top: 0 !important;
-}
-
-/* Code block bottom spacing */
-.vocs_Pre {
-  margin-bottom: 1rem;
-}
-
-.vocs_Pre:last-child {
-  margin-bottom: 0;
-}
-
-/* Code blocks within lists */
-li .vocs_Pre,
-li * .vocs_Pre {
-  margin-top: 0 !important;
-  margin-bottom: 0.5rem;
+/* Handles a paragraph within the same list item */
+.vocs_ListItem .vocs_Paragraph + .vocs_Paragraph {
+  margin-top: 0.5rem !important;
 }
 
 /* Code groups */
-.vocs_CodeGroup {
-  margin: 1rem 0;
-}
-
-.vocs_CodeGroup:last-child {
-  margin-bottom: 0;
-}
-
-/* Override paragraph spacing that might affect code blocks */
-li p:has(.vocs_CodeTitle),
-li p:has(.vocs_Pre) {
-  margin: 0 !important;
+.vocs_CodeBlock {
+  margin: 0.5rem 0;
 }
