@@ -183,9 +183,9 @@ table td {
 
 /* ====== NESTED LIST CONTENT SPACING FIXES ====== */
 
-/* Core rules for paragraphs within list items */
+/* Core rules for paragraphs within list items - increased spacing */
 .vocs_Content li p {
-  margin-top: 0.75rem;
+  margin-top: 1.5rem;
 }
 
 .vocs_Content li p:not(:last-child) {
@@ -194,6 +194,11 @@ table td {
 
 .vocs_Content li > p:first-child {
   margin-top: 0;
+}
+
+/* Add more space between consecutive paragraphs within the same list item */
+.vocs_ListItem .vocs_Paragraph + .vocs_Paragraph {
+  margin-top: 0.5rem !important;
 }
 
 /* Nested lists and general list content spacing */
