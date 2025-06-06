@@ -5,7 +5,7 @@ function shouldShowPopup() {
   const lastVisit = Number(localStorage.getItem("lastVisit") || "0");
   const sessionCount = Number(localStorage.getItem("sessionCount") || "0");
 
-  const THIRTY_MINUTES = 5 * 1000;
+  const THIRTY_MINUTES = 30 * 60 * 1000; // 30 minutes in milliseconds
 
   // If this is a new session (30+ min later), increment session count
   if (now - lastVisit > THIRTY_MINUTES) {
@@ -89,7 +89,7 @@ function createPopup() {
   // Feedback: Never show again
   document.getElementById("popup-feedback")?.addEventListener("click", () => {
     localStorage.setItem("popupDismissed", "true");
-    window.open("https://example.com/survey", "_blank"); // Replace with real link later
+    window.open("https://tally.so/r/wdVqdy", "_blank");
     popup.remove();
   });
 }
