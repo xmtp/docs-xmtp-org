@@ -81,6 +81,10 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
+          text: "Quickstart",
+          link: "/inboxes/quickstart",
+        },
+        {
           text: "Pick an SDK",
           link: "/inboxes/pick-an-sdk",
         },
