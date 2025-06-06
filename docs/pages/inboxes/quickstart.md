@@ -94,8 +94,8 @@ Explore the examples and docs in [xmtp-agent-examples](https://github.com/epheme
 
 - Found a bug or need support? Please file an issue in the relevant SDK repo:
   
-  - [React Native SDK](https://github.com/xmtp/xmtp-react-native)
-  - [Kotlin SDK](https://github.com/xmtp/xmtp-android)
-  - [Swift SDK](https://github.com/xmtp/xmtp-ios)
-  - [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk)
-  - [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
+  - [React Native SDK](https://github.com/xmtp/xmtp-react-native/issues)
+  - [Kotlin SDK](https://github.com/xmtp/xmtp-android/issues)
+  - [Swift SDK](https://github.com/xmtp/xmtp-ios/issues)
+  - [Browser SDK](https://github.com/xmtp/xmtp-js/issues)
+  - [Node SDK](https://github.com/xmtp/xmtp-js/issues)
