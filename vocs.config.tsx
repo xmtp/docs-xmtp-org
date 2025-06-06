@@ -85,6 +85,10 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
+          text: "Quickstart",
+          link: "/inboxes/quickstart",
+        },
+        {
           text: "Pick an SDK",
           link: "/inboxes/pick-an-sdk",
         },
@@ -115,6 +119,10 @@ export default defineConfig({
             {
               text: "Sync conversations and messages",
               link: "/inboxes/sync-and-syncall",
+            },
+            {
+              text: "Sync preferences",
+              link: "/inboxes/sync-preferences",
             },
             {
               text: "History sync",
