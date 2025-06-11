@@ -28,8 +28,8 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
+    { text: "XMTP status", link: "https://xmtp.chat/" },
     { text: "XMTP.chat", link: "https://xmtp.chat/" },
-    { text: "Dev support", link: "https://github.com/xmtp" },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -77,6 +77,10 @@ export default defineConfig({
         {
           text: "Build with LLMs",
           link: "/intro/build-with-llms",
+        },
+        {
+          text: "Dev support",
+          link: "/intro/dev-support",
         },
       ],
     },
