@@ -135,7 +135,10 @@ client.revokeInstallations(signingKey, listOf(installationIds))
 ```
 
 ```swift [Swift]
-
+// Revoke all the other installations but this one
+try await client.revokeAllOtherInstallations(signingKey)
+// Revoke individual installations based on id
+try await client.revokeInstallations(signingKey, [installationIds])
 ```
 
 :::
