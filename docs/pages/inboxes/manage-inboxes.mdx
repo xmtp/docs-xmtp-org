@@ -105,11 +105,19 @@ You can revoke a specific installation other than the currently accessed install
 :::code-group
 
 ```tsx [Browser]
+// revoke all other installations
+await client.revokeAllOtherInstallations()
 
+// revoke specific installation(s)
+await client.revokeInstallations([installationId1, installationId2])
 ```
 
 ```tsx [Node]
+// revoke all other installations
+await client.revokeAllOtherInstallations()
 
+// revoke specific installation(s)
+await client.revokeInstallations([installationId1, installationId2])
 ```
 
 ```jsx [React Native]
