@@ -128,7 +128,10 @@ await client.revokeInstallations(signingKey, [installationIds])
 ```
 
 ```kotlin [Kotlin]
-
+// Revoke all the other installations but this one
+client.revokeAllOtherInstallations(signingKey)
+// Revoke individual installations based on id
+client.revokeInstallations(signingKey, listOf(installationIds))
 ```
 
 ```swift [Swift]
