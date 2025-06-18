@@ -121,7 +121,10 @@ await client.revokeInstallations([installationId1, installationId2])
 ```
 
 ```jsx [React Native]
-
+// Revoke all the other installations but this one
+await client.revokeAllOtherInstallations(signingKey)
+// Revoke individual installations based on id
+await client.revokeInstallations(signingKey, [installationIds])
 ```
 
 ```kotlin [Kotlin]
