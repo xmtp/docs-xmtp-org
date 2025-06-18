@@ -14,7 +14,7 @@ The client creates an inbox ID and installation ID associated with the identity.
 
 When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
 
-An identity can have up to 5 app installations before it needs to [revoke an installation](#revoke-an-installation).
+An inbox ID can have up to 5 app installations before it needs to [revoke an installation](#revoke-an-installation).
 
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
@@ -100,7 +100,7 @@ This video provides a walkthrough of revoking installations, covering the key id
 
 ### Revoke an installation
 
-You can revoke a specific installation other than the currently accessed installation.
+You can revoke a specific installation other than the currently accessed installation. You can use this function to revoke an installation when an inbox ID has reached its maximum of 5 installations.
 
 :::code-group
 
