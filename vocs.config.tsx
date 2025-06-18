@@ -12,6 +12,10 @@ export default defineConfig({
           data-domain="docs.xmtp.org"
           defer
         />
+        <script
+          src="/popup.js"
+          async
+        />
       </>
     );
   },
@@ -24,8 +28,8 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
+    { text: "XMTP status", link: "https://status.xmtp.org/" },
     { text: "XMTP.chat", link: "https://xmtp.chat/" },
-    { text: "Dev support", link: "https://github.com/xmtp" },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -74,12 +78,20 @@ export default defineConfig({
           text: "Build with LLMs",
           link: "/intro/build-with-llms",
         },
+        {
+          text: "Dev support",
+          link: "/intro/dev-support",
+        },
       ],
     },
     {
       text: "Build chat inboxes",
       collapsed: false,
       items: [
+        {
+          text: "Quickstart",
+          link: "/inboxes/quickstart",
+        },
         {
           text: "Pick an SDK",
           link: "/inboxes/pick-an-sdk",

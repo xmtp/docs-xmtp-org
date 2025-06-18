@@ -180,3 +180,25 @@ table td {
   vertical-align: top;
   padding: 4px; /* Add padding for more margin */
 }
+
+/* ====== NESTED LIST CONTENT SPACING FIXES ====== */
+
+.vocs_Content li p:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+/* Handles paragraphs following nested lists. */
+li ul ~ p,
+li ol ~ p {
+  margin-top: 0.5rem !important;
+}
+
+/* Handles a paragraph within the same list item */
+.vocs_ListItem .vocs_Paragraph + .vocs_Paragraph {
+  margin-top: 0.5rem !important;
+}
+
+/* Code groups */
+.vocs_CodeBlock {
+  margin: 0.5rem 0;
+}

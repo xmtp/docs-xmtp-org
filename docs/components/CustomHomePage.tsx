@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 
 const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="custom-homepage">{children}</div>
@@ -54,19 +55,37 @@ interface TileProps {
     </svg>
   );
   
-  const Tile: React.FC<TileProps> = ({ href, title, description, icon, isExternal }) => (
-    <a 
-      href={href} 
-      className={`custom-homepage-tile ${isExternal ? 'custom-homepage-tile-external' : ''}`}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener noreferrer" : undefined}
-    >
+  const Tile: React.FC<TileProps> = ({ href, title, description, icon, isExternal }) => {
+  const content = (
+    <>
       {icon && <span className="custom-homepage-tile-icon">{icon}</span>}
       <h2 className="custom-homepage-tile-title">{title}</h2>
       <p className="custom-homepage-tile-description">{description}</p>
-      {isExternal && <img src="/.vocs/icons/arrow-diagonal.svg" alt="" className="custom-homepage-tile-external-icon" />}
-    </a>
+      {isExternal && (
+        <img
+          src="/.vocs/icons/arrow-diagonal.svg"
+          alt=""
+          className="custom-homepage-tile-external-icon"
+        />
+      )}
+    </>
   );
+
+  return isExternal ? (
+    <a
+      href={href}
+      className="custom-homepage-tile custom-homepage-tile-external"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {content}
+    </a>
+  ) : (
+    <Link to={href} className="custom-homepage-tile">
+      {content}
+    </Link>
+  );
+};
   
 export const CustomHomePage = {
   Root,
