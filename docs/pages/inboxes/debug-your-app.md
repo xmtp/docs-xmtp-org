@@ -61,6 +61,8 @@ You can use these statistics to see which and how many API, identity, and stream
 
 A client has a function called `client.debugInformation` These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
 
+Use the `client.debugInformation.clearAllStatistics()` function to reset all API, identity, and stream statistics to zero. This is useful when you want to get a clean baseline before running specific actions. It is also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
+
 ### Get aggregated statistics
 
 Use the `client.debugInformation.aggregateStatistics` function to return these aggregated statistics.
