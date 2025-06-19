@@ -58,14 +58,11 @@ When you pass `allowOffline = true` to [`Client.create()`](#create-a-client), or
 
 - Skips all network requests (identity ledger, key packages, etc.)
 - Works entirely from the local database
-- Postpones identity registration if no inbox ID exists
 - Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
 
 ## Create a client
 
 To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
-
-You can pass in `allowOffline = true` to create a client in [offline mode](#offline-mode).
 
 :::code-group
 
