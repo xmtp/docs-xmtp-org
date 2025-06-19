@@ -59,7 +59,7 @@ When you pass an `inboxId` to build a client with [`Client.build()`](#build-an-e
 - Skips all network requests (preference syncing between installations, validating inbox, etc.)
 - Works entirely from the local database
 - Postpones identity registration if no inbox ID exists
-- Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
+- Can be synchronized later by calling `build` while online.
 
 ## Create a client
 
