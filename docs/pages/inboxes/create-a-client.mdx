@@ -56,7 +56,7 @@ To learn more about database operations, see the [XMTP MLS protocol spec](https:
 
 When you pass an `inboxId` to build a client with [`Client.build()`](#build-an-existing-client) the client operates in offline mode as follows:
 
-- Skips all network requests (identity ledger, key packages, etc.)
+- Skips all network requests (preference syncing between installations, validating inbox, etc.)
 - Works entirely from the local database
 - Postpones identity registration if no inbox ID exists
 - Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
