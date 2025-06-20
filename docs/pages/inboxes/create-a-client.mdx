@@ -52,14 +52,6 @@ The `dbEncryptionKey` client option is not used by the Browser SDK for due to te
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
-### Offline mode
-
-When you pass an `inboxId` to build a client with [`Client.build()`](#build-an-existing-client) the client operates in offline mode as follows:
-
-- Skips all network requests (preference syncing between installations, validating inbox, etc.)
-- Works entirely from the local database
-- Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
-
 ## Create a client
 
 To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
@@ -343,7 +335,11 @@ You can use a `local` network environment to have a client communicate with an X
 
 Build, or resume, an existing client (created using [`Client.create()`](#create-a-client)) that's logged in and has an existing local database.
 
-When building a client with an existing `inboxId`, [offline mode](#offline-mode) is automatically enabled since no network request is needed to check the identity ledger.
+When building a client with an existing `inboxId`, the client automatically operates in offline mode since no network request is needed to check the identity ledger. In offline mode, the client:
+
+- Skips all network requests (preference syncing between installations, validating inbox, etc.)
+- Works entirely from the local database
+- Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
 
 :::code-group
 
