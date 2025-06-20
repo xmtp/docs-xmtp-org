@@ -335,7 +335,7 @@ You can use a `local` network environment to have a client communicate with an X
 
 Build, or resume, an existing client (created using [`Client.create()`](#create-a-client)) that's logged in and has an existing local database.
 
-When building a client with an existing `inboxId`, the client automatically operates in offline mode since no network request is needed to check the identity ledger. In offline mode, the client:
+For React Native, Android, and iOS SDKs, when building a client with an existing `inboxId`, the client automatically operates in offline mode since no network request is needed to check the identity ledger. In offline mode, the client:
 
 - Skips all network requests (preference syncing between installations, validating inbox, etc.)
 - Works entirely from the local database
