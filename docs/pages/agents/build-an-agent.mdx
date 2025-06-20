@@ -1,0 +1,67 @@
+# Build an agent that uses XMTP
+
+This guide covers how to build agents that communicate with humans and other agents in chats that provide all of [XMTP's messaging security properties](/protocol/security).
+
+## Resources to get started
+
+### Quickstart video guide
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+### Agent examples
+
+Explore and run example agents built with the XMTP Node SDK in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repo.
+
+### Cursor rules
+
+You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
+
+## Basic usage
+
+### Listening and sending messages
+
+These are the steps to initialize the XMTP listener and send messages.
+
+```tsx
+// import the xmtp sdk
+import { Client, type XmtpEnv, type Signer } from "@xmtp/node-sdk";
+
+// encryption key, must be consistent across runs
+const encryptionKey: Uint8Array = ...;
+const signer: Signer = ...;
+const env: XmtpEnv = "dev";
+
+// create the client
+const client = await Client.create(signer, {encryptionKey, env });
+// sync the client to get the latest messages
+await client.conversations.sync();
+
+// listen to all messages
+const stream = await client.conversations.streamAllMessages();
+for await (const message of  stream) {
+  // ignore messages from the agent
+  if (message?.senderInboxId === client.inboxId ) continue;
+  // get the conversation by id
+  const conversation = await client.conversations.getConversationById(message.conversationId);
+  // send a message from the agent
+  await conversation.send("gm");
+}
+```
+
+### Get the address of a user
+
+Each user has a unique inboxId for retrieving their associated addresses (identifiers). One inboxId can have multiple identifiers like passkeys or EVM wallet addresses.
+
+> [!NOTE]
+> The inboxId differs from the address—it's a user identifier, while the address identifies the user's wallet. Not all users have associated addresses.
+
+```tsx
+const inboxState = await client.preferences.inboxStateFromInboxIds([
+  message.senderInboxId,
+]);
+const addressFromInboxId = inboxState[0].identifiers[0].identifier;
+```
+
+## Try out your agent using xmtp.chat
+
+Test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
