@@ -178,6 +178,77 @@ try await client.revokeAllOtherInstallations(signingKey)
 
 :::
 
+## Revoke installations without a client present
+
+Use this static installation revocation when you need to revoke an installation but can't create a client first.
+
+For example, this scenario might arise when a user uninstalls their app, tries to re-install it, and finds the re-install is blocked because they've reached the maximum number of installations for their inbox ID (5 installations). In this state, the app will be unable to create a client.
+
+You can use this function to enable a user to revoke installations without a client. Instead, you'll use their wallet and information available in their static local database to enable them to revoke one or more installations to free up slots so their reinstall can succeed.
+
+:::code-group
+
+```tsx [Browser]
+// ────────────────────────────────────────────────
+// 0. Inputs
+// ────────────────────────────────────────────────
+const DB_PATH = "/data/app/inbox.db";
+const ENC_KEY: Uint8Array | undefined = loadEncKey();
+const inboxId: string            = "ab12…ef";          // hex InboxId
+const wallet:  Wallet            = loadWallet();       // wallet used for XMTP
+const installationsToRevoke: Uint8Array[] = [
+  hexToBytes("deadbeef…01"),
+  // hexToBytes("cafebabe…02"),  // uncomment to drop multiple
+];
+
+// ────────────────────────────────────────────────
+// 1. Build an unsigned SignatureRequest
+// ────────────────────────────────────────────────
+const sigReq: SignatureRequest = await staticRevokeInstallations(
+  api,
+  DB_PATH,
+  ENC_KEY,
+  inboxId,
+  installationsToRevoke,
+);
+
+// ────────────────────────────────────────────────
+// 2. Sign with the inbox-owning wallet
+// ────────────────────────────────────────────────
+await sigReq.addWalletSignature(wallet);
+
+// ────────────────────────────────────────────────
+// 3. Publish the signed update
+// ────────────────────────────────────────────────
+await staticApplySignatureRequest(api, DB_PATH, ENC_KEY, sigReq);
+
+// ────────────────────────────────────────────────
+// 4. Retry client registration (slot is now free)
+// ────────────────────────────────────────────────
+const client = await Client.create(wallet, {
+  dbPath: DB_PATH,
+  encryptionKey: ENC_KEY,
+});
+```
+
+```tsx [Node]
+
+```
+
+```jsx [React Native]
+
+```
+
+```kotlin [Kotlin]
+
+```
+
+```swift [Swift]
+
+```
+
+:::
+
 ## View the inbox state
 
 Find an `inboxId` for an identity:
