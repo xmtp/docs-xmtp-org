@@ -178,6 +178,83 @@ try await client.revokeAllOtherInstallations(signingKey)
 
 :::
 
+## Revoke installations for a user who can't log in
+
+Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
+
+This feature is especially useful in a scenario where a user has reached the 5-installation limit and can't log in, but needs to revoke installations to make room for a new installation.
+
+Static revocation enables users to revoke installations using only their recovery address signer. For example:
+
+1. **Identify installations to revoke**: Determine which installation IDs to revoke
+2. **Create signature request**: Generate a signature request for the revocation
+3. **Sign with recovery address**: Use the recovery address signer to authorize the revocation
+4. **Apply revocation**: Submit the signed request to revoke the specified installations
+
+:::code-group
+
+```tsx [Browser]
+import { Client, type Signer } from "@xmtp/browser-sdk";
+
+// Recovery address signer (the address that created the inbox)
+const recoveryAddressSigner: Signer = {
+  // Your recovery address signer implementation
+};
+
+// Installation IDs to revoke
+const installationIdsToRevoke = [
+  "installation_id_1",
+  "installation_id_2"
+];
+
+async function revokeInstallationsStatically() {
+  try {
+    // Create a signature request for revoking installations
+    const signatureRequest = await createRevocationSignatureRequest(
+      recoveryAddressSigner.getIdentifier().identifier,
+      installationIdsToRevoke
+    );
+    
+    // Sign the revocation request with the recovery address
+    const signature = await recoveryAddressSigner.signMessage(
+      signatureRequest.signatureText
+    );
+    
+    // Apply the signed revocation
+    await applyRevocationSignature({
+      signatureRequest,
+      signature,
+      recoveryAddress: recoveryAddressSigner.getIdentifier().identifier
+    });
+    
+    console.log("Successfully revoked installations:", installationIdsToRevoke);
+  } catch (error) {
+    console.error("Failed to revoke installations:", error);
+  }
+}
+
+// Apply the revocation
+revokeInstallationsStatically();
+```
+
+```tsx [Node]
+
+```
+
+```jsx [React Native]
+
+```
+
+```kotlin [Kotlin]
+
+```
+
+```swift [Swift]
+
+```
+
+:::
+
 ## View the inbox state
 
 Find an `inboxId` for an identity:
