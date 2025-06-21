@@ -225,6 +225,10 @@ export default defineConfig({
           link: "/inboxes/use-signatures",
         },
         {
+          text: "Run a payer service",
+          link: "/inboxes/payer-service",
+        },
+        {
           text: "Debug your app",
           link: "/inboxes/debug-your-app",
         },
