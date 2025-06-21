@@ -178,57 +178,63 @@ try await client.revokeAllOtherInstallations(signingKey)
 
 :::
 
-## Revoke installations without a client present
+## Revoke installations for a user who can't log in
 
-Use this static installation revocation when you need to revoke an installation but can't create a client first.
+Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
 
-For example, this scenario might arise when a user uninstalls their app, tries to re-install it, and finds the re-install is blocked because they've reached the maximum number of installations for their inbox ID (5 installations). In this state, the app will be unable to create a client.
+This feature is especially useful in a scenario where a user has reached the 5-installation limit and can't log in, but needs to revoke installations to make room for a new installation.
 
-You can use this function to enable a user to revoke installations without a client. Instead, you'll use their wallet and information available in their static local database to enable them to revoke one or more installations to free up slots so their reinstall can succeed.
+Static revocation enables users to revoke installations using only their recovery address signer. For example:
+
+1. **Identify installations to revoke**: Determine which installation IDs to revoke
+2. **Create signature request**: Generate a signature request for the revocation
+3. **Sign with recovery address**: Use the recovery address signer to authorize the revocation
+4. **Apply revocation**: Submit the signed request to revoke the specified installations
 
 :::code-group
 
 ```tsx [Browser]
-// ────────────────────────────────────────────────
-// 0. Inputs
-// ────────────────────────────────────────────────
-const DB_PATH = "/data/app/inbox.db";
-const ENC_KEY: Uint8Array | undefined = loadEncKey();
-const inboxId: string            = "ab12…ef";          // hex InboxId
-const wallet:  Wallet            = loadWallet();       // wallet used for XMTP
-const installationsToRevoke: Uint8Array[] = [
-  hexToBytes("deadbeef…01"),
-  // hexToBytes("cafebabe…02"),  // uncomment to drop multiple
+import { Client, type Signer } from "@xmtp/browser-sdk";
+
+// Recovery address signer (the address that created the inbox)
+const recoveryAddressSigner: Signer = {
+  // Your recovery address signer implementation
+};
+
+// Installation IDs to revoke
+const installationIdsToRevoke = [
+  "installation_id_1",
+  "installation_id_2"
 ];
 
-// ────────────────────────────────────────────────
-// 1. Build an unsigned SignatureRequest
-// ────────────────────────────────────────────────
-const sigReq: SignatureRequest = await staticRevokeInstallations(
-  api,
-  DB_PATH,
-  ENC_KEY,
-  inboxId,
-  installationsToRevoke,
-);
+async function revokeInstallationsStatically() {
+  try {
+    // Create a signature request for revoking installations
+    const signatureRequest = await createRevocationSignatureRequest(
+      recoveryAddressSigner.getIdentifier().identifier,
+      installationIdsToRevoke
+    );
+    
+    // Sign the revocation request with the recovery address
+    const signature = await recoveryAddressSigner.signMessage(
+      signatureRequest.signatureText
+    );
+    
+    // Apply the signed revocation
+    await applyRevocationSignature({
+      signatureRequest,
+      signature,
+      recoveryAddress: recoveryAddressSigner.getIdentifier().identifier
+    });
+    
+    console.log("Successfully revoked installations:", installationIdsToRevoke);
+  } catch (error) {
+    console.error("Failed to revoke installations:", error);
+  }
+}
 
-// ────────────────────────────────────────────────
-// 2. Sign with the inbox-owning wallet
-// ────────────────────────────────────────────────
-await sigReq.addWalletSignature(wallet);
-
-// ────────────────────────────────────────────────
-// 3. Publish the signed update
-// ────────────────────────────────────────────────
-await staticApplySignatureRequest(api, DB_PATH, ENC_KEY, sigReq);
-
-// ────────────────────────────────────────────────
-// 4. Retry client registration (slot is now free)
-// ────────────────────────────────────────────────
-const client = await Client.create(wallet, {
-  dbPath: DB_PATH,
-  encryptionKey: ENC_KEY,
-});
+// Apply the revocation
+revokeInstallationsStatically();
 ```
 
 ```tsx [Node]
