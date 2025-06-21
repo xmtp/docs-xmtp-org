@@ -85,6 +85,20 @@ export default defineConfig({
       ],
     },
     {
+      text: "Build agents",
+      collapsed: false,
+      items: [
+        {
+          text: "Build an agent",
+          link: "/agents/build-an-agent",
+        },
+        {
+          text: "Deploy an agent",
+          link: "/agents/deploy-an-agent",
+        },
+      ],
+    },
+    {
       text: "Build chat inboxes",
       collapsed: false,
       items: [
@@ -233,11 +247,6 @@ export default defineConfig({
           link: "/inboxes/references",
         },
       ],
-    },
-    {
-      text: "Build agents ↗",
-      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
-      items: [], // Add this line
     },
     {
       text: "Network",
