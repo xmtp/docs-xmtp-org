@@ -16,9 +16,7 @@ Explore and run example agents built with the XMTP Node SDK in the [xmtp-agent-e
 
 You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
 
-## Basic usage
-
-### Listening and sending messages
+## Listen for and send messages
 
 These are the steps to initialize the XMTP listener and send messages.
 
@@ -48,12 +46,25 @@ for await (const message of  stream) {
 }
 ```
 
-### Get the address of a user
+To learn more about `Client.create`, see [Create an XMTP client](/inboxes/create-a-client).
 
-Each user has a unique inboxId for retrieving their associated addresses (identifiers). One inboxId can have multiple identifiers like passkeys or EVM wallet addresses.
+To learn more about `conversations.sync`, see [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations).
 
-> [!NOTE]
-> The inboxId differs from the address—it's a user identifier, while the address identifies the user's wallet. Not all users have associated addresses.
+To learn more about `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences).
+
+To learn more about `conversations.getConversationById`, see [Conversation helper methods](/inboxes/create-conversations#conversation-helper-methods).
+
+To learn more about `conversation.send`, see [Send messages](/inboxes/send-messages).
+
+## Get the address of a user
+
+Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, like passkeys and EVM wallet addresses.
+
+:::tip
+
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses.
+
+:::
 
 ```tsx
 const inboxState = await client.preferences.inboxStateFromInboxIds([
@@ -61,6 +72,8 @@ const inboxState = await client.preferences.inboxStateFromInboxIds([
 ]);
 const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 ```
+
+To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox-state).
 
 ## Try out your agent using xmtp.chat
 
