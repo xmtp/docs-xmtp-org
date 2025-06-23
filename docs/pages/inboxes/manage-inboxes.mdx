@@ -14,6 +14,8 @@ The client creates an inbox ID and installation ID associated with the identity.
 
 When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
 
+An inbox ID can have up to 5 app installations before it needs to [revoke an installation](#revoke-an-installation).
+
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
 </div>
@@ -96,6 +98,42 @@ This video provides a walkthrough of revoking installations, covering the key id
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/MIw9x1Z4WXw?si=4bcbfkHTDvsM0uDG" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
+### Revoke a specific installation
+
+You can revoke one or more specific installations by ID, as long as it isn't the currently accessed installation.
+
+An inbox ID can have up to 5 app installations before it needs to revoke an installation.
+
+- If an inbox ID has 5 installations and the user wants to add another installation, use this function to enable them to revoke an installation before they can add the new one.
+
+- If an inbox ID was created before this installation limit was implemented, the inbox ID might have more than 5 installations. If this is the case, the user will receive an error when they try to add another installation. Use this function to enable them to revoke the required number of installations before they can add the new one. For example, if an inbox ID has 20 installations, the user will need to revoke 16 installations before they can add the new one.
+
+If preferred, you can use the [revoke all other installations](#revoke-all-other-installations) function to revoke all installations other than the currently accessed installation.
+
+:::code-group
+
+```tsx [Browser]
+await client.revokeInstallations([installationId1, installationId2])
+```
+
+```tsx [Node]
+await client.revokeInstallations([installationId1, installationId2])
+```
+
+```jsx [React Native]
+await client.revokeInstallations(signingKey, [installationIds])
+```
+
+```kotlin [Kotlin]
+client.revokeInstallations(signingKey, listOf(installationIds))
+```
+
+```swift [Swift]
+try await client.revokeInstallations(signingKey, [installationIds])
+```
+
+:::
+
 ### Revoke all other installations
 
 You can revoke all installations other than the currently accessed installation.
@@ -112,6 +150,10 @@ When the user revokes all other installations, the action removes their identity
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install-id.png" width="350px" />
 </div>
 
+An inbox ID can have up to 5 app installations before it needs to revoke an installation.
+
+If preferred, you can use the [revoke a specific installation](#revoke-a-specific-installation) function to revoke one or more specific installations by ID.
+
 :::code-group
 
 ```tsx [Browser]
@@ -123,15 +165,15 @@ await client.revokeAllOtherInstallations()
 ```
 
 ```jsx [React Native]
-await client.revokeAllOtherInstallations(recoveryIdentity)
+await client.revokeAllOtherInstallations(signingKey)
 ```
 
 ```kotlin [Kotlin]
-client.revokeAllOtherInstallations(recoveryIdentity)
+client.revokeAllOtherInstallations(signingKey)
 ```
 
 ```swift [Swift]
-try await client.revokeAllOtherInstallations(signingKey: recoveryIdentity)
+try await client.revokeAllOtherInstallations(signingKey)
 ```
 
 :::
