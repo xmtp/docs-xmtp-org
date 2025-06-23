@@ -477,23 +477,22 @@ import "../styles.css";
       icon="🤝"
     />
     <CustomHomePage.Tile
-      href="/inboxes/pick-an-sdk"
+      href="/inboxes/quickstart"
       title="Build chat inboxes"
       description="Build standalone inbox apps with 1:1 and group chats built with MLS"
       icon="📥"
+    />
+    <CustomHomePage.Tile
+      href="/agents/build-an-agent"
+      title="Build agents"
+      description="Build agents that communicate with humans and other agents"
+      icon="🤖"
     />
     <CustomHomePage.Tile
       href="https://xmtp.chat/"
       title="Build with xmtp.chat"
       description="Build an inbox app with the help of this interactive developer tool and chat app"
       icon="🧑🏽‍💻"
-      isExternal={true}
-    />
-    <CustomHomePage.Tile
-      href="https://github.com/ephemeraHQ/xmtp-agent-examples"
-      title="Build agents"
-      description="Explore examples of agents built with the XMTP Node SDK"
-      icon="🤖"
       isExternal={true}
     />
     <CustomHomePage.Tile
@@ -528,6 +527,176 @@ We continuously release new and updated documentation.
 Not seeing the specific documentation you need? [Open an issue](https://github.com/xmtp/docs-xmtp-org/issues/new/choose). We ❤️ doc requests.
 
 Onward builders! 🫡
+
+## pages/agents/build-an-agent.mdx
+# Build an agent that uses XMTP
+
+This guide covers how to build agents that communicate with humans and other agents in chats that provide all of [XMTP's messaging security properties](/protocol/security).
+
+## Resources to get started
+
+### Quickstart video guide
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+### Agent examples
+
+Explore and run example agents built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repo.
+
+### Cursor rules
+
+You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
+
+## Listen for and send messages
+
+These are the steps to initialize the XMTP listener and send messages.
+
+```tsx
+// import the xmtp sdk
+import { Client, type XmtpEnv, type Signer } from "@xmtp/node-sdk";
+
+// encryption key, must be consistent across runs
+const encryptionKey: Uint8Array = ...;
+const signer: Signer = ...;
+const env: XmtpEnv = "dev";
+
+// create the client
+const client = await Client.create(signer, { encryptionKey, env });
+// sync the client to get the latest messages
+await client.conversations.sync();
+
+// listen to all messages
+const stream = await client.conversations.streamAllMessages();
+for await (const message of stream) {
+  // ignore messages from the agent
+  if (message?.senderInboxId === client.inboxId) continue;
+  // get the conversation by id
+  const conversation = await client.conversations.getConversationById(message.conversationId);
+  // send a message from the agent
+  await conversation.send("gm");
+}
+```
+
+To learn more about `Client.create`, see [Create an XMTP client](/inboxes/create-a-client).
+
+To learn more about `conversations.sync`, see [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations).
+
+To learn more about `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences).
+
+To learn more about `conversations.getConversationById`, see [Conversation helper methods](/inboxes/create-conversations#conversation-helper-methods).
+
+To learn more about `conversation.send`, see [Send messages](/inboxes/send-messages).
+
+## Get the address of a user
+
+Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, like passkeys and EVM wallet addresses.
+
+:::tip
+
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses.
+
+:::
+
+```tsx
+const inboxState = await client.preferences.inboxStateFromInboxIds([
+  message.senderInboxId,
+]);
+const addressFromInboxId = inboxState[0].identifiers[0].identifier;
+```
+
+To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox-state).
+
+## Try out your agent using xmtp.chat
+
+Test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+
+## pages/agents/deploy-an-agent.md
+# Deploy your agent built with XMTP
+
+This guide covers how to deploy an agent using Railway—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+
+Alternative platforms include:
+- Heroku
+- Fly.io
+- Render
+- Vercel
+
+_Want to contribute a guide for another platform? We welcome pull requests!_
+
+## 1. Create a Railway account
+
+Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+
+## 2. Start a new project
+
+From your Railway dashboard, click **New Project** and select **Empty Project**.
+
+![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
+
+## 3. Import your agent's GitHub repository
+
+Click **Deploy from GitHub repo** and select the repository that contains your agent code.
+
+![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
+
+## 4. Configure volume storage
+
+Your XMTP agent will need persistent storage. Add a volume to your container:
+
+1. Navigate to your service settings.
+2. Select the **Volumes** tab.
+3. Add a new volume and specify the mount path.
+
+   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+
+Use this code in your agent to properly connect to the Railway volume:
+
+```tsx
+export const getDbPath = (env: string, suffix: string = "xmtp") => {
+  //Checks if the environment is a Railway deployment
+  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
+  // Create database directory if it doesn't exist
+  if (!fs.existsSync(volumePath)) {
+    fs.mkdirSync(volumePath, { recursive: true });
+  }
+  const dbPath = `${volumePath}/${env}-${suffix}.db3`;
+
+  return dbPath;
+};
+```
+
+Then, specify `dbPath` in your client options:
+
+```tsx
+const receiverClient = await Client.create(signer, {
+    dbEncryptionKey,
+    env: XMTP_ENV as XmtpEnv,
+    dbPath: getDbPath(XMTP_ENV),
+  });
+```
+
+## 5. Configure environment variables
+
+1. Get the connection string for your database.
+   
+   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+
+2. Add the connection string and any other required environment variables to your service.
+   
+   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+
+## 6. Deploy your agent
+
+Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+
+## 7. Share your agent (optional)
+
+Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+
+## Example Railway deployment
+
+For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
 
 ## pages/inboxes/sync-and-syncall.mdx
 # Sync conversations and messages
@@ -7433,4 +7602,4 @@ XMTP does not currently have a token. Disregard any information regarding airdro
 
 # Summary
 
-This documentation contains 45 files.
+This documentation contains 47 files.
