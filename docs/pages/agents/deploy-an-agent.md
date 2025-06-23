@@ -62,16 +62,7 @@ const receiverClient = await Client.create(signer, {
   });
 ```
 
-## 5. Add a database (optional)
-
-If your agent requires a database:
-
-1. Right-click in your project dashboard
-2. Select **New** → **Database** and choose your preferred database (e.g., Redis)
-
-   ![Adding a Database](https://github.com/user-attachments/assets/2ec83212-9b6b-45e8-b161-d58d554771d1)
-
-## 6. Configure environment variables
+## 5. Configure environment variables
 
 1. Get the connection string for your database.
    
@@ -81,11 +72,11 @@ If your agent requires a database:
    
    ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
 
-## 7. Deploy your agent
+## 6. Deploy your agent
 
 Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
 
-## 8. Share your agent (optional)
+## 7. Share your agent (optional)
 
 Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
 

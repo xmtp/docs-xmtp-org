@@ -10,7 +10,7 @@ This guide covers how to build agents that communicate with humans and other age
 
 ### Agent examples
 
-Explore and run example agents built with the XMTP Node SDK in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repo.
+Explore and run example agents built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repo.
 
 ### Cursor rules
 
@@ -30,15 +30,15 @@ const signer: Signer = ...;
 const env: XmtpEnv = "dev";
 
 // create the client
-const client = await Client.create(signer, {encryptionKey, env });
+const client = await Client.create(signer, { encryptionKey, env });
 // sync the client to get the latest messages
 await client.conversations.sync();
 
 // listen to all messages
 const stream = await client.conversations.streamAllMessages();
-for await (const message of  stream) {
+for await (const message of stream) {
   // ignore messages from the agent
-  if (message?.senderInboxId === client.inboxId ) continue;
+  if (message?.senderInboxId === client.inboxId) continue;
   // get the conversation by id
   const conversation = await client.conversations.getConversationById(message.conversationId);
   // send a message from the agent
