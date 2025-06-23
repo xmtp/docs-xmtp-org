@@ -45,21 +45,7 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "Upgrade to a stable XMTP V3 SDK",
-      collapsed: false,
-      items: [
-        {
-          text: "From a legacy XMTP V2 SDK",
-          link: "/upgrade-from-legacy-V2",
-        },
-        {
-          text: "From a legacy XMTP V3 SDK",
-          link: "/upgrade-from-legacy-V3",
-        },
-      ],
-    },
-    {
-      text: "Intro",
+      text: "Intro to XMTP",
       collapsed: false,
       items: [
         {
@@ -85,55 +71,61 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build agents",
-      collapsed: false,
-      items: [
-        {
-          text: "Build an agent",
-          link: "/agents/build-an-agent",
-        },
-        {
-          text: "Deploy an agent",
-          link: "/agents/deploy-an-agent",
-        },
-      ],
+      text: "Quickstart: Build a chat inbox",
+      link: "/inboxes/quickstart",
+      items: [],
     },
     {
-      text: "Build chat inboxes",
+      text: "Quickstart: Build an agent",
+      link: "/agents/build-an-agent",
+      items: [],
+    },
+    {
+      text: "Build core messaging",
       collapsed: false,
       items: [
-        {
-          text: "Quickstart",
-          link: "/inboxes/quickstart",
-        },
-        {
-          text: "Pick an SDK",
-          link: "/inboxes/pick-an-sdk",
-        },
-        {
-          text: "Create an EOA or SCW signer",
-          link: "/inboxes/create-a-signer",
-        },
-        {
-          text: "Create a client",
-          link: "/inboxes/create-a-client",
-        },
-        {
-          text: "Create conversations",
-          link: "/inboxes/create-conversations",
-        },
-        {
-          text: "Send messages",
-          link: "/inboxes/send-messages",
-        },
-        {
-          text: "List and stream",
-          link: "/inboxes/list-and-stream",
-        },
-    {
-          text: "Sync",
-          collapsed: true,
-          items: [
+          {
+            text: "Pick an SDK",
+            link: "/inboxes/pick-an-sdk",
+          },
+          {
+            text: "Create an EOA or SCW signer",
+            link: "/inboxes/create-a-signer",
+          },
+          {
+            text: "Create a client",
+            link: "/inboxes/create-a-client",
+          },
+          {
+            text: "Create conversations",
+            link: "/inboxes/create-conversations",
+          },
+          {
+            text: "Send messages",
+            link: "/inboxes/send-messages",
+          },
+          {
+            text: "Manage group permissions",
+            link: "/inboxes/group-permissions",
+          },
+          {
+            text: "Manage group metadata",
+            link: "/inboxes/group-metadata",
+          },
+          {
+            text: "Manage inboxes",
+            link: "/inboxes/manage-inboxes",
+          },
+        ]
+      },
+      {
+        text: "List, stream, and sync",
+        collapsed: false,
+        items: [
+            {
+              text: "List and stream conversations and messages",
+              link: "/inboxes/list-and-stream",
+            },
             {
               text: "Sync conversations and messages",
               link: "/inboxes/sync-and-syncall",
@@ -149,23 +141,19 @@ export default defineConfig({
           ],
         },
         {
-          text: "Manage inboxes",
-          link: "/inboxes/manage-inboxes",
-        },
-        {
-          text: "Support spam-free inboxes",
-          collapsed: true,
+          text: "Support user consent",
+          collapsed: false,
           items: [
-            {
-              text: "How spam-free inboxes work",
-              link: "/inboxes/user-consent/user-consent",
-            },
-            {
-              text: "Support spam-free inboxes",
-              link: "/inboxes/user-consent/support-user-consent",
-            },
-          ],
-        },
+              {
+                text: "How spam-free inboxes work",
+                link: "/inboxes/user-consent/user-consent",
+              },
+              {
+                text: "Support spam-free inboxes",
+                link: "/inboxes/user-consent/support-user-consent",
+              },        
+            ],
+          },
         {
           text: "Support content types",
           collapsed: true,
@@ -224,30 +212,8 @@ export default defineConfig({
               text: "Try iOS push notifications",
               link: "/inboxes/push-notifs/ios-pn",
             },
-          ],
+          ]
         },
-        {
-          text: "Manage group permissions",
-          link: "/inboxes/group-permissions",
-        },
-        {
-          text: "Manage group metadata",
-          link: "/inboxes/group-metadata",
-        },
-        {
-          text: "Use signatures",
-          link: "/inboxes/use-signatures",
-        },
-        {
-          text: "Debug your app",
-          link: "/inboxes/debug-your-app",
-        },
-        {
-          text: "SDK references",
-          link: "/inboxes/references",
-        },
-      ],
-    },
     {
       text: "Network",
       collapsed: false,
@@ -296,6 +262,20 @@ export default defineConfig({
       text: "💬 Doc feedback",
       link: "/doc-feedback",
       items: [],
+    },
+    {
+      text: "Upgrade to a stable XMTP V3 SDK",
+      collapsed: false,
+      items: [
+        {
+          text: "From a legacy XMTP V2 SDK",
+          link: "/upgrade-from-legacy-V2",
+        },
+        {
+          text: "From a legacy XMTP V3 SDK",
+          link: "/upgrade-from-legacy-V3",
+        },
+      ],
     },
   ],
 });
