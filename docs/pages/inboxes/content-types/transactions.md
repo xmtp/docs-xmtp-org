@@ -84,3 +84,7 @@ const walletSendCalls: WalletSendCallsParams = message.content;
 ```
 
 :::
+
+## Examples
+
+For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
