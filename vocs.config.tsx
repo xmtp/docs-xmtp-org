@@ -53,10 +53,6 @@ export default defineConfig({
           link: "/intro/intro",
         },
         {
-          text: "XMTP Improvement Proposals",
-          link: "/intro/xips",
-        },
-        {
           text: "FAQ",
           link: "/intro/faq",
         },
@@ -67,6 +63,10 @@ export default defineConfig({
         {
           text: "Dev support",
           link: "/intro/dev-support",
+        },
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/intro/xips",
         },
       ],
     },
@@ -141,20 +141,6 @@ export default defineConfig({
           ],
         },
         {
-          text: "Support user consent",
-          collapsed: false,
-          items: [
-              {
-                text: "How spam-free inboxes work",
-                link: "/inboxes/user-consent/user-consent",
-              },
-              {
-                text: "Support spam-free inboxes",
-                link: "/inboxes/user-consent/support-user-consent",
-              },        
-            ],
-          },
-        {
           text: "Support content types",
           collapsed: true,
           items: [
@@ -189,6 +175,20 @@ export default defineConfig({
           ],
         },
         {
+          text: "Support user consent",
+          collapsed: false,
+          items: [
+              {
+                text: "How spam-free inboxes work",
+                link: "/inboxes/user-consent/user-consent",
+              },
+              {
+                text: "Support spam-free inboxes",
+                link: "/inboxes/user-consent/support-user-consent",
+              },        
+            ],
+          },
+          {
           text: "Support push notifications",
           collapsed: true,
           items: [
@@ -214,7 +214,21 @@ export default defineConfig({
             },
           ]
         },
-    {
+        {
+          text: "Upgrade to a stable XMTP V3 SDK",
+          collapsed: false,
+          items: [
+            {
+              text: "From a legacy XMTP V2 SDK",
+              link: "/upgrade-from-legacy-V2",
+            },
+            {
+              text: "From a legacy XMTP V3 SDK",
+              link: "/upgrade-from-legacy-V3",
+            },
+          ],
+        },    
+      {
       text: "Network",
       collapsed: false,
       items: [
@@ -262,20 +276,6 @@ export default defineConfig({
       text: "💬 Doc feedback",
       link: "/doc-feedback",
       items: [],
-    },
-    {
-      text: "Upgrade to a stable XMTP V3 SDK",
-      collapsed: false,
-      items: [
-        {
-          text: "From a legacy XMTP V2 SDK",
-          link: "/upgrade-from-legacy-V2",
-        },
-        {
-          text: "From a legacy XMTP V3 SDK",
-          link: "/upgrade-from-legacy-V3",
-        },
-      ],
     },
   ],
 });
