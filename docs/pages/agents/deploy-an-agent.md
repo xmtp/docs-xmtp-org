@@ -1,0 +1,85 @@
+# Deploy your agent built with XMTP
+
+This guide covers how to deploy an agent using Railway—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+
+Alternative platforms include:
+- Heroku
+- Fly.io
+- Render
+- Vercel
+
+_Want to contribute a guide for another platform? We welcome pull requests!_
+
+## 1. Create a Railway account
+
+Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+
+## 2. Start a new project
+
+From your Railway dashboard, click **New Project** and select **Empty Project**.
+
+![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
+
+## 3. Import your agent's GitHub repository
+
+Click **Deploy from GitHub repo** and select the repository that contains your agent code.
+
+![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
+
+## 4. Configure volume storage
+
+Your XMTP agent will need persistent storage. Add a volume to your container:
+
+1. Navigate to your service settings.
+2. Select the **Volumes** tab.
+3. Add a new volume and specify the mount path.
+
+   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+
+Use this code in your agent to properly connect to the Railway volume:
+
+```tsx
+export const getDbPath = (env: string, suffix: string = "xmtp") => {
+  //Checks if the environment is a Railway deployment
+  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
+  // Create database directory if it doesn't exist
+  if (!fs.existsSync(volumePath)) {
+    fs.mkdirSync(volumePath, { recursive: true });
+  }
+  const dbPath = `${volumePath}/${env}-${suffix}.db3`;
+
+  return dbPath;
+};
+```
+
+Then, specify `dbPath` in your client options:
+
+```tsx
+const receiverClient = await Client.create(signer, {
+    dbEncryptionKey,
+    env: XMTP_ENV as XmtpEnv,
+    dbPath: getDbPath(XMTP_ENV),
+  });
+```
+
+## 5. Configure environment variables
+
+1. Get the connection string for your database.
+   
+   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+
+2. Add the connection string and any other required environment variables to your service.
+   
+   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+
+## 6. Deploy your agent
+
+Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+
+## 7. Share your agent (optional)
+
+Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+
+## Example Railway deployment
+
+For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
