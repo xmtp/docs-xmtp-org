@@ -127,7 +127,7 @@ export default defineConfig({
               link: "/inboxes/list",
             },
             {
-              text: "Stream conversations and messages",
+              text: "Stream messages and preferences",
               link: "/inboxes/stream",
             },
             {
@@ -175,6 +175,10 @@ export default defineConfig({
             {
               text: "Custom content",
               link: "/inboxes/content-types/custom",
+            },
+            {
+              text: "Handle unsupported content",
+              link: "/inboxes/content-types/fallback",
             },
           ],
         },
