@@ -28,67 +28,40 @@ You can enable a user to add multiple identities to their inbox. Added identitie
 
 You can enable a user to remove an identity from their inbox. You cannot remove the recovery identity.
 
-## Add an identity to an inbox
+## Inbox update and installation limits
 
-:::warning[Warning]
+An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
-This function is delicate and should be used with caution. Adding an identity to an inbox ID B when it's already associated with an inbox ID A will cause the identity to lose access to inbox ID A.
+- Add a wallet
+- Remove a wallet
+- Add an installation
+- Revoke an installation
 
-:::
+This means that one inbox ID can have 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
 
-:::code-group
+If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
 
-```tsx [Browser]
-await client.unsafe_addAccount(signer, true)
-```
+To avoid this scenario altogether, inboxes are limited to having only 5 active installations. When an inbox has 5 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
 
-```tsx [Node]
-await client.unsafe_addAccount(signer, true)
-```
+### Rotate an inbox ID
 
-```jsx [React Native]
-await client.addAccount(identityToAdd)
-```
+When you create an inbox ID, there is a nonce on it that is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce and it will create a new inbox ID associated with the user's information.
 
-```kotlin [Kotlin]
-client.addAccount(identityToAdd)
-```
+## Help users manage installations
 
-```swift [Swift]
-try await client.addAccount(newAccount: identityToAdd)
-```
+By default, your app stores the following information about installations:
 
-:::
+- `id` (random byte array)
+- `createdAt` (date)
 
-## Remove an identity from an inbox
+To help users make informed decisions when managing and revoking their installations, you should aim to store additional useful information about installations, such as:
 
-:::tip[Note]
- A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
-:::
+- Last date logged in
+- Device make and model
 
-:::code-group
+Installation IDs that don't have this additional information can be treated as unknown installations, which can also provide helpful signals to users.
 
-```tsx [Browser]
-await client.removeAccount(identifier)
-```
 
-```tsx [Node]
-await client.removeAccount(identifier)
-```
-
-```jsx [React Native]
-await client.removeAccount(recoveryIdentity, identityToRemove)
-```
-
-```kotlin [Kotlin]
-client.removeAccount(recoveryIdentity, identityToRemove)
-```
-
-```swift [Swift]
-try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
-```
-
-:::
 
 ## Revoke installations
 
@@ -178,6 +151,67 @@ try await client.revokeAllOtherInstallations(signingKey)
 
 :::
 
+## Revoke installations for a user who can't log in
+
+Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
+
+This feature is especially useful in the following scenarios:
+
+- A user has reached the 5-installation limit and can't log in to revoke installations to make room for a new installation.
+- A user logs out of an app installation and chooses the option to delete their local database. Choosing this option will cause them to permanently lose access to the installation. For this reason, you should revoke the installation.
+
+In both scenarios, static revocation enables logged out users to revoke installations using only their recovery address signer. 
+
+Here is how static installation revocation works behind the scenes:
+
+1. Determines which installation IDs to revoke
+2. Generates a signature request for the revocation
+3. Uses the recovery address signer to authorize the revocation
+4. Submits the signed request to revoke the specified installations
+
+:::code-group
+
+```jsx [React Native]
+  const states = await Client.inboxStatesForInboxIds('production', [inboxId])
+
+  const toRevokeIds = states[0].installations.map((i) => i.id)
+
+  await Client.revokeInstallations(
+    'production',
+    recoveryWallet,
+    inboxId,
+    toRevokeIds as InstallationId[]
+  )
+```
+
+```kotlin [Kotlin]
+        val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
+		
+	val toRevokeIds = states.first().installations.map { it.id }
+
+	Client.revokeInstallations(
+		api,
+		recoveryWallet,
+		inboxId,
+		toRevokeIds
+	)
+```
+
+```swift [Swift]
+        let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
+		
+	let toRevokeIds = states.first.installations.map { $0.id }
+
+	try await Client.revokeInstallations(
+		api: api,
+		signingKey: recoveryWallet,
+		inboxId: inboxId,
+		installationIds: toRevokeIds
+	)
+```
+
+:::
+
 ## View the inbox state
 
 Find an `inboxId` for an identity:
@@ -263,6 +297,68 @@ InboxState
   "inboxId": "string"
 }
 ```
+
+## Add an identity to an inbox
+
+:::warning[Warning]
+
+This function is delicate and should be used with caution. Adding an identity to an inbox ID B when it's already associated with an inbox ID A will cause the identity to lose access to inbox ID A.
+
+:::
+
+:::code-group
+
+```tsx [Browser]
+await client.unsafe_addAccount(signer, true)
+```
+
+```tsx [Node]
+await client.unsafe_addAccount(signer, true)
+```
+
+```jsx [React Native]
+await client.addAccount(identityToAdd)
+```
+
+```kotlin [Kotlin]
+client.addAccount(identityToAdd)
+```
+
+```swift [Swift]
+try await client.addAccount(newAccount: identityToAdd)
+```
+
+:::
+
+## Remove an identity from an inbox
+
+:::tip[Note]
+ A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
+:::
+
+:::code-group
+
+```tsx [Browser]
+await client.removeAccount(identifier)
+```
+
+```tsx [Node]
+await client.removeAccount(identifier)
+```
+
+```jsx [React Native]
+await client.removeAccount(recoveryIdentity, identityToRemove)
+```
+
+```kotlin [Kotlin]
+client.removeAccount(recoveryIdentity, identityToRemove)
+```
+
+```swift [Swift]
+try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
+```
+
+:::
 
 ## FAQ
 
