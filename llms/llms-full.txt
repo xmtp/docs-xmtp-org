@@ -465,35 +465,28 @@ import "../styles.css";
   </CustomHomePage.Subhead>
   <CustomHomePage.TileGrid>
     <CustomHomePage.Tile
-      href="/upgrade-from-legacy-V2"
-      title="Upgrade to XMTP V3"
-      description="Get tips for upgrading from a legacy SDK to a stable XMTP V3 SDK"
-      icon="🚀"
-    />
-    <CustomHomePage.Tile
       href="/intro/intro"
       title="Intro to XMTP"
       description="Get an intro to XMTP and why devs choose it to build messaging apps"
       icon="🤝"
     />
     <CustomHomePage.Tile
-      href="/inboxes/pick-an-sdk"
+      href="/inboxes/quickstart"
       title="Build chat inboxes"
       description="Build standalone inbox apps with 1:1 and group chats built with MLS"
       icon="📥"
+    />
+    <CustomHomePage.Tile
+      href="/agents/build-an-agent"
+      title="Build agents"
+      description="Build agents that communicate with humans and other agents"
+      icon="🤖"
     />
     <CustomHomePage.Tile
       href="https://xmtp.chat/"
       title="Build with xmtp.chat"
       description="Build an inbox app with the help of this interactive developer tool and chat app"
       icon="🧑🏽‍💻"
-      isExternal={true}
-    />
-    <CustomHomePage.Tile
-      href="https://github.com/ephemeraHQ/xmtp-agent-examples"
-      title="Build agents"
-      description="Explore examples of agents built with the XMTP Node SDK"
-      icon="🤖"
       isExternal={true}
     />
     <CustomHomePage.Tile
@@ -514,6 +507,12 @@ import "../styles.css";
       description="Read and provide feedback on the latest XMTP Improvement Proposals"
       icon="⚒️"
     />
+        <CustomHomePage.Tile
+      href="/upgrade-from-legacy-V2"
+      title="Upgrade to XMTP V3"
+      description="Get tips for upgrading from a legacy SDK to a stable XMTP V3 SDK"
+      icon="🚀"
+    />
   </CustomHomePage.TileGrid>
 </CustomHomePage.Root>
 
@@ -528,6 +527,268 @@ We continuously release new and updated documentation.
 Not seeing the specific documentation you need? [Open an issue](https://github.com/xmtp/docs-xmtp-org/issues/new/choose). We ❤️ doc requests.
 
 Onward builders! 🫡
+
+## pages/agents/build-an-agent.mdx
+# Quickstart: Build an agent that uses XMTP
+
+This quickstart provides a map to building agents that communicate with humans and other agents in chats built with XMTP.
+
+Building with XMTP gives your agent access to:
+- The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
+- The building blocks of AI + money + secure chat
+- Users accessing apps built with XMTP, including Coinbase Wallet and Convos.
+
+## Resources to get started
+
+### Quickstart video guide
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+### Agent examples
+
+Explore and run example agents built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repo.
+
+### Cursor rules
+
+You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
+
+## Build an agent
+
+### Listen for and send messages
+
+These are the steps to initialize the XMTP listener and send messages.
+
+```tsx
+// import the xmtp sdk
+import { Client, type XmtpEnv, type Signer } from "@xmtp/node-sdk";
+
+// encryption key, must be consistent across runs
+const encryptionKey: Uint8Array = ...;
+const signer: Signer = ...;
+const env: XmtpEnv = "dev";
+
+// create the client
+const client = await Client.create(signer, { encryptionKey, env });
+// sync the client to get the latest messages
+await client.conversations.sync();
+
+// listen to all messages
+const stream = await client.conversations.streamAllMessages();
+for await (const message of stream) {
+  // ignore messages from the agent
+  if (message?.senderInboxId === client.inboxId) continue;
+  // get the conversation by id
+  const conversation = await client.conversations.getConversationById(message.conversationId);
+  // send a message from the agent
+  await conversation.send("gm");
+}
+```
+
+To learn more about `Client.create`, see [Create an XMTP client](/inboxes/create-a-client).
+
+To learn more about `conversations.sync`, see [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations).
+
+To learn more about `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences).
+
+To learn more about `conversations.getConversationById`, see [Conversation helper methods](/inboxes/create-conversations#conversation-helper-methods).
+
+To learn more about `conversation.send`, see [Send messages](/inboxes/send-messages).
+
+### Get the address of a user
+
+Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, like passkeys and EVM wallet addresses.
+
+:::tip
+
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses.
+
+:::
+
+```tsx
+const inboxState = await client.preferences.inboxStateFromInboxIds([
+  message.senderInboxId,
+]);
+const addressFromInboxId = inboxState[0].identifiers[0].identifier;
+```
+
+To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox-state).
+
+### Try out your agent using xmtp.chat
+
+Test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+## Deploy an agent
+
+This section covers how to deploy an agent using Railway—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+
+Alternative platforms include:
+- Heroku
+- Fly.io
+- Render
+- Vercel
+
+_Want to contribute a guide for another platform? We welcome pull requests!_
+
+### 1. Create a Railway account
+
+Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+
+### 2. Start a new project
+
+From your Railway dashboard, click **New Project** and select **Empty Project**.
+
+![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
+
+### 3. Import your agent's GitHub repository
+
+Click **Deploy from GitHub repo** and select the repository that contains your agent code.
+
+![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
+
+### 4. Configure volume storage
+
+Your XMTP agent will need persistent storage. Add a volume to your container:
+
+1. Navigate to your service settings.
+2. Select the **Volumes** tab.
+3. Add a new volume and specify the mount path.
+
+   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+
+Use this code in your agent to properly connect to the Railway volume:
+
+```tsx
+export const getDbPath = (env: string, suffix: string = "xmtp") => {
+  //Checks if the environment is a Railway deployment
+  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
+  // Create database directory if it doesn't exist
+  if (!fs.existsSync(volumePath)) {
+    fs.mkdirSync(volumePath, { recursive: true });
+  }
+  const dbPath = `${volumePath}/${env}-${suffix}.db3`;
+
+  return dbPath;
+};
+```
+
+Then, specify `dbPath` in your client options:
+
+```tsx
+const receiverClient = await Client.create(signer, {
+    dbEncryptionKey,
+    env: XMTP_ENV as XmtpEnv,
+    dbPath: getDbPath(XMTP_ENV),
+  });
+```
+
+### 5. Configure environment variables
+
+1. Get the connection string for your database.
+   
+   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+
+2. Add the connection string and any other required environment variables to your service.
+   
+   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+
+### 6. Deploy your agent
+
+Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+
+### 7. Share your agent (optional)
+
+Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+
+### Example Railway deployment
+
+For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
+## pages/agents/deploy-an-agent.md
+# Deploy your agent built with XMTP
+
+This guide covers how to deploy an agent using Railway—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+
+Alternative platforms include:
+- Heroku
+- Fly.io
+- Render
+- Vercel
+
+_Want to contribute a guide for another platform? We welcome pull requests!_
+
+## 1. Create a Railway account
+
+Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+
+## 2. Start a new project
+
+From your Railway dashboard, click **New Project** and select **Empty Project**.
+
+![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
+
+## 3. Import your agent's GitHub repository
+
+Click **Deploy from GitHub repo** and select the repository that contains your agent code.
+
+![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
+
+## 4. Configure volume storage
+
+Your XMTP agent will need persistent storage. Add a volume to your container:
+
+1. Navigate to your service settings.
+2. Select the **Volumes** tab.
+3. Add a new volume and specify the mount path.
+
+   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+
+Use this code in your agent to properly connect to the Railway volume:
+
+```tsx
+export const getDbPath = (env: string, suffix: string = "xmtp") => {
+  //Checks if the environment is a Railway deployment
+  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
+  // Create database directory if it doesn't exist
+  if (!fs.existsSync(volumePath)) {
+    fs.mkdirSync(volumePath, { recursive: true });
+  }
+  const dbPath = `${volumePath}/${env}-${suffix}.db3`;
+
+  return dbPath;
+};
+```
+
+Then, specify `dbPath` in your client options:
+
+```tsx
+const receiverClient = await Client.create(signer, {
+    dbEncryptionKey,
+    env: XMTP_ENV as XmtpEnv,
+    dbPath: getDbPath(XMTP_ENV),
+  });
+```
+
+## 5. Configure environment variables
+
+1. Get the connection string for your database.
+   
+   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+
+2. Add the connection string and any other required environment variables to your service.
+   
+   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+
+## 6. Deploy your agent
+
+Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+
+## 7. Share your agent (optional)
+
+Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+
+## Example Railway deployment
+
+For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
 
 ## pages/inboxes/sync-and-syncall.mdx
 # Sync conversations and messages
@@ -1462,6 +1723,85 @@ public struct SCWallet: SigningKey {
 :::
 
 
+## pages/inboxes/stream.mdx
+# Stream new group chat and DM messages and preference updates
+
+This function listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
+
+Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
+try {
+  for await (const message of stream) {
+    // Received a message
+    console.log("New message:", message);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+// stream all messages from all conversations
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
+// stream only group messages
+const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
+ 
+// stream only dm messages
+const stream = await client.conversations.streamAllDmMessages(["allowed"]);
+ 
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ["allowed"] }
+);
+```
+
+```kotlin [Kotlin]
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
+  // Received a message
+}
+```
+
+```swift [Swift]
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+  // Received a message
+}
+```
+
+:::
+
+
 ## pages/inboxes/references.md
 ---
 description: "Access reference documentation for each XMTP client SDK"
@@ -2056,6 +2396,293 @@ To ensure that users understand which messages are disappearing messages and the
 - A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
 
 
+## pages/inboxes/list.mdx
+# List conversations
+
+## List existing conversations
+
+Get a list of existing group chat and DM conversations in the local database.
+
+By default, `list` returns only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
+
+To list all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+
+Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
+
+:::code-group
+
+```js [Browser]
+const allConversations = await client.conversations.list(["allowed"]);
+const allGroups = await client.conversations.listGroups(["allowed"]);
+const allDms = await client.conversations.listDms(["allowed"]);
+```
+
+```js [Node]
+const allConversations = await client.conversations.list(["allowed"]);
+const allGroups = await client.conversations.listGroups(["allowed"]);
+const allDms = await client.conversations.listDms(["allowed"]);
+```
+
+```tsx [React Native]
+// List Conversation items
+await alix.conversations.list(["allowed"]);
+
+// List Conversation items and return only the fields set to true. Optimize data transfer
+// by requesting only the fields the app needs.
+await alix.conversations.list(
+  {
+    members: false,
+    consentState: false,
+    description: false,
+    creatorInboxId: false,
+    addedByInboxId: false,
+    isActive: false,
+    lastMessage: true,
+  },
+);
+```
+
+```kotlin [Kotlin]
+// List conversations (both groups and dms)
+val conversations = alix.conversations.list()
+val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
+
+// List just dms
+val conversations = alix.conversations.listDms()
+val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
+
+//List just groups
+val conversations = alix.conversations.listGroups()
+val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
+
+```
+
+```swift [Swift]
+// List conversations (both groups and dms)
+let conversations = try await alix.conversations.list()
+let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
+
+// List just dms
+let conversations = try await alix.conversations.listDms()
+let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
+
+//List just groups
+let conversations = try await alix.conversations.listGroups()
+let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
+```
+
+:::
+
+## List a user's active conversations
+
+The `isActive()` method determines whether the current user is still an active member of a group conversation. For example:
+
+- When a user is added to a group, `isActive()` returns `true` for that user
+- When a user is removed from a group, `isActive()` returns `false` for that user
+
+You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
+
+## Stream all group chats and DMs
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.stream();
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream all group chat and DM messages and preferences
+
+Listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
+
+Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
+try {
+  for await (const message of stream) {
+    // Received a message
+    console.log("New message:", message);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+// stream all messages from all conversations
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
+// stream only group messages
+const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
+ 
+// stream only dm messages
+const stream = await client.conversations.streamAllDmMessages(["allowed"]);
+ 
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ["allowed"] }
+);
+```
+
+```kotlin [Kotlin]
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
+  // Received a message
+}
+```
+
+```swift [Swift]
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+  // Received a message
+}
+```
+
+:::
+
+## Handle unsupported content types
+
+As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+
+Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+
+:::code-group
+
+```js [Browser]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```js [Node]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```jsx [React Native]
+//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
+const isRegistered = message.contentTypeID in client.codecRegistry;
+if (!isRegistered) {
+  // Not supported content type
+  if (message?.fallback != null) {
+    return message?.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```kotlin [Kotlin]
+val codec = client.codecRegistry.find(options?.contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```swift [Swift]
+let codec = client.codecRegistry.find(for: contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+:::
+
+
 ## pages/inboxes/group-permissions.mdx
 # Manage group permissions
 
@@ -2522,293 +3149,6 @@ try await group.addedByInboxId();
 :::
 
 
-## pages/inboxes/list-and-stream.mdx
-# List and stream conversations and messages
-
-## List existing conversations
-
-Get a list of existing group chat and DM conversations in the local database.
-
-By default, `list` returns only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
-
-We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
-
-To list all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
-
-Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
-
-:::code-group
-
-```js [Browser]
-const allConversations = await client.conversations.list(["allowed"]);
-const allGroups = await client.conversations.listGroups(["allowed"]);
-const allDms = await client.conversations.listDms(["allowed"]);
-```
-
-```js [Node]
-const allConversations = await client.conversations.list(["allowed"]);
-const allGroups = await client.conversations.listGroups(["allowed"]);
-const allDms = await client.conversations.listDms(["allowed"]);
-```
-
-```tsx [React Native]
-// List Conversation items
-await alix.conversations.list(["allowed"]);
-
-// List Conversation items and return only the fields set to true. Optimize data transfer
-// by requesting only the fields the app needs.
-await alix.conversations.list(
-  {
-    members: false,
-    consentState: false,
-    description: false,
-    creatorInboxId: false,
-    addedByInboxId: false,
-    isActive: false,
-    lastMessage: true,
-  },
-);
-```
-
-```kotlin [Kotlin]
-// List conversations (both groups and dms)
-val conversations = alix.conversations.list()
-val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
-
-// List just dms
-val conversations = alix.conversations.listDms()
-val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
-
-//List just groups
-val conversations = alix.conversations.listGroups()
-val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
-
-```
-
-```swift [Swift]
-// List conversations (both groups and dms)
-let conversations = try await alix.conversations.list()
-let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
-
-// List just dms
-let conversations = try await alix.conversations.listDms()
-let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
-
-//List just groups
-let conversations = try await alix.conversations.listGroups()
-let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
-```
-
-:::
-
-## List a user's active conversations
-
-The `isActive()` method determines whether the current user is still an active member of a group conversation. For example:
-
-- When a user is added to a group, `isActive()` returns `true` for that user
-- When a user is removed from a group, `isActive()` returns `false` for that user
-
-You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
-
-## Stream all group chats and DMs
-
-Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
-
-:::code-group
-
-```js [Browser]
-const stream = await client.conversations.stream();
-
-try {
-  for await (const conversation of stream) {
-    // Received a conversation
-    console.log("New conversation:", conversation);
-  }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
-}
-```
-
-```js [Node]
-const stream = await client.conversations.stream();
-// to stream only groups, use `client.conversations.streamGroups()`
-// to stream only dms, use `client.conversations.streamDms()`
-
-try {
-  for await (const conversation of stream) {
-    // Received a conversation
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
-}
-```
-
-```tsx [React Native]
-await alix.conversations.stream(async (conversation: Conversation<any>) => {
-  // Received a conversation
-});
-```
-
-```kotlin [Kotlin]
-alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
-  // Received a conversation
-}
-```
-
-```swift [Swift]
-for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
-  // Received a conversation
-}
-```
-
-:::
-
-## Stream all group chat and DM messages and preferences
-
-Listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
-
-Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
-
-By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
-
-We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
-
-To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
-
-:::warning[Important]
-
-The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
-
-:::
-
-:::code-group
-
-```js [Browser]
-const stream = await client.conversations.streamAllMessages(["allowed"]);
- 
-try {
-  for await (const message of stream) {
-    // Received a message
-    console.log("New message:", message);
-  }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
-}
-```
-
-```js [Node]
-// stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages(["allowed"]);
- 
-// stream only group messages
-const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
- 
-// stream only dm messages
-const stream = await client.conversations.streamAllDmMessages(["allowed"]);
- 
-try {
-  for await (const message of stream) {
-    // Received a message
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
-}
-```
-
-```tsx [React Native]
-await alix.conversations.streamAllMessages(
-  async (message: DecodedMessage<any>) => {
-    // Received a message
-  },
-  { consentState: ["allowed"] }
-);
-```
-
-```kotlin [Kotlin]
-alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
-  // Received a message
-}
-```
-
-```swift [Swift]
-for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
-  // Received a message
-}
-```
-
-:::
-
-## Handle unsupported content types
-
-As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
-
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
-
-:::code-group
-
-```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-:::
-
-
 ## pages/inboxes/history-sync.mdx
 # Enable history sync for apps built with XMTP
 
@@ -3193,67 +3533,40 @@ You can enable a user to add multiple identities to their inbox. Added identitie
 
 You can enable a user to remove an identity from their inbox. You cannot remove the recovery identity.
 
-## Add an identity to an inbox
+## Inbox update and installation limits
 
-:::warning[Warning]
+An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
-This function is delicate and should be used with caution. Adding an identity to an inbox ID B when it's already associated with an inbox ID A will cause the identity to lose access to inbox ID A.
+- Add a wallet
+- Remove a wallet
+- Add an installation
+- Revoke an installation
 
-:::
+This means that one inbox ID can have 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
 
-:::code-group
+If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
 
-```tsx [Browser]
-await client.unsafe_addAccount(signer, true)
-```
+To avoid this scenario altogether, inboxes are limited to having only 5 active installations. When an inbox has 5 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
 
-```tsx [Node]
-await client.unsafe_addAccount(signer, true)
-```
+### Rotate an inbox ID
 
-```jsx [React Native]
-await client.addAccount(identityToAdd)
-```
+When you create an inbox ID, there is a nonce on it that is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce and it will create a new inbox ID associated with the user's information.
 
-```kotlin [Kotlin]
-client.addAccount(identityToAdd)
-```
+## Help users manage installations
 
-```swift [Swift]
-try await client.addAccount(newAccount: identityToAdd)
-```
+By default, your app stores the following information about installations:
 
-:::
+- `id` (random byte array)
+- `createdAt` (date)
 
-## Remove an identity from an inbox
+To help users make informed decisions when managing and revoking their installations, you should aim to store additional useful information about installations, such as:
 
-:::tip[Note]
- A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
-:::
+- Last date logged in
+- Device make and model
 
-:::code-group
+Installation IDs that don't have this additional information can be treated as unknown installations, which can also provide helpful signals to users.
 
-```tsx [Browser]
-await client.removeAccount(identifier)
-```
 
-```tsx [Node]
-await client.removeAccount(identifier)
-```
-
-```jsx [React Native]
-await client.removeAccount(recoveryIdentity, identityToRemove)
-```
-
-```kotlin [Kotlin]
-client.removeAccount(recoveryIdentity, identityToRemove)
-```
-
-```swift [Swift]
-try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
-```
-
-:::
 
 ## Revoke installations
 
@@ -3343,6 +3656,67 @@ try await client.revokeAllOtherInstallations(signingKey)
 
 :::
 
+### Revoke installations for a user who can't log in
+
+Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
+
+This feature is especially useful in the following scenarios:
+
+- A user has reached the 5-installation limit and can't log in to revoke installations to make room for a new installation.
+- A user logs out of an app installation and chooses the option to delete their local database. Choosing this option will cause them to permanently lose access to the installation. For this reason, you should revoke the installation.
+
+In both scenarios, static revocation enables logged out users to revoke installations using only their recovery address signer. 
+
+Here is how static installation revocation works behind the scenes:
+
+1. Determines which installation IDs to revoke
+2. Generates a signature request for the revocation
+3. Uses the recovery address signer to authorize the revocation
+4. Submits the signed request to revoke the specified installations
+
+:::code-group
+
+```jsx [React Native]
+  const states = await Client.inboxStatesForInboxIds('production', [inboxId])
+
+  const toRevokeIds = states[0].installations.map((i) => i.id)
+
+  await Client.revokeInstallations(
+    'production',
+    recoveryWallet,
+    inboxId,
+    toRevokeIds as InstallationId[]
+  )
+```
+
+```kotlin [Kotlin]
+        val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
+		
+	val toRevokeIds = states.first().installations.map { it.id }
+
+	Client.revokeInstallations(
+		api,
+		recoveryWallet,
+		inboxId,
+		toRevokeIds
+	)
+```
+
+```swift [Swift]
+        let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
+		
+	let toRevokeIds = states.first.installations.map { $0.id }
+
+	try await Client.revokeInstallations(
+		api: api,
+		signingKey: recoveryWallet,
+		inboxId: inboxId,
+		installationIds: toRevokeIds
+	)
+```
+
+:::
+
 ## View the inbox state
 
 Find an `inboxId` for an identity:
@@ -3428,6 +3802,68 @@ InboxState
   "inboxId": "string"
 }
 ```
+
+## Add an identity to an inbox
+
+:::warning[Warning]
+
+This function is delicate and should be used with caution. Adding an identity to an inbox ID B when it's already associated with an inbox ID A will cause the identity to lose access to inbox ID A.
+
+:::
+
+:::code-group
+
+```tsx [Browser]
+await client.unsafe_addAccount(signer, true)
+```
+
+```tsx [Node]
+await client.unsafe_addAccount(signer, true)
+```
+
+```jsx [React Native]
+await client.addAccount(identityToAdd)
+```
+
+```kotlin [Kotlin]
+client.addAccount(identityToAdd)
+```
+
+```swift [Swift]
+try await client.addAccount(newAccount: identityToAdd)
+```
+
+:::
+
+## Remove an identity from an inbox
+
+:::tip[Note]
+ A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
+:::
+
+:::code-group
+
+```tsx [Browser]
+await client.removeAccount(identifier)
+```
+
+```tsx [Node]
+await client.removeAccount(identifier)
+```
+
+```jsx [React Native]
+await client.removeAccount(recoveryIdentity, identityToRemove)
+```
+
+```kotlin [Kotlin]
+client.removeAccount(recoveryIdentity, identityToRemove)
+```
+
+```swift [Swift]
+try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
+```
+
+:::
 
 ## FAQ
 
@@ -3525,7 +3961,7 @@ If you are interested in providing this functionality in your app and want some 
 
 
 ## pages/inboxes/quickstart.md
-# Quickstart: Build an app with XMTP
+# Quickstart: Build a chat inbox with XMTP
 
 This quickstart provides a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
@@ -3533,12 +3969,6 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 - Rich content types (attachments, reactions, replies, and more)
 - Real-time push notifications
 - Spam-free inboxes using user consent preferences
-
-:::tip[🤖 Building an agent instead?]
-
-Explore the examples and docs in [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples).
-
-:::
 
 ## 🏗️ Phase I: Setup
 
@@ -3580,11 +4010,11 @@ Explore the examples and docs in [xmtp-agent-examples](https://github.com/epheme
 
 ## 📩 Phase III: Manage conversations and messages
 
-1. [List existing conversations](/inboxes/list-and-stream#list-existing-conversations) from local storage.
+1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.
 
-2. [Stream new conversations](/inboxes/list-and-stream#stream-all-group-chats-and-dms) from the network.
+2. [Stream new conversations](/inboxes/stream#stream-all-group-chats-and-dms) from the network.
 
-3. [Stream new messages](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
+3. [Stream new messages](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
 
 4. [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations) from the network.
 
@@ -3732,7 +4162,7 @@ For example, it will handle syncing an HMAC key shared by Installation B to othe
 
 Use this call to sync preferences (consent preferences and HMAC keys) across app installations in a preferences group. This will also sync welcomes to ensure that you have all potential new installations before syncing.
 
-This is a lighter-weight alternative to syncing preferences using [`syncAll`](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences) or [`streamAll`](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences).
+This is a lighter-weight alternative to syncing preferences using [`syncAll`](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences) or [`streamAll`](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences).
 
 :::code-group
 
@@ -5029,7 +5459,7 @@ content.timestamp // "2019-09-26T07:58:30.996+0200"
 
 ## Display a read receipt
 
-`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
+`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/inboxes/content-types/fallback) section.
 
 ## Notifications and read receipts
 
@@ -5207,7 +5637,7 @@ let content: Reply = try message.content()
 
 :::
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
 ## Display the reply
 
@@ -5359,7 +5789,7 @@ await conversation.messages.send(transactionReference, {
 
 To receive and process a transaction reference, you can use the following code samples.
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
 ```tsx [Browser]
 // Assume `loadLastMessage` is a thing you have
@@ -5769,7 +6199,7 @@ struct ContentView: View {
 
 :::
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback]() section.
 
 ## Support multiple remote attachments of any size
 
@@ -6196,6 +6626,74 @@ if (message.contentType.sameAs(ContentTypeAttachment)) {
 ```
 
 
+## pages/inboxes/content-types/fallback.mdx
+# Handle unsupported content types
+
+As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+
+Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+
+:::code-group
+
+```js [Browser]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```js [Node]
+const codec = client.codecFor(content.contentType);
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback !== undefined) {
+    return message.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```jsx [React Native]
+//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
+const isRegistered = message.contentTypeID in client.codecRegistry;
+if (!isRegistered) {
+  // Not supported content type
+  if (message?.fallback != null) {
+    return message?.fallback;
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```kotlin [Kotlin]
+val codec = client.codecRegistry.find(options?.contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+```swift [Swift]
+let codec = client.codecRegistry.find(for: contentType)
+if (!codec) {
+  /*Not supported content type*/
+  if (message.fallback != null) {
+    return message.fallback
+  }
+  // Handle other types like ReadReceipts which are not meant to be displayed
+}
+```
+
+:::
+
+
 ## pages/inboxes/content-types/custom.md
 ---
 description: Learn how to build custom content types
@@ -6396,7 +6894,7 @@ if (message.contentType == ContentTypeReaction) {
 let content: Reaction = try message.content()
 ```
 
-To handle unsupported content types, refer to the [fallback](/inboxes/list-and-stream/#handle-unsupported-content-types) section.
+To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
 ## Display the reaction
 
@@ -6419,7 +6917,7 @@ You can sync new consent preferences (and HMAC keys) from the network using any 
 
 - [Sync all new conversations, messages, and preferences](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences)
 
-- [Stream all group chat and DM messages and preferences](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences)
+- [Stream all group chat and DM messages and preferences](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences)
 
 ## Get the consent state of a conversation
 
@@ -7433,4 +7931,4 @@ XMTP does not currently have a token. Disregard any information regarding airdro
 
 # Summary
 
-This documentation contains 45 files.
+This documentation contains 49 files.
