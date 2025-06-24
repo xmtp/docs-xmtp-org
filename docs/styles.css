@@ -202,3 +202,22 @@ li ol ~ p {
 .vocs_CodeBlock {
   margin: 0.5rem 0;
 }
+
+/* ====== SIDEBAR SPACING REDUCTION ====== */
+
+/* Reduce section header padding */
+.vocs_Sidebar_sectionHeader {
+  padding-top: var(--vocs-space_6) !important; /* Reduced from space_12. Space above section heading. */
+}
+
+/* Reduce level items padding */
+.vocs_Sidebar_level .vocs_Sidebar_items {
+  padding-top: var(--vocs-space_8) !important; /* Reduced from space_6. Space above l2 items in section. */
+}
+
+/* Reduce main items container padding and gap */
+.vocs_Sidebar_items {
+  gap: 0.5em !important; /* Reduced from 0.625em. Space between each l1 item in section. */
+  padding-top: var(--vocs-space_6) !important; /* Reduced from space_16. Space above block of l1 items in section. */
+  padding-bottom: var(--vocs-space_6) !important; /* Reduced from space_16. Space below block of l1 items in section. */
+}

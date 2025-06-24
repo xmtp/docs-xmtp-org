@@ -1,4 +1,4 @@
-# Quickstart: Build an app with XMTP
+# Quickstart: Build a chat inbox with XMTP
 
 This quickstart provides a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
@@ -6,12 +6,6 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 - Rich content types (attachments, reactions, replies, and more)
 - Real-time push notifications
 - Spam-free inboxes using user consent preferences
-
-:::tip[🤖 Building an agent instead?]
-
-Explore the examples and docs in [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples).
-
-:::
 
 ## 🏗️ Phase I: Setup
 
@@ -53,11 +47,11 @@ Explore the examples and docs in [xmtp-agent-examples](https://github.com/epheme
 
 ## 📩 Phase III: Manage conversations and messages
 
-1. [List existing conversations](/inboxes/list-and-stream#list-existing-conversations) from local storage.
+1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.
 
-2. [Stream new conversations](/inboxes/list-and-stream#stream-all-group-chats-and-dms) from the network.
+2. [Stream new conversations](/inboxes/stream#stream-all-group-chats-and-dms) from the network.
 
-3. [Stream new messages](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
+3. [Stream new messages](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
 
 4. [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations) from the network.
 
