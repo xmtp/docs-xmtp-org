@@ -53,11 +53,11 @@ Explore the examples and docs in [xmtp-agent-examples](https://github.com/epheme
 
 ## 📩 Phase III: Manage conversations and messages
 
-1. [List existing conversations](/inboxes/list-and-stream#list-existing-conversations) from local storage.
+1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.
 
-2. [Stream new conversations](/inboxes/list-and-stream#stream-all-group-chats-and-dms) from the network.
+2. [Stream new conversations](/inboxes/stream#stream-all-group-chats-and-dms) from the network.
 
-3. [Stream new messages](/inboxes/list-and-stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
+3. [Stream new messages](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
 
 4. [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations) from the network.
 
