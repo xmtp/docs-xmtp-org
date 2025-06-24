@@ -172,15 +172,42 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```jsx [React Native]
+  const states = await Client.inboxStatesForInboxIds('production', [inboxId])
 
+  const toRevokeIds = states[0].installations.map((i) => i.id)
+
+  await Client.revokeInstallations(
+    'production',
+    recoveryWallet,
+    inboxId,
+    toRevokeIds as InstallationId[]
+  )
 ```
 
 ```kotlin [Kotlin]
+        val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
+		
+	val toRevokeIds = states.first().installations.map { it.id }
 
+	Client.revokeInstallations(
+		api,
+		recoveryWallet,
+		inboxId,
+		toRevokeIds
+	)
 ```
 
 ```swift [Swift]
+        let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
+		
+	let toRevokeIds = states.first.installations.map { $0.id }
 
+	try await Client.revokeInstallations(
+		api: api,
+		signingKey: recoveryWallet,
+		inboxId: inboxId,
+		installationIds: toRevokeIds
+	)
 ```
 
 :::
