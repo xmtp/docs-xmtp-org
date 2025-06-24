@@ -123,8 +123,12 @@ export default defineConfig({
         collapsed: false,
         items: [
             {
-              text: "List and stream conversations and messages",
-              link: "/inboxes/list-and-stream",
+              text: "List conversations",
+              link: "/inboxes/list",
+            },
+            {
+              text: "Stream conversations and messages",
+              link: "/inboxes/stream",
             },
             {
               text: "Sync conversations and messages",
@@ -141,8 +145,8 @@ export default defineConfig({
           ],
         },
         {
-          text: "Support content types",
-          collapsed: true,
+          text: "Support rich content types",
+          collapsed: false,
           items: [
             {
               text: "Understand content types",
@@ -175,22 +179,22 @@ export default defineConfig({
           ],
         },
         {
-          text: "Support user consent",
+          text: "Support spam-free inboxes",
           collapsed: false,
           items: [
               {
-                text: "How spam-free inboxes work",
+                text: "Understand user consent",
                 link: "/inboxes/user-consent/user-consent",
               },
               {
-                text: "Support spam-free inboxes",
+                text: "Support user consent",
                 link: "/inboxes/user-consent/support-user-consent",
               },        
             ],
           },
           {
           text: "Support push notifications",
-          collapsed: true,
+          collapsed: false,
           items: [
             {
               text: "Understand push notifications",
