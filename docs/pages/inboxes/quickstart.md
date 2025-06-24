@@ -1,4 +1,4 @@
-# Quickstart: Build an app with XMTP
+# Quickstart: Build a chat inbox with XMTP
 
 This quickstart provides a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
@@ -6,12 +6,6 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 - Rich content types (attachments, reactions, replies, and more)
 - Real-time push notifications
 - Spam-free inboxes using user consent preferences
-
-:::tip[🤖 Building an agent instead?]
-
-Explore the examples and docs in [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples).
-
-:::
 
 ## 🏗️ Phase I: Setup
 

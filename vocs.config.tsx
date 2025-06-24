@@ -71,12 +71,12 @@ export default defineConfig({
       ],
     },
     {
-      text: "Quickstart: Build a chat inbox",
+      text: "Quickstart: Build a chat inbox 📥",
       link: "/inboxes/quickstart",
       items: [],
     },
     {
-      text: "Quickstart: Build an agent",
+      text: "Quickstart: Build an agent 🤖",
       link: "/agents/build-an-agent",
       items: [],
     },
