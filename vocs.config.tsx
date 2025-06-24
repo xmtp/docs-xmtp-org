@@ -53,6 +53,10 @@ export default defineConfig({
           link: "/intro/intro",
         },
         {
+          text: "Upcoming releases ↗",
+          link: "https://ephemerahq.notion.site/upcoming-xmtp-releases",
+        },
+        {
           text: "FAQ",
           link: "/intro/faq",
         },
