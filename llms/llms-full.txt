@@ -542,7 +542,7 @@ Building with XMTP gives your agent access to:
 
 ### Quickstart video guide
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
 ### Agent examples
 
@@ -3535,6 +3535,12 @@ You can enable a user to remove an identity from their inbox. You cannot remove 
 
 ## Inbox update and installation limits
 
+### 🎥 walkthrough: Installation limits and static revocation
+
+This video provides a walkthrough of the idea behind the XMTP installation limit (5) and how to use [static installation revocation](#revoke-installations-for-a-user-who-cant-log-in). After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/66bHc_MBQKo?si=5ZuqFBrQm885ILSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
 - Add a wallet
@@ -3565,8 +3571,6 @@ To help users make informed decisions when managing and revoking their installat
 - Device make and model
 
 Installation IDs that don't have this additional information can be treated as unknown installations, which can also provide helpful signals to users.
-
-
 
 ## Revoke installations
 
@@ -3657,6 +3661,8 @@ try await client.revokeAllOtherInstallations(signingKey)
 :::
 
 ### Revoke installations for a user who can't log in
+
+For a video walkthrough of this feature, see [🎥 walkthrough: Installation limits and static revocation](#-walkthrough-installation-limits-and-static-revocation).
 
 Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
 
