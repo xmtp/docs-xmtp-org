@@ -91,8 +91,13 @@ SubscribeWelcomes       0
 
 To return an individual statistic as a number, run:
 
-- `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-- `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+- For Browser, Node, iOS, and Android SDKs: 
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For React Native SDK:
+  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
 
