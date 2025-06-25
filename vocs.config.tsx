@@ -231,6 +231,11 @@ export default defineConfig({
           ]
         },
         {
+          text: "Debug your app",
+          link: "/inboxes/debug-your-app",
+          items: [],
+        },
+        {
           text: "Upgrade to a stable XMTP V3 SDK",
           collapsed: false,
           items: [
@@ -243,7 +248,12 @@ export default defineConfig({
               link: "/upgrade-from-legacy-V3",
             },
           ],
-        },    
+        },
+        {
+          text: "Sign and verify payloads",
+          link: "/inboxes/use-signatures",
+          items: [],
+        },
       {
       text: "Network",
       collapsed: false,
