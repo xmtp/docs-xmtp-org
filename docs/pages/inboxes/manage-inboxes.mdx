@@ -178,100 +178,42 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-// Step 1: Get inbox state data for the specified inbox IDs.
-// Gets the installation data needed to revoke installations.
-static async inboxStateFromInboxIds(inboxIds: string[], env?: XmtpEnv) {
-  const host = ApiUrls[env ?? "dev"];
-  return inboxStateFromInboxIds(host, inboxIds);
-}
-
-// Step 2: Call the method to get inbox states
-// The second argument is optional and defaults to "dev" if not provided
 const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
 
-// Step 3: Access the installation ID bytes from the first inbox state
-// This gets the raw bytes needed for the revocation request
-const installationBytes = inboxStates[0].installations[0].bytes
+const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
-// Step 4: Call Client.revokeInstallations to revoke the specified installations
-// This method allows revocation without needing an active client instance
 await Client.revokeInstallations(
-  signer,           // The signer (recovery wallet) to authorize the revocation
-  inboxId,          // The inbox ID containing the installations to revoke
-  [installationIdBytes], // Array of installation ID bytes to revoke
-  "production",     // The XMTP environment
+  signer,
+  inboxId,
+  toRevokeInstallationBytes,
+  "production", // optional, defaults to "dev"
 );
-
-// Method signature for reference:
-/**
- * Revokes specific installations of the client's inbox without a client
- *
- * @param env - The environment to use
- * @param signer - The signer to use
- * @param inboxId - The inbox ID to revoke installations for
- * @param installationIds - The installation IDs to revoke
- */
-static async revokeInstallations(
-  signer: Signer,
-  inboxId: string,
-  installationIds: Uint8Array[],
-  env?: XmtpEnv,
-) => Promise<void>
 ```
 
 ```tsx [Node]
-// Step 1: Get inbox state data for the specified inbox IDs.
-// Gets the installation data needed to revoke installations.
-static async inboxStateFromInboxIds(inboxIds: string[], env?: XmtpEnv) {
-  const host = ApiUrls[env ?? "dev"];
-  return inboxStateFromInboxIds(host, inboxIds);
-}
-
-// Step 2: Call the method to get inbox states
-// The second argument is optional and defaults to "dev" if not provided
 const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
 
-// Step 3: Access the installation ID bytes from the first inbox state
-// This gets the raw bytes needed for the revocation request
-const installationBytes = inboxStates[0].installations[0].bytes
+const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
-// Step 4: Call Client.revokeInstallations to revoke the specified installations
-// This method allows revocation without needing an active client instance
 await Client.revokeInstallations(
-  signer,           // The signer (recovery wallet) to authorize the revocation
-  inboxId,          // The inbox ID containing the installations to revoke
-  [installationIdBytes], // Array of installation ID bytes to revoke
-  "production",     // The XMTP environment
+  signer,
+  inboxId,
+  toRevokeInstallationBytes,
+  "production", // optional, defaults to "dev"
 );
-
-// Method signature for reference:
-/**
- * Revokes specific installations of the client's inbox without a client
- *
- * @param env - The environment to use
- * @param signer - The signer to use
- * @param inboxId - The inbox ID to revoke installations for
- * @param installationIds - The installation IDs to revoke
- */
-static async revokeInstallations(
-  signer: Signer,
-  inboxId: string,
-  installationIds: Uint8Array[],
-  env?: XmtpEnv,
-) => Promise<void>
 ```
 
 ```jsx [React Native]
-  const states = await Client.inboxStatesForInboxIds('production', [inboxId])
+const states = await Client.inboxStatesForInboxIds('production', [inboxId])
 
-  const toRevokeIds = states[0].installations.map((i) => i.id)
+const toRevokeIds = states[0].installations.map((i) => i.id)
 
-  await Client.revokeInstallations(
-    'production',
-    recoveryWallet,
-    inboxId,
-    toRevokeIds as InstallationId[]
-  )
+await Client.revokeInstallations(
+  'production',
+  recoveryWallet,
+  inboxId,
+  toRevokeIds as InstallationId[]
+)
 ```
 
 ```kotlin [Kotlin]
