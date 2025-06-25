@@ -161,6 +161,14 @@ export default defineConfig({
               link: "/inboxes/content-types/attachments",
             },
             {
+              text: "Onchain transactions",
+              link: "/inboxes/content-types/transactions",
+            },
+            {
+              text: "Onchain transaction references",
+              link: "/inboxes/content-types/transaction-refs",
+            },
+            {
               text: "Reactions",
               link: "/inboxes/content-types/reactions",
             },
@@ -171,14 +179,6 @@ export default defineConfig({
             {
               text: "Read receipts",
               link: "/inboxes/content-types/read-receipts",
-            },
-            {
-              text: "Onchain transactions",
-              link: "/inboxes/content-types/transactions",
-            },
-            {
-              text: "Onchain transaction references",
-              link: "/inboxes/content-types/transaction-refs",
             },
             {
               text: "Custom content",

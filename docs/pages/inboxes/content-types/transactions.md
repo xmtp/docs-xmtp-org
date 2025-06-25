@@ -2,6 +2,10 @@
 
 This package provides an XMTP content type to support sending transactions to a wallet for execution. 
 
+Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
+
+For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
+
 :::tip[Open for feedback]
 
 You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
@@ -10,7 +14,7 @@ You are welcome to provide feedback on this implementation by commenting on [XIP
 
 ## Install the package
 
-```bash
+```bash [Bash]
 # npm
 npm i @xmtp/content-type-wallet-send-calls
 
@@ -23,9 +27,9 @@ pnpm i @xmtp/content-type-wallet-send-calls
 
 ## Create a transaction request
 
-With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display:
+With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
 
-```tsx [Browser]
+```tsx [TypeScript]
 const walletSendCalls: WalletSendCallsParams = {
   version: "1.0",
   from: "0x123...abc",
@@ -64,13 +68,17 @@ const walletSendCalls: WalletSendCallsParams = {
 
 Once you have a transaction reference, you can send it as part of your conversation:
 
-```tsx [Browser]
+```tsx [TypeScript]
 await conversation.messages.send(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
-Receive a transaction request
+```
+
+## Receive a transaction request
+
 To receive and process a transaction request:
 
+```tsx [TypeScript]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 
@@ -82,9 +90,3 @@ if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
 const walletSendCalls: WalletSendCallsParams = message.content;
 // Process the transaction request here
 ```
-
-:::
-
-## Examples
-
-For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
