@@ -74,6 +74,7 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
    - [Reactions](/inboxes/content-types/reactions)
    - [Replies](/inboxes/content-types/replies)
    - [Read receipts](/inboxes/content-types/read-receipts)
+   - [Onchain transactions](/inboxes/content-types/transactions)
    - [Onchain transaction references](/inboxes/content-types/transaction-refs)
 
 3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs).
