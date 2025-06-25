@@ -63,10 +63,10 @@ These statistics are maintained per client instance, so each app installation ha
 
 ### Get aggregated statistics
 
-To return aggregated statistics, you can run:
+To return aggregated statistics, run:
 
-- Browser and Node SDKs: `client.apiAggregateStatistics()`
-- React Native, iOS, and Android SDKs: `client.debugInformation.aggregateStatistics` 
+- For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For React Native SDK: `client.debugInformation.aggregateStatistics`
 
 ```text
 Aggregate Stats:
@@ -89,23 +89,32 @@ SubscribeWelcomes       0
 
 ### Get an individual statistic
 
-To return an individual statistic as a number, you can run:
+To return an individual statistic as a number, run:
 
-- Browser and Node SDKs:
-  - `client.apiStatistics().uploadKeyPackage` to track `uploadKeyPackage` only
-  - `client.apiIdentityStatistics().publishIdentityUpdate` to track `PublishIdentityUpdate` only
-- React Native, iOS, and Android SDKs: 
-  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only
-  - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only
+- `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+- `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
 
 ### Clear statistics
 
-To clear all API, identity, and stream statistics and set them to zero, you can run:
-
-- Browser and Node SDKs: `client.clearAllStatistics()`
-- React Native, iOS, and Android SDKs: `client.debugInformation.clearAllStatistics()`
+To clear all API, identity, and stream statistics and set them to zero, run `client.debugInformation.clearAllStatistics()`.
 
 This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
+
+### Upload an archive of network statistics
+
+With the Browser and Node SDKs, you can upload an archive of collected network statistics.
+
+```tsx [TypeScript]
+// Upload to default server (no serverUrl needed)
+const result1 = await client.debugInformation.uploadDebugArchive();
+
+// Upload to custom server (serverUrl provided)
+const result2 = await client.debugInformation.uploadDebugArchive(
+  "https://my-debug-server.com/api/upload"
+);
+```
 
 ### Statistic descriptions
 
