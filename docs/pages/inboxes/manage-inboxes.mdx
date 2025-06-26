@@ -49,6 +49,8 @@ If an inbox is allowed to reach its limit of 256 inbox updates, the user will ne
 
 To avoid this scenario altogether, inboxes are limited to having only 5 active installations. When an inbox has 5 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
 
+Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
+
 ### Rotate an inbox ID
 
 When you create an inbox ID, there is a nonce on it that is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce and it will create a new inbox ID associated with the user's information.
