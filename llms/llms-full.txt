@@ -950,7 +950,7 @@ XMTP is also chain-agnostic, so multi-chain support is possible.
 Here are just a few chains that work with XMTP:
 
 - [Arbitrum](https://arbitrum.foundation/)
-- [Avalanche](https://www.avax.com/)
+- [Avalanche](https://www.avax.network/)
 - [Base](https://base.org/)
 - [(BNB) Chain](https://www.bnbchain.org/)
 - [Ethereum](https://ethereum.org/)
@@ -2364,8 +2364,7 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 
 2. [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
 
-3. You can [use llms-full.txt](http://localhost:5173/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
-
+3. You can [use llms-full.txt](/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
 ## 💬 Phase II: Build core messaging
 
@@ -2618,6 +2617,8 @@ This means that one inbox ID can have 256 installations. When you add an inbox I
 If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
 
 To avoid this scenario altogether, inboxes are limited to having only 5 active installations. When an inbox has 5 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
+
+Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
 ### Rotate an inbox ID
 
