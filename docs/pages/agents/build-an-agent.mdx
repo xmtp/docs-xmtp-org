@@ -1,6 +1,6 @@
 # Quickstart: Build an agent that uses XMTP
 
-This quickstart provides a map to building agents that communicate with humans and other agents in chats built with XMTP.
+This quickstart provides a map to building agents that can communicate with humans and other agents in chats built with XMTP.
 
 Building with XMTP gives your agent access to:
 - The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
@@ -15,11 +15,17 @@ Building with XMTP gives your agent access to:
 
 ### Agent examples
 
-Explore and run example agents built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repo.
+From a simple agent that replies "GM" to one that supports onchain transactions, explore and run a dozen [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk).
 
 ### Cursor rules
 
 You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
+
+### llms-full.txt
+
+To make it easier to use AI coding tools to build agents with XMTP, you can find an llms-full.txt file at https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-full.txt.
+
+This llms-full.txt file includes all XMTP documentation in a single plain text file for easy parsing by AI.
 
 ## Build an agent
 
@@ -65,11 +71,11 @@ To learn more about `conversation.send`, see [Send messages](/inboxes/send-messa
 
 ### Get the address of a user
 
-Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, like passkeys and EVM wallet addresses.
+Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, such as EOAs and SCWs.
 
 :::tip
 
-An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses.
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage XMTP inboxes and installations](/inboxes/manage-inboxes).
 
 :::
 
@@ -84,11 +90,21 @@ To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox
 
 ### Support onchain transactions
 
-To learn more, see the [Support onchain transactions](/inboxes/content-types/transactions) documentation and the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent.
+To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent.
+
+If helpful, you can also see the [Support onchain transactions](/inboxes/content-types/transactions) documentation.
+
+### Support attachments
+
+To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent.
+
+If helpful, you can also see the [Support attachments](/inboxes/content-types/attachments) documentation. 
 
 ### Try out your agent using xmtp.chat
 
-Test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+You can test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
 
 ## Deploy an agent
 
@@ -100,7 +116,7 @@ Alternative platforms include:
 - Render
 - Vercel
 
-_Want to contribute a guide for another platform? We welcome pull requests!_
+Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
 
 ### 1. Create a Railway account
 
