@@ -278,19 +278,19 @@ export default defineConfig({
         },
         {
           text: "Encryption ↗",
-          link: "https://xmtp.org/encryption",
+          link: "https://xmtp.org/docs/concepts/encryption",
         },
         {
           text: "Identity ↗",
-          link: "https://xmtp.org/identity",
+          link: "https://xmtp.org/docs/concepts/identity",
         },
         {
           text: "Consent ↗",
-          link: "https://xmtp.org/consent",
+          link: "https://xmtp.org/docs/concepts/consent",
         },
         {
           text: "Decentralization ↗",
-          link: "https://xmtp.org/decentralizing-xmtp",
+          link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
         },
         {
           text: "Wallet signatures",

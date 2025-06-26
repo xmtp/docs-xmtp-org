@@ -24,8 +24,7 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 
 2. [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
 
-3. You can [use llms-full.txt](http://localhost:5173/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
-
+3. You can [use llms-full.txt](/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
 ## 💬 Phase II: Build core messaging
 
