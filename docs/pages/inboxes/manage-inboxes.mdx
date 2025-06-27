@@ -43,7 +43,7 @@ An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 - Add an installation
 - Revoke an installation
 
-This means that one inbox ID can have 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
+This means that one inbox ID can have up to 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
 
 If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
 
@@ -448,7 +448,7 @@ To help users avoid this state, ensure that your UX surfaces their ability to ad
 
 The identity used to initiate a client should be matched to its original inbox ID. 
 
-You do have the ability to rotate inbox IDs if a user reaches the limit of 257 identity actions (adding, removing, or revoking identities or installations). Hopefully, users won't reach this limit, but if they do, inbox IDs have a nonce and can be created an infinite number of times. 
+You do have the ability to rotate inbox IDs if a user reaches the limit of 256 identity actions (adding, removing, or revoking identities or installations). Hopefully, users won't reach this limit, but if they do, inbox IDs have a nonce and can be created an infinite number of times. 
 
 However, anytime a new inbox ID is created for an identity, the conversations and messages in any existing inbox ID associated with the identity are lost.
 
