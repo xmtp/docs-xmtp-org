@@ -100,7 +100,39 @@ To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/
 
 If helpful, you can also see the [Support attachments](/inboxes/content-types/attachments) documentation. 
 
-### Try out your agent using xmtp.chat
+### Support replies
+
+To learn more, see the example [good example for this?](#TODO) agent.
+
+If helpful, you can also see the [Support replies](/inboxes/content-types/replies) documentation. 
+
+### Support reactions
+
+To learn more, see the example [good example for this?](#TODO) agent.
+
+If helpful, you can also see the [Support reactions](/inboxes/content-types/reactions) documentation. 
+
+### Follow security best practices
+
+For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond. 
+
+Like any other user, this means your agent holds the cryptographic keys required to decrypt and send messages in the conversation. As an agent developer, it's important to uphold the security of these keys and messages.
+
+Here are some security best practices:
+
+- **Never expose private keys**: Use environment variables.
+- **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
+- **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
+
+### Handle rate limits
+
+
+
+### Provide error handling
+
+
+
+## Test your agent
 
 You can test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
 
@@ -191,3 +223,28 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 ### Example Railway deployment
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
+## Monitor and maintain your agent
+
+### Monitor agent health
+
+```tsx
+const inboxState = await client.preferences.inboxState();
+const address = inboxState.identifiers[0].identifier;
+const inboxId = client.inboxId;
+const installationId = client.installationId;
+const conversations = await client.conversations.list();
+
+console.log(`
+XMTP Client:
+  • InboxId: ${inboxId}
+  • Address: ${address}
+  • Conversations: ${conversations.length}
+  • Installations: ${inboxState.installations.length}
+  • InstallationId: ${installationId}
+  • Network: ${process.env.XMTP_ENV}
+`);
+```
+
+### Log agent activity
+
