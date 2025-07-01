@@ -9,27 +9,17 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client, type Identifier } from "@xmtp/browser-sdk";
+import { Client } from "@xmtp/browser-sdk";
 
-const identifiers: Identifier[] = [
-  { identifier: "0xboAddress", identifierKind: "Ethereum" },
-  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
-];
-
-// response is a Map of string (identifier) => boolean (is reachable)
-const response = await Client.canMessage(identifiers);
+// response is a Map of string (identity) => boolean (is reachable)
+const response = await Client.canMessage([bo.identity, caro.identity]);
 ```
 
 ```js [Node]
-import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
+import { Client } from "@xmtp/node-sdk";
 
-const identifiers: Identifier[] = [
-  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
-  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
-];
-
-// response is a Map of string (identifier) => boolean (is reachable)
-const response = await Client.canMessage(identifiers);
+// response is a Map of string (identity) => boolean (is reachable)
+const response = await Client.canMessage([bo.identity, caro.identity]);
 ```
 
 ```tsx [React Native]
