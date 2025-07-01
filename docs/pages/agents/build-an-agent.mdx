@@ -5,7 +5,7 @@ This quickstart provides a map to building agents that can communicate with huma
 Building with XMTP gives your agent access to:
 - The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
 - The building blocks of AI + money + secure chat
-- Users accessing apps built with XMTP, including Coinbase Wallet and Convos.
+- Users on apps built with XMTP, including Coinbase Wallet, Convos, and more
 
 ## Resources to get started
 
@@ -90,9 +90,9 @@ const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 
 To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox-state).
 
-### Support onchain transactions
+### Support onchain transactions and transaction references
 
-To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent and [Support onchain transactions](/inboxes/content-types/transactions) documentation.
+To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent, as well as the [Support onchain transactions](/inboxes/content-types/transactions) and [Support onchain transaction references](/inboxes/content-types/transaction-refs) (receipts) documentation.
 
 ### Support attachments
 
@@ -106,6 +106,20 @@ To learn more, see the example [good example for this?](#TODO) agent and [Suppor
 
 To learn more, see the example [good example for this?](#TODO) agent and [Support reactions](/inboxes/content-types/reactions) documentation. 
 
+### Observe rate limits
+
+XMTP enforces a rate limit of 10,000 calls to the network per client per a rolling 5-minute window.
+
+These network calls include actions like:
+
+- Sending chat messages
+- Adding and removing wallets
+- Adding and revoking installations
+- Adding and removing group members
+- Updating group metadata
+
+When you reach the rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+
 ### Follow security best practices
 
 For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond. 
@@ -118,19 +132,31 @@ Here are some security best practices:
 - **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
 - **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
 
-### Handle rate limits
-
-
-
-### Provide error handling
-
-
-
-## Test your agent
+## Test and debug an agent
 
 You can test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
 
 Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+You can use this code to get your agent's client information, which provides useful values for testing and debugging: 
+
+```tsx
+const inboxState = await client.preferences.inboxState();
+const address = inboxState.identifiers[0].identifier;
+const inboxId = client.inboxId;
+const installationId = client.installationId;
+const conversations = await client.conversations.list();
+
+console.log(`
+XMTP Client:
+  • InboxId: ${inboxId}
+  • Address: ${address}
+  • Conversations: ${conversations.length}
+  • Installations: ${inboxState.installations.length}
+  • InstallationId: ${installationId}
+  • Network: ${process.env.XMTP_ENV}
+`);
+```
 
 ## Deploy an agent
 
@@ -217,28 +243,3 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 ### Example Railway deployment
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
-
-## Monitor and maintain your agent
-
-### Monitor agent health
-
-```tsx
-const inboxState = await client.preferences.inboxState();
-const address = inboxState.identifiers[0].identifier;
-const inboxId = client.inboxId;
-const installationId = client.installationId;
-const conversations = await client.conversations.list();
-
-console.log(`
-XMTP Client:
-  • InboxId: ${inboxId}
-  • Address: ${address}
-  • Conversations: ${conversations.length}
-  • Installations: ${inboxState.installations.length}
-  • InstallationId: ${installationId}
-  • Network: ${process.env.XMTP_ENV}
-`);
-```
-
-### Log agent activity
-
