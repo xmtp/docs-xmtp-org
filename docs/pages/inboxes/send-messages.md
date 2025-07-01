@@ -288,7 +288,7 @@ if (!codec) {
 
 ```jsx [React Native]
 //contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
+const isRegistered = message.contentTypeID in Client.codecRegistry;
 if (!isRegistered) {
   // Not supported content type
   if (message?.fallback != null) {
@@ -414,25 +414,21 @@ await client.conversations.newGroup(
 
 ```tsx [React Native]
 // DM
-await client.conversations.newConversation(
+await client.conversations.findOrCreateDm(
   inboxId,
-  {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
+  1738620126404999936, // disappearStartingAtNs
+  1800000000000000     // retentionDurationInNs
 )
 
 // Group
 await client.conversations.newGroup(
   [inboxId],
-  { 
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
+  'all_members', // permissionLevel
+  '', // name
+  '', // imageUrl  
+  '', // description
+  1738620126404999936, // disappearStartingAtNs
+  1800000000000000     // retentionDurationInNs
 )
 ```
 
@@ -501,7 +497,7 @@ await conversation.removeMessageDisappearingSettings()
 ```
 
 ```tsx [React Native]
-await conversation.updateDisappearingMessageSettings(updatedSettings)
+await conversation.updateDisappearingMessageSettings(1738620126404999936, 1800000000000000)
 await conversation.clearDisappearingMessageSettings()
 ```
 

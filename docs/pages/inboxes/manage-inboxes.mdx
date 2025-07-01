@@ -100,7 +100,7 @@ await client.revokeInstallations([installationId1, installationId2])
 ```
 
 ```jsx [React Native]
-await client.revokeInstallations(signingKey, [installationIds])
+await client.revokeInstallations([installationIds], signer.getIdentifier())
 ```
 
 ```kotlin [Kotlin]
@@ -144,7 +144,7 @@ await client.revokeAllOtherInstallations()
 ```
 
 ```jsx [React Native]
-await client.revokeAllOtherInstallations(signingKey)
+await client.revokeAllOtherInstallations(signer.getIdentifier())
 ```
 
 ```kotlin [Kotlin]
@@ -206,15 +206,17 @@ await Client.revokeInstallations(
 ```
 
 ```jsx [React Native]
-const states = await Client.inboxStatesForInboxIds('production', [inboxId])
+import { staticInboxStatesForInboxIds, staticRevokeInstallations } from '@xmtp/react-native-sdk'
+
+const states = await staticInboxStatesForInboxIds('production', [inboxId])
 
 const toRevokeIds = states[0].installations.map((i) => i.id)
 
-await Client.revokeInstallations(
+await staticRevokeInstallations(
   'production',
-  recoveryWallet,
+  recoveryWallet.getIdentifier(),
   inboxId,
-  toRevokeIds as InstallationId[]
+  toRevokeIds
 )
 ```
 
@@ -261,7 +263,9 @@ const inboxState = await client.preferences.inboxState()
 ```
 
 ```jsx [React Native]
-const inboxId = await client.inboxIdFromIdentity(identity)
+import { getOrCreateInboxId } from '@xmtp/react-native-sdk'
+
+const inboxId = await getOrCreateInboxId(publicIdentity, client.environment)
 ```
 
 ```kotlin [Kotlin]
@@ -291,8 +295,10 @@ const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId
 ```
 
 ```jsx [React Native]
-const state = await client.inboxState(true)
-const states = await client.inboxStates(true, [inboxId, inboxId])
+import { getInboxState, getInboxStates } from '@xmtp/react-native-sdk'
+
+const state = await getInboxState(client.installationId, true)
+const states = await getInboxStates(client.installationId, true, [inboxId, inboxId])
 ```
 
 ```kotlin [Kotlin]
@@ -351,7 +357,9 @@ await client.unsafe_addAccount(signer, true)
 ```
 
 ```jsx [React Native]
-await client.addAccount(identityToAdd)
+import { addAccount } from '@xmtp/react-native-sdk'
+
+await addAccount(client.installationId, newIdentity)
 ```
 
 ```kotlin [Kotlin]
@@ -381,7 +389,9 @@ await client.removeAccount(identifier)
 ```
 
 ```jsx [React Native]
-await client.removeAccount(recoveryIdentity, identityToRemove)
+import { removeAccount } from '@xmtp/react-native-sdk'
+
+await removeAccount(client.installationId, identityToRemove, recoveryIdentity)
 ```
 
 ```kotlin [Kotlin]

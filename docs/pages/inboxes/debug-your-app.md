@@ -68,7 +68,7 @@ These statistics are maintained per client instance, so each app installation ha
 To return aggregated statistics, run:
 
 - For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
-- For React Native SDK: `client.debugInformation.aggregateStatistics`
+- For React Native SDK: `(await client.debugInformation.getNetworkDebugInformation()).aggregateStatistics`
 
 ```text
 Aggregate Stats:
@@ -98,8 +98,8 @@ To return an individual statistic as a number, run:
   - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 - For React Native SDK:
-  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+  - `(await client.debugInformation.getNetworkDebugInformation()).apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `(await client.debugInformation.getNetworkDebugInformation()).identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
 
