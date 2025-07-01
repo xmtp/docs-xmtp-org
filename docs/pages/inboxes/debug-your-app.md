@@ -14,6 +14,8 @@ To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_d
 
 This tool helps you identify potential forked groups in your app, but preventing forks in the first place is XMTP's responsibility. This diagnostic tool is just a temporary aid, not a shift in responsibility to your app.
 
+XMTP React Native SDK v4.2.5 includes fixes for known bugs that could cause forking, improving the overall stability of group conversations.
+
 :::
 
 A conversation now has `getDebugInformation`. You can use this to see:

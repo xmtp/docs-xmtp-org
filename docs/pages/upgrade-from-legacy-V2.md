@@ -9,7 +9,7 @@ This document is for you if you are upgrading from a legacy XMTP V2 SDK. Legacy 
 
 :::tip[Upgrading from a legacy XMTP V3 SDK?]
 
-Legacy XMTP V3 SDKs include Browser SDK v0.x.x-&lt;v2.0.11, Node SDK v0.x.x-&lt;v2.0.6, React Native SDK v3.x.x-&lt;v4.0.5, Android SDK v3.x.x-&lt;v4.0.5, and iOS SDK v3.x.x-&lt;v4.0.7. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V3 SDK](/upgrade-from-legacy-V3).
+Legacy XMTP V3 SDKs include Browser SDK v0.x.x-&lt;v2.0.11, Node SDK v0.x.x-&lt;v2.0.6, React Native SDK v3.x.x-&lt;v4.2.5, Android SDK v3.x.x-&lt;v4.0.5, and iOS SDK v3.x.x-&lt;v4.0.7. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V3 SDK](/upgrade-from-legacy-V3).
 
 :::
 
@@ -26,7 +26,7 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 ## Upgrade to XMTP V3
 
 🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.5)
+- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.2.5)
 - [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.5)
 - [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
 
