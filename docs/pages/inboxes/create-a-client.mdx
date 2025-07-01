@@ -153,29 +153,15 @@ type ClientOptions = {
    * historySyncUrl can be used to override the `env` flag and connect to a
    * specific endpoint for syncing history
    */
-  historySyncUrl?: string | null;
+  historySyncUrl?: string;
   /**
    * Allow configuring codecs for additional content types
    */
   codecs?: ContentCodec[];
   /**
    * Path to the local DB
-   *
-   * There are 3 value types that can be used to specify the database path:
-   *
-   * - `undefined` (or excluded from the client options)
-   *    The database will be created in the current working directory and is based on
-   *    the XMTP environment and client inbox ID.
-   *    Example: `xmtp-dev-<inbox-id>.db3`
-   *
-   * - `null`
-   *    No database will be created and all data will be lost once the client disconnects.
-   *
-   * - `string`
-   *    The given path will be used to create the database.
-   *    Example: `./my-db.db3`
    */
-  dbPath?: string | null;
+  dbPath?: string;
   /**
    * Encryption key for the local DB
    */
@@ -196,17 +182,12 @@ type ClientOptions = {
    * Disable automatic registration when creating a client
    */
   disableAutoRegister?: boolean;
-  /**
-   * Disable device sync
-   */
-  disableDeviceSync?: boolean;
 };
 
 ```
 
 ```tsx [Node]
 import type { ContentCodec } from "@xmtp/content-type-primitives";
-import type { LogLevel } from "@xmtp/node-bindings";
 
 type ClientOptions = {
   /**
@@ -222,25 +203,11 @@ type ClientOptions = {
    * historySyncUrl can be used to override the `env` flag and connect to a
    * specific endpoint for syncing history
    */
-  historySyncUrl?: string | null;
+  historySyncUrl?: string;
   /**
    * Path to the local DB
-   *
-   * There are 3 value types that can be used to specify the database path:
-   *
-   * - `undefined` (or excluded from the client options)
-   *    The database will be created in the current working directory and is based on
-   *    the XMTP environment and client inbox ID.
-   *    Example: `xmtp-dev-<inbox-id>.db3`
-   *
-   * - `null`
-   *    No database will be created and all data will be lost once the client disconnects.
-   *
-   * - `string`
-   *    The given path will be used to create the database.
-   *    Example: `./my-db.db3`
    */
-  dbPath?: string | null;
+  dbPath?: string;
   /**
    * Encryption key for the local DB
    */
@@ -261,10 +228,6 @@ type ClientOptions = {
    * Disable automatic registration when creating a client
    */
   disableAutoRegister?: boolean;
-  /**
-   * Disable device sync
-   */
-  disableDeviceSync?: boolean;
 };
 ```
 
