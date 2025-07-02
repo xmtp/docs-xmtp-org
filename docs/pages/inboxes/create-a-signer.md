@@ -36,7 +36,7 @@ const accountIdentifier: Identifier = {
 
 const signer: Signer = {
   type: "EOA",
-  getIdentity: () => accountIdentifier,
+  getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
     // this string must be converted to bytes and returned in this function
@@ -168,7 +168,7 @@ const accountIdentifier: Identifier = {
 
 const signer: Signer = {
   type: "SCW",
-  getIdentity: () => accountIdentifier,
+  getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
     // this string must be converted to bytes and returned in this function
