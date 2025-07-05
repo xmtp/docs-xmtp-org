@@ -135,6 +135,10 @@ export default defineConfig({
               link: "/inboxes/stream",
             },
             {
+              text: "Understand sync",
+              link: "/inboxes/understand-sync",
+            },
+            {
               text: "Sync conversations and messages",
               link: "/inboxes/sync-and-syncall",
             },
