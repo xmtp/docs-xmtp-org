@@ -231,6 +231,10 @@ export default defineConfig({
           ]
         },
         {
+          text: "Run a payer service",
+          link: "/inboxes/payer-service",
+        },
+        {
           text: "Debug your app",
           link: "/inboxes/debug-your-app",
           items: [],
