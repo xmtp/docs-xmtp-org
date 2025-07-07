@@ -1,4 +1,4 @@
-# Quickstart: Build an agent that uses XMTP
+# Tutorial: Build an agent that uses XMTP
 
 This quickstart provides a map to building agents that can communicate with humans and other agents in chats built with XMTP.
 
@@ -119,6 +119,60 @@ These network calls include actions like:
 - Updating group metadata
 
 When you reach the rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+
+### Handle stream failures
+
+All streaming methods accept a callback as the last argument that will be called when the stream fails. Use this callback to restart the stream.
+
+An example of how to use the callback to restart the stream:
+
+```tsx
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+
+let retries = MAX_RETRIES;
+
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+
+  console.log("Waiting for messages...");
+
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+
+await handleStream(client);
+```
 
 ### Follow security best practices
 
