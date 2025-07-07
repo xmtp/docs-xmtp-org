@@ -529,7 +529,7 @@ Not seeing the specific documentation you need? [Open an issue](https://github.c
 Onward builders! 🫡
 
 ## pages/agents/build-an-agent.mdx
-# Quickstart: Build an agent that uses XMTP
+# Tutorial: Build an agent that uses XMTP
 
 This quickstart provides a map to building agents that can communicate with humans and other agents in chats built with XMTP.
 
