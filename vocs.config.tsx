@@ -80,7 +80,7 @@ export default defineConfig({
       items: [],
     },
     {
-      text: "Quickstart: Build an agent 🤖",
+      text: "Tutorial: Build an agent 🤖",
       link: "/agents/build-an-agent",
       items: [],
     },

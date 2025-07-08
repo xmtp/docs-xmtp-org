@@ -1,11 +1,11 @@
-# Quickstart: Build an agent that uses XMTP
+# Tutorial: Build an agent that uses XMTP
 
 This quickstart provides a map to building agents that can communicate with humans and other agents in chats built with XMTP.
 
 Building with XMTP gives your agent access to:
 - The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
 - The building blocks of AI + money + secure chat
-- Users accessing apps built with XMTP, including Coinbase Wallet and Convos.
+- Users on apps built with XMTP, including Coinbase Wallet, Convos, and more
 
 ## Resources to get started
 
@@ -23,9 +23,9 @@ You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-exampl
 
 ### llms-full.txt
 
-To make it easier to use AI coding tools to build agents with XMTP, you can find an llms-full.txt file at https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-full.txt.
+To make it easier to use AI coding tools to build agents with XMTP, you can find an `llms-full.txt` file at https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-full.txt.
 
-This llms-full.txt file includes all XMTP documentation in a single plain text file for easy parsing by AI.
+This `llms-full.txt` file includes all XMTP documentation in a single plain text file for easy parsing by AI.
 
 ## Build an agent
 
@@ -59,15 +59,17 @@ for await (const message of stream) {
 }
 ```
 
-To learn more about `Client.create`, see [Create an XMTP client](/inboxes/create-a-client).
+To learn more about:
 
-To learn more about `conversations.sync`, see [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations).
+- `Client.create`, see [Create an XMTP client](/inboxes/create-a-client).
 
-To learn more about `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences).
+- `conversations.sync`, see [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations).
 
-To learn more about `conversations.getConversationById`, see [Conversation helper methods](/inboxes/create-conversations#conversation-helper-methods).
+- `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences).
 
-To learn more about `conversation.send`, see [Send messages](/inboxes/send-messages).
+- `conversations.getConversationById`, see [Conversation helper methods](/inboxes/create-conversations#conversation-helper-methods).
+
+- `conversation.send`, see [Send messages](/inboxes/send-messages).
 
 ### Get the address of a user
 
@@ -88,23 +90,127 @@ const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 
 To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox-state).
 
-### Support onchain transactions
+### Support onchain transactions and transaction references
 
-To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent.
-
-If helpful, you can also see the [Support onchain transactions](/inboxes/content-types/transactions) documentation.
+To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent, as well as the [Support onchain transactions](/inboxes/content-types/transactions) and [Support onchain transaction references](/inboxes/content-types/transaction-refs) (receipts) documentation.
 
 ### Support attachments
 
-To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent.
+To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent and [Support attachments](/inboxes/content-types/attachments) documentation. 
 
-If helpful, you can also see the [Support attachments](/inboxes/content-types/attachments) documentation. 
+### Support replies
 
-### Try out your agent using xmtp.chat
+To learn more, see the example [good example for this?](#TODO) agent and [Support replies](/inboxes/content-types/replies) documentation. 
+
+### Support reactions
+
+To learn more, see the example [good example for this?](#TODO) agent and [Support reactions](/inboxes/content-types/reactions) documentation. 
+
+### Observe rate limits
+
+XMTP enforces a rate limit of 10,000 calls to the network per client per a rolling 5-minute window.
+
+These network calls include actions like:
+
+- Sending chat messages
+- Adding and removing wallets
+- Adding and revoking installations
+- Adding and removing group members
+- Updating group metadata
+
+When you reach the rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+
+### Handle stream failures
+
+All streaming methods accept a callback as the last argument that will be called when the stream fails. Use this callback to restart the stream.
+
+An example of how to use the callback to restart the stream:
+
+```tsx
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+
+let retries = MAX_RETRIES;
+
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+
+  console.log("Waiting for messages...");
+
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+
+await handleStream(client);
+```
+
+### Follow security best practices
+
+For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond. 
+
+Like any other user, this means your agent holds the cryptographic keys required to decrypt and send messages in the conversation. As an agent developer, it's important to uphold the security of these keys and messages.
+
+Here are some security best practices:
+
+- **Never expose private keys**: Use environment variables.
+- **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
+- **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
+
+## Test and debug an agent
 
 You can test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
 
 Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+You can use this code to get your agent's client information, which provides useful values for testing and debugging: 
+
+```tsx
+const inboxState = await client.preferences.inboxState();
+const address = inboxState.identifiers[0].identifier;
+const inboxId = client.inboxId;
+const installationId = client.installationId;
+const conversations = await client.conversations.list();
+
+console.log(`
+XMTP Client:
+  • InboxId: ${inboxId}
+  • Address: ${address}
+  • Conversations: ${conversations.length}
+  • Installations: ${inboxState.installations.length}
+  • InstallationId: ${installationId}
+  • Network: ${process.env.XMTP_ENV}
+`);
+```
 
 ## Deploy an agent
 
