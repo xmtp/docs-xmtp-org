@@ -10,9 +10,14 @@ All messages associated with these identities flow through the one inbox ID and 
 
 The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and **installation** associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity.
 
-The client creates an inbox ID and installation ID associated with the identity. Each XMTP client installation (on a device or in a browser) is assigned a unique installation ID, which identifies a specific instance of the XMTP client.
+:::tip[Note for agent developers]
 
-By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
+The installation concepts described in this document apply to both inbox apps and agents. However, the context differs. **Inbox apps** typically have installations across different devices and apps (phone, laptop, different XMTP apps), while **agents** typically have installations across different deployment environments (local development, Railway, production servers).
+
+For more agent-specific guidance, see [Manage agent installations](/agents/build-an-agent#manage-agent-installations).
+:::
+
+The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
 
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/create-inbox-install.png" width="250px" />
@@ -186,7 +191,7 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -195,11 +200,12 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
+  enableLogging: true, // optional, defaults to false
 );
 ```
 
 ```tsx [Node]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
