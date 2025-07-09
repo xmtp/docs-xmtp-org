@@ -8,22 +8,22 @@ By default, `list` returns only conversations with a [consent state](/inboxes/us
 
 We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
 
-To list all conversations regardless of consent state, pass `{ consentStates: ["allowed", "unknown", "denied"] }`.
+To list all conversations regardless of consent state, use the `consentStates` option and pass all three consent states.
 
 Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
 ```js [Browser]
-const allConversations = await client.conversations.list({ consentStates: ["allowed"] });
-const allGroups = await client.conversations.listGroups({ consentStates: ["allowed"] });
-const allDms = await client.conversations.listDms({ consentStates: ["allowed"] });
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list({ consentStates: ["allowed"] });
-const allGroups = await client.conversations.listGroups({ consentStates: ["allowed"] });
-const allDms = await client.conversations.listDms({ consentStates: ["allowed"] });
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 ```
 
 ```tsx [React Native]
