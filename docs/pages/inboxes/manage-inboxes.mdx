@@ -187,7 +187,7 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -196,11 +196,12 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
+  enableLogging: true, // optional, defaults to false
 );
 ```
 
 ```tsx [Node]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
