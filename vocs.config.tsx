@@ -117,7 +117,7 @@ export default defineConfig({
             link: "/inboxes/group-metadata",
           },
           {
-            text: "Manage inboxes, IDs, & installs",
+            text: "Manage inboxes, IDs, & installations",
             link: "/inboxes/manage-inboxes",
           },
         ]
