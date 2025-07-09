@@ -1092,15 +1092,29 @@ type ClientOptions = {
    * historySyncUrl can be used to override the `env` flag and connect to a
    * specific endpoint for syncing history
    */
-  historySyncUrl?: string;
+  historySyncUrl?: string | null;
   /**
    * Allow configuring codecs for additional content types
    */
   codecs?: ContentCodec[];
   /**
    * Path to the local DB
+   *
+   * There are 3 value types that can be used to specify the database path:
+   *
+   * - `undefined` (or excluded from the client options)
+   *    The database will be created in the current working directory and is based on
+   *    the XMTP environment and client inbox ID.
+   *    Example: `xmtp-dev-<inbox-id>.db3`
+   *
+   * - `null`
+   *    No database will be created and all data will be lost once the client disconnects.
+   *
+   * - `string`
+   *    The given path will be used to create the database.
+   *    Example: `./my-db.db3`
    */
-  dbPath?: string;
+  dbPath?: string | null;
   /**
    * Encryption key for the local DB
    */
@@ -1121,12 +1135,17 @@ type ClientOptions = {
    * Disable automatic registration when creating a client
    */
   disableAutoRegister?: boolean;
+  /**
+   * Disable device sync
+   */
+  disableDeviceSync?: boolean;
 };
 
 ```
 
 ```tsx [Node]
 import type { ContentCodec } from "@xmtp/content-type-primitives";
+import type { LogLevel } from "@xmtp/node-bindings";
 
 type ClientOptions = {
   /**
@@ -1142,11 +1161,25 @@ type ClientOptions = {
    * historySyncUrl can be used to override the `env` flag and connect to a
    * specific endpoint for syncing history
    */
-  historySyncUrl?: string;
+  historySyncUrl?: string | null;
   /**
    * Path to the local DB
+   *
+   * There are 3 value types that can be used to specify the database path:
+   *
+   * - `undefined` (or excluded from the client options)
+   *    The database will be created in the current working directory and is based on
+   *    the XMTP environment and client inbox ID.
+   *    Example: `xmtp-dev-<inbox-id>.db3`
+   *
+   * - `null`
+   *    No database will be created and all data will be lost once the client disconnects.
+   *
+   * - `string`
+   *    The given path will be used to create the database.
+   *    Example: `./my-db.db3`
    */
-  dbPath?: string;
+  dbPath?: string | null;
   /**
    * Encryption key for the local DB
    */
@@ -1167,6 +1200,10 @@ type ClientOptions = {
    * Disable automatic registration when creating a client
    */
   disableAutoRegister?: boolean;
+  /**
+   * Disable device sync
+   */
+  disableDeviceSync?: boolean;
 };
 ```
 
@@ -1569,7 +1606,7 @@ const accountIdentifier: Identifier = {
 
 const signer: Signer = {
   type: "EOA",
-  getIdentity: () => accountIdentifier,
+  getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
     // this string must be converted to bytes and returned in this function
@@ -1701,7 +1738,7 @@ const accountIdentifier: Identifier = {
 
 const signer: Signer = {
   type: "SCW",
-  getIdentity: () => accountIdentifier,
+  getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
     // this string must be converted to bytes and returned in this function
@@ -2461,22 +2498,22 @@ By default, `list` returns only conversations with a [consent state](/inboxes/us
 
 We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
 
-To list all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+To list all conversations regardless of consent state, use the `consentStates` option and pass all three consent states.
 
 Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
 ```js [Browser]
-const allConversations = await client.conversations.list(["allowed"]);
-const allGroups = await client.conversations.listGroups(["allowed"]);
-const allDms = await client.conversations.listDms(["allowed"]);
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list(["allowed"]);
-const allGroups = await client.conversations.listGroups(["allowed"]);
-const allDms = await client.conversations.listDms(["allowed"]);
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 ```
 
 ```tsx [React Native]
@@ -3739,7 +3776,7 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -3748,11 +3785,12 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
+  enableLogging: true, // optional, defaults to false
 );
 ```
 
 ```tsx [Node]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -4289,17 +4327,27 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
+import { Client, type Identifier } from "@xmtp/browser-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: "Ethereum" },
+  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```js [Node]
-import { Client } from "@xmtp/node-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```tsx [React Native]
