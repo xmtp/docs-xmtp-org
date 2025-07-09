@@ -1,10 +1,12 @@
 # Manage XMTP inboxes, identities, and installations
 
-With XMTP, a user can have one or more inboxes they use to access their messages. An inbox can have multiple identities associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
+With XMTP, a user can have one or more **inboxes** they use to access their messages. An inbox ID is a stable identifier for a user's messaging identity and is used as the destination for messages in direct message and group conversations. It is derived from the public key material in their key package.
+
+An inbox can have multiple **identities** associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
 
 All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
 
-The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity. 
+The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and **installation** associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity.
 
 :::tip[Note for agent developers]
 
