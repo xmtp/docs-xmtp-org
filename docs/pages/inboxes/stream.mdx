@@ -79,7 +79,7 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 
 ## Handle stream failures
 
-All streaming methods accept a callback as the last argument that will be called when the stream fails. Use this callback to restart the stream.
+All streaming methods accept a callback as the last argument that will be called when the stream closes. Use this callback to restart the stream.
 
 :::code-group
 
