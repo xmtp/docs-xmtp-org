@@ -120,6 +120,10 @@ export default defineConfig({
             text: "Manage inboxes, IDs, and installations",
             link: "/inboxes/manage-inboxes",
           },
+          {
+            text: "Observe rate limits",
+            link: "/inboxes/rate-limits",
+          },
         ]
       },
       {
