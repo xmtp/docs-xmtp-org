@@ -1,6 +1,14 @@
 # Message types with XMTP
 
-This document outlines the key message types that developers encounter when building with XMTP, explaining their purpose and when they occur. XMTP inherits these message types from its implementation of [Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html)(MLS) to provide secure, end-to-end encrypted messaging.
+This document covers **protocol-level message types** (key package, welcome, commit, etc.) that are internal to the XMTP protocol's [Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html)(MLS) implementation. This information is primarily useful for:
+
+- Developers contributing to the XMTP protocol itself
+- Understanding XMTP internals and debugging
+- Reading XMTP Improvement Proposals (XIPs)
+
+The protocol-level message types described here are handled automatically by XMTP SDKs and rarely need direct interaction from app developers.
+
+For **app development**, you'll typically work with [content types](/inboxes/content-types/content-types) instead. Content types define how your app's messages are structured and encoded (text, attachments, reactions, etc.) and are what you'll use in your day-to-day development.
 
 ## Overview
 
