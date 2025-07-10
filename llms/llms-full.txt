@@ -651,6 +651,60 @@ These network calls include actions like:
 
 When you reach the rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
 
+### Handle stream failures
+
+All streaming methods accept a callback as the last argument that will be called when the stream fails. Use this callback to restart the stream.
+
+An example of how to use the callback to restart the stream:
+
+```tsx
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+
+let retries = MAX_RETRIES;
+
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+
+  console.log("Waiting for messages...");
+
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+
+await handleStream(client);
+```
+
 ### Follow security best practices
 
 For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond. 
@@ -662,6 +716,76 @@ Here are some security best practices:
 - **Never expose private keys**: Use environment variables.
 - **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
 - **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
+
+## Manage agent installations
+
+With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
+
+When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
+
+For example, consider deploying your agent to these platforms:
+- Local development: Creates an installation
+- Railway: Creates another installation
+- Production server: Creates another installation
+
+Your agent can have up to 5 active installations before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
+
+For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
+- Local development: `local` network
+- Railway: `dev` network  
+- Production server: `production` network
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png" width="500px" />
+</div>
+
+If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
+- Local development: `production` network
+- Railway: `production` network
+- Production server: `production` network
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png" width="500px" />
+</div>
+
+Here are some best practices for agent installation management:
+
+- Configure your deployments to preserve the agent's database
+- Consider how many platforms you'll need before hitting the 5-installation limit
+- Keep track of which installation corresponds to which platform
+- Regularly [check how many installations your agent has](#test-and-debug-an-agent)
+- [Revoke installations](#revoke-agent-installations) from platforms you no longer use
+
+### Common agent installation scenarios
+
+#### Deploy to a new platform
+
+When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
+- Your agent creates a new installation for the new platform
+- If you already have 5 installations, you'll need to [revoke one first](#revoke-agent-installations)
+- The new installation will start fresh without conversation history
+
+#### Update an existing deployment
+
+When you redeploy your agent to the same platform:
+- If the platform preserves the database, the same installation continues working
+- If the platform doesn't preserve the database, a new installation is created
+
+### Revoke agent installations
+
+:::warning[Important]
+
+Revoking an installation is permanent. You cannot recover access to a revoked installation.
+
+:::
+
+When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database.
+
+Your agent can still run from any active installations on other deployment platforms.
+
+You can [revoke specific installations](/inboxes/manage-inboxes#revoke-a-specific-installation) and even [revoke an installation you can't log into](/inboxes/manage-inboxes#revoke-installations-for-a-user-who-cant-log-in).
+
+To learn more, see [Manage XMTP inboxes, identities, and installations](/inboxes/manage-inboxes).
 
 ## Test and debug an agent
 
@@ -774,6 +898,8 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 ### Example Railway deployment
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
+```
 
 
 ## pages/inboxes/sync-and-syncall.mdx
@@ -1038,15 +1164,29 @@ type ClientOptions = {
    * historySyncUrl can be used to override the `env` flag and connect to a
    * specific endpoint for syncing history
    */
-  historySyncUrl?: string;
+  historySyncUrl?: string | null;
   /**
    * Allow configuring codecs for additional content types
    */
   codecs?: ContentCodec[];
   /**
    * Path to the local DB
+   *
+   * There are 3 value types that can be used to specify the database path:
+   *
+   * - `undefined` (or excluded from the client options)
+   *    The database will be created in the current working directory and is based on
+   *    the XMTP environment and client inbox ID.
+   *    Example: `xmtp-dev-<inbox-id>.db3`
+   *
+   * - `null`
+   *    No database will be created and all data will be lost once the client disconnects.
+   *
+   * - `string`
+   *    The given path will be used to create the database.
+   *    Example: `./my-db.db3`
    */
-  dbPath?: string;
+  dbPath?: string | null;
   /**
    * Encryption key for the local DB
    */
@@ -1067,12 +1207,17 @@ type ClientOptions = {
    * Disable automatic registration when creating a client
    */
   disableAutoRegister?: boolean;
+  /**
+   * Disable device sync
+   */
+  disableDeviceSync?: boolean;
 };
 
 ```
 
 ```tsx [Node]
 import type { ContentCodec } from "@xmtp/content-type-primitives";
+import type { LogLevel } from "@xmtp/node-bindings";
 
 type ClientOptions = {
   /**
@@ -1088,11 +1233,25 @@ type ClientOptions = {
    * historySyncUrl can be used to override the `env` flag and connect to a
    * specific endpoint for syncing history
    */
-  historySyncUrl?: string;
+  historySyncUrl?: string | null;
   /**
    * Path to the local DB
+   *
+   * There are 3 value types that can be used to specify the database path:
+   *
+   * - `undefined` (or excluded from the client options)
+   *    The database will be created in the current working directory and is based on
+   *    the XMTP environment and client inbox ID.
+   *    Example: `xmtp-dev-<inbox-id>.db3`
+   *
+   * - `null`
+   *    No database will be created and all data will be lost once the client disconnects.
+   *
+   * - `string`
+   *    The given path will be used to create the database.
+   *    Example: `./my-db.db3`
    */
-  dbPath?: string;
+  dbPath?: string | null;
   /**
    * Encryption key for the local DB
    */
@@ -1113,6 +1272,10 @@ type ClientOptions = {
    * Disable automatic registration when creating a client
    */
   disableAutoRegister?: boolean;
+  /**
+   * Disable device sync
+   */
+  disableDeviceSync?: boolean;
 };
 ```
 
@@ -1515,7 +1678,7 @@ const accountIdentifier: Identifier = {
 
 const signer: Signer = {
   type: "EOA",
-  getIdentity: () => accountIdentifier,
+  getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
     // this string must be converted to bytes and returned in this function
@@ -1647,7 +1810,7 @@ const accountIdentifier: Identifier = {
 
 const signer: Signer = {
   type: "SCW",
-  getIdentity: () => accountIdentifier,
+  getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
     // this string must be converted to bytes and returned in this function
@@ -2407,22 +2570,22 @@ By default, `list` returns only conversations with a [consent state](/inboxes/us
 
 We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
 
-To list all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+To list all conversations regardless of consent state, use the `consentStates` option and pass all three consent states.
 
 Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
 
 :::code-group
 
 ```js [Browser]
-const allConversations = await client.conversations.list(["allowed"]);
-const allGroups = await client.conversations.listGroups(["allowed"]);
-const allDms = await client.conversations.listDms(["allowed"]);
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list(["allowed"]);
-const allGroups = await client.conversations.listGroups(["allowed"]);
-const allDms = await client.conversations.listDms(["allowed"]);
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 ```
 
 ```tsx [React Native]
@@ -3503,13 +3666,22 @@ try await group.updateImageUrl(imageUrl: "newurl.com")
 
 
 ## pages/inboxes/manage-inboxes.mdx
-# Manage XMTP inboxes and installations
+# Manage XMTP inboxes, identities, and installations
 
-With XMTP, a user can have one or more inboxes they use to access their messages. An inbox can have multiple identities associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
+With XMTP, a user can have one or more **inboxes** they use to access their messages. An inbox ID is a stable identifier for a user's messaging identity and is used as the destination for messages in direct message and group conversations. It is derived from the public key material in their key package.
+
+An inbox can have multiple **identities** associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
 
 All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
 
-The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and installation ID associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity. 
+The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and **installation** associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity.
+
+:::tip[Note for agent developers]
+
+The installation concepts described in this document apply to both inbox apps and agents. However, the context differs. **Inbox apps** typically have installations across different devices and apps (phone, laptop, different XMTP apps), while **agents** typically have installations across different deployment environments (local development, Railway, production servers).
+
+For more agent-specific guidance, see [Manage agent installations](/agents/build-an-agent#manage-agent-installations).
+:::
 
 The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
 
@@ -3685,7 +3857,7 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -3694,11 +3866,12 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
+  enableLogging: true, // optional, defaults to false
 );
 ```
 
 ```tsx [Node]
-const inboxStates = Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -4235,17 +4408,27 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
+import { Client, type Identifier } from "@xmtp/browser-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: "Ethereum" },
+  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```js [Node]
-import { Client } from "@xmtp/node-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```tsx [React Native]
