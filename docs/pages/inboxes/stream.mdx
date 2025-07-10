@@ -140,49 +140,19 @@ Need this code sample
 ```
 
 ```kotlin [Kotlin]
-val MAX_RETRIES = 5
-// wait 5 seconds before each retry
-val RETRY_INTERVAL = 5000L
+    private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
+    val messages: StateFlow<List<DecodedMessage>> = _messages.asStateFlow()
 
-var retries = MAX_RETRIES
-
-fun retry() {
-    println("Retrying in ${RETRY_INTERVAL / 1000}s, $retries retries left")
-    if (retries > 0) {
-        retries--
-        Handler(Looper.getMainLooper()).postDelayed({
-            handleStream(client)
-        }, RETRY_INTERVAL)
-    } else {
-        println("Max retries reached, ending process")
-        System.exit(1)
-    }
-}
-
-val onClose = {
-    println("Stream failed")
-    retry()
-}
-
-suspend fun handleStream(client: Client) {
-    println("Syncing conversations...")
-    client.conversations.sync()
-
-    client.conversations.streamAllMessages(
-        type = StreamType.ALL,
-        consentStates = listOf(ConsentState.ALLOWED),
-        onClose = onClose
-    ).collect { message ->
-        // Process message
-        println("Received message: $message")
-    }
-
-    println("Waiting for messages...")
-}
-
-// Launch in a coroutine
-lifecycleScope.launch {
-    handleStream(client)
+    fun startMessageStream() {
+        viewModelScope.launch {
+            streamMessages(onClose = {
+                Log.d("XMTP ViewModel", "Message stream closed.")
+            }).collect { decodedMessage ->
+                _messages.update { current ->
+                    current + decodedMessage
+                }
+            }
+        }
 }
 ```
 
