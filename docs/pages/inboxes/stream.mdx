@@ -1,4 +1,6 @@
-# Stream new group chat and DM messages and preference updates
+# Stream messages and preference updates
+
+## Stream new group chat and DM messages and preference updates
 
 This function listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
 
@@ -71,6 +73,165 @@ alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, cons
 for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
   // Received a message
 }
+```
+
+:::
+
+## Handle stream failures
+
+All streaming methods accept a callback as the last argument that will be called when the stream fails. Use this callback to restart the stream.
+
+:::code-group
+
+```tsx [Browser]
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+ 
+let retries = MAX_RETRIES;
+ 
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+ 
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+ 
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+ 
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+ 
+  console.log("Waiting for messages...");
+ 
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+ 
+await handleStream(client);
+```
+
+```tsx [Node]
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+ 
+let retries = MAX_RETRIES;
+ 
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+ 
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+ 
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+ 
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+ 
+  console.log("Waiting for messages...");
+ 
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+ 
+await handleStream(client);
+```
+
+```tsx [React Native]
+Need this code sample
+```
+
+```kotlin [Kotlin]
+val MAX_RETRIES = 5
+// wait 5 seconds before each retry
+val RETRY_INTERVAL = 5000L
+
+var retries = MAX_RETRIES
+
+fun retry() {
+    println("Retrying in ${RETRY_INTERVAL / 1000}s, $retries retries left")
+    if (retries > 0) {
+        retries--
+        Handler(Looper.getMainLooper()).postDelayed({
+            handleStream(client)
+        }, RETRY_INTERVAL)
+    } else {
+        println("Max retries reached, ending process")
+        System.exit(1)
+    }
+}
+
+val onClose = {
+    println("Stream failed")
+    retry()
+}
+
+suspend fun handleStream(client: Client) {
+    println("Syncing conversations...")
+    client.conversations.sync()
+
+    client.conversations.streamAllMessages(
+        type = StreamType.ALL,
+        consentStates = listOf(ConsentState.ALLOWED),
+        onClose = onClose
+    ).collect { message ->
+        // Process message
+        println("Received message: $message")
+    }
+
+    println("Waiting for messages...")
+}
+
+// Launch in a coroutine
+lifecycleScope.launch {
+    handleStream(client)
+}
+```
+
+```swift [Swift]
+Need this code sample
 ```
 
 :::
