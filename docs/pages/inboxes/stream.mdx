@@ -157,48 +157,30 @@ Need this code sample
 ```
 
 ```swift [Swift]
-let MAX_RETRIES = 5
-// wait 5 seconds before each retry
-let RETRY_INTERVAL: TimeInterval = 5.0
+    @Published private(set) var messages: [DecodedMessage] = []
 
-var retries = MAX_RETRIES
+    private var streamTask: Task<Void, Never>? = nil
 
-func retry() {
-    print("Retrying in \(RETRY_INTERVAL)s, \(retries) retries left.")
-    if retries > 0 {
-        retries -= 1
-        DispatchQueue.main.asyncAfter(deadline: .now() + RETRY_INTERVAL) {
-            handleStream(client: client)
+    func startMessageStream(from conversation: XMTPConversation) {
+        streamTask?.cancel()
+
+        streamTask = Task {
+            do {
+                for try await message in conversation.streamMessages(onClose: {
+                    print("XMTP ViewModel: Message stream closed.")
+                }) {
+                    messages.append(message)
+                }
+            } catch {
+                print("XMTP ViewModel: Stream failed with error \(error)")
+            }
         }
-    } else {
-        print("Max retries reached, ending process.")
-        exit(1)
     }
-}
 
-let onClose = {
-    print("Stream failed.")
-    retry()
-}
-
-func handleStream(client: Client) async {
-    print("Syncing conversations...")
-    await client.conversations.sync()
-    
-    print("Waiting for messages...")
-    
-    do {
-        for await message in try await client.conversations.streamAllMessages(
-            type: .all,
-            consentStates: [.allowed],
-            onClose: onClose
-        ) {
-            // Process message
-            print("Received message: \(message)")
-        }
-    } catch {
-        print("Stream error: \(error)")
-        onClose()
+    func stopMessageStream() {
+        streamTask?.cancel()
+        streamTask = nil
+    }
 ```
 
 :::
