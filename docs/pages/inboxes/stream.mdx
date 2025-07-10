@@ -229,13 +229,6 @@ func handleStream(client: Client) async {
     } catch {
         print("Stream error: \(error)")
         onClose()
-    }
-}
-
-// Start the stream
-Task {
-    await handleStream(client: client)
-}
 ```
 
 :::
