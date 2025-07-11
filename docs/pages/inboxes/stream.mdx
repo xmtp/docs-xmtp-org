@@ -136,7 +136,18 @@ Not yet available
 ```
 
 ```tsx [React Native]
-Need this code sample
+const [messages, setMessages] = useState<DecodedMessage[]>([]);
+
+const startMessageStream = async () => {
+  await client.conversations.streamAllMessages(
+    async (message: DecodedMessage<any>) => {
+      setMessages(prev => [...prev, message]);
+    },
+    'all',
+    ['allowed'],
+    () => console.log("Message stream closed.")
+  );
+};
 ```
 
 ```kotlin [Kotlin]
