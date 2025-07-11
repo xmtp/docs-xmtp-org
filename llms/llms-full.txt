@@ -121,7 +121,7 @@ const signer: Signer = {
 };
 ```
 
-### Before: newConveration()
+### Before: newConversation()
 
 Previously, developers used an Ethereum address to create a new DM conversation:
 
@@ -129,7 +129,7 @@ Previously, developers used an Ethereum address to create a new DM conversation:
 const dm = await alix.conversations.findOrCreateDm(bo.address);
 ```
 
-### After: newConveration()
+### After: newConversation()
 
 Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
 
@@ -324,7 +324,7 @@ const signer: Signer = {
 };
 ```
 
-### Before: newConveration()
+### Before: newConversation()
 
 Previously, developers used an Ethereum address to create a new DM conversation:
 
@@ -332,7 +332,7 @@ Previously, developers used an Ethereum address to create a new DM conversation:
 const dm = await alix.conversations.findOrCreateDm(bo.address);
 ```
 
-### After: newConveration()
+### After: newConversation()
 
 Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
 
@@ -1887,7 +1887,64 @@ public struct SCWallet: SigningKey {
 
 
 ## pages/inboxes/stream.mdx
-# Stream new group chat and DM messages and preference updates
+# Stream conversations, messages, and preference updates
+
+## Stream new group chat and DM conversations
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/inboxes/create-conversations#conversation-helper-methods). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.stream();
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream new group chat and DM messages and preference updates
 
 This function listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
 
@@ -2646,204 +2703,6 @@ The `isActive()` method determines whether the current user is still an active m
 - When a user is removed from a group, `isActive()` returns `false` for that user
 
 You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
-
-## Stream all group chats and DMs
-
-Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#conversationcontainer-interface). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
-
-:::code-group
-
-```js [Browser]
-const stream = await client.conversations.stream();
-
-try {
-  for await (const conversation of stream) {
-    // Received a conversation
-    console.log("New conversation:", conversation);
-  }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
-}
-```
-
-```js [Node]
-const stream = await client.conversations.stream();
-// to stream only groups, use `client.conversations.streamGroups()`
-// to stream only dms, use `client.conversations.streamDms()`
-
-try {
-  for await (const conversation of stream) {
-    // Received a conversation
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
-}
-```
-
-```tsx [React Native]
-await alix.conversations.stream(async (conversation: Conversation<any>) => {
-  // Received a conversation
-});
-```
-
-```kotlin [Kotlin]
-alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
-  // Received a conversation
-}
-```
-
-```swift [Swift]
-for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
-  // Received a conversation
-}
-```
-
-:::
-
-## Stream all group chat and DM messages and preferences
-
-Listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
-
-Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
-
-By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
-
-We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
-
-To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
-
-:::warning[Important]
-
-The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
-
-:::
-
-:::code-group
-
-```js [Browser]
-const stream = await client.conversations.streamAllMessages(["allowed"]);
- 
-try {
-  for await (const message of stream) {
-    // Received a message
-    console.log("New message:", message);
-  }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
-}
-```
-
-```js [Node]
-// stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages(["allowed"]);
- 
-// stream only group messages
-const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
- 
-// stream only dm messages
-const stream = await client.conversations.streamAllDmMessages(["allowed"]);
- 
-try {
-  for await (const message of stream) {
-    // Received a message
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
-}
-```
-
-```tsx [React Native]
-await alix.conversations.streamAllMessages(
-  async (message: DecodedMessage<any>) => {
-    // Received a message
-  },
-  { consentState: ["allowed"] }
-);
-```
-
-```kotlin [Kotlin]
-alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
-  // Received a message
-}
-```
-
-```swift [Swift]
-for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
-  // Received a message
-}
-```
-
-:::
-
-## Handle unsupported content types
-
-As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
-
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
-
-:::code-group
-
-```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-:::
 
 
 ## pages/inboxes/group-permissions.mdx
@@ -3711,7 +3570,7 @@ You can enable a user to remove an identity from their inbox. You cannot remove 
 
 This video provides a walkthrough of the idea behind the XMTP installation limit (5) and how to use [static installation revocation](#revoke-installations-for-a-user-who-cant-log-in). After watching, feel free to continue reading for more details.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/66bHc_MBQKo?si=5ZuqFBrQm885ILSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/66bHc_MBQKo?si=5ZuqFBrQm885ILSk" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
 An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
@@ -8313,7 +8172,7 @@ A purple pin indicates that the node is operated by a non-profit organization.
 
 A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
 
-To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/decentralizing-xmtp).
+To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp).
 
 ## Interested in becoming a registered XMTP node operator?
 
@@ -8349,7 +8208,7 @@ The testnet of the decentralized XMTP network includes two distributed systems:
 - The XMTP broadcast network
 - The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralizing-xmtp).
+To learn more, see [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp).
 
 The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
 
