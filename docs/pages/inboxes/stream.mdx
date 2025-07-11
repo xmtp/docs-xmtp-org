@@ -1,4 +1,61 @@
-# Stream new group chat and DM messages and preference updates
+# Stream conversations, messages, and preference updates
+
+## Stream new group chat and DM conversations
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/inboxes/create-conversations#conversation-helper-methods). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.stream();
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream new group chat and DM messages and preference updates
 
 This function listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
 
