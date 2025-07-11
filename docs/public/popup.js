@@ -1,4 +1,12 @@
 function shouldShowPopup() {
+  // Testing mode - uncomment the line below to force popup to show immediately
+  // localStorage.setItem("testingMode", "true");
+  
+  // Check if testing mode is enabled
+  if (localStorage.getItem("testingMode") === "true") {
+    return true;
+  }
+
   if (localStorage.getItem("popupDismissed") === "true") return false;
 
   const now = Date.now();
@@ -45,9 +53,9 @@ function createPopup() {
         color: #888;
         cursor: pointer;
       ">×</button>
-      <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">Got feedback?</h3>
+      <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">📣 Got feedback?</h3>
       <p style="margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.4;">
-        We'd love to hear what you think about these docs.
+        Help us improve the XMTP docs—get a $50 gift card.
       </p>
       <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
         <button id="popup-dismiss" style="
