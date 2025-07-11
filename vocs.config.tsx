@@ -273,6 +273,10 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
+          text: "Envelope types",
+          link: "/protocol/envelope-types",
+        },
+        {
           text: "Security",
           link: "/protocol/security",
         },
