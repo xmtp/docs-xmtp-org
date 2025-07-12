@@ -44,6 +44,8 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 
 7. [Manage identities, inboxes, and installations](/inboxes/manage-inboxes).
 
+8. Be sure to [observe rate limits](/inboxes/rate-limits).
+
 ## 📩 Phase III: Manage conversations and messages
 
 1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.

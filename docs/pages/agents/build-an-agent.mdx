@@ -108,17 +108,9 @@ To learn more, see the example [good example for this?](#TODO) agent and [Suppor
 
 ### Observe rate limits
 
-XMTP enforces a rate limit of 10,000 calls to the network per client per a rolling 5-minute window.
+XMTP enforces separate rate limits for read and write operations per client.
 
-These network calls include actions like:
-
-- Sending chat messages
-- Adding and removing wallets
-- Adding and revoking installations
-- Adding and removing group members
-- Updating group metadata
-
-When you reach the rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+To learn more, see [Observe rate limits](/inboxes/rate-limits)
 
 ### Handle stream failures
 
