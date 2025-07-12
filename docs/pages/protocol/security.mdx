@@ -48,6 +48,14 @@ Ensures that messages can't be tampered with during transit and that messages ar
 
 XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
 
+## Quantum resistance
+
+Protects against future quantum computer attacks through post-quantum cryptography.
+
+XMTP implements quantum-resistant encryption to protect against "Harvest Now, Decrypt Later" (HNDL) attacks, where adversaries store encrypted messages until quantum computers become powerful enough to break current encryption. XMTP uses a hybrid approach that combines post-quantum algorithms with conventional cryptography, ensuring protection against future quantum threats without compromising current security.
+
+The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
+
 ## User anonymity
 
 Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
@@ -87,3 +95,7 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 - [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
 
     Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
+
+- [XWING KEM](https://github.com/cryspen/xwing)
+
+    Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
