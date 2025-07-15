@@ -9,7 +9,7 @@ This document is for you if you are upgrading from a legacy XMTP V2 SDK. Legacy 
 
 :::tip[Upgrading from a legacy XMTP V3 SDK?]
 
-Legacy XMTP V3 SDKs include Browser SDK v0.x.x-&lt;v1.1.4, Node SDK v0.x.x-&lt;v1.0.5, React Native SDK v3.x.x-&lt;v4.0.2, Android SDK v3.x.x-&lt;v4.0.3, and iOS SDK v3.x.x-&lt;v4.0.4. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V3 SDK](/upgrade-from-legacy-V3).
+Legacy XMTP V3 SDKs include Browser SDK v0.x.x-&lt;v2.0.11, Node SDK v0.x.x-&lt;v2.0.6, React Native SDK v3.x.x-&lt;v4.0.5, Android SDK v3.x.x-&lt;v4.0.5, and iOS SDK v3.x.x-&lt;v4.0.7. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V3 SDK](/upgrade-from-legacy-V3).
 
 :::
 
@@ -20,19 +20,19 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 :::info[Key takeaways]
 - **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
 - **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
-- ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 1, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
+- ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 23, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
 :::
 
 ## Upgrade to XMTP V3
 
 🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.2)
-- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.3)
-- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.4)
+- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.5)
+- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.5)
+- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
 
 🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.4** or **upgrade to an XMTP node SDK >=v1.0.5** following the detailed instructions in these release notes:
-- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%401.1.4)
-- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%401.0.5)
+- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%402.0.11)
+- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%402.0.6)
 - For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
 
 🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.
@@ -111,7 +111,7 @@ const signer: Signer = {
 };
 ```
 
-### Before: newConveration()
+### Before: newConversation()
 
 Previously, developers used an Ethereum address to create a new DM conversation:
 
@@ -119,7 +119,7 @@ Previously, developers used an Ethereum address to create a new DM conversation:
 const dm = await alix.conversations.findOrCreateDm(bo.address);
 ```
 
-### After: newConveration()
+### After: newConversation()
 
 Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
 

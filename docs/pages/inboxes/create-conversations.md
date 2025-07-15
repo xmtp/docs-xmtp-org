@@ -9,17 +9,27 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
+import { Client, type Identifier } from "@xmtp/browser-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: "Ethereum" },
+  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```js [Node]
-import { Client } from "@xmtp/node-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```tsx [React Native]
@@ -68,13 +78,13 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 
 :::
 
-:::tip
-Regarding how to handle identities that aren’t reachable, the XMTP V3.0.0 release notes will outline the next steps to ensure smooth onboarding for all participants.
-:::
-
 ## Create a new group chat
 
-Once you have the verified identities, create a new group chat:
+Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
+
+:::tip
+If you want to provide faster and offline group creation, consider using [optimistic group chat creation](#optimistically-create-a-group-chat) instead. This approach enables instant group creation and message preparation before adding members and even when offline.
+:::
 
 :::code-group
 
@@ -129,6 +139,89 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
 )
+```
+
+:::
+
+## Optimistically create a new group chat
+
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
+
+Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
+
+The group chat can be created with any number of [standard options](/inboxes/group-metadata#updatable-group-chat-metadata), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
+
+You can prepare messages for the optimistic group chat immediately using `prepareMessage()`. As with the group chat itself, these messages are stored locally only.
+
+When you want to add members, you use [`addMembers()`](/inboxes/group-permissions#add-members-by-inbox-id) with a list of inbox IDs.
+
+Adding a member will automatically sync the group chat to the network. Once synced, the group chat becomes visible to the added members and across other app installations.
+
+After adding members, you must explicitly call `publishMessages()` to send any prepared messages to the network.
+
+To learn more about optimistically sending messages using `prepareMessage()` and `publishMessages()`, see [Optimistically send messages](/inboxes/send-messages#optimistically-send-messages).
+
+:::code-group
+
+```tsx [Browser]
+// create optimistic group (stays local)
+const optimisticGroup = await alixClient.conversations.newGroupOptimistic();
+
+// send optimistic message (stays local)
+await optimisticGroup.sendOptimistic("gm");
+
+// later, sync the group by adding members
+await optimisticGroup.addMembers([boClient.inboxId]);
+// or publishing messages
+await optimisticGroup.publishMessages();
+```
+
+```ts [Node]
+// create optimistic group (stays local)
+const optimisticGroup = client.conversations.newGroupOptimistic();
+
+// send optimistic message (stays local)
+optimisticGroup.sendOptimistic("gm");
+
+// later, sync the group by adding members
+await optimisticGroup.addMembers([boClient.inboxId]);
+// or publishing messages
+await optimisticGroup.publishMessages();
+```
+
+```tsx [React Native]
+const optimisticGroup = await boClient.conversations.newGroupOptimistic();
+
+// Prepare a message (stays local)
+await optimisticGroup.prepareMessage("Hello group!");
+
+// Later, add members and sync
+await optimisticGroup.addMembers([alixClient.inboxId]); // also syncs group to the network
+await optimisticGroup.publishMessages(); // Publish prepared messages
+```
+
+```kotlin [Kotlin]
+// Create optimistic group (stays local)
+val optimisticGroup = boClient.conversations.newGroupOptimistic(groupName = "Testing")
+
+// Prepare a message (stays local)
+optimisticGroup.prepareMessage("Hello group!")
+
+// Later, add members and sync
+optimisticGroup.addMembers(listOf(alixClient.inboxId)) // also syncs group to the network
+optimisticGroup.publishMessages() // Publish prepared messages
+```
+
+```swift [Swift]
+// Create optimistic group (stays local)
+let optimisticGroup = try await boClient.conversations.newGroupOptimistic(groupName: "Testing")
+
+// Prepare a message (stays local)
+try await optimisticGroup.prepareMessage("Hello group!")
+
+// Later, add members and sync
+try await  optimisticGroup.addMembers([alixClient.inboxId]) // also syncs group to the network
+try await  optimisticGroup.publishMessages() // Publish prepared messages
 ```
 
 :::
