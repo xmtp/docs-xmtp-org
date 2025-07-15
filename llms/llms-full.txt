@@ -978,6 +978,14 @@ Ensures that messages can't be tampered with during transit and that messages ar
 
 XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
 
+## Quantum resistance
+
+Protects against future quantum computer attacks through post-quantum cryptography.
+
+XMTP implements quantum-resistant encryption to protect against "Harvest Now, Decrypt Later" (HNDL) attacks, where adversaries store encrypted messages until quantum computers become powerful enough to break current encryption. XMTP uses a hybrid approach that combines post-quantum algorithms with conventional cryptography, ensuring protection against future quantum threats without compromising current security.
+
+The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
+
 ## User anonymity
 
 Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
@@ -1017,6 +1025,10 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 - [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
 
     Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
+
+- [XWING KEM](https://github.com/cryspen/xwing)
+
+    Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
 
 
 ## pages/protocol/signatures.md
@@ -4270,6 +4282,125 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 
 :::
 
+## Handle stream failures
+
+All streaming methods accept a callback as the last argument that will be called when the stream closes. Use this callback to restart the stream.
+
+:::code-group
+
+```tsx [Node]
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+ 
+let retries = MAX_RETRIES;
+ 
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+ 
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+ 
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+ 
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+ 
+  console.log("Waiting for messages...");
+ 
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+ 
+await handleStream(client);
+```
+
+```tsx [Browser]
+Not yet available
+```
+
+```tsx [React Native]
+const [messages, setMessages] = useState<DecodedMessage[]>([]);
+
+const startMessageStream = async () => {
+  await client.conversations.streamAllMessages(
+    async (message: DecodedMessage<any>) => {
+      setMessages(prev => [...prev, message]);
+    },
+    'all',
+    ['allowed'],
+    () => console.log("Message stream closed.")
+  );
+};
+```
+
+```kotlin [Kotlin]
+    private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
+    val messages: StateFlow<List<DecodedMessage>> = _messages.asStateFlow()
+
+    fun startMessageStream() {
+        viewModelScope.launch {
+            streamMessages(onClose = {
+                Log.d("XMTP ViewModel", "Message stream closed.")
+            }).collect { decodedMessage ->
+                _messages.update { current ->
+                    current + decodedMessage
+                }
+            }
+        }
+}
+```
+
+```swift [Swift]
+    @Published private(set) var messages: [DecodedMessage] = []
+
+    private var streamTask: Task<Void, Never>? = nil
+
+    func startMessageStream(from conversation: XMTPConversation) {
+        streamTask?.cancel()
+
+        streamTask = Task {
+            do {
+                for try await message in conversation.streamMessages(onClose: {
+                    print("XMTP ViewModel: Message stream closed.")
+                }) {
+                    messages.append(message)
+                }
+            } catch {
+                print("XMTP ViewModel: Stream failed with error \(error)")
+            }
+        }
+    }
+
+    func stopMessageStream() {
+        streamTask?.cancel()
+        streamTask = nil
+    }
+```
+
+:::
+
 
 ## pages/inboxes/use-signatures.md
 # Use signatures with XMTP
@@ -4767,6 +4898,18 @@ try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRem
 ```
 
 :::
+
+## Select the identity to display
+
+When an inbox has multiple associated identities, the `identities` array is ordered by the `client_timestamp_ns` field, which sorts identities based on when they were added to the inbox, placing the earliest added identity first.
+
+This provides consistent display ordering and helps establish norms for which identity should be used for UI display purposes. 
+
+For UI display purposes, you can use the following logic to select the most appropriate identity:
+
+1. If there is only one identity in the `identities` array, use that as the display identity.
+2. If there are two identities, use the one that does not match the `recoveryIdentity`. The first non-recovery identifier in the array is typically the preferred identity for display.
+3. If there are more than two identities, the first non-recovery identity in the ordered array is typically the preferred idenity for display.
 
 ## FAQ
 
