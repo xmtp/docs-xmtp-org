@@ -1,6 +1,6 @@
 # Topics with XMTP
 
-This document describes the concept of **topics** on the XMTP network. Topics are used to address and route [envelopes](/protocol/envelope-types), forming the backbone of XMTP's pub/sub messaging system.
+This document describes the concept of **topics** on the XMTP network. Topics are used to address and route [envelopes](/protocol/envelope-types), forming the backbone of the XMTP pub/sub messaging system.
 
 While XMTP SDKs manage topic subscriptions automatically, understanding them can be helpful for protocol-level development, debugging, and building services like push notification servers.
 
@@ -11,7 +11,7 @@ XMTP topics follow a standardized format that indicates the protocol version, me
 `/xmtp/mls/1/{topic-type}-{identifier}/proto`
 
 - `/xmtp/mls/1/`: The protocol namespace, indicating XMTP with MLS, version 1.
-- `{topic-type}`: A single letter representing the purpose of the topic (e.g., `g` for group, `w` for welcome).
+- `{topic-type}`: A single letter representing the purpose of the topic (for example, `g` for group, `w` for welcome).
 - `{identifier}`: A unique ID for the specific conversation or installation.
 - `/proto`: The payload serialization format.
 

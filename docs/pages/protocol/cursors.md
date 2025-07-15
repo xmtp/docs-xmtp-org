@@ -26,7 +26,7 @@ This process ensures that each `sync()` call only retrieves what's new, making s
 A key characteristic of cursors is that they **only move forward** and **only when a `sync()` function is called**.
 
 - **You cannot re-fetch old messages**: Because the cursor never moves backward, an installation cannot use `sync()` to re-fetch messages it has already synchronized. The network will only return messages that are newer than the installation's current cursor. To get message history on a *new* device, you would use [History Sync](/inboxes/history-sync).
-- **Streaming does not move the cursor**: Receiving messages via a real-time `stream()` does not affect the cursor's position. This is intentional. Streaming provides messages as they arrive but doesn't guarantee their order or that none were missed (e.g., if the client was briefly offline). The `sync()` function acts as the authoritative way to get all messages in the correct order up to a certain point. Calling `sync()` after streaming ensures the local state is consistent and correctly ordered.
+- **Streaming does not move the cursor**: Receiving messages via a real-time `stream()` does not affect the cursor's position. This is intentional. Streaming provides messages as they arrive but doesn't guarantee their order or that none were missed (for example, if the client was briefly offline). The `sync()` function acts as the authoritative way to get all messages in the correct order up to a certain point. Calling `sync()` after streaming ensures the local state is consistent and correctly ordered.
 
 ## Cursors for different sync functions
 
