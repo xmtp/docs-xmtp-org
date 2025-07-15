@@ -132,9 +132,9 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 
 :::
 
-## Handle stream failures
+## Handle stream failures 
 
-All streaming methods accept a callback as the last argument that will be called when the stream closes. Use this callback to restart the stream.
+All streaming methods accept a callback as the last argument that will be called when the stream closes. Use this callback to restart the stream. 
 
 :::code-group
 
@@ -190,20 +190,20 @@ await handleStream(client);
 Not yet available
 ```
 
-```tsx [React Native]
-const [messages, setMessages] = useState<DecodedMessage[]>([]);
-
-const startMessageStream = async () => {
-  await client.conversations.streamAllMessages(
-    async (message: DecodedMessage<any>) => {
-      setMessages(prev => [...prev, message]);
-    },
-    'all',
-    ['allowed'],
-    () => console.log("Message stream closed.")
-  );
-};
-```
+```tsx [React Native] 
+const [messages, setMessages] = useState<DecodedMessage[]>([]); 
+ 
+const startMessageStream = async () => { 
+  await client.conversations.streamAllMessages( 
+    async (message: DecodedMessage<any>) => { 
+      setMessages(prev => [...prev, message]); 
+    }, 
+    'all', 
+    ['allowed'], 
+    () => console.log("Message stream closed.") 
+  ); 
+}; 
+``` 
 
 ```kotlin [Kotlin]
     private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
