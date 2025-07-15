@@ -277,6 +277,14 @@ export default defineConfig({
           link: "/protocol/envelope-types",
         },
         {
+          text: "Topics",
+          link: "/protocol/topics",
+        },
+        {
+          text: "Cursors",
+          link: "/protocol/cursors",
+        },
+        {
           text: "Security",
           link: "/protocol/security",
         },
