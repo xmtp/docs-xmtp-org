@@ -1,0 +1,17 @@
+    sequenceDiagram
+        participant Client
+        participant Network
+
+        Note over Client,Network: Initial Sync
+        Client->>Network: conversation.sync() - Fetch all from start
+        Network-->>Client: Msg1, Msg2, Msg3
+        Client->>Client: Set cursor after Msg3
+
+        Note over Client,Network: New messages arrive (e.g., via stream)
+        Network-->>Client: (Stream) New MsgA, New MsgB
+        Note over Client: Cursor unchanged
+
+        Note over Client,Network: Subsequent Sync
+        Client->>Network: conversation.sync() - Fetch from cursor (after Msg3)
+        Network-->>Client: New MsgA, New MsgB
+        Client->>Client: Advance cursor after New MsgB
