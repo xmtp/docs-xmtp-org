@@ -6,7 +6,9 @@ To prevent a poor user experience or app crashes, you should use the `fallback` 
 
 **For sending:** When sending a message with a custom content type, always provide a `fallback` string. This string offers a human-readable representation of the content. If the recipient's app doesn't support your custom type, it can display the `fallback` text instead. To learn more, see [Build custom content types](/inboxes/content-types/custom).
 
-**For receiving:** When your app receives a message, check if it supports the message's `contentType`. If not, display the `fallback` text. The code examples below show how to implement this check. Note that for some content types, such as read receipts, the `fallback` may be `undefined`, indicating the content is not meant to be rendered.
+**For receiving:** When your app receives a message, check if it supports the message's `contentType`. If not, render the `fallback` text.
+
+However, some content types, especially those not meant for display (like read receipts), won't have a `fallback`. In these `undefined` cases, you should generally ignore the message entirely. Displaying a generic "unsupported content" message for every silent background event would create a poor user experience and clutter the chat. The code examples below show how to handle both scenarios.
 
 :::code-group
 
