@@ -193,16 +193,23 @@ Not yet available
 ```tsx [React Native] 
 const [messages, setMessages] = useState<DecodedMessage[]>([]); 
  
-const startMessageStream = async () => { 
-  await client.conversations.streamAllMessages( 
-    async (message: DecodedMessage<any>) => { 
-      setMessages(prev => [...prev, message]); 
-    }, 
-    'all', 
-    ['allowed'], 
-    () => console.log("Message stream closed.") 
-  ); 
-}; 
+  const messageCallback = async (message: DecodedMessage<any>) => { 
+    setMessages(prev => [...prev, message]); 
+  }
+  const conversationFilterType: ConversationFilterType = 'all'
+  const consentStates: ConsentState[] = ['allowed']
+  const onCloseCallback = () => {
+    console.log("Message stream closed, handle retries here")
+  }
+
+  const startMessageStream = async () => { 
+    await alix.conversations.streamAllMessages( 
+      messageCallback, 
+      conversationFilterType, 
+      consentStates, 
+      onCloseCallback 
+    ); 
+  };
 ``` 
 
 ```kotlin [Kotlin]
