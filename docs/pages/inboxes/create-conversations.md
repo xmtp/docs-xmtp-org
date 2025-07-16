@@ -9,17 +9,27 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client } from "@xmtp/browser-sdk";
+import { Client, type Identifier } from "@xmtp/browser-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: "Ethereum" },
+  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```js [Node]
-import { Client } from "@xmtp/node-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
 
-// response is a Map of string (identity) => boolean (is reachable)
-const response = await Client.canMessage([bo.identity, caro.identity]);
+const identifiers: Identifier[] = [
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
+];
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await Client.canMessage(identifiers);
 ```
 
 ```tsx [React Native]
@@ -70,7 +80,7 @@ let canMessage = try await client.canMessage([boIdentity, v2OnlyIdentity, badIde
 
 ## Create a new group chat
 
-Once you have the verified identities, create a new group chat. The maximum group chat size is 220 members.
+Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
 
 :::tip
 If you want to provide faster and offline group creation, consider using [optimistic group chat creation](#optimistically-create-a-group-chat) instead. This approach enables instant group creation and message preparation before adding members and even when offline.

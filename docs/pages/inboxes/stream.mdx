@@ -1,0 +1,259 @@
+# Stream conversations, messages, and preference updates
+
+## Stream new group chat and DM conversations
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/inboxes/create-conversations#conversation-helper-methods). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.stream();
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+const stream = await client.conversations.stream();
+// to stream only groups, use `client.conversations.streamGroups()`
+// to stream only dms, use `client.conversations.streamDms()`
+
+try {
+  for await (const conversation of stream) {
+    // Received a conversation
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream new group chat and DM messages and preference updates
+
+This function listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
+
+Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
+try {
+  for await (const message of stream) {
+    // Received a message
+    console.log("New message:", message);
+  }
+} catch (error) {
+  // Log any stream errors
+  console.error(error);
+}
+```
+
+```js [Node]
+// stream all messages from all conversations
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+ 
+// stream only group messages
+const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
+ 
+// stream only dm messages
+const stream = await client.conversations.streamAllDmMessages(["allowed"]);
+ 
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  // log any stream errors
+  console.error(error);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ["allowed"] }
+);
+```
+
+```kotlin [Kotlin]
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
+  // Received a message
+}
+```
+
+```swift [Swift]
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+  // Received a message
+}
+```
+
+:::
+
+## Handle stream failures
+
+All streaming methods accept a callback as the last argument that will be called when the stream closes. Use this callback to restart the stream.
+
+:::code-group
+
+```tsx [Node]
+const MAX_RETRIES = 5;
+// wait 5 seconds before each retry
+const RETRY_INTERVAL = 5000;
+ 
+let retries = MAX_RETRIES;
+ 
+const retry = () => {
+  console.log(
+    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
+  );
+  if (retries > 0) {
+    retries--;
+    setTimeout(() => {
+      handleStream(client);
+    }, RETRY_INTERVAL);
+  } else {
+    console.log("Max retries reached, ending process");
+    process.exit(1);
+  }
+};
+ 
+const onFail = () => {
+  console.log("Stream failed");
+  retry();
+};
+ 
+const handleStream = async (client) => {
+  console.log("Syncing conversations...");
+  await client.conversations.sync();
+ 
+  const stream = await client.conversations.streamAllMessages(
+    onMessage,
+    undefined,
+    undefined,
+    onFail,
+  );
+ 
+  console.log("Waiting for messages...");
+ 
+  for await (const message of stream) {
+    // process streammessage
+  }
+};
+ 
+await handleStream(client);
+```
+
+```tsx [Browser]
+Not yet available
+```
+
+```tsx [React Native]
+const [messages, setMessages] = useState<DecodedMessage[]>([]); 
+ 
+  const messageCallback = async (message: DecodedMessage<any>) => { 
+    setMessages(prev => [...prev, message]); 
+  }
+  const conversationFilterType: ConversationFilterType = 'all'
+  const consentStates: ConsentState[] = ['allowed']
+  const onCloseCallback = () => {
+    console.log("Message stream closed, handle retries here")
+  }
+
+  const startMessageStream = async () => { 
+    await alix.conversations.streamAllMessages( 
+      messageCallback, 
+      conversationFilterType, 
+      consentStates, 
+      onCloseCallback 
+    ); 
+  };
+``` 
+
+```kotlin [Kotlin]
+    private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
+    val messages: StateFlow<List<DecodedMessage>> = _messages.asStateFlow()
+
+    fun startMessageStream() {
+        viewModelScope.launch {
+            streamMessages(onClose = {
+                Log.d("XMTP ViewModel", "Message stream closed.")
+            }).collect { decodedMessage ->
+                _messages.update { current ->
+                    current + decodedMessage
+                }
+            }
+        }
+}
+```
+
+```swift [Swift]
+    @Published private(set) var messages: [DecodedMessage] = []
+
+    private var streamTask: Task<Void, Never>? = nil
+
+    func startMessageStream(from conversation: XMTPConversation) {
+        streamTask?.cancel()
+
+        streamTask = Task {
+            do {
+                for try await message in conversation.streamMessages(onClose: {
+                    print("XMTP ViewModel: Message stream closed.")
+                }) {
+                    messages.append(message)
+                }
+            } catch {
+                print("XMTP ViewModel: Stream failed with error \(error)")
+            }
+        }
+    }
+
+    func stopMessageStream() {
+        streamTask?.cancel()
+        streamTask = nil
+    }
+```
+
+:::

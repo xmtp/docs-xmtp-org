@@ -10,7 +10,7 @@ To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_d
 
 ## Forked group debugging tool
 
-:::tip[Preventing forks is XMTP’s responsibility]
+:::tip[Preventing forks is XMTP's responsibility]
 
 This tool helps you identify potential forked groups in your app, but preventing forks in the first place is XMTP's responsibility. This diagnostic tool is just a temporary aid, not a shift in responsibility to your app.
 
@@ -59,11 +59,14 @@ For an example UI implementation, see PR to [add new persistent log debug menu o
 
 You can use these statistics to see which and how many API, identity, and streaming calls are going across the network, which can help you better manage network usage and debug potential rate limiting issues.
 
-A client has a function called `client.debugInformation` These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
+These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
 
 ### Get aggregated statistics
 
-Use the `client.debugInformation.aggregateStatistics` function to return these aggregated statistics.
+To return aggregated statistics, run:
+
+- For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For React Native SDK: `client.debugInformation.aggregateStatistics`
 
 ```text
 Aggregate Stats:
@@ -86,7 +89,37 @@ SubscribeWelcomes       0
 
 ### Get an individual statistic
 
-You can return an individual statistic as a number. For example, you can run `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeypackage` only.
+To return an individual statistic as a number, run:
+
+- For Browser, Node, iOS, and Android SDKs: 
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For React Native SDK:
+  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
+
+### Clear statistics
+
+To clear all API, identity, and stream statistics and set them to zero, run `client.debugInformation.clearAllStatistics()`.
+
+This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
+
+### Upload an archive of network statistics
+
+With the Browser and Node SDKs, you can upload an archive of collected network statistics.
+
+```tsx [TypeScript]
+// Upload to default server (no serverUrl needed)
+const result1 = await client.debugInformation.uploadDebugArchive();
+
+// Upload to custom server (serverUrl provided)
+const result2 = await client.debugInformation.uploadDebugArchive(
+  "https://my-debug-server.com/api/upload"
+);
+```
 
 ### Statistic descriptions
 

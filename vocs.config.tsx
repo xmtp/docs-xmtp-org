@@ -12,6 +12,10 @@ export default defineConfig({
           data-domain="docs.xmtp.org"
           defer
         />
+        <script
+          src="/popup.js"
+          async
+        />
       </>
     );
   },
@@ -24,8 +28,8 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
+    { text: "XMTP status", link: "https://status.xmtp.org/" },
     { text: "XMTP.chat", link: "https://xmtp.chat/" },
-    { text: "Dev support", link: "https://github.com/xmtp" },
     { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
@@ -41,21 +45,7 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "Upgrade to a stable XMTP V3 SDK",
-      collapsed: false,
-      items: [
-        {
-          text: "From a legacy XMTP V2 SDK",
-          link: "/upgrade-from-legacy-V2",
-        },
-        {
-          text: "From a legacy XMTP V3 SDK",
-          link: "/upgrade-from-legacy-V3",
-        },
-      ],
-    },
-    {
-      text: "Intro",
+      text: "Intro to XMTP",
       collapsed: false,
       items: [
         {
@@ -63,8 +53,8 @@ export default defineConfig({
           link: "/intro/intro",
         },
         {
-          text: "XMTP Improvement Proposals",
-          link: "/intro/xips",
+          text: "Upcoming releases ↗",
+          link: "https://ephemerahq.notion.site/upcoming-xmtp-releases",
         },
         {
           text: "FAQ",
@@ -74,40 +64,84 @@ export default defineConfig({
           text: "Build with LLMs",
           link: "/intro/build-with-llms",
         },
+        {
+          text: "Dev support",
+          link: "/intro/dev-support",
+        },
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/intro/xips",
+        },
       ],
     },
     {
-      text: "Build chat inboxes",
+      text: "Quickstart: Build a chat inbox 📥",
+      link: "/inboxes/quickstart",
+      items: [],
+    },
+    {
+      text: "Tutorial: Build an agent 🤖",
+      link: "/agents/build-an-agent",
+      items: [],
+    },
+    {
+      text: "Build core messaging",
       collapsed: false,
       items: [
-        {
-          text: "Pick an SDK",
-          link: "/inboxes/pick-an-sdk",
-        },
-        {
-          text: "Create an EOA or SCW signer",
-          link: "/inboxes/create-a-signer",
-        },
-        {
-          text: "Create a client",
-          link: "/inboxes/create-a-client",
-        },
-        {
-          text: "Create conversations",
-          link: "/inboxes/create-conversations",
-        },
-        {
-          text: "Send messages",
-          link: "/inboxes/send-messages",
-        },
-        {
-          text: "List and stream",
-          link: "/inboxes/list-and-stream",
-        },
-    {
-          text: "Sync",
-          collapsed: true,
-          items: [
+          {
+            text: "Pick an SDK",
+            link: "/inboxes/pick-an-sdk",
+          },
+          {
+            text: "Create an EOA or SCW signer",
+            link: "/inboxes/create-a-signer",
+          },
+          {
+            text: "Create a client",
+            link: "/inboxes/create-a-client",
+          },
+          {
+            text: "Create conversations",
+            link: "/inboxes/create-conversations",
+          },
+          {
+            text: "Send messages",
+            link: "/inboxes/send-messages",
+          },
+          {
+            text: "Manage group permissions",
+            link: "/inboxes/group-permissions",
+          },
+          {
+            text: "Manage group metadata",
+            link: "/inboxes/group-metadata",
+          },
+          {
+            text: "Support group invite links",
+            link: "/inboxes/support-group-invite-links",
+          },
+          {
+            text: "Manage inboxes, IDs, and installations",
+            link: "/inboxes/manage-inboxes",
+          },
+          {
+            text: "Observe rate limits",
+            link: "/inboxes/rate-limits",
+          },
+        ]
+      },
+      {
+        text: "List, stream, and sync",
+        collapsed: false,
+        items: [
+            {
+              text: "List conversations",
+              link: "/inboxes/list",
+            },
+            {
+              text: "Stream messages and preferences",
+              link: "/inboxes/stream",
+            },
             {
               text: "Sync conversations and messages",
               link: "/inboxes/sync-and-syncall",
@@ -123,26 +157,8 @@ export default defineConfig({
           ],
         },
         {
-          text: "Manage inboxes",
-          link: "/inboxes/manage-inboxes",
-        },
-        {
-          text: "Support spam-free inboxes",
-          collapsed: true,
-          items: [
-            {
-              text: "How spam-free inboxes work",
-              link: "/inboxes/user-consent/user-consent",
-            },
-            {
-              text: "Support spam-free inboxes",
-              link: "/inboxes/user-consent/support-user-consent",
-            },
-          ],
-        },
-        {
-          text: "Support content types",
-          collapsed: true,
+          text: "Support rich content types",
+          collapsed: false,
           items: [
             {
               text: "Understand content types",
@@ -151,6 +167,14 @@ export default defineConfig({
             {
               text: "Attachments",
               link: "/inboxes/content-types/attachments",
+            },
+            {
+              text: "Onchain transactions",
+              link: "/inboxes/content-types/transactions",
+            },
+            {
+              text: "Onchain transaction references",
+              link: "/inboxes/content-types/transaction-refs",
             },
             {
               text: "Reactions",
@@ -165,18 +189,32 @@ export default defineConfig({
               link: "/inboxes/content-types/read-receipts",
             },
             {
-              text: "Onchain transaction references",
-              link: "/inboxes/content-types/transaction-refs",
-            },
-            {
               text: "Custom content",
               link: "/inboxes/content-types/custom",
+            },
+            {
+              text: "Fallback text for compatibility",
+              link: "/inboxes/content-types/fallback",
             },
           ],
         },
         {
+          text: "Support spam-free inboxes",
+          collapsed: false,
+          items: [
+              {
+                text: "Understand user consent",
+                link: "/inboxes/user-consent/user-consent",
+              },
+              {
+                text: "Support user consent",
+                link: "/inboxes/user-consent/support-user-consent",
+              },        
+            ],
+          },
+          {
           text: "Support push notifications",
-          collapsed: true,
+          collapsed: false,
           items: [
             {
               text: "Understand push notifications",
@@ -198,19 +236,7 @@ export default defineConfig({
               text: "Try iOS push notifications",
               link: "/inboxes/push-notifs/ios-pn",
             },
-          ],
-        },
-        {
-          text: "Manage group permissions",
-          link: "/inboxes/group-permissions",
-        },
-        {
-          text: "Manage group metadata",
-          link: "/inboxes/group-metadata",
-        },
-        {
-          text: "Use signatures",
-          link: "/inboxes/use-signatures",
+          ]
         },
         {
           text: "Run a payer service",
@@ -219,19 +245,28 @@ export default defineConfig({
         {
           text: "Debug your app",
           link: "/inboxes/debug-your-app",
+          items: [],
         },
         {
-          text: "SDK references",
-          link: "/inboxes/references",
+          text: "Upgrade to a stable XMTP V3 SDK",
+          collapsed: false,
+          items: [
+            {
+              text: "From a legacy XMTP V2 SDK",
+              link: "/upgrade-from-legacy-V2",
+            },
+            {
+              text: "From a legacy XMTP V3 SDK",
+              link: "/upgrade-from-legacy-V3",
+            },
+          ],
         },
-      ],
-    },
-    {
-      text: "Build agents ↗",
-      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
-      items: [], // Add this line
-    },
-    {
+        {
+          text: "Sign and verify payloads",
+          link: "/inboxes/use-signatures",
+          items: [],
+        },
+      {
       text: "Network",
       collapsed: false,
       items: [
@@ -250,24 +285,28 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
+          text: "Envelope types",
+          link: "/protocol/envelope-types",
+        },
+        {
           text: "Security",
           link: "/protocol/security",
         },
         {
           text: "Encryption ↗",
-          link: "https://xmtp.org/encryption",
+          link: "https://xmtp.org/docs/concepts/encryption",
         },
         {
           text: "Identity ↗",
-          link: "https://xmtp.org/identity",
+          link: "https://xmtp.org/docs/concepts/identity",
         },
         {
           text: "Consent ↗",
-          link: "https://xmtp.org/consent",
+          link: "https://xmtp.org/docs/concepts/consent",
         },
         {
           text: "Decentralization ↗",
-          link: "https://xmtp.org/decentralizing-xmtp",
+          link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
         },
         {
           text: "Wallet signatures",

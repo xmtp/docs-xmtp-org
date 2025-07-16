@@ -6,17 +6,20 @@
   "scripts": {
     "dev": "vocs dev",
     "build": "vocs build",
-    "preview": "vocs preview"
+    "preview": "vocs preview",
+    "spell": "cspell"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
     "@xmtp/react-sdk": "^8.0.1",
     "react": "latest",
     "react-dom": "latest",
+    "react-medium-image-zoom": "^5.2.14",
     "vocs": "latest"
   },
   "devDependencies": {
     "@types/react": "latest",
+    "cspell": "^9.1.3",
     "typescript": "latest"
   }
 }
