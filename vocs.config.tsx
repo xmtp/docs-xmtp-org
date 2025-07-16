@@ -117,6 +117,10 @@ export default defineConfig({
             link: "/inboxes/group-metadata",
           },
           {
+            text: "Support group invite links",
+            link: "/inboxes/support-group-invite-links",
+          },
+          {
             text: "Manage inboxes, IDs, and installations",
             link: "/inboxes/manage-inboxes",
           },
