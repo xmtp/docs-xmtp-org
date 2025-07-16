@@ -1,3 +1,6 @@
+import Zoom from 'react-medium-image-zoom'
+import 'react-medium-image-zoom/dist/styles.css'
+
 # Cursors with XMTP
 
 This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
@@ -38,8 +41,8 @@ Each `sync()` function corresponds to a different type of cursor:
 
 For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
 
-<div>
+<Zoom>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-for-convo-sync.png" width="550px" />
-</div>
+</Zoom>
 
 By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
