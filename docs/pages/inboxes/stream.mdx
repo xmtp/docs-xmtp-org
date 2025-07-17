@@ -39,6 +39,18 @@ try {
 await alix.conversations.stream(async (conversation: Conversation<any>) => {
   // Received a conversation
 });
+
+// Stream with onClose callback
+await alix.conversations.stream(
+  async (conversation: Conversation<any>) => {
+    // Received a conversation
+  },
+  'all', // conversation type filter
+  () => {
+    // Stream closed callback
+    console.log('Conversation stream closed');
+  }
+);
 ```
 
 ```kotlin [Kotlin]
@@ -114,7 +126,12 @@ await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
-  { consentState: ["allowed"] }
+  'all', // conversation type filter
+  ["allowed"], // consent states
+  () => {
+    // Stream closed callback
+    console.log('Messages stream closed');
+  }
 );
 ```
 
