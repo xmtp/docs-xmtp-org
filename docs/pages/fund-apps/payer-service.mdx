@@ -331,3 +331,84 @@ Most production applications will require some level of customization to authori
 ### Requirements
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
+
+
+
+
+
+
+
+## Step 2: Set Up Your Payer Service
+
+### What Is a Payer Service?
+
+A Payer Service is a proxy that pays for and forwards messages to the XMTP network on behalf of your users. Think of it as your app's payment gateway for messaging.
+
+Behind the scenes, your payer service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
+
+### Key Things to Know
+
+**Every app needs a payer service** with two implementation options:
+
+- **Node.js apps**: Payer is built into the SDK—no separate service needed!
+- **All other apps** (React, React Native, iOS, Android): Must run a separate Go-based payer service on your infrastructure
+
+### Implementation Options
+
+### For Node.js Apps
+
+Good news—the payer is built into the SDK:
+
+```jsx
+// Automatic payer included, no separate service needed
+const client = await Client.create(wallet, {
+  env: 'mainnet'
+})
+
+```
+
+### For Client Apps (Web, Mobile)
+
+You must run a separate payer service written in Go:
+
+**Option 1: Basic Docker Image** (No Go knowledge required)
+
+- XMTP provides a Docker image that works out of the box
+- Authorizes all requests (add authentication for production)
+- Suitable for testing
+
+**Option 2: Custom Implementation** (Requires Go development)
+
+- Start with XMTP's Go implementation
+- Add your own authentication logic
+- Implement custom rate limiting
+- Required for apps with authentication needs
+
+### What You'll Need (for non-Node.js apps)
+
+- **Infrastructure**: Container hosting ($25-50/month minimum)
+- **Blockchain RPC**: WebSocket connections to XMTP Chain and Base
+- **Redis**: Recommended for rate limiting and nonce management
+- **Authentication**: Your existing auth system (JWT, API keys, etc.)
+
+### Authentication Flow
+
+Your clients will need to authenticate with your payer service:
+
+```jsx
+// Client-side example
+const client = await Client.create(wallet, {
+  env: 'mainnet',
+  payerService: 'https://api.yourapp.com/xmtp-payer',
+  payerAuthTokenFetcher: {
+    fetchAuthToken: async () => {
+      // Return your app's auth token
+      return await getAuthToken()
+    }
+  }
+})
+
+```
+
+> Important: Apps requiring user authentication will need to customize the Go payer service to integrate with their authentication system. Node.js apps skip this complexity entirely!
+> 
