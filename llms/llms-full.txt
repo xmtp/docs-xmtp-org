@@ -1125,6 +1125,113 @@ When you provide consent, you're adding the publisher's address to your personal
 To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/inboxes/user-consent/user-consent).
 
 
+## pages/protocol/cursors.mdx
+import Zoom from 'react-medium-image-zoom'
+import 'react-medium-image-zoom/dist/styles.css'
+
+# Cursors with XMTP
+
+This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
+
+While cursors are managed automatically by the XMTP SDKs, understanding how they work is crucial for debugging and for grasping the underlying mechanics of message synchronization.
+
+## What is a cursor?
+
+A cursor is a pointer or a marker that an XMTP client maintains for each topic it subscribes to (both [group message topics](/protocol/topics#group-message-topic) and [welcome message topics](/protocol/topics#welcome-message-topic)). This cursor is stored locally and is specific to each app installation.
+
+Think of it as a bookmark in the chronological log of messages and events for a given topic. Its purpose is to remember the exact point up to which an installation has successfully synchronized its data.
+
+## How cursors work with `sync()`
+
+The primary role of a cursor becomes evident when you use the `sync()` functions (`conversation.sync()`, `conversations.sync()`, and `conversations.syncAll()`).
+
+1.  **Initial sync**: The first time an app installation calls `sync()` for a specific conversation, it fetches all available messages and events from the network for that conversation's topic.
+2.  **Cursor placement**: Once the sync is complete, the SDK places a cursor at the end of that batch of fetched messages.
+3.  **Subsequent syncs**: On the next `sync()` call for that same conversation, the client sends its current cursor position to the network. The network then returns only the messages and events that have occurred *after* that cursor.
+4.  **Cursor advancement**: After the new messages are successfully fetched, the SDK advances the cursor to the new latest point.
+
+This process ensures that each `sync()` call only retrieves what's new, making synchronization efficient by avoiding the re-downloading of messages the client already has.
+
+### How Cursors Enable Efficient Sync
+
+The XMTP SDKs use cursors to make message synchronization highly efficient. The design principle is to fetch new data from the network with `sync()` while providing access to historical data from a local database.
+
+- **`sync()` fetches new data from the network:** The `sync()` functions are designed specifically to retrieve new messages and events from the network. To do this efficiently, the SDK advances the cursor to the position of the last synchronized item. On subsequent `sync()` calls, the client provides this cursor, and the network returns only what has arrived since. This forward-only cursor movement is an intentional design choice that prevents re-downloading data the client already has.
+
+- **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
+
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+
+- **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
+
+## Cursors for different sync functions
+
+Each `sync()` function corresponds to a different type of cursor:
+
+- `conversation.sync()`: This operates on the **group message topic** for a single conversation. It moves the cursor for that specific conversation, fetching new messages or group updates (like name changes).
+- `conversations.sync()`: This operates on the **welcome message topic**. It moves the cursor for welcome messages, fetching any new conversations the user has been invited to. It does *not* fetch the contents of those new conversations.
+- `conversations.syncAll()`: This is the most comprehensive sync. It effectively performs the actions of the other two syncs for all of the user's conversations. It moves the cursors for the welcome topic *and* for every individual group message topic, ensuring the client has fetched all new conversations and all new messages in existing conversations.
+
+For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
+
+<Zoom>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-for-convo-sync.png" width="550px" />
+</Zoom>
+
+By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
+
+
+## pages/protocol/topics.md
+# Topics with XMTP
+
+This document describes the concept of **topics** on the XMTP network. Topics are used to address and route [envelopes](/protocol/envelope-types), forming the backbone of the XMTP pub/sub messaging system.
+
+While XMTP SDKs manage topic subscriptions automatically, understanding them can be helpful for protocol-level development, debugging, and building services like push notification servers.
+
+## Topic naming convention
+
+XMTP topics follow a standardized format that indicates the protocol version, message type, and a unique identifier. The general structure is:
+
+`/xmtp/mls/1/{topic-type}-{identifier}/proto`
+
+- `/xmtp/mls/1/`: The protocol namespace, indicating XMTP with MLS, version 1.
+- `{topic-type}`: A single letter representing the purpose of the topic (for example, `g` for group, `w` for welcome).
+- `{identifier}`: A unique ID for the specific conversation or installation.
+- `/proto`: The payload serialization format.
+
+## Core topics in XMTP
+
+XMTP uses two primary topic types for delivering messages.
+
+### Group message topic
+
+The group message topic is used to send and receive messages within a specific conversation (both 1:1 DMs and group chats). Each conversation has its own unique topic.
+
+- **Format**: `/xmtp/mls/1/g-$conversationId/proto`
+- **Envelope**: [Group message envelope](/protocol/envelope-types#group-message-envelope)
+- **Purpose**: Carries all ongoing communication for a conversation, including [application messages](/protocol/envelope-types#application-messages) (text, reactions, etc.) and [commit messages](/protocol/envelope-types#commit-messages) that modify the group state.
+- **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value.
+
+> **Note on [DM stitching](/inboxes/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications**): For direct messages, multiple underlying conversations might be "stitched" together in the UI. For push notifications to be reliable, an app must subscribe to the group message topic for each of these underlying conversations.
+
+### Welcome message topic
+
+The welcome message topic is used to deliver a `Welcome` message to a new member of a group. This message bootstraps the new member, providing them with the group's state so they can participate.
+
+- **Format**: `/xmtp/mls/1/w-$installationId/proto`
+- **Envelope**: [Welcome message envelope](/protocol/envelope-types#welcome-message-envelope)
+- **Purpose**: To notify a specific app installation that it has been added to a new conversation.
+- **Usage**: A push notification server subscribes to an installation's welcome topic to be notified when that installation is invited to a new group chat or DM. The SDKs provide this via methods like `client.welcomeTopic()`.
+
+## How other envelopes are handled
+
+Not all envelope types are broadcast on persistent pub/sub topics.
+
+- **[Key package envelopes](/protocol/envelope-types#key-package-envelope)**: These are not sent over a topic. Instead, they are published to a network-level store where they can be retrieved by other clients who need to start a conversation or add a new member to a group.
+
+- **[Identity update envelopes](/protocol/envelope-types#identity-update-envelope)**: These are also not sent over a topic. They are stored permanently on the XMTP network to ensure the continuity and verifiability of a user's identity across their devices.
+
+
 ## pages/agents/build-an-agent.mdx
 # Tutorial: Build an agent that uses XMTP
 
@@ -8731,4 +8838,4 @@ XMTP does not currently have a token. Disregard any information regarding airdro
 
 # Summary
 
-This documentation contains 52 files.
+This documentation contains 54 files.
