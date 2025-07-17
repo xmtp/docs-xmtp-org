@@ -193,7 +193,7 @@ export default defineConfig({
               link: "/inboxes/content-types/custom",
             },
             {
-              text: "Handle unsupported content",
+              text: "Fallback text for compatibility",
               link: "/inboxes/content-types/fallback",
             },
           ],

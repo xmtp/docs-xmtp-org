@@ -1488,8 +1488,15 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
 
-```
+## Get featured
 
+:::tip
+
+**Want your agent or mini-app featured on TBA?**
+
+[Complete this form](https://docs.google.com/forms/d/e/1FAIpQLSfZ7JgOt4tw36dGLL9cEmw_y09VoE5_Knk7X6EnJd1IJ3CLEg/viewform) to tell the team about your project, get feedback, and collaborate on possibly getting it featured.
+
+:::
 
 ## pages/inboxes/group-metadata.md
 # Manage group chat metadata
@@ -4341,19 +4348,26 @@ Not yet available
 ```
 
 ```tsx [React Native]
-const [messages, setMessages] = useState<DecodedMessage[]>([]);
+const [messages, setMessages] = useState<DecodedMessage[]>([]); 
+ 
+  const messageCallback = async (message: DecodedMessage<any>) => { 
+    setMessages(prev => [...prev, message]); 
+  }
+  const conversationFilterType: ConversationFilterType = 'all'
+  const consentStates: ConsentState[] = ['allowed']
+  const onCloseCallback = () => {
+    console.log("Message stream closed, handle retries here")
+  }
 
-const startMessageStream = async () => {
-  await client.conversations.streamAllMessages(
-    async (message: DecodedMessage<any>) => {
-      setMessages(prev => [...prev, message]);
-    },
-    'all',
-    ['allowed'],
-    () => console.log("Message stream closed.")
-  );
-};
-```
+  const startMessageStream = async () => { 
+    await alix.conversations.streamAllMessages( 
+      messageCallback, 
+      conversationFilterType, 
+      consentStates, 
+      onCloseCallback 
+    ); 
+  };
+``` 
 
 ```kotlin [Kotlin]
     private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
@@ -8554,11 +8568,17 @@ Any developer building with XMTP can create a custom content type and immediatel
 To learn more, see [Build custom content types](/inboxes/content-types/custom).
 
 ## pages/inboxes/content-types/fallback.mdx
-# Handle unsupported content types
+# Use fallback text for content type compatibility
 
-As more [custom](/inboxes/content-types/content-types#create-a-custom-content-type) and [standards-track](/inboxes/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+When building with XMTP, you can't know in advance whether a recipient's app will support a given content type, especially a [custom one](/inboxes/content-types/content-types#create-a-custom-content-type). Likewise, your own app might receive messages with content types it doesn't support.
 
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/inboxes/content-types/custom).
+To prevent a poor user experience or app crashes, you should use the `fallback` property.
+
+**For sending:** When sending a message with a custom content type, always provide a `fallback` string. This string offers a human-readable representation of the content. If the recipient's app doesn't support your custom type, it can display the `fallback` text instead. To learn more, see [Build custom content types](/inboxes/content-types/custom).
+
+**For receiving:** When your app receives a message, check if it supports the message's `contentType`. If not, render the `fallback` text.
+
+However, some content types, especially those not meant for display (like read receipts), won't have a `fallback`. In these `undefined` cases, you should generally ignore the message entirely. Displaying a generic "unsupported content" message for every silent background event would create a poor user experience and clutter the chat. The code examples below show how to handle both scenarios.
 
 :::code-group
 
