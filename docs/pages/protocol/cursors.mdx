@@ -24,12 +24,17 @@ The primary role of a cursor becomes evident when you use the `sync()` functions
 
 This process ensures that each `sync()` call only retrieves what's new, making synchronization efficient by avoiding the re-downloading of messages the client already has.
 
-### The cursor only moves forward
+### How Cursors Enable Efficient Sync
 
-A key characteristic of cursors is that they **only move forward** and **only when a `sync()` function is called**.
+The XMTP SDKs use cursors to make message synchronization highly efficient. The design principle is to fetch new data from the network with `sync()` while providing access to historical data from a local database.
 
-- **You cannot re-fetch old messages**: Because the cursor never moves backward, an installation cannot use `sync()` to re-fetch messages it has already synchronized. The network will only return messages that are newer than the installation's current cursor. To get message history on a *new* device, you would use [History Sync](/inboxes/history-sync).
-- **Streaming does not move the cursor**: Receiving messages via a real-time `stream()` does not affect the cursor's position. This is intentional. Streaming provides messages as they arrive but doesn't guarantee their order or that none were missed (for example, if the client was briefly offline). The `sync()` function acts as the authoritative way to get all messages in the correct order up to a certain point. Calling `sync()` after streaming ensures the local state is consistent and correctly ordered.
+- **`sync()` fetches new data from the network:** The `sync()` functions are designed specifically to retrieve new messages and events from the network. To do this efficiently, the SDK advances the cursor to the position of the last synchronized item. On subsequent `sync()` calls, the client provides this cursor, and the network returns only what has arrived since. This forward-only cursor movement is an intentional design choice that prevents re-downloading data the client already has.
+
+- **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
+
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+
+- **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
 
 ## Cursors for different sync functions
 
