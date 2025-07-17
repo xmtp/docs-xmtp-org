@@ -36,9 +36,16 @@ try {
 ```
 
 ```tsx [React Native]
-await alix.conversations.stream(async (conversation: Conversation<any>) => {
-  // Received a conversation
-});
+await alix.conversations.stream(
+  async (conversation: Conversation<any>) => {
+    // Received a conversation
+  },
+  "all", // Optional: filter by type ("all", "groups", "dms")
+  () => {
+    // Optional: callback when stream is closed
+    console.log("Conversation stream closed");
+  }
+);
 ```
 
 ```kotlin [Kotlin]
@@ -114,7 +121,12 @@ await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
-  { consentState: ["allowed"] }
+  "all", // Optional: filter by type ("all", "groups", "dms")
+  ["allowed"], // Optional: filter by consent state
+  () => {
+    // Optional: callback when stream is closed
+    console.log("Message stream closed");
+  }
 );
 ```
 
