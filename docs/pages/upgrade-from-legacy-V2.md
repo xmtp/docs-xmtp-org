@@ -26,7 +26,7 @@ As developers on V2 explore XMTP V3, many have found that its new architecture p
 ## Upgrade to XMTP V3
 
 🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.5)
+- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.3.0)
 - [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.5)
 - [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
 
