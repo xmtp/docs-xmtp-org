@@ -424,7 +424,7 @@ import "../styles.css";
       icon="🕸️"
     />
     <CustomHomePage.Tile
-      href="/protocol/security"
+      href="/protocol/envelope-types"
       title="Learn protocol concepts"
       description="Dive deeper into XMTP by learning about key protocol concepts"
       icon="🧠"
@@ -540,6 +540,8 @@ Please open an issue in the relevant repo:
 - [React Native SDK](https://github.com/xmtp/xmtp-react-native/issues)
 - [Android SDK](https://github.com/xmtp/xmtp-android/issues)
 - [iOS SDK](https://github.com/xmtp/xmtp-ios/issues)
+
+For all other topics, post to the [XMTP Community Forums](https://community.xmtp.org/).
 
 
 ## pages/intro/build-with-llms.md
@@ -2909,7 +2911,7 @@ GET /groupJoinRequest/hijklmn
 
 ```json
 {
-	id: "hijlkmn",
+	id: "hijklmn",
 	status: "approved"// Possible statuses ("approved", "rejected", "pending")
 	reason: null // Allow the system to pass a reason back to the client
 }
@@ -2935,7 +2937,7 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
-	id: "hijlkmn",
+	id: "hijklmn",
 	status: "approved",
 	reason: null // Allow the system to pass a reason back to the client
 }
@@ -5030,7 +5032,7 @@ For UI display purposes, you can use the following logic to select the most appr
 
 1. If there is only one identity in the `identities` array, use that as the display identity.
 2. If there are two identities, use the one that does not match the `recoveryIdentity`. The first non-recovery identifier in the array is typically the preferred identity for display.
-3. If there are more than two identities, the first non-recovery identity in the ordered array is typically the preferred idenity for display.
+3. If there are more than two identities, the first non-recovery identity in the ordered array is typically the preferred identity for display.
 
 ## FAQ
 
