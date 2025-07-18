@@ -70,17 +70,7 @@ export default defineConfig({
       ],
     },
     {
-      text: "Quickstart: Build a chat inbox 📥",
-      link: "/inboxes/quickstart",
-      items: [],
-    },
-    {
-      text: "Tutorial: Build an agent 🤖",
-      link: "/agents/build-an-agent",
-      items: [],
-    },
-    {
-      text: "SDKs",
+      text: "SDK quickstarts",
       collapsed: false,
       items: [
           {
@@ -104,6 +94,11 @@ export default defineConfig({
             link: "/sdks/ios",
           },
         ]
+    },
+    {
+      text: "Tutorial: Build an agent 🤖",
+      link: "/agents/build-an-agent",
+      items: [],
     },
     {
       text: "Build core messaging",
