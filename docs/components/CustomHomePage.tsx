@@ -130,27 +130,36 @@ const SDKTile: React.FC<SDKTileProps> = ({
   darkSrc,
   alt,
   name,
-}) => (
-  <Link to={href} className="custom-homepage-sdk-tile">
-    {src ? (
-      <img src={src} alt={alt} className="custom-homepage-sdk-icon" />
-    ) : (
-      <>
-        <img
-          src={lightSrc}
-          alt={alt}
-          className="custom-homepage-sdk-icon light-mode-icon"
-        />
-        <img
-          src={darkSrc}
-          alt={alt}
-          className="custom-homepage-sdk-icon dark-mode-icon"
-        />
-      </>
-    )}
-    {name && <p className="custom-homepage-sdk-name">{name}</p>}
-  </Link>
-);
+}) => {
+  if (!src && !(lightSrc && darkSrc)) {
+    console.warn(
+      "SDKTile requires either `src` or both `lightSrc` and `darkSrc`.",
+    );
+    return null;
+  }
+
+  return (
+    <Link to={href} className="custom-homepage-sdk-tile">
+      {src ? (
+        <img src={src} alt={alt} className="custom-homepage-sdk-icon" />
+      ) : (
+        <>
+          <img
+            src={lightSrc}
+            alt={alt}
+            className="custom-homepage-sdk-icon light-mode-icon"
+          />
+          <img
+            src={darkSrc}
+            alt={alt}
+            className="custom-homepage-sdk-icon dark-mode-icon"
+          />
+        </>
+      )}
+      {name && <p className="custom-homepage-sdk-name">{name}</p>}
+    </Link>
+  );
+};
 
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
   children,
