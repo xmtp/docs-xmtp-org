@@ -80,13 +80,35 @@ export default defineConfig({
       items: [],
     },
     {
-      text: "Build core messaging",
+      text: "SDKs",
       collapsed: false,
       items: [
           {
-            text: "Pick an SDK",
-            link: "/inboxes/pick-an-sdk",
+            text: "Browser",
+            link: "/sdks/browser",
           },
+          {
+            text: "Node",
+            link: "/sdks/node",
+          },
+          {
+            text: "React Native",
+            link: "/sdks/react-native",
+          },
+          {
+            text: "Android",
+            link: "/sdks/android",
+          },
+          {
+            text: "iOS",
+            link: "/sdks/ios",
+          },
+        ]
+    },
+    {
+      text: "Build core messaging",
+      collapsed: false,
+      items: [
           {
             text: "Create an EOA or SCW signer",
             link: "/inboxes/create-a-signer",

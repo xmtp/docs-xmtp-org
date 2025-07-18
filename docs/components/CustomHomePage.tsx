@@ -10,8 +10,9 @@ const Headline: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <h1 className="custom-homepage-headline">
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && child.type === 'p') {
-          return React.cloneElement(child, {
-            className: `custom-homepage-headline-text ${child.props.className || ''}`.trim()
+          const childElement = child as React.ReactElement<{ className?: string }>;
+          return React.cloneElement(childElement, {
+            className: `custom-homepage-headline-text ${childElement.props.className || ''}`.trim()
           });
         }
         return <span className="custom-homepage-headline-text">{child}</span>;
@@ -25,8 +26,9 @@ const Subhead: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="custom-homepage-subhead">
       {React.Children.map(children, child => {
         if (React.isValidElement(child) && child.type === 'p') {
-          return React.cloneElement(child, {
-            className: `custom-homepage-subhead-text ${child.props.className || ''}`.trim()
+          const childElement = child as React.ReactElement<{ className?: string }>;
+          return React.cloneElement(childElement, {
+            className: `custom-homepage-subhead-text ${childElement.props.className || ''}`.trim()
           });
         }
         return <span className="custom-homepage-subhead-text">{child}</span>;
@@ -87,10 +89,42 @@ interface TileProps {
   );
 };
   
+interface SDKTileProps {
+  href: string;
+  src?: string;
+  lightSrc?: string;
+  darkSrc?: string;
+  alt: string;
+  name?: string;
+}
+const SDKGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="custom-homepage-sdk-grid">{children}</div>
+);
+const SDKTile: React.FC<SDKTileProps> = ({ href, src, lightSrc, darkSrc, alt, name }) => (
+  <Link to={href} className="custom-homepage-sdk-tile">
+    {src ? (
+      <img src={src} alt={alt} className="custom-homepage-sdk-icon" />
+    ) : (
+      <>
+        <img src={lightSrc} alt={alt} className="custom-homepage-sdk-icon light-mode-icon" />
+        <img src={darkSrc} alt={alt} className="custom-homepage-sdk-icon dark-mode-icon" />
+      </>
+    )}
+    {name && <p className="custom-homepage-sdk-name">{name}</p>}
+  </Link>
+);
+
+const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h2 className="custom-homepage-tile-title custom-homepage-section-title">{children}</h2>
+);
+  
 export const CustomHomePage = {
   Root,
   Headline,
   Subhead,
   TileGrid,
   Tile,
+  SDKGrid,
+  SDKTile,
+  SectionTitle,
 };
