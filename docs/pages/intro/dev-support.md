@@ -9,3 +9,5 @@ Please open an issue in the relevant repo:
 - [React Native SDK](https://github.com/xmtp/xmtp-react-native/issues)
 - [Android SDK](https://github.com/xmtp/xmtp-android/issues)
 - [iOS SDK](https://github.com/xmtp/xmtp-ios/issues)
+
+For all other topics, post to the [XMTP Community Forums](https://community.xmtp.org/).

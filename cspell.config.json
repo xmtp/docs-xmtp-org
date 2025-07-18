@@ -35,7 +35,9 @@
     "geoblocking",
     "groupname",
     "hexlify",
+    "hijklmn",
     "HMAC",
+    "HNDL",
     "HPKE",
     "HPKEX",
     "inboxid",
@@ -71,6 +73,7 @@
     "xmtp",
     "xmtpd",
     "XMTP",
+    "XWING",
     "YOURFCMJSON",
     "YOURFCMPROJECTID"
   ]
