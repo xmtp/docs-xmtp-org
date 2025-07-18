@@ -30,7 +30,6 @@ export default defineConfig({
   topNav: [
     { text: "XMTP status", link: "https://status.xmtp.org/" },
     { text: "XMTP.chat", link: "https://xmtp.chat/" },
-    { text: "XMTP.org", link: "https://xmtp.org/" },
   ],
   ogImageUrl: {
     "/": "/xmtp-og-card.jpeg",
@@ -67,10 +66,6 @@ export default defineConfig({
         {
           text: "Dev support",
           link: "/intro/dev-support",
-        },
-        {
-          text: "XMTP Improvement Proposals",
-          link: "/intro/xips",
         },
       ],
     },
@@ -315,6 +310,10 @@ export default defineConfig({
         {
           text: "Wallet signatures",
           link: "/protocol/signatures",
+        },
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/intro/xips",
         },
       ],
     },
