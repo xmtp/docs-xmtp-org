@@ -38,6 +38,8 @@ try {
 ```tsx [React Native]
 await alix.conversations.stream(async (conversation: Conversation<any>) => {
   // Received a conversation
+}, 'all', () => {
+  // Optional: Handle when stream is closed
 });
 ```
 
@@ -114,7 +116,11 @@ await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
-  { consentState: ["allowed"] }
+  'all',
+  ["allowed"],
+  () => {
+    // Optional: Handle when stream is closed
+  }
 );
 ```
 
