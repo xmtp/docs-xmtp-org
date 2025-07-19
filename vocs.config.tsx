@@ -70,27 +70,27 @@ export default defineConfig({
       ],
     },
     {
-      text: "SDK quickstarts",
+      text: "Get started",
       collapsed: false,
       items: [
           {
-            text: "Browser",
+            text: "Browser SDK",
             link: "/sdks/browser",
           },
           {
-            text: "Node",
+            text: "Node SDK",
             link: "/sdks/node",
           },
           {
-            text: "React Native",
+            text: "React Native SDK",
             link: "/sdks/react-native",
           },
           {
-            text: "Android",
+            text: "Android SDK",
             link: "/sdks/android",
           },
           {
-            text: "iOS",
+            text: "iOS SDK",
             link: "/sdks/ios",
           },
         ]

@@ -1,7 +1,33 @@
-import InboxQuickstart from '../sdks/inbox-qs-snippet.mdx';
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
 
-# XMTP React Native SDK quickstart
+# Get started with the XMTP React Native SDK
 
 Use the XMTP React Native SDK to build secure, private, and decentralized messaging into your cross-platform mobile app.
 
-<InboxQuickstart /> 
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```tsx [React Native]
+// 1. Create a signer (example with ethers.js)
+// You would typically integrate this with a wallet connection library.
+import { Wallet } from 'ethers'
+const signer = Wallet.createRandom()
+
+// 2. Create the XMTP client
+import { Client } from '@xmtp/react-native-sdk'
+
+const client = await Client.create(signer, { env: 'dev' })
+
+// 3. Start a new conversation and send a message
+const conversation = await client.conversations.newConversation(
+  '0xPEER_ADDRESS'
+)
+await conversation.send('Hello, world!')
+```
+
+<InboxGetStarted /> 

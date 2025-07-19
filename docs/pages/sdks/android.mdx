@@ -1,7 +1,38 @@
-import InboxQuickstart from '../sdks/inbox-qs-snippet.mdx';
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
 
-# XMTP Android SDK quickstart
+# Get started with the XMTP Android SDK
 
 Use the XMTP Kotlin SDK to build secure, private, and decentralized messaging into your Android app.
 
-<InboxQuickstart />
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```kotlin [Kotlin]
+// 1. Create a signer.
+// This depends on your app's wallet implementation.
+// For example, using a library to get a signer from a private key:
+val signer = PrivateKey.newBuilder().build().generate()
+
+// 2. Create the XMTP client
+import org.xmtp.android.library.Client
+import org.xmtp.android.library.ClientOptions
+import org.xmtp.android.library.XMTPEnvironment
+
+val client = Client.create(
+    account = signer, 
+    options = ClientOptions(
+        api = ClientOptions.Api(env = XMTPEnvironment.DEV)
+    )
+)
+
+// 3. Start a new conversation and send a message
+val conversation = client.conversations.newConversation("0xPEER_ADDRESS")
+conversation.send(text = "Hello, Kotlin!")
+```
+
+<InboxGetStarted />

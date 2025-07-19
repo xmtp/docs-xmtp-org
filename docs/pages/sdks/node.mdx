@@ -1,6 +1,6 @@
-import InboxQuickstart from '../sdks/inbox-qs-snippet.mdx';
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
 
-# XMTP Node SDK quickstart
+# Get started with the XMTP Node SDK
 
 Use the XMTP Node SDK to build server-side applications that interact with the XMTP network.
 
@@ -10,6 +10,37 @@ For building AI agents, bots, or other automated services, use the [Build an age
 
 :::
 
-For all other server-side applications, including backends for chat inboxes, follow the quickstart guide below.
+For all other server-side applications, including backends for chat inboxes, follow the get started guide below, which provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
-<InboxQuickstart />
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```tsx [Node]
+// 1. Create a signer
+import { Wallet } from 'ethers'
+const signer = Wallet.createRandom()
+
+// 2. Create the XMTP client
+import { Client } from '@xmtp/node-sdk'
+import { randomBytes } from 'crypto'
+
+// You'll want to store the key somewhere in your app's backend
+// to avoid creating a new key on every app start.
+const newEncryptionKey = randomBytes(32)
+
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  encryptionKey: newEncryptionKey,
+})
+
+// 3. Start a new conversation and send a message
+const conversation = await xmtp.conversations.newConversation(
+  '0xPEER_ADDRESS'
+)
+await conversation.send('Hello from Node!')
+```
+
+<InboxGetStarted />

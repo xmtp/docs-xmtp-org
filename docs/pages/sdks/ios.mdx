@@ -1,7 +1,30 @@
-import InboxQuickstart from '../sdks/inbox-qs-snippet.mdx';
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
 
-# XMTP iOS SDK quickstart
+# Get started with the XMTP iOS SDK
 
 Use the XMTP Swift SDK to build secure, private, and decentralized messaging into your iOS app.
 
-<InboxQuickstart /> 
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```swift [Swift]
+// 1. Create a signer
+// This depends on your app's wallet implementation.
+// For example, using a library to get a signer from a private key:
+let signer = try PrivateKey.generate()
+
+// 2. Create the XMTP client
+import XMTP
+let client = try await Client.create(account: signer, options: .init(api: .init(env: .dev)))
+
+// 3. Start a new conversation and send a message
+let conversation = try await client.conversations.newConversation(with: "0xPEER_ADDRESS")
+try await conversation.send(text: "Hello, Swift!")
+```
+
+<InboxGetStarted /> 

@@ -1,7 +1,37 @@
-import InboxQuickstart from '../sdks/inbox-qs-snippet.mdx';
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
 
-# XMTP Browser SDK quickstart
+# Get started with the XMTP Browser SDK
 
 Use the XMTP Browser SDK to build web-based apps, tools, and experiences with secure, private, and decentralized messaging.
 
-<InboxQuickstart />
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```tsx [Browser]
+// 1. Create a signer from a browser wallet
+import { createWalletClient, custom } from 'viem'
+import { mainnet } from 'viem/chains'
+ 
+const signer = createWalletClient({
+  chain: mainnet,
+  transport: custom(window.ethereum)
+})
+
+// 2. Create the XMTP client
+import { Client } from '@xmtp/browser-sdk'
+ 
+const client = await Client.create(signer, { env: 'dev' })
+
+// 3. Start a new conversation and send a message
+const conversation = await client.conversations.newConversation(
+  '0xPEER_ADDRESS'
+)
+await conversation.send('Hello, world!')
+```
+
+<InboxGetStarted />
