@@ -239,6 +239,20 @@ export default defineConfig({
           items: [],
         },
         {
+          text: "Fund an app",
+          collapsed: false,
+          items: [
+            {
+              text: "Understand push notifications",
+              link: "/inboxes/push-notifs/understand-push-notifs",
+            },
+            {
+              text: "Run a payer service",
+              link: "/inboxes/payer-service",
+            },
+          ]
+        },
+        {
           text: "Upgrade to a stable XMTP V3 SDK",
           collapsed: false,
           items: [
