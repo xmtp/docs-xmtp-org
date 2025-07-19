@@ -221,3 +221,95 @@ li ol ~ p {
   padding-top: var(--vocs-space_6) !important; /* Reduced from space_16. Space above block of l1 items in section. */
   padding-bottom: var(--vocs-space_6) !important; /* Reduced from space_16. Space below block of l1 items in section. */
 }
+
+/* Custom Homepage SDK grid */
+.custom-homepage-sdk-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 0;
+}
+@media (max-width: 768px) {
+  .custom-homepage-sdk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.custom-homepage-sdk-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--vocs-color-bg-soft);
+  border: 1px solid var(--vocs-color-border);
+  border-radius: 8px;
+  padding: 1rem;
+  text-decoration: none;
+  color: var(--vocs-color-text);
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  height: auto;
+  text-align: center;
+}
+.custom-homepage-sdk-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--vocs-color-primary);
+}
+.custom-homepage-sdk-icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+.custom-homepage-sdk-icon.light-mode-icon {
+  display: block;
+}
+.custom-homepage-sdk-icon.dark-mode-icon {
+  display: none;
+}
+.dark .custom-homepage-sdk-icon.light-mode-icon {
+  display: none;
+}
+.dark .custom-homepage-sdk-icon.dark-mode-icon {
+  display: block;
+}
+.custom-homepage-sdk-name {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--vocs-color-text);
+}
+/* Dark mode adjustments */
+.dark .custom-homepage-sdk-tile {
+  background-color: rgba(255, 255, 255, 0.01);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+}
+.dark .custom-homepage-sdk-tile:hover {
+  transform: translateY(-5px);
+  background-color: rgba(255, 255, 255, 0.01);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.02);
+  border-color: var(--vocs-color-primary);
+}
+
+.custom-homepage-section-title {
+  text-align: left;
+  max-width: 800px;
+  margin: 2rem auto 1rem auto;
+}
+/* For smaller screens */
+@media (max-width: 768px) {
+  .custom-homepage-section-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Custom Homepage HR styles */
+.custom-homepage hr {
+  border: 0;
+  border-top: .5px solid #d1d1d1;
+  opacity: 1;
+  margin: 2rem 0;
+}
+.dark .custom-homepage hr {
+  border-top-color: #4d4d4d;
+}
