@@ -13,18 +13,49 @@ The guide provides some quickstart code, as well as a map to building a [secure 
 ## Quickstart
 
 ```swift [Swift]
-// 1. Create a signer
-// This depends on your app's wallet implementation.
-// For example, using a library to get a signer from a private key:
-let signer = try PrivateKey.generate()
+// 1. Create an EOA or SCW signer
+// Details depend on your app's wallet implementation.
+public struct EOAWallet: SigningKey {
+    public var identity: PublicIdentity {
+        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+    }
+    public var type: SignerType { .EOA }
+    public func sign(message: String) async throws -> SignedData {
+        return SignedData(try await key.sign(message: message))
+    }
+}
 
 // 2. Create the XMTP client
-import XMTP
-let client = try await Client.create(account: signer, options: .init(api: .init(env: .dev)))
+let client = try await Client.create(
+    account: SigningKey,
+    options: ClientOptions.init(
+        api: .init(env: .production, isSecure: true),
+        dbEncryptionKey: keyBytes // 32 bytes
+    )
+)
 
-// 3. Start a new conversation and send a message
-let conversation = try await client.conversations.newConversation(with: "0xPEER_ADDRESS")
-try await conversation.send(text: "Hello, Swift!")
+// 3. Start conversations
+let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId])
+let groupWithMeta = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
+    permissionLevel: .admin_only,
+    name: "The Group Name",
+    imageUrl: "www.groupImage.com",
+    description: "The description of the group"
+)
+
+// 4. Send messages
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+try await dm.send(content: "Hello world")
+try await group.send(content: "Hello everyone")
+
+// 5. List and stream
+// List existing conversations
+let conversations = try await alix.conversations.list()
+let filteredConversations = try await client.conversations.list(consentState: .allowed)
+// Stream new messages
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+    // Received a message
+}
 ```
 
 <InboxGetStarted /> 

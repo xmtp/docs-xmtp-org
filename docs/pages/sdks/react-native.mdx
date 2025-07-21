@@ -13,21 +13,57 @@ The guide provides some quickstart code, as well as a map to building a [secure 
 ## Quickstart
 
 ```tsx [React Native]
-// 1. Create a signer (example with ethers.js)
-// You would typically integrate this with a wallet connection library.
-import { Wallet } from 'ethers'
-const signer = Wallet.createRandom()
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
+  return {
+    getIdentifier: async () => new PublicIdentity(eoaAccount.address, "ETHEREUM"),
+    getChainId: () => undefined,
+    getBlockNumber: () => undefined,
+    signerType: () => "EOA",
+    signMessage: async (message: string) => ({ signature: await eoaAccount.signMessage(message) }),
+  };
+}
 
 // 2. Create the XMTP client
-import { Client } from '@xmtp/react-native-sdk'
+Client.create(signer, {
+  env: "production",
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
 
-const client = await Client.create(signer, { env: 'dev' })
+// 3. Start conversations
+const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId]);
+const groupWithMeta = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
+  name: "The Group Name",
+  imageUrl: "www.groupImage.com",
+  description: "The description of the group",
+  permissionLevel: "admin_only",
+});
 
-// 3. Start a new conversation and send a message
-const conversation = await client.conversations.newConversation(
-  '0xPEER_ADDRESS'
-)
-await conversation.send('Hello, world!')
+// 4. Send messages
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+await dm.send("Hello world");
+await group.send("Hello everyone");
+
+// 5. List and stream
+// List existing conversations
+await alix.conversations.list(["allowed"]);
+await alix.conversations.list({
+  members: false,
+  consentState: false,
+  description: false,
+  creatorInboxId: false,
+  addedByInboxId: false,
+  isActive: false,
+  lastMessage: true,
+});
+// Stream new messages
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ["allowed"] }
+);
 ```
 
 <InboxGetStarted /> 

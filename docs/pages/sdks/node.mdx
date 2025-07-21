@@ -2,11 +2,11 @@ import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
 
 # Get started with the XMTP Node SDK
 
-Use the XMTP Node SDK to build server-side applications that interact with the XMTP network.
+Use the XMTP Node SDK to build agents and other server-side applications that interact with the XMTP network.
 
 :::tip[🤖 Building an agent?]
 
-For building AI agents, bots, or other automated services, use the [Build an agent with XMTP](/agents/build-an-agent) tutorial tailored to this use case.
+For building AI agents, use the [Build an agent with XMTP](/agents/build-an-agent) tutorial tailored to this use case.
 
 :::
 
@@ -19,28 +19,52 @@ For all other server-side applications, including backends for chat inboxes, fol
 ## Quickstart
 
 ```tsx [Node]
-// 1. Create a signer
-import { Wallet } from 'ethers'
-const signer = Wallet.createRandom()
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
+
+const signer: Signer = {
+  type: "EOA",
+  getIdentifier: () => ({
+    identifier: "0x...", // Ethereum address as the identifier
+    identifierKind: IdentifierKind.Ethereum
+  }),
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+};
 
 // 2. Create the XMTP client
-import { Client } from '@xmtp/node-sdk'
-import { randomBytes } from 'crypto'
+import { Client } from "@xmtp/node-sdk";
+import { getRandomValues } from "node:crypto";
 
-// You'll want to store the key somewhere in your app's backend
-// to avoid creating a new key on every app start.
-const newEncryptionKey = randomBytes(32)
+const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+const client = await Client.create(signer, { dbEncryptionKey });
 
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  encryptionKey: newEncryptionKey,
-})
+// 3. Start a new conversation
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
 
-// 3. Start a new conversation and send a message
-const conversation = await xmtp.conversations.newConversation(
-  '0xPEER_ADDRESS'
-)
-await conversation.send('Hello from Node!')
+// 4. Send messages
+await dm.send("Hello world");
+await group.send("Hello everyone");
+
+// 5. List and stream
+// List existing conversations
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+// Stream new messages
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  console.error(error);
+}
 ```
 
 <InboxGetStarted />

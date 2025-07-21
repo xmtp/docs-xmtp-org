@@ -43,6 +43,10 @@ const Subhead: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
+const Description: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="description">{children}</div>
+);
+
 const TileGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="custom-homepage-grid">{children}</div>
 );
@@ -173,6 +177,7 @@ export const CustomHomePage = {
   Root,
   Headline,
   Subhead,
+  Description,
   TileGrid,
   Tile,
   SDKGrid,

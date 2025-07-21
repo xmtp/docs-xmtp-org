@@ -226,8 +226,9 @@ li ol ~ p {
 .custom-homepage-sdk-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1.25rem;
+  gap: 1rem;
   margin-bottom: 0;
+  margin-top: .5rem;
 }
 @media (max-width: 768px) {
   .custom-homepage-sdk-grid {
@@ -242,7 +243,7 @@ li ol ~ p {
   background-color: var(--vocs-color-bg-soft);
   border: 1px solid var(--vocs-color-border);
   border-radius: 8px;
-  padding: 1rem;
+  padding: .5rem;
   text-decoration: none;
   color: var(--vocs-color-text);
   transition: all 0.3s ease;
@@ -256,10 +257,10 @@ li ol ~ p {
   border-color: var(--vocs-color-primary);
 }
 .custom-homepage-sdk-icon {
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 .custom-homepage-sdk-icon.light-mode-icon {
   display: block;
@@ -274,7 +275,7 @@ li ol ~ p {
   display: block;
 }
 .custom-homepage-sdk-name {
-  font-size: 1rem;
+  font-size: 15px;
   margin: 0;
   color: var(--vocs-color-text);
 }
@@ -312,4 +313,9 @@ li ol ~ p {
 }
 .dark .custom-homepage hr {
   border-top-color: #4d4d4d;
+}
+
+.description {
+  font-size: 16px; /* 2px smaller than subhead */
+  /* other styling properties */
 }
