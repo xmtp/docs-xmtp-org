@@ -36,7 +36,7 @@ val client = Client.create(
 )
 
 // 3. Start conversations
-val group = alix.conversations.newGroup(listOf(bo.inboxId, caro.inboxId))
+val group = client.conversations.newGroup(inboxIds = listOf(bo.inboxId, caro.inboxId))
 val groupWithMeta = alix.conversations.newGroup(
     listOf(bo.inboxId, caro.inboxId),
     permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS,
