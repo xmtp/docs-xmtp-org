@@ -256,20 +256,6 @@ export default defineConfig({
           items: [],
         },
         {
-          text: "Upgrade to a stable XMTP V3 SDK",
-          collapsed: false,
-          items: [
-            {
-              text: "From a legacy XMTP V2 SDK",
-              link: "/upgrade-from-legacy-V2",
-            },
-            {
-              text: "From a legacy XMTP V3 SDK",
-              link: "/upgrade-from-legacy-V3",
-            },
-          ],
-        },
-        {
           text: "Sign and verify payloads",
           link: "/inboxes/use-signatures",
           items: [],
