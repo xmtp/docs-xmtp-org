@@ -38,7 +38,7 @@ val client = Client.create(
 // 3. Start conversations
 val group = client.conversations.newGroup(inboxIds = listOf(bo.inboxId, caro.inboxId))
 val groupWithMeta = client.conversations.newGroup(
-    listOf(bo.inboxId, caro.inboxId),
+    inboxIds = listOf(bo.inboxId, caro.inboxId),
     permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS,
     name = "The Group Name",
     imageUrl = "www.groupImage.com",
