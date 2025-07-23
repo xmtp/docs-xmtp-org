@@ -50,7 +50,7 @@ val dm = client.conversations.findOrCreateDm(recipientInboxId)
 dm.send(text = "Hello world")
 group.send(text = "Hello everyone")
 
-// 5. List and stream
+// 5. List, stream, and sync
 // List existing conversations
 val conversations = client.conversations.list()
 val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
@@ -58,6 +58,9 @@ val filteredConversations = client.conversations.list(consentState = ConsentStat
 client.conversations.streamAllMessages(consentStates = listOf(ConsentState.ALLOWED)).collect {
     // Received a message
 }
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+client.conversations.syncAll(consentStates = ConsentState.ALLOWED)
 ```
 
 <InboxGetStarted />

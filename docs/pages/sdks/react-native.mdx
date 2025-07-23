@@ -32,8 +32,8 @@ const client = Client.create(signer, {
 });
 
 // 3. Start conversations
-const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId]);
-const groupWithMeta = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
+const group = await client.conversations.newGroup([bo.inboxId, caro.inboxId]);
+const groupWithMeta = await client.conversations.newGroup([bo.inboxId, caro.inboxId], {
   name: "The Group Name",
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
@@ -45,25 +45,19 @@ const dm = await client.conversations.findOrCreateDm(recipientInboxId);
 await dm.send("Hello world");
 await group.send("Hello everyone");
 
-// 5. List and stream
+// 5. List, stream, and sync
 // List existing conversations
-await alix.conversations.list(["allowed"]);
-await alix.conversations.list({
-  members: false,
-  consentState: false,
-  description: false,
-  creatorInboxId: false,
-  addedByInboxId: false,
-  isActive: false,
-  lastMessage: true,
-});
+await client.conversations.list(["allowed"]);
 // Stream new messages
-await alix.conversations.streamAllMessages(
+await client.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
   { consentState: ["allowed"] }
 );
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+await client.conversations.syncAllConversations(["allowed"]);
 ```
 
 <InboxGetStarted /> 

@@ -35,8 +35,8 @@ let client = try await Client.create(
 )
 
 // 3. Start conversations
-let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId])
-let groupWithMeta = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
+let group = try await client.conversations.newGroup([bo.inboxId, caro.inboxId])
+let groupWithMeta = try await client.conversations.newGroup([bo.inboxId, caro.inboxId],
     permissionLevel: .admin_only,
     name: "The Group Name",
     imageUrl: "www.groupImage.com",
@@ -48,14 +48,17 @@ let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
 try await dm.send(content: "Hello world")
 try await group.send(content: "Hello everyone")
 
-// 5. List and stream
+// 5. List, stream, and sync
 // List existing conversations
-let conversations = try await alix.conversations.list()
+let conversations = try await client.conversations.list()
 let filteredConversations = try await client.conversations.list(consentState: .allowed)
 // Stream new messages
-for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+for await message in try await client.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
     // Received a message
 }
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
 <InboxGetStarted /> 
