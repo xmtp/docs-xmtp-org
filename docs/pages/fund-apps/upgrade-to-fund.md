@@ -4,7 +4,7 @@
 
 Once your infrastructure is ready, upgrading is straightforward:
 
-- Payer service is running (or using Node.js)
+- XMTP Gateway is running (or using Node.js)
 - Authentication is working
 - USDC funding process established
 - **Just update dependencies and connect**

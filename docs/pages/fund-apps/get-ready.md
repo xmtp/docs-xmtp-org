@@ -1,17 +1,4 @@
-# Get started
-
-:::tip
-🎤 **TL;DR: What You Need To Know**
-
-- **XMTP mainnet launches July 29, 2025** with mandatory fees starting December 9, 2025
-- **Three key preparation steps**: Set up your payer service, calculate costs and fund your account
-- **Fees start at $5 per 100,000 messages** to cover shared network infrastructure costs—100% goes to node operators
-- **Most apps will pay $30–$3,000 per month** depending on user base and optimization
-- **Client libraries available October 7, 2025**—the final step after you've prepared everything else
-
-:::
-
-## What’s Changing
+# Get ready for decentralized XMTP mainnet
 
 The decentralized XMTP network is moving from testnet to mainnet—a significant transition affecting everyone building on the protocol. This milestone represents the culmination of three years of development and marks a major step toward a fully decentralized messaging layer for the open web.
 
@@ -54,6 +41,23 @@ Your fees directly fund:
 
 You're not paying for access to someone else's platform. You're investing in shared infrastructure that no one can take away from you or your users.
 
+
+:::tip
+🎤 **TL;DR: Key dates**
+
+- **August 12, 2025**: 
+  - XMTP mainnet launches with one node run by Ephemera.
+  - XMTP Funding Portal launches, enabling developers test funding apps on XMTP testnet
+- **October 7, 2025**: XMTP client SDKs that work with decentralized XMTP mainnet become available.
+- **December 9, 2025**: Decentralized XMTP mainnet launches with nodes run by independent, diverse operators. Mandatory fees start.
+
+:::
+
+
+- **Three key preparation steps**: Set up your XMTP Gateway, calculate costs, and fund your account
+- **Fees start at $5 per 100,000 messages** to cover shared network infrastructure costs—100% goes to node operators
+- **Most apps will pay $30–$3,000 per month** depending on user base and optimization
+
 ### How XMTP's Architecture Works
 
 XMTP uses a two-layer system to deliver messages efficiently:
@@ -75,7 +79,7 @@ XMTP uses a two-layer system to deliver messages efficiently:
 ### Critical Dates
 
 - **Mainnet launches July 29, 2025**—this is when you should start preparing and testing
-- **October 7, 2025 marks the release of client libraries** and when the Payer Portal begins accepting mainnet deposits
+- **October 7, 2025 marks the release of client libraries** and when the Funding Portal begins accepting mainnet deposits
 - **On December 9, 2025**, fees will no longer be optional—your system must be fully operational by this date
 
 [Placeholder: Visual timeline highlighting "Prepare Now" phase and "Migration Period"]
@@ -85,14 +89,14 @@ XMTP uses a two-layer system to deliver messages efficiently:
 ### July-August 2025
 
 - [ ]  Calculate estimated monthly costs
-- [ ]  Plan payer service architecture (unless using Node.js)
+- [ ]  Plan XMTP Gateway architecture (unless using Node.js)
 - [ ]  Set up development environment
 - [ ]  Begin testing with testnet
 - [ ]  Identify Go resources if needed
 
 ### September-October 2025
 
-- [ ]  Deploy payer service to production (unless using Node.js)
+- [ ]  Deploy XMTP Gateway to production (unless using Node.js)
 - [ ]  Complete testnet testing
 - [ ]  Document operations
 - [ ]  Upgrade client libraries (October 7)
@@ -118,7 +122,7 @@ XMTP uses a two-layer system to deliver messages efficiently:
 
 ### Documentation
 
-- **Payer Service Guide**: [docs.xmtp.org/payer-service](https://claude.ai/chat/URL-placeholder)
+- **XMTP Gateway Guide**: [docs.xmtp.org/payer-service](https://claude.ai/chat/URL-placeholder)
 - **Mainnet Migration**: [docs.xmtp.org/mainnet](https://claude.ai/chat/URL-placeholder)
 - **Payer Examples**: [github.com/xmtp/xmtpd](https://claude.ai/chat/URL-placeholder)
 
@@ -132,7 +136,7 @@ XMTP uses a two-layer system to deliver messages efficiently:
 
 ## Key Takeaways
 
-✅ **Payer service requirements vary**—built-in for Node.js, Go service for others
+✅ **XMTP Gateway requirements vary**—built-in for Node.js, Go service for others
 
 ✅ **Simple pricing**—$5 per 100K messages estimate covers typical usage
 

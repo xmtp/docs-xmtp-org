@@ -243,14 +243,26 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "Understand push notifications",
-              link: "/inboxes/push-notifs/understand-push-notifs",
+              text: "Understand funding and fees",
+              link: "/fund-apps/understand-fees",
             },
             {
-              text: "Run a payer service",
-              link: "/inboxes/payer-service",
+              text: "Quickstart",
+              link: "/fund-apps/quickstart",
             },
-          ]
+            {
+              text: "Calculate costs",
+              link: "/fund-apps/calculate-costs",
+            },
+            {
+              text: "Run an XMTP Gateway",
+              link: "/fund-apps/run-gateway",
+            },
+            {
+              text: "FAQ and glossary",
+              link: "/fund-apps/faq-glossary",
+            },
+          ],
         },
         {
           text: "Upgrade to a stable XMTP V3 SDK",
