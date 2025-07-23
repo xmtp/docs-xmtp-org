@@ -26,7 +26,7 @@ export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
 }
 
 // 2. Create the XMTP client
-Client.create(signer, {
+const client = Client.create(signer, {
   env: "production",
   dbEncryptionKey: keyBytes, // 32 bytes
 });
