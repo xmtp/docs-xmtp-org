@@ -272,10 +272,6 @@ export default defineConfig({
           text: "Testnet nodes",
           link: "/network/network-nodes",
         },
-        {
-          text: "Testnet2 nodes",
-          link: "/upgrade-from-legacy-V2",
-        },
       ],
     },
     {
