@@ -404,6 +404,18 @@ try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRem
 
 :::
 
+## Select the identity to display
+
+When an inbox has multiple associated identities, the `identities` array is ordered by the `client_timestamp_ns` field, which sorts identities based on when they were added to the inbox, placing the earliest added identity first.
+
+This provides consistent display ordering and helps establish norms for which identity should be used for UI display purposes. 
+
+For UI display purposes, you can use the following logic to select the most appropriate identity:
+
+1. If there is only one identity in the `identities` array, use that as the display identity.
+2. If there are two identities, use the one that does not match the `recoveryIdentity`. The first non-recovery identifier in the array is typically the preferred identity for display.
+3. If there are more than two identities, the first non-recovery identity in the ordered array is typically the preferred identity for display.
+
 ## FAQ
 
 ### What happens when a user removes an identity?

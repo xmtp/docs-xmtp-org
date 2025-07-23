@@ -48,15 +48,15 @@ await alix.conversations.list(
 ```kotlin [Kotlin]
 // List conversations (both groups and dms)
 val conversations = alix.conversations.list()
-val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
+val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
 
 // List just dms
-val conversations = alix.conversations.listDms()
-val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
+val dms = alix.conversations.listDms()
+val filteredDms = client.conversations.listDms(consentState = ConsentState.ALLOWED)
 
 //List just groups
-val conversations = alix.conversations.listGroups()
-val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
+val groups = alix.conversations.listGroups()
+val filteredGroups = client.conversations.listGroups(consentState = ConsentState.ALLOWED)
 
 ```
 

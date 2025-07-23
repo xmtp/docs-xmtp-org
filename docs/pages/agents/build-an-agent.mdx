@@ -1,6 +1,6 @@
 # Tutorial: Build an agent that uses XMTP
 
-This quickstart provides a map to building agents that can communicate with humans and other agents in chats built with XMTP.
+This tutorial provides a map to building agents with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
 
 Building with XMTP gives your agent access to:
 - The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
@@ -108,17 +108,9 @@ To learn more, see the example [good example for this?](#TODO) agent and [Suppor
 
 ### Observe rate limits
 
-XMTP enforces a rate limit of 10,000 calls to the network per client per a rolling 5-minute window.
+XMTP enforces separate rate limits for read and write operations per client.
 
-These network calls include actions like:
-
-- Sending chat messages
-- Adding and removing wallets
-- Adding and revoking installations
-- Adding and removing group members
-- Updating group metadata
-
-When you reach the rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+To learn more, see [Observe rate limits](/inboxes/rate-limits)
 
 ### Handle stream failures
 
@@ -368,4 +360,12 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
 
-```
+## Get featured
+
+:::tip
+
+**Want your agent or mini-app featured on TBA?**
+
+[Complete this form](https://docs.google.com/forms/d/e/1FAIpQLSfZ7JgOt4tw36dGLL9cEmw_y09VoE5_Knk7X6EnJd1IJ3CLEg/viewform) to tell the team about your project, get feedback, and collaborate on possibly getting it featured.
+
+:::
