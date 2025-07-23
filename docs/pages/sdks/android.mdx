@@ -26,7 +26,7 @@ class EOAWallet : SigningKey {
 }
 
 // 2. Create the XMTP client
-val client = Client().create(
+val client = Client.create(
     account = SigningKey,
     options = ClientOptions(
         ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
