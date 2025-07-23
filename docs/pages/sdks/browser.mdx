@@ -44,7 +44,7 @@ const group = await client.conversations.newGroup(
 // 4. Send messages
 await group.send("Hello everyone");
 
-// 5. List and stream
+// 5. List, stream, and sync
 // List existing conversations
 const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
 const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
@@ -58,6 +58,9 @@ try {
 } catch (error) {
   console.error(error);
 }
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+await client.conversations.syncAll(["allowed"]);
 ```
 
 <InboxGetStarted />
