@@ -1,32 +1,12 @@
-# Quickstart: Build a chat inbox with XMTP
+## 🛠️ Phase 0: Explore XMTP developer tools
 
-This quickstart provides a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+- [Use llms-full.txt](/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
-- End-to-end encrypted direct message and group chat conversations
-- Rich content types (attachments, reactions, replies, and more)
-- Real-time push notifications
-- Spam-free inboxes using user consent preferences
+- [Use xmtp.chat](https://xmtp.chat), the official web inbox for developers, to interact with and test your app
 
-## 🏗️ Phase I: Setup
+- [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
 
-1. Select the XMTP SDK that matches your platform.
-
-   - Mobile development
-     - [React Native SDK](https://github.com/xmtp/xmtp-react-native)
-     - [Kotlin SDK](https://github.com/xmtp/xmtp-android)
-     - [Swift SDK](https://github.com/xmtp/xmtp-ios)
-
-   - Web development
-     - [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk) (for web apps)
-     - [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) (for servers)
-
-   Need an SDK for a different platform? Let us know in [Ideas & Improvements](https://community.xmtp.org/c/general/ideas/54) in the XMTP Community Forums.
-
-2. [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
-
-3. You can [use llms-full.txt](/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
-
-## 💬 Phase II: Build core messaging
+## 💬 Phase I: Build core messaging
 
 1. [Create an EOA or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer).
 
@@ -44,7 +24,9 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 
 7. [Manage identities, inboxes, and installations](/inboxes/manage-inboxes).
 
-## 📩 Phase III: Manage conversations and messages
+8. Be sure to [observe rate limits](/inboxes/rate-limits).
+
+## 📩 Phase II: Manage conversations and messages
 
 1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.
 
@@ -56,7 +38,7 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 
 5. [Sync a specific conversation's messages and preference updates](/inboxes/sync-and-syncall#sync-a-specific-conversation) from the network.
 
-## 💅🏽 Phase IV: Enhance the user experience
+## 💅🏽 Phase III: Enhance the user experience
 
 1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts. You can use these consent values to filter conversations. For example:
    
@@ -76,9 +58,9 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
    - [Onchain transactions](/inboxes/content-types/transactions)
    - [Onchain transaction references](/inboxes/content-types/transaction-refs)
 
-3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs).
+3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs), if applicable.
 
-## 🧪 Phase V: Test and debug
+## 🧪 Phase IV: Test and debug
 
 - [Stress and burn-in test](/inboxes/debug-your-app#xmtp-debug) your inbox app.
 
@@ -86,10 +68,4 @@ This quickstart provides a map to building a [secure messaging app](/protocol/se
 
 - [Capture network statistics](/inboxes/debug-your-app#network-statistics).
 
-- Found a bug or need support? Please file an issue in the relevant SDK repo:
-  
-  - [React Native SDK](https://github.com/xmtp/xmtp-react-native/issues)
-  - [Kotlin SDK](https://github.com/xmtp/xmtp-android/issues)
-  - [Swift SDK](https://github.com/xmtp/xmtp-ios/issues)
-  - [Browser SDK](https://github.com/xmtp/xmtp-js/issues)
-  - [Node SDK](https://github.com/xmtp/xmtp-js/issues)
+- Found a bug or need help? Contact [dev support](/intro/dev-support).

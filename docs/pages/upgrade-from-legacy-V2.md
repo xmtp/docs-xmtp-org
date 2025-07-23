@@ -111,7 +111,7 @@ const signer: Signer = {
 };
 ```
 
-### Before: newConveration()
+### Before: newConversation()
 
 Previously, developers used an Ethereum address to create a new DM conversation:
 
@@ -119,7 +119,7 @@ Previously, developers used an Ethereum address to create a new DM conversation:
 const dm = await alix.conversations.findOrCreateDm(bo.address);
 ```
 
-### After: newConveration()
+### After: newConversation()
 
 Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
 

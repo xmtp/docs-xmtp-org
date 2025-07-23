@@ -3,6 +3,19 @@ export default function Footer() {
     <div style={{ textAlign: "center" }}>
       <div>
         <small>
+          <a
+            href="https://xmtp.org/"
+            target="_blank"
+            style={{
+              "--vocs_ExternalLink_iconUrl":
+                "url(/.vocs/icons/arrow-diagonal.svg)",
+            }}
+            className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink"
+          >
+            XMTP.org
+          </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </small>
+        <small>
         <a
             href="https://status.xmtp.org/"
             target="_blank"
@@ -26,19 +39,6 @@ export default function Footer() {
             className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink"
           >
             XMTP.chat
-          </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </small>
-        <small>
-        <a
-            href="https://xmtp.org/"
-            target="_blank"
-            style={{
-              "--vocs_ExternalLink_iconUrl":
-                "url(/.vocs/icons/arrow-diagonal.svg)",
-            }}
-            className="vocs_Anchor vocs_Link vocs_Link_accent_underlined vocs_ExternalLink"
-          >
-            XMTP.org
           </a>
         </small>
       </div>
