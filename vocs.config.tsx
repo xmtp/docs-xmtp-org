@@ -70,9 +70,30 @@ export default defineConfig({
       ],
     },
     {
-      text: "Quickstart: Build a chat inbox 📥",
-      link: "/inboxes/quickstart",
-      items: [],
+      text: "Get started",
+      collapsed: false,
+      items: [
+          {
+            text: "Browser SDK",
+            link: "/sdks/browser",
+          },
+          {
+            text: "Node SDK",
+            link: "/sdks/node",
+          },
+          {
+            text: "React Native SDK",
+            link: "/sdks/react-native",
+          },
+          {
+            text: "Android SDK",
+            link: "/sdks/android",
+          },
+          {
+            text: "iOS SDK",
+            link: "/sdks/ios",
+          },
+        ]
     },
     {
       text: "Tutorial: Build an agent 🤖",
@@ -83,10 +104,6 @@ export default defineConfig({
       text: "Build core messaging",
       collapsed: false,
       items: [
-          {
-            text: "Pick an SDK",
-            link: "/inboxes/pick-an-sdk",
-          },
           {
             text: "Create an EOA or SCW signer",
             link: "/inboxes/create-a-signer",
@@ -265,20 +282,6 @@ export default defineConfig({
           ],
         },
         {
-          text: "Upgrade to a stable XMTP V3 SDK",
-          collapsed: false,
-          items: [
-            {
-              text: "From a legacy XMTP V2 SDK",
-              link: "/upgrade-from-legacy-V2",
-            },
-            {
-              text: "From a legacy XMTP V3 SDK",
-              link: "/upgrade-from-legacy-V3",
-            },
-          ],
-        },
-        {
           text: "Sign and verify payloads",
           link: "/inboxes/use-signatures",
           items: [],
@@ -294,6 +297,10 @@ export default defineConfig({
         {
           text: "Testnet nodes",
           link: "/network/network-nodes",
+        },
+        {
+          text: "Testnet2 nodes",
+          link: "/upgrade-from-legacy-V2",
         },
       ],
     },
