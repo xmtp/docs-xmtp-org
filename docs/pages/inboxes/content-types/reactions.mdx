@@ -38,6 +38,10 @@ xmtp.registerCodec(new ReactionCodec());
 
 </div>
 
+```jsx [Node]
+
+```
+
 ```jsx [React Native]
 const client = await Client.create(signer, {
   env: "production",
@@ -79,6 +83,18 @@ const reaction = {
 };
 
 await conversation.send(reaction, {
+  contentType: ContentTypeReaction,
+});
+```
+
+```jsx [Node]
+const reaction: Reaction = {
+  reference: someMessageID,
+  action: "added",
+  content: "smile",
+};
+
+await conversation.messages.send(reaction, {
   contentType: ContentTypeReaction,
 });
 ```
@@ -144,6 +160,19 @@ if (message.contentType.sameAs(ContentTypeReaction)) {
   // We've got a reaction.
   const reaction: Reaction = message.content;
 }
+```
+
+```jsx [Node]
+// Assume `loadLastMessage` is a thing you have
+const message: DecodedMessage = await loadLastMessage();
+
+if (!message.contentType.sameAs(ContentTypeReaction)) {
+  // We do not have a reaction. A topic for another blog post.
+  return;
+}
+
+// We've got a reaction.
+const reaction: Reaction = message.content;
 ```
 
 ```jsx [React Native]
