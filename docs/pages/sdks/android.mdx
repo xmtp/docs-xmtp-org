@@ -52,7 +52,7 @@ group.send(text = "Hello everyone")
 
 // 5. List and stream
 // List existing conversations
-val conversations = alix.conversations.list()
+val conversations = client.conversations.list()
 val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
 // Stream new messages
 alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
