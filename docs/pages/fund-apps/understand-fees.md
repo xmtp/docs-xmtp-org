@@ -6,7 +6,7 @@ Use this guide to understand the fees involved in sending messages with XMTP.
 
 Apps and agents pay fees to send messages through XMTP.
 
-To learn how to fund your app to pay fees, see [Quickstart: Fund your app to send messages with XMTP](/fund-apps/quickstart).
+To learn how to fund your app to pay fees, see [Fund your app to send messages with XMTP](/fund-apps/fund-your-app).
 
 # What kinds of fees are there?
 

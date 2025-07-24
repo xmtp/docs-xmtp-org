@@ -11,7 +11,7 @@ Starting on October 7, 2025, you'll be able to update your app to use an XMTP SD
 ## Prerequisites
 
 - [XMTP Gateway](/fund-apps/run-gateway) is running, or using built-in XMTP Gateway provided by XMTP Node SDK, with authentication working
-- [Payer created and funded](/fund-apps/fund-payer) with USDC on Base
+- [Payer created and funded](/fund-apps/fund-your-app) with USDC on Base
   
 ## Update your app
 

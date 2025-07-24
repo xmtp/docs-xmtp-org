@@ -260,20 +260,28 @@ export default defineConfig({
           collapsed: false,
           items: [
             {
-              text: "Understand funding and fees",
+              text: "Get started",
+              link: "/fund-apps/get-started",
+            },
+            {
+              text: "Understand fees",
               link: "/fund-apps/understand-fees",
             },
             {
-              text: "Quickstart",
-              link: "/fund-apps/quickstart",
+              text: "Calculate fees and costs",
+              link: "/fund-apps/calculate-costs",
             },
             {
-              text: "Calculate costs",
-              link: "/fund-apps/calculate-costs",
+              text: "Fund your app",
+              link: "/fund-apps/fund-your-app",
             },
             {
               text: "Run an XMTP Gateway",
               link: "/fund-apps/run-gateway",
+            },
+            {
+              text: "Update your SDK",
+              link: "/fund-apps/update-sdk",
             },
             {
               text: "FAQ and glossary",
