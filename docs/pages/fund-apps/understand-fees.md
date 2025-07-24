@@ -8,7 +8,7 @@ Apps and agents pay fees to send messages through XMTP.
 
 To learn how to fund your app to pay fees, see [Fund your app to send messages with XMTP](/fund-apps/fund-your-app).
 
-# What kinds of fees are there?
+## What kinds of fees are there?
 
 - **Messaging fees**: Charged for messages sent through the XMTP network.
 - **Gas fees**: Charged for messages that require transactions on the XMTP appchain.
