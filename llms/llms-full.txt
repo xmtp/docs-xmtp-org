@@ -7036,9 +7036,21 @@ To send multiple remote attachments of any size in a single message, see [Suppor
 
 In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-remote-attachment
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+:::
 
 ### Configure the content type
 
@@ -7046,22 +7058,17 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="Browser">
-
-```jsx
+```jsx [Browser]
 import {
-  ContentTypeAttachment,
   AttachmentCodec,
   RemoteAttachmentCodec,
-  ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new AttachmentCodec());
-xmtp.registerCodec(new RemoteAttachmentCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+});
 ```
-
-</div>
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -7748,11 +7755,22 @@ Unless a very specific use case we recommend using the [remote attachment conten
 
 ### Install the package
 
-```bash
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-remote-attachment
 ```
 
-> In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+:::
 
 ### Import and register
 
@@ -7760,12 +7778,13 @@ npm i @xmtp/content-type-remote-attachment
 
 ```jsx [Browser]
 import {
-  ContentTypeAttachment,
   AttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new AttachmentCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec()],
+});
 ```
 
 ```jsx [React Native]
@@ -7846,9 +7865,21 @@ Use a local database to store replies. This will enable your app to performantly
 
 In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-reply
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reply
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reply
+```
+
+:::
 
 ## Configure the content type
 
@@ -7856,14 +7887,16 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-```jsx [Browser]
-import { ContentTypeReply, ReplyCodec } from "@xmtp/content-type-reply";
+```js [Browser]
+import { ReplyCodec } from "@xmtp/content-type-reply";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReplyCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReplyCodec()],
+});
 ```
 
-```jsx [React Native]
+```js [React Native]
 const client = await Client.create(signer, {
   env: "production",
   codecs: [new ReplyCodec()],
@@ -7892,7 +7925,7 @@ Once you've created a reply, you can send it. Replies are represented as objects
 
 :::code-group
 
-```tsx [Browser]
+```ts [Browser]
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import type { Reply } from "@xmtp/content-type-reply";
@@ -7908,7 +7941,7 @@ await conversation.send(reply, {
 });
 ```
 
-```jsx [React Native]
+```js [React Native]
 // Assuming you have a conversation object and the ID of the message you're replying to
 const replyContent = {
   reply: {
@@ -7959,7 +7992,7 @@ try await conversation.send(
 
 :::code-group
 
-```tsx [Browser]
+```ts [Browser]
 if (message.contentType.sameAs(ContentTypeReply)) {
   // We've got a reply.
   const reply: Reply = message.content;
@@ -8002,101 +8035,6 @@ For example, in Discord, users can reply to individual messages, and the reply p
 
 Note that the user experience of replies in iMessage and Slack follows more of a threaded pattern, where messages display in logical groupings, or threads. This reply content type doesn't support the threaded pattern. If you'd like to request support for a threaded reply pattern, [post an XIP idea](https://community.xmtp.org/c/development/ideas/54).
 
-## pages/inboxes/content-types/transactions.md
-# Support onchain transactions in your app built with XMTP
-
-This package provides an XMTP content type to support sending transactions to a wallet for execution. 
-
-Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
-
-For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
-
-:::tip[Open for feedback]
-
-You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
-
-:::
-
-## Install the package
-
-```bash [Bash]
-# npm
-npm i @xmtp/content-type-wallet-send-calls
-
-# yarn
-yarn add @xmtp/content-type-wallet-send-calls
-
-# pnpm
-pnpm i @xmtp/content-type-wallet-send-calls
-```
-
-## Create a transaction request
-
-With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
-
-```tsx [TypeScript]
-const walletSendCalls: WalletSendCallsParams = {
-  version: "1.0",
-  from: "0x123...abc",
-  chainId: "0x2105",
-  calls: [
-    {
-      to: "0x456...def",
-      value: "0x5AF3107A4000",
-      metadata: {
-        description: "Send 0.0001 ETH on base to 0x456...def",
-        transactionType: "transfer",
-        currency: "ETH",
-        amount: 100000000000000,
-        decimals: 18,
-        toAddress: "0x456...def",
-      },
-    },
-    {
-      to: "0x789...cba",
-      data: "0xdead...beef",
-      metadata: {
-        description: "Lend 10 USDC on base with Morpho @ 8.5% APY",
-        transactionType: "lend",
-        currency: "USDC",
-        amount: 10000000,
-        decimals: 6,
-        platform: "morpho",
-        apy: "8.5",
-      },
-    },
-  ],
-};
-```
-
-## Send a transaction request
-
-Once you have a transaction reference, you can send it as part of your conversation:
-
-```tsx [TypeScript]
-await conversation.messages.send(walletSendCalls, {
-  contentType: ContentTypeWalletSendCalls,
-});
-```
-
-## Receive a transaction request
-
-To receive and process a transaction request:
-
-```tsx [TypeScript]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
-}
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
-```
-
-
 ## pages/inboxes/content-types/reactions.mdx
 ---
 description: Learn how to use the reaction content type to support reactions in your app built with XMTP
@@ -8112,11 +8050,23 @@ Use a local database to store reactions. This enables your app to performantly d
 
 ### Install the package
 
-```bash [Bash]
+In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-reaction
 ```
 
-> In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+```bash [yarn]
+yarn add @xmtp/content-type-reaction
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reaction
+```
+
+:::
 
 ## Configure the content type
 
@@ -8124,19 +8074,16 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="Browser">
-
-```jsx
+```jsx [Browser]
 import {
-  ContentTypeReaction,
   ReactionCodec,
 } from "@xmtp/content-type-reaction";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReactionCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReactionCodec()],
+});
 ```
-
-</div>
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -8307,6 +8254,121 @@ For more common content types, you can usually find a [standard](/inboxes/conten
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/intro/xips).
 
 
+## pages/inboxes/content-types/transactions.mdx
+# Support onchain transactions in your app built with XMTP
+
+This package provides an XMTP content type to support sending transactions to a wallet for execution.
+
+Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
+
+For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
+
+:::tip[Open for feedback]
+
+You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
+
+:::
+
+## Install the package
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-wallet-send-calls
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-wallet-send-calls
+```
+
+```bash [pnpm]
+pnpm i @xmtp/content-type-wallet-send-calls
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Browser]
+import {
+  WalletSendCallsCodec,
+} from "@xmtp/content-type-wallet-send-calls";
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new WalletSendCallsCodec()],
+});
+```
+
+## Create a transaction request
+
+With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
+
+```ts [TypeScript]
+const walletSendCalls: WalletSendCallsParams = {
+  version: "1.0",
+  from: "0x123...abc",
+  chainId: "0x2105",
+  calls: [
+    {
+      to: "0x456...def",
+      value: "0x5AF3107A4000",
+      metadata: {
+        description: "Send 0.0001 ETH on base to 0x456...def",
+        transactionType: "transfer",
+        currency: "ETH",
+        amount: 100000000000000,
+        decimals: 18,
+        toAddress: "0x456...def",
+      },
+    },
+    {
+      to: "0x789...cba",
+      data: "0xdead...beef",
+      metadata: {
+        description: "Lend 10 USDC on base with Morpho @ 8.5% APY",
+        transactionType: "lend",
+        currency: "USDC",
+        amount: 10000000,
+        decimals: 6,
+        platform: "morpho",
+        apy: "8.5",
+      },
+    },
+  ],
+};
+```
+
+## Send a transaction request
+
+Once you have a transaction reference, you can send it as part of your conversation:
+
+```ts [TypeScript]
+await conversation.messages.send(walletSendCalls, {
+  contentType: ContentTypeWalletSendCalls,
+});
+```
+
+## Receive a transaction request
+
+To receive and process a transaction request:
+
+```ts [TypeScript]
+// Assume `loadLastMessage` is a thing you have
+const message: DecodedMessage = await loadLastMessage();
+
+if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
+  // Handle non-transaction request message
+  return;
+}
+
+const walletSendCalls: WalletSendCallsParams = message.content;
+// Process the transaction request here
+```
+
+
 ## pages/inboxes/content-types/transaction-refs.mdx
 ---
 description: Learn how to implement an onchain transaction reference content type
@@ -8324,29 +8386,43 @@ You're welcome to provide feedback by commenting on [XIP-21: On-chain transactio
 
 ## Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-transaction-reference
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-transaction-reference
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-transaction-reference
+```
+
+:::
 
 ## Configure the content type
 
 After importing the package, you can register the codec.
 
-```jsx [Browser]
+```js [Browser]
 import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
 } from "@xmtp/content-type-transaction-reference";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new TransactionReferenceCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new TransactionReferenceCodec()],
+});
 ```
 
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
 
-```tsx [Browser]
+```ts [Browser]
 const transactionReference: TransactionReference = {
   /**
    * Optional namespace for the networkId
@@ -8375,7 +8451,7 @@ const transactionReference: TransactionReference = {
 ```
 Once you have a transaction reference, you can send it as part of your conversation:
 
-```jsx [Browser]
+```js [Browser]
 await conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
@@ -8387,7 +8463,7 @@ To receive and process a transaction reference, you can use the following code s
 
 To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
-```tsx [Browser]
+```ts [Browser]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 
@@ -8419,29 +8495,38 @@ While this is a per-app decision, the best practice is to provide users with the
 
 ## Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-read-receipt
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-read-receipt
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-read-receipt
+```
+
+:::
 
 ## Configure the content type
 
 :::code-group
 
-<div data-title="Browser">
-
-```tsx
+```js [Browser]
 import {
-  ContentTypeReadReceipt,
   ReadReceiptCodec,
 } from "@xmtp/content-type-read-receipt";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReadReceiptCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReadReceiptCodec()],
+});
 ```
 
-</div>
-
-```jsx [React Native]
+```js [React Native]
 const client = await Client.create(signer, {
   env: "production",
   codecs: [new ReadReceiptCodec()],
@@ -8465,7 +8550,7 @@ Client.register(codec = ReadReceiptCodec())
 
 :::code-group
 
-```jsx [Browser]
+```js [Browser]
 // The content of a read receipt message must be an empty object.
 
 await conversation.messages.send({}, ContentTypeReadReceipt);
@@ -8508,14 +8593,14 @@ Here's how you can receive a read receipt:
 
 :::code-group
 
-```tsx [Browser]
+```js [Browser]
 if (message.contentType.sameAs(ContentTypeReadReceipt)) {
   // The message is a read receipt
   const timestamp = message.sent;
 }
 ```
 
-```jsx [React Native]
+```js [React Native]
 if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
   return message.sent; //Date received
 }

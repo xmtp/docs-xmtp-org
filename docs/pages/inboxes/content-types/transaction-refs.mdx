@@ -14,29 +14,43 @@ You're welcome to provide feedback by commenting on [XIP-21: On-chain transactio
 
 ## Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-transaction-reference
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-transaction-reference
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-transaction-reference
+```
+
+:::
 
 ## Configure the content type
 
 After importing the package, you can register the codec.
 
-```jsx [Browser]
+```js [Browser]
 import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
 } from "@xmtp/content-type-transaction-reference";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new TransactionReferenceCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new TransactionReferenceCodec()],
+});
 ```
 
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
 
-```tsx [Browser]
+```ts [Browser]
 const transactionReference: TransactionReference = {
   /**
    * Optional namespace for the networkId
@@ -65,7 +79,7 @@ const transactionReference: TransactionReference = {
 ```
 Once you have a transaction reference, you can send it as part of your conversation:
 
-```jsx [Browser]
+```js [Browser]
 await conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
@@ -77,7 +91,7 @@ To receive and process a transaction reference, you can use the following code s
 
 To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
-```tsx [Browser]
+```ts [Browser]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 

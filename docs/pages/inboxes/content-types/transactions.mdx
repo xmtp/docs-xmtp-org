@@ -1,6 +1,6 @@
 # Support onchain transactions in your app built with XMTP
 
-This package provides an XMTP content type to support sending transactions to a wallet for execution. 
+This package provides an XMTP content type to support sending transactions to a wallet for execution.
 
 Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
 
@@ -14,22 +14,42 @@ You are welcome to provide feedback on this implementation by commenting on [XIP
 
 ## Install the package
 
-```bash [Bash]
-# npm
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-wallet-send-calls
+```
 
-# yarn
+```bash [yarn]
 yarn add @xmtp/content-type-wallet-send-calls
+```
 
-# pnpm
+```bash [pnpm]
 pnpm i @xmtp/content-type-wallet-send-calls
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Browser]
+import {
+  WalletSendCallsCodec,
+} from "@xmtp/content-type-wallet-send-calls";
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new WalletSendCallsCodec()],
+});
 ```
 
 ## Create a transaction request
 
 With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
 
-```tsx [TypeScript]
+```ts [TypeScript]
 const walletSendCalls: WalletSendCallsParams = {
   version: "1.0",
   from: "0x123...abc",
@@ -68,7 +88,7 @@ const walletSendCalls: WalletSendCallsParams = {
 
 Once you have a transaction reference, you can send it as part of your conversation:
 
-```tsx [TypeScript]
+```ts [TypeScript]
 await conversation.messages.send(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
@@ -78,7 +98,7 @@ await conversation.messages.send(walletSendCalls, {
 
 To receive and process a transaction request:
 
-```tsx [TypeScript]
+```ts [TypeScript]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 
