@@ -12,9 +12,21 @@ Use a local database to store reactions. This enables your app to performantly d
 
 ### Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-reaction
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reaction
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reaction
+```
+
+:::
 
 > In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
 
@@ -24,19 +36,16 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="Browser">
-
-```jsx
+```jsx [Browser]
 import {
-  ContentTypeReaction,
   ReactionCodec,
 } from "@xmtp/content-type-reaction";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReactionCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReactionCodec()],
+});
 ```
-
-</div>
 
 ```jsx [React Native]
 const client = await Client.create(signer, {

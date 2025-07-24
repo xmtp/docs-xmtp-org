@@ -22,9 +22,21 @@ To send multiple remote attachments of any size in a single message, see [Suppor
 
 In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-remote-attachment
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+:::
 
 ### Configure the content type
 
@@ -32,22 +44,17 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="Browser">
-
-```jsx
+```jsx [Browser]
 import {
-  ContentTypeAttachment,
   AttachmentCodec,
   RemoteAttachmentCodec,
-  ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new AttachmentCodec());
-xmtp.registerCodec(new RemoteAttachmentCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+});
 ```
-
-</div>
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -734,9 +741,20 @@ Unless a very specific use case we recommend using the [remote attachment conten
 
 ### Install the package
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-remote-attachment
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+:::
 
 > In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
@@ -746,12 +764,13 @@ npm i @xmtp/content-type-remote-attachment
 
 ```jsx [Browser]
 import {
-  ContentTypeAttachment,
   AttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new AttachmentCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec()],
+});
 ```
 
 ```jsx [React Native]

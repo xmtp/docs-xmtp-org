@@ -14,9 +14,21 @@ Use a local database to store replies. This will enable your app to performantly
 
 In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-reply
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reply
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reply
+```
+
+:::
 
 ## Configure the content type
 
@@ -24,14 +36,16 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-```jsx [Browser]
-import { ContentTypeReply, ReplyCodec } from "@xmtp/content-type-reply";
+```js [Browser]
+import { ReplyCodec } from "@xmtp/content-type-reply";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReplyCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReplyCodec()],
+});
 ```
 
-```jsx [React Native]
+```js [React Native]
 const client = await Client.create(signer, {
   env: "production",
   codecs: [new ReplyCodec()],
@@ -60,7 +74,7 @@ Once you've created a reply, you can send it. Replies are represented as objects
 
 :::code-group
 
-```tsx [Browser]
+```ts [Browser]
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import type { Reply } from "@xmtp/content-type-reply";
@@ -76,7 +90,7 @@ await conversation.send(reply, {
 });
 ```
 
-```jsx [React Native]
+```js [React Native]
 // Assuming you have a conversation object and the ID of the message you're replying to
 const replyContent = {
   reply: {
@@ -127,7 +141,7 @@ try await conversation.send(
 
 :::code-group
 
-```tsx [Browser]
+```ts [Browser]
 if (message.contentType.sameAs(ContentTypeReply)) {
   // We've got a reply.
   const reply: Reply = message.content;
