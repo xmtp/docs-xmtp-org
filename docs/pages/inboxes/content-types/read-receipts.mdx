@@ -12,29 +12,38 @@ While this is a per-app decision, the best practice is to provide users with the
 
 ## Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-read-receipt
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-read-receipt
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-read-receipt
+```
+
+:::
 
 ## Configure the content type
 
 :::code-group
 
-<div data-title="Browser">
-
-```tsx
+```js [Browser]
 import {
-  ContentTypeReadReceipt,
   ReadReceiptCodec,
 } from "@xmtp/content-type-read-receipt";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReadReceiptCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReadReceiptCodec()],
+});
 ```
 
-</div>
-
-```jsx [React Native]
+```js [React Native]
 const client = await Client.create(signer, {
   env: "production",
   codecs: [new ReadReceiptCodec()],
@@ -58,7 +67,7 @@ Client.register(codec = ReadReceiptCodec())
 
 :::code-group
 
-```jsx [Browser]
+```js [Browser]
 // The content of a read receipt message must be an empty object.
 
 await conversation.messages.send({}, ContentTypeReadReceipt);
@@ -101,14 +110,14 @@ Here's how you can receive a read receipt:
 
 :::code-group
 
-```tsx [Browser]
+```js [Browser]
 if (message.contentType.sameAs(ContentTypeReadReceipt)) {
   // The message is a read receipt
   const timestamp = message.sent;
 }
 ```
 
-```jsx [React Native]
+```js [React Native]
 if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
   return message.sent; //Date received
 }
