@@ -1,10 +1,44 @@
-# XMTP Gateways
+# Run an XMTP Gateway
 
-XMTP Gateways are how your application can cover the cost of sending messages on the XMTP network on behalf of your users. You can think of a XMTP Gateway as a proxy that pays for and forwards messages to the XMTP network.
+A XMTP Gateway is a proxy that pays for and forwards messages to the XMTP network on behalf of your users. Think of it as your app's payment gateway for messaging.
 
-A XMTP Gateway is hosted on your infrastructure, since it contains sensitive information such as your Payer Private Key.
+Behind the scenes, your XMTP Gateway handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
 
-XMTP provides a standard implementation of the XMTP Gateway that you can extend to meet your unique needs. Once your XMTP Gateway is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your web or mobile app.
+You host your XMTP Gateway on your infrastructure because it contains sensitive information such as your Payer Private Key.
+
+XMTP provides a standard implementation of an XMTP Gateway that you can extend to meet your unique needs. Once your XMTP Gateway is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your app or agent.
+
+## Get started
+
+**Every app needs a XMTP Gateway**.
+
+### For Node.js apps
+
+The XMTP Gateway is built into the XMTP Node SDK. No need to run a separate XMTP Gateway.
+
+```jsx
+// Automatic gateway included, no separate service needed
+const client = await Client.create(wallet, {
+  env: 'mainnet'
+})
+```
+
+### For browser and mobile client apps
+
+You must run the XMTP Gateway written in Go. Choose the option that works best for you:
+
+**Option 1: Basic Docker image** (No Go knowledge required)
+
+- XMTP provides a Docker image that works out of the box
+- Authorizes all requests (add authentication for production)
+- Suitable for testing
+
+**Option 2: Custom implementation** (Go knowledge required)
+
+- Start with XMTP's Go implementation
+- Add your own authentication logic
+- Implement custom rate limiting
+- Required for apps with authentication needs
 
 ## A minimal example
 
@@ -36,13 +70,13 @@ func main() {
 }
 ```
 
-## Configuring your XMTP Gateway
+## Configure your XMTP Gateway
 
 You can provide the configuration options for your XMTP Gateway either directly in your code, via command line flag, or through environment variables.
 
-| Name                     | Required | Command Line Flag                      | Environment Variable             | Info                                                                                               |
+| Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                               |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal    |
+| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the PayerRegistry smart contract.    |
 | App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                        |
 | Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                    |
 | Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway will run in. Valid values are `local`, `testnet`, and `mainnet` |
@@ -51,17 +85,27 @@ You can provide the configuration options for your XMTP Gateway either directly 
 
 {/* TODO:nm: Include all non-required options */}
 
-## Funding your Payer
+### Metrics and observability
 
-The private key for your XMTP Gateway is an Ethereum account that is expected to be funded in the Funding Portal.
+If the XMTP Gateway is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
 
-Read more about [funding your XMTP Gateway](https://docs.xmtp.org/network/fund-your-payer-service).
+## Fund your payer
 
-## Authenticating Users
+The private key for your XMTP Gateway is an Ethereum account that is expected to be funded in the XMTP Funding Portal.
 
-You can think of the XMTP Gateway is an extension of your client application. If you already have a system for authenticating user requests in your application, you should use it in your XMTP Gateway. For example, many apps use [JSON Web Tokens](https://jwt.io) (JWTs) to authenticate client requests to servers.
+To learn more, see [Funding your XMTP Gateway](fund-apps/quickstart).
+
+## Authenticate users
+
+You can think of the XMTP Gateway as an extension of your client app. If you already have a system for authenticating user requests in your app, you should use it in your XMTP Gateway. For example, many apps use [JSON Web Tokens](https://jwt.io) (JWTs) to authenticate client requests to servers.
 
 You can use any authentication scheme you like to authenticate requests from your client to the XMTP Gateway.
+
+:::tip[IMPORTANT]
+
+Browser and mobile client apps that need user authentication must customize the XMTP Gateway to integrate with their authentication system. Node.js apps that need user authentication can use the XMTP Gateway provided by the XMTP Node SDK without customization.
+
+:::
 
 ### In your client
 
@@ -69,7 +113,7 @@ When creating a XMTP client, you can optionally provide an `payerAuthTokenFetche
 
 The value returned by this function will be included all client requests to the XMTP Gateway. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway, and after any request to the XMTP Gateway fails due to a `PermissionDenied` error.
 
-### Creating a `payerAuthTokenFetcher`
+### Create a `payerAuthTokenFetcher`
 
 A Payer Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
 
@@ -126,7 +170,7 @@ public struct MyAuthTokenFetcher: PayerAuthTokenFetcher {
 
 ### In the XMTP Gateway
 
-The `PayerServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `payer.Identity` struct, which identifies the user in a way that is unique to your application.
+The `PayerServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `payer.Identity` struct, which identifies the user in a way that is unique to your app.
 
 This identity will then be used for rate limiting, and will be passed to your `AuthorizePublishFn` as additional context.
 
@@ -233,7 +277,7 @@ func main() {
 
 :::
 
-## Authorizing requests
+## Authorize requests
 
 Now that you have an identity for the caller of your API, you can use it to authorize requests. We provide some helpers to handle common authorization patterns, such as rate limiting.
 
@@ -312,110 +356,35 @@ func main() {
 
 :::
 
-## Metrics and Observability
+## Deploy your XMTP Gateway
 
-If the XMTP Gateway is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
+Deploy the XMTP Gateway on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
 
-## Deployment
-
-You can deploy the XMTP Gateway on your infrastructure of choice.
-
-We provide a Docker Image that corresponds to the bare bones example above, that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
+We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
 
 ```bash
 docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/payer-service-example:latest
 ```
 
-Most production applications will require some level of customization to authorize user requests. We provide a sample Dockerfile in the [`examples/docker`](https://link-goes-here) directory that you can use as a starting point.
-
-### Requirements
+Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the [`examples/docker`](#TODO) directory that you can use as a starting point.
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
+## Test your XMTP Gateway
 
+Here are some high priority scenarios to test:
 
+- [ ]  Deploy and test XMTP Gateway (unless using Node.js)
+- [ ]  Verify authentication works properly
+- [ ]  Test with expected message volumes
+- [ ]  Monitor resource usage and costs
+- [ ]  Simulate failure scenarios
 
+You can test on Base Sepolia, AppChain TestNet, and Broadcast Network TestNet. They all run identical contracts so you can dry-run funding and messaging.
 
+To get testnet USDC, [use this faucet](#TODO) or DM `somesupportensxxxxxx.eth` for bulk credits.
 
-
-## Step 2: Set Up Your XMTP Gateway
-
-### What Is a XMTP Gateway?
-
-A XMTP Gateway is a proxy that pays for and forwards messages to the XMTP network on behalf of your users. Think of it as your app's payment gateway for messaging.
-
-Behind the scenes, your XMTP Gateway handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
-
-### Key Things to Know
-
-**Every app needs a XMTP Gateway** with two implementation options:
-
-- **Node.js apps**: Payer is built into the SDK—no separate service needed!
-- **All other apps** (React, React Native, iOS, Android): Must run a separate Go-based XMTP Gateway on your infrastructure
-
-### Implementation Options
-
-### For Node.js Apps
-
-Good news—the payer is built into the SDK:
-
-```jsx
-// Automatic payer included, no separate service needed
-const client = await Client.create(wallet, {
-  env: 'mainnet'
-})
-
-```
-
-### For Client Apps (Web, Mobile)
-
-You must run a separate XMTP Gateway written in Go:
-
-**Option 1: Basic Docker Image** (No Go knowledge required)
-
-- XMTP provides a Docker image that works out of the box
-- Authorizes all requests (add authentication for production)
-- Suitable for testing
-
-**Option 2: Custom Implementation** (Requires Go development)
-
-- Start with XMTP's Go implementation
-- Add your own authentication logic
-- Implement custom rate limiting
-- Required for apps with authentication needs
-
-### What You'll Need (for non-Node.js apps)
-
-- **Infrastructure**: Container hosting ($25-50/month minimum)
-- **Blockchain RPC**: WebSocket connections to XMTP Chain and Base
-- **Redis**: Recommended for rate limiting and nonce management
-- **Authentication**: Your existing auth system (JWT, API keys, etc.)
-
-### Authentication Flow
-
-Your clients will need to authenticate with your XMTP Gateway:
-
-```jsx
-// Client-side example
-const client = await Client.create(wallet, {
-  env: 'mainnet',
-  payerService: 'https://api.yourapp.com/xmtp-payer',
-  payerAuthTokenFetcher: {
-    fetchAuthToken: async () => {
-      // Return your app's auth token
-      return await getAuthToken()
-    }
-  }
-})
-
-```
-
-> Important: Apps requiring user authentication will need to customize the Go XMTP Gateway to integrate with their authentication system. Node.js apps skip this complexity entirely!
-> 
-
-## Step 4: Test Your Integration
-
-### Testing Timeline
+### Testing timeline
 
 **July 29 - October 6**: Testnet-only period
 
@@ -431,10 +400,48 @@ const client = await Client.create(wallet, {
 - Cost validation with real funds
 - Final integration checks
 
-### Testing Priorities
+## XMTP Gateway flows
 
-- [ ]  Deploy and test XMTP Gateway (unless using Node.js)
-- [ ]  Verify authentication works properly
-- [ ]  Test with expected message volumes
-- [ ]  Monitor resource usage and costs
-- [ ]  Simulate failure scenarios
+The following sequence diagrams illustrate the XMTP Gateway's role in the following key flows.
+
+### Flow for sending a message to the XMTP network
+
+```mermaid
+sequenceDiagram
+    title: Message sent to XMTP network
+    participant App
+    participant Payer service
+    participant XMTP network
+
+    App->>Payer service: Request to send message
+    Payer service->>Payer service: Verify user authorization
+    Payer service->>Payer service: Sign with payer wallet key
+    Payer service->>XMTP network: Send message and pay network message fees
+    alt Sufficient funds in PayerRegistry
+        XMTP network-->>App: Message sent
+    else Insufficient funds in PayerRegistry
+        XMTP network-->>App: Message not sent
+    end
+```
+
+### Flow for sending a message to the XMTP Appchain
+
+```mermaid
+sequenceDiagram
+    title: Message sent to XMTP Appchain
+    participant App
+    participant Payer service
+    participant Payer wallet
+    participant XMTP Appchain
+
+    App->>Payer service: Request to send message
+    Payer service->>Payer service: Verify user authorization
+    Payer service->>Payer service: Sign with payer wallet key
+    Payer service->>Payer wallet: Use wallet's USDC
+    Payer wallet->>XMTP Appchain: Send message and pay Appchain gas fee
+    alt Sufficient funds
+        XMTP Appchain-->>App: Message sent
+    else Insufficient funds
+        XMTP Appchain-->>App: Message not sent
+    end
+```

@@ -1,12 +1,28 @@
-## Step 1: Calculate Your Costs
+# Calculate XMTP fees and costs
 
-### How XMTP Pricing Works
+Use this guide to understand how to calculate your app or agent's estimated XMTP fees and costs.
 
-### Simple, Volume-Based Pricing
+## Fee types
 
-XMTP uses straightforward pay-as-you-go pricing that benefits from network scale:
+Each message sent through XMTP can incur these fee types:
 
-| Your Monthly Active Users | Estimated Monthly Cost | Cost per User |
+- **Messaging fees**: Charged for messages sent through the XMTP network.
+    - **Base fee**: A flat per-message fee.
+    - **Storage fee**: A fee charged per-byte-day of storage required. A 100-byte message stored for 30 days would be calculated as 3,000-byte-days.
+    - **Congestion fee**: A dynamic fee computed by looking at the recent activity of an originator. Added only during periods of high network activity.
+- **Gas fees**: Charged for messages that require transactions on the XMTP appchain. Typically, these are messages for group membership, identity, and funder-related updates.
+
+The dollar value of the flat per-message base fee, per-byte-day storage fee, and congestion fee are stored in a smart contract and remain constant for a specified period of time. These fees are set and adjusted through protocol governance.
+
+## Estimate XMTP fees and costs
+
+Here are a few example estimates of XMTP fee and cost calculation that you can use you inform calculations for your own app or agent.
+
+### Estimate monthly costs
+
+XMTP uses pay-as-you-go pricing that benefits from network scale. For example:
+
+| Monthly active users | Estimated monthly cost | Cost per user |
 | --- | --- | --- |
 | 10,000 MAU | ~$150/month | $0.015 |
 | 100,000 MAU | ~$1,500/month | $0.015 |
@@ -15,41 +31,38 @@ XMTP uses straightforward pay-as-you-go pricing that benefits from network scale
 
 *Based on average usage of 300 messages per user per month*
 
-### What Counts as a Message?
+### Estimate detailed cost breakdowns by message type
 
-**Everything your application sends through XMTP counts toward your message volume:**
-
-- User messages (text, reactions, replies)
-- Media attachments (charged by size, capped at 1MB)
-- System messages (read receipts, typing indicators)
-- Group management (member additions, permission changes)
-- Identity updates and consent preferences
-
-> About pricing: The $5 per 100K messages is an all-inclusive estimate based on typical usage patterns (1KB average message size and 1-2 group operations per 100 messages). Apps with heavy media usage or frequent group operations may see costs vary by 10-20%, but for most applications, this estimate holds true.
-> 
-
-[Placeholder: Visual breakdown showing different message types and their typical sizes]
-
-### Future Price Reductions
-
-As the network grows, per-message costs will decrease for everyone:
-
-- **Today**: $5 per 100K messages (estimated all-in cost)
-- **At scale**: $3 per 100K messages
-- **Long-term target**: $1 per 100K messages
-
-The more applications join the network, the lower costs become for all participants.
-
-### Detailed Cost Breakdown by Message Type
-
-| Content Type | Typical Size | Messages per $1 | Monthly Cost (1M msgs) |
+| Content type | Typical size | Messages per $1 | Monthly cost (1M msgs) |
 | --- | --- | --- | --- |
 | Text message | 1 KB | 20,000 | $50 |
 | Reaction/receipt | 500 bytes | 40,000 | $25 |
 | Photo (compressed) | 500 KB | 40 | $25,000 |
 | Group update | 2 KB | 10,000 | $100 |
 
-### Calculating Your Specific Costs
+### Estimate congestion fees
+
+Each XMTP network node is responsible for keeping track of its own level of congestion and computing a congestion fee for any new message it originates.
+
+Here are the parameters used to calculate the congestion fee:
+
+- `N`: Target capacity of the node, below which we don’t want to charge congestion fees
+- `M`: Maximum capacity of a node
+- `C`: Multiplier to convert each unit of congestion into dollars
+
+When the message count in the fee calculation window is at or below the target `N`, the fee is 0.
+
+When the message count is at or above the maximum `M`, the fee is 100.
+
+Otherwise, we compute a normalized fraction `x` that represents how far above `N` the current count is relative to the gap `M`−`N`. Then, we apply an exponential curve:
+
+![congestion fee formula](https://community.xmtp.org/uploads/default/optimized/1X/5b0b450522b207793cbd6e977e9015579e4ef657_2_690x71.png)
+
+The final congestion fee in dollars would be `fee * C`
+
+Fees are calculated based on a rolling 5-minute window of messages.
+
+### Estimate your app's specific costs
 
 **Example: Social app with 50,000 MAUs**
 
@@ -58,7 +71,7 @@ The more applications join the network, the lower costs become for all participa
 - Include system messages: ~20M total
 - **Monthly cost**: $1,000 (at launch rates)
 
-This estimate includes typical group operations and blockchain costs.
+This estimate includes XMTP appchain gas fees for typical group membership, identity, and funder-related updates.
 
 **Cost calculation checklist**:
 
@@ -67,18 +80,17 @@ This estimate includes typical group operations and blockchain costs.
 - [ ]  Factor in media usage patterns
 - [ ]  Consider frequency of group operations
 - [ ]  Add 20-30% buffer for growth and variance
-- [ ]  Use the [Cost Calculator](https://claude.ai/chat/URL-placeholder)
+- [ ]  Use the [XMTP Messaging Costs Calculator](#TODO)
 
+## Cost optimization strategies
 
-## Cost Optimization Strategies
-
-### Quick Wins
+### Quick wins
 
 - **Message batching**: Group notifications save 50-70%
 - **Efficient encoding**: Compress before sending
 - **Smart caching**: Reduce duplicate fetches
 
-### Advanced Techniques
+### Advanced techniques
 
 - **Remote attachments**: Link vs. embed for media
 - **Selective sync**: Only fetch needed conversations
@@ -86,8 +98,22 @@ This estimate includes typical group operations and blockchain costs.
 
 ### Impact on Costs
 
-| Optimization | Effort | Cost Reduction |
+| Optimization | Effort | Cost reduction |
 | --- | --- | --- |
 | Batch notifications | Low | 30-50% |
 | Compress messages | Low | 10-20% |
 | Remote attachments | Medium | 20-40% |
+
+## Future price reductions
+
+As the network grows, per-message costs will decrease for everyone:
+
+- **Today**: $5 per 100K messages (estimated all-in cost)
+- **At scale**: $3 per 100K messages
+- **Long-term target**: $1 per 100K messages
+
+The more apps join the network, the lower costs become for all participants.
+
+> About pricing: The $5 per 100K messages is an all-inclusive estimate based on typical usage patterns (1KB average message size and 1-2 group operations per 100 messages). Apps with heavy media usage or frequent group operations may see costs vary by 10-20%, but for most applications, this estimate holds true.
+
+[Placeholder: Visual breakdown showing different message types and their typical sizes]
