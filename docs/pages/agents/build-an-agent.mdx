@@ -195,7 +195,7 @@ For example, consider deploying your agent to these platforms:
 - Railway: Creates another installation
 - Production server: Creates another installation
 
-Your agent can have up to 5 active installations before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
+Your agent can have up to 10 active installations before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
 
 For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
 - Local development: `local` network
@@ -218,7 +218,7 @@ If you deploy your agent to this same network environment, you have 1 inbox with
 Here are some best practices for agent installation management:
 
 - Configure your deployments to preserve the agent's database
-- Consider how many platforms you'll need before hitting the 5-installation limit
+- Consider how many platforms you'll need before hitting the 10 installation limit
 - Keep track of which installation corresponds to which platform
 - Regularly [check how many installations your agent has](#test-and-debug-an-agent)
 - [Revoke installations](#revoke-agent-installations) from platforms you no longer use
@@ -229,7 +229,7 @@ Here are some best practices for agent installation management:
 
 When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
 - Your agent creates a new installation for the new platform
-- If you already have 5 installations, you'll need to [revoke one first](#revoke-agent-installations)
+- If you already have 10 installations, you'll need to [revoke one first](#revoke-agent-installations)
 - The new installation will start fresh without conversation history
 
 #### Update an existing deployment
