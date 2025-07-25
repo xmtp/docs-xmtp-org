@@ -1,41 +1,34 @@
 # Get started with funding your app to send messages with XMTP
 
-On December 9, 2025, the XMTP decentralized mainnet will go live. 
+Starting December 9, 2025, apps and agents must pay fees to send messages on the decentralized XMTP Network.
 
-On this date, apps and agents will be required to pay fees to send messages through XMTP.
+This guide provides a timeline and checklist to prepare your app for this transition.
 
-This guide covers the tasks and milestones you need to know about to ensure your app or agent is ready to start paying fees on December 9.
+## Key milestones
 
-## August - September 2025
+- **August 12, 2025**:
+  - Decentralized network infrastructure and XMTP Funding Portal go live.
+  - You can begin deploying your gateway service.
+- **October 7, 2025**:
+  - Decentralization-ready client SDKs are available.
+  - You can begin updating your app.
+- **December 9, 2025**:
+  - The decentralized XMTP Network is fully operational.
+  - Fees are now required to send messages.
 
-1. Get a basic introduction to [XMTP fees](/fund-apps/understand-fees)
-2. Dive deeper into [how XMTP fees are calculated](/fund-apps/calculate-costs)
-3. Calculate your app's [estimated monthly costs](/fund-apps/calculate-costs#estimate-xmtp-fees-and-costs)
-4. **August 12**: The XMTP Funding Portal launches on testnet
-5. Familiarize yourself with the process of [funding your app](/fund-apps/fund-your-app) using the XMTP Funding Portal on testnet
-6. [Run your XMTP Gateway](/fund-apps/run-gateway) on testnet
+## Required tasks
 
-## October 2025
+Complete these tasks by **December 9, 2025**, to ensure your app can send messages on the decentralized XMTP Network.
 
-1. **October 7**: Update your app or agent to [use a compatible XMTP SDK](/fund-apps/update-sdk), which will enable it to communicate with XMTP testnet and mainnet
-2. Send messages on testnet to verify that funding and your XMTP Gateway work
-3. Send messages on testnet to simulate your app's MAU and review estimated costs in the XMTP Funding Portal
+1. **From August 12**: Deploy the [XMTP Gateway Service](/fund-apps/run-gateway) to enable your app or agent to send messages and pay fees to the XMTP Network and XMTP Appchain.
+2. **From August 12 and before December 9**: [Fund your app](/fund-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
+3. **From October 7**: Update your app to use a [decentralization-ready XMTP SDK](/fund-apps/update-sdk) to connect to your XMTP Gateway Service.
 
-## November 2025
+## Recommended next steps
 
-1. [Fund your app](/fund-apps/fund-your-app) using the XMTP Funding Portal on mainnet
-2. [Deploy your XMTP Gateway](/fund-apps/run-gateway) to mainnet
-3. Send messages on mainnet to verify that funding and your XMTP Gateway work
-4. Send messages on mainnet to simulate your app's MAU and see estimated costs in the XMTP Funding Portal
-5. Set up monitoring for your XMTP Gateway
-6. Run a thorough cost analysis
-
-## December 1-8, 2025
-
-1. Fund your app with USDC to cover 3-6 months
-2. Verify that your XMTP Gateway is operational
-3. Run final tests
-
-## December 9, 2025
-
-XMTP decentralized mainnet goes live. Apps and agents are required to pay fees to send messages through XMTP.
+- Learn about [XMTP fees](/fund-apps/understand-fees).
+- [Estimate your app's monthly costs](/fund-apps/calculate-costs#estimate-xmtp-fees-and-costs).
+- Test your implementation:
+  - Verify that your [XMTP Gateway Service](/fund-apps/run-gateway) and [funding](/fund-apps/fund-your-app) are working correctly.
+  - Simulate your app's usage to run a thorough a projected cost analysis using the XMTP Funding Portal.
+- [Set up monitoring](/fund-apps/run-gateway#metrics-and-observability) and automated tests for your XMTP Gateway Service.

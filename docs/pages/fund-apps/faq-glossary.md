@@ -2,6 +2,10 @@
 
 ## FAQ
 
+### Is there a testnet?
+
+Yes. Base Sepolia, XMTP AppChain testnet, and XMTP Network testnet all run identical contracts so you can dry-run funding and messaging.
+
 ### How is pricing determined?
 
 Fees are usage-based—the contract multiplies message bytes by a base rate that adjusts with network congestion. At launch, the effective cost is about 0.001 USDC for a 1 KB text message (≈ $1 per 1,000 small messages). Governance can update the base rate over time.
@@ -70,7 +74,7 @@ Only if you're NOT using Node.js. Node.js has the payer built-in. For all other 
 
 This estimate assumes typical usage patterns (1KB messages, 1-2 group operations per 100 messages). Most apps fall within 10% of this estimate.
 
-## What if my XMTP Gateway goes down?
+## What if my XMTP Gateway Service goes down?
 
 Messages will queue until your payer is back online. Build redundancy if needed. (Node.js apps have payer built-in, reducing this risk.)
 
@@ -107,7 +111,7 @@ To learn more, see [Understand XMTP messaging fees](https://file+.vscode-resour
 
 ### Payer
 
-A payer is typically an app or agent that pays to use the XMTP network to send messages.
+A payer is typically an app or agent that pays to use the XMTP Network to send messages.
 
 ### PayerRegistry
 
@@ -133,18 +137,18 @@ To learn more, see [PayerRegistry.sol](https://github.com/xmtp/smart-contracts/
 
 A non-custodial Ethereum-compatible wallet address used to track for your app's messaging fees. The payer wallet is registered in the PayerRegistry and is the only wallet that can request withdrawals and control its funds in the PayerRegistry. However, any wallet can contribute funds to the PayerRegistry for the payer wallet.
 
-### Payer service
+### XMTP Gateway Service
 
-A small client that acts as a proxy between your app and the payer wallet, and more specifically, the payer wallet's private key. Here's what the payer service handles:
+A small client that acts as a proxy between your app and the payer wallet, and more specifically, the payer wallet's private key. Here's what the XMTP Gateway Service handles:
 
 - Security: The payer wallet's private key is sensitive information that shouldn't be in your app
-    - The payer service hosts this private key securely on your infrastructure
+    - The XMTP Gateway Service hosts this private key securely on your infrastructure
     - Your app never sees or handles the private key directly
-- Authorization: The payer service can implement your app's authorization logic
+- Authorization: The XMTP Gateway Service can implement your app's authorization logic
     - It can verify that requests are coming from your legitimate users
     - It can rate limit requests
     - It can enforce your app's business rules
-- Fee management: The payer service handles both types of fees:
+- Fee management: The XMTP Gateway Service handles both types of fees:
     - Signs transactions on Base for paying messaging fees from the PayerRegistry contract
     - Signs transactions on the XMTP Appchain for paying gas fees from the payer wallet (Payers contract)
 
@@ -160,6 +164,10 @@ A real-time index that tracks PayerRegistry contract activity—such as who fund
 
 The desired maximum number of messages the network aims to handle per minute to maintain performance and prevent overload.
 
+### XMTP Network
+
+The offchain, globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
+
 ### XMTP Appchain
 
 An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It manages metadata requiring strict ordering through these smart contracts:
@@ -169,7 +177,7 @@ An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It ma
 
 ### NodeRegistry
 
-A smart contract on Base that manages the list of authorized XMTP broadcast network nodes.
+A smart contract on Base that manages the list of authorized XMTP Network nodes.
 
 To learn more, see [NodeRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/NodeRegistry.sol) in the smart-contracts repo.
 
@@ -179,7 +187,7 @@ To learn more, see [NodeRegistry.sol](https://github.com/xmtp/smart-contracts/bl
 
 ### XMTP Appchain gas fee
 
-A fee for an onchain transaction on the XMTP AppChain, typically for group membership, identity, and payer-related updates. Fees are expressed in Gwei and paid with USDC directly held by payer wallets on the XMTP Appchain.
+A fee for an onchain transaction on the XMTP Appchain, typically for group membership, identity, and payer-related updates. Fees are expressed in Gwei and paid with USDC directly held by payer wallets on the XMTP Appchain.
 
 ### XMTP Appchain latest block
 
