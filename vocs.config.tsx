@@ -268,7 +268,7 @@ export default defineConfig({
               link: "/fund-apps/understand-fees",
             },
             {
-              text: "Calculate fees and costs",
+              text: "Calculate fees",
               link: "/fund-apps/calculate-costs",
             },
             {
@@ -276,7 +276,7 @@ export default defineConfig({
               link: "/fund-apps/fund-your-app",
             },
             {
-              text: "Run an XMTP Gateway",
+              text: "Run your XMTP Gateway Service",
               link: "/fund-apps/run-gateway",
             },
             {

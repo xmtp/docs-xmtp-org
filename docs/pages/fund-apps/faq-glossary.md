@@ -8,9 +8,9 @@ Yes. Base Sepolia, XMTP AppChain testnet, and XMTP Network testnet all run ident
 
 ### How is pricing determined?
 
-Fees are usage-based—the contract multiplies message bytes by a base rate that adjusts with network congestion. At launch, the effective cost is about 0.001 USDC for a 1 KB text message (≈ $1 per 1,000 small messages). Governance can update the base rate over time.
+Fees are usage-based—the contract multiplies message bytes by a base rate that adjusts with network congestion. At launch, the effective fee is about 0.001 USDC for a 1 KB text message (≈ $1 per 1,000 small messages). Governance can update the base rate over time.
 
-### What gas costs apply?
+### What gas fees apply?
 
 Each message triggers an L3 commit; at ≤ 500 gwei that works out to fractions of a cent. Portal shows live estimates before you send.
 
@@ -28,7 +28,7 @@ Yes—apply via the XMTP Dev Grants program. Approved wallets receive periodic t
 
 ### What determines the effective price per message?
 
-Messaging fees are charged per byte, with total cost scaling linearly with bytes sent. The effective per-message rate shown in the estimator assumes a 1,024-byte message and includes all components: base fees for message storage, gas fees for metadata written to XMTP’s L3, and a 5% protocol treasury share.
+Messaging fees are charged per byte, with total fees scaling linearly with bytes sent. The effective per-message rate shown in the estimator assumes a 1,024-byte message and includes all components: base fees for message storage, gas fees for metadata written to XMTP’s L3, and a 5% protocol treasury share.
 
 ### Is price global or per-sender?
 
@@ -40,13 +40,13 @@ All XMTP message types are subject to per-byte fees—including invisible system
 
 ### Are attachments or large media extra?
 
-No. They’re just larger messages. XMTP charges per byte, so sending media costs more only due to size—capped at 1 MB per message. For lower costs and larger files, use remote attachment messages to point to off-network storage like IPFS or S3.
+No. They’re just larger messages. XMTP charges per byte, so sending media costs more only due to size—capped at 1 MB per message. For lower fees and larger files, use remote attachment messages to point to off-network storage like IPFS or S3.
 
 ### Is the current fee level sustainable for node operators?
 
 Yes. The network is designed to be profitable at 1B messages/month. As volume grows beyond this point, surplus revenue is recycled to lower the global per-byte price for everyone.
 
-### How are costs estimated for 100M or even 1B users?
+### How are fees estimated for 100M or even 1B users?
 
 At very high volumes, price converges to a global floor that ensures node operators remain sustainable. The current effective floor price is $3 per 100,000 messages. Future node efficiency improvements are expected to push this floor even lower.
 
@@ -54,17 +54,17 @@ At very high volumes, price converges to a global floor that ensures node operat
 
 The system is designed for fees to decrease over time as volume grows and nodes become more efficient. However, if network volume drops significantly, the global per-byte price can rise to maintain sustainability. Congestion surcharges may occur briefly on overloaded nodes, but traffic can route through another node at the standard price.
 
-### Can I let sponsors or end-users cover my costs?
+### Can I let sponsors or end-users cover my fees?
 
 Yes. Any wallet can deposit USDC into your balance. Once deposited, funds are only withdrawable by your app.
 
 ### Where can I see a detailed fee breakdown?
 
-All pricing is onchain and fully auditable. The payer portal shows per-byte fees, gas costs, and your historical and projected spend.
+All pricing is onchain and fully auditable. The XMTP Funding Portal shows per-byte fees, gas fees, and your historical and projected spend.
 
 ### How do I fund usage and avoid interruptions?
 
-Fees are drawn from an onchain USDC balance that you can [fund and manage through the XMTP payer portal](https://www.notion.so/Protocol-Release-1-3-1ff30823ce9280f1b2fdff148fad85dd?pvs=21). The portal will support balance notifications and auto top-ups.
+Fees are drawn from an onchain USDC balance that you can [fund and manage through the XMTP Funding Portal](/fund-apps/fudning-your-app). The portal will support balance notifications and auto top-ups.
 
 ## Do I need Go developers?
 
@@ -72,7 +72,7 @@ Only if you're NOT using Node.js. Node.js has the payer built-in. For all other 
 
 ## How accurate is the $5 per 100K messages estimate?
 
-This estimate assumes typical usage patterns (1KB messages, 1-2 group operations per 100 messages). Most apps fall within 10% of this estimate.
+This estimate assumes typical usage patterns (1 KB messages, 1-2 group operations per 100 messages). Most apps fall within 10% of this estimate.
 
 ## What if my XMTP Gateway Service goes down?
 
@@ -84,7 +84,9 @@ Yes! Anyone (investors, sponsors, partners) can deposit funds to your wallet thr
 
 ## How much does infrastructure cost?
 
-Node.js apps: No additional infrastructure needed. Other apps: $25-50/month for hosting plus RPC provider costs.
+- Browser and mobile apps: $25-50/month for hosting plus RPC provider costs.
+
+- Node.js apps: No additional infrastructure needed. 
 
 ## Glossary
 
@@ -158,7 +160,7 @@ An offchain micropayment paid to node operators based on the size (in bytes) of 
 
 ### Subgraph
 
-A real-time index that tracks PayerRegistry contract activity—such as who funded a payer wallet, how much was spent, and which messages incurred fees—enabling the XMTP Payer Portal to display historical and live fee data.
+A real-time index that tracks PayerRegistry contract activity—such as who funded a payer wallet, how much was spent, and which messages incurred fees—enabling the XMTP Funding Portal to display historical and live fee data.
 
 ### Target rate/min
 

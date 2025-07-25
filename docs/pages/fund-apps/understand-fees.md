@@ -24,7 +24,7 @@ To learn how to fund your app to pay fees, see [Fund your app to send messages w
 - **Messaging fees**: Charged for messages sent through the XMTP Network.
 - **Gas fees**: Charged for messages that require transactions on the XMTP Appchain.
 
-To learn more about fees, see [Fee types](/fund-apps/calculate-costs#fee-types).
+To learn more about fees, see [Fee types](/fund-apps/calculate-fess#fee-types).
 
 ## What counts as a message?
 

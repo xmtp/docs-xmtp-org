@@ -1,6 +1,6 @@
-# Calculate XMTP fees and costs
+# Calculate XMTP fees
 
-Use this guide to understand how to calculate your app or agent's estimated XMTP fees and costs.
+Use this guide to understand how to calculate your app or agent's estimated XMTP fees.
 
 ## Fee types
 
@@ -14,15 +14,15 @@ Each message sent through XMTP can incur these fee types:
 
 The dollar value of the flat per-message base fee, per-byte-day storage fee, and congestion fee are stored in a smart contract and remain constant for a specified period of time. These fees are set and adjusted through protocol governance.
 
-## Estimate XMTP fees and costs
+## Estimate XMTP fees
 
-Use these examples to help you estimate costs for your own app or agent.
+Use these examples to help you estimate fees for your own app or agent.
 
-### Estimate monthly costs
+### Estimate monthly fees
 
 XMTP uses pay-as-you-go pricing that benefits from network scale. For example:
 
-| Monthly active users | Estimated monthly cost | Cost per user |
+| Monthly active users | Estimated monthly fees | Fees per user |
 | --- | --- | --- |
 | 10,000 | ~$150/month | $0.015 |
 | 100,000 | ~$1,500/month | $0.015 |
@@ -31,9 +31,9 @@ XMTP uses pay-as-you-go pricing that benefits from network scale. For example:
 
 *Based on average usage of 300 messages per user per month*
 
-### Estimate detailed cost breakdowns by message type
+### Estimate detailed fee breakdowns by message type
 
-| Content type | Typical size | Messages per $1 | Monthly cost (1M messages) |
+| Content type | Typical size | Messages per $1 | Monthly fees (1M messages) |
 | --- | --- | --- | --- |
 | Text message | 1 KB | 20,000 | $50 |
 | Reaction/receipt | 500 bytes | 40,000 | $25 |
@@ -62,27 +62,27 @@ The final congestion fee in dollars would be `fee * C`
 
 Fees are calculated based on a rolling 5-minute window of messages.
 
-### Estimate your app's specific costs
+### Estimate your app's specific fees
 
 **Example: Social app with 50,000 monthly active users**
 
 - Users send ~10 messages/day
 - 50,000 × 10 × 30 = 15M messages/month
 - Include system messages: ~20M total
-- **Monthly cost**: $1,000 (at launch rates)
+- **Monthly fees**: $1,000 (at launch rates)
 
 This estimate includes XMTP Appchain gas fees for typical group membership, identity, and funder-related updates.
 
-**Cost calculation checklist**:
+**Fee calculation checklist**:
 
 - [ ]  Count all message types your app sends
 - [ ]  Include automated messages (notifications, updates)
 - [ ]  Factor in media usage patterns
 - [ ]  Consider frequency of group operations
 - [ ]  Add 20-30% buffer for growth and variance
-- [ ]  Use the [XMTP Messaging Costs Calculator](#TODO)
+- [ ]  Use the [XMTP Messaging Fees Calculator](#TODO)
 
-## Cost optimization strategies
+## Fee optimization strategies
 
 ### Quick wins
 
@@ -96,16 +96,16 @@ This estimate includes XMTP Appchain gas fees for typical group membership, iden
 - **Selective sync**: Only fetch needed conversations
 - **Group optimization**: Minimize membership broadcasts
 
-### Impact on Costs
+### Impact on fees
 
-| Optimization | Effort | Cost reduction |
+| Optimization | Effort | Fee reduction |
 | --- | --- | --- |
 | Batch notifications | Low | 30-50% |
 | Compress messages | Low | 10-20% |
 | Remote attachments | Medium | 20-40% |
 
-## Pricing and Network Scale
+## Pricing and network scale
 
-The network is designed for per-message costs to decrease as network volume grows, reflecting economies of scale. The current all-inclusive estimate is **$5 per 100,000 messages**.
+The network is designed for per-message fees to decrease as network volume grows, reflecting economies of scale. The current all-inclusive estimate is **$5 per 100,000 messages**.
 
-This estimate is based on typical usage patterns, such as an average message size of 1 KB and 1-2 group operations per 100 messages. Apps with heavy media usage or frequent group operations might see costs vary, but this estimate is accurate for most use cases.
+This estimate is based on typical usage patterns, such as an average message size of 1 KB and 1-2 group operations per 100 messages. Apps with heavy media usage or frequent group operations might see fees vary, but this estimate is accurate for most use cases.

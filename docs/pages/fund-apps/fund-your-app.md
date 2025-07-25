@@ -1,6 +1,6 @@
 # Fund your app to send messages with XMTP
 
-Use this guide to learn how to use the XMTP Funding Portal to fund your app to send messages with XMTP. You can also use the portal to view usage and current and projected costs.
+Use this guide to learn how to use the XMTP Funding Portal to fund your app to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
 
 Behind the scenes, the Funding Portal handles PayerRegistry smart contract deposits, XMTP Network messaging fee and XMTP Appchain gas payments, and all blockchain interactions.
 
@@ -63,7 +63,7 @@ Once the payer wallet is set up as a payer, you can use the payer wallet (and on
 
 ## Step 5: Review usage
 
-You can use the Usage panel on the home page of the XMTP Funding Portal to review the number of messages sent by your app, as well as actual and projected costs.
+You can use the Usage panel on the home page of the XMTP Funding Portal to review the number of messages sent by your app, as well as actual and projected fees.
 
 Before data can display in the Usage panel, you must have completed the following on the appropriate network (testnet or mainnet):
 
