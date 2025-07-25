@@ -12,438 +12,63 @@ This documentation includes code samples for multiple SDKs. Please use the code 
 
 Ensure that you select the correct code block to avoid compatibility issues.
 
-## pages/upgrade-from-legacy-V2.md
-# Upgrade from a legacy XMTP V2 SDK to a stable XMTP V3 SDK
-
-This document is for you if you are upgrading from a legacy XMTP V2 SDK. Legacy XMTP V2 SDKs include:
-
-- JavaScript SDK vx.x.x
-- React Native SDK &lt;v3
-- Android SDK &lt;v3
-- iOS SDK &lt;v3
-
-:::tip[Upgrading from a legacy XMTP V3 SDK?]
-
-Legacy XMTP V3 SDKs include Browser SDK v0.x.x-&lt;v2.0.11, Node SDK v0.x.x-&lt;v2.0.6, React Native SDK v3.x.x-&lt;v4.0.5, Android SDK v3.x.x-&lt;v4.0.5, and iOS SDK v3.x.x-&lt;v4.0.7. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V3 SDK](/upgrade-from-legacy-V3).
-
-:::
-
-XMTP V3 provides support for the features expected by modern messaging apps while laying a strong foundation for the future. This is a stable and performant release that will allow for new features and is not expected to receive breaking changes in the near-term.
-
-As developers on V2 explore XMTP V3, many have found that its new architecture provides an opportunity to rethink and refine their approach to messaging. While upgrading from V2 is possible, some teams chose to rebuild with V3 from the start to take full advantage of its performance, security, and scalability improvements. Evaluate your needs and consider the path that makes the most sense for your app.
-
-:::info[Key takeaways]
-- **Most core methods from V2 work in a similar way in V3**, with some notable differences that are covered in this document.
-- **Primary XMTP identifier is now an inbox ID, not an Ethereum address**. As covered in this document, this inbox can have a list of identities including Ethereum addresses as well as other types in the future, such as Passkeys and Bitcoin**.
-- ⛔️ **Rolling brownouts of the V2 network start on May 1, 2025. V2 will be deprecated on June 23, 2025**, after which all V2 conversations and messages will become read-only. To learn more, see [XIP-53: XIP V2 deprecation plan](https://community.xmtp.org/t/xip-53-xmtp-v2-deprecation-plan/867). Users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
-:::
-
-## Upgrade to XMTP V3
-
-🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.5)
-- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.5)
-- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
-
-🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.4** or **upgrade to an XMTP node SDK >=v1.0.5** following the detailed instructions in these release notes:
-- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%402.0.11)
-- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%402.0.6)
-- For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
-
-🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.
-
-## Primary XMTP identifier is now an inbox ID, not an Ethereum address
-
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/create-a-signer), as well as future support for Passkeys and other identity types.
-
-Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. An `inboxId` has a list of identity objects that explicitly includes the identity type (kind) and identifier. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
-
-For example:
-
-```json
-[
-  {
-    "kind": "ETHEREUM",
-    "identifier": "0x1234567890abcdef1234567890abcdef12345678",
-  },
-  {
-    "kind": "PASSKEY", // not yet supported; provided as an example only.
-    "identifier": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMk",
-  }
-]
-```
-
-This change ensures that XMTP identities are more extensible and adaptable, accommodating future improvements in authentication methods while maintaining backward compatibility for Ethereum-based accounts.
-
-### Example: Supporting multiple identity types
-
-With this new model, an app can now distinguish different identity types when creating a signer.
-
-```tsx
-function createSigner(account): Signer {
-  return {
-    getIdentity: async () => ({
-      kind: account.isSCW ? "ETHEREUM" : "PASSKEY", // Passkeys are not yet supported; provided as an example only.
-      identifier: account.address || account.passkeyId,
-    }),
-    signMessage: async (message) => {
-      return account.signMessage(message);
-    },
-    getChainId: account.isSCW ? () => BigInt(8453) : undefined,
-    getBlockNumber: account.isSCW ? () => undefined : undefined,
-  };
-}
-```
-
-### Before: Using getAddress()
-
-Previously, developers used `getAddress()` to retrieve an account’s Ethereum address:
-
-```tsx
-const signer: Signer = {
-  getAddress: () => "0x123...",
-  signMessage: async (message) => {
-    // return signed message
-  },
-};
-```
-
-While this approach worked for EOAs, it assumed that all accounts were Ethereum addresses and did not allow for other identity types.
-
-### After: Using getIdentity()
-
-Now, `getIdentity()` returns an identity object, allowing for multiple types of accounts:
-
-```tsx
-const signer: Signer = {
-  getIdentity: () => ({
-    kind: "ETHEREUM", // Identity type [ETHEREUM, PASSKEY (passkeys are not yet supported), etc.]
-    identifier: "0x123...", // Account identifier
-  }),
-  signMessage: async (message) => {
-    // return signed message
-  },
-};
-```
-
-### Before: newConversation()
-
-Previously, developers used an Ethereum address to create a new DM conversation:
-
-```tsx
-const dm = await alix.conversations.findOrCreateDm(bo.address);
-```
-
-### After: newConversation()
-
-Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
-
-```tsx
-const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
-```
-
-## Core methods from V2 work in a similar way in V3
-
-Most core methods from V2, such as `newConversation`, `list`, `stream`, and `streamAllMessages`, work in a similar way in V3. 
-
-However, key differences include:
-
-- `newConversation` no longer takes addresses, but rather inbox IDs, as covered in [Primary XMTP identifier is now an inboxId, not an Ethereum address](#primary-xmtp-identifier-is-now-an-inbox-id-not-an-ethereum-address)
-
-- Prior to V3, a conversation could represent a V1 or V2 conversation. In V3, a conversation can represent a group chat or direct message (DM).
-
-To learn more, see [Build a chat inbox](/inboxes/pick-an-sdk).
-
-## Local databases mean no need to export/import topic data
-
-- In V2, we needed to manually create and manage a local database for performance. Additionally, when moving across different SDKs, you could export a topic and then import it into the other SDK to shorten the performance loop. This was particularly useful when handling push notifications in React Native apps to increase the speed of exporting and importing a conversation across SDKs.
-- In V3, a client automatically creates and manages a local database per installation, so performance issues are no longer an issue. When moving across installations, use message history to move data between installations. In the case of React Native push notifications, the database is accessible from both the native layer and React Native.
-
-## Loading messages
-
-- In V2, we used `listBatchMessages` to load all messages across conversations to help performantly load a conversation list in descending order by last message.
-- In V3, because there is a local database, we can simply use `list()`, which returns a list of conversations in descending order by last message, or by a conversation's `createdAt` value if it has no messages.
-
-## Push notification differences
-
-### Decryption
-
-- In V1 and V2, we used intros V1 (`fromIntro`) and invites V2 (`fromInvite`) to decrypt invites and intros.
-- In V3, new conversations are called welcomes, and we use `fromWelcome` to decrypt them.
-
-### Getting topic IDs
-
-- In V2, we used `/xmtp/0/invite-$address/proto` to get the topic identifier for a new conversation.
-- In V3, we use `/xmtp/mls/1/w-$installationId/proto` to get the topic identifier for a new group chat or DM conversation.
-
-## Installation-specific private keys
-
-In V2, we had a `privateKeyBundle` that could be exported and imported into any SDK to create a client. This allowed users to migrate their identity across SDKs without re-signing with their wallet. In V2, we also had a consistent identity key that we used to sign and verify messages, and their static nature could make them a vulnerability over time.
-
-In V3, we have installation-specific key bundles that are stored securely in the managed local database and rotated periodically, which adds a significant layer of security. This means that after a V3 client is created, it is as simple as calling the `build` method with an address and a `dbEncryptionKey`, which retrieves the appropriate key bundle from the local database. With the added security of installation-based keys, it is no longer possible to export and import them into other clients. Calling create will create a new installation if a local database is not already present. Provided the same wallet is used for signing, your `inboxID` will be the same across all installations.
-
-### Create a client
-
-- In V2, `client.createFromKeyBundle`
-- In V3, `client.build`
-
-### Sign a message
-
-- In V2, `client.privateKeyBundle.sign(message)`
-- In V3, `client.signWithInstallationKey(message)`
-
-### Verify a signature
-
-- In V2, `Signature.verify(signature)`
-- In V3, `client.verifyInstallationSignature(message, signature, installationId)`
-
-## Managing consent
-
-- In V2, we managed consent via `client.contacts.consentList`.
-- In V3, we can manage consent via `client.preferences.getInboxIdConsent(inboxId)`. However, we recommend that you now manage consent at the conversation level by `conversationId`. To learn more, see [Support user consent preferences](/inboxes/user-consent/support-user-consent#support-user-consent-preferences-to-provide-spam-free-inboxes).
-
-## Summary of notable changes
-
-| Purpose | V2 method | V3 equivalent |
-| --- | --- | --- |
-| Create a new conversation | `findOrCreateDm(bo.address);` | `findOrCreateDm(bo.inboxId);` |
-| Loading messages | `listBatchMessages` | `list()` |
-| Push notification decryption | `fromInvite`, `fromIntro` | `fromWelcome` |
-| Get topic IDs for push notifications | `/xmtp/0/invite-$address/proto` | `/xmtp/mls/1/w-$installationId/proto` |
-| Create client | `client.createFromKeyBundle` | `client.build` |
-| Sign a message | `client.privateKeyBundle.sign(message)` | `client.signWithInstallationKey(message)` |
-| Verify a signature | `Signature.verify(signature)` | `client.verifyInstallationSignature(message, signature, installationId)` |
-| Manage consent | `client.contacts.consentList` | `client.preferences.getInboxIdConsent(inboxId)` |
-
-## FAQ
-
-### Can I use a V2 identity in an app built with V3?
-
-A V2 identity can access V2 functionality only. To access V3 functionality, you must create a new V3 identity.
-
-In V2, creating an identity required two signatures. In V3, we only need one signature. For example:
-
-```kotlin
-// Database encryption key for the local database.
-const databaseEncryptionKey = new Uint8Array([
-  233, 120, 198, 96, 154, 65, 132, 17, 132, 96, 250, 40, 103, 35, 125, 64,
-  166, 83, 208, 224, 254, 44, 205, 227, 175, 49, 234, 129, 74, 252, 135, 145,
-])
-
-// Creating a new client
-const xmtpClient = await Client.create(signer, {
-	env: 'production',
-	dbEncryptionKey: databaseEncryptionKey, // Required for V3
- })
-```
-
-### Can I use V2 consent preferences in an app built with V3?
-
-Because V2 conversations are not automatically ported to V3, V2 consent preferences are less useful in a V3 app. So, when starting V3 conversations, you may need to approve or reject certain users again.
-
-### Can I access V2 conversations and messages in an app built with V3?
-
-V3 delivers an enhanced encryption scheme that is even more secure than V2, laying the groundwork for decentralizing the network. While the difference in encryption schemes makes it challenging to import V2 conversations and messages into an app built with V3, this tradeoff establishes a stronger foundation for security, privacy, and decentralization.
-
-We recommend that apps upgrade directly to V3, giving people access to a pure V3+ messaging experience.
-
-To ensure continuity, users will still be able to access their V2 communications in read-only format using [https://legacy.xmtp.chat/](https://legacy.xmtp.chat/).
-
-### Can I use V2 conversations to seed the conversation list in my app built with V3?
-
-While we don’t recommend it, you can store V2 conversations in a local database that you manage, and then, on the first install, your app can try to create V3 DM conversations using the peer addresses in the V2 conversations. If you go this route, ensure that you store the **allowed** V2 conversations only so you don’t port over spam.
-
-We don’t recommend using this approach because not all of the peer addresses may be reachable on the V3 network, which means that only some conversations would be seeded.
-
-
-## pages/upgrade-from-legacy-V3.md
-# Upgrade from a legacy XMTP V3 SDK to a stable XMTP V3 SDK
-
-This document is for you if you are upgrading from a legacy XMTP V3 SDK. Legacy XMTP V3 SDKs include:
-
-- Browser SDK v0.x.x-&lt;v2.0.11
-- Node SDK v0.x.x-&lt;v2.0.6
-- React Native SDK v3.x.x-&lt;v4.0.5
-- Android SDK v3.x.x-&lt;v4.0.5
-- iOS SDK v3.x.x-&lt;v4.0.7
-
-:::tip[Upgrading from a legacy XMTP V2 SDK?]
-
-Legacy XMTP V2 SDKs include JavaScript SDK vx.x.x, React Native SDK &lt;v3, Android SDK &lt;v3, and iOS SDK &lt;v3. To learn how to upgrade to stable XMTP V3, see [Upgrade from a legacy XMTP V2 SDK](/upgrade-from-legacy-V2). 
-
-:::
-
-XMTP V3 provides support for the features expected by modern messaging apps while laying a strong foundation for the future. This is a stable and performant release that will allow for new features and is not expected to receive breaking changes in the near-term.
-
-## Upgrade to XMTP V3 stable
-
-The process to upgrade an app built with a legacy XMTP V3 SDK to a stable V3 SDK is designed to be straightforward, with most functions in stable V3 working as they did in legacy V3. However, there are some notable differences, which we cover here and in these release notes:
-
-🟢 For mobile apps, **upgrade to an XMTP mobile SDK >=v4.0.4** following the detailed instructions in these release notes:
-- [React Native](https://github.com/xmtp/xmtp-react-native/releases/tag/v4.0.5)
-- [Kotlin](https://github.com/xmtp/xmtp-android/releases/tag/4.0.5)
-- [Swift](https://github.com/xmtp/xmtp-ios/releases/tag/4.0.7)
-
-🟢 For web apps, **upgrade to an XMTP web SDK >=v1.1.4** or **upgrade to an XMTP node SDK >=v1.0.5** following the detailed instructions in these release notes:
-- [Browser](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fbrowser-sdk%402.0.11)
-- [Node](https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%402.0.6)
-- For additional guidance, try [xmtp.chat](https://xmtp.chat/), an interactive developer tool and chat app built with XMTP V3.
-
-🟢 For agents, **explore [example agents](https://github.com/ephemeraHQ/xmtp-agent-examples)** built with the XMTP Node SDK >=v1.0.0.
-
-## Primary XMTP identifier is now an inbox ID, not an Ethereum address
-
-XMTP is evolving from using Ethereum account addresses (0x...) as the primary identifier to an inbox-based identity model. This change allows for broader support of different authentication mechanisms, including the currently supported [Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs)](/inboxes/create-a-signer), as well as future support for Passkeys and other identity types.
-
-Instead of assuming an Ethereum address as the unique identifier, developers should default to using the `inboxId`, where possible. An `inboxId` has a list of identity objects that explicitly includes the identity type (kind) and identifier. Some identity types, like Passkeys, do not have an associated onchain address, so using the `inboxId` provides a consistent way to identify users across different authentication methods.
-
-For example:
-
-```json
-[
-  {
-    "kind": "ETHEREUM",
-    "identifier": "0x1234567890abcdef1234567890abcdef12345678",
-  },
-  {
-    "kind": "PASSKEY", // not yet supported; provided as an example only.
-    "identifier": "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMk",
-  }
-]
-```
-
-This change ensures that XMTP identities are more extensible and adaptable, accommodating future improvements in authentication methods while maintaining backward compatibility for Ethereum-based accounts.
-
-### Example: Supporting multiple identity types
-
-With this new model, an app can now distinguish different identity types when creating a signer.
-
-```tsx
-function createSigner(account): Signer {
-  return {
-    getIdentity: async () => ({
-      kind: account.isSCW ? "ETHEREUM" : "PASSKEY", // Passkeys are not yet supported; provided as an example only.
-      identifier: account.address || account.passkeyId,
-    }),
-    signMessage: async (message) => {
-      return account.signMessage(message);
-    },
-    getChainId: account.isSCW ? () => BigInt(8453) : undefined,
-    getBlockNumber: account.isSCW ? () => undefined : undefined,
-  };
-}
-```
-
-### Before: Using getAddress()
-
-Previously, developers used `getAddress()` to retrieve an account’s Ethereum address:
-
-```tsx
-const signer: Signer = {
-  getAddress: () => "0x123...",
-  signMessage: async (message) => {
-    // return signed message
-  },
-};
-```
-
-While this approach worked for EOAs, it assumed that all accounts were Ethereum addresses and did not allow for other identity types.
-
-### After: Using getIdentity()
-
-Now, `getIdentity()` returns an identity object, allowing for multiple types of accounts:
-
-```tsx
-const signer: Signer = {
-  getIdentity: () => ({
-    kind: "ETHEREUM", // Identity type [ETHEREUM, PASSKEY (passkeys are not yet supported), etc.]
-    identifier: "0x123...", // Account identifier
-  }),
-  signMessage: async (message) => {
-    // return signed message
-  },
-};
-```
-
-### Before: newConversation()
-
-Previously, developers used an Ethereum address to create a new DM conversation:
-
-```tsx
-const dm = await alix.conversations.findOrCreateDm(bo.address);
-```
-
-### After: newConversation()
-
-Now, developers can use `inboxId` to create a new DM conversation because with the new flexible identity model, they cannot rely on the existence of an Ethereum address.
-
-```tsx
-const dm = await alix.conversations.findOrCreateDm(bo.inboxId);
-```
-
-
 ## pages/index.mdx
 import { CustomHomePage } from "../components/CustomHomePage";
 import "../styles.css";
 
 <CustomHomePage.Root>
-  <CustomHomePage.Headline>Build with XMTP</CustomHomePage.Headline>
-  <CustomHomePage.Subhead>
-    The largest and most secure decentralized messaging network
-  </CustomHomePage.Subhead>
-  <CustomHomePage.TileGrid>
-    <CustomHomePage.Tile
-      href="/intro/intro"
-      title="Intro to XMTP"
-      description="Get an intro to XMTP and why devs choose it to build messaging apps"
-      icon="🤝"
-    />
-    <CustomHomePage.Tile
-      href="/inboxes/quickstart"
-      title="Build chat inboxes"
-      description="Build standalone inbox apps with 1:1 and group chats built with MLS"
-      icon="📥"
-    />
-    <CustomHomePage.Tile
-      href="/agents/build-an-agent"
-      title="Build agents"
-      description="Build agents that communicate with humans and other agents"
-      icon="🤖"
-    />
-    <CustomHomePage.Tile
-      href="https://xmtp.chat/"
-      title="Build with xmtp.chat"
-      description="Build an inbox app with the help of this interactive developer tool and chat app"
-      icon="🧑🏽‍💻"
-      isExternal={true}
-    />
-    <CustomHomePage.Tile
-      href="/network/run-a-node"
-      title="Run an XMTP node"
-      description="Learn about network nodes and how to become a registered node operator"
-      icon="🕸️"
-    />
-    <CustomHomePage.Tile
-      href="/protocol/envelope-types"
-      title="Learn protocol concepts"
-      description="Dive deeper into XMTP by learning about key protocol concepts"
-      icon="🧠"
-    />
-    <CustomHomePage.Tile
-      href="/intro/xips"
-      title="Review XIPs"
-      description="Read and provide feedback on the latest XMTP Improvement Proposals"
-      icon="⚒️"
-    />
-        <CustomHomePage.Tile
-      href="/upgrade-from-legacy-V2"
-      title="Upgrade to XMTP V3"
-      description="Get tips for upgrading from a legacy SDK to a stable XMTP V3 SDK"
-      icon="🚀"
-    />
-  </CustomHomePage.TileGrid>
+   <CustomHomePage.Headline>Build with XMTP</CustomHomePage.Headline>
+   <CustomHomePage.Subhead>
+      The largest decentralized network for quantum-resistant, MLS end-to-end encrypted messaging
+   </CustomHomePage.Subhead>
+   <CustomHomePage.SectionTitle>📥 Build a chat inbox</CustomHomePage.SectionTitle>
+   <CustomHomePage.Description>
+      Use an XMTP SDK:
+   </CustomHomePage.Description>
+   <CustomHomePage.SDKGrid>
+      <CustomHomePage.SDKTile href="sdks/browser" src="/ts-logo-128.svg" alt="TypeScript logo" name="Browser" />
+      <CustomHomePage.SDKTile href="sdks/node" lightSrc="/nodejsStackedDark.svg" darkSrc="/nodejsStackedLight.svg" alt="Node.js" name="Node" />
+      <CustomHomePage.SDKTile href="sdks/react-native" src="/rn-header_logo.svg" alt="React Native logo" name="RN" />
+      <CustomHomePage.SDKTile href="sdks/ios" src="/swift_logo_color.svg" alt="iOS logo" name="iOS" />
+      <CustomHomePage.SDKTile href="sdks/android" src="/Kotlin_Icon.svg" alt="Android logo" name="Android" />
+   </CustomHomePage.SDKGrid>
+   <CustomHomePage.SectionTitle>🤖 Build an agent</CustomHomePage.SectionTitle>
+      <CustomHomePage.Description>
+         Use this tutorial:
+      </CustomHomePage.Description>
+   <CustomHomePage.SDKGrid>
+      <CustomHomePage.SDKTile href="agents/build-an-agent" darkSrc="/agent-tute-icon-light.png" lightSrc="/agent-tute-icon-dark.png" alt="agent logo" name="Agent tutorial" />
+   </CustomHomePage.SDKGrid>
+   <CustomHomePage.SectionTitle>Learn more</CustomHomePage.SectionTitle>
+   <CustomHomePage.TileGrid>
+      <CustomHomePage.Tile
+         href="/intro/intro"
+         title="Intro to XMTP"
+         description="Get an intro to XMTP and why you should build with it"
+         />
+      <CustomHomePage.Tile
+         href="/protocol/envelope-types"
+         title="Learn protocol concepts"
+         description="Dive deeper into XMTP by learning about key protocol concepts"
+         />
+      <CustomHomePage.Tile
+         href="https://xmtp.chat/"
+         title="Build with xmtp.chat"
+         description="Build with this interactive dev tool and starter reference app implementation"
+         isExternal={true}
+         />
+      <CustomHomePage.Tile
+         href="/network/run-a-node"
+         title="Run an XMTP node"
+         description="Learn about network nodes and how to become a registered node operator"
+         />
+      <CustomHomePage.Tile
+         href="/intro/xips"
+         title="Review XIPs"
+         description="Read and provide feedback on the latest XMTP Improvement Proposals"
+         />
+   </CustomHomePage.TileGrid>
 </CustomHomePage.Root>
-
 
 ## pages/privacy.md
 # Privacy policy
@@ -526,6 +151,426 @@ Again, please link back to the original source page so that readers can refer to
 #### Other media
 
 If you produce non-hypertext works, such as books, audio, or video, we ask that you make a best effort to include a spoken or written attribution in the spirit of the messages above.
+
+
+## pages/sdks/android.mdx
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
+
+# Get started with the XMTP Android SDK
+
+Use the XMTP Kotlin SDK to build secure, private, and decentralized messaging into your Android app.
+
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```kotlin [Kotlin]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+class EOAWallet : SigningKey {
+    override val publicIdentity: PublicIdentity
+        get() = PublicIdentity(IdentityKind.ETHEREUM, key.publicAddress)
+    override val type: SignerType
+        get() = SignerType.EOA
+    override suspend fun sign(message: String): SignedData {
+        return SignedData(key.sign(message = message))
+    }
+}
+
+// 2. Create the XMTP client
+val client = Client.create(
+    account = SigningKey,
+    options = ClientOptions(
+        ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+        appContext = ApplicationContext(),
+        dbEncryptionKey = keyBytes // 32 bytes
+    )
+)
+
+// 3. Start conversations
+val group = client.conversations.newGroup(inboxIds = listOf(bo.inboxId, caro.inboxId))
+val groupWithMeta = client.conversations.newGroup(
+    inboxIds = listOf(bo.inboxId, caro.inboxId),
+    permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS,
+    name = "The Group Name",
+    imageUrl = "www.groupImage.com",
+    description = "The description of the group"
+)
+
+// 4. Send messages
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+dm.send(text = "Hello world")
+group.send(text = "Hello everyone")
+
+// 5. List, stream, and sync
+// List existing conversations
+val conversations = client.conversations.list()
+val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
+// Stream all new conversations and new messages from allowed conversations
+client.conversations.streamAllMessages(consentStates = listOf(ConsentState.ALLOWED)).collect {
+    // Received a message
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+client.conversations.syncAll(consentStates = ConsentState.ALLOWED)
+```
+
+<InboxGetStarted />
+
+
+## pages/sdks/inbox-gs-snippet.mdx
+## 🛠️ Phase 0: Explore XMTP developer tools
+
+- [Use llms-full.txt](/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
+
+- [Use xmtp.chat](https://xmtp.chat), the official web inbox for developers, to interact with and test your app
+
+- [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
+
+## 💬 Phase I: Build core messaging
+
+1. [Create an EOA or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer).
+
+2. [Create an XMTP client](/inboxes/create-a-client).
+
+3. [Check if an identity is reachable on XMTP](/inboxes/create-conversations#check-if-an-identity-is-reachable).
+
+4. Create a [group chat](/inboxes/create-conversations#create-a-new-group-chat) or [direct message](/inboxes/create-conversations#create-a-new-dm) (DM) conversation. 
+   
+   With XMTP, "conversation" refers to both group chat and DM conversations.
+
+5. [Send messages](/inboxes/send-messages) in a conversation.
+
+6. Manage group chat [permissions](/inboxes/group-permissions) and [metadata](/inboxes/group-metadata).
+
+7. [Manage identities, inboxes, and installations](/inboxes/manage-inboxes).
+
+8. Be sure to [observe rate limits](/inboxes/rate-limits).
+
+## 📩 Phase II: Manage conversations and messages
+
+1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.
+
+2. [Stream new conversations](/inboxes/stream#stream-all-group-chats-and-dms) from the network.
+
+3. [Stream new messages](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
+
+4. [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations) from the network.
+
+5. [Sync a specific conversation's messages and preference updates](/inboxes/sync-and-syncall#sync-a-specific-conversation) from the network.
+
+## 💅🏽 Phase III: Enhance the user experience
+
+1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts. You can use these consent values to filter conversations. For example:
+   
+   - Conversations with **allowed** contacts go to a user's main inbox
+   - Conversations with **unknown** contacts go to a possible spam tab
+   - Conversations with **denied** contacts are hidden from view.
+  
+2. Support rich [content types](/inboxes/content-types/content-types).
+   
+   - [Attachments](/inboxes/content-types/attachments)
+     - Single remote attachment
+     - Multiple remote attachments
+     - Attachments smaller than 1MB
+   - [Reactions](/inboxes/content-types/reactions)
+   - [Replies](/inboxes/content-types/replies)
+   - [Read receipts](/inboxes/content-types/read-receipts)
+   - [Onchain transactions](/inboxes/content-types/transactions)
+   - [Onchain transaction references](/inboxes/content-types/transaction-refs)
+
+3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs), if applicable.
+
+## 🧪 Phase IV: Test and debug
+
+- [Stress and burn-in test](/inboxes/debug-your-app#xmtp-debug) your inbox app.
+
+- [Enable file logging](/inboxes/debug-your-app#file-logging).
+
+- [Capture network statistics](/inboxes/debug-your-app#network-statistics).
+
+- Found a bug or need help? Contact [dev support](/intro/dev-support).
+
+
+## pages/sdks/node.mdx
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
+
+# Get started with the XMTP Node SDK
+
+Use the XMTP Node SDK to build agents and other server-side applications that interact with the XMTP network.
+
+:::tip[🤖 Building an agent?]
+
+For building AI agents, use the [Build an agent with XMTP](/agents/build-an-agent) tutorial tailored to this use case.
+
+:::
+
+For all other server-side applications, including backends for chat inboxes, follow the get started guide below, which provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```tsx [Node]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
+
+const signer: Signer = {
+  type: "EOA",
+  getIdentifier: () => ({
+    identifier: "0x...", // Ethereum address as the identifier
+    identifierKind: IdentifierKind.Ethereum
+  }),
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+};
+
+// 2. Create the XMTP client
+import { Client } from "@xmtp/node-sdk";
+import { getRandomValues } from "node:crypto";
+
+const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+const client = await Client.create(signer, { dbEncryptionKey });
+
+// 3. Start a new conversation
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+
+// 4. Send messages
+await group.send("Hello everyone");
+
+// 5. List, stream, and sync
+// List existing conversations
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+// Stream new messages
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+
+try {
+  for await (const message of stream) {
+    // Received a message
+  }
+} catch (error) {
+  console.error(error);
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+await client.conversations.syncAll(["allowed"]);
+```
+
+<InboxGetStarted />
+
+
+## pages/sdks/react-native.mdx
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
+
+# Get started with the XMTP React Native SDK
+
+Use the XMTP React Native SDK to build secure, private, and decentralized messaging into your cross-platform mobile app.
+
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```tsx [React Native]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
+  return {
+    getIdentifier: async () => new PublicIdentity(eoaAccount.address, "ETHEREUM"),
+    getChainId: () => undefined,
+    getBlockNumber: () => undefined,
+    signerType: () => "EOA",
+    signMessage: async (message: string) => ({ signature: await eoaAccount.signMessage(message) }),
+  };
+}
+
+// 2. Create the XMTP client
+const client = Client.create(signer, {
+  env: "production",
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+
+// 3. Start conversations
+const group = await client.conversations.newGroup([bo.inboxId, caro.inboxId]);
+const groupWithMeta = await client.conversations.newGroup([bo.inboxId, caro.inboxId], {
+  name: "The Group Name",
+  imageUrl: "www.groupImage.com",
+  description: "The description of the group",
+  permissionLevel: "admin_only",
+});
+
+// 4. Send messages
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+await dm.send("Hello world");
+await group.send("Hello everyone");
+
+// 5. List, stream, and sync
+// List existing conversations
+await client.conversations.list(["allowed"]);
+// Stream new messages
+await client.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ["allowed"] }
+);
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+await client.conversations.syncAllConversations(["allowed"]);
+```
+
+<InboxGetStarted /> 
+
+
+## pages/sdks/browser.mdx
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
+
+# Get started with the XMTP Browser SDK
+
+Use the XMTP Browser SDK to build web-based apps, tools, and experiences with secure, private, and decentralized messaging.
+
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```tsx [Browser]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+import type { Signer, Identifier } from "@xmtp/browser-sdk";
+
+const signer: Signer = {
+  type: "EOA",
+  getIdentifier: () => ({
+    identifier: "0x...", // Ethereum address as the identifier
+    identifierKind: "Ethereum"
+  }),
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  }
+};
+
+// 2. Create the XMTP client
+import { Client } from "@xmtp/browser-sdk";
+const client = await Client.create(signer, {
+  // Note: dbEncryptionKey is not used for encryption in browser environments
+});
+
+// 3. Start conversations
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+
+// 4. Send messages
+await group.send("Hello everyone");
+
+// 5. List, stream, and sync
+// List existing conversations
+const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
+const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
+// Stream new messages
+const stream = await client.conversations.streamAllMessages(["allowed"]);
+try {
+  for await (const message of stream) {
+    console.log("New message:", message);
+  }
+} catch (error) {
+  console.error(error);
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+await client.conversations.syncAll(["allowed"]);
+```
+
+<InboxGetStarted />
+
+
+## pages/sdks/ios.mdx
+import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
+
+# Get started with the XMTP iOS SDK
+
+Use the XMTP Swift SDK to build secure, private, and decentralized messaging into your iOS app.
+
+The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free inboxes using user consent preferences
+
+## Quickstart
+
+```swift [Swift]
+// 1. Create an EOA or SCW signer
+// Details depend on your app's wallet implementation.
+public struct EOAWallet: SigningKey {
+    public var identity: PublicIdentity {
+        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+    }
+    public var type: SignerType { .EOA }
+    public func sign(message: String) async throws -> SignedData {
+        return SignedData(try await key.sign(message: message))
+    }
+}
+
+// 2. Create the XMTP client
+let client = try await Client.create(
+    account: SigningKey,
+    options: ClientOptions.init(
+        api: .init(env: .production, isSecure: true),
+        dbEncryptionKey: keyBytes // 32 bytes
+    )
+)
+
+// 3. Start conversations
+let group = try await client.conversations.newGroup([bo.inboxId, caro.inboxId])
+let groupWithMeta = try await client.conversations.newGroup([bo.inboxId, caro.inboxId],
+    permissionLevel: .admin_only,
+    name: "The Group Name",
+    imageUrl: "www.groupImage.com",
+    description: "The description of the group"
+)
+
+// 4. Send messages
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+try await dm.send(content: "Hello world")
+try await group.send(content: "Hello everyone")
+
+// 5. List, stream, and sync
+// List existing conversations
+let conversations = try await client.conversations.list()
+let filteredConversations = try await client.conversations.list(consentState: .allowed)
+// Stream new messages
+for await message in try await client.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+    // Received a message
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations 
+try await client.conversations.syncAllConversations(consentState: [.allowed])
+```
+
+<InboxGetStarted /> 
 
 
 ## pages/intro/dev-support.md
@@ -1237,7 +1282,7 @@ Not all envelope types are broadcast on persistent pub/sub topics.
 ## pages/agents/build-an-agent.mdx
 # Tutorial: Build an agent that uses XMTP
 
-This quickstart provides a map to building agents that can communicate with humans and other agents in chats built with XMTP.
+This tutorial provides a map to building agents with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
 
 Building with XMTP gives your agent access to:
 - The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
@@ -2609,7 +2654,7 @@ await client.conversations.syncAllConversations(["allowed"]);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations(consentState: listOf(ConsentState.ALLOWED))
+client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
 ```
 
 ```swift [Swift]
@@ -2617,7 +2662,6 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
 :::
-
 
 ## pages/inboxes/support-group-invite-links.mdx
 import Zoom from 'react-medium-image-zoom'
@@ -5153,106 +5197,6 @@ When you reach either rate limit, your API calls will be rejected with a 429 (To
 - Updating group metadata
 
 
-## pages/inboxes/quickstart.md
-# Quickstart: Build a chat inbox with XMTP
-
-This quickstart provides a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
-
-- End-to-end encrypted direct message and group chat conversations
-- Rich content types (attachments, reactions, replies, and more)
-- Real-time push notifications
-- Spam-free inboxes using user consent preferences
-
-## 🏗️ Phase I: Setup
-
-1. Select the XMTP SDK that matches your platform.
-
-   - Mobile development
-     - [React Native SDK](https://github.com/xmtp/xmtp-react-native)
-     - [Kotlin SDK](https://github.com/xmtp/xmtp-android)
-     - [Swift SDK](https://github.com/xmtp/xmtp-ios)
-
-   - Web development
-     - [Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk) (for web apps)
-     - [Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) (for servers)
-
-   Need an SDK for a different platform? Let us know in [Ideas & Improvements](https://community.xmtp.org/c/general/ideas/54) in the XMTP Community Forums.
-
-2. [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
-
-3. You can [use llms-full.txt](/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
-
-## 💬 Phase II: Build core messaging
-
-1. [Create an EOA or SCW signer](/inboxes/create-a-signer#create-a-eoa-or-scw-signer).
-
-2. [Create an XMTP client](/inboxes/create-a-client).
-
-3. [Check if an identity is reachable on XMTP](/inboxes/create-conversations#check-if-an-identity-is-reachable).
-
-4. Create a [group chat](/inboxes/create-conversations#create-a-new-group-chat) or [direct message](/inboxes/create-conversations#create-a-new-dm) (DM) conversation. 
-   
-   With XMTP, "conversation" refers to both group chat and DM conversations.
-
-5. [Send messages](/inboxes/send-messages) in a conversation.
-
-6. Manage group chat [permissions](/inboxes/group-permissions) and [metadata](/inboxes/group-metadata).
-
-7. [Manage identities, inboxes, and installations](/inboxes/manage-inboxes).
-
-8. Be sure to [observe rate limits](/inboxes/rate-limits).
-
-## 📩 Phase III: Manage conversations and messages
-
-1. [List existing conversations](/inboxes/list#list-existing-conversations) from local storage.
-
-2. [Stream new conversations](/inboxes/stream#stream-all-group-chats-and-dms) from the network.
-
-3. [Stream new messages](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences) from the network.
-
-4. [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations) from the network.
-
-5. [Sync a specific conversation's messages and preference updates](/inboxes/sync-and-syncall#sync-a-specific-conversation) from the network.
-
-## 💅🏽 Phase IV: Enhance the user experience
-
-1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts. You can use these consent values to filter conversations. For example:
-   
-   - Conversations with **allowed** contacts go to a user's main inbox
-   - Conversations with **unknown** contacts go to a possible spam tab
-   - Conversations with **denied** contacts are hidden from view.
-  
-2. Support rich [content types](/inboxes/content-types/content-types).
-   
-   - [Attachments](/inboxes/content-types/attachments)
-     - Single remote attachment
-     - Multiple remote attachments
-     - Attachments smaller than 1MB
-   - [Reactions](/inboxes/content-types/reactions)
-   - [Replies](/inboxes/content-types/replies)
-   - [Read receipts](/inboxes/content-types/read-receipts)
-   - [Onchain transactions](/inboxes/content-types/transactions)
-   - [Onchain transaction references](/inboxes/content-types/transaction-refs)
-
-3. [Implement push notifications](/inboxes/push-notifs/understand-push-notifs).
-
-## 🧪 Phase V: Test and debug
-
-- [Stress and burn-in test](/inboxes/debug-your-app#xmtp-debug) your inbox app.
-
-- [Enable file logging](/inboxes/debug-your-app#file-logging).
-
-- [Capture network statistics](/inboxes/debug-your-app#network-statistics).
-
-- Found a bug or need support? Please file an issue in the relevant SDK repo:
-  
-  - [React Native SDK](https://github.com/xmtp/xmtp-react-native/issues)
-  - [Kotlin SDK](https://github.com/xmtp/xmtp-android/issues)
-  - [Swift SDK](https://github.com/xmtp/xmtp-ios/issues)
-  - [Browser SDK](https://github.com/xmtp/xmtp-js/issues)
-  - [Node SDK](https://github.com/xmtp/xmtp-js/issues)
-
-
 ## pages/inboxes/create-a-client.mdx
 # Create an XMTP client
 
@@ -5781,15 +5725,15 @@ await alix.conversations.list(
 ```kotlin [Kotlin]
 // List conversations (both groups and dms)
 val conversations = alix.conversations.list()
-val orderFilteredConversations = client.conversations.list(consentState: ALLOWED)
+val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
 
 // List just dms
-val conversations = alix.conversations.listDms()
-val orderFilteredConversations = client.conversations.listDms(consentState: ALLOWED)
+val dms = alix.conversations.listDms()
+val filteredDms = client.conversations.listDms(consentState = ConsentState.ALLOWED)
 
 //List just groups
-val conversations = alix.conversations.listGroups()
-val orderFilteredConversations = client.conversations.listGroups(consentState: ALLOWED)
+val groups = alix.conversations.listGroups()
+val filteredGroups = client.conversations.listGroups(consentState = ConsentState.ALLOWED)
 
 ```
 
@@ -7092,9 +7036,21 @@ To send multiple remote attachments of any size in a single message, see [Suppor
 
 In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-remote-attachment
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+:::
 
 ### Configure the content type
 
@@ -7102,22 +7058,17 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="Browser">
-
-```jsx
+```jsx [Browser]
 import {
-  ContentTypeAttachment,
   AttachmentCodec,
   RemoteAttachmentCodec,
-  ContentTypeRemoteAttachment,
 } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new AttachmentCodec());
-xmtp.registerCodec(new RemoteAttachmentCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+});
 ```
-
-</div>
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -7804,11 +7755,22 @@ Unless a very specific use case we recommend using the [remote attachment conten
 
 ### Install the package
 
-```bash
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-remote-attachment
 ```
 
-> In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+:::
 
 ### Import and register
 
@@ -7816,12 +7778,13 @@ npm i @xmtp/content-type-remote-attachment
 
 ```jsx [Browser]
 import {
-  ContentTypeAttachment,
   AttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new AttachmentCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec()],
+});
 ```
 
 ```jsx [React Native]
@@ -7902,9 +7865,21 @@ Use a local database to store replies. This will enable your app to performantly
 
 In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-```bash
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-reply
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reply
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reply
+```
+
+:::
 
 ## Configure the content type
 
@@ -7912,14 +7887,16 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-```jsx [Browser]
-import { ContentTypeReply, ReplyCodec } from "@xmtp/content-type-reply";
+```js [Browser]
+import { ReplyCodec } from "@xmtp/content-type-reply";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReplyCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReplyCodec()],
+});
 ```
 
-```jsx [React Native]
+```js [React Native]
 const client = await Client.create(signer, {
   env: "production",
   codecs: [new ReplyCodec()],
@@ -7948,7 +7925,7 @@ Once you've created a reply, you can send it. Replies are represented as objects
 
 :::code-group
 
-```tsx [Browser]
+```ts [Browser]
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import type { Reply } from "@xmtp/content-type-reply";
@@ -7964,7 +7941,7 @@ await conversation.send(reply, {
 });
 ```
 
-```jsx [React Native]
+```js [React Native]
 // Assuming you have a conversation object and the ID of the message you're replying to
 const replyContent = {
   reply: {
@@ -8015,7 +7992,7 @@ try await conversation.send(
 
 :::code-group
 
-```tsx [Browser]
+```ts [Browser]
 if (message.contentType.sameAs(ContentTypeReply)) {
   // We've got a reply.
   const reply: Reply = message.content;
@@ -8058,101 +8035,6 @@ For example, in Discord, users can reply to individual messages, and the reply p
 
 Note that the user experience of replies in iMessage and Slack follows more of a threaded pattern, where messages display in logical groupings, or threads. This reply content type doesn't support the threaded pattern. If you'd like to request support for a threaded reply pattern, [post an XIP idea](https://community.xmtp.org/c/development/ideas/54).
 
-## pages/inboxes/content-types/transactions.md
-# Support onchain transactions in your app built with XMTP
-
-This package provides an XMTP content type to support sending transactions to a wallet for execution. 
-
-Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
-
-For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
-
-:::tip[Open for feedback]
-
-You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
-
-:::
-
-## Install the package
-
-```bash [Bash]
-# npm
-npm i @xmtp/content-type-wallet-send-calls
-
-# yarn
-yarn add @xmtp/content-type-wallet-send-calls
-
-# pnpm
-pnpm i @xmtp/content-type-wallet-send-calls
-```
-
-## Create a transaction request
-
-With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
-
-```tsx [TypeScript]
-const walletSendCalls: WalletSendCallsParams = {
-  version: "1.0",
-  from: "0x123...abc",
-  chainId: "0x2105",
-  calls: [
-    {
-      to: "0x456...def",
-      value: "0x5AF3107A4000",
-      metadata: {
-        description: "Send 0.0001 ETH on base to 0x456...def",
-        transactionType: "transfer",
-        currency: "ETH",
-        amount: 100000000000000,
-        decimals: 18,
-        toAddress: "0x456...def",
-      },
-    },
-    {
-      to: "0x789...cba",
-      data: "0xdead...beef",
-      metadata: {
-        description: "Lend 10 USDC on base with Morpho @ 8.5% APY",
-        transactionType: "lend",
-        currency: "USDC",
-        amount: 10000000,
-        decimals: 6,
-        platform: "morpho",
-        apy: "8.5",
-      },
-    },
-  ],
-};
-```
-
-## Send a transaction request
-
-Once you have a transaction reference, you can send it as part of your conversation:
-
-```tsx [TypeScript]
-await conversation.messages.send(walletSendCalls, {
-  contentType: ContentTypeWalletSendCalls,
-});
-```
-
-## Receive a transaction request
-
-To receive and process a transaction request:
-
-```tsx [TypeScript]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
-}
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
-```
-
-
 ## pages/inboxes/content-types/reactions.mdx
 ---
 description: Learn how to use the reaction content type to support reactions in your app built with XMTP
@@ -8168,11 +8050,23 @@ Use a local database to store reactions. This enables your app to performantly d
 
 ### Install the package
 
-```bash [Bash]
+In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-reaction
 ```
 
-> In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+```bash [yarn]
+yarn add @xmtp/content-type-reaction
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reaction
+```
+
+:::
 
 ## Configure the content type
 
@@ -8180,19 +8074,16 @@ After importing the package, you can register the codec.
 
 :::code-group
 
-<div data-title="Browser">
-
-```jsx
+```jsx [Browser]
 import {
-  ContentTypeReaction,
   ReactionCodec,
 } from "@xmtp/content-type-reaction";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReactionCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReactionCodec()],
+});
 ```
-
-</div>
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -8363,6 +8254,121 @@ For more common content types, you can usually find a [standard](/inboxes/conten
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/intro/xips).
 
 
+## pages/inboxes/content-types/transactions.mdx
+# Support onchain transactions in your app built with XMTP
+
+This package provides an XMTP content type to support sending transactions to a wallet for execution.
+
+Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
+
+For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
+
+:::tip[Open for feedback]
+
+You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
+
+:::
+
+## Install the package
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-wallet-send-calls
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-wallet-send-calls
+```
+
+```bash [pnpm]
+pnpm i @xmtp/content-type-wallet-send-calls
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Browser]
+import {
+  WalletSendCallsCodec,
+} from "@xmtp/content-type-wallet-send-calls";
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new WalletSendCallsCodec()],
+});
+```
+
+## Create a transaction request
+
+With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
+
+```ts [TypeScript]
+const walletSendCalls: WalletSendCallsParams = {
+  version: "1.0",
+  from: "0x123...abc",
+  chainId: "0x2105",
+  calls: [
+    {
+      to: "0x456...def",
+      value: "0x5AF3107A4000",
+      metadata: {
+        description: "Send 0.0001 ETH on base to 0x456...def",
+        transactionType: "transfer",
+        currency: "ETH",
+        amount: 100000000000000,
+        decimals: 18,
+        toAddress: "0x456...def",
+      },
+    },
+    {
+      to: "0x789...cba",
+      data: "0xdead...beef",
+      metadata: {
+        description: "Lend 10 USDC on base with Morpho @ 8.5% APY",
+        transactionType: "lend",
+        currency: "USDC",
+        amount: 10000000,
+        decimals: 6,
+        platform: "morpho",
+        apy: "8.5",
+      },
+    },
+  ],
+};
+```
+
+## Send a transaction request
+
+Once you have a transaction reference, you can send it as part of your conversation:
+
+```ts [TypeScript]
+await conversation.messages.send(walletSendCalls, {
+  contentType: ContentTypeWalletSendCalls,
+});
+```
+
+## Receive a transaction request
+
+To receive and process a transaction request:
+
+```ts [TypeScript]
+// Assume `loadLastMessage` is a thing you have
+const message: DecodedMessage = await loadLastMessage();
+
+if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
+  // Handle non-transaction request message
+  return;
+}
+
+const walletSendCalls: WalletSendCallsParams = message.content;
+// Process the transaction request here
+```
+
+
 ## pages/inboxes/content-types/transaction-refs.mdx
 ---
 description: Learn how to implement an onchain transaction reference content type
@@ -8380,29 +8386,43 @@ You're welcome to provide feedback by commenting on [XIP-21: On-chain transactio
 
 ## Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-transaction-reference
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-transaction-reference
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-transaction-reference
+```
+
+:::
 
 ## Configure the content type
 
 After importing the package, you can register the codec.
 
-```jsx [Browser]
+```js [Browser]
 import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
 } from "@xmtp/content-type-transaction-reference";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new TransactionReferenceCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new TransactionReferenceCodec()],
+});
 ```
 
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
 
-```tsx [Browser]
+```ts [Browser]
 const transactionReference: TransactionReference = {
   /**
    * Optional namespace for the networkId
@@ -8431,7 +8451,7 @@ const transactionReference: TransactionReference = {
 ```
 Once you have a transaction reference, you can send it as part of your conversation:
 
-```jsx [Browser]
+```js [Browser]
 await conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
@@ -8443,7 +8463,7 @@ To receive and process a transaction reference, you can use the following code s
 
 To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
-```tsx [Browser]
+```ts [Browser]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 
@@ -8475,29 +8495,38 @@ While this is a per-app decision, the best practice is to provide users with the
 
 ## Install the package
 
-```bash [Bash]
+:::code-group
+
+```bash [npm]
 npm i @xmtp/content-type-read-receipt
 ```
+
+```bash [yarn]
+yarn add @xmtp/content-type-read-receipt
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-read-receipt
+```
+
+:::
 
 ## Configure the content type
 
 :::code-group
 
-<div data-title="Browser">
-
-```tsx
+```js [Browser]
 import {
-  ContentTypeReadReceipt,
   ReadReceiptCodec,
 } from "@xmtp/content-type-read-receipt";
 // Create the XMTP client
-const xmtp = await Client.create(signer, { env: "dev" });
-xmtp.registerCodec(new ReadReceiptCodec());
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReadReceiptCodec()],
+});
 ```
 
-</div>
-
-```jsx [React Native]
+```js [React Native]
 const client = await Client.create(signer, {
   env: "production",
   codecs: [new ReadReceiptCodec()],
@@ -8521,7 +8550,7 @@ Client.register(codec = ReadReceiptCodec())
 
 :::code-group
 
-```jsx [Browser]
+```js [Browser]
 // The content of a read receipt message must be an empty object.
 
 await conversation.messages.send({}, ContentTypeReadReceipt);
@@ -8564,14 +8593,14 @@ Here's how you can receive a read receipt:
 
 :::code-group
 
-```tsx [Browser]
+```js [Browser]
 if (message.contentType.sameAs(ContentTypeReadReceipt)) {
   // The message is a read receipt
   const timestamp = message.sent;
 }
 ```
 
-```jsx [React Native]
+```js [React Native]
 if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
   return message.sent; //Date received
 }
@@ -8840,4 +8869,4 @@ XMTP does not currently have a token. Disregard any information regarding airdro
 
 # Summary
 
-This documentation contains 54 files.
+This documentation contains 57 files.
