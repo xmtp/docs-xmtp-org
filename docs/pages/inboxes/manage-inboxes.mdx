@@ -23,7 +23,7 @@ The client creates an inbox ID and installation ID associated with the identity.
 
 When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
 
-An inbox ID can have up to 5 app installations before it needs to [revoke an installation](#revoke-an-installation).
+An inbox ID can have up to 10 app installations before it needs to [revoke an installation](#revoke-an-installation).
 
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
@@ -41,7 +41,7 @@ You can enable a user to remove an identity from their inbox. You cannot remove 
 
 ### 🎥 walkthrough: Installation limits and static revocation
 
-This video provides a walkthrough of the idea behind the XMTP installation limit (5) and how to use [static installation revocation](#revoke-installations-for-a-user-who-cant-log-in). After watching, feel free to continue reading for more details.
+This video provides a walkthrough of the idea behind the XMTP installation limit (10) and how to use [static installation revocation](#revoke-installations-for-a-user-who-cant-log-in). After watching, feel free to continue reading for more details.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/66bHc_MBQKo?si=5ZuqFBrQm885ILSk" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
@@ -56,7 +56,7 @@ This means that one inbox ID can have up to 256 installations. When you add an i
 
 If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
 
-To avoid this scenario altogether, inboxes are limited to having only 5 active installations. When an inbox has 5 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
+To avoid this scenario altogether, inboxes are limited to having only 10 active installations. When an inbox has 10 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
 
 Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
@@ -90,11 +90,11 @@ This video provides a walkthrough of revoking installations, covering the key id
 
 You can revoke one or more specific installations by ID, as long as it isn't the currently accessed installation.
 
-An inbox ID can have up to 5 app installations before it needs to revoke an installation.
+An inbox ID can have up to 10 app installations before it needs to revoke an installation.
 
-- If an inbox ID has 5 installations and the user wants to add another installation, use this function to enable them to revoke an installation before they can add the new one.
+- If an inbox ID has 10 installations and the user wants to add another installation, use this function to enable them to revoke an installation before they can add the new one.
 
-- If an inbox ID was created before this installation limit was implemented, the inbox ID might have more than 5 installations. If this is the case, the user will receive an error when they try to add another installation. Use this function to enable them to revoke the required number of installations before they can add the new one. For example, if an inbox ID has 20 installations, the user will need to revoke 16 installations before they can add the new one.
+- If an inbox ID was created before this installation limit was implemented, the inbox ID might have more than 10 installations. If this is the case, the user will receive an error when they try to add another installation. Use this function to enable them to revoke the required number of installations before they can add the new one. For example, if an inbox ID has 20 installations, the user will need to revoke 11 installations before they can add the new one.
 
 If preferred, you can use the [revoke all other installations](#revoke-all-other-installations) function to revoke all installations other than the currently accessed installation.
 
@@ -138,7 +138,7 @@ When the user revokes all other installations, the action removes their identity
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install-id.png" width="350px" />
 </div>
 
-An inbox ID can have up to 5 app installations before it needs to revoke an installation.
+An inbox ID can have up to 10 app installations before it needs to revoke an installation.
 
 If preferred, you can use the [revoke a specific installation](#revoke-a-specific-installation) function to revoke one or more specific installations by ID.
 
@@ -174,7 +174,7 @@ Static installation revocation enables users to revoke installations without nee
 
 This feature is especially useful in the following scenarios:
 
-- A user has reached the 5-installation limit and can't log in to revoke installations to make room for a new installation.
+- A user has reached the 10 installation limit and can't log in to revoke installations to make room for a new installation.
 - A user logs out of an app installation and chooses the option to delete their local database. Choosing this option will cause them to permanently lose access to the installation. For this reason, you should revoke the installation.
 
 In both scenarios, static revocation enables logged out users to revoke installations using only their recovery address signer. 
