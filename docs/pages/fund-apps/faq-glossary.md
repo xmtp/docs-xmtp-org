@@ -64,7 +64,7 @@ All pricing is onchain and fully auditable. The XMTP Funding Portal shows per-by
 
 ### How do I fund usage and avoid interruptions?
 
-Fees are drawn from an onchain USDC balance that you can [fund and manage through the XMTP Funding Portal](/fund-apps/fudning-your-app). The portal will support balance notifications and auto top-ups.
+Fees are drawn from an onchain USDC balance that you can [fund and manage through the XMTP Funding Portal](/fund-apps/fund-your-app). The portal will support balance notifications and auto top-ups.
 
 ## Do I need Go developers?
 
