@@ -256,6 +256,40 @@ export default defineConfig({
           items: [],
         },
         {
+          text: "Fund an app",
+          collapsed: false,
+          items: [
+            {
+              text: "Get started",
+              link: "/fund-apps/get-started",
+            },
+            {
+              text: "Understand fees",
+              link: "/fund-apps/understand-fees",
+            },
+            {
+              text: "Calculate fees",
+              link: "/fund-apps/calculate-costs",
+            },
+            {
+              text: "Fund your app",
+              link: "/fund-apps/fund-your-app",
+            },
+            {
+              text: "Run your XMTP Gateway Service",
+              link: "/fund-apps/run-gateway",
+            },
+            {
+              text: "Update your SDK",
+              link: "/fund-apps/update-sdk",
+            },
+            {
+              text: "FAQ and glossary",
+              link: "/fund-apps/faq-glossary",
+            },
+          ],
+        },
+        {
           text: "Sign and verify payloads",
           link: "/inboxes/use-signatures",
           items: [],
