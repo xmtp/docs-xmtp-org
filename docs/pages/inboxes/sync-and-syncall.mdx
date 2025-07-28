@@ -101,3 +101,31 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
 :::
+
+### Sync a limited number of messages per conversation
+
+To protect from spam, you can sync just the first few messages of new conversations. For example, you can sync all conversations with an `unknown` consent state, but limit it to the first 5 messages per conversation.
+
+:::code-group
+
+```js [Browser]
+await client.conversations.syncAll({ consentState: ["unknown"], numMessages: 5 });
+```
+
+```js [Node]
+await client.conversations.syncAll({ consentState: ["unknown"], numMessages: 5 });
+```
+
+```tsx [React Native]
+await client.conversations.syncAllConversations({ consentState: ["unknown"], numMessages: 5 });
+```
+
+```kotlin [Kotlin]
+client.conversations.syncAllConversations(consentState = listOf(ConsentState.UNKNOWN), numMessages = 5)
+```
+
+```swift [Swift]
+try await client.conversations.syncAllConversations(consentState: [.unknown], numMessages: 5)
+```
+
+:::
