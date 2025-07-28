@@ -8,7 +8,7 @@ Behind the scenes, the Funding Portal handles PayerRegistry smart contract depos
 
 ## Step 1. Create your payer wallet
 
-A payer wallet is what you'll use to fund your XMTP Gateway Service. 
+A payer wallet is what you'll use to fund your XMTP Gateway Service.
 
 The payer wallet must be:
 
@@ -21,9 +21,7 @@ You can create a payer wallet using common non-custodial wallet apps, such as Co
 
 If useful for shared budgets, you can use a multisig wallet. For example, a Gnosis Safe or any ERC-1271 wallet can own a balance in the PayerRegistry and sign allowance approvals.
 
-You'll register your payer wallet using the XMTP Funding Portal in the next step.
-
-You'll need your payer wallet's private key when setting up your XMTP Gateway Service in a subsequent step.
+You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-apps/run-gateway).
 
 ## Step 2: Fund your payer wallet with USDC on Base
 
@@ -35,7 +33,7 @@ Fund your payer wallet with USDC on Base. Here are some sources you can use to a
 
 To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
 
-## Step 3. Set up your first payer
+## Step 3. Set up your first payer 
 
 1. Use your payer wallet to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Welcome page, click **Use connected wallet**.

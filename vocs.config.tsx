@@ -140,6 +140,10 @@ export default defineConfig({
             text: "Observe rate limits",
             link: "/inboxes/rate-limits",
           },
+          {
+            text: "Keep your app funded",
+            link: "/fund-apps/get-started",
+          },
         ]
       },
       {
@@ -262,10 +266,6 @@ export default defineConfig({
             {
               text: "Get started",
               link: "/fund-apps/get-started",
-            },
-            {
-              text: "Understand fees",
-              link: "/fund-apps/understand-fees",
             },
             {
               text: "Calculate fees",

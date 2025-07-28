@@ -1,8 +1,25 @@
 # Calculate XMTP fees
 
-Use this guide to understand how to calculate your app or agent's estimated XMTP fees.
+Use this guide to understand XMTP fees and how to calculate your app or agent's estimated XMTP fees.
 
-## Fee types
+## Understand XMTP fees
+
+To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. The fees you pay directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
+
+XMTP's architecture consists of two layers:
+
+1.  **The XMTP Network (Offchain):** A globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
+2.  **The XMTP Appchain (Onchain):** A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations. Gas fees are used to pay for transactions on the Appchain.
+
+This two-layer system allows XMTP to provide scalable, decentralized messaging.
+
+### Who pays messaging fees?
+
+Apps and agents pay fees to send messages through XMTP.
+
+To learn how to fund your app to pay fees, see [Fund your app to send messages with XMTP](/fund-apps/fund-your-app).
+
+### What kinds of fees are there?
 
 Each message sent through XMTP can incur these fee types:
 
@@ -13,6 +30,28 @@ Each message sent through XMTP can incur these fee types:
 - **Gas fees**: Charged for messages that require transactions on the XMTP Appchain. Typically, these are messages for group membership, identity, and funder-related updates.
 
 The dollar value of the flat per-message base fee, per-byte-day storage fee, and congestion fee are stored in a smart contract and remain constant for a specified period of time. These fees are set and adjusted through protocol governance.
+
+### What counts as a message?
+
+Everything an app or agent sends through the XMTP Network counts toward its message volume:
+
+- App messages (text, reactions, replies)
+- Media attachments (charged by size, capped at 1 MB)
+- System messages (read receipts, typing indicators)
+- Group management (member additions, permission changes)
+- Identity updates and consent preferences
+
+To learn more about the message types that clients can publish to XMTP, see [Envelope types](/protocol/envelope-types).
+
+### What happens to collected messaging fees?
+
+Collected messaging fees are paid directly to the node operators who run the globally distributed nodes that power the XMTP Network.
+
+To learn more about node operation, see [Run an XMTP Network node](/network/run-a-node).
+
+### What happens to collected gas fees?
+
+Collected gas fees are paid directly to the XMTP Appchain. Fees are used to maintain the Appchain.
 
 ## Estimate XMTP fees
 
@@ -40,28 +79,6 @@ XMTP uses pay-as-you-go pricing that benefits from network scale. For example:
 | Photo (compressed) | 500 KB | 40 | $25,000 |
 | Group update | 2 KB | 10,000 | $100 |
 
-### Estimate congestion fees
-
-Each XMTP Network node is responsible for keeping track of its own level of congestion and computing a congestion fee for any new message it originates.
-
-Here are the parameters used to calculate the congestion fee:
-
-- `N`: Target capacity of the node, below which we don’t want to charge congestion fees
-- `M`: Maximum capacity of a node
-- `C`: Multiplier to convert each unit of congestion into dollars
-
-When the message count in the fee calculation window is at or below the target `N`, the fee is 0.
-
-When the message count is at or above the maximum `M`, the fee is 100.
-
-Otherwise, we compute a normalized fraction `x` that represents how far above `N` the current count is relative to the gap `M`−`N`. Then, we apply an exponential curve:
-
-![congestion fee formula](https://community.xmtp.org/uploads/default/optimized/1X/5b0b450522b207793cbd6e977e9015579e4ef657_2_690x71.png)
-
-The final congestion fee in dollars would be `fee * C`
-
-Fees are calculated based on a rolling 5-minute window of messages.
-
 ### Estimate your app's specific fees
 
 **Example: Social app with 50,000 monthly active users**
@@ -73,30 +90,18 @@ Fees are calculated based on a rolling 5-minute window of messages.
 
 This estimate includes XMTP Appchain gas fees for typical group membership, identity, and funder-related updates.
 
-**Fee calculation checklist**:
-
-- [ ]  Count all message types your app sends
-- [ ]  Include automated messages (notifications, updates)
-- [ ]  Factor in media usage patterns
-- [ ]  Consider frequency of group operations
-- [ ]  Add 20-30% buffer for growth and variance
-- [ ]  Use the [XMTP Messaging Fees Calculator](#TODO)
+You can get to the right order of magnitude just using network averages, which is how our calculators work. Avg message size x number of messages per MAU x MAU
 
 ## Fee optimization strategies
-
-### Quick wins
 
 - **Message batching**: Group notifications save 50-70%
 - **Efficient encoding**: Compress before sending
 - **Smart caching**: Reduce duplicate fetches
-
-### Advanced techniques
-
 - **Remote attachments**: Link vs. embed for media
 - **Selective sync**: Only fetch needed conversations
 - **Group optimization**: Minimize membership broadcasts
 
-### Impact on fees
+**Impact on fees**:
 
 | Optimization | Effort | Fee reduction |
 | --- | --- | --- |
