@@ -257,3 +257,132 @@ const [messages, setMessages] = useState<DecodedMessage[]>([]);
 ```
 
 :::
+
+## Stream group updates
+
+When a group's metadata, membership, or permissions change, a `GroupUpdated` message is sent to the conversation. Your app can listen for these messages to display system notifications in the UI, such as `Alix changed the group name to 'Book Club`.
+
+These messages contain details about what changed.
+
+### Stream group metadata updates
+
+When metadata like the group name or description is updated, the message will include `metadataFieldChanges`.
+
+```json
+{
+  "initiatedByInboxId": "<inbox_id>",
+  ...
+  "metadataFieldChanges": [
+    {
+      "fieldName": "group_name",
+      "oldValue": "Old Name",
+      "newValue": "New Name"
+    }
+  ]
+}
+```
+
+### Strean group membership updates
+
+When members are added or removed, the message will include `addedInboxes` or `removedInboxes`.
+
+```json
+{
+  "initiatedByInboxId": "<inbox_id>",
+  "addedInboxes": ["<new_member_inbox_id>"],
+  "removedInboxes": [],
+  ...
+}
+```
+
+### Stream group permission updates
+
+When a member's role changes (for example, from a member to an admin), the message will include `memberRoleChanges`.
+
+```json
+{
+  "initiatedByInboxId": "<inbox_id>",
+  ...
+  "memberRoleChanges": [
+    {
+      "inboxId": "<member_inbox_id>",
+      "oldRole": "member",
+      "newRole": "admin"
+    }
+  ]
+}
+```
+
+Here is a conceptual example of how to listen for and process these update messages.
+
+:::code-group
+
+```js [Browser]
+// Stream messages from the group conversation
+for await (const message of await group.stream()) {
+  // This content type is hypothetical and subject to change
+  if (message.contentType.sameAs(ContentTypeGroupUpdated)) {
+    const groupUpdate = message.content;
+
+    // Now you can process the update and change the UI
+    if (groupUpdate.metadataFieldChanges.length > 0) {
+      // Handle name/description/image changes
+    }
+    if (groupUpdate.memberRoleChanges.length > 0) {
+      // Handle role changes
+    }
+  }
+}
+```
+
+```js [Node]
+// Stream messages from the group conversation
+for await (const message of await group.stream()) {
+  // This content type is hypothetical and subject to change
+  if (message.contentType.sameAs(ContentTypeGroupUpdated)) {
+    const groupUpdate = message.content;
+
+    // Now you can process the update and change the UI
+    if (groupUpdate.metadataFieldChanges.length > 0) {
+      // Handle name/description/image changes
+    }
+    if (groupUpdate.memberRoleChanges.length > 0) {
+      // Handle role changes
+    }
+  }
+}
+```
+
+```tsx [React Native]
+// How you stream will depend on your implementation,
+// but the logic for processing the message is the same.
+// This content type is hypothetical and subject to change.
+if (message.contentType.sameAs(ContentTypeGroupUpdated)) {
+  const groupUpdate = message.content;
+  // process update...
+}
+```
+
+```kotlin [Kotlin]
+// Stream messages from the group conversation
+group.streamMessages().collect { message ->
+    // This content type is hypothetical and subject to change
+    if (message.contentType == ContentTypeGroupUpdated.id) {
+        val groupUpdate = message.content<GroupUpdated>()
+        // process update...
+    }
+}
+```
+
+```swift [Swift]
+// Stream messages from the group conversation
+for try await message in group.streamMessages() {
+    // This content type is hypothetical and subject to change
+    if message.contentType == ContentTypeGroupUpdated {
+        let groupUpdate = try message.content(as: GroupUpdated.self)
+        // process update...
+    }
+}
+```
+
+:::
