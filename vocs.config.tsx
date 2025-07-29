@@ -269,7 +269,7 @@ export default defineConfig({
             },
             {
               text: "Calculate fees",
-              link: "/fund-apps/calculate-costs",
+              link: "/fund-apps/calculate-fees",
             },
             {
               text: "Fund your app",

@@ -33,31 +33,31 @@ Fund your payer wallet with USDC on Base. Here are some sources you can use to a
 
 To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
 
-## Step 3. Set up your first payer 
+## Step 3. Register your payer wallet
 
 1. Use your payer wallet to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Welcome page, click **Use connected wallet**.
 3. Open the **View as** menu and click **Manage payers**.
-4. Click the pencil icon to give your payer a human-readable name.
+4. Click the pencil icon to give your payer wallet a human-readable name.
 
 Your payer wallet is now a payer in the PayerRegistry smart contract. 
 
-In the next step, you'll fund your payer with USDC that the Funding Portal can use to pay XMTP Network messaging fees and XMTP Appchain gas fees.
+In the next step, you'll allocate USDC in your payer wallet to create a messaging balance that the network can use to pay for fees.
 
-## Step 4: Fund your payer
+## Step 4: Allocate funds for messaging
 
 The XMTP Funding Portal will accept only testnet USDC until **October 7, 2025**. Plan your testnet and mainnet funding accordingly.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Home page, click **Fund**.
-3. Enter the amount of USDC you want to fund your payer with.
-4. The XMTP Funding Portal automatically optimizes how the funds are deposited to cover messaging fees and gas fees. Click the **+** icon to view the details of the split.
+3. Enter the amount of USDC you want to allocate from your payer wallet.
+4. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Click the **+** icon to view the details of the split.
 5. Click **Continue**.
 6. The Depositing funds screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
-Your payer now has a USDC allowance the Funding Portal can use to pay XMTP Network messaging fees and XMTP Appchain gas fees.
+Your payer wallet now has a messaging balance in the PayerRegistry smart contract. This balance will be used to pay for XMTP Network messaging fees and XMTP Appchain gas fees.
 
-Once the payer wallet is set up as a payer, you can use the payer wallet (and only the payer wallet) to [receive withdrawals](#step-6-withdraw-funds) of funds allocated to the payer in the Payer Registry smart contact.
+You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-withdraw-funds) (deallocate) USDC from your messaging balance.
 
 ## Step 5: Review usage
 
@@ -69,13 +69,13 @@ Before data can display in the Usage panel, you must have completed the followin
 2. Updated your app to [use a compatible XMTP SDK](/fund-apps/update-sdk)
 3. Sent messages using your app
 
-## Step 6: Withdraw funds
+## Step 6: Withdraw and claim funds
 
-You can withdraw funds from your payer at any time. Funds will be available after 48 hours, and require a second transaction to claim.
+You can withdraw (deallocate) funds from your messaging balance at any time. Funds will be available after 48 hours, and require a second transaction to claim.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Home page, click **Withdraw**.
-3. Enter the amount of USDC you want to withdraw from your payer. Click **MAX** if you want to withdraw the maximum amount available in your payer.
+3. Enter the amount of USDC you want to withdraw from your messaging balance. Click **MAX** if you want to withdraw the maximum amount available.
 4. Click **Request withdrawal**.
 5. XXXX Need to wait to see this part of the UI XXXXX.
 6. After 48 hours, return to the XMTP Funding Portal to complete your withdrawal. On the homepage, view the **Transaction** panel and locate your **Withdrawal** transaction. The **Status** column should be set to **_Ready to withdraw_**.

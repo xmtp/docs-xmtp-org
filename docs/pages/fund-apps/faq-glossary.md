@@ -92,10 +92,10 @@ Yes! Anyone (investors, sponsors, partners) can deposit funds to your wallet thr
 
 ### Balance
 
-Balance available to pay for messaging fees. This includes:
+The total amount of USDC available to pay for messaging fees. This includes:
 
-- The USDC balance held in the PayerRegistry contract for your payer wallet
-- The USDC balance in your payer wallet on the XMTP Appchain
+- The USDC allocated to your **messaging balance** in the PayerRegistry smart contract.
+- The spendable USDC balance in your payer wallet on the XMTP Appchain.
 
 ### Base
 
@@ -117,27 +117,19 @@ A payer is typically an app or agent that pays to use the XMTP Network to send m
 
 ### PayerRegistry
 
-A smart contract that holds and manages balances for registered payer wallets. The PayerRegistry enables:
+A smart contract that holds and manages messaging balances for registered payer wallets. The PayerRegistry enables:
 
-- Pay-as-you-go messaging funding
-    - A payer registers their payer wallet in the PayerRegistry. The payer deposits USDC into the PayerRegistry for their payer wallet to compensate node operators.
-    - Funds are used to pay node operators for message delivery, storage, and any applicable congestion fees
-- Balance management
-    - Deposits: Any wallet can deposit USDC into the PayerRegistry for a registered payer wallet
-    - Withdrawals: The PayerRegistry maintains balances and pending withdrawals. Only a payer wallet can request and finalize withdrawals.
-        1. Payer wallet requests withdrawal from the PayerRegistry.
-        2. After a waiting period, the payer wallet can cancel or finalize the withdrawal from the PayerRegistry.
-        3. If finalized, the withdrawal is made from the PayerRegistry to the payer wallet.
-- Fee settlement
-    - The PayerRegistry handles paying node operators
-    - It tracks usage and deducts fees from payer wallet balances
-    - It enforces sufficient balance requirements for message sending
+- **Pay-as-you-go messaging**: A developer registers their payer wallet and allocates USDC to it, creating a messaging balance to compensate node operators.
+- **Balance management**: Any wallet can deposit USDC to a registered payer wallet's messaging balance. Only the registered payer wallet can withdraw (deallocate) funds from its balance.
+- **Fee settlement**: The PayerRegistry tracks usage, deducts fees from messaging balances, and enforces sufficient balance requirements for sending messages.
 
 To learn more, see [PayerRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/PayerRegistry.sol#L38) in the XMTP smart-contracts repo.
 
 ### Payer wallet
 
-A non-custodial Ethereum-compatible wallet address used to track for your app's messaging fees. The payer wallet is registered in the PayerRegistry and is the only wallet that can request withdrawals and control its funds in the PayerRegistry. However, any wallet can contribute funds to the PayerRegistry for the payer wallet.
+A non-custodial, Ethereum-compatible wallet that you register and use to allocate USDC to pay for your app's messaging fees.
+
+The payer wallet is the only wallet that can control its messaging balance in the PayerRegistry, but any wallet can allocate funds to its messaging balance.
 
 ### XMTP Gateway Service
 
@@ -160,7 +152,7 @@ An offchain micropayment paid to node operators based on the size (in bytes) of 
 
 ### Subgraph
 
-A real-time index that tracks PayerRegistry contract activity—such as who funded a payer wallet, how much was spent, and which messages incurred fees—enabling the XMTP Funding Portal to display historical and live fee data.
+A real-time index that tracks PayerRegistry contract activity—such as who funded a messaging balance, how much was spent, and which messages incurred fees—enabling the XMTP Funding Portal to display historical and live fee data.
 
 ### Target rate/min
 

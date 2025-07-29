@@ -1,3 +1,5 @@
+import Mermaid from '../../components/Mermaid'
+
 # Calculate XMTP fees
 
 Use this guide to understand XMTP fees and how to calculate your app or agent's estimated XMTP fees.
@@ -114,3 +116,27 @@ You can get to the right order of magnitude just using network averages, which i
 The network is designed for per-message fees to decrease as network volume grows, reflecting economies of scale. The current all-inclusive estimate is **$5 per 100,000 messages**.
 
 This estimate is based on typical usage patterns, such as an average message size of 1 KB and 1-2 group operations per 100 messages. Apps with heavy media usage or frequent group operations might see fees vary, but this estimate is accurate for most use cases.
+
+## Understand the payer-to-node operator payment flow
+
+<Mermaid
+  id="cursors"
+  chart={`
+sequenceDiagram
+    actor Payer
+    participant PayerRegistry
+    participant PayerReportManager
+    participant DistributionManager
+    participant NodeRegistry
+    actor NodeOperator
+
+    Payer->>PayerRegistry: 1. Deposits USDC to cover usage
+    Note over PayerReportManager: Nodes submit usage reports for settlement.
+    PayerReportManager->>PayerRegistry: 2. Calls settleUsage() to deduct fees from a Payer's balance
+    PayerRegistry->>DistributionManager: 3. Transfers the collected fees
+    NodeOperator->>DistributionManager: 4. Claims their share of the fees
+    DistributionManager->>NodeRegistry: 5. Verifies that the claimant is the true owner of the node
+    NodeRegistry-->>DistributionManager: Returns the owner's address
+    DistributionManager->>NodeOperator: 6. Transfers the earned fees to the node operator
+`}
+/>

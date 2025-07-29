@@ -6,7 +6,7 @@ A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMT
 
 Behind the scenes, your XMTP Gateway Service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
 
-You host your XMTP Gateway Service on your infrastructure because it contains sensitive information such as your Payer Private Key.
+You host your XMTP Gateway Service on your infrastructure because it contains your payer wallet's private key.
 
 XMTP provides a standard implementation of an XMTP Gateway Service that you can extend to meet your unique needs. Once your XMTP Gateway Service is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your app or agent.
 
@@ -91,11 +91,11 @@ You can provide the configuration options for your XMTP Gateway Service either d
 
 If the XMTP Gateway Service is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
 
-## Fund your payer
+## Allocate funds for messaging
 
-The private key for your XMTP Gateway Service is an Ethereum account that is expected to be funded in the XMTP Funding Portal.
+The private key for your XMTP Gateway Service must belong to a payer wallet that has allocated funds for messaging in the XMTP Funding Portal.
 
-To learn more, see [Funding your XMTP Gateway Service](fund-apps/quickstart).
+To learn more, see [Fund your app to send messages with XMTP](/fund-apps/fund-your-app).
 
 ## Authenticate users
 
