@@ -1,3 +1,4 @@
+import Zoom from 'react-medium-image-zoom'
 import Mermaid from '../../components/Mermaid'
 
 # Calculate XMTP fees
@@ -119,8 +120,9 @@ This estimate is based on typical usage patterns, such as an average message siz
 
 ## Understand the payer-to-node operator payment flow
 
+<Zoom>
 <Mermaid
-  id="cursors"
+  id="payer-to-node"
   chart={`
 sequenceDiagram
     actor Payer
@@ -128,15 +130,16 @@ sequenceDiagram
     participant PayerReportManager
     participant DistributionManager
     participant NodeRegistry
-    actor NodeOperator
+    actor NodeOperator as Node operator
 
-    Payer->>PayerRegistry: 1. Deposits USDC to cover usage
-    Note over PayerReportManager: Nodes submit usage reports for settlement.
-    PayerReportManager->>PayerRegistry: 2. Calls settleUsage() to deduct fees from a Payer's balance
-    PayerRegistry->>DistributionManager: 3. Transfers the collected fees
-    NodeOperator->>DistributionManager: 4. Claims their share of the fees
-    DistributionManager->>NodeRegistry: 5. Verifies that the claimant is the true owner of the node
-    NodeRegistry-->>DistributionManager: Returns the owner's address
-    DistributionManager->>NodeOperator: 6. Transfers the earned fees to the node operator
+    Payer->>PayerRegistry: 1. Allocates USDC to cover usage fees
+    Note over PayerReportManager: Node operator submits payer usage reports
+    PayerReportManager->>PayerRegistry: 2. Deducts fees from payer's balance
+    PayerRegistry->>DistributionManager: 3. Transfers collected fees
+    NodeOperator->>DistributionManager: 4. Claims share of fees
+    DistributionManager->>NodeRegistry: 5. Verifies claimant is node owner
+    NodeRegistry-->>DistributionManager: Returns node owner's address
+    DistributionManager->>NodeOperator: 6. Transfers earned fees to node operator
 `}
 />
+</Zoom>

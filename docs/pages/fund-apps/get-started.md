@@ -26,8 +26,8 @@ Complete these tasks by **December 9, 2025**, to ensure your app can send messag
 
 ## Recommended next steps
 
-- Learn about [XMTP fees](/fund-apps/understand-fees).
-- [Estimate your app's monthly fees](/fund-apps/calculate-fees#estimate-xmtp-fees).
+- Learn about [XMTP fees](/fund-apps/calculate-fees).
+- [Estimate your app's monthly fees](#TODO).
 - Test your implementation:
   - Verify that your [XMTP Gateway Service](/fund-apps/run-gateway) and [funding](/fund-apps/fund-your-app) are working correctly.
   - Simulate your app's usage to run a thorough a projected fee analysis using the XMTP Funding Portal.

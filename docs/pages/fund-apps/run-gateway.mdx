@@ -1,3 +1,4 @@
+import Zoom from 'react-medium-image-zoom'
 import Mermaid from '../../components/Mermaid'
 
 # Run an XMTP Gateway Service
@@ -408,6 +409,7 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
 
 ### Flow for sending a message to the XMTP Network
 
+<Zoom>
 <Mermaid
   id="xmtp-network-flow"
   chart={`
@@ -427,9 +429,11 @@ sequenceDiagram
         XMTP Network-->>App: Message not sent
     end
 `} />
+</Zoom>
 
 ### Flow for sending a message to the XMTP Appchain
 
+<Zoom>
 <Mermaid
   id="xmtp-appchain-flow"
   chart={`
@@ -449,3 +453,4 @@ sequenceDiagram
         XMTP Appchain-->>App: Message not sent
     end
 `} />
+</Zoom>
