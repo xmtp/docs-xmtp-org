@@ -12,10 +12,7 @@ export default defineConfig({
           data-domain="docs.xmtp.org"
           defer
         />
-        <script
-          src="/popup.js"
-          async
-        />
+        <script src="/popup.js" async />
       </>
     );
   },
@@ -37,7 +34,7 @@ export default defineConfig({
       "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
   },
   socials: [
-   {
+    {
       icon: "github",
       link: "https://github.com/xmtp",
     },
@@ -73,27 +70,27 @@ export default defineConfig({
       text: "Get started",
       collapsed: false,
       items: [
-          {
-            text: "Browser SDK",
-            link: "/sdks/browser",
-          },
-          {
-            text: "Node SDK",
-            link: "/sdks/node",
-          },
-          {
-            text: "React Native SDK",
-            link: "/sdks/react-native",
-          },
-          {
-            text: "Android SDK",
-            link: "/sdks/android",
-          },
-          {
-            text: "iOS SDK",
-            link: "/sdks/ios",
-          },
-        ]
+        {
+          text: "Browser SDK",
+          link: "/sdks/browser",
+        },
+        {
+          text: "Node SDK",
+          link: "/sdks/node",
+        },
+        {
+          text: "React Native SDK",
+          link: "/sdks/react-native",
+        },
+        {
+          text: "Android SDK",
+          link: "/sdks/android",
+        },
+        {
+          text: "iOS SDK",
+          link: "/sdks/ios",
+        },
+      ],
     },
     {
       text: "Tutorial: Build an agent 🤖",
@@ -104,163 +101,163 @@ export default defineConfig({
       text: "Build core messaging",
       collapsed: false,
       items: [
-          {
-            text: "Create an EOA or SCW signer",
-            link: "/inboxes/create-a-signer",
-          },
-          {
-            text: "Create a client",
-            link: "/inboxes/create-a-client",
-          },
-          {
-            text: "Create conversations",
-            link: "/inboxes/create-conversations",
-          },
-          {
-            text: "Send messages",
-            link: "/inboxes/send-messages",
-          },
-          {
-            text: "Manage group permissions",
-            link: "/inboxes/group-permissions",
-          },
-          {
-            text: "Manage group metadata",
-            link: "/inboxes/group-metadata",
-          },
-          {
-            text: "Support group invite links",
-            link: "/inboxes/support-group-invite-links",
-          },
-          {
-            text: "Manage inboxes, IDs, and installations",
-            link: "/inboxes/manage-inboxes",
-          },
-          {
-            text: "Observe rate limits",
-            link: "/inboxes/rate-limits",
-          },
-        ]
-      },
-      {
-        text: "List, stream, and sync",
-        collapsed: false,
-        items: [
-            {
-              text: "List conversations",
-              link: "/inboxes/list",
-            },
-            {
-              text: "Stream messages and preferences",
-              link: "/inboxes/stream",
-            },
-            {
-              text: "Sync conversations and messages",
-              link: "/inboxes/sync-and-syncall",
-            },
-            {
-              text: "Sync preferences",
-              link: "/inboxes/sync-preferences",
-            },
-            {
-              text: "History sync",
-              link: "/inboxes/history-sync",
-            },    
-          ],
+        {
+          text: "Create an EOA or SCW signer",
+          link: "/inboxes/create-a-signer",
         },
         {
-          text: "Support rich content types",
-          collapsed: false,
-          items: [
-            {
-              text: "Understand content types",
-              link: "/inboxes/content-types/content-types",
-            },
-            {
-              text: "Attachments",
-              link: "/inboxes/content-types/attachments",
-            },
-            {
-              text: "Onchain transactions",
-              link: "/inboxes/content-types/transactions",
-            },
-            {
-              text: "Onchain transaction references",
-              link: "/inboxes/content-types/transaction-refs",
-            },
-            {
-              text: "Reactions",
-              link: "/inboxes/content-types/reactions",
-            },
-            {
-              text: "Replies",
-              link: "/inboxes/content-types/replies",
-            },
-            {
-              text: "Read receipts",
-              link: "/inboxes/content-types/read-receipts",
-            },
-            {
-              text: "Custom content",
-              link: "/inboxes/content-types/custom",
-            },
-            {
-              text: "Fallback text for compatibility",
-              link: "/inboxes/content-types/fallback",
-            },
-          ],
+          text: "Create a client",
+          link: "/inboxes/create-a-client",
         },
         {
-          text: "Support spam-free inboxes",
-          collapsed: false,
-          items: [
-              {
-                text: "Understand user consent",
-                link: "/inboxes/user-consent/user-consent",
-              },
-              {
-                text: "Support user consent",
-                link: "/inboxes/user-consent/support-user-consent",
-              },        
-            ],
-          },
-          {
+          text: "Create conversations",
+          link: "/inboxes/create-conversations",
+        },
+        {
+          text: "Send messages",
+          link: "/inboxes/send-messages",
+        },
+        {
+          text: "Manage group permissions",
+          link: "/inboxes/group-permissions",
+        },
+        {
+          text: "Manage group metadata",
+          link: "/inboxes/group-metadata",
+        },
+        {
+          text: "Support group invite links",
+          link: "/inboxes/support-group-invite-links",
+        },
+        {
+          text: "Manage inboxes, IDs, and installations",
+          link: "/inboxes/manage-inboxes",
+        },
+        {
+          text: "Observe rate limits",
+          link: "/inboxes/rate-limits",
+        },
+      ],
+    },
+    {
+      text: "List, stream, and sync",
+      collapsed: false,
+      items: [
+        {
+          text: "List conversations",
+          link: "/inboxes/list",
+        },
+        {
+          text: "Stream messages",
+          link: "/inboxes/stream",
+        },
+        {
+          text: "Sync conversations and messages",
+          link: "/inboxes/sync-and-syncall",
+        },
+        {
+          text: "Sync preferences",
+          link: "/inboxes/sync-preferences",
+        },
+        {
+          text: "History sync",
+          link: "/inboxes/history-sync",
+        },
+      ],
+    },
+    {
+      text: "Support rich content types",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand content types",
+          link: "/inboxes/content-types/content-types",
+        },
+        {
+          text: "Attachments",
+          link: "/inboxes/content-types/attachments",
+        },
+        {
+          text: "Onchain transactions",
+          link: "/inboxes/content-types/transactions",
+        },
+        {
+          text: "Onchain transaction references",
+          link: "/inboxes/content-types/transaction-refs",
+        },
+        {
+          text: "Reactions",
+          link: "/inboxes/content-types/reactions",
+        },
+        {
+          text: "Replies",
+          link: "/inboxes/content-types/replies",
+        },
+        {
+          text: "Read receipts",
+          link: "/inboxes/content-types/read-receipts",
+        },
+        {
+          text: "Custom content",
+          link: "/inboxes/content-types/custom",
+        },
+        {
+          text: "Fallback text for compatibility",
+          link: "/inboxes/content-types/fallback",
+        },
+      ],
+    },
+    {
+      text: "Support spam-free inboxes",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand user consent",
+          link: "/inboxes/user-consent/user-consent",
+        },
+        {
+          text: "Support user consent",
+          link: "/inboxes/user-consent/support-user-consent",
+        },
+      ],
+    },
+    {
+      text: "Support push notifications",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand push notifications",
+          link: "/inboxes/push-notifs/understand-push-notifs",
+        },
+        {
           text: "Support push notifications",
-          collapsed: false,
-          items: [
-            {
-              text: "Understand push notifications",
-              link: "/inboxes/push-notifs/understand-push-notifs",
-            },
-            {
-              text: "Support push notifications",
-              link: "/inboxes/push-notifs/push-notifs",
-            },
-            {
-              text: "Run a push notifications server",
-              link: "/inboxes/push-notifs/pn-server",
-            },
-            {
-              text: "Try Android push notifications",
-              link: "/inboxes/push-notifs/android-pn",
-            },
-            {
-              text: "Try iOS push notifications",
-              link: "/inboxes/push-notifs/ios-pn",
-            },
-          ]
+          link: "/inboxes/push-notifs/push-notifs",
         },
         {
-          text: "Debug your app",
-          link: "/inboxes/debug-your-app",
-          items: [],
+          text: "Run a push notifications server",
+          link: "/inboxes/push-notifs/pn-server",
         },
         {
-          text: "Sign and verify payloads",
-          link: "/inboxes/use-signatures",
-          items: [],
+          text: "Try Android push notifications",
+          link: "/inboxes/push-notifs/android-pn",
         },
-      {
+        {
+          text: "Try iOS push notifications",
+          link: "/inboxes/push-notifs/ios-pn",
+        },
+      ],
+    },
+    {
+      text: "Debug your app",
+      link: "/inboxes/debug-your-app",
+      items: [],
+    },
+    {
+      text: "Sign and verify payloads",
+      link: "/inboxes/use-signatures",
+      items: [],
+    },
+    {
       text: "Network",
       collapsed: false,
       items: [
