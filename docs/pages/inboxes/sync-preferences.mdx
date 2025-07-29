@@ -1,13 +1,13 @@
-# Sync preferences
+# Stream and sync preferences
 
-Preference sync enables you to sync the following preference-related information across multiple existing app installations:
+You can stream and sync the following preference-related information across multiple existing app installations:
 
 - Conversation [consent preferences](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set)
 - Conversation HMAC keys (for [push notifications](/inboxes/push-notifs/understand-push-notifs))
 
-## Databases used by preference sync
+## Databases used by preference stream and sync
 
-Each xmtpd node contains:
+Each XMTP node contains:
 
 - A **welcomes database**: Keeps a ledger of all groups an inbox ID is a part of.
 - A **group messages database**: Keeps a ledger of all messages in the groups an inbox ID is a part of.
@@ -20,7 +20,7 @@ In the welcomes database, the groups are of these types:
 
 - **1:1 chat**: A group that handles conversations between an inbox ID and one other user.
 - **Group chat**: A group that handles conversations between an inbox ID and multiple other users.
-- **Preferences**: A group that handles syncing preferences between an inbox ID's existing app installations.
+- **Preferences**: A group that handles streaming and syncing preferences between an inbox ID's existing app installations.
 
 One-to-one chat, group chat, and preferences groups in the welcome database are updated by apps as follows:
 
@@ -96,6 +96,34 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 Preferences sync handles syncing HMAC keys in the same way.
 
 For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync`, `syncAll`, or `streamAll`, the sync worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
+
+## Stream preferences
+
+Use this call to stream preferences (consent preferences and HMAC keys) across app installations in a preferences group. This will also sync welcomes to ensure that you have all potential new installations before streaming.
+
+:::code-group
+
+```js [Browser]
+await client.preferences.stream();
+```
+
+```js [Node]
+await client.preferences.stream();
+```
+
+```tsx [React Native]
+await client.preferences.stream()
+```
+
+```kotlin [Kotlin]
+client.preferences.stream()
+```
+
+```swift [Swift]
+try await client.preferences.stream()
+```
+
+:::
 
 ## Sync preferences
 
