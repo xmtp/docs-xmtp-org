@@ -354,14 +354,20 @@ await group.send("Hello everyone");
 // List existing conversations
 const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
 // Stream new messages
-const stream = await client.conversations.streamAllMessages(["allowed"]);
-
-try {
-  for await (const message of stream) {
-    // Received a message
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
 }
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations 
@@ -490,13 +496,19 @@ const allConversations = await client.conversations.list({ consentStates: [Conse
 const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
 const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 // Stream new messages
-const stream = await client.conversations.streamAllMessages(["allowed"]);
-try {
-  for await (const message of stream) {
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
     console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  console.log("New message:", message);
 }
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations 
@@ -4334,31 +4346,60 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 :::code-group
 
 ```js [Browser]
-const stream = await client.conversations.stream();
-
-try {
-  for await (const conversation of stream) {
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
     // Received a conversation
     console.log("New conversation:", conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log("New conversation:", conversation);
 }
 ```
 
 ```js [Node]
-const stream = await client.conversations.stream();
-// to stream only groups, use `client.conversations.streamGroups()`
-// to stream only dms, use `client.conversations.streamDms()`
-
-try {
-  for await (const conversation of stream) {
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
     // Received a conversation
+    console.log("New conversation:", conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
   }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
+});
+
+// To stream only groups
+const groupStream = await client.conversations.streamGroups({
+  onValue: (conversation) => {
+    console.log("New group:", conversation);
+  }
+});
+
+// To stream only DMs
+const dmStream = await client.conversations.streamDms({
+  onValue: (conversation) => {
+    console.log("New DM:", conversation);
+  }
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log("New conversation:", conversation);
 }
 ```
 
@@ -4404,20 +4445,25 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 
 ```js [Browser]
 // stream all messages from conversations with a consent state of allowed
-const stream = await client.conversations.streamAllMessages(
-  undefined,
-  undefined,
-  [ConsentState.Allowed],
-);
- 
-try {
-  for await (const message of stream) {
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
     // Received a message
     console.log("New message:", message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
+});
+ 
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
 }
 ```
 
@@ -4425,26 +4471,39 @@ try {
 // stream all messages from conversations with a consent state of allowed
 const stream = await client.conversations.streamAllMessages({
   consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    // Received a message
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
+  }
 });
  
 // stream only group messages
-const stream = await client.conversations.streamAllGroupMessages({
+const groupMessageStream = await client.conversations.streamAllGroupMessages({
   consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log("New group message:", message);
+  }
 });
  
 // stream only dm messages
-const stream = await client.conversations.streamAllDmMessages({
+const dmMessageStream = await client.conversations.streamAllDmMessages({
   consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log("New DM message:", message);
+  }
 });
  
-try {
-  for await (const message of stream) {
-    // Received a message
-    console.log("New message:", message);
-  }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
 }
 ```
 
@@ -4474,7 +4533,7 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 ## Handle stream failures
 
 :::warning
-**Node SDK only**
+**Browser and Node SDK**
 
 Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
 :::
@@ -4485,12 +4544,25 @@ Streams will automatically attempt to reconnect if they fail. By default, a stre
 // disable automatic reconnects
 const stream = await client.conversations.streamAllMessages({
   retryOnFail: false,
+  onValue: (message) => {
+    console.log("New message:", message);
+  }
 });
 
-// use stream options
+// use stream options with retry configuration
 const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
   retryAttempts: 10,
   retryDelay: 20000, // 20 seconds
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+  onFail: () => {
+    console.log("Stream failed after retries");
+  },
   onRestart: () => {
     console.log("Stream restarted");
   },
@@ -4501,7 +4573,27 @@ const stream = await client.conversations.streamAllMessages({
 ```
 
 ```tsx [Browser]
-Not yet available
+// Browser SDK also supports stream retry options
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  retryAttempts: 5,
+  retryDelay: 15000, // 15 seconds
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+  onFail: () => {
+    console.log("Stream failed after retries");
+  },
+  onRestart: () => {
+    console.log("Stream restarted");
+  },
+  onRetry: (attempt, maxAttempts) => {
+    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
+  },
+});
 ```
 
 ```tsx [React Native]
@@ -5900,31 +5992,47 @@ Listen for real-time updates to consent preferences:
 
 ```tsx [Browser]
 // Stream consent records in real-time
-const stream = await client.preferences.streamConsent()
-
-try {
-  for await (const updates of stream) {
+const stream = await client.preferences.streamConsent({
+  onValue: (updates) => {
     // Received consent updates
-    console.log("Consent updates:", updates)
+    console.log("Consent updates:", updates);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Consent stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error)
+});
+
+// Or use for-await loop
+for await (const updates of stream) {
+  // Received consent updates
+  console.log("Consent updates:", updates);
 }
 ```
 
 ```tsx [Node]
 // Stream consent records in real-time
-const stream = client.preferences.streamConsent()
-
-try {
-  for await (const updates of stream) {
+const stream = await client.preferences.streamConsent({
+  onValue: (updates) => {
     // Received consent updates
-    console.log("Consent updates:", updates)
+    console.log("Consent updates:", updates);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Consent stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error)
+});
+
+// Or use for-await loop
+for await (const updates of stream) {
+  // Received consent updates
+  console.log("Consent updates:", updates);
 }
 ```
 

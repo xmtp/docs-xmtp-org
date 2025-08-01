@@ -130,31 +130,47 @@ Listen for real-time updates to consent preferences:
 
 ```tsx [Browser]
 // Stream consent records in real-time
-const stream = await client.preferences.streamConsent()
-
-try {
-  for await (const updates of stream) {
+const stream = await client.preferences.streamConsent({
+  onValue: (updates) => {
     // Received consent updates
-    console.log("Consent updates:", updates)
+    console.log("Consent updates:", updates);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Consent stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error)
+});
+
+// Or use for-await loop
+for await (const updates of stream) {
+  // Received consent updates
+  console.log("Consent updates:", updates);
 }
 ```
 
 ```tsx [Node]
 // Stream consent records in real-time
-const stream = client.preferences.streamConsent()
-
-try {
-  for await (const updates of stream) {
+const stream = await client.preferences.streamConsent({
+  onValue: (updates) => {
     // Received consent updates
-    console.log("Consent updates:", updates)
+    console.log("Consent updates:", updates);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Consent stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error)
+});
+
+// Or use for-await loop
+for await (const updates of stream) {
+  // Received consent updates
+  console.log("Consent updates:", updates);
 }
 ```
 
