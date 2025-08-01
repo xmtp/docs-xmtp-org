@@ -156,7 +156,7 @@ export default defineConfig({
           link: "/inboxes/sync-and-syncall",
         },
         {
-          text: "Sync preferences",
+          text: "Stream and sync preferences",
           link: "/inboxes/sync-preferences",
         },
         {
