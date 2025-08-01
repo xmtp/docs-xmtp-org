@@ -50,13 +50,19 @@ const allConversations = await client.conversations.list({ consentStates: [Conse
 const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
 const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 // Stream new messages
-const stream = await client.conversations.streamAllMessages(["allowed"]);
-try {
-  for await (const message of stream) {
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
     console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  console.log("New message:", message);
 }
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations 
