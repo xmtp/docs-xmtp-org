@@ -49,7 +49,15 @@ const xmtp = await Client.create(signer, {
 ```
 
 ```kotlin [Kotlin]
+import org.xmtp.android.library.Client
+import org.xmtp.android.library.Signer
+import org.xmtp.android.library.codecs.ContentTypeTransactionReference
+import org.xmtp.android.library.codecs.TransactionReferenceCodec
 
+Client.register(codec = TransactionReferenceCodec())
+
+// Create the XMTP client (assume account is a Signer)
+val xmtp = Client.create(account)
 ```
 
 ```swift [Swift]
@@ -93,7 +101,21 @@ const transactionReference: TransactionReference = {
 ```
 
 ```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.TransactionReference
 
+val transactionReference = TransactionReference(
+  namespace = "eip155",
+  networkId = "1",
+  reference = "0x123...abc",
+  metadata = TransactionReference.Metadata(
+    transactionType = "transfer",
+    currency = "USDC",
+    amount = 100000.0,
+    decimals = 6u,
+    fromAddress = "0x456...def",
+    toAddress = "0x789...ghi"
+  )
+)
 ```
 
 ```swift [Swift]
@@ -113,7 +135,16 @@ await conversation.messages.send(transactionReference, {
 ```
 
 ```kotlin [Kotlin]
+import kotlinx.coroutines.runBlocking
+import org.xmtp.android.library.SendOptions
+import org.xmtp.android.library.codecs.ContentTypeTransactionReference
 
+runBlocking {
+  conversation.send(
+    content = transactionReference,
+    options = SendOptions(contentType = ContentTypeTransactionReference)
+  )
+}
 ```
 
 ```swift [Swift]
@@ -144,7 +175,11 @@ const transactionRef: TransactionReference = message.content;
 ```
 
 ```kotlin [Kotlin]
-
+// Assume message is a DecodedMessage
+if (message.type == ContentTypeTransactionReference) {
+  val transactionRef: TransactionReference? = message.content()
+  // Process the transaction reference here
+}
 ```
 
 ```swift [Swift]
