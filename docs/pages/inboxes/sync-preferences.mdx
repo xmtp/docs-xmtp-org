@@ -64,9 +64,9 @@ To describe preference sync, let's first focus on how the preferences group work
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png" width="300px" />
    </div>
     
-## Preferences worker
+## Preferences sync worker
 
-Now, let's describe how the preferences worker helps keep user consent preferences in sync across existing app installations.
+Now, let's describe how the preferences sync worker helps keep user consent preferences in sync across existing app installations.
 
 1. Let's say Inbox ID Alix uses Installation A to block Inbox ID Bo.
 
@@ -80,13 +80,13 @@ Now, let's describe how the preferences worker helps keep user consent preferenc
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" />
    </div>    
     
-3. When Installation B calls `preferences.sync` or `syncAll`, it gets the message from the preferences group. The worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
+3. When Installation B calls `preferences.sync` or `syncAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
     
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" />
    </div> 
     
-4. Likewise, when Installation C calls `preferences.sync` or `syncAll`, it gets the message from the preferences group, and the worker ensures Inbox ID Bo is blocked there as well.
+4. Likewise, when Installation C calls `preferences.sync` or `syncAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
     
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" />
@@ -94,7 +94,7 @@ Now, let's describe how the preferences worker helps keep user consent preferenc
 
 Preferences sync handles HMAC keys in the same way.
 
-For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync` or `syncAll`, the worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
+For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
 
 ## Sync preferences
 
