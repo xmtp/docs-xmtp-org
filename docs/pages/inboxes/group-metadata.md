@@ -166,3 +166,7 @@ try await group.updateImageUrl(imageUrl: "newurl.com")
 ```
 
 :::
+
+## Listen for group updates
+
+When a group's metadata, membership, or permissions change, a `GroupUpdated` message is sent to the conversation. To learn how to listen for and process these messages, see [Stream group updates](/inboxes/stream#stream-group-updates).
