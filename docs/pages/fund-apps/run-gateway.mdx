@@ -3,7 +3,7 @@ import Mermaid from '../../components/Mermaid'
 
 # Run an XMTP Gateway Service
 
-A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Network on behalf of your users. Think of it as your app's payment gateway for messaging.
+A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app's payment gateway for messaging.
 
 Behind the scenes, your XMTP Gateway Service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
 
@@ -373,6 +373,8 @@ Most production apps will require some level of customization to authorize user 
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
+If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
+
 ## Test your XMTP Gateway Service
 
 Here are some high priority scenarios to test:
@@ -407,26 +409,26 @@ To get testnet USDC, use [https://faucet.circle.com/](https://faucet.circle.com/
 
 The following sequence diagrams illustrate the XMTP Gateway Service's role in the following key flows.
 
-### Flow for sending a message to the XMTP Network
+### Flow for sending a message to the XMTP Broadcast Network
 
 <Zoom>
 <Mermaid
   id="xmtp-network-flow"
   chart={`
 sequenceDiagram
-    title: Message sent to XMTP Network
+    title: Message sent to XMTP Broadcast Network
     participant App
     participant Gateway Service
-    participant XMTP Network
+    participant XMTP Broadcast Network
 
     App->>Gateway Service: Request to send message
     Gateway Service->>Gateway Service: Verify user authorization
     Gateway Service->>Gateway Service: Sign with payer wallet key
-    Gateway Service->>XMTP Network: Send message and pay network message fees
+    Gateway Service->>XMTP Broadcast Network: Send message and pay network message fees
     alt Sufficient funds in PayerRegistry
-        XMTP Network-->>App: Message sent
+        XMTP Broadcast Network-->>App: Message sent
     else Insufficient funds in PayerRegistry
-        XMTP Network-->>App: Message not sent
+        XMTP Broadcast Network-->>App: Message not sent
     end
 `} />
 </Zoom>

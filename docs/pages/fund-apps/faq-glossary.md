@@ -1,107 +1,19 @@
-# FAQ and glossary for funding apps
+# Glossary
 
-## FAQ
+###I think we can write these and some can be used as tooltips in the UI###
 
-### Is there a testnet?
-
-Yes. Base Sepolia, XMTP AppChain testnet, and XMTP Network testnet all run identical contracts so you can dry-run funding and messaging.
-
-### How is pricing determined?
-
-Fees are usage-based—the contract multiplies message bytes by a base rate that adjusts with network congestion. At launch, the effective fee is about 0.001 USDC for a 1 KB text message (≈ $1 per 1,000 small messages). Governance can update the base rate over time.
-
-### What gas fees apply?
-
-Each message triggers an L3 commit; at ≤ 500 gwei that works out to fractions of a cent. Portal shows live estimates before you send.
-
-### What happens when my balance hits zero?
-
-The PayerRegistry rejects new messages and returns `INSUFFICIENT_PAYER_BALANCE`. The portal UI + optional webhook warn you as soon as 20% balance remains.
-
-### Where are the audits?
-
-Full reports from Trail of Bits and Octane will be published on xmtp.org before paid messaging is enforced.
-
-### Are grants available?
-
-Yes—apply via the XMTP Dev Grants program. Approved wallets receive periodic top-ups visible in your payer balance dashboard.
-
-### What determines the effective price per message?
-
-Messaging fees are charged per byte, with total fees scaling linearly with bytes sent. The effective per-message rate shown in the estimator assumes a 1,024-byte message and includes all components: base fees for message storage, gas fees for metadata written to XMTP’s L3, and a 5% protocol treasury share.
-
-### Is price global or per-sender?
-
-The protocol charges a single global per-byte rate that falls as total network volume rises. All developers benefit from lower per-byte rates as the network grows.
-
-### What counts as a “message”?
-
-All XMTP message types are subject to per-byte fees—including invisible system messages like consent updates, group-state sync, identity associations, and more. Additionally, critical group state updates and identity changes incur small gas fees on XMTP’s L3.
-
-### Are attachments or large media extra?
-
-No. They’re just larger messages. XMTP charges per byte, so sending media costs more only due to size—capped at 1 MB per message. For lower fees and larger files, use remote attachment messages to point to off-network storage like IPFS or S3.
-
-### Is the current fee level sustainable for node operators?
-
-Yes. The network is designed to be profitable at 1B messages/month. As volume grows beyond this point, surplus revenue is recycled to lower the global per-byte price for everyone.
-
-### How are fees estimated for 100M or even 1B users?
-
-At very high volumes, price converges to a global floor that ensures node operators remain sustainable. The current effective floor price is $3 per 100,000 messages. Future node efficiency improvements are expected to push this floor even lower.
-
-### Do fees ever increase?
-
-The system is designed for fees to decrease over time as volume grows and nodes become more efficient. However, if network volume drops significantly, the global per-byte price can rise to maintain sustainability. Congestion surcharges may occur briefly on overloaded nodes, but traffic can route through another node at the standard price.
-
-### Can I let sponsors or end-users cover my fees?
-
-Yes. Any wallet can deposit USDC into your balance. Once deposited, funds are only withdrawable by your app.
-
-### Where can I see a detailed fee breakdown?
-
-All pricing is onchain and fully auditable. The XMTP Funding Portal shows per-byte fees, gas fees, and your historical and projected spend.
-
-### How do I fund usage and avoid interruptions?
-
-Fees are drawn from an onchain USDC balance that you can [fund and manage through the XMTP Funding Portal](/fund-apps/fund-your-app). The portal will support balance notifications and auto top-ups.
-
-## Do I need Go developers?
-
-Only if you're NOT using Node.js. Node.js has the payer built-in. For all other platforms, you'll need either the Docker image (no Go required) or Go developers for customization.
-
-## How accurate is the $5 per 100K messages estimate?
-
-This estimate assumes typical usage patterns (1 KB messages, 1-2 group operations per 100 messages). Most apps fall within 10% of this estimate.
-
-## What if my XMTP Gateway Service goes down?
-
-Messages will queue until your payer is back online. Build redundancy if needed. (Node.js apps have payer built-in, reducing this risk.)
-
-## Can someone else pay for my app's messaging?
-
-Yes! Anyone (investors, sponsors, partners) can deposit funds to your wallet through the Funding Portal. You can also manage funds for other developers.
-
-## How much does infrastructure cost?
-
-- Browser and mobile apps: $25-50/month for hosting plus RPC provider costs.
-
-- Node.js apps: No additional infrastructure needed. 
-
-## Glossary
-
-### Balance
+## Balance
 
 The total amount of USDC available to pay for messaging fees. This includes:
 
 - The USDC allocated to your **messaging balance** in the PayerRegistry smart contract.
 - The spendable USDC balance in your payer wallet on the XMTP Appchain.
 
-### Base
+## Base
 
 An Ethereum L2 network developed by Coinbase on the OP Stack. Base processes transactions offchain and settles them on Ethereum.
 
-### Congestion fee
+## Congestion fee
 
 A dynamic offchain fee added during high network activity to manage load, determined by and paid to node operators.
 
@@ -113,7 +25,7 @@ To learn more, see [Understand XMTP messaging fees](https://file+.vscode-resour
 
 ### Payer
 
-A payer is typically an app or agent that pays to use the XMTP Network to send messages.
+A payer is typically an app or agent that pays to use the XMTP Broadcast Network to send messages.
 
 ### PayerRegistry
 
@@ -158,7 +70,7 @@ A real-time index that tracks PayerRegistry contract activity—such as who fund
 
 The desired maximum number of messages the network aims to handle per minute to maintain performance and prevent overload.
 
-### XMTP Network
+### XMTP Broadcast Network
 
 The offchain, globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
 
@@ -171,7 +83,7 @@ An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It ma
 
 ### NodeRegistry
 
-A smart contract on Base that manages the list of authorized XMTP Network nodes.
+A smart contract on Base that manages the list of authorized XMTP Broadcast Network nodes.
 
 To learn more, see [NodeRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/NodeRegistry.sol) in the smart-contracts repo.
 

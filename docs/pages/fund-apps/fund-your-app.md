@@ -2,9 +2,11 @@
 
 Use this guide to learn how to use the XMTP Funding Portal to fund your app to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
 
-Behind the scenes, the Funding Portal handles PayerRegistry smart contract deposits, XMTP Network messaging fee and XMTP Appchain gas payments, and all blockchain interactions.
+Behind the scenes, the Funding Portal handles PayerRegistry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP Appchain gas payments, and all blockchain interactions.
 
-[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA. The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial.
+[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA. 
+
+The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
 
 ## Step 1. Create your payer wallet
 
@@ -55,11 +57,11 @@ The XMTP Funding Portal will accept only testnet USDC until **October 7, 2025**.
 5. Click **Continue**.
 6. The Depositing funds screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
-Your payer wallet now has a messaging balance in the PayerRegistry smart contract. This balance will be used to pay for XMTP Network messaging fees and XMTP Appchain gas fees.
+Your payer wallet now has a messaging balance in the PayerRegistry smart contract. This balance will be used to pay for XMTP Broadcast Network messaging fees and XMTP Appchain gas fees.
 
 You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-withdraw-funds) (deallocate) USDC from your messaging balance.
 
-## Step 5: Review usage
+## Step 5: Monitor your usage and allowance
 
 You can use the Usage panel on the home page of the XMTP Funding Portal to review the number of messages sent by your app, as well as actual and projected fees.
 
@@ -69,9 +71,15 @@ Before data can display in the Usage panel, you must have completed the followin
 2. Updated your app to [use a compatible XMTP SDK](/fund-apps/update-sdk)
 3. Sent messages using your app
 
+We recommend funding an allowance for 3-6 months of estimated usage.
+
+The Funding Portal UI displays a warning if your allowance goes below XXXX does it do thisXXXX.
+
+If your allowance goes to zero, the Payer Registry smart contract rejects new messages sent to the XMTP Broadcast Network and returns an `INSUFFICIENT_PAYER_BALANCE` error.
+
 ## Step 6: Withdraw and claim funds
 
-You can withdraw (deallocate) funds from your messaging balance at any time. Funds will be available after 48 hours, and require a second transaction to claim.
+You can withdraw funds from your messaging balance at any time. Funds will be available after 48 hours, and require a second transaction to claim.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Home page, click **Withdraw**.
@@ -83,7 +91,19 @@ You can withdraw (deallocate) funds from your messaging balance at any time. Fun
 8. Verify the withdrawal details and click **Claim USDC**.
 9. XXXX Need to wait to see this part of the UI XXXXX.
 
+## Enable others to contribute to your funded allowance
+
+Any wallet (investors, sponsors, partners, users) can deposit USDC funds to your payer wallet's allowance through the Funding Portal. You can also manage funds for other developers. ###what does this mean?###
+
+Once deposited, funds are withdrawable only by your app.
+
 ## Troubleshooting
+
+### Is there a testnet?
+
+Yes. The XMTP AppChain testnet and XMTP Broadcast Network testnet run smart contracts that are identical to those run on mainnet.
+
+You can dry-run allocating funds using Base Sepolia USDC and sending messages using these XMTP testnets.
 
 ### Signature rejected (MetaMask only)
 
