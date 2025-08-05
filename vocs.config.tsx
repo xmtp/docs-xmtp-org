@@ -12,10 +12,7 @@ export default defineConfig({
           data-domain="docs.xmtp.org"
           defer
         />
-        <script
-          src="/popup.js"
-          async
-        />
+        <script src="/popup.js" async />
       </>
     );
   },
@@ -37,7 +34,7 @@ export default defineConfig({
       "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
   },
   socials: [
-   {
+    {
       icon: "github",
       link: "https://github.com/xmtp",
     },
@@ -73,27 +70,27 @@ export default defineConfig({
       text: "Get started",
       collapsed: false,
       items: [
-          {
-            text: "Browser SDK",
-            link: "/sdks/browser",
-          },
-          {
-            text: "Node SDK",
-            link: "/sdks/node",
-          },
-          {
-            text: "React Native SDK",
-            link: "/sdks/react-native",
-          },
-          {
-            text: "Android SDK",
-            link: "/sdks/android",
-          },
-          {
-            text: "iOS SDK",
-            link: "/sdks/ios",
-          },
-        ]
+        {
+          text: "Browser SDK",
+          link: "/sdks/browser",
+        },
+        {
+          text: "Node SDK",
+          link: "/sdks/node",
+        },
+        {
+          text: "React Native SDK",
+          link: "/sdks/react-native",
+        },
+        {
+          text: "Android SDK",
+          link: "/sdks/android",
+        },
+        {
+          text: "iOS SDK",
+          link: "/sdks/ios",
+        },
+      ],
     },
     {
       text: "Tutorial: Build an agent 🤖",
@@ -171,130 +168,130 @@ export default defineConfig({
               link: "/inboxes/history-sync",
             },    
           ],
+    },
+    {
+      text: "Support rich content types",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand content types",
+          link: "/inboxes/content-types/content-types",
         },
         {
-          text: "Support rich content types",
-          collapsed: false,
-          items: [
-            {
-              text: "Understand content types",
-              link: "/inboxes/content-types/content-types",
-            },
-            {
-              text: "Attachments",
-              link: "/inboxes/content-types/attachments",
-            },
-            {
-              text: "Onchain transactions",
-              link: "/inboxes/content-types/transactions",
-            },
-            {
-              text: "Onchain transaction references",
-              link: "/inboxes/content-types/transaction-refs",
-            },
-            {
-              text: "Reactions",
-              link: "/inboxes/content-types/reactions",
-            },
-            {
-              text: "Replies",
-              link: "/inboxes/content-types/replies",
-            },
-            {
-              text: "Read receipts",
-              link: "/inboxes/content-types/read-receipts",
-            },
-            {
-              text: "Custom content",
-              link: "/inboxes/content-types/custom",
-            },
-            {
-              text: "Fallback text for compatibility",
-              link: "/inboxes/content-types/fallback",
-            },
-          ],
+          text: "Attachments",
+          link: "/inboxes/content-types/attachments",
         },
         {
-          text: "Support spam-free inboxes",
-          collapsed: false,
-          items: [
-              {
-                text: "Understand user consent",
-                link: "/inboxes/user-consent/user-consent",
-              },
-              {
-                text: "Support user consent",
-                link: "/inboxes/user-consent/support-user-consent",
-              },        
-            ],
-          },
-          {
+          text: "Onchain transactions",
+          link: "/inboxes/content-types/transactions",
+        },
+        {
+          text: "Onchain transaction references",
+          link: "/inboxes/content-types/transaction-refs",
+        },
+        {
+          text: "Reactions",
+          link: "/inboxes/content-types/reactions",
+        },
+        {
+          text: "Replies",
+          link: "/inboxes/content-types/replies",
+        },
+        {
+          text: "Read receipts",
+          link: "/inboxes/content-types/read-receipts",
+        },
+        {
+          text: "Custom content",
+          link: "/inboxes/content-types/custom",
+        },
+        {
+          text: "Fallback text for compatibility",
+          link: "/inboxes/content-types/fallback",
+        },
+      ],
+    },
+    {
+      text: "Support spam-free inboxes",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand user consent",
+          link: "/inboxes/user-consent/user-consent",
+        },
+        {
+          text: "Support user consent",
+          link: "/inboxes/user-consent/support-user-consent",
+        },
+      ],
+    },
+    {
+      text: "Support push notifications",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand push notifications",
+          link: "/inboxes/push-notifs/understand-push-notifs",
+        },
+        {
           text: "Support push notifications",
-          collapsed: false,
-          items: [
-            {
-              text: "Understand push notifications",
-              link: "/inboxes/push-notifs/understand-push-notifs",
-            },
-            {
-              text: "Support push notifications",
-              link: "/inboxes/push-notifs/push-notifs",
-            },
-            {
-              text: "Run a push notifications server",
-              link: "/inboxes/push-notifs/pn-server",
-            },
-            {
-              text: "Try Android push notifications",
-              link: "/inboxes/push-notifs/android-pn",
-            },
-            {
-              text: "Try iOS push notifications",
-              link: "/inboxes/push-notifs/ios-pn",
-            },
-          ]
+          link: "/inboxes/push-notifs/push-notifs",
         },
         {
-          text: "Debug your app",
-          link: "/inboxes/debug-your-app",
-          items: [],
+          text: "Run a push notifications server",
+          link: "/inboxes/push-notifs/pn-server",
         },
         {
-          text: "Fund an app",
-          collapsed: false,
-          items: [
-            {
-              text: "Get started",
-              link: "/fund-apps/get-started",
-            },
-            {
-              text: "Calculate fees",
-              link: "/fund-apps/calculate-fees",
-            },
-            {
-              text: "Fund your app",
-              link: "/fund-apps/fund-your-app",
-            },
-            {
-              text: "Run your XMTP Gateway Service",
-              link: "/fund-apps/run-gateway",
-            },
-            {
-              text: "Update your SDK",
-              link: "/fund-apps/update-sdk",
-            },
-            {
-              text: "FAQ and glossary",
-              link: "/fund-apps/faq-glossary",
-            },
-          ],
+          text: "Try Android push notifications",
+          link: "/inboxes/push-notifs/android-pn",
         },
         {
-          text: "Sign and verify payloads",
-          link: "/inboxes/use-signatures",
-          items: [],
+          text: "Try iOS push notifications",
+          link: "/inboxes/push-notifs/ios-pn",
         },
-      {
+      ],
+    },
+    {
+      text: "Debug your app",
+      link: "/inboxes/debug-your-app",
+      items: [],
+    },
+    {
+      text: "Fund an app",
+      collapsed: false,
+      items: [
+        {
+          text: "Get started",
+          link: "/fund-apps/get-started",
+        },
+        {
+          text: "Estimate fees",
+          link: "/fund-apps/estimate-fees",
+        },
+        {
+          text: "Fund your app",
+          link: "/fund-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-apps/update-sdk",
+        },
+        {
+          text: "FAQ and glossary",
+          link: "/fund-apps/faq-glossary",
+        },
+      ],
+    },
+    {
+      text: "Sign and verify payloads",
+      link: "/inboxes/use-signatures",
+      items: [],
+    },
+    {
       text: "Network",
       collapsed: false,
       items: [
