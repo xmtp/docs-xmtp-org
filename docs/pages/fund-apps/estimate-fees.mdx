@@ -1,9 +1,9 @@
 import Zoom from 'react-medium-image-zoom'
 import Mermaid from '../../components/Mermaid'
 
-# Understand and estimate XMTP fees
+# Understand and calculate XMTP fees
 
-Use this guide to understand XMTP fees and how to estimate XMTP fees for an app or agent.
+Use this guide to understand XMTP fees and how to calculate estimated XMTP fees for an app or agent.
 
 ## Understand XMTP fees
 
@@ -20,16 +20,16 @@ To understand XMTP fee types, it's helpful to understand XMTP's architecture, wh
 
 Messages sent through the **XMTP Broadcast Network** incur these types of **messaging fees**:
 
-- **Base fee**: A flat per-message fee.
-- **Storage fee**: A fee charged per-byte-day of storage required. A 100-byte message stored for 30 days would be calculated as 3,000-byte-days.
+- **Base fee**: A flat per-message fee charged at a single global rate, not a rate per app or sender.
+- **Storage fee**: A fee charged per-byte-day of storage required.
 - **Congestion fee**: A dynamic fee computed by looking at the recent activity of an originator. Added only during periods of high network activity.
 
-The dollar value of the flat per-message base fee, per-byte-day storage fee, and congestion fee are stored in a smart contract and remain constant for a specified period of time. These fees are set and adjusted through protocol governance.
+The fee rates for the base fee, storage fee, and congestion fee are denominated in dollars and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
 
-Every message an app or agent sends through the XMTP Broadcast Network counts toward its message volume. These message types include:
+Every message an app or agent sends through the XMTP Broadcast Network counts against its message allowance. These message types include:
 
 - App messages (text, reactions, replies)
-- Media attachments (charged by size, capped at 1 MB)
+- Media attachments (charged by size, with a 1 MB cap). To send larger files and reduce fees, use a remote attachment to point to off-network storage (for example, IPFS or S3).
 - System messages (read receipts, typing indicators)
 
 To learn more, see [Envelope types](/protocol/envelope-types).
@@ -66,63 +66,65 @@ This sequence diagram illustrates the messaging fee payment flow from payers to 
 
 ### Gas fees
 
-Commit messages sent through the **XMTP Appchain** incur **gas fees**. Commit messages require transactions on the XMTP Appchain. Gas fees are paid directly from the payer wallet's XMTP Appchain allowance.
-
-Every commit message an app or agent sends through the XMTP Appchain counts toward its message volume. Commit messages are typically used to perform:
+Certain administrative operations involve transactions on the XMTP Appchain:
 
 - Group management updated (member additions, permission changes)
 - Identity updates
-- Consent preferences updates
 - Payer-related updates
 
-To learn more, see [Envelope types](/protocol/envelope-types).
+To pay for these transactions, apps and agents need to maintain a gas reserve balance on the XMTP Appchain. The Funding Portal automatically manages funding this gas reserve for apps and agents based on their expected message volume.
 
 Collected gas fees are paid directly to the XMTP Appchain. Fees are used to maintain the Appchain.
 
-## Estimate XMTP fees
+## Calculate estimated XMTP fees
 
-Use the [XMTP fee calculator](#TODO) to help you estimate fees to be incurred by your app or agent. This calculator uses network averages, which provides estimates at the correct order of magnitude.
+As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 messages** ($0.00005/message). This all-in price for typical usage is based on the following key assumptions:
 
-Here are rough estimates of XMTP Broadcast Network and XMTP Appchain fees:
+- A 95/5 split between messaging and gas fees. Meaning, for every $5 in total fees:
+  - $4.75 is for XMTP Broadcast Network messaging fees
+  - $0.25 is for XMTP Appchain gas fees
+- An average message size of 1 KB (1024 bytes).
+- A message retention period of 90 days.
+- Normal network conditions (no congestion fees).
 
-- **Messaging fee**: At launch, a 1 KB text message sent to the XMTP Broadcast Network incurs a fee of ~0.001 USDC (≈ $1 per 1,000 small messages).
+Your actual costs may vary depending on your app's specific usage patterns. For example, sending smaller messages or using a shorter retention period will result in lower fees.
 
-- **Gas fee**: A message that triggers a commit to the XMTP Appchain incurs a ≤ 500 gwei fee, which works out to fractions of a cent.
+All pricing is onchain and fully auditable. For the most accurate estimates based on your specific usage, the XMTP Funding Portal provides a detailed breakdown of per-byte fees, gas fees, and your historical and projected spend.
+
+### Calculate estimated messaging fees
+
+The total messaging fee for a single message is the sum of its component fees:
+
+*total messaging fee = base fee + storage fee + congestion fee*
+
+The storage fee is calculated as follows:
+
+*storage fee = rate × message size in bytes × message retention in days*
+
+For example, a 1 KB text message stored for 90 days on the XMTP Broadcast Network would incur a messaging fee calculated as: 
+
+*total messaging fee = base fee + (storage rate × 1024 bytes × 90 days) + congestion fee*
+
+The congestion fee is applied only during periods of high network activity to manage load.
+
+### Calculate estimated gas fees
+
+Gas fees for transactions on the XMTP Appchain are calculated as follows:
+
+*gas fee = price per unit of gas × amount of gas consumed by a transaction*
+
+This often works out to fractions of a US cent.
+
+The price per unit of gas is set by the XMTP Appchain based on network activity.
+
+The total amount of gas consumed depends on the complexity and size of the transaction.
 
 ### Pricing and network scale
 
-The network is designed to be profitable at 1B messages/month. As volume grows beyond this point, surplus revenue is recycled to lower the global per-byte price for everyone.
+The network is designed for sustainability, not to accumulate profit. Fee revenue is used to cover network operational costs incurred by node operators. 
 
-## FAQ about XMTP fees
+The price per message is expected to step down as the network achieves and sustains global message volume milestones. For example, at a volume of 1 billion messages per month, revenue is expected to cover operational costs.
 
-### What determines the effective price per message?
+The specific schedule for these milestones is managed by protocol governance, with a current effective floor price target of $5 per 100,000 messages.
 
-Messaging fees are charged per byte, with total fees scaling linearly with bytes sent. The effective per-message rate shown in the estimator assumes a 1,024-byte message and includes all components: base fees for message storage, gas fees for metadata written to XMTP’s L3, and a 5% protocol treasury share.
-
-### Is price global or per-sender?
-
-The protocol charges a single global per-byte rate that falls as total network volume rises. All developers benefit from lower per-byte rates as the network grows.
-
-### Are attachments or large media extra?
-
-No. They’re just larger messages. XMTP charges per byte, so sending media costs more only due to size—capped at 1 MB per message. For lower fees and larger files, use remote attachment messages to point to off-network storage like IPFS or S3.
-
-### Is the current fee level sustainable for node operators?
-
-Yes. The network is designed to be profitable at 1B messages/month. As volume grows beyond this point, surplus revenue is recycled to lower the global per-byte price for everyone.
-
-### How are fees estimated for 100M or even 1B users?
-
-At very high volumes, price converges to a global floor that ensures node operators remain sustainable. The current effective floor price is $3 per 100,000 messages. Future node efficiency improvements are expected to push this floor even lower.
-
-### Do fees ever increase?
-
-The system is designed for fees to decrease over time as volume grows and nodes become more efficient. However, if network volume drops significantly, the global per-byte price can rise to maintain sustainability. Congestion surcharges may occur briefly on overloaded nodes, but traffic can route through another node at the standard price.
-
-### Where can I see a detailed fee breakdown?
-
-All pricing is onchain and fully auditable. The XMTP Funding Portal shows per-byte fees, gas fees, and your historical and projected spend.
-
-### How accurate is the $5 per 100K messages estimate?
-
-This estimate assumes typical usage patterns (1 KB messages, 1-2 group operations per 100 messages). Most apps fall within 10% of this estimate.
+While the system is designed for fees to decrease over time, the global per-byte price can rise if network volume drops significantly, ensuring node operator sustainability.

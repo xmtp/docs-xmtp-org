@@ -265,8 +265,8 @@ export default defineConfig({
           link: "/fund-apps/get-started",
         },
         {
-          text: "Estimate fees",
-          link: "/fund-apps/estimate-fees",
+          text: "Calculate fees",
+          link: "/fund-apps/calculate-fees",
         },
         {
           text: "Fund your app",
@@ -281,8 +281,8 @@ export default defineConfig({
           link: "/fund-apps/update-sdk",
         },
         {
-          text: "FAQ and glossary",
-          link: "/fund-apps/faq-glossary",
+          text: "Glossary",
+          link: "/fund-apps/glossary",
         },
       ],
     },
