@@ -38,7 +38,7 @@ Collected messaging fees are paid directly to the node operators who run the glo
 
 #### Messaging fee payment flow
 
-This sequence diagram illustrates the messaging fee payment flow from payers to independent node operators using a series of smart contracts.
+This sequence diagram illustrates the messaging fee payment flow from payers to independent node operators using a series of [smart contracts](https://github.com/xmtp/smart-contracts/blob/main/src/settlement-chain/README.md).
 
 <Zoom>
 <Mermaid
@@ -78,7 +78,7 @@ Collected gas fees are paid directly to the XMTP Appchain. Fees are used to main
 
 ## Calculate estimated XMTP fees
 
-As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 messages** ($0.00005/message). This all-in price for typical usage is based on the following key assumptions:
+As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 messages** ($0.00005/message). This all-in fee for typical usage is based on the following key assumptions:
 
 - A 95/5 split between messaging and gas fees. Meaning, for every $5 in total fees:
   - $4.75 is for XMTP Broadcast Network messaging fees
@@ -87,9 +87,9 @@ As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 me
 - A message retention period of 90 days.
 - Normal network conditions (no congestion fees).
 
-Your actual costs may vary depending on your app's specific usage patterns. For example, sending smaller messages or using a shorter retention period will result in lower fees.
+Your actual costs may vary depending on your app's specific usage patterns. For example, sending smaller messages or using a shorter retention period will result in lower messaging fees.
 
-All pricing is onchain and fully auditable. For the most accurate estimates based on your specific usage, the XMTP Funding Portal provides a detailed breakdown of per-byte fees, gas fees, and your historical and projected spend.
+All pricing is onchain and fully auditable. For the most accurate estimates based on your specific usage, the XMTP Funding Portal provides a detailed breakdown of messaging fees, gas fees, and your historical and projected spend.
 
 ### Calculate estimated messaging fees
 
@@ -111,20 +111,20 @@ The congestion fee is applied only during periods of high network activity to ma
 
 Gas fees for transactions on the XMTP Appchain are calculated as follows:
 
-*gas fee = price per unit of gas × amount of gas consumed by a transaction*
+*gas fee = fee per unit of gas × amount of gas consumed by a transaction*
 
 This often works out to fractions of a US cent.
 
-The price per unit of gas is set by the XMTP Appchain based on network activity.
+The fee per unit of gas is set by the XMTP Appchain based on network activity.
 
-The total amount of gas consumed depends on the complexity and size of the transaction.
+The total amount of gas consumed depends on the size of the transaction.
 
-### Pricing and network scale
+### Fees and network scale
 
-The network is designed for sustainability, not to accumulate profit. Fee revenue is used to cover network operational costs incurred by node operators. 
+The network is designed for sustainability, not to accumulate profit. Fee revenue is used to cover network operational costs incurred by node operators.
 
-The price per message is expected to step down as the network achieves and sustains global message volume milestones. For example, at a volume of 1 billion messages per month, revenue is expected to cover operational costs.
+The messaging fee per message is expected to step down as the network achieves and sustains global message volume milestones. For example, at a volume of 1 billion messages per month, revenue is expected to cover operational costs.
 
-The specific schedule for these milestones is managed by protocol governance, with a current effective floor price target of $5 per 100,000 messages.
+The specific schedule for these milestones is managed by protocol governance, with a current effective floor fee target of $5 per 100,000 messages.
 
-While the system is designed for fees to decrease over time, the global per-byte price can rise if network volume drops significantly, ensuring node operator sustainability.
+While the system is designed for fees to decrease over time, the global messaging fee can rise if network volume drops significantly, ensuring node operator sustainability.
