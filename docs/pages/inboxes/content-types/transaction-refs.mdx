@@ -61,7 +61,14 @@ val xmtp = Client.create(account)
 ```
 
 ```swift [Swift]
+import XMTP
+import XMTPContentTypeTransactionReference
 
+let codec = TransactionReferenceCodec()
+Client.register(codec: codec)
+
+// Create the XMTP client (assume account is a signer)
+let xmtp = try await Client.create(account: account)
 ```
 
 :::
@@ -119,7 +126,21 @@ val transactionReference = TransactionReference(
 ```
 
 ```swift [Swift]
+import XMTPContentTypeTransactionReference
 
+let transactionReference = TransactionReference(
+  namespace: "eip155",
+  networkId: "1",
+  reference: "0x123...abc",
+  metadata: TransactionReference.Metadata(
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100_000,
+    decimals: 6,
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  )
+)
 ```
 
 :::
@@ -148,7 +169,10 @@ runBlocking {
 ```
 
 ```swift [Swift]
-
+try await conversation.send(
+  transactionReference,
+  options: SendOptions(contentType: ContentTypeTransactionReference)
+)
 ```
 
 :::
@@ -183,7 +207,11 @@ if (message.type == ContentTypeTransactionReference) {
 ```
 
 ```swift [Swift]
-
+if message.contentType == ContentTypeTransactionReference {
+  if let transactionRef = message.content as? TransactionReference {
+    // Process the transaction reference here
+  }
+}
 ```
 
 :::
