@@ -208,9 +208,38 @@ Then determine whether it’s for a new conversation or an existing one.
 
   :::
 
+## Stream HMAC key update events
+
+Use `preferences.stream` to listen for events that indicate when a new HMAC key has been added, typically due to a new installation joining the network. This stream does not provide the actual HMAC keys but notifies you to refresh your HMAC keys accordingly by resubscribing to topics.
+
+This is particularly useful for ensuring that push notifications work correctly across all installations by not missing updates from new installations.
+
+:::code-group
+
+```tsx [React Native]
+await alix.preferences.stream((event: any) => {
+  // Received a preference update event
+  // Check if it indicates a new HMAC key and resubscribe if necessary
+});
+```
+
+```kotlin [Kotlin]
+alix.preferences.stream().collect { event ->
+  // Received a preference update event
+}
+```
+
+```swift [Swift]
+for await event in try await alix.preferences.stream() {
+  // Received a preference update event
+}
+```
+
+:::
+
 ## Resubscribe to topics to get new HMAC keys
 
-As soon as your apps receive a [user preference update event](/inboxes/sync-preferences) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
+As soon as your app receives a user preference update event from [preferences.sync](/inboxes/sync-preferences) or [preferences.stream](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
 
 ```kotlin [Kotlin]
 conversations.allTopics.forEach { -> topic
