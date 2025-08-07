@@ -145,6 +145,18 @@ type ClientOptions = {
    */
   env?: "local" | "dev" | "production";
   /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP developers provide app
+   * support, especially around communicating important SDK updates, including
+   * deprecations and required upgrades.
+   */
+  appVersion?: string;
+  /**
    * apiUrl can be used to override the `env` flag and connect to a
    * specific endpoint
    */
@@ -214,6 +226,18 @@ type ClientOptions = {
    */
   env?: "local" | "dev" | "production";
   /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP developers provide app
+   * support, especially around communicating important SDK updates, including
+   * deprecations and required upgrades.
+   */
+  appVersion?: string;
+  /**
    * apiUrl can be used to override the `env` flag and connect to a
    * specific endpoint
    */
@@ -277,6 +301,18 @@ type ClientOptions = {
    */
   env: 'local' | 'dev' | 'production'
   /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP developers provide app
+   * support, especially around communicating important SDK updates, including
+   * deprecations and required upgrades.
+   */
+  appVersion?: string;
+  /**
    * REQUIRED specify the encryption key for the database. The encryption key must be exactly 32 bytes.
    */
   dbEncryptionKey: Uint8Array
@@ -323,6 +359,18 @@ data class ClientOptions(
     data class Api(
         val env: XMTPEnvironment = XMTPEnvironment.DEV,
         val isSecure: Boolean = true,
+        /**
+         * Add a client app version identifier that's included with API requests.
+         * Production apps are strongly encouraged to set this value.
+         *
+         * For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+         *
+         * Setting this value provides telemetry that shows which apps are using the
+         * XMTP client SDK. This information can help XMTP developers provide app
+         * support, especially around communicating important SDK updates, including
+         * deprecations and required upgrades.
+         */
+        val appVersion: String? = null,
     )
 }
 ```
@@ -338,6 +386,17 @@ public struct ClientOptions {
 
 		/// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
 		public var isSecure: Bool = true
+
+		/// Add a client app version identifier that's included with API requests.
+		/// Production apps are strongly encouraged to set this value.
+		///
+		/// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+		///
+		/// Setting this value provides telemetry that shows which apps are using the
+		/// XMTP client SDK. This information can help XMTP developers provide app
+		/// support, especially around communicating important SDK updates, including
+		/// deprecations and required upgrades.
+		public var appVersion: String?
 	}
 
 	public var api = Api()
