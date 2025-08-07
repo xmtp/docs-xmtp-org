@@ -101,69 +101,73 @@ export default defineConfig({
       text: "Build core messaging",
       collapsed: false,
       items: [
-        {
-          text: "Create an EOA or SCW signer",
-          link: "/inboxes/create-a-signer",
-        },
-        {
-          text: "Create a client",
-          link: "/inboxes/create-a-client",
-        },
-        {
-          text: "Create conversations",
-          link: "/inboxes/create-conversations",
-        },
-        {
-          text: "Send messages",
-          link: "/inboxes/send-messages",
-        },
-        {
-          text: "Manage group permissions",
-          link: "/inboxes/group-permissions",
-        },
-        {
-          text: "Manage group metadata",
-          link: "/inboxes/group-metadata",
-        },
-        {
-          text: "Support group invite links",
-          link: "/inboxes/support-group-invite-links",
-        },
-        {
-          text: "Manage inboxes, IDs, and installations",
-          link: "/inboxes/manage-inboxes",
-        },
-        {
-          text: "Observe rate limits",
-          link: "/inboxes/rate-limits",
-        },
-      ],
-    },
-    {
-      text: "List, stream, and sync",
-      collapsed: false,
-      items: [
-        {
-          text: "List conversations",
-          link: "/inboxes/list",
-        },
-        {
-          text: "Stream messages",
-          link: "/inboxes/stream",
-        },
-        {
-          text: "Sync conversations and messages",
-          link: "/inboxes/sync-and-syncall",
-        },
-        {
-          text: "Sync preferences",
-          link: "/inboxes/sync-preferences",
-        },
-        {
-          text: "History sync",
-          link: "/inboxes/history-sync",
-        },
-      ],
+          {
+            text: "Create an EOA or SCW signer",
+            link: "/inboxes/create-a-signer",
+          },
+          {
+            text: "Create a client",
+            link: "/inboxes/create-a-client",
+          },
+          {
+            text: "Create conversations",
+            link: "/inboxes/create-conversations",
+          },
+          {
+            text: "Send messages",
+            link: "/inboxes/send-messages",
+          },
+          {
+            text: "Manage group permissions",
+            link: "/inboxes/group-permissions",
+          },
+          {
+            text: "Manage group metadata",
+            link: "/inboxes/group-metadata",
+          },
+          {
+            text: "Support group invite links",
+            link: "/inboxes/support-group-invite-links",
+          },
+          {
+            text: "Manage inboxes, IDs, and installations",
+            link: "/inboxes/manage-inboxes",
+          },
+          {
+            text: "Observe rate limits",
+            link: "/inboxes/rate-limits",
+          },
+          {
+            text: "Keep your app funded",
+            link: "/fund-apps/get-started",
+          },
+        ]
+      },
+      {
+        text: "List, stream, and sync",
+        collapsed: false,
+        items: [
+            {
+              text: "List conversations",
+              link: "/inboxes/list",
+            },
+            {
+              text: "Stream messages and preferences",
+              link: "/inboxes/stream",
+            },
+            {
+              text: "Sync conversations and messages",
+              link: "/inboxes/sync-and-syncall",
+            },
+            {
+              text: "Sync preferences",
+              link: "/inboxes/sync-preferences",
+            },
+            {
+              text: "History sync",
+              link: "/inboxes/history-sync",
+            },    
+          ],
     },
     {
       text: "Support rich content types",
@@ -251,6 +255,36 @@ export default defineConfig({
       text: "Debug your app",
       link: "/inboxes/debug-your-app",
       items: [],
+    },
+    {
+      text: "Fund an app",
+      collapsed: false,
+      items: [
+        {
+          text: "Get started",
+          link: "/fund-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-apps/calculate-fees",
+        },
+        {
+          text: "Fund your app",
+          link: "/fund-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-apps/glossary",
+        },
+      ],
     },
     {
       text: "Sign and verify payloads",
