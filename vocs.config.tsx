@@ -140,7 +140,7 @@ export default defineConfig({
       ],
     },
     {
-      text: "List, stream, and sync",
+      text: "List, stream, sync, & back up",
       collapsed: false,
       items: [
         {
@@ -158,6 +158,10 @@ export default defineConfig({
         {
           text: "Sync preferences",
           link: "/inboxes/sync-preferences",
+        },
+        {
+          text: "Support backups",
+          link: "/inboxes/archive-backups",
         },
         {
           text: "History sync",
