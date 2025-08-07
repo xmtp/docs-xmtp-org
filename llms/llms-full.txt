@@ -354,14 +354,20 @@ await group.send("Hello everyone");
 // List existing conversations
 const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
 // Stream new messages
-const stream = await client.conversations.streamAllMessages(["allowed"]);
-
-try {
-  for await (const message of stream) {
-    // Received a message
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
 }
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations 
@@ -490,13 +496,19 @@ const allConversations = await client.conversations.list({ consentStates: [Conse
 const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
 const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
 // Stream new messages
-const stream = await client.conversations.streamAllMessages(["allowed"]);
-try {
-  for await (const message of stream) {
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
     console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error(error);
   }
-} catch (error) {
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  console.log("New message:", message);
 }
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations 
@@ -1173,8 +1185,8 @@ To learn about XMTP's consent standards, see [Understand how user consent prefer
 
 
 ## pages/protocol/cursors.mdx
-import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
+import Mermaid from '../../components/Mermaid'
 
 # Cursors with XMTP
 
@@ -1221,9 +1233,26 @@ Each `sync()` function corresponds to a different type of cursor:
 
 For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
 
-<Zoom>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-for-convo-sync.png" width="550px" />
-</Zoom>
+<Mermaid
+  id="cursors"
+  chart={`
+sequenceDiagram
+  participant Client as Client <br> (Stores cursor)
+  participant Network as Network <br> (Stores group topic)
+
+  Note over Client: No cursor for topic yet
+  Client ->> Network: Initial conversation.sync()
+  Network ->> Client: Returns all messages from topic <br> (Msg1, Msg2, Msg3)
+  Note over Client: Stores new cursor for topic
+  Client ->> Client: Cursor points after Msg3
+  Note over Network: New messages arrive on group topic
+  Network ->> Client: streamAllMessages() <br> (Msg4, Msg5, Msg6)
+  Note over Client: Cursor unaffected by stream
+  Client ->> Network: Subsequent conversation.sync() <br> (Sends stored cursor from after Msg3)
+  Network ->> Client: Returns messages that occurred after cursor <br> (Msg4, Msg5, Msg6)
+  Note over Client: Advances cursor for topic
+  Client ->> Client: Cursor points after Msg6
+`} />
 
 By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
 
@@ -1850,14 +1879,14 @@ These SDKs provide native support for mobile app development across different pl
 ## pages/inboxes/sync-preferences.mdx
 # Sync preferences
 
-Preference sync enables you to sync the following preference-related information across multiple existing app installations:
+You can sync the following preference-related information across multiple existing app installations:
 
 - Conversation [consent preferences](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set)
 - Conversation HMAC keys (for [push notifications](/inboxes/push-notifs/understand-push-notifs))
 
-## Databases used by preference sync
+## Databases used by preferences sync
 
-Each xmtpd node contains:
+Each XMTP node contains:
 
 - A **welcomes database**: Keeps a ledger of all groups an inbox ID is a part of.
 - A **group messages database**: Keeps a ledger of all messages in the groups an inbox ID is a part of.
@@ -1885,10 +1914,9 @@ One-to-one chat, group chat, and preferences groups in the welcome database are 
 - Preferences
     - `preferences.sync`
     - `syncAll`
-    - `streamAll`
 
 <div>
-  <img alt="groups in the welcome database" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/welcomes-db.png" width="500px" />
+  <img alt="groups in the welcome database" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/welcomes-db-3.png" width="500px" />
 </div>
 
 ## Preferences group
@@ -1903,13 +1931,13 @@ To describe preference sync, let's first focus on how the preferences group work
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-1.png" width="300px" />
    </div>
 
-3. Inbox ID Alix then logs in to an Installation B of App B on their phone. The next time Installation A runs `preferences.sync`, `syncAll`, or `streamAll`, it updates the preferences group as follows:
+3. Inbox ID Alix then logs in to an Installation B of App B on their phone. The next time Installation A runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
     
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-2.png" width="300px" />
    </div>
     
-4. Then let's say Inbox ID Alix logs in to an Installation C of App A on their tablet. The next time Installation A or B runs `preferences.sync`, `syncAll`, or `streamAll`, it updates the preferences group as follows:
+4. Then let's say Inbox ID Alix logs in to an Installation C of App A on their tablet. The next time Installation A or B runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
     
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png" width="300px" />
@@ -1931,27 +1959,27 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" />
    </div>    
     
-3. When Installation B calls `preferences.sync`, `syncAll`, or `streamAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
+3. When Installation B calls `preferences.sync` or `syncAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
     
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" />
    </div> 
     
-4. Likewise, when Installation C calls `preferences.sync`, `syncAll`, or `streamAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
+4. Likewise, when Installation C calls `preferences.sync` or `syncAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
     
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" />
    </div>   
 
-Preferences sync handles syncing HMAC keys in the same way.
+Preferences sync handles HMAC keys in the same way.
 
-For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync`, `syncAll`, or `streamAll`, the sync worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
+For example, it will handle syncing an HMAC key shared by Installation B to other installations. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets Installation B's HMAC key message from the preferences group and ensures that Installation A and C get the HMAC key for Installation B.
 
 ## Sync preferences
 
 Use this call to sync preferences (consent preferences and HMAC keys) across app installations in a preferences group. This will also sync welcomes to ensure that you have all potential new installations before syncing.
 
-This is a lighter-weight alternative to syncing preferences using [`syncAll`](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences) or [`streamAll`](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences).
+This is a lighter-weight alternative to syncing preferences using [`syncAll`](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences).
 
 :::code-group
 
@@ -4308,7 +4336,7 @@ Use these reference docs as guides to integrating the capabilities of XMTP SDKs 
 
 
 ## pages/inboxes/stream.mdx
-# Stream conversations, messages, and preference updates
+# Stream conversations and messages
 
 ## Stream new group chat and DM conversations
 
@@ -4317,31 +4345,60 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 :::code-group
 
 ```js [Browser]
-const stream = await client.conversations.stream();
-
-try {
-  for await (const conversation of stream) {
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
     // Received a conversation
     console.log("New conversation:", conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log("New conversation:", conversation);
 }
 ```
 
 ```js [Node]
-const stream = await client.conversations.stream();
-// to stream only groups, use `client.conversations.streamGroups()`
-// to stream only dms, use `client.conversations.streamDms()`
-
-try {
-  for await (const conversation of stream) {
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
     // Received a conversation
+    console.log("New conversation:", conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
   }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
+});
+
+// To stream only groups
+const groupStream = await client.conversations.streamGroups({
+  onValue: (conversation) => {
+    console.log("New group:", conversation);
+  }
+});
+
+// To stream only DMs
+const dmStream = await client.conversations.streamDms({
+  onValue: (conversation) => {
+    console.log("New DM:", conversation);
+  }
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log("New conversation:", conversation);
 }
 ```
 
@@ -4365,9 +4422,9 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 :::
 
-## Stream new group chat and DM messages and preference updates
+## Stream new group chat and DM messages
 
-This function listens to the network for new messages within all active group chats and DMs, as well as [preference updates](/inboxes/sync-preferences). 
+This function listens to the network for new messages within all active group chats and DMs. 
 
 Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
@@ -4386,36 +4443,66 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::code-group
 
 ```js [Browser]
-const stream = await client.conversations.streamAllMessages(["allowed"]);
- 
-try {
-  for await (const message of stream) {
+// stream all messages from conversations with a consent state of allowed
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
     // Received a message
     console.log("New message:", message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error);
+});
+ 
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
 }
 ```
 
 ```js [Node]
-// stream all messages from all conversations
-const stream = await client.conversations.streamAllMessages(["allowed"]);
+// stream all messages from conversations with a consent state of allowed
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    // Received a message
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
+  }
+});
  
 // stream only group messages
-const stream = await client.conversations.streamAllGroupMessages(["allowed"]);
+const groupMessageStream = await client.conversations.streamAllGroupMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log("New group message:", message);
+  }
+});
  
 // stream only dm messages
-const stream = await client.conversations.streamAllDmMessages(["allowed"]);
- 
-try {
-  for await (const message of stream) {
-    // Received a message
+const dmMessageStream = await client.conversations.streamAllDmMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log("New DM message:", message);
   }
-} catch (error) {
-  // log any stream errors
-  console.error(error);
+});
+ 
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
 }
 ```
 
@@ -4444,60 +4531,68 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 
 ## Handle stream failures
 
-All streaming methods accept a callback as the last argument that will be called when the stream closes. Use this callback to restart the stream.
+:::warning
+**Browser and Node SDK**
+
+Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
+:::
 
 :::code-group
 
-```tsx [Node]
-const MAX_RETRIES = 5;
-// wait 5 seconds before each retry
-const RETRY_INTERVAL = 5000;
- 
-let retries = MAX_RETRIES;
- 
-const retry = () => {
-  console.log(
-    `Retrying in ${RETRY_INTERVAL / 1000}s, ${retries} retries left`,
-  );
-  if (retries > 0) {
-    retries--;
-    setTimeout(() => {
-      handleStream(client);
-    }, RETRY_INTERVAL);
-  } else {
-    console.log("Max retries reached, ending process");
-    process.exit(1);
+```ts [Node]
+// disable automatic reconnects
+const stream = await client.conversations.streamAllMessages({
+  retryOnFail: false,
+  onValue: (message) => {
+    console.log("New message:", message);
   }
-};
- 
-const onFail = () => {
-  console.log("Stream failed");
-  retry();
-};
- 
-const handleStream = async (client) => {
-  console.log("Syncing conversations...");
-  await client.conversations.sync();
- 
-  const stream = await client.conversations.streamAllMessages(
-    onMessage,
-    undefined,
-    undefined,
-    onFail,
-  );
- 
-  console.log("Waiting for messages...");
- 
-  for await (const message of stream) {
-    // process streammessage
-  }
-};
- 
-await handleStream(client);
+});
+
+// use stream options with retry configuration
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  retryAttempts: 10,
+  retryDelay: 20000, // 20 seconds
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+  onFail: () => {
+    console.log("Stream failed after retries");
+  },
+  onRestart: () => {
+    console.log("Stream restarted");
+  },
+  onRetry: (attempt, maxAttempts) => {
+    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
+  },
+});
 ```
 
 ```tsx [Browser]
-Not yet available
+// Browser SDK also supports stream retry options
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  retryAttempts: 5,
+  retryDelay: 15000, // 15 seconds
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+  onFail: () => {
+    console.log("Stream failed after retries");
+  },
+  onRestart: () => {
+    console.log("Stream restarted");
+  },
+  onRetry: (attempt, maxAttempts) => {
+    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
+  },
+});
 ```
 
 ```tsx [React Native]
@@ -5896,31 +5991,47 @@ Listen for real-time updates to consent preferences:
 
 ```tsx [Browser]
 // Stream consent records in real-time
-const stream = await client.preferences.streamConsent()
-
-try {
-  for await (const updates of stream) {
+const stream = await client.preferences.streamConsent({
+  onValue: (updates) => {
     // Received consent updates
-    console.log("Consent updates:", updates)
+    console.log("Consent updates:", updates);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Consent stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error)
+});
+
+// Or use for-await loop
+for await (const updates of stream) {
+  // Received consent updates
+  console.log("Consent updates:", updates);
 }
 ```
 
 ```tsx [Node]
 // Stream consent records in real-time
-const stream = client.preferences.streamConsent()
-
-try {
-  for await (const updates of stream) {
+const stream = await client.preferences.streamConsent({
+  onValue: (updates) => {
     // Received consent updates
-    console.log("Consent updates:", updates)
+    console.log("Consent updates:", updates);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Consent stream failed");
   }
-} catch (error) {
-  // Log any stream errors
-  console.error(error)
+});
+
+// Or use for-await loop
+for await (const updates of stream) {
+  // Received consent updates
+  console.log("Consent updates:", updates);
 }
 ```
 
@@ -6616,9 +6727,38 @@ Then determine whether it’s for a new conversation or an existing one.
 
   :::
 
+## Stream HMAC key update events
+
+Use `preferences.stream` to listen for events that indicate when a new HMAC key has been added, typically due to a new installation joining the network. This stream does not provide the actual HMAC keys but notifies you to refresh your HMAC keys accordingly by resubscribing to topics.
+
+This is particularly useful for ensuring that push notifications work correctly across all installations by not missing updates from new installations.
+
+:::code-group
+
+```tsx [React Native]
+await alix.preferences.stream((event: any) => {
+  // Received a preference update event
+  // Check if it indicates a new HMAC key and resubscribe if necessary
+});
+```
+
+```kotlin [Kotlin]
+alix.preferences.stream().collect { event ->
+  // Received a preference update event
+}
+```
+
+```swift [Swift]
+for await event in try await alix.preferences.stream() {
+  // Received a preference update event
+}
+```
+
+:::
+
 ## Resubscribe to topics to get new HMAC keys
 
-As soon as your apps receive a [user preference update event](/inboxes/sync-preferences) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
+As soon as your app receives a user preference update event from [preferences.sync](/inboxes/sync-preferences) or [preferences.stream](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
 
 ```kotlin [Kotlin]
 conversations.allTopics.forEach { -> topic

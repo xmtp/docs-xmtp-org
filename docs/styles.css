@@ -319,3 +319,9 @@ li ol ~ p {
   font-size: 16px; /* 2px smaller than subhead */
   /* other styling properties */
 }
+
+/* styles/global.css or wherever you include global styles */
+.mermaid {
+  max-width: 100%;
+  overflow-x: auto;
+}
