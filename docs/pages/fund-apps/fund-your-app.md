@@ -59,7 +59,7 @@ The XMTP Funding Portal will accept only testnet USDC until **October 7, 2025**.
 
 Your payer wallet now has a messaging balance in the PayerRegistry smart contract. This balance will be used to pay for XMTP Broadcast Network messaging fees and XMTP Appchain gas fees.
 
-You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-withdraw-funds) (deallocate) USDC from your messaging balance.
+You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-withdraw-funds) USDC from your messaging balance.
 
 ## Step 5: Monitor your usage and allowance
 
