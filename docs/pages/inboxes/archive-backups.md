@@ -8,7 +8,7 @@ When an archive-based backup is imported into an installation, **all imported co
 
 To learn more, see [4. Handle post-import conversation statuses](#4-handle-post-import-conversation-statuses).
 
-Archive-based backups can be used as a more **deterministic and user-controlled** alternative to [history sync](/inboxes/history-sync).  To take this approach, set the `historySyncUrl` client option to an empty string.
+Archive-based backups can be used as a more **deterministic and user-controlled** alternative to [history sync](/inboxes/history-sync). To take this approach, set the `historySyncUrl` client option to an empty string.
 
 This feature includes three core methods:
 
