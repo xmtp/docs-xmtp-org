@@ -6,7 +6,7 @@ For example, a user can set up an archive-based backup for an app installation o
 
 When an archive-based backup is imported into an installation, **all imported conversations start off as inactive, with history visible and in read-only mode**. This is as intended by Messaging Layer Security (MLS), which ensures that there is no way to offer immediate access to active conversations. To protect the security of conversations, MLS requires that all new installations go through the process of being re-added as a member of a conversation. As such, all conversations will be inactive until the installation is added to the imported conversations by active members of the conversations.
 
-To learn more, see [4. Handle post-import conversastion statuses](#4-handle-post-import-conversation-statuses).
+To learn more, see [4. Handle post-import conversation statuses](#4-handle-post-import-conversation-statuses).
 
 Archive-based backups can be used as a more **deterministic and user-controlled** alternative to [history sync](/inboxes/history-sync).  To take this approach, set the `historySyncUrl` client option to an empty string.
 
