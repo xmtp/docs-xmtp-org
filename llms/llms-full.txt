@@ -5347,6 +5347,18 @@ The `dbEncryptionKey` client option is not used by the Browser SDK for due to te
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
+### View an encrypted database
+
+For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates an [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
+
+To open this database, you need to construct the password by prefixing `0x` (to indicate hexadecimal numbers), then appending the encryption key (64 hex characters, 32 bytes) and the salt (32 hex characters, 16 bytes). For example, if your encryption key is `A` and your salt is `B`, the resulting password would be `0xAB`.
+
+The database also uses a [plaintext header size](https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_plaintext_header_size) of 32 bytes.
+
+If you want to inspect the database visually, you can use [DB Browser for SQLite](https://sqlitebrowser.org/), an open source tool that supports SQLite and SQLCipher. In its **Custom** encryption settings, set the **Plaintext Header Size** to **_32_**, and use the full **Password** as a **Raw key**:
+
+![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
+
 ## Create a client
 
 To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
@@ -5440,6 +5452,18 @@ type ClientOptions = {
    */
   env?: "local" | "dev" | "production";
   /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP developers provide app
+   * support, especially around communicating important SDK updates, including
+   * deprecations and required upgrades.
+   */
+  appVersion?: string;
+  /**
    * apiUrl can be used to override the `env` flag and connect to a
    * specific endpoint
    */
@@ -5509,6 +5533,18 @@ type ClientOptions = {
    */
   env?: "local" | "dev" | "production";
   /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP developers provide app
+   * support, especially around communicating important SDK updates, including
+   * deprecations and required upgrades.
+   */
+  appVersion?: string;
+  /**
    * apiUrl can be used to override the `env` flag and connect to a
    * specific endpoint
    */
@@ -5572,6 +5608,18 @@ type ClientOptions = {
    */
   env: 'local' | 'dev' | 'production'
   /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP developers provide app
+   * support, especially around communicating important SDK updates, including
+   * deprecations and required upgrades.
+   */
+  appVersion?: string;
+  /**
    * REQUIRED specify the encryption key for the database. The encryption key must be exactly 32 bytes.
    */
   dbEncryptionKey: Uint8Array
@@ -5618,6 +5666,18 @@ data class ClientOptions(
     data class Api(
         val env: XMTPEnvironment = XMTPEnvironment.DEV,
         val isSecure: Boolean = true,
+        /**
+         * Add a client app version identifier that's included with API requests.
+         * Production apps are strongly encouraged to set this value.
+         *
+         * For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+         *
+         * Setting this value provides telemetry that shows which apps are using the
+         * XMTP client SDK. This information can help XMTP developers provide app
+         * support, especially around communicating important SDK updates, including
+         * deprecations and required upgrades.
+         */
+        val appVersion: String? = null,
     )
 }
 ```
@@ -5633,6 +5693,17 @@ public struct ClientOptions {
 
 		/// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
 		public var isSecure: Bool = true
+
+		/// Add a client app version identifier that's included with API requests.
+		/// Production apps are strongly encouraged to set this value.
+		///
+		/// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+		///
+		/// Setting this value provides telemetry that shows which apps are using the
+		/// XMTP client SDK. This information can help XMTP developers provide app
+		/// support, especially around communicating important SDK updates, including
+		/// deprecations and required upgrades.
+		public var appVersion: String?
 	}
 
 	public var api = Api()
@@ -8516,11 +8587,11 @@ description: Learn how to implement an onchain transaction reference content typ
 
 # Support onchain transaction references in your app built with XMTP
 
-This package provides an XMTP content type to support on-chain transaction references. It is a reference to an on-chain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to on-chain activities. Transaction references serve to display transaction details, facilitating the sharing of on-chain activities, such as token transfers, between users.
+This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
 
 :::tip[Open for feedback]
 
-You're welcome to provide feedback by commenting on [XIP-21: On-chain transaction reference content type](https://community.xmtp.org/t/xip-21-on-chain-transaction-reference-content-type/532).
+You're welcome to provide feedback by commenting on [XIP-21: Onchain transaction reference content type](https://community.xmtp.org/t/xip-21-on-chain-transaction-reference-content-type/532).
 
 :::
 
@@ -8546,6 +8617,8 @@ pnpm add @xmtp/content-type-transaction-reference
 
 After importing the package, you can register the codec.
 
+:::code-group
+
 ```js [Browser]
 import {
   ContentTypeTransactionReference,
@@ -8558,9 +8631,36 @@ const xmtp = await Client.create(signer, {
 });
 ```
 
+```kotlin [Kotlin]
+import org.xmtp.android.library.Client
+import org.xmtp.android.library.Signer
+import org.xmtp.android.library.codecs.ContentTypeTransactionReference
+import org.xmtp.android.library.codecs.TransactionReferenceCodec
+
+Client.register(codec = TransactionReferenceCodec())
+
+// Create the XMTP client (assume account is a Signer)
+val xmtp = Client.create(account)
+```
+
+```swift [Swift]
+import XMTP
+import XMTPContentTypeTransactionReference
+
+let codec = TransactionReferenceCodec()
+Client.register(codec: codec)
+
+// Create the XMTP client (assume account is a signer)
+let xmtp = try await Client.create(account: account)
+```
+
+:::
+
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
+
+:::code-group
 
 ```ts [Browser]
 const transactionReference: TransactionReference = {
@@ -8589,7 +8689,48 @@ const transactionReference: TransactionReference = {
   };
 };
 ```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.TransactionReference
+
+val transactionReference = TransactionReference(
+  namespace = "eip155",
+  networkId = "1",
+  reference = "0x123...abc",
+  metadata = TransactionReference.Metadata(
+    transactionType = "transfer",
+    currency = "USDC",
+    amount = 100000.0,
+    decimals = 6u,
+    fromAddress = "0x456...def",
+    toAddress = "0x789...ghi"
+  )
+)
+```
+
+```swift [Swift]
+import XMTPContentTypeTransactionReference
+
+let transactionReference = TransactionReference(
+  namespace: "eip155",
+  networkId: "1",
+  reference: "0x123...abc",
+  metadata: TransactionReference.Metadata(
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100_000,
+    decimals: 6,
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  )
+)
+```
+
+:::
+
 Once you have a transaction reference, you can send it as part of your conversation:
+
+:::code-group
 
 ```js [Browser]
 await conversation.messages.send(transactionReference, {
@@ -8597,11 +8738,35 @@ await conversation.messages.send(transactionReference, {
 });
 ```
 
+```kotlin [Kotlin]
+import kotlinx.coroutines.runBlocking
+import org.xmtp.android.library.SendOptions
+import org.xmtp.android.library.codecs.ContentTypeTransactionReference
+
+runBlocking {
+  conversation.send(
+    content = transactionReference,
+    options = SendOptions(contentType = ContentTypeTransactionReference)
+  )
+}
+```
+
+```swift [Swift]
+try await conversation.send(
+  transactionReference,
+  options: SendOptions(contentType: ContentTypeTransactionReference)
+)
+```
+
+:::
+
 ## Receive a transaction reference
 
 To receive and process a transaction reference, you can use the following code samples.
 
 To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
+
+:::code-group
 
 ```ts [Browser]
 // Assume `loadLastMessage` is a thing you have
@@ -8616,9 +8781,28 @@ const transactionRef: TransactionReference = message.content;
 // Process the transaction reference here
 ```
 
+```kotlin [Kotlin]
+// Assume message is a DecodedMessage
+if (message.type == ContentTypeTransactionReference) {
+  val transactionRef: TransactionReference? = message.content()
+  // Process the transaction reference here
+}
+```
+
+```swift [Swift]
+if message.contentType == ContentTypeTransactionReference {
+  if let transactionRef = message.content as? TransactionReference {
+    // Process the transaction reference here
+  }
+}
+```
+
+:::
+
 ## Display the transaction reference
 
-Displaying a transaction reference typically involves rendering details such as the transaction hash, network ID, and any relevant metadata. Because the exact UI representation can vary based on your app's design, you might want to fetch on-chain data before showing it to the user.
+Displaying a transaction reference typically involves rendering details such as the transaction hash, network ID, and any relevant metadata. Because the exact UI representation can vary based on your app's design, you might want to fetch onchain data before showing it to the user.
+
 
 ## pages/inboxes/content-types/read-receipts.mdx
 ---
