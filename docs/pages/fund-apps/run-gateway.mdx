@@ -79,7 +79,7 @@ You can provide the configuration options for your XMTP Gateway Service either d
 
 | Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                               |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the PayerRegistry smart contract.    |
+| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract.    |
 | Appchain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                        |
 | Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                    |
 | Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet` |
@@ -425,9 +425,9 @@ sequenceDiagram
     Gateway Service->>Gateway Service: Verify user authorization
     Gateway Service->>Gateway Service: Sign with payer wallet key
     Gateway Service->>XMTP Broadcast Network: Send message and pay network message fees
-    alt Sufficient funds in PayerRegistry
+    alt Sufficient funds in Payer Registry
         XMTP Broadcast Network-->>App: Message sent
-    else Insufficient funds in PayerRegistry
+    else Insufficient funds in Payer Registry
         XMTP Broadcast Network-->>App: Message not sent
     end
 `} />

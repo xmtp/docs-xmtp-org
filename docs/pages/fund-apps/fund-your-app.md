@@ -2,7 +2,7 @@
 
 Use this guide to learn how to use the XMTP Funding Portal to fund your app to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
 
-Behind the scenes, the Funding Portal handles PayerRegistry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP Appchain gas payments, and all blockchain interactions.
+Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP Appchain gas payments, and all blockchain interactions.
 
 [Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA. 
 
@@ -21,7 +21,7 @@ The payer wallet must be:
 
 You can create a payer wallet using common non-custodial wallet apps, such as Coinbase Wallet and MetaMask.
 
-If useful for shared budgets, you can use a multisig wallet. For example, a Gnosis Safe or any ERC-1271 wallet can own a balance in the PayerRegistry and sign allowance approvals.
+If useful for shared budgets, you can use a multisig wallet. For example, a Gnosis Safe or any ERC-1271 wallet can own a balance in the Payer Registry and sign allowance approvals.
 
 You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-apps/run-gateway).
 
@@ -42,7 +42,7 @@ To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://fa
 3. Open the **View as** menu and click **Manage payers**.
 4. Click the pencil icon to give your payer wallet a human-readable name.
 
-Your payer wallet is now a payer in the PayerRegistry smart contract. 
+Your payer wallet is now a payer in the Payer Registry smart contract. 
 
 In the next step, you'll allocate USDC in your payer wallet to create a messaging balance that the network can use to pay for fees.
 
@@ -57,9 +57,12 @@ The XMTP Funding Portal will accept only testnet USDC until **October 7, 2025**.
 5. Click **Continue**.
 6. The Depositing funds screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
-Your payer wallet now has a messaging balance in the PayerRegistry smart contract. This balance will be used to pay for XMTP Broadcast Network messaging fees and XMTP Appchain gas fees.
+Your payer wallet now has:
 
-You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-withdraw-funds) USDC from your messaging balance.
+- USDC allocated to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- USDC bridged to your payer wallet on the XMTP Appchain. This balance will be used to pay XMTP Appchain gas fees.
+
+You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-withdraw-funds) USDC from your messaging fee allowance.
 
 ## Step 5: Monitor your usage and allowance
 
