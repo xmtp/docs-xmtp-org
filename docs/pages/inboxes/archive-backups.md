@@ -4,7 +4,7 @@ Support archive-based backups to give your users an easy and durable way to back
 
 For example, a user can set up an archive-based backup for an app installation on their device. If they lose their device and get a new one, they can download and import their archive-based backup onto their new device.
 
-When an archive-based backup is imported into an installation, **all imported conversations start off as inactive, with history visible and in read-only mode**. This is as intended by Messaging Layer Security (MLS), which ensures that there is no way to offer immediate access to active conversations. To protect the security of conversations, MLS requires that all new installations go through the process of being re-added as a member of a conversation. As such, all conversations will be inactive until the installation is added to the imported conversations by active members of the conversations.
+When an archive-based backup is imported into an installation, **all imported conversations start off as inactive, with history visible and in read-only mode**. This is as intended by Messaging Layer Security (MLS), which ensures that there is no way to join a conversation without the permission of an existing member. As such, imported conversations will be inactive until the new installation is added to the conversation by an active member. This process happens invisibly and automatically as other members of the group come online and send or receive messages.
 
 To learn more, see [4. Handle post-import conversation statuses](#4-handle-post-import-conversation-statuses).
 
@@ -16,60 +16,60 @@ This feature includes three core methods:
 - `archiveMetadata(path, encryptionKey)`
 - `importArchive(path, encryptionKey)`
 
-## 1. Create the archive
+### 1. Create the archive
 
 To enable a user to create an archive:
 
-1. Create the archive file that will be used as the database backup.
-2. Specify the archive file path (e.g., iCloud, Google Cloud, or your server).
-3. Generate a 32-byte array encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is easily accessible to the user.
-4. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
+1. Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists.
+2. Generate a 32-byte array encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive file, and will persist after your app has been uninstalled. A common place to store this encryption key is the iCloud Keychain.
+3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
+
    - Archive start and end time. If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
 
-    :::code-group
+   :::code-group
 
-    ```tsx [React Native]
-    createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
-      startTime?: Date,
-      endTime?: Date,
-      elements?: ("Consent" | "Messages")[]
-    })
-    ```
+   ```tsx [React Native]
+   createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
+     startTime?: Date,
+     endTime?: Date,
+     elements?: ("Consent" | "Messages")[]
+   })
+   ```
 
-    ```kotlin [Kotlin]
-    // Create an archive backup
-    XMTPClient.createArchive(
-        path = "/path/to/archive.xmtp",
-        encryptionKey = encryptionKey,
-        options = ArchiveOptions(
-            startTime = startTime,
-            endTime = endTime,
-            elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES)
-        )
-    )
-    ```
+   ```kotlin [Kotlin]
+   // Create an archive backup
+   XMTPClient.createArchive(
+       path = "/path/to/archive.xmtp",
+       encryptionKey = encryptionKey,
+       options = ArchiveOptions(
+           startTime = startTime,
+           endTime = endTime,
+           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES)
+       )
+   )
+   ```
 
-    ```swift [Swift]
-    // Create an archive backup
-    try await xmtp.createArchive(
-        path: "/path/to/archive.xmtp",
-        encryptionKey: encryptionKey,
-        options: ArchiveOptions(
-            startTime: startTime,
-            endTime: endTime,
-            elements: [.consent, .messages]
-        )
-    )
-    ```
+   ```swift [Swift]
+   // Create an archive backup
+   try await xmtp.createArchive(
+       path: "/path/to/archive.xmtp",
+       encryptionKey: encryptionKey,
+       options: ArchiveOptions(
+           startTime: startTime,
+           endTime: endTime,
+           elements: [.consent, .messages]
+       )
+   )
+   ```
 
-    :::
+   :::
 
-    This writes the selected content into the empty file and encrypts it using the provided key.
+   This writes the selected content into the specified file location and encrypts it using the provided key.
 
 If the user tries to close the app before `createArchive` is complete, you can do a check to see if the file on the server is empty. If empty, display a warning to the user letting them know that exiting the app will cancel archive creation.
 
-## 2. Check archive metadata
+### 2. Check archive metadata
 
 To enable a user to view information about their archive(s) before importing it to an app installation:
 
@@ -143,7 +143,7 @@ If the user tries to close the app before `importArchive` is complete, display a
 
 After importing the archive to an app installation, **all imported conversations will be inactive, with history visible and in read-only mode**, as intended by MLS as described earlier.
 
-You should gray out UI functionality that involves network requests for inactive conversations.
+You should gray out UI functionality that involves writing to or modifying inactive conversations.
 
 Attempting to send or sync on inactive conversations will throw a `Group is inactive` error.
 
@@ -152,7 +152,7 @@ To check conversation status before initiating a network action:
 :::code-group
 
 ```tsx [React Native]
-conversation.isActive()
+conversation.isActive();
 ```
 
 ```kotlin [Kotlin]
@@ -175,12 +175,20 @@ if conversation.isActive() {
 
 :::
 
-
 This will check to see if the installation is actively in the conversation yet.
 
 To reactivate a DM or group conversation:
 
-- A participant, or a preexisting installation belonging to the user who ran the import, can add the new installation by sending a message to the conversation.
+- A participant, or a preexisting installation belonging to the user who ran the import, will automatically add the new installation when sending a message to the conversation or calling `conversation.sync`. In some cases, it may take up to 30 minutes for other devices to recognize the new installation.
 - For DM conversations, you may choose to programmatically create a duplicate DM for every inactive DM to trigger [stitching](/inboxes/push-notifs/understand-push-notifs#dm-stitching-considerations-for-push-notifications). This will activate the DM conversations.
 
 Inactive conversations in which participants frequently send messages may seem to activate immediately.
+
+## Archives vs History Sync
+
+Archives and History Sync serve similar purposes: helping you restore messages on new devices. When should you use one or the other?
+
+- If your users sign in using wallets or passkeys shared by multiple messaging apps provided by different developers, use History Sync to allow them to synchronize their messages when they install a new application.
+- If your goal is to synchronize a user's message history across multiple devices that will be used at the same time, History Sync may be a better fit. Especially if those devices are on different platforms (an Android tablet and an iOS app).
+- If your goal is to maintain message history when a user upgrades or replaces their device, use Archives.
+- If your goal is to allow users to export their data into the storage platform of their choosing, use Archives.
