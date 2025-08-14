@@ -1,0 +1,57 @@
+import { CustomHomePage } from "../components/CustomHomePage";
+import "../styles.css";
+
+<CustomHomePage.Root>
+   <CustomHomePage.Headline>Build with XMTP</CustomHomePage.Headline>
+   <CustomHomePage.Subhead>
+      The largest decentralized network for quantum-resistant, MLS end-to-end encrypted messaging
+   </CustomHomePage.Subhead>
+      <CustomHomePage.SectionTitle>🤖 Build an agent</CustomHomePage.SectionTitle>
+      <CustomHomePage.Description>
+         Use this tutorial:
+      </CustomHomePage.Description>
+   <CustomHomePage.SDKGrid>
+      <CustomHomePage.SDKTile href="agents/build-an-agent" darkSrc="/agent-tute-icon-light.png" lightSrc="/agent-tute-icon-dark.png" alt="agent logo" name="Agent tutorial" />
+   </CustomHomePage.SDKGrid>
+
+   <CustomHomePage.SectionTitle>📥 Build a chat inbox</CustomHomePage.SectionTitle>
+   <CustomHomePage.Description>
+      Use an XMTP SDK:
+   </CustomHomePage.Description>
+   <CustomHomePage.SDKGrid>
+      <CustomHomePage.SDKTile href="sdks/browser" src="/ts-logo-128.svg" alt="TypeScript logo" name="Browser" />
+      <CustomHomePage.SDKTile href="sdks/node" lightSrc="/nodejsStackedDark.svg" darkSrc="/nodejsStackedLight.svg" alt="Node.js" name="Node" />
+      <CustomHomePage.SDKTile href="sdks/react-native" src="/rn-header_logo.svg" alt="React Native logo" name="RN" />
+      <CustomHomePage.SDKTile href="sdks/ios" src="/swift_logo_color.svg" alt="iOS logo" name="iOS" />
+      <CustomHomePage.SDKTile href="sdks/android" src="/Kotlin_Icon.svg" alt="Android logo" name="Android" />
+   </CustomHomePage.SDKGrid>
+   <CustomHomePage.SectionTitle>Learn more</CustomHomePage.SectionTitle>
+   <CustomHomePage.TileGrid>
+      <CustomHomePage.Tile
+         href="/intro/intro"
+         title="Intro to XMTP"
+         description="Get an intro to XMTP and why you should build with it"
+         />
+      <CustomHomePage.Tile
+         href="/protocol/envelope-types"
+         title="Learn protocol concepts"
+         description="Dive deeper into XMTP by learning about key protocol concepts"
+         />
+      <CustomHomePage.Tile
+         href="https://xmtp.chat/"
+         title="Build with xmtp.chat"
+         description="Build with this interactive dev tool and starter reference app implementation"
+         isExternal={true}
+         />
+      <CustomHomePage.Tile
+         href="/network/run-a-node"
+         title="Run an XMTP node"
+         description="Learn about network nodes and how to become a registered node operator"
+         />
+      <CustomHomePage.Tile
+         href="/intro/xips"
+         title="Review XIPs"
+         description="Read and provide feedback on the latest XMTP Improvement Proposals"
+         />
+   </CustomHomePage.TileGrid>
+</CustomHomePage.Root>

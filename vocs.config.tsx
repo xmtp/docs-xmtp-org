@@ -13,6 +13,7 @@ export default defineConfig({
           defer
         />
         <script src="/popup.js" async />
+        <script src="/mobile-nav.js" defer />
       </>
     );
   },
@@ -25,8 +26,10 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue.png",
   topNav: [
-    { text: "XMTP status", link: "https://status.xmtp.org/" },
-    { text: "XMTP.chat", link: "https://xmtp.chat/" },
+    { text: "Build agents", link: '/agents/intro/intro', match: '/agents' },
+    { text: "Build inboxes", link: '/inboxes/intro/intro', match: '/inboxes' },
+    { text: "Protocol", link: '/protocol/envelope-types' },
+    { text: "Network", link: '/network/run-a-node' },
   ],
   ogImageUrl: {
     "/": "/xmtp-og-card.jpeg",
@@ -39,56 +42,19 @@ export default defineConfig({
       link: "https://github.com/xmtp",
     },
   ],
-  sidebar: [
+  sidebar: {
+    '/agents/': [
     {
       text: "Intro to XMTP",
       collapsed: false,
       items: [
         {
           text: "What is XMTP?",
-          link: "/intro/intro",
-        },
-        {
-          text: "Upcoming releases ↗",
-          link: "https://ephemerahq.notion.site/upcoming-xmtp-releases",
+          link: "/agents/intro/intro",
         },
         {
           text: "FAQ",
-          link: "/intro/faq",
-        },
-        {
-          text: "Build with LLMs",
-          link: "/intro/build-with-llms",
-        },
-        {
-          text: "Dev support",
-          link: "/intro/dev-support",
-        },
-      ],
-    },
-    {
-      text: "Get started",
-      collapsed: false,
-      items: [
-        {
-          text: "Browser SDK",
-          link: "/sdks/browser",
-        },
-        {
-          text: "Node SDK",
-          link: "/sdks/node",
-        },
-        {
-          text: "React Native SDK",
-          link: "/sdks/react-native",
-        },
-        {
-          text: "Android SDK",
-          link: "/sdks/android",
-        },
-        {
-          text: "iOS SDK",
-          link: "/sdks/ios",
+          link: "/agents/intro/faq",
         },
       ],
     },
@@ -103,39 +69,225 @@ export default defineConfig({
       items: [
         {
           text: "Create an EOA or SCW signer",
-          link: "/inboxes/create-a-signer",
+          link: "/agents/core-messaging/create-a-signer",
         },
         {
           text: "Create a client",
-          link: "/inboxes/create-a-client",
+          link: "/agents/core-messaging/create-a-client",
         },
         {
           text: "Create conversations",
-          link: "/inboxes/create-conversations",
+          link: "/agents/core-messaging/create-conversations",
         },
         {
           text: "Send messages",
-          link: "/inboxes/send-messages",
+          link: "/agents/core-messaging/send-messages",
         },
         {
           text: "Manage group permissions",
-          link: "/inboxes/group-permissions",
+          link: "/agents/core-messaging/group-permissions",
         },
         {
           text: "Manage group metadata",
-          link: "/inboxes/group-metadata",
+          link: "/agents/core-messaging/group-metadata",
         },
         {
           text: "Support group invite links",
-          link: "/inboxes/support-group-invite-links",
+          link: "/agents/core-messaging/support-group-invite-links",
+        },
+      ],
+    },
+    {
+      text: "Support rich content types",
+      collapsed: false,
+      items: [
+        {
+          text: "Understand content types",
+          link: "/agents/content-types/content-types",
+        },
+        {
+          text: "Attachments",
+          link: "/agents/content-types/attachments",
+        },
+        {
+          text: "Onchain transactions",
+          link: "/agents/content-types/transactions",
+        },
+        {
+          text: "Onchain transaction references",
+          link: "/agents/content-types/transaction-refs",
+        },
+        {
+          text: "Reactions",
+          link: "/agents/content-types/reactions",
+        },
+        {
+          text: "Replies",
+          link: "/agents/content-types/replies",
+        },
+        {
+          text: "Read receipts",
+          link: "/agents/content-types/read-receipts",
+        },
+      ],
+    },
+  ],
+  '/network/': [
+    {
+      text: "Network",
+      collapsed: false,
+      items: [
+        {
+          text: "Run a network node",
+          link: "/network/run-a-node",
+        },
+        {
+          text: "Testnet nodes",
+          link: "/network/network-nodes",
+        },
+      ],
+    },
+  ],
+  '/protocol/': [
+    {
+      text: "Protocol concepts",
+      collapsed: false,
+      items: [
+        {
+          text: "Envelope types",
+          link: "/protocol/envelope-types",
+        },
+        {
+          text: "Topics",
+          link: "/protocol/topics",
+        },
+        {
+          text: "Cursors",
+          link: "/protocol/cursors",
+        },
+        {
+          text: "Security",
+          link: "/protocol/security",
+        },
+        {
+          text: "Encryption ↗",
+          link: "https://xmtp.org/docs/concepts/encryption",
+        },
+        {
+          text: "Identity ↗",
+          link: "https://xmtp.org/docs/concepts/identity",
+        },
+        {
+          text: "Consent ↗",
+          link: "https://xmtp.org/docs/concepts/consent",
+        },
+        {
+          text: "Decentralization ↗",
+          link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
+        },
+        {
+          text: "Wallet signatures",
+          link: "/protocol/signatures",
+        },
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/intro/xips",
+        },
+      ],
+    },
+  ],
+  '/inboxes/': [
+    {
+      text: "Intro to XMTP",
+      collapsed: false,
+      items: [
+        {
+          text: "What is XMTP?",
+          link: "/inboxes/intro/intro",
+        },
+        {
+          text: "Upcoming releases ↗",
+          link: "https://ephemerahq.notion.site/upcoming-xmtp-releases",
+        },
+        {
+          text: "FAQ",
+          link: "/inboxes/intro/faq",
+        },
+        {
+          text: "Build with LLMs",
+          link: "/inboxes/intro/build-with-llms",
+        },
+        {
+          text: "Dev support",
+          link: "/inboxes/intro/dev-support",
+        },
+      ],
+    },
+    {
+      text: "Get started",
+      collapsed: false,
+      items: [
+        {
+          text: "Browser SDK",
+          link: "/inboxes/sdks/browser",
+        },
+        {
+          text: "Node SDK",
+          link: "/inboxes/sdks/node",
+        },
+        {
+          text: "React Native SDK",
+          link: "/inboxes/sdks/react-native",
+        },
+        {
+          text: "Android SDK",
+          link: "/inboxes/sdks/android",
+        },
+        {
+          text: "iOS SDK",
+          link: "/inboxes/sdks/ios",
+        },
+      ],
+    },
+    {
+      text: "Build core messaging",
+      collapsed: false,
+      items: [
+        {
+          text: "Create an EOA or SCW signer",
+          link: "/inboxes/core-messaging/create-a-signer",
+        },
+        {
+          text: "Create a client",
+          link: "/inboxes/core-messaging/create-a-client",
+        },
+        {
+          text: "Create conversations",
+          link: "/inboxes/core-messaging/create-conversations",
+        },
+        {
+          text: "Send messages",
+          link: "/inboxes/core-messaging/send-messages",
+        },
+        {
+          text: "Manage group permissions",
+          link: "/inboxes/core-messaging/group-permissions",
+        },
+        {
+          text: "Manage group metadata",
+          link: "/inboxes/core-messaging/group-metadata",
+        },
+        {
+          text: "Support group invite links",
+          link: "/inboxes/core-messaging/support-group-invite-links",
         },
         {
           text: "Manage inboxes, IDs, and installations",
-          link: "/inboxes/manage-inboxes",
+          link: "/inboxes/core-messaging/manage-inboxes",
         },
         {
           text: "Observe rate limits",
-          link: "/inboxes/rate-limits",
+          link: "/inboxes/core-messaging/rate-limits",
         },
       ],
     },
@@ -145,23 +297,23 @@ export default defineConfig({
       items: [
         {
           text: "List conversations",
-          link: "/inboxes/list",
+          link: "/inboxes/list-stream-sync/list",
         },
         {
           text: "Stream messages",
-          link: "/inboxes/stream",
+          link: "/inboxes/list-stream-sync/stream",
         },
         {
           text: "Sync conversations and messages",
-          link: "/inboxes/sync-and-syncall",
+          link: "/inboxes/list-stream-sync/sync-and-syncall",
         },
         {
           text: "Sync preferences",
-          link: "/inboxes/sync-preferences",
+          link: "/inboxes/list-stream-sync/sync-preferences",
         },
         {
           text: "History sync",
-          link: "/inboxes/history-sync",
+          link: "/inboxes/list-stream-sync/history-sync",
         },
       ],
     },
@@ -257,70 +409,6 @@ export default defineConfig({
       link: "/inboxes/use-signatures",
       items: [],
     },
-    {
-      text: "Network",
-      collapsed: false,
-      items: [
-        {
-          text: "Run a network node",
-          link: "/network/run-a-node",
-        },
-        {
-          text: "Testnet nodes",
-          link: "/network/network-nodes",
-        },
-      ],
-    },
-    {
-      text: "Protocol concepts",
-      collapsed: false,
-      items: [
-        {
-          text: "Envelope types",
-          link: "/protocol/envelope-types",
-        },
-        {
-          text: "Topics",
-          link: "/protocol/topics",
-        },
-        {
-          text: "Cursors",
-          link: "/protocol/cursors",
-        },
-        {
-          text: "Security",
-          link: "/protocol/security",
-        },
-        {
-          text: "Encryption ↗",
-          link: "https://xmtp.org/docs/concepts/encryption",
-        },
-        {
-          text: "Identity ↗",
-          link: "https://xmtp.org/docs/concepts/identity",
-        },
-        {
-          text: "Consent ↗",
-          link: "https://xmtp.org/docs/concepts/consent",
-        },
-        {
-          text: "Decentralization ↗",
-          link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
-        },
-        {
-          text: "Wallet signatures",
-          link: "/protocol/signatures",
-        },
-        {
-          text: "XMTP Improvement Proposals",
-          link: "/intro/xips",
-        },
-      ],
-    },
-    {
-      text: "💬 Doc feedback",
-      link: "/doc-feedback",
-      items: [],
-    },
   ],
+  },
 });

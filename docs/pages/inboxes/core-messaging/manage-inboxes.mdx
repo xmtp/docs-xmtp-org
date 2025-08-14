@@ -1,0 +1,511 @@
+# Manage XMTP inboxes, identities, and installations
+
+With XMTP, a user can have one or more **inboxes** they use to access their messages. An inbox ID is a stable identifier for a user's messaging identity and is used as the destination for messages in direct message and group conversations. It is derived from the public key material in their key package.
+
+An inbox can have multiple **identities** associated with it. An identity has a kind, such as EOA or SCW, and a string, which in the case of an EOA or SCW, is an Ethereum address. However, this extensible inbox-based identity model means that support for additional kinds of identities, such as Passkey or Bitcoin, can be added in the future.
+
+All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
+
+The first time someone uses your app with an identity they've never used with any app built with XMTP, your app creates an inbox ID and **installation** associated with the identity. To do this, you [create a client](/inboxes/create-a-client) for their identity.
+
+:::tip[Note for agent developers]
+
+The installation concepts described in this document apply to both inbox apps and agents. However, the context differs. **Inbox apps** typically have installations across different devices and apps (phone, laptop, different XMTP apps), while **agents** typically have installations across different deployment environments (local development, Railway, production servers).
+
+For more agent-specific guidance, see [Manage agent installations](/agents/build-an-agent#manage-agent-installations).
+:::
+
+The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/create-inbox-install.png" width="250px" />
+</div>
+
+When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
+
+An inbox ID can have up to 10 app installations before it needs to [revoke an installation](#revoke-an-installation).
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
+</div>
+
+You can enable a user to add multiple identities to their inbox. Added identities use the same inbox ID and the installation ID of the installation used to add the identity.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-id.png" width="350px" />
+</div>
+
+You can enable a user to remove an identity from their inbox. You cannot remove the recovery identity.
+
+## Inbox update and installation limits
+
+### 🎥 walkthrough: Installation limits and static revocation
+
+This video provides a walkthrough of the idea behind the XMTP installation limit (10) and how to use [static installation revocation](#revoke-installations-for-a-user-who-cant-log-in). After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/66bHc_MBQKo?si=5ZuqFBrQm885ILSk" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
+
+- Add a wallet
+- Remove a wallet
+- Add an installation
+- Revoke an installation
+
+This means that one inbox ID can have up to 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
+
+If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
+
+To avoid this scenario altogether, inboxes are limited to having only 10 active installations. When an inbox has 10 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
+
+Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
+
+### Rotate an inbox ID
+
+When you create an inbox ID, there is a nonce on it that is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce and it will create a new inbox ID associated with the user's information.
+
+## Help users manage installations
+
+By default, your app stores the following information about installations:
+
+- `id` (random byte array)
+- `createdAt` (date)
+
+To help users make informed decisions when managing and revoking their installations, you should aim to store additional useful information about installations, such as:
+
+- Last date logged in
+- Device make and model
+
+Installation IDs that don't have this additional information can be treated as unknown installations, which can also provide helpful signals to users.
+
+## Revoke installations
+
+### 🎥 walkthrough: Revoking installations
+
+This video provides a walkthrough of revoking installations, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/MIw9x1Z4WXw?si=4bcbfkHTDvsM0uDG" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+### Revoke a specific installation
+
+You can revoke one or more specific installations by ID, as long as it isn't the currently accessed installation.
+
+An inbox ID can have up to 10 app installations before it needs to revoke an installation.
+
+- If an inbox ID has 10 installations and the user wants to add another installation, use this function to enable them to revoke an installation before they can add the new one.
+
+- If an inbox ID was created before this installation limit was implemented, the inbox ID might have more than 10 installations. If this is the case, the user will receive an error when they try to add another installation. Use this function to enable them to revoke the required number of installations before they can add the new one. For example, if an inbox ID has 20 installations, the user will need to revoke 11 installations before they can add the new one.
+
+If preferred, you can use the [revoke all other installations](#revoke-all-other-installations) function to revoke all installations other than the currently accessed installation.
+
+:::code-group
+
+```tsx [Browser]
+await client.revokeInstallations([installationId1, installationId2])
+```
+
+```tsx [Node]
+await client.revokeInstallations([installationId1, installationId2])
+```
+
+```jsx [React Native]
+await client.revokeInstallations(signingKey, [installationIds])
+```
+
+```kotlin [Kotlin]
+client.revokeInstallations(signingKey, listOf(installationIds))
+```
+
+```swift [Swift]
+try await client.revokeInstallations(signingKey, [installationIds])
+```
+
+:::
+
+### Revoke all other installations
+
+You can revoke all installations other than the currently accessed installation.
+
+For example, consider a user using this current installation:
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install-id.png" width="350px" />
+</div>
+
+When the user revokes all other installations, the action removes their identity's access to all installations other than the current installation:
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install-id.png" width="350px" />
+</div>
+
+An inbox ID can have up to 10 app installations before it needs to revoke an installation.
+
+If preferred, you can use the [revoke a specific installation](#revoke-a-specific-installation) function to revoke one or more specific installations by ID.
+
+:::code-group
+
+```tsx [Browser]
+await client.revokeAllOtherInstallations()
+```
+
+```tsx [Node]
+await client.revokeAllOtherInstallations()
+```
+
+```jsx [React Native]
+await client.revokeAllOtherInstallations(signingKey)
+```
+
+```kotlin [Kotlin]
+client.revokeAllOtherInstallations(signingKey)
+```
+
+```swift [Swift]
+try await client.revokeAllOtherInstallations(signingKey)
+```
+
+:::
+
+### Revoke installations for a user who can't log in
+
+For a video walkthrough of this feature, see [🎥 walkthrough: Installation limits and static revocation](#-walkthrough-installation-limits-and-static-revocation).
+
+Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
+
+This feature is especially useful in the following scenarios:
+
+- A user has reached the 10 installation limit and can't log in to revoke installations to make room for a new installation.
+- A user logs out of an app installation and chooses the option to delete their local database. Choosing this option will cause them to permanently lose access to the installation. For this reason, you should revoke the installation.
+
+In both scenarios, static revocation enables logged out users to revoke installations using only their recovery address signer. 
+
+Here is how static installation revocation works behind the scenes:
+
+1. Determines which installation IDs to revoke
+2. Generates a signature request for the revocation
+3. Uses the recovery address signer to authorize the revocation
+4. Submits the signed request to revoke the specified installations
+
+:::code-group
+
+```tsx [Browser]
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
+
+const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
+
+await Client.revokeInstallations(
+  signer,
+  inboxId,
+  toRevokeInstallationBytes,
+  "production", // optional, defaults to "dev"
+  enableLogging: true, // optional, defaults to false
+);
+```
+
+```tsx [Node]
+const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
+
+const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
+
+await Client.revokeInstallations(
+  signer,
+  inboxId,
+  toRevokeInstallationBytes,
+  "production", // optional, defaults to "dev"
+);
+```
+
+```jsx [React Native]
+const states = await Client.inboxStatesForInboxIds('production', [inboxId])
+
+const toRevokeIds = states[0].installations.map((i) => i.id)
+
+await Client.revokeInstallations(
+  'production',
+  recoveryWallet,
+  inboxId,
+  toRevokeIds as InstallationId[]
+)
+```
+
+```kotlin [Kotlin]
+        val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
+		
+	val toRevokeIds = states.first().installations.map { it.id }
+
+	Client.revokeInstallations(
+		api,
+		recoveryWallet,
+		inboxId,
+		toRevokeIds
+	)
+```
+
+```swift [Swift]
+        let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
+		
+	let toRevokeIds = states.first.installations.map { $0.id }
+
+	try await Client.revokeInstallations(
+		api: api,
+		signingKey: recoveryWallet,
+		inboxId: inboxId,
+		installationIds: toRevokeIds
+	)
+```
+
+:::
+
+## View the inbox state
+
+Find an `inboxId` for an identity:
+
+:::code-group
+
+```tsx [Browser]
+const inboxState = await client.preferences.inboxState()
+```
+
+```tsx [Node]
+const inboxState = await client.preferences.inboxState()
+```
+
+```jsx [React Native]
+const inboxId = await client.inboxIdFromIdentity(identity)
+```
+
+```kotlin [Kotlin]
+val inboxId = client.inboxIdFromIdentity(identity)
+```
+
+```swift [Swift]
+let inboxId = try await client.inboxIdFromIdentity(identity: identity)
+```
+
+:::
+
+View the state of any inbox to see the identities, installations, and other information associated with the `inboxId`.
+
+**Sample request**
+
+:::code-group
+
+```tsx [Browser]
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+```
+
+```tsx [Node]
+// the second argument is optional and refreshes the state from the network.
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+```
+
+```jsx [React Native]
+const state = await client.inboxState(true)
+const states = await client.inboxStates(true, [inboxId, inboxId])
+```
+
+```kotlin [Kotlin]
+val state = client.inboxState(true) 
+val states = client.inboxStatesForInboxIds(true, listOf(inboxID, inboxID))
+```
+
+```swift [Swift]
+let state = try await client.inboxState(refreshFromNetwork: true)
+let states = try await client.inboxStatesForInboxIds(
+	refreshFromNetwork: true,
+	inboxIds: [inboxID, inboxID]
+)
+```
+:::
+
+**Sample response**
+
+```json
+InboxState
+{
+  "recoveryIdentity": "string",
+  "identities": [
+    {
+      "kind": "ETHEREUM",
+      "identifier": "string",
+      "relyingPartner": "string"
+    },
+    {
+      "kind": "PASSKEY",  // not yet supported; provided as an example only.
+      "identifier": "string",
+      "relyingPartner": "string"
+    }
+  ],
+  "installations": ["string"],
+  "inboxId": "string"
+}
+```
+
+## Add an identity to an inbox
+
+:::warning[Warning]
+
+This function is delicate and should be used with caution. Adding an identity to an inbox ID B when it's already associated with an inbox ID A will cause the identity to lose access to inbox ID A.
+
+:::
+
+:::code-group
+
+```tsx [Browser]
+await client.unsafe_addAccount(signer, true)
+```
+
+```tsx [Node]
+await client.unsafe_addAccount(signer, true)
+```
+
+```jsx [React Native]
+await client.addAccount(identityToAdd)
+```
+
+```kotlin [Kotlin]
+client.addAccount(identityToAdd)
+```
+
+```swift [Swift]
+try await client.addAccount(newAccount: identityToAdd)
+```
+
+:::
+
+## Remove an identity from an inbox
+
+:::tip[Note]
+ A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
+:::
+
+:::code-group
+
+```tsx [Browser]
+await client.removeAccount(identifier)
+```
+
+```tsx [Node]
+await client.removeAccount(identifier)
+```
+
+```jsx [React Native]
+await client.removeAccount(recoveryIdentity, identityToRemove)
+```
+
+```kotlin [Kotlin]
+client.removeAccount(recoveryIdentity, identityToRemove)
+```
+
+```swift [Swift]
+try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
+```
+
+:::
+
+## Select the identity to display
+
+When an inbox has multiple associated identities, the `identities` array is ordered by the `client_timestamp_ns` field, which sorts identities based on when they were added to the inbox, placing the earliest added identity first.
+
+This provides consistent display ordering and helps establish norms for which identity should be used for UI display purposes. 
+
+For UI display purposes, you can use the following logic to select the most appropriate identity:
+
+1. If there is only one identity in the `identities` array, use that as the display identity.
+2. If there are two identities, use the one that does not match the `recoveryIdentity`. The first non-recovery identifier in the array is typically the preferred identity for display.
+3. If there are more than two identities, the first non-recovery identity in the ordered array is typically the preferred identity for display.
+
+## FAQ
+
+### What happens when a user removes an identity?
+
+Consider an inbox with three associated identities:
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/three-ids.png" width="650px" />
+</div>
+
+If the user removes an identity from the inbox, the identity no longer has access to the inbox it was removed from.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/removed-id.png" width="650px" />
+</div>
+
+The identity can no longer be added to or used to access conversations in that inbox. If someone sends a message to the identity, the message is not associated with the original inbox. If the user logs in to a new installation with the identity, this will create a new inbox ID.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox-id.png" width="650px" />
+</div>
+
+### How is the recovery identity used?
+
+The recovery identity and its signer can be used to sign transactions that remove identities and revoke installations.
+
+For example, Alix can give Bo access to their inbox so Bo can see their groups and conversations and respond for Alix.
+
+If Alix decides they no longer want Bo have access to their inbox, Alix can use their recovery identity signer to remove Bo. 
+
+However, while Bo has access to Alix's inbox, Bo cannot remove Alix from their own inbox because Bo does not have access to Alix's recovery identity signer.
+
+### If a user created two inboxes using two identities, is there a way to combine the inboxes?
+
+If a user logs in with an identity with address 0x62EE...309c and creates inbox 1 and then logs in with an identity with address 0xd0e4...DCe8 and creates inbox 2; there is no way to combine inbox 1 and 2.
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inboxes.png" width="350px" />
+</div>
+
+You can add an identity with address 0xd0e4...DCe8 to inbox 1, but both identities with addresses 0x62EE...309c and 0xd0e4...DCe8 would then have access to inbox 1 only. The identity with address 0xd0e4...DCe8 would no longer be able to access inbox 2. 
+
+<div>
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inbox-remap-id.png" width="350px" />
+</div>
+
+To help users avoid this state, ensure that your UX surfaces their ability to add multiple identities to a single inbox.
+
+### What happens if I remove an identity from an inbox ID and then initiate a client with the private key of the removed identity?
+
+**Does the client create a new inbox ID or does it match it with the original inbox ID the identity was removed from?**
+
+The identity used to initiate a client should be matched to its original inbox ID. 
+
+You do have the ability to rotate inbox IDs if a user reaches the limit of 256 identity actions (adding, removing, or revoking identities or installations). Hopefully, users won't reach this limit, but if they do, inbox IDs have a nonce and can be created an infinite number of times. 
+
+However, anytime a new inbox ID is created for an identity, the conversations and messages in any existing inbox ID associated with the identity are lost.
+
+### I have multiple identities associated with one inbox ID. If I log in with any one of these identities, does it access that inbox ID, or does it create a new inbox ID?
+
+The identity accesses that inbox ID and does not create a new inbox ID.
+
+For example, let's say that you create a client with an identity with address 0x62EE...309c. Inbox ID 1 is generated from that identity. 
+
+<div>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1.png" width="150px" />
+</div>
+
+If you then add an identity with address 0xd0e4...DCe8 to inbox ID 1, the identity is also associated with inbox ID 1.
+
+If you then log into a new app installation with the identity with address 0xd0e4...DCe8, it accesses inbox ID 1 and does not create a new inbox ID.
+
+Once the identity with address 0xd0e4...DCe8 has been associated with inbox ID 1, it can then be used to log into inbox ID 1 using a new app installation.
+
+<div>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2.png" width="350px" />
+</div>
+
+The inverse is also true. Let's say an identity with address 0xd0e4...DCe8 was previously used to create and log into inbox ID 2.
+
+<div>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-inbox2-id2.png" width="350px" />
+</div>
+
+If the identity is then added as an associated identity to inbox ID 1, the identity will no longer be able to log into inbox ID 2.
+
+<div>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2-inverse.png" width="350px" />
+</div>
+
+To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox ID 2 again, you can use the recovery identity for inbox ID 2 to add a different identity to inbox ID 2 and have the user use that identity access it.
+
+If you are interested in providing this functionality in your app and want some guidance, post to the [XMTP Community Forums](https://community.xmtp.org).
