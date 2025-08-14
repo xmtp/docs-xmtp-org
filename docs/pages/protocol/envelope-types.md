@@ -115,6 +115,6 @@ They handle:
 
 - Linking an installation to an XMTP inbox
 - Key rotation and revocation
-- Linking multiple devices (though [history sync](/inboxes/history-sync) is used to synchronize data between those devices)
+- Linking multiple devices (though [history sync](#TODO) is used to synchronize data between those devices)
 
 Identity update messages are stored permanently to ensure continuity of trust and identity verification.

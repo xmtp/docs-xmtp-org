@@ -98,7 +98,7 @@ XMTP uses Hash-based Message Authentication Code (HMAC) keys for push notificati
 
 The HMAC key is derived from a generated root HMAC key, the message’s group ID, and the number of 30-day periods since the Unix epoch, along with some salt. Anytime a user gets a new installation, they get new HMAC keys for it. In this case, how do the user’s older installations learn about the user’s new installation HMAC key so they can properly decrypt and route certain messages and push notifications for that newly added installation?
 
-This is one of the jobs of the [history sync](/inboxes/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with HMAC keys for new installations. When a user’s new installation publishes updated HMAC info, older installations can see that update and must [resubscribe to topics](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new HMAC keys.
+This is one of the jobs of the [history sync](#TODO) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with HMAC keys for new installations. When a user's new installation publishes updated HMAC info, older installations can see that update and must [resubscribe to topics](#TODO) to get the new HMAC keys.
 
 ## Understand DM stitching and push notifications
 

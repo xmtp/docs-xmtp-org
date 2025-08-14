@@ -149,17 +149,17 @@ Optimistic group creation enables instant group chat creation and message prepar
 
 Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
 
-The group chat can be created with any number of [standard options](/inboxes/group-metadata#updatable-group-chat-metadata), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
+The group chat can be created with any number of [standard options](#TODO), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
 
 You can prepare messages for the optimistic group chat immediately using `prepareMessage()`. As with the group chat itself, these messages are stored locally only.
 
-When you want to add members, you use [`addMembers()`](/inboxes/group-permissions#add-members-by-inbox-id) with a list of inbox IDs.
+When you want to add members, you use [`addMembers()`](#TODO) with a list of inbox IDs.
 
 Adding a member will automatically sync the group chat to the network. Once synced, the group chat becomes visible to the added members and across other app installations.
 
 After adding members, you must explicitly call `publishMessages()` to send any prepared messages to the network.
 
-To learn more about optimistically sending messages using `prepareMessage()` and `publishMessages()`, see [Optimistically send messages](/inboxes/send-messages#optimistically-send-messages).
+To learn more about optimistically sending messages using `prepareMessage()` and `publishMessages()`, see [Optimistically send messages](#TODO).
 
 :::code-group
 

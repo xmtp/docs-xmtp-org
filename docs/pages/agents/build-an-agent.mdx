@@ -61,15 +61,15 @@ for await (const message of stream) {
 
 To learn more about:
 
-- `Client.create`, see [Create an XMTP client](/inboxes/create-a-client).
+- `Client.create`, see [Create an XMTP client](#TODO).
 
-- `conversations.sync`, see [Sync new conversations](/inboxes/sync-and-syncall#sync-new-conversations).
+- `conversations.sync`, see [Sync new conversations](#TODO).
 
-- `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences).
+- `conversations.streamAllMessages`, see [Stream all group chat and DM messages and preferences](#TODO).
 
-- `conversations.getConversationById`, see [Conversation helper methods](/inboxes/create-conversations#conversation-helper-methods).
+- `conversations.getConversationById`, see [Conversation helper methods](#TODO).
 
-- `conversation.send`, see [Send messages](/inboxes/send-messages).
+- `conversation.send`, see [Send messages](#TODO).
 
 ### Get the address of a user
 
@@ -77,7 +77,7 @@ Each user has a unique `inboxId` used to retrieve their associated addresses (id
 
 :::tip
 
-An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage XMTP inboxes and installations](/inboxes/manage-inboxes).
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage XMTP inboxes and installations](#TODO).
 
 :::
 
@@ -88,7 +88,7 @@ const inboxState = await client.preferences.inboxStateFromInboxIds([
 const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 ```
 
-To learn more, see [View the inbox state](/inboxes/manage-inboxes#view-the-inbox-state).
+To learn more, see [View the inbox state](#TODO).
 
 ### Support onchain transactions and transaction references
 
@@ -110,7 +110,7 @@ To learn more, see the example [good example for this?](#TODO) agent and [Suppor
 
 XMTP enforces separate rate limits for read and write operations per client.
 
-To learn more, see [Observe rate limits](/inboxes/rate-limits)
+To learn more, see [Observe rate limits](#TODO)
 
 ### Handle stream failures
 
@@ -244,9 +244,9 @@ When you revoke an agent installation, it can no longer send or receive messages
 
 Your agent can still run from any active installations on other deployment platforms.
 
-You can [revoke specific installations](/inboxes/manage-inboxes#revoke-a-specific-installation) and even [revoke an installation you can't log into](/inboxes/manage-inboxes#revoke-installations-for-a-user-who-cant-log-in).
+You can [revoke specific installations](#TODO) and even [revoke an installation you can't log into](#TODO).
 
-To learn more, see [Manage XMTP inboxes, identities, and installations](/inboxes/manage-inboxes).
+To learn more, see [Manage XMTP inboxes, identities, and installations](#TODO).
 
 ## Test and debug an agent
 

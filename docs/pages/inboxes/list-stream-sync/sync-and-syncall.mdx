@@ -68,7 +68,7 @@ try await client.conversations.sync()
 
 ## Sync all new welcomes, conversations, messages, and preferences
 
-Sync all new welcomes, group chat and DM conversations, messages, and [preference updates](/inboxes/sync-preferences) from the network.
+Sync all new welcomes, group chat and DM conversations, messages, and [preference updates](#TODO) from the network.
 
 By default, `syncAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
@@ -76,7 +76,7 @@ We recommend streaming messages for allowed conversations only. This ensures tha
 
 To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
 
-To sync preferences only, you can call [`preferences.sync`](/inboxes/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
+To sync preferences only, you can call [`preferences.sync`](#TODO). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
 
 :::code-group
 

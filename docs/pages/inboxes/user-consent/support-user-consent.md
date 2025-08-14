@@ -6,11 +6,11 @@ Use the following methods to provide users with control over their messaging exp
 
 You can sync new consent preferences (and HMAC keys) from the network using any of these calls:
 
-- [Sync preferences only](/inboxes/sync-preferences#sync-preferences-1)
+- [Sync preferences only](#TODO)
 
-- [Sync all new conversations, messages, and preferences](/inboxes/sync-and-syncall#sync-all-new-conversations-messages-and-preferences)
+- [Sync all new conversations, messages, and preferences](#TODO)
 
-- [Stream all group chat and DM messages and preferences](/inboxes/stream#stream-all-group-chat-and-dm-messages-and-preferences)
+- [Stream all group chat and DM messages and preferences](#TODO)
 
 ## Get the consent state of a conversation
 
