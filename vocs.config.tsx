@@ -133,10 +133,6 @@ export default defineConfig({
     },
   ],
   '/network/': [
-    {
-      text: "Network",
-      collapsed: false,
-      items: [
         {
           text: "Run a network node",
           link: "/network/run-a-node",
@@ -146,13 +142,7 @@ export default defineConfig({
           link: "/network/network-nodes",
         },
       ],
-    },
-  ],
   '/protocol/': [
-    {
-      text: "Protocol concepts",
-      collapsed: false,
-      items: [
         {
           text: "Envelope types",
           link: "/protocol/envelope-types",
@@ -194,8 +184,6 @@ export default defineConfig({
           link: "/intro/xips",
         },
       ],
-    },
-  ],
   '/inboxes/': [
     {
       text: "Intro to XMTP",

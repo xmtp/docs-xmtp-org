@@ -44,6 +44,52 @@ html body [data-layout="landing"] main {
   padding-right: 0 !important;
 }
 
+/* Breadcrumb styles */
+.breadcrumb-nav {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--vocs-color-border);
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--vocs-color-text-2);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumb-link {
+  color: var(--vocs-color-text-2);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--vocs-color-text);
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: var(--vocs-color-text);
+  font-weight: normal;
+}
+
+.breadcrumb-separator {
+  color: var(--vocs-color-text-2);
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
 /* Target any container that might be constraining width */
 html body *:has(.custom-homepage) {
   max-width: none !important;
