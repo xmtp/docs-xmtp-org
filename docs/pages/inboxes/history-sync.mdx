@@ -34,6 +34,8 @@ These default servers are managed and operated by [Ephemera](https://ephemerahq.
 
 You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server) and set the `historySyncUrl` to your server's URL.
 
+If needed, you can turn off history sync by setting the `historySyncUrl` client option to an empty string.
+
 ## How history sync works
 
 When your app initializes an XMTP client and a `historySyncUrl` client option is present, history sync automatically triggers an initial sync request and creates an encrypted payload.
