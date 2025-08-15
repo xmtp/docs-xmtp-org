@@ -76,12 +76,16 @@ export default defineConfig({
           link: "/agents/core-messaging/create-a-client",
         },
         {
-          text: "Create conversations",
-          link: "/agents/core-messaging/create-conversations",
-        },
-        {
           text: "Send messages",
           link: "/agents/core-messaging/send-messages",
+        },
+        {
+          text: "Stream messages",
+          link: "/agents/list-stream-sync/stream",
+        },
+        {
+          text: "Create conversations",
+          link: "/agents/core-messaging/create-conversations",
         },
         {
           text: "Manage group permissions",
@@ -90,10 +94,6 @@ export default defineConfig({
         {
           text: "Manage group metadata",
           link: "/agents/core-messaging/group-metadata",
-        },
-        {
-          text: "Support group invite links",
-          link: "/agents/core-messaging/support-group-invite-links",
         },
       ],
     },
