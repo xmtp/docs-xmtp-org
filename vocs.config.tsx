@@ -81,7 +81,7 @@ export default defineConfig({
         },
         {
           text: "Stream messages",
-          link: "/agents/list-stream-sync/stream",
+          link: "/agents/core-messaging/stream",
         },
         {
           text: "Create conversations",
@@ -94,6 +94,14 @@ export default defineConfig({
         {
           text: "Manage group metadata",
           link: "/agents/core-messaging/group-metadata",
+        },
+        {
+          text: "Manage inboxes",
+          link: "/agents/core-messaging/manage-inboxes",
+        },
+        {
+          text: "Rate limits",
+          link: "/agents/core-messaging/rate-limits",
         },
       ],
     },

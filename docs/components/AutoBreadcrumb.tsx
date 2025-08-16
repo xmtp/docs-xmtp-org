@@ -31,11 +31,13 @@ const sidebarConfig = {
       items: [
         { text: "Create an EOA or SCW signer", link: "/agents/core-messaging/create-a-signer" },
         { text: "Create a client", link: "/agents/core-messaging/create-a-client" },
-        { text: "Create conversations", link: "/agents/core-messaging/create-conversations" },
         { text: "Send messages", link: "/agents/core-messaging/send-messages" },
+        { text: "Stream messages", link: "/agents/core-messaging/stream" },
+        { text: "Create conversations", link: "/agents/core-messaging/create-conversations" },
         { text: "Manage group permissions", link: "/agents/core-messaging/group-permissions" },
         { text: "Manage group metadata", link: "/agents/core-messaging/group-metadata" },
-        { text: "Support group invite links", link: "/agents/core-messaging/support-group-invite-links" },
+        { text: "Manage inboxes", link: "/agents/core-messaging/manage-inboxes" },
+        { text: "Rate limits", link: "/agents/core-messaging/rate-limits" },
       ],
     },
     {
