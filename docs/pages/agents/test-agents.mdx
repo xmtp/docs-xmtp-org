@@ -1,0 +1,29 @@
+import AutoBreadcrumb from '../../components/AutoBreadcrumb'
+
+<AutoBreadcrumb />
+
+# Test and debug an agent
+
+You can test and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+You can use this code to get your agent's client information, which provides useful values for testing and debugging: 
+
+```tsx [Node]
+const inboxState = await client.preferences.inboxState();
+const address = inboxState.identifiers[0].identifier;
+const inboxId = client.inboxId;
+const installationId = client.installationId;
+const conversations = await client.conversations.list();
+
+console.log(`
+XMTP Client:
+  • InboxId: ${inboxId}
+  • Address: ${address}
+  • Conversations: ${conversations.length}
+  • Installations: ${inboxState.installations.length}
+  • InstallationId: ${installationId}
+  • Network: ${process.env.XMTP_ENV}
+`);
+```

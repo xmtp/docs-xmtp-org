@@ -5,6 +5,7 @@ description: Learn how to use the read receipt content type to support read rece
 import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 <AutoBreadcrumb />
+
 # Support read receipts in your app built with XMTP
 
 Use the read receipt content type to support read receipts in your app. A read receipt is a `timestamp` that indicates when a message was read. It is sent as a message and can be used to calculate the time since the last message was read.
@@ -33,9 +34,7 @@ pnpm add @xmtp/content-type-read-receipt
 
 ## Configure the content type
 
-:::code-group
-
-```js [Browser]
+```js [Node]
 import {
   ReadReceiptCodec,
 } from "@xmtp/content-type-read-receipt";
@@ -46,103 +45,24 @@ const xmtp = await Client.create(signer, {
 });
 ```
 
-```js [React Native]
-const client = await Client.create(signer, {
-  env: "production",
-  codecs: [new ReadReceiptCodec()],
-});
-```
-
-```kotlin [Kotlin]
-import org.xmtp.android.library.Client
-import org.xmtp.android.library.codecs.ReadReceiptCodec
-
-Client.register(codec = ReadReceiptCodec())
-```
-
-```swift [Swift]
- Client.register(codec: ReadReceiptCodec())
-```
-
-:::
-
 ## Send a read receipt
 
-:::code-group
-
-```js [Browser]
+```js [Node]
 // The content of a read receipt message must be an empty object.
 
 await conversation.messages.send({}, ContentTypeReadReceipt);
 ```
 
-```jsx [React Native]
-await bobConversation.send({ readReceipt: {} });
-```
-
-```kotlin [Kotlin]
-import org.xmtp.android.library.Client
-import org.xmtp.android.library.codecs.ReadReceipt
-import org.xmtp.android.library.codecs.ContentTypeReadReceipt
-import org.xmtp.android.library.messages.SendOptions
-
-// Create a ReadReceipt instance
-val readReceipt = ReadReceipt
-
-// Send the read receipt
-aliceConversation.send(
-    content = readReceipt,
-    options = SendOptions(contentType = ContentTypeReadReceipt),
-)
-```
-
-```swift [Swift]
-let read = ReadReceipt(timestamp: "2019-09-26T07:58:30.996+0200")
-
-try await conversation.send(
-    content: read,
-    options: .init(contentType: ContentTypeReadReceipt)
-)
-```
-
-:::
-
 ## Receive a read receipt
 
 Here's how you can receive a read receipt:
 
-:::code-group
-
-```js [Browser]
+```js [Node]
 if (message.contentType.sameAs(ContentTypeReadReceipt)) {
   // The message is a read receipt
   const timestamp = message.sent;
 }
 ```
-
-```js [React Native]
-if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
-  return message.sent; //Date received
-}
-```
-
-```kotlin [Kotlin]
-val message: DecodedMessage = conversation.messages().first()
-if (message.encodedContent.type == ContentTypeReadReceipt) {
-    // The message is a ReadReceipt
-    val readReceipt: ReadReceipt? = message.content()
-    if (readReceipt != null) {
-      println("Message read at: ${message.sent}")
-    }
-}
-```
-
-```swift [Swift]
-let content: ReadReceipt = try message.content()
-content.timestamp // "2019-09-26T07:58:30.996+0200"
-```
-
-:::
 
 ## Display a read receipt
 

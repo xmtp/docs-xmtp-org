@@ -1,6 +1,7 @@
 import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 <AutoBreadcrumb />
+
 # Understand content types with XMTP
 
 When you build an app with XMTP, all messages are encoded with a content type to ensure that an XMTP client knows how to encode and decode messages, ensuring interoperability and consistent display of messages across apps.
@@ -25,25 +26,9 @@ Here is the current standard content type:
 
 An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don’t need to perform any additional steps related to content types.
 
-:::code-group
-
-```jsx [Browser]
+```jsx [Node]
 await conversation.send("gm");
 ```
-
-```jsx [React Native]
-await conversation.send("gm");
-```
-
-```kotlin [Kotlin]
-conversation.send(text = "gm")
-```
-
-```swift [Swift]
-try await conversation.send(content: "gm")
-```
-
-:::
 
 ## Standards-track content types
 
@@ -58,9 +43,3 @@ Here are standards-track content types that you can review, test, and adopt in y
 - [Reaction content type](/inboxes/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message. 
 - [Reply content type](/inboxes/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 - [On-chain transaction reference content type](/inboxes/content-types/transaction-refs): Use to send references to on-chain transactions, such as crypto payments.
-
-## Create a custom content type
-
-Any developer building with XMTP can create a custom content type and immediately start using it in their app. Unlike a standard content type, use of a custom content type doesn't require prerequisite formal adoption through the XRC and XIP processes.
-
-To learn more, see [Build custom content types](/inboxes/content-types/custom).

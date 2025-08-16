@@ -131,6 +131,26 @@ export default defineConfig({
         },
       ],
     },
+    {
+      text: "Manage agent installations",
+      link: "/agents/agent-installations",
+      items: [],
+    },
+    {
+      text: "Test agents",
+      link: "/agents/test-agents",
+      items: [],
+    },
+    {
+      text: "Deploy agents",
+      link: "/agents/deploy-agent",
+      items: [],
+    },
+    {
+      text: "Security",
+      link: "/agents/agent-security",
+      items: [],
+    },
   ],
   '/network/': [
         {

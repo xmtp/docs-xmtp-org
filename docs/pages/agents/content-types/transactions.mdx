@@ -37,7 +37,7 @@ pnpm i @xmtp/content-type-wallet-send-calls
 
 After importing the package, you can register the codec.
 
-```js [Browser]
+```js [Node]
 import {
   WalletSendCallsCodec,
 } from "@xmtp/content-type-wallet-send-calls";
@@ -52,7 +52,7 @@ const xmtp = await Client.create(signer, {
 
 With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
 
-```ts [TypeScript]
+```ts [Node]
 const walletSendCalls: WalletSendCallsParams = {
   version: "1.0",
   from: "0x123...abc",
@@ -91,7 +91,7 @@ const walletSendCalls: WalletSendCallsParams = {
 
 Once you have a transaction reference, you can send it as part of your conversation:
 
-```ts [TypeScript]
+```ts [Node]
 await conversation.messages.send(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
@@ -101,7 +101,7 @@ await conversation.messages.send(walletSendCalls, {
 
 To receive and process a transaction request:
 
-```ts [TypeScript]
+```ts [Node]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 

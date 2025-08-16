@@ -1,6 +1,7 @@
 import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 <AutoBreadcrumb />
+
 # Manage XMTP inboxes, identities, and installations
 
 With XMTP, a user can have one or more **inboxes** they use to access their messages. An inbox ID is a stable identifier for a user's messaging identity and is used as the destination for messages in direct message and group conversations. It is derived from the public key material in their key package.
@@ -101,29 +102,9 @@ An inbox ID can have up to 10 app installations before it needs to revoke an ins
 
 If preferred, you can use the [revoke all other installations](#revoke-all-other-installations) function to revoke all installations other than the currently accessed installation.
 
-:::code-group
-
-```tsx [Browser]
-await client.revokeInstallations([installationId1, installationId2])
-```
-
 ```tsx [Node]
 await client.revokeInstallations([installationId1, installationId2])
 ```
-
-```jsx [React Native]
-await client.revokeInstallations(signingKey, [installationIds])
-```
-
-```kotlin [Kotlin]
-client.revokeInstallations(signingKey, listOf(installationIds))
-```
-
-```swift [Swift]
-try await client.revokeInstallations(signingKey, [installationIds])
-```
-
-:::
 
 ### Revoke all other installations
 
@@ -145,29 +126,9 @@ An inbox ID can have up to 10 app installations before it needs to revoke an ins
 
 If preferred, you can use the [revoke a specific installation](#revoke-a-specific-installation) function to revoke one or more specific installations by ID.
 
-:::code-group
-
-```tsx [Browser]
-await client.revokeAllOtherInstallations()
-```
-
 ```tsx [Node]
 await client.revokeAllOtherInstallations()
 ```
-
-```jsx [React Native]
-await client.revokeAllOtherInstallations(signingKey)
-```
-
-```kotlin [Kotlin]
-client.revokeAllOtherInstallations(signingKey)
-```
-
-```swift [Swift]
-try await client.revokeAllOtherInstallations(signingKey)
-```
-
-:::
 
 ### Revoke installations for a user who can't log in
 
@@ -189,22 +150,6 @@ Here is how static installation revocation works behind the scenes:
 3. Uses the recovery address signer to authorize the revocation
 4. Submits the signed request to revoke the specified installations
 
-:::code-group
-
-```tsx [Browser]
-const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
-
-const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
-
-await Client.revokeInstallations(
-  signer,
-  inboxId,
-  toRevokeInstallationBytes,
-  "production", // optional, defaults to "dev"
-  enableLogging: true, // optional, defaults to false
-);
-```
-
 ```tsx [Node]
 const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
 
@@ -217,110 +162,23 @@ await Client.revokeInstallations(
   "production", // optional, defaults to "dev"
 );
 ```
-
-```jsx [React Native]
-const states = await Client.inboxStatesForInboxIds('production', [inboxId])
-
-const toRevokeIds = states[0].installations.map((i) => i.id)
-
-await Client.revokeInstallations(
-  'production',
-  recoveryWallet,
-  inboxId,
-  toRevokeIds as InstallationId[]
-)
-```
-
-```kotlin [Kotlin]
-        val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
-		
-	val toRevokeIds = states.first().installations.map { it.id }
-
-	Client.revokeInstallations(
-		api,
-		recoveryWallet,
-		inboxId,
-		toRevokeIds
-	)
-```
-
-```swift [Swift]
-        let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
-		
-	let toRevokeIds = states.first.installations.map { $0.id }
-
-	try await Client.revokeInstallations(
-		api: api,
-		signingKey: recoveryWallet,
-		inboxId: inboxId,
-		installationIds: toRevokeIds
-	)
-```
-
-:::
 
 ## View the inbox state
 
 Find an `inboxId` for an identity:
 
-:::code-group
-
-```tsx [Browser]
-const inboxState = await client.preferences.inboxState()
-```
-
 ```tsx [Node]
 const inboxState = await client.preferences.inboxState()
 ```
-
-```jsx [React Native]
-const inboxId = await client.inboxIdFromIdentity(identity)
-```
-
-```kotlin [Kotlin]
-val inboxId = client.inboxIdFromIdentity(identity)
-```
-
-```swift [Swift]
-let inboxId = try await client.inboxIdFromIdentity(identity: identity)
-```
-
-:::
 
 View the state of any inbox to see the identities, installations, and other information associated with the `inboxId`.
 
 **Sample request**
 
-:::code-group
-
-```tsx [Browser]
-// the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
-```
-
 ```tsx [Node]
 // the second argument is optional and refreshes the state from the network.
 const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
 ```
-
-```jsx [React Native]
-const state = await client.inboxState(true)
-const states = await client.inboxStates(true, [inboxId, inboxId])
-```
-
-```kotlin [Kotlin]
-val state = client.inboxState(true) 
-val states = client.inboxStatesForInboxIds(true, listOf(inboxID, inboxID))
-```
-
-```swift [Swift]
-let state = try await client.inboxState(refreshFromNetwork: true)
-let states = try await client.inboxStatesForInboxIds(
-	refreshFromNetwork: true,
-	inboxIds: [inboxID, inboxID]
-)
-```
-:::
 
 **Sample response**
 
@@ -353,29 +211,9 @@ This function is delicate and should be used with caution. Adding an identity to
 
 :::
 
-:::code-group
-
-```tsx [Browser]
-await client.unsafe_addAccount(signer, true)
-```
-
 ```tsx [Node]
 await client.unsafe_addAccount(signer, true)
 ```
-
-```jsx [React Native]
-await client.addAccount(identityToAdd)
-```
-
-```kotlin [Kotlin]
-client.addAccount(identityToAdd)
-```
-
-```swift [Swift]
-try await client.addAccount(newAccount: identityToAdd)
-```
-
-:::
 
 ## Remove an identity from an inbox
 
@@ -383,29 +221,9 @@ try await client.addAccount(newAccount: identityToAdd)
  A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
 :::
 
-:::code-group
-
-```tsx [Browser]
-await client.removeAccount(identifier)
-```
-
 ```tsx [Node]
 await client.removeAccount(identifier)
 ```
-
-```jsx [React Native]
-await client.removeAccount(recoveryIdentity, identityToRemove)
-```
-
-```kotlin [Kotlin]
-client.removeAccount(recoveryIdentity, identityToRemove)
-```
-
-```swift [Swift]
-try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
-```
-
-:::
 
 ## Select the identity to display
 

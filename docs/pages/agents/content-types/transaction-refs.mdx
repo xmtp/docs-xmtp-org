@@ -5,6 +5,7 @@ description: Learn how to implement an onchain transaction reference content typ
 import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 <AutoBreadcrumb />
+
 # Support onchain transaction references in your app built with XMTP
 
 This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
@@ -37,9 +38,7 @@ pnpm add @xmtp/content-type-transaction-reference
 
 After importing the package, you can register the codec.
 
-:::code-group
-
-```js [Browser]
+```js [Node]
 import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
@@ -51,38 +50,11 @@ const xmtp = await Client.create(signer, {
 });
 ```
 
-```kotlin [Kotlin]
-import org.xmtp.android.library.Client
-import org.xmtp.android.library.Signer
-import org.xmtp.android.library.codecs.ContentTypeTransactionReference
-import org.xmtp.android.library.codecs.TransactionReferenceCodec
-
-Client.register(codec = TransactionReferenceCodec())
-
-// Create the XMTP client (assume account is a Signer)
-val xmtp = Client.create(account)
-```
-
-```swift [Swift]
-import XMTP
-import XMTPContentTypeTransactionReference
-
-let codec = TransactionReferenceCodec()
-Client.register(codec: codec)
-
-// Create the XMTP client (assume account is a signer)
-let xmtp = try await Client.create(account: account)
-```
-
-:::
-
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
 
-:::code-group
-
-```ts [Browser]
+```ts [Node]
 const transactionReference: TransactionReference = {
   /**
    * Optional namespace for the networkId
@@ -110,75 +82,13 @@ const transactionReference: TransactionReference = {
 };
 ```
 
-```kotlin [Kotlin]
-import org.xmtp.android.library.codecs.TransactionReference
-
-val transactionReference = TransactionReference(
-  namespace = "eip155",
-  networkId = "1",
-  reference = "0x123...abc",
-  metadata = TransactionReference.Metadata(
-    transactionType = "transfer",
-    currency = "USDC",
-    amount = 100000.0,
-    decimals = 6u,
-    fromAddress = "0x456...def",
-    toAddress = "0x789...ghi"
-  )
-)
-```
-
-```swift [Swift]
-import XMTPContentTypeTransactionReference
-
-let transactionReference = TransactionReference(
-  namespace: "eip155",
-  networkId: "1",
-  reference: "0x123...abc",
-  metadata: TransactionReference.Metadata(
-    transactionType: "transfer",
-    currency: "USDC",
-    amount: 100_000,
-    decimals: 6,
-    fromAddress: "0x456...def",
-    toAddress: "0x789...ghi"
-  )
-)
-```
-
-:::
-
 Once you have a transaction reference, you can send it as part of your conversation:
 
-:::code-group
-
-```js [Browser]
+```js [Node]
 await conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
 ```
-
-```kotlin [Kotlin]
-import kotlinx.coroutines.runBlocking
-import org.xmtp.android.library.SendOptions
-import org.xmtp.android.library.codecs.ContentTypeTransactionReference
-
-runBlocking {
-  conversation.send(
-    content = transactionReference,
-    options = SendOptions(contentType = ContentTypeTransactionReference)
-  )
-}
-```
-
-```swift [Swift]
-try await conversation.send(
-  transactionReference,
-  options: SendOptions(contentType: ContentTypeTransactionReference)
-)
-```
-
-:::
 
 ## Receive a transaction reference
 
@@ -186,9 +96,7 @@ To receive and process a transaction reference, you can use the following code s
 
 To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
 
-:::code-group
-
-```ts [Browser]
+```ts [Node]
 // Assume `loadLastMessage` is a thing you have
 const message: DecodedMessage = await loadLastMessage();
 
@@ -200,24 +108,6 @@ if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
 const transactionRef: TransactionReference = message.content;
 // Process the transaction reference here
 ```
-
-```kotlin [Kotlin]
-// Assume message is a DecodedMessage
-if (message.type == ContentTypeTransactionReference) {
-  val transactionRef: TransactionReference? = message.content()
-  // Process the transaction reference here
-}
-```
-
-```swift [Swift]
-if message.contentType == ContentTypeTransactionReference {
-  if let transactionRef = message.content as? TransactionReference {
-    // Process the transaction reference here
-  }
-}
-```
-
-:::
 
 ## Display the transaction reference
 

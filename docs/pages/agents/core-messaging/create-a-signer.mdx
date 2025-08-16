@@ -9,26 +9,6 @@ XMTP SDKs support message signing with 2 different types of Ethereum accounts: E
 
 The EOA signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
 
-:::code-group
-
-```tsx [Browser]
-import type { Signer, Identifier } from "@xmtp/browser-sdk";
-
-const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
-  identifierKind: "Ethereum", // Specifies the identity type
-};
-
-const signer: Signer = {
-  type: "EOA",
-  getIdentifier: () => accountIdentifier,
-  signMessage: async (message: string): Uint8Array => {
-    // typically, signing methods return a hex string
-    // this string must be converted to bytes and returned in this function
-  },
-};
-```
-
 ```tsx [Node]
 import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
 
@@ -46,60 +26,6 @@ const signer: Signer = {
   },
 };
 ```
-
-```tsx [React Native]
-// Example EOA Signer
-export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
-  return {
-    getIdentifier: async () =>
-      new PublicIdentity(eoaAccount.address, "ETHEREUM"),
-    getChainId: () => undefined, // Provide a chain ID if available or return undefined
-    getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
-    signerType: () => "EOA", // "EOA" indicates an externally owned account
-    signMessage: async (message: string) => {
-      const signature = await eoaAccount.signMessage(message);
-
-      return {
-        signature,
-      };
-    },
-  };
-}
-```
-
-```kotlin [Kotlin]
-class EOAWallet : SigningKey {
-    override val publicIdentity: PublicIdentity
-      get() = PublicIdentity(
-          IdentityKind.ETHEREUM,
-          key.publicAddress
-      )
-    override val type: SignerType
-      get() = SignerType.EOA
-
-    override suspend fun sign(message: String): SignedData {
-        val signature = key.sign(message = message)
-        return SignedData(signature)
-    }
-}
-```
-
-```swift [Swift]
-public struct EOAWallet: SigningKey {
-    public var identity: PublicIdentity {
-      return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
-    }
-
-    public var type: SignerType { .EOA }
-
-    public func sign(message: String) async throws -> SignedData {
-        let signature = try await key.sign(message: message)
-        return SignedData(signature)
-    }
-}
-```
-
-:::
 
 ## Create a Smart Contract Wallet signer
 
@@ -130,36 +56,9 @@ The details of creating an SCW signer are highly dependent on the wallet provide
 
 - **Sign the replay-safe hash**: The replay-safe hash is signed using the private key of the SCW. This generates a cryptographic signature that proves ownership of the wallet and ensures the integrity of the message.
 
-- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing.
+- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing.
 
 The code snippets below are examples only and will need to be adapted based on your specific wallet provider and library.
-
-:::code-group
-
-```tsx [Browser]
-export const createSCWSigner = (
-  address: `0x${string}`,
-  walletClient: WalletClient,
-  chainId: bigint,
-): Signer => {
-  return {
-    type: "SCW",
-    getIdentifier: () => ({
-      identifier: address.toLowerCase(),
-      identifierKind: "Ethereum",
-    }),
-    signMessage: async (message: string) => {
-      const signature = await walletClient.signMessage({
-        account: address,
-        message,
-      });
-      return toBytes(signature);
-    },
-    getChainId: () => {
-      return chainId;
-    },
-  };
-```
 
 ```tsx [Node]
 import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
@@ -179,69 +78,3 @@ const signer: Signer = {
   getChainId: () => BigInt(8453), // Example: Base chain ID
 };
 ```
-
-```tsx [React Native]
-// Example SCW Signer
-export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
-  return {
-    getIdentifier: async () =>
-      new PublicIdentity(scwAccount.address, "ETHEREUM"),
-    getChainId: () => 8453, // https://chainlist.org/
-    getBlockNumber: () => undefined, // Optional: will be computed at runtime
-    signerType: () => "SCW", // "SCW" indicates smart contract wallet account
-    signMessage: async (message: string) => {
-      const byteArray = await scwAccount.signMessage(message);
-      const signature = ethers.utils.hexlify(byteArray); // Convert to hex string
-
-      return {
-        signature,
-      };
-    },
-  };
-}
-```
-
-```kotlin [Kotlin]
-  class SCWallet : SigningKey {
-    override val publicIdentity: PublicIdentity
-      get() = PublicIdentity(
-          IdentityKind.ETHEREUM,
-          key.publicAddress
-      )
-    override val type: SignerType
-      get() = SignerType.SCW
-
-    override var chainId: Long? = 8453 // https://chainlist.org/
-    override var blockNumber: Long? = null // Optional: will be computed at runtime
-
-    override suspend fun sign(message: String): SignedData {
-        val signature = key.sign(message = message)
-        return SignedData(signature)
-    }
-}
-```
-
-```swift [Swift]
-public struct SCWallet: SigningKey {
-    public var identity: PublicIdentity {
-      return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
-    }
-
-    public var chainId: Int64? {
-        8453
-    }
-
-    public var blockNumber: Int64? {
-        nil
-    }
-
-    public var type: SignerType { .SCW }
-
-    public func sign(message: String) async throws -> SignedData {
-        let signature = try await key.sign(message: message)
-        return SignedData(signature.hexStringToByteArray )
-    }
-}
-```
-
-:::
