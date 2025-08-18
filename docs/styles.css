@@ -711,87 +711,178 @@ li ol ~ p {
     gap: 0.5rem !important;
     padding: 0.5rem 1rem !important;
     background: rgba(86, 83, 198, 0.1) !important;
+    border: 1px solid rgba(86, 83, 198, 0.2) !important;
     border-radius: 8px !important;
-    border: none !important;
     cursor: pointer !important;
     text-decoration: none !important;
     color: var(--vocs-color-text) !important;
-    pointer-events: none !important; /* Prevent navigation, this becomes dropdown trigger */
+    pointer-events: auto !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  
+  /* Dark mode specific styling for the button */
+  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
+    background: rgba(155, 152, 255, 0.15) !important;
+    border: 1px solid rgba(155, 152, 255, 0.3) !important;
+    color: #e5e5e5 !important;
+  }
+  
+  /* Hover effects for both light and dark modes */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover {
+    background: rgba(86, 83, 198, 0.2) !important;
+    border-color: rgba(86, 83, 198, 0.4) !important;
+  }
+  
+  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover {
+    background: rgba(155, 152, 255, 0.25) !important;
+    border-color: rgba(155, 152, 255, 0.5) !important;
   }
   
   /* Add dropdown arrow */
   body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem::after {
     content: '';
-    width: 11px;
-    height: 6px;
-    margin-left: auto;
-    background-image: url("data:image/svg+xml,%3Csvg width='69' height='39' viewBox='0 0 69 39' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M34.8677 38.8398C35.9419 38.8398 37.0161 38.4492 37.7485 37.6191L67.729 7.44339C68.4614 6.71089 68.9009 5.73439 68.9009 4.61129C68.9009 2.31639 67.1919 0.558594 64.897 0.558594C63.8227 0.558594 62.7485 1.04689 62.0161 1.73049L32.5727 31.2715H37.1138L7.67042 1.73049C6.93802 1.04689 5.96142 0.558594 4.83842 0.558594C2.54342 0.558594 0.785645 2.31639 0.785645 4.61129C0.785645 5.73439 1.22512 6.71089 1.95752 7.44339L31.9868 37.6191C32.768 38.4492 33.7446 38.8398 34.8677 38.8398Z' fill='currentColor'/%3E%3C/svg%3E");
+    width: 12px;
+    height: 7px;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-size: contain;
     background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
   }
   
-  /* Hide the full navigation initially, position as dropdown */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu .vocs_NavigationMenu_list {
-    position: absolute !important;
-    top: calc(100% + 0.5rem) !important;
-    left: 0 !important;
-    right: 0 !important;
-    background: var(--vocs-color-bg) !important;
-    border: 1px solid var(--vocs-color-border) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-    z-index: 1000 !important;
-    padding: 0.5rem !important;
-    flex-direction: column !important;
-    gap: 0.25rem !important;
+  /* Dark mode arrow - more visible */
+  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23e5e5e5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    opacity: 0.9;
+  }
+  
+  /* Make arrow more visible on hover */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover::after {
+    opacity: 1;
+  }
+  
+  /* Hide the original navigation menu on homepage to prevent conflicts */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu {
     display: none !important;
   }
   
-  /* Show dropdown on hover/focus AND make it work on mobile */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact:hover + .vocs_MobileTopNav_navigation .vocs_NavigationMenu_list,
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact:focus-within + .vocs_MobileTopNav_navigation .vocs_NavigationMenu_list,
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact:active + .vocs_MobileTopNav_navigation .vocs_NavigationMenu_list {
+  /* Style interior page mobile dropdown to match homepage styling */
+  .vocs_MobileTopNav_menuTrigger {
     display: flex !important;
-  }
-  
-  /* Also show when hovering/tapping the navigation area itself */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu:hover .vocs_NavigationMenu_list,
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu:focus-within .vocs_NavigationMenu_list {
-    display: flex !important;
-  }
-  
-  /* Make the group container support click/tap behavior */
-  body:has(.custom-homepage) .vocs_MobileTopNav_group {
-    position: relative !important;
-  }
-  
-  /* Use a more aggressive approach - show dropdown when ANY element in the group is focused/active */
-  body:has(.custom-homepage) .vocs_MobileTopNav_group:focus-within .vocs_NavigationMenu_list,
-  body:has(.custom-homepage) .vocs_MobileTopNav_group:active .vocs_NavigationMenu_list {
-    display: flex !important;
-  }
-  
-  /* Make sure the compact nav item can receive focus for keyboard/touch */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
-    pointer-events: auto !important; /* Re-enable clicking */
-    position: relative !important;
-  }
-  
-  /* Intercept clicks to show dropdown instead of navigating */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:focus + .vocs_MobileTopNav_navigation .vocs_NavigationMenu_list {
-    display: flex !important;
-  }
-  
-  /* Style the dropdown links */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu .vocs_NavigationMenu_link {
-    padding: 0.75rem 1rem !important;
-    border-radius: 4px !important;
-    text-decoration: none !important;
-    color: var(--vocs-color-text) !important;
-    display: block !important;
-  }
-  
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu .vocs_NavigationMenu_link:hover {
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
     background: rgba(86, 83, 198, 0.1) !important;
+    border: 1px solid rgba(86, 83, 198, 0.2) !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  /* Dark mode for interior page button */
+  .dark .vocs_MobileTopNav_menuTrigger {
+    background: rgba(155, 152, 255, 0.15) !important;
+    border: 1px solid rgba(155, 152, 255, 0.3) !important;
+  }
+  
+  /* Hover effects for interior page button */
+  .vocs_MobileTopNav_menuTrigger:hover {
+    background: rgba(86, 83, 198, 0.2) !important;
+    border-color: rgba(86, 83, 198, 0.4) !important;
+  }
+  
+  .dark .vocs_MobileTopNav_menuTrigger:hover {
+    background: rgba(155, 152, 255, 0.25) !important;
+    border-color: rgba(155, 152, 255, 0.5) !important;
+  }
+  
+  /* Style the interior page dropdown content to match homepage */
+  .vocs_MobileTopNav_topNavPopover,
+  .vocs_MobileTopNav_sidebarPopover {
+    background: var(--vocs-color-bg-2, #f8f9fa) !important;
+    border: 1px solid var(--vocs-color-border, #e9ecef) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
+    padding: 0.75rem 1rem !important;
+    max-width: 280px !important;
+    min-width: 200px !important;
+  }
+  
+  /* Dark mode for interior page dropdown content */
+  .dark .vocs_MobileTopNav_topNavPopover,
+  .dark .vocs_MobileTopNav_sidebarPopover {
+    background: var(--vocs-color-bg-2, #1a1a1a) !important;
+    border: 1px solid var(--vocs-color-border, #404040) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Style the navigation links in interior page dropdown */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link,
+  .vocs_MobileTopNav_topNavPopover a,
+  .vocs_MobileTopNav_sidebarPopover a {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.5rem 0 !important;
+    border-radius: 0 !important;
+    text-decoration: none !important;
+    color: var(--vocs-color-text, #333333) !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid var(--vocs-color-border, #e9ecef) !important;
+    transition: color 0.1s ease !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  /* Remove border from last link */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:last-child,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:last-child,
+  .vocs_MobileTopNav_topNavPopover a:last-child,
+  .vocs_MobileTopNav_sidebarPopover a:last-child {
+    border-bottom: none !important;
+  }
+  
+  /* Dark mode for navigation links */
+  .dark .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link,
+  .dark .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link,
+  .dark .vocs_MobileTopNav_topNavPopover a,
+  .dark .vocs_MobileTopNav_sidebarPopover a {
+    color: var(--vocs-color-text, #e5e5e5) !important;
+    border-bottom-color: var(--vocs-color-border, rgba(255,255,255,0.1)) !important;
+  }
+  
+  /* Hover effects for navigation links */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:hover,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
+  .vocs_MobileTopNav_topNavPopover a:hover,
+  .vocs_MobileTopNav_sidebarPopover a:hover {
+    color: var(--vocs-color-text-accent, #5E80F6) !important;
+    background-color: transparent !important;
+  }
+  
+  .dark .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:hover,
+  .dark .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
+  .dark .vocs_MobileTopNav_topNavPopover a:hover,
+  .dark .vocs_MobileTopNav_sidebarPopover a:hover {
+    color: var(--vocs-color-text-accent, #9B98FF) !important;
+  }
+  
+  /* Remove any extra spacing or margins from the list */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_list,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_list,
+  .vocs_MobileTopNav_topNavPopover ul,
+  .vocs_MobileTopNav_sidebarPopover ul {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
   }
 }
