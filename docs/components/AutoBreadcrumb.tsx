@@ -37,9 +37,15 @@ export default function AutoBreadcrumb({ path }: AutoBreadcrumbProps) {
         <ol className="breadcrumb-list">
           {path.map((item, index) => (
             <li key={index} className="breadcrumb-item">
-              <a href={item.href} className="breadcrumb-link">
-                {item.label}
-              </a>
+              {item.href ? (
+                <a href={item.href} className="breadcrumb-link">
+                  {item.label}
+                </a>
+              ) : (
+                <span className="breadcrumb-current">
+                  {item.label}
+                </span>
+              )}
               {index < path.length - 1 && (
                 <span className="breadcrumb-separator" aria-hidden="true">
                   /
@@ -53,6 +59,8 @@ export default function AutoBreadcrumb({ path }: AutoBreadcrumbProps) {
   }
 
   // Auto-generate breadcrumb based on sidebar structure
+  // Note: Breadcrumbs are purely informational (no links) to provide location context
+  // rather than navigation, since top nav and sidebar already handle navigation
   const generateBreadcrumb = (path: string) => {
     path = path.replace(/\/$/, "");
     const breadcrumbs: BreadcrumbItem[] = [];
@@ -60,24 +68,19 @@ export default function AutoBreadcrumb({ path }: AutoBreadcrumbProps) {
     // Determine section
     let sectionKey = '';
     let sectionName = '';
-    let sectionHref = '';
     
     if (path.startsWith('/agents')) {
       sectionKey = '/agents/';
       sectionName = 'Build agents';
-      sectionHref = '/agents/intro/intro';
     } else if (path.startsWith('/inboxes')) {
       sectionKey = '/inboxes/';
       sectionName = 'Build inboxes';
-      sectionHref = '/inboxes/intro/intro';
     } else if (path.startsWith('/protocol')) {
       sectionKey = '/protocol/';
       sectionName = 'Protocol';
-      sectionHref = '/protocol/envelope-types';
     } else if (path.startsWith('/network')) {
       sectionKey = '/network/';
       sectionName = 'Network';
-      sectionHref = '/network/run-a-node';
     }
     
     if (!sectionKey) return [];
@@ -85,7 +88,7 @@ export default function AutoBreadcrumb({ path }: AutoBreadcrumbProps) {
     // Always add the main section
     breadcrumbs.push({
       label: sectionName,
-      href: sectionHref
+      href: undefined
     });
     
     // Find if this page is nested in a subsection
