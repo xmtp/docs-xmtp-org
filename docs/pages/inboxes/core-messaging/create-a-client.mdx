@@ -4,7 +4,7 @@ import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 # Create an XMTP client
 
-Create an XMTP client that can use the signing capabilities provided by the [signer](#TODO). This signer links the client to the appropriate EOA or SCW.
+Create an XMTP client that can use the signing capabilities provided by the [signer](/inboxes/core-messaging/create-a-signer). This signer links the client to the appropriate EOA or SCW.
 
 ## Understand creating and building a client
 
@@ -48,7 +48,7 @@ This encryption key is not stored or persisted by the XMTP SDK, so it's your res
 
 If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
 
-Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](#TODO).
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/list-stream-sync/history-sync).
 
 To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
 

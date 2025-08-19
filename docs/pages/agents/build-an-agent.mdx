@@ -63,7 +63,7 @@ Each user has a unique `inboxId` used to retrieve their associated addresses (id
 
 :::tip
 
-An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage XMTP inboxes and installations](#TODO).
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage XMTP inboxes and installations](/agents/core-messaging/manage-inboxes).
 
 :::
 
@@ -74,7 +74,7 @@ const inboxState = await client.preferences.inboxStateFromInboxIds([
 const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 ```
 
-To learn more, see [View the inbox state](#TODO).
+To learn more, see [View the inbox state](/agents/core-messaging/manage-inboxes#view-the-inbox-state).
 
 ### Support onchain transactions and transaction references
 
@@ -96,7 +96,7 @@ To learn more, see [Support reactions](/inboxes/content-types/reactions) documen
 
 XMTP enforces separate rate limits for read and write operations per client.
 
-To learn more, see [Observe rate limits](#TODO)
+To learn more, see [Observe rate limits](/agents/core-messaging/rate-limits)
 
 ### Follow security best practices
 

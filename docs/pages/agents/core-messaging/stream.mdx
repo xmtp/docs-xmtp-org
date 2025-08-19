@@ -6,7 +6,7 @@ import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 ## Stream new group chat and DM conversations
 
-Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](#TODO). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/agents/core-messaging/create-conversations#conversation-union-type). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
 
 ```js [Node]
 const stream = await client.conversations.stream({
