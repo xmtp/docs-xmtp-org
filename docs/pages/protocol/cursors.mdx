@@ -35,7 +35,7 @@ The XMTP SDKs use cursors to make message synchronization highly efficient. The 
 
 - **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
 
-- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](#TODO) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/list-stream-sync/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
 
 - **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
 

@@ -243,7 +243,7 @@ for await event in try await alix.preferences.stream() {
 
 ## Resubscribe to topics to get new HMAC keys
 
-As soon as your app receives a user preference update event from [preferences.sync](#TODO) or [preferences.stream](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
+As soon as your app receives a user preference update event from [preferences.sync](/inboxes/list-stream-sync/sync-preferences) or [preferences.stream](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
 
 ```kotlin [Kotlin]
 conversations.allTopics.forEach { -> topic

@@ -1764,7 +1764,7 @@ public struct SCWallet: SigningKey {
 :::
 
 
-## pages/inboxes/history-sync.mdx
+## pages/inboxes/list-stream-sync/history-sync.mdx
 # Enable history sync for apps built with XMTP
 
 :::warning[This feature is in beta]
@@ -2859,7 +2859,7 @@ This encryption key is not stored or persisted by the XMTP SDK, so it's your res
 
 If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
 
-Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/history-sync).
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/list-stream-sync/history-sync).
 
 To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
 
@@ -7638,7 +7638,7 @@ XMTP uses Hash-based Message Authentication Code (HMAC) keys for push notificati
 
 The HMAC key is derived from a generated root HMAC key, the message’s group ID, and the number of 30-day periods since the Unix epoch, along with some salt. Anytime a user gets a new installation, they get new HMAC keys for it. In this case, how do the user’s older installations learn about the user’s new installation HMAC key so they can properly decrypt and route certain messages and push notifications for that newly added installation?
 
-This is one of the jobs of the [history sync](/inboxes/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with HMAC keys for new installations. When a user’s new installation publishes updated HMAC info, older installations can see that update and must [resubscribe to topics](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new HMAC keys.
+This is one of the jobs of the [history sync](/inboxes/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with HMAC keys for new installations. When a user’s new installation publishes updated HMAC info, older installations can see that update and must [resubscribe to topics](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new HMAC keys.
 
 ## Understand DM stitching and push notifications
 
@@ -7648,7 +7648,7 @@ This video provides a walkthrough of direct message (DM) stitching, covering the
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/YF5m_mTY6mw?si=EH0S4eP0GPEAafIw" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
-Consider a scenario where `alix.id` using an existing installation #1 to create a conversation with `bo.id` and sends them a DM. And then `alix.id` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/inboxes/history-sync) to bring in their existing conversations, `alix.id` creates a new conversation with `bo.id` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of identities, `alix.id` and `bo.id`, resulting in a confusing DM UX like this one:
+Consider a scenario where `alix.id` using an existing installation #1 to create a conversation with `bo.id` and sends them a DM. And then `alix.id` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/inboxes/list-stream-sync/history-sync) to bring in their existing conversations, `alix.id` creates a new conversation with `bo.id` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of identities, `alix.id` and `bo.id`, resulting in a confusing DM UX like this one:
 
 ![No DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/no-dm-stitching.png)
 
@@ -7982,7 +7982,7 @@ The XMTP SDKs use cursors to make message synchronization highly efficient. The 
 
 - **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
 
-- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/list-stream-sync/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
 
 - **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
 
@@ -8293,7 +8293,7 @@ They handle:
 
 - Linking an installation to an XMTP inbox
 - Key rotation and revocation
-- Linking multiple devices (though [history sync](/inboxes/history-sync) is used to synchronize data between those devices)
+- Linking multiple devices (though [history sync](/inboxes/list-stream-sync/history-sync) is used to synchronize data between those devices)
 
 Identity update messages are stored permanently to ensure continuity of trust and identity verification.
 
