@@ -19,13 +19,35 @@ This tool helps you identify potential forked groups in your app, but preventing
 A conversation now has `getDebugInformation`. You can use this to see:
 
 - The MLS epoch of a group chat conversation for a member
-- Whether a group chat might be forked for a member
-- Details of a potential fork
+- Whether a group chat is forked via `commitLogForkStatus` (no false positives)
+- Local and remote commit logs for expert analysis
+- Legacy `maybeForked` field (being phased out)
 
-The function that provides this information is called `maybeForked` because it is difficult to be 100% certain whether a group is forked.
+The new `commitLogForkStatus` field provides definitive fork detection without false positives, replacing the probabilistic `maybeForked` approach.
 
-- If `maybeForked` returns `true`, it is highly likely that the group chat is forked.
-- If `maybeForked` returns `false`, it is highly likely that the group chat is NOT forked.
+```typescript
+// Get detailed debug information for a conversation
+const debugInfo = await conversation?.getDebugInformation();
+
+console.log('Epoch:', debugInfo.epoch);
+console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+You can also check fork status directly from conversation lists:
+
+```typescript
+// Check fork status when listing conversations
+const conversations = await client.conversations.list();
+
+conversations.forEach(conversation => {
+  if (conversation.commitLogForkStatus === 'forked') {
+    console.log(`Conversation ${conversation.id} is forked`);
+  }
+});
+```
 
 To learn about group chat forks, see [MLS Group State Forks: What, Why, How](https://cryspen.com/post/mls-fork-resolution/).
 
