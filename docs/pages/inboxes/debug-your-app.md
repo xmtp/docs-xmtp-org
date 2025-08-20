@@ -23,7 +23,7 @@ A conversation now has `getDebugInformation`. You can use this to see:
 - Local and remote commit logs for expert analysis
 - Legacy `maybeForked` field (being phased out)
 
-The new `commitLogForkStatus` field provides definitive fork detection without false positives, replacing the probabilistic `maybeForked` approach.
+The new `commitLogForkStatus` field provides definitive fork detection without false positives, replacing the probabilistic `maybeForked` approach. To minimize the negative effects of spam, fork detection is only active for groups that a user has actively consented to, which is automatically true for groups/DMs you have created or groups/DMs that you have sent a message in. For more information on consent, see [support user consent](/inboxes/user-consent/support-user-consent).
 
 ```typescript
 // Get detailed debug information for a conversation
