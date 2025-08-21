@@ -23,20 +23,6 @@ const stream = await client.conversations.stream({
   }
 });
 
-// To stream only groups
-const groupStream = await client.conversations.streamGroups({
-  onValue: (conversation) => {
-    console.log("New group:", conversation);
-  }
-});
-
-// To stream only DMs
-const dmStream = await client.conversations.streamDms({
-  onValue: (conversation) => {
-    console.log("New DM:", conversation);
-  }
-});
-
 // Or use for-await loop
 for await (const conversation of stream) {
   // Received a conversation

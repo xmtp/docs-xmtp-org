@@ -100,8 +100,8 @@ export const sidebarConfig = {
       items: [],
     },
     {
-      text: "Test agents",
-      link: "/agents/test-agents",
+      text: "Debug agents",
+      link: "/agents/debug-agents",
       items: [],
     },
     {
