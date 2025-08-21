@@ -68,7 +68,10 @@ When you revoke an agent installation, it can no longer send or receive messages
 
 Your agent can still run from any active installations on other deployment platforms.
 
-You can [revoke specific installations](/agents/core-messaging/manage-inboxes#revoke-an-installation) and even [revoke an installation you can't log into](/agents/core-messaging/manage-inboxes#revoke-an-installation-when-you-dont-have-access-to-the-app-installation).
+To revoke an agent installation, use [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo. For example:
 
-To learn more, see [Manage XMTP inboxes, identities, and installations](/agents/core-messaging/manage-inboxes).
+```bash
 
+yarn revoke <inbox-id> <installations-to-exclude>
+
+```

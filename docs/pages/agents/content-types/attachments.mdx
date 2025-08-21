@@ -4,21 +4,9 @@ import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
 
 # Support attachments in your app built with XMTP
 
-Use the remote attachment, multiple remote attachments, or attachment content type to support attachments in your app.
+Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
 
-- Use the [remote attachment content type](#support-remote-attachments-of-any-size) to send one remote attachment of any size.
-
-- Use the [multiple remote attachments content type](#support-multiple-remote-attachments-of-any-size-in-a-message) to send multiple remote attachments of any size.
-
-- Use the [attachment content type](#support-attachments-smaller-than-1mb) to send attachments smaller than 1MB.
-
-## Support remote attachments of any size
-
-One remote attachment of any size can be sent in a message using the `RemoteAttachmentCodec` and a storage provider.
-
-To send multiple remote attachments of any size in a single message, see [Support multiple remote attachments of any size in a message](#support-multiple-remote-attachments-of-any-size-in-a-message).
-
-### Install the package
+## Install the package
 
 In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
@@ -38,7 +26,7 @@ pnpm add @xmtp/content-type-remote-attachment
 
 :::
 
-### Configure the content type
+## Configure the content type
 
 After importing the package, you can register the codec.
 
@@ -54,7 +42,7 @@ const xmtp = await Client.create(signer, {
 });
 ```
 
-### Send a remote attachment
+## Send a remote attachment
 
 Load the file. This example uses a web browser to load the file:
 
@@ -118,7 +106,7 @@ await conversation.send(remoteAttachment, {
 });
 ```
 
-### Receive, decode, and decrypt a remote attachment
+## Receive, decode, and decrypt a remote attachment
 
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
@@ -153,83 +141,3 @@ img.title = attachment.filename;
 ```
 
 To handle unsupported content types, refer to the [fallback](/inboxes/content-types/fallback) section.
-
-## Support attachments smaller than 1MB
-
-Attachments smaller than 1MB can be sent using the `AttachmentCodec`. The codec will automatically encrypt the attachment and upload it to the XMTP network.
-
-:::warning
-
-Unless a very specific use case we recommend using the [remote attachment content type](/agents/content-types/attachments#support-remote-attachments-of-any-size) instead since many attachments are larger than 1MB in a messaging app.
-:::
-
-### Install the package
-
-In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-remote-attachment
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-remote-attachment
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-remote-attachment
-```
-:::
-
-### Import and register
-
-```jsx [Node]
-import {
-  AttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: "dev",
-  codecs: [new AttachmentCodec()],
-});
-```
-
-### Load local file
-
-```tsx [Node]
-// Read local file and extract its details
-const file = fs.readFileSync("xmtp.png");
-const filename = path.basename("xmtp.png");
-const extname = path.extname("xmtp.png");
-console.log(`Filename: ${filename}`);
-console.log(`File Type: ${extname}`);
-```
-
-### Send encrypted file
-
-```tsx [Node]
-// Convert the file to a Uint8Array
-const blob = new Blob([file], { type: extname });
-let imgArray = new Uint8Array(await blob.arrayBuffer());
-
-const attachment = {
-  filename: filename,
-  mimeType: extname, //image, video or audio
-  data: imgArray,
-};
-
-console.log("Attachment created", attachment);
-await conversation.send(attachment, { contentType: ContentTypeAttachment });
-```
-
-### Receive encrypted file
-
-```jsx [Node]
-if (message.contentType.sameAs(ContentTypeAttachment)) {
-  const blobdecoded = new Blob([message.content.data], {
-    type: message.content.mimeType,
-  });
-  const url = URL.createObjectURL(blobdecoded);
-}
-```

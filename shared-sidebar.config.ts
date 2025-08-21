@@ -92,10 +92,6 @@ export const sidebarConfig = {
           text: "Replies",
           link: "/agents/content-types/replies",
         },
-        {
-          text: "Read receipts",
-          link: "/agents/content-types/read-receipts",
-        },
       ],
     },
     {

@@ -50,12 +50,6 @@ This function listens to the network for new messages within all active group ch
 
 Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
-By default, `streamAll` streams only conversations with a [consent state](/inboxes/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
-
-We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
-
-To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
-
 :::warning[Important]
 
 The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
@@ -63,9 +57,8 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 :::
 
 ```js [Node]
-// stream all messages from conversations with a consent state of allowed
+// stream all messages from conversations
 const stream = await client.conversations.streamAllMessages({
-  consentStates: [ConsentState.Allowed],
   onValue: (message) => {
     // Received a message
     console.log("New message:", message);
@@ -81,7 +74,6 @@ const stream = await client.conversations.streamAllMessages({
  
 // stream only group messages
 const groupMessageStream = await client.conversations.streamAllGroupMessages({
-  consentStates: [ConsentState.Allowed],
   onValue: (message) => {
     console.log("New group message:", message);
   }
@@ -89,7 +81,6 @@ const groupMessageStream = await client.conversations.streamAllGroupMessages({
  
 // stream only dm messages
 const dmMessageStream = await client.conversations.streamAllDmMessages({
-  consentStates: [ConsentState.Allowed],
   onValue: (message) => {
     console.log("New DM message:", message);
   }
@@ -120,7 +111,6 @@ const stream = await client.conversations.streamAllMessages({
 
 // use stream options with retry configuration
 const stream = await client.conversations.streamAllMessages({
-  consentStates: [ConsentState.Allowed],
   retryAttempts: 10,
   retryDelay: 20000, // 20 seconds
   onValue: (message) => {

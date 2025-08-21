@@ -48,7 +48,7 @@ This encryption key is not stored or persisted by the XMTP SDK, so it's your res
 
 If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
 
-Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/inboxes/list-stream-sync/history-sync).
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages**.
 
 To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
 
@@ -128,11 +128,6 @@ type ClientOptions = {
    */
   apiUrl?: string;
   /**
-   * historySyncUrl can be used to override the `env` flag and connect to a
-   * specific endpoint for syncing history
-   */
-  historySyncUrl?: string | null;
-  /**
    * Path to the local DB
    *
    * There are 3 value types that can be used to specify the database path:
@@ -166,14 +161,6 @@ type ClientOptions = {
    * Logging level
    */
   loggingLevel?: LogLevel;
-  /**
-   * Disable automatic registration when creating a client
-   */
-  disableAutoRegister?: boolean;
-  /**
-   * Disable device sync
-   */
-  disableDeviceSync?: boolean;
 };
 ```
 
@@ -190,26 +177,6 @@ When you create a client, it connects to the XMTP `dev` network by default. Set 
 The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
 
 You can use a `local` network environment to have a client communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
-
-## Build an existing client
-
-Build, or resume, an existing client (created using [`Client.create()`](#create-a-client)) that's logged in and has an existing local database.
-
-For React Native, Android, and iOS SDKs, when building a client with an existing `inboxId`, the client automatically operates in offline mode since no network request is needed to check the identity ledger. In offline mode, the client:
-
-- Skips all network requests (preference syncing between installations, validating inbox, etc.)
-- Works entirely from the local database
-- Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
-
-```tsx [Node]
-import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
-
-const identifier: Identifier = {
-  identifier: "0x1234567890abcdef1234567890abcdef12345678",
-  identifierKind: IdentifierKind.Ethereum,
-};
-const client = await Client.build(identifier, options);
-```
 
 ## Log out a client
 
