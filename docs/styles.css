@@ -886,3 +886,32 @@ li ol ~ p {
     list-style: none !important;
   }
 }
+
+/* Fix padding for Vocs footer container with edit link and last updated */
+.vocs_Footer_container {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Remove specific padding from last updated since container now has it */
+.vocs_Footer_lastUpdated {
+  padding-left: 0 !important;
+}
+
+/* Add padding for footer navigation items */
+.vocs_Footer_navigationItem_left {
+  padding-left: 1rem !important;
+}
+
+.vocs_Footer_navigationItem_right {
+  padding-right: 1rem !important;
+}
+
+/* Fix text alignment for footer navigation text */
+.vocs_Footer_navigationItem_left .vocs_Footer_navigationTextInner {
+  text-align: left !important;
+}
+
+.vocs_Footer_navigationItem_right .vocs_Footer_navigationTextInner {
+  text-align: right !important;
+}

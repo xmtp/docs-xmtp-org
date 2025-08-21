@@ -44,4 +44,8 @@ export default defineConfig({
     },
   ],
   sidebar: sidebarConfig,
+  editLink: {
+    pattern: "https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path",
+    text: "Edit this page on GitHub"
+  },
 });
