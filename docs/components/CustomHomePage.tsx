@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="custom-homepage">{children}</div>
