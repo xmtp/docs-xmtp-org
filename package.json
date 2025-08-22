@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
-    "@xmtp/react-sdk": "^8.0.1",
     "mermaid": "^11.9.0",
     "react": "latest",
     "react-dom": "latest",

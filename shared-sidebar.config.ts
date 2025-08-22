@@ -47,6 +47,10 @@ export const sidebarConfig = {
           link: "/agents/core-messaging/create-conversations",
         },
         {
+          text: "Manage agent installations",
+          link: "/agents/core-messaging/agent-installations",
+        },
+        {
           text: "Manage group permissions",
           link: "/agents/core-messaging/group-permissions",
         },
@@ -55,11 +59,7 @@ export const sidebarConfig = {
           link: "/agents/core-messaging/group-metadata",
         },
         {
-          text: "Manage inboxes",
-          link: "/agents/core-messaging/manage-inboxes",
-        },
-        {
-          text: "Rate limits",
+          text: "Observe rate limits",
           link: "/agents/core-messaging/rate-limits",
         },
       ],
@@ -93,11 +93,6 @@ export const sidebarConfig = {
           link: "/agents/content-types/replies",
         },
       ],
-    },
-    {
-      text: "Manage agent installations",
-      link: "/agents/agent-installations",
-      items: [],
     },
     {
       text: "Debug agents",

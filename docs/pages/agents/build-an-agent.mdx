@@ -63,7 +63,7 @@ Each user has a unique `inboxId` used to retrieve their associated addresses (id
 
 :::tip
 
-An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage XMTP inboxes and installations](/agents/core-messaging/manage-inboxes).
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
 
 :::
 
@@ -73,8 +73,6 @@ const inboxState = await client.preferences.inboxStateFromInboxIds([
 ]);
 const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 ```
-
-To learn more, see [View the inbox state](/agents/core-messaging/manage-inboxes#view-the-inbox-state).
 
 ### Support onchain transactions and transaction references
 
@@ -104,7 +102,7 @@ To learn more, see [Follow agent security best practices](/agents/agent-security
 
 ## Manage agent installations
 
-To learn more, see [Manage agent installations](/agents/agent-installations).
+To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
 
 ## Debug an agent
 
