@@ -142,19 +142,19 @@ export const sidebarConfig = {
       link: "/protocol/security",
     },
     {
-      text: "Encryption ↗",
+      text: "Encryption",
       link: "https://xmtp.org/docs/concepts/encryption",
     },
     {
-      text: "Identity ↗",
+      text: "Identity",
       link: "https://xmtp.org/docs/concepts/identity",
     },
     {
-      text: "Consent ↗",
+      text: "Consent",
       link: "https://xmtp.org/docs/concepts/consent",
     },
     {
-      text: "Decentralization ↗",
+      text: "Decentralization",
       link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
     },
     {
@@ -172,7 +172,7 @@ export const sidebarConfig = {
           link: "/inboxes/intro/intro",
         },
         {
-          text: "Upcoming releases ↗",
+          text: "Upcoming releases",
           link: "https://ephemerahq.notion.site/upcoming-xmtp-releases",
         },
         {
@@ -193,6 +193,10 @@ export const sidebarConfig = {
       text: "Get started",
       collapsed: false,
       items: [
+        {
+          text: "Get started",
+          link: "/inboxes/sdks/get-started",
+        },
         {
           text: "Browser SDK",
           link: "/inboxes/sdks/browser",

@@ -1,8 +1,48 @@
-import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
-
-<AutoBreadcrumb />
+# Get started building with XMTP
 
 ## 🛠️ Phase 0: Explore XMTP developer tools
+
+- Pick your SDK:
+
+  <style>
+   {`
+      /* Inline styles instead of styles.css bc vocs 
+      search bug doesn't allow imports */
+      .sdk-buttons {
+         display: flex;
+         gap: 20px;
+         flex-wrap: wrap;
+         margin: 20px 0;
+      }
+
+      .sdk-button {
+         padding: 8px 16px;
+         background-color: #5653C6;
+         border-radius: 5px;
+         text-decoration: none;
+         color: #ffffff;
+         font-weight: 400;
+         transition: all 0.2s;
+      }
+
+      .sdk-button:hover {
+         background-color: #7974FF;
+      }
+   `}
+  </style>
+
+  <div className="sdk-buttons">
+    <a href="/inboxes/sdks/browser" 
+  className="sdk-button">Browser</a>
+    <a href="/inboxes/sdks/node" 
+  className="sdk-button">Node</a>
+    <a href="/inboxes/sdks/react-native" 
+  className="sdk-button">React Native</a>
+    <a href="/inboxes/sdks/android" 
+  className="sdk-button">Android</a>
+    <a href="/inboxes/sdks/ios" 
+  className="sdk-button">iOS</a>
+  </div>
 
 - [Use llms-full.txt](/inboxes/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 

@@ -1,9 +1,3 @@
-import Zoom from 'react-medium-image-zoom'
-import 'react-medium-image-zoom/dist/styles.css'
-import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
-
-<AutoBreadcrumb />
-
 # Support group chat invite links
 
 This document provides suggested paths you might take to provide XMTP group chat invite links in your app. These are just proposals and the actual implementation direction and details are specific to your app and your goals.
@@ -25,27 +19,21 @@ These diagrams help illustrate the sequence of interactions between users and pa
 
 #### Option 1: Automatic join via silent push notification to the link creator
 
-<Zoom>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png" alt="Sequence diagram for Automatic join via silent push notification to the link creator" />
-</Zoom>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png" alt="Sequence diagram for Automatic join via silent push notification to the link creator" />
 
 #### Option 2: Automatic join via silent push notification to all group members
 
-<Zoom>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png" alt="Sequence diagram for Automatic join via silent push notification to all group members" />
-</Zoom>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png" alt="Sequence diagram for Automatic join via silent push notification to all group members" />
 
 #### Option 3: Manual join via push notification to the link creator
 
-<Zoom>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png" alt="Sequence diagram for Manual join via push notification to the link creator" />
-</Zoom>
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png" alt="Sequence diagram for Manual join via push notification to the link creator" />
 
 ## Create a group invite link
 
 You can provide a UI that enables a group member with permission to add members to create an invite link.
 
-Create the group invite by making a `POST` to a `/groupInvite` endpoint with any metadata your app wants to show on an invite landing page that will be displayed when an invitee clicks the invite link.
+Create the group invite by making a `POST` to a `/groupInvite` endpoint with any metadata your app wants to show on an invite landing page that will be displayed when an invitee clicks the invite link.
 
 ### `POST /groupInvite`
 
@@ -75,9 +63,9 @@ Save the `linkUrl` to the client’s local database (alongside the XMTP `group_i
 
 ## Generate an invite landing page
 
-When a user clicks the invite link, the link can display a group invite landing page at `app.xyz`, for example.
+When a user clicks the invite link, the link can display a group invite landing page at `app.xyz`, for example.
 
-To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint. 
+To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint. 
 
 For example, the invite landing page can display the group name, the invite link creator's profile, any other group metadata the app wants to show, and a Join button.
 
@@ -276,7 +264,7 @@ If the invite link creator approves the request, in the background, you can call
 
 ### `/groups/joinFromInvite`
 
-You can poll a `/groups/joinFromInvite` endpoint to check the invite status and know when the invite link creator has marked it as approved or rejected.
+You can poll a `/groups/joinFromInvite` endpoint to check the invite status and know when the invite link creator has marked it as approved or rejected.
 
 ### `GET /groupJoinRequest/:id`
 

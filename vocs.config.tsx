@@ -14,7 +14,6 @@ export default defineConfig({
           defer
         />
         <script src="/popup.js" async />
-        <script src="/mobile-nav.js" defer />
       </>
     );
   },

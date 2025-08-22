@@ -1,9 +1,3 @@
-import 'react-medium-image-zoom/dist/styles.css'
-import Mermaid from '../../components/Mermaid'
-import AutoBreadcrumb from '../../components/AutoBreadcrumb'
-
-<AutoBreadcrumb />
-
 # Cursors with XMTP
 
 This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
@@ -49,25 +43,6 @@ Each `sync()` function corresponds to a different type of cursor:
 
 For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
 
-<Mermaid
-  id="cursors"
-  chart={`
-sequenceDiagram
-  participant Client as Client <br> (Stores cursor)
-  participant Network as Network <br> (Stores group topic)
-
-  Note over Client: No cursor for topic yet
-  Client ->> Network: Initial conversation.sync()
-  Network ->> Client: Returns all messages from topic <br> (Msg1, Msg2, Msg3)
-  Note over Client: Stores new cursor for topic
-  Client ->> Client: Cursor points after Msg3
-  Note over Network: New messages arrive on group topic
-  Network ->> Client: streamAllMessages() <br> (Msg4, Msg5, Msg6)
-  Note over Client: Cursor unaffected by stream
-  Client ->> Network: Subsequent conversation.sync() <br> (Sends stored cursor from after Msg3)
-  Network ->> Client: Returns messages that occurred after cursor <br> (Msg4, Msg5, Msg6)
-  Note over Client: Advances cursor for topic
-  Client ->> Client: Cursor points after Msg6
-`} />
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
 
 By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.

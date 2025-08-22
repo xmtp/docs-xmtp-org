@@ -1,8 +1,3 @@
-import InboxGetStarted from '../sdks/inbox-gs-snippet.mdx';
-import AutoBreadcrumb from '../../../components/AutoBreadcrumb'
-
-<AutoBreadcrumb />
-
 # Get started with the XMTP iOS SDK
 
 Use the XMTP Swift SDK to build secure, private, and decentralized messaging into your iOS app.
@@ -63,5 +58,3 @@ for await message in try await client.conversations.streamAllMessages(type: /* O
 // and messages from allowed conversations 
 try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
-
-<InboxGetStarted /> 
