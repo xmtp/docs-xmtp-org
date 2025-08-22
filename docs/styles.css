@@ -147,21 +147,21 @@ html body .custom-homepage-sdk-grid {
 }
 
 .custom-homepage-cta-button--primary {
-  background: linear-gradient(135deg, #5E80F6 0%, #7B78FF 100%);
+  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
   color: white;
-  box-shadow: 0 8px 32px rgba(86, 83, 198, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .custom-homepage-cta-button--secondary {
-  background: rgba(0, 0, 0, 0.08);
-  color: #5E80F6;
-  box-shadow: 0 8px 32px rgba(86, 83, 198, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: rgba(224, 231, 255, 0.8);
+  color: #4F46E5;
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark mode button adjustments */
 .dark .custom-homepage-cta-button--secondary {
-  background: rgba(255, 255, 255, 0.12);
-  color: #9B98FF;
+  background: rgba(224, 231, 255, 0.15);
+  color: #A5B4FC;
 }
 
 .custom-homepage-cta-button:hover {
@@ -169,18 +169,18 @@ html body .custom-homepage-sdk-grid {
 }
 
 .custom-homepage-cta-button--primary:hover {
-  box-shadow: 0 12px 40px rgba(86, 83, 198, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(135deg, #6B68D9 0%, #8E8BFF 100%);
+  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #4338CA 0%, #5B21B6 100%);
 }
 
 .custom-homepage-cta-button--secondary:hover {
-  background: rgba(0, 0, 0, 0.12);
-  box-shadow: 0 12px 40px rgba(86, 83, 198, 0.2), 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(199, 210, 254, 0.9);
+  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.2), 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dark .custom-homepage-cta-button--secondary:hover {
-  background: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 12px 40px rgba(155, 152, 255, 0.3), 0 2px 8px rgba(255, 255, 255, 0.1);
+  background: rgba(199, 210, 254, 0.2);
+  box-shadow: 0 12px 40px rgba(165, 180, 252, 0.3), 0 2px 8px rgba(255, 255, 255, 0.1);
 }
 
 .custom-homepage {
@@ -498,8 +498,8 @@ li ol ~ p {
 
 .custom-homepage-sdk-tile:hover {
   transform: translateY(-1px);
-  box-shadow: 0 20px 25px -5px rgba(86, 83, 198, 0.1), 0 10px 10px -5px rgba(86, 83, 198, 0.04);
-  border-color: #5E80F6;
+  box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1), 0 10px 10px -5px rgba(79, 70, 229, 0.04);
+  border-color: #4F46E5;
 }
 
 .custom-homepage-sdk-icon {
@@ -514,7 +514,7 @@ li ol ~ p {
   transform: scale(1.1);
 }
 
-/* Add purple accent bar to SDK tiles */
+/* Add indigo accent bar to SDK tiles */
 .custom-homepage-sdk-tile::before {
   content: '';
   position: absolute;
@@ -522,7 +522,7 @@ li ol ~ p {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #5E80F6, #7B78FF);
+  background: linear-gradient(90deg, #4F46E5, #6366F1);
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 12px 12px 0 0;
@@ -560,8 +560,8 @@ li ol ~ p {
 .dark .custom-homepage-sdk-tile:hover {
   transform: translateY(-4px);
   background-color: rgba(255, 255, 255, 0.03);
-  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.1);
-  border-color: var(--vocs-color-primary);
+  box-shadow: 0 8px 16px rgba(79, 70, 229, 0.2);
+  border-color: #6366F1;
 }
 
 .custom-homepage-section-title {
@@ -609,13 +609,59 @@ li ol ~ p {
 .vocs_NavigationMenu_link {
   font-size: 1rem !important;
   font-weight: 500 !important;
-  color: #5E80F6 !important;
+  color: #4F46E5 !important;
+  transition: color 0.2s ease !important;
+}
+
+.vocs_NavigationMenu_link:hover {
+  color: #4338CA !important;
 }
 
 /* Dark mode navigation adjustments */
 .dark .vocs_NavigationMenu_link {
-  color: #9B98FF !important;
+  color: #A5B4FC !important;
 }
+
+.dark .vocs_NavigationMenu_link:hover {
+  color: #C7D2FE !important;
+}
+
+/* Update content links to use indigo color scheme (excluding sidebar and homepage elements) */
+.vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile),
+.vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile) {
+  color: #4F46E5 !important;
+  transition: color 0.2s ease !important;
+}
+
+.vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover,
+.vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover {
+  color: #4338CA !important;
+}
+
+/* Dark mode content links */
+.dark .vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile),
+.dark .vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile) {
+  color: #A5B4FC !important;
+}
+
+.dark .vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover,
+.dark .vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover {
+  color: #C7D2FE !important;
+}
+
+/* Active/current page link in sidebar uses indigo color */
+.vocs_Sidebar a[data-active="true"],
+.vocs_Sidebar .vocs_Link[data-active="true"] {
+  color: #4F46E5 !important;
+  font-weight: 600 !important;
+}
+
+.dark .vocs_Sidebar a[data-active="true"],
+.dark .vocs_Sidebar .vocs_Link[data-active="true"] {
+  color: #A5B4FC !important;
+  font-weight: 600 !important;
+}
+
 
 /* Center the footer properly */
 .vocs_Footer {
@@ -864,7 +910,7 @@ li ol ~ p {
   .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
   .vocs_MobileTopNav_topNavPopover a:hover,
   .vocs_MobileTopNav_sidebarPopover a:hover {
-    color: var(--vocs-color-text-accent, #5E80F6) !important;
+    color: var(--vocs-color-text-accent, #4338CA) !important;
     background-color: transparent !important;
   }
   
@@ -914,4 +960,91 @@ li ol ~ p {
 
 .vocs_Footer_navigationItem_right .vocs_Footer_navigationTextInner {
   text-align: right !important;
+}
+
+/* ====== SIDEBAR SECTION HEADERS ====== */
+
+/* Add prominent section headers at the top of the navigation area based on current page */
+
+/* Agents section - only when on agents pages */
+body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before {
+  content: "Build agents";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Inboxes section - only when on inboxes pages */
+body:has([data-active="true"][href*="/inboxes/"]) .vocs_Sidebar_navigation::before {
+  content: "Build inboxes";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Protocol section - only when on protocol pages */
+body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before {
+  content: "Protocol";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Network section - only when on network pages */
+body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
+  content: "Network";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Dark mode border colors for sidebar section headers */
+.dark body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/inboxes/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
+  border-bottom-color: #A5B4FC;
+}
+
+/* Footer links use indigo color scheme */
+.vocs_Footer a,
+.vocs_Footer .vocs_Link {
+  color: #4F46E5 !important;
+  transition: color 0.2s ease !important;
+}
+
+.vocs_Footer a:hover,
+.vocs_Footer .vocs_Link:hover {
+  color: #4338CA !important;
+}
+
+/* Dark mode footer links */
+.dark .vocs_Footer a,
+.dark .vocs_Footer .vocs_Link {
+  color: #A5B4FC !important;
+}
+
+.dark .vocs_Footer a:hover,
+.dark .vocs_Footer .vocs_Link:hover {
+  color: #C7D2FE !important;
 }
