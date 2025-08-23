@@ -27,21 +27,25 @@ small + ul.TabbedList {
 
 /* Custom Homepage text styles */
 
-/* Override Vocs layout containers for landing page */
-html body[data-layout="landing"],
-html body [data-layout="landing"],
-html body [data-layout="landing"] > *,
-html body [data-layout="landing"] .vocs_Layout,
-html body [data-layout="landing"] .vocs_Layout > *,
-html body [data-layout="landing"] .vocs_Content,
-html body [data-layout="landing"] article,
-html body [data-layout="landing"] main {
+/* Override Vocs layout containers for landing page - exclude top nav */
+html body[data-layout="landing"] .vocs_Content,
+html body[data-layout="landing"] article,
+html body[data-layout="landing"] main {
   max-width: none !important;
   width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+}
+
+/* Keep top nav positioning consistent with interior pages */
+html body[data-layout="landing"] .vocs_TopNav,
+html body[data-layout="landing"] .vocs_DesktopTopNav,
+html body[data-layout="landing"] .vocs_MobileTopNav {
+  max-width: var(--vocs-content_width) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 /* Breadcrumb styles */
@@ -211,11 +215,12 @@ html body .custom-homepage-sdk-grid {
 /* XMTP Logo styling in headline */
 .custom-homepage-headline .xmtp-logo-light-mode,
 .custom-homepage-headline .xmtp-logo-dark-mode {
-  height: 4rem;
+  height: 4.5rem;
   width: auto;
   display: inline-block;
   vertical-align: bottom;
   margin-left: 0.5rem;
+  margin-right: 0.25rem;
 }
 
 /* Light mode - show dark purple logo */

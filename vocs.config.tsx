@@ -68,7 +68,7 @@ export default defineConfig({
     light: "/logomark-light-purple.png",
     dark: "/logomark-dark-purple.png",
   },
-  iconUrl: "/x-mark-blue.png",
+  iconUrl: "/x-new-blue.png",
   topNav: [
     { text: "Build agents", link: '/agents/get-started/build-an-agent', match: '/agents' },
     { text: "Build inboxes", link: '/inboxes/intro/get-started', match: '/inboxes' },
