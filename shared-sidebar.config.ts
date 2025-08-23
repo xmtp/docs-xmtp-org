@@ -4,23 +4,22 @@
 export const sidebarConfig = {
   '/agents/': [
     {
-      text: "Intro to XMTP",
+      text: "Get started",
       collapsed: false,
       items: [
         {
+          text: "Tutorial: Build an agent 🤖",
+          link: "/agents/get-started/build-an-agent",
+        },
+        {
           text: "What is XMTP?",
-          link: "/agents/intro/intro",
+          link: "/agents/get-started/intro",
         },
         {
           text: "FAQ",
-          link: "/agents/intro/faq",
+          link: "/agents/get-started/faq",
         },
       ],
-    },
-    {
-      text: "Tutorial: Build an agent 🤖",
-      link: "/agents/build-an-agent",
-      items: [],
     },
     {
       text: "Build core messaging",
@@ -168,12 +167,12 @@ export const sidebarConfig = {
       collapsed: false,
       items: [
         {
-          text: "What is XMTP?",
-          link: "/inboxes/intro/intro",
+          text: "Get started",
+          link: "/inboxes/intro/get-started",
         },
         {
-          text: "Upcoming releases",
-          link: "https://ephemerahq.notion.site/upcoming-xmtp-releases",
+          text: "Why XMTP?",
+          link: "/inboxes/intro/why-xmtp",
         },
         {
           text: "FAQ",
@@ -187,16 +186,16 @@ export const sidebarConfig = {
           text: "Dev support",
           link: "/inboxes/intro/dev-support",
         },
+        {
+          text: "Roadmap",
+          link: "https://github.com/orgs/xmtp/projects/34/views/1",
+        },
       ],
     },
     {
-      text: "Get started",
+      text: "SDKs",
       collapsed: false,
       items: [
-        {
-          text: "Get started",
-          link: "/inboxes/sdks/get-started",
-        },
         {
           text: "Browser SDK",
           link: "/inboxes/sdks/browser",

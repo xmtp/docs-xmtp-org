@@ -298,7 +298,7 @@ To implement push notifications in your app, you must run a push notification se
 
 - **Continuous monitoring**: The XMTP network operates on a decentralized protocol, where messages are exchanged directly between clients. However, for push notifications, your app needs a dedicated server to continuously listen for new messages or events on the XMTP network, even when the user’s device is offline or the app is not running.
 - **Message processing**: Upon detecting new messages or events, the server processes them to determine their relevance and formats them appropriately for push notifications. This includes extracting necessary information, such as the sender’s identity and message content, to craft meaningful notifications.
-- **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](#understand-apple-entitlements-for-ios-apps) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user’s device.
+- **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](/inboxes/push-notifs/understand-push-notifs#best-practices-for-apple-push-notifications) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user’s device.
 
 To learn more about running a push notification server, see [Understand push notifications with XMTP](/inboxes/push-notifs/understand-push-notifs).
 

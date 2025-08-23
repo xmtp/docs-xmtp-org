@@ -12,7 +12,7 @@ The first time someone uses your app with an identity they've never used with an
 
 The installation concepts described in this document apply to both inbox apps and agents. However, the context differs. **Inbox apps** typically have installations across different devices and apps (phone, laptop, different XMTP apps), while **agents** typically have installations across different deployment environments (local development, Railway, production servers).
 
-For more agent-specific guidance, see [Manage agent installations](/agents/build-an-agent#manage-agent-installations).
+For more agent-specific guidance, see [Manage agent installations](/agents/core-messaging/agent-installations).
 :::
 
 The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
@@ -23,7 +23,7 @@ The client creates an inbox ID and installation ID associated with the identity.
 
 When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
 
-An inbox ID can have up to 10 app installations before it needs to [revoke an installation](#revoke-an-installation).
+An inbox ID can have up to 10 app installations before it needs to [revoke installations](#revoke-installations).
 
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
