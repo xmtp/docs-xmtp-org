@@ -609,57 +609,6 @@ li ol ~ p {
 .vocs_NavigationMenu_link {
   font-size: 1rem !important;
   font-weight: 500 !important;
-  color: #4F46E5 !important;
-  transition: color 0.2s ease !important;
-}
-
-.vocs_NavigationMenu_link:hover {
-  color: #4338CA !important;
-}
-
-/* Dark mode navigation adjustments */
-.dark .vocs_NavigationMenu_link {
-  color: #A5B4FC !important;
-}
-
-.dark .vocs_NavigationMenu_link:hover {
-  color: #C7D2FE !important;
-}
-
-/* Update content links to use indigo color scheme (excluding sidebar and homepage elements) */
-.vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile),
-.vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile) {
-  color: #4F46E5 !important;
-  transition: color 0.2s ease !important;
-}
-
-.vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover,
-.vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover {
-  color: #4338CA !important;
-}
-
-/* Dark mode content links */
-.dark .vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile),
-.dark .vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile) {
-  color: #A5B4FC !important;
-}
-
-.dark .vocs_Content a:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover,
-.dark .vocs_Content .vocs_Link:not(.custom-homepage-cta-button):not(.custom-homepage-sdk-tile):hover {
-  color: #C7D2FE !important;
-}
-
-/* Active/current page link in sidebar uses indigo color */
-.vocs_Sidebar a[data-active="true"],
-.vocs_Sidebar .vocs_Link[data-active="true"] {
-  color: #4F46E5 !important;
-  font-weight: 600 !important;
-}
-
-.dark .vocs_Sidebar a[data-active="true"],
-.dark .vocs_Sidebar .vocs_Link[data-active="true"] {
-  color: #A5B4FC !important;
-  font-weight: 600 !important;
 }
 
 
@@ -1026,25 +975,3 @@ body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::befo
   border-bottom-color: #A5B4FC;
 }
 
-/* Footer links use indigo color scheme */
-.vocs_Footer a,
-.vocs_Footer .vocs_Link {
-  color: #4F46E5 !important;
-  transition: color 0.2s ease !important;
-}
-
-.vocs_Footer a:hover,
-.vocs_Footer .vocs_Link:hover {
-  color: #4338CA !important;
-}
-
-/* Dark mode footer links */
-.dark .vocs_Footer a,
-.dark .vocs_Footer .vocs_Link {
-  color: #A5B4FC !important;
-}
-
-.dark .vocs_Footer a:hover,
-.dark .vocs_Footer .vocs_Link:hover {
-  color: #C7D2FE !important;
-}

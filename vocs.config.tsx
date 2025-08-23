@@ -4,6 +4,21 @@ import { sidebarConfig } from "./shared-sidebar.config";
 // console.log('Loading Vocs config...')
 
 export default defineConfig({
+  theme: {
+    accentColor: {
+      // Primary indigo button colors
+      backgroundAccent: { light: '#4F46E5', dark: '#4F46E5' },
+      backgroundAccentHover: { light: '#4338CA', dark: '#4338CA' },
+      backgroundAccentText: { light: 'white', dark: 'white' },
+      
+      // Text accent colors for links and highlights  
+      textAccent: { light: '#4F46E5', dark: '#A5B4FC' },
+      textAccentHover: { light: '#4338CA', dark: '#C7D2FE' },
+      
+      // Border accent colors
+      borderAccent: { light: '#4F46E5', dark: '#A5B4FC' },
+    }
+  },
   head: () => {
     // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
