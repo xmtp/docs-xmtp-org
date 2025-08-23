@@ -19,6 +19,35 @@ export default defineConfig({
       borderAccent: { light: '#4F46E5', dark: '#A5B4FC' },
     }
   },
+  search: {
+    // Boost documents based on their section to help differentiate similar page names
+    boostDocument(documentId) {
+      // Boost agents section pages slightly
+      if (documentId.includes('/agents/')) {
+        return 1.2;
+      }
+      // Boost inboxes section pages slightly  
+      if (documentId.includes('/inboxes/')) {
+        return 1.1;
+      }
+      // Default boost for other sections
+      return 1;
+    },
+    // Filter and process search results to add section context
+    filter(result) {
+      // Add section info to the result for display purposes
+      if (result.id.includes('/agents/')) {
+        result.section = 'Build agents';
+      } else if (result.id.includes('/inboxes/')) {
+        result.section = 'Build inboxes';  
+      } else if (result.id.includes('/protocol/')) {
+        result.section = 'Protocol';
+      } else if (result.id.includes('/network/')) {
+        result.section = 'Network';
+      }
+      return true; // Include all results
+    }
+  },
   head: () => {
     // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (

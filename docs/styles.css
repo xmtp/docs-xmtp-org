@@ -975,3 +975,37 @@ body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::befo
   border-bottom-color: #A5B4FC;
 }
 
+/* Hide social links on homepage (they appear awkwardly above footer) */
+body:has(.custom-homepage) .vocs_Socials {
+  display: none !important;
+}
+
+/* Add section context to search results */
+.vocs_SearchDialog_result a[href*="/agents/"] .vocs_SearchDialog_titles::before {
+  content: "Build agents • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
+.vocs_SearchDialog_result a[href*="/inboxes/"] .vocs_SearchDialog_titles::before {
+  content: "Build inboxes • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
+.vocs_SearchDialog_result a[href*="/protocol/"] .vocs_SearchDialog_titles::before {
+  content: "Protocol • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
+.vocs_SearchDialog_result a[href*="/network/"] .vocs_SearchDialog_titles::before {
+  content: "Network • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
