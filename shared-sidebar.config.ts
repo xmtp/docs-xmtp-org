@@ -261,7 +261,7 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "List, stream, and sync",
+      text: "List, stream, sync, & back up",
       collapsed: false,
       items: [
         {
@@ -279,6 +279,10 @@ export const sidebarConfig = {
         {
           text: "Sync preferences",
           link: "/inboxes/list-stream-sync/sync-preferences",
+        },
+        {
+          text: "Support backups",
+          link: "/inboxes/list-stream-sync/archive-backups",
         },
         {
           text: "History sync",
