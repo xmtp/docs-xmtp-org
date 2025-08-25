@@ -1,0 +1,73 @@
+# Support replies with your agent built with XMTP
+
+Use the reply content type to support quote replies with your agent. A reply is a method to directly respond to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
+
+## Use a local database for performance
+
+Use a local database to store replies. This will enable your app to performantly display a reply with its [referenced message](#send-a-reply) when rendering message lists.
+
+### Install the package
+
+In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-reply
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reply
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reply
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Node]
+import { ReplyCodec } from "@xmtp/content-type-reply";
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new ReplyCodec()],
+});
+```
+
+## Send a reply
+
+Once you've created a reply, you can send it. Replies are represented as objects with two keys:
+
+- `reference`: ID of the message being replied to
+
+- `content`: String representation of the reply
+
+```ts [Node]
+import { ContentTypeText } from "@xmtp/content-type-text";
+import { ContentTypeReply } from "@xmtp/content-type-reply";
+import type { Reply } from "@xmtp/content-type-reply";
+
+const reply: Reply = {
+  reference: someMessageID,
+  contentType: ContentTypeText,
+  content: "I concur",
+};
+
+await conversation.send(reply, {
+  contentType: ContentTypeReply,
+});
+```
+
+## Receive the content type
+
+```ts [Node]
+if (message.contentType.sameAs(ContentTypeReply)) {
+  // We've got a reply.
+  const reply: Reply = message.content;
+}
+```

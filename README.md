@@ -28,17 +28,17 @@ The **Suggest changes to this page** link allows you to submit a PR to an **exis
 
 **To use the Suggest changes to this page link to submit a pull request:**
 
-1. Click the **Suggest changes to this page** link at the bottom of the page you want to fix. The link takes you to the page’s markdown file on GitHub.
+1. Click the **Suggest changes to this page** link at the bottom of the page you want to fix. The link takes you to the page's markdown file on GitHub.
 
-2. The GitHub UI might tell you that you need to fork the repository to propose changes. Forking the repo means that you’re making an editable copy of the `docs-xmtp-org` repo within an org or account you control. Click **Fork this repository** to continue.
+2. The GitHub UI might tell you that you need to fork the repository to propose changes. Forking the repo means that you're making an editable copy of the `docs-xmtp-org` repo within an org or account you control. Click **Fork this repository** to continue.
 
 3. Edit the markdown file to make your change.
 
-4. Once you’re happy with your change, scroll to the bottom of the page to the **Propose changes** section. Add a short description explaining the reason for your change, including a link to the GitHub Issue your PR addresses. GitHub adds this information to the file’s changelog, which can help other contributors understand the purpose of your update. Click **Propose changes**.
+4. Once you're happy with your change, scroll to the bottom of the page to the **Propose changes** section. Add a short description explaining the reason for your change, including a link to the GitHub Issue your PR addresses. GitHub adds this information to the file's changelog, which can help other contributors understand the purpose of your update. Click **Propose changes**.
 
 5. A confirmation page appears. Use it to review your proposed changes. Click **Create pull request**. You have one more chance to review your change on the next page before you submit it to the `docs.xmtp.org` team for review.
 
-6. Now, to finally create your PR! You’ll see the change description you entered earlier. You can add some additional information if you want to. Once you’re happy with your PR, select **Create pull request**.
+6. Now, to finally create your PR! You'll see the change description you entered earlier. You can add some additional information if you want to. Once you're happy with your PR, select **Create pull request**.
 
 7. When you create a PR, the `docs.xmtp.org` team receives a notification to [review it](#what-to-expect).
 

@@ -1,0 +1,57 @@
+# Debug an agent
+
+You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+You can use this code to get your agent's client information, which provides useful values for debugging: 
+
+```tsx [Node]
+const clientsByAddress = client.accountIdentifier?.identifier;
+// Get XMTP SDK version from package.json
+const require = createRequire(import.meta.url);
+const packageJson = require("../package.json") as {
+  dependencies: Record<string, string>;
+};
+const xmtpSdkVersion = packageJson.dependencies["@xmtp/node-sdk"];
+const bindingVersion = (
+  require("../node_modules/@xmtp/node-bindings/package.json") as {
+    version: string;
+  }
+).version;
+
+const inboxId = client.inboxId;
+const installationId = client.installationId;
+const environments = client.options?.env ?? "dev";
+
+const urls = [`http://xmtp.chat/dm/${clientsByAddress}`];
+
+const conversations = await client.conversations.list();
+const inboxState = await client.preferences.inboxState();
+const keyPackageStatuses =
+  await client.getKeyPackageStatusesForInstallationIds([installationId]);
+
+let createdDate = new Date();
+let expiryDate = new Date();
+
+// Extract key package status for the specific installation
+const keyPackageStatus = keyPackageStatuses[installationId];
+if (keyPackageStatus.lifetime) {
+  createdDate = new Date(Number(keyPackageStatus.lifetime.notBefore) * 1000);
+  expiryDate = new Date(Number(keyPackageStatus.lifetime.notAfter) * 1000);
+}
+console.log(`
+  ✓ XMTP Client:
+  • InboxId: ${inboxId}
+  • SDK: ${xmtpSdkVersion}
+  • Bindings: ${bindingVersion}
+  • Version: ${Client.version}
+  • Address: ${clientsByAddress}
+  • Conversations: ${conversations.length}
+  • Installations: ${inboxState.installations.length}
+  • InstallationId: ${installationId}
+  • Key Package created: ${createdDate.toLocaleString()}
+  • Key Package valid until: ${expiryDate.toLocaleString()}
+  • Networks: ${environments}
+  ${urls.map((url) => `• URL: ${url}`).join("\n")}`);
+```

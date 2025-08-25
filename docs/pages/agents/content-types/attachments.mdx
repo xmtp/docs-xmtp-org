@@ -1,0 +1,137 @@
+# Support attachments with your agent built with XMTP
+
+Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
+
+## Install the package
+
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-remote-attachment
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```jsx [Node]
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from "@xmtp/content-type-remote-attachment";
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: "dev",
+  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+});
+```
+
+## Send a remote attachment
+
+Load the file. This example uses a web browser to load the file:
+
+```jsx [Node]
+//image is the uploaded event.target.files[0];
+const data = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    if (reader.result instanceof ArrayBuffer) {
+      resolve(reader.result);
+    } else {
+      reject(new Error("Not an ArrayBuffer"));
+    }
+  };
+  reader.readAsArrayBuffer(image);
+});
+```
+
+Create an attachment object:
+
+```tsx [Node]
+// Local file details
+const attachment = {
+  filename: image?.name,
+  mimeType: image?.type,
+  data: new Uint8Array(data),
+};
+```
+
+Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+
+```tsx [Node]
+const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
+  attachment,
+  new AttachmentCodec()
+);
+```
+
+Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
+
+Now that you have a `url`, you can create a `RemoteAttachment`:
+
+```jsx [Node]
+const remoteAttachment = {
+  url: url,
+  contentDigest: encryptedEncoded.digest,
+  salt: encryptedEncoded.salt,
+  nonce: encryptedEncoded.nonce,
+  secret: encryptedEncoded.secret,
+  scheme: "https://",
+  filename: attachment.filename,
+  contentLength: attachment.data.byteLength,
+};
+```
+
+Now that you have a remote attachment, you can send it:
+
+```jsx [Node]
+await conversation.send(remoteAttachment, {
+  contentType: ContentTypeRemoteAttachment,
+});
+```
+
+## Receive, decode, and decrypt a remote attachment
+
+Now that you can send a remote attachment, you need a way to receive it. For example:
+
+```tsx [Node]
+import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+
+if (message.contentType.sameAs(RemoteAttachmentContentType)) {
+  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+}
+```
+
+You now have the original attachment:
+
+```bash [Bash]
+attachment.filename // => "screenshot.png"
+attachment.mimeType // => "image/png",
+attachment.data // => [the PNG data]
+```
+
+Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+
+```tsx [Node]
+const objectURL = URL.createObjectURL(
+  new Blob([Buffer.from(attachment.data)], {
+    type: attachment.mimeType,
+  })
+);
+
+const img = document.createElement("img");
+img.src = objectURL;
+img.title = attachment.filename;
+```

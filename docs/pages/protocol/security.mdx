@@ -40,7 +40,7 @@ XMTP uses regular key rotation achieved through a commit mechanism with a specif
 
 Validates the identity of the participants in the conversation, preventing impersonation.
 
-XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender’s identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
+XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender's identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
 
 ## Message integrity
 
@@ -68,7 +68,7 @@ User anonymity is achieved through a combination of the following functions:
 
 - XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
 
-- XMTP’s backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
+- XMTP's backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
 
 It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
 
