@@ -19,7 +19,7 @@ This tool helps you identify forked groups in your app, but preventing forks in 
 A conversation has `getDebugInformation`. You can use this to see:
 
 - The MLS epoch of a group chat conversation for a member
-- Local and remote commit logs for expert analysis
+- The local commit log for expert analysis
 - Whether a group chat is forked via `commitLogForkStatus` (no false positives)
 
 The `commitLogForkStatus` field provides definitive fork detection without false positives. To minimize the negative effects of spam, fork detection is active only for groups that a user has actively consented to, which is automatically true for groups/DMs they created or groups/DMs they've sent a message in. To learn more about consent, see [Support user consent](/inboxes/user-consent/support-user-consent).
