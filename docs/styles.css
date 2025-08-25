@@ -27,25 +27,226 @@ small + ul.TabbedList {
 
 /* Custom Homepage text styles */
 
+/* Override Vocs layout containers for landing page - exclude top nav */
+html body[data-layout="landing"] .vocs_Content,
+html body[data-layout="landing"] article,
+html body[data-layout="landing"] main {
+  max-width: none !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Keep top nav positioning consistent with interior pages */
+html body[data-layout="landing"] .vocs_TopNav,
+html body[data-layout="landing"] .vocs_DesktopTopNav,
+html body[data-layout="landing"] .vocs_MobileTopNav {
+  max-width: var(--vocs-content_width) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Breadcrumb styles */
+.breadcrumb-nav {
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--vocs-color-border);
+}
+
+.breadcrumb-list {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--vocs-color-text-2);
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.breadcrumb-link {
+  color: var(--vocs-color-text-2);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  color: var(--vocs-color-text);
+  text-decoration: underline;
+}
+
+.breadcrumb-current {
+  color: var(--vocs-color-text);
+  font-weight: normal;
+}
+
+.breadcrumb-separator {
+  color: var(--vocs-color-text-2);
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* Target any container that might be constraining width */
+html body *:has(.custom-homepage) {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* But keep text content readable */
+html body .custom-homepage-headline,
+html body .custom-homepage-subhead,
+html body .description {
+  max-width: 900px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+html body .custom-homepage-grid {
+  max-width: 1400px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+html body .custom-homepage-sdk-grid {
+  max-width: 1000px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Homepage CTA buttons */
+.custom-homepage-cta-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  width: auto !important;
+}
+
+.custom-homepage-cta-button {
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  max-width: 200px !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-homepage-cta-button--primary {
+  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+  color: white;
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.custom-homepage-cta-button--secondary {
+  background: rgba(224, 231, 255, 0.8);
+  color: #4F46E5;
+  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark mode button adjustments */
+.dark .custom-homepage-cta-button--secondary {
+  background: rgba(224, 231, 255, 0.15);
+  color: #A5B4FC;
+}
+
+.custom-homepage-cta-button:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.custom-homepage-cta-button--primary:hover {
+  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #4338CA 0%, #5B21B6 100%);
+}
+
+.custom-homepage-cta-button--secondary:hover {
+  background: rgba(199, 210, 254, 0.9);
+  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.2), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dark .custom-homepage-cta-button--secondary:hover {
+  background: rgba(199, 210, 254, 0.2);
+  box-shadow: 0 12px 40px rgba(165, 180, 252, 0.3), 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
 .custom-homepage {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 4rem 3rem;
+  text-align: center;
 }
 
 .custom-homepage-headline {
-  margin-bottom: 1rem;
-  text-align: left;
-  max-width: 800px;
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 900px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .custom-homepage-headline-text {
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 4rem;
+  font-weight: 800;
   display: inline-block;
+  color: var(--vocs-color-text);
+  align-items: center;
+}
+
+/* XMTP Logo styling in headline */
+.custom-homepage-headline .xmtp-logo-light-mode,
+.custom-homepage-headline .xmtp-logo-dark-mode {
+  height: 4.5rem;
+  width: auto;
+  display: inline-block;
+  vertical-align: bottom;
+  margin-left: 0.5rem;
+  margin-right: 0.25rem;
+}
+
+/* Light mode - show dark purple logo */
+.custom-homepage-headline .xmtp-logo-light-mode {
+  display: inline-block !important;
+}
+
+.custom-homepage-headline .xmtp-logo-dark-mode {
+  display: none !important;
+}
+
+/* Dark mode - show light purple logo */
+.dark .custom-homepage-headline .xmtp-logo-light-mode {
+  display: none !important;
+}
+
+.dark .custom-homepage-headline .xmtp-logo-dark-mode {
+  display: inline-block !important;
+}
+
+/* Responsive logo sizing */
+@media (max-width: 768px) {
+  .custom-homepage-headline .xmtp-logo-light-mode,
+  .custom-homepage-headline .xmtp-logo-dark-mode {
+    height: 2.2rem;
+  }
 }
 
 .custom-homepage-headline * {
@@ -56,24 +257,36 @@ small + ul.TabbedList {
 
 /* For smaller screens */
 @media (max-width: 768px) {
+  .custom-homepage {
+    padding: 2rem 1.5rem;
+  }
+  
   .custom-homepage-headline-text {
-    font-size: 2rem;
-    line-height: 1.3;
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-homepage {
+    padding: 2rem 1rem;
   }
 }
 
 .custom-homepage-subhead {
-  margin-bottom: 1rem;
-  text-align: left;
-  max-width: 800px;
+  margin-bottom: 3rem;
+  text-align: center;
+  max-width: 700px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .custom-homepage-subhead-text {
-  font-size: 1.25rem;
-  line-height: 1.25;
+  font-size: 1.75rem;
+  line-height: 1.4;
   display: inline-block;
+  color: var(--vocs-color-text-soft);
+  font-weight: 500;
 }
 
 .custom-homepage-subhead * {
@@ -85,7 +298,7 @@ small + ul.TabbedList {
 /* For smaller screens */
 @media (max-width: 768px) {
   .custom-homepage-subhead-text {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 }
 
@@ -93,69 +306,92 @@ small + ul.TabbedList {
 
 .custom-homepage-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin: 3rem auto;
+  max-width: 1400px;
+  width: 100%;
 }
 
+@media (max-width: 1024px) {
+  .custom-homepage-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-homepage-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+}
+
+/* ========== SAVED INTERACTIVE TILE STYLES (COMMENTED OUT) ========== 
 .custom-homepage-tile {
-  position: relative; /* Add this line */
-  background-color: var(--vocs-color-bg-soft);
+  position: relative;
+  background: var(--vocs-color-bg-soft);
   border: 1px solid var(--vocs-color-border);
-  border-radius: 8px;
-  padding: 1.25rem;
+  border-radius: 16px;
+  padding: 2rem;
   text-decoration: none;
   color: var(--vocs-color-text);
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.custom-homepage-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #5E80F6, #7B78FF);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-homepage-tile:hover::before {
+  opacity: 1;
 }
 
 .custom-homepage-tile:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: var(--vocs-color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 20px 25px -5px rgba(86, 83, 198, 0.1), 0 10px 10px -5px rgba(86, 83, 198, 0.04);
+  border-color: #5E80F6;
 }
+========== END SAVED INTERACTIVE TILE STYLES ========== */
 
-.custom-homepage-tile-icon {
-  font-size: 1.5rem;
+/* Non-interactive tile styles */
+.custom-homepage-tile {
+  position: relative;
+  background: var(--vocs-color-bg-soft);
+  border: 1px solid var(--vocs-color-border);
+  border-radius: 16px;
+  padding: 2rem;
+  color: var(--vocs-color-text);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   display: block;
-  margin-bottom: 0.75rem;
-}
-
-:root {
-  --tile-external-icon-color: rgba(76, 76, 76, 0.7); /* Default color for light mode */
-}
-
-.dark {
-  --tile-external-icon-color: rgba(207, 207, 207, 0.7); /* Use the text color in dark mode */
-}
-
-.custom-homepage-tile-external-icon {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  width: 0.75rem;
-  height: 0.75rem;
-  opacity: 0.7;
-  transition: opacity 0.3s ease, filter 0.3s ease;
-  filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
-  display: block; /* Add this line */
-}
-
-.dark .custom-homepage-tile-external-icon {
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
 }
 
 .custom-homepage-tile-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--vocs-color-text);
+  line-height: 1.3;
+  text-align: left;
 }
 
 .custom-homepage-tile-description {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--vocs-color-text-soft);
-  line-height: 1.5; /* Added this line to reduce line height */
-  margin: 0; /* Added to remove any default margins */
+  line-height: 1.6;
+  margin: 0;
+  text-align: left;
 }
 
 /* Dark mode adjustments */
@@ -226,41 +462,79 @@ li ol ~ p {
 .custom-homepage-sdk-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
-  margin-bottom: 0;
-  margin-top: .5rem;
+  gap: 1.5rem;
+  margin: 2rem auto 4rem auto;
+  max-width: 1000px;
+  width: 100%;
 }
+
 @media (max-width: 768px) {
+  .custom-homepage-sdk-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
   .custom-homepage-sdk-grid {
     grid-template-columns: 1fr;
   }
 }
+
 .custom-homepage-sdk-tile {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--vocs-color-bg-soft);
+  background: var(--vocs-color-bg-soft);
   border: 1px solid var(--vocs-color-border);
-  border-radius: 8px;
-  padding: .5rem;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
   text-decoration: none;
   color: var(--vocs-color-text);
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   height: auto;
   text-align: center;
+  min-height: 120px;
+  overflow: hidden;
 }
+
 .custom-homepage-sdk-tile:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-color: var(--vocs-color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1), 0 10px 10px -5px rgba(79, 70, 229, 0.04);
+  border-color: #4F46E5;
 }
+
 .custom-homepage-sdk-icon {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.custom-homepage-sdk-tile:hover .custom-homepage-sdk-icon {
+  transform: scale(1.1);
+}
+
+/* Add indigo accent bar to SDK tiles */
+.custom-homepage-sdk-tile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4F46E5, #6366F1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 12px 12px 0 0;
+}
+
+.custom-homepage-sdk-tile:hover::before {
+  opacity: 1;
 }
 .custom-homepage-sdk-icon.light-mode-icon {
   display: block;
@@ -275,49 +549,59 @@ li ol ~ p {
   display: block;
 }
 .custom-homepage-sdk-name {
-  font-size: 15px;
+  font-size: 0.9rem;
   margin: 0;
   color: var(--vocs-color-text);
+  font-weight: 600;
 }
+
 /* Dark mode adjustments */
 .dark .custom-homepage-sdk-tile {
-  background-color: rgba(255, 255, 255, 0.01);
+  background-color: rgba(255, 255, 255, 0.02);
   border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.05);
 }
+
 .dark .custom-homepage-sdk-tile:hover {
-  transform: translateY(-5px);
-  background-color: rgba(255, 255, 255, 0.01);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.02);
-  border-color: var(--vocs-color-primary);
+  transform: translateY(-4px);
+  background-color: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 8px 16px rgba(79, 70, 229, 0.2);
+  border-color: #6366F1;
 }
 
 .custom-homepage-section-title {
-  text-align: left;
+  text-align: center;
   max-width: 800px;
-  margin: 2rem auto 1rem auto;
+  margin: 4rem auto 2rem auto;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--vocs-color-text);
 }
+
+.custom-homepage-section-title h2 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
 /* For smaller screens */
 @media (max-width: 768px) {
   .custom-homepage-section-title {
-    font-size: 1.1rem;
+    font-size: 2rem;
+    margin: 3rem auto 1.5rem auto;
   }
 }
 
-/* Custom Homepage HR styles */
-.custom-homepage hr {
-  border: 0;
-  border-top: .5px solid #d1d1d1;
-  opacity: 1;
-  margin: 2rem 0;
-}
-.dark .custom-homepage hr {
-  border-top-color: #4d4d4d;
-}
+
 
 .description {
-  font-size: 16px; /* 2px smaller than subhead */
-  /* other styling properties */
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--vocs-color-text-soft);
+  max-width: 600px;
+  margin: 0 auto 3rem auto;
+  text-align: center;
 }
 
 /* styles/global.css or wherever you include global styles */
@@ -325,3 +609,408 @@ li ol ~ p {
   max-width: 100%;
   overflow-x: auto;
 }
+
+/* Increase top navigation font size */
+.vocs_NavigationMenu_link {
+  font-size: 1rem !important;
+  font-weight: 500 !important;
+}
+
+
+/* Center the footer properly */
+.vocs_Footer {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.vocs_Footer > div {
+  max-width: none !important;
+  width: auto !important;
+  text-align: center !important;
+}
+
+/* Mobile navigation: show compact version only */
+@media (max-width: 768px) {
+  /* Hide the full navigation list */
+  .vocs_MobileTopNav_navigation:not(.vocs_MobileTopNav_navigation_compact) {
+    display: none !important;
+  }
+  
+  /* Hide compact navigation initially */
+  .vocs_MobileTopNav_navigation_compact {
+    display: block !important;
+    position: relative;
+  }
+  
+  /* Style the compact nav as a dropdown trigger */
+  .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    background: rgba(86, 83, 198, 0.1) !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+  }
+  
+
+  
+    /* Only inject logo when Vocs doesn't generate the real one */
+  .vocs_MobileTopNav_section:first-child:not(:has(.vocs_MobileTopNav_logo))::before {
+    content: '';
+    background-image: url('/logomark-light-purple.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: left center;
+    width: 100px;
+    height: 28px;
+    display: inline-block;
+    margin-right: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Dark mode logo - only when no real logo */
+  .dark .vocs_MobileTopNav_section:first-child:not(:has(.vocs_MobileTopNav_logo))::before {
+    background-image: url('/logomark-dark-purple.png');
+  }
+
+  /* Make the first section a flexbox to align logo and nav */
+  .vocs_MobileTopNav_section:first-child {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* Homepage mobile navigation with working dropdown */
+  
+  /* Style the real menu trigger consistently on ALL pages */
+  .vocs_MobileTopNav_menuTrigger {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    background: rgba(86, 83, 198, 0.1) !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+  
+  /* Style homepage compact nav button - use presence of custom homepage instead of data-layout */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact {
+    position: relative !important;
+  }
+  
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    background: rgba(86, 83, 198, 0.1) !important;
+    border: 1px solid rgba(86, 83, 198, 0.2) !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    color: var(--vocs-color-text) !important;
+    pointer-events: auto !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  
+  /* Dark mode specific styling for the button */
+  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
+    background: rgba(155, 152, 255, 0.15) !important;
+    border: 1px solid rgba(155, 152, 255, 0.3) !important;
+    color: #e5e5e5 !important;
+  }
+  
+  /* Hover effects for both light and dark modes */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover {
+    background: rgba(86, 83, 198, 0.2) !important;
+    border-color: rgba(86, 83, 198, 0.4) !important;
+  }
+  
+  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover {
+    background: rgba(155, 152, 255, 0.25) !important;
+    border-color: rgba(155, 152, 255, 0.5) !important;
+  }
+  
+  /* Add dropdown arrow */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem::after {
+    content: '';
+    width: 12px;
+    height: 7px;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  
+  /* Dark mode arrow - more visible */
+  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23e5e5e5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    opacity: 0.9;
+  }
+  
+  /* Make arrow more visible on hover */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover::after {
+    opacity: 1;
+  }
+  
+  /* Hide the original navigation menu on homepage to prevent conflicts */
+  body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu {
+    display: none !important;
+  }
+  
+  /* Style interior page mobile dropdown to match homepage styling */
+  .vocs_MobileTopNav_menuTrigger {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 1rem !important;
+    background: rgba(86, 83, 198, 0.1) !important;
+    border: 1px solid rgba(86, 83, 198, 0.2) !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  /* Dark mode for interior page button */
+  .dark .vocs_MobileTopNav_menuTrigger {
+    background: rgba(155, 152, 255, 0.15) !important;
+    border: 1px solid rgba(155, 152, 255, 0.3) !important;
+  }
+  
+  /* Hover effects for interior page button */
+  .vocs_MobileTopNav_menuTrigger:hover {
+    background: rgba(86, 83, 198, 0.2) !important;
+    border-color: rgba(86, 83, 198, 0.4) !important;
+  }
+  
+  .dark .vocs_MobileTopNav_menuTrigger:hover {
+    background: rgba(155, 152, 255, 0.25) !important;
+    border-color: rgba(155, 152, 255, 0.5) !important;
+  }
+  
+  /* Style the interior page dropdown content to match homepage */
+  .vocs_MobileTopNav_topNavPopover,
+  .vocs_MobileTopNav_sidebarPopover {
+    background: var(--vocs-color-bg-2, #f8f9fa) !important;
+    border: 1px solid var(--vocs-color-border, #e9ecef) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
+    padding: 0.75rem 1rem !important;
+    max-width: 280px !important;
+    min-width: 200px !important;
+  }
+  
+  /* Dark mode for interior page dropdown content */
+  .dark .vocs_MobileTopNav_topNavPopover,
+  .dark .vocs_MobileTopNav_sidebarPopover {
+    background: var(--vocs-color-bg-2, #1a1a1a) !important;
+    border: 1px solid var(--vocs-color-border, #404040) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Style the navigation links in interior page dropdown */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link,
+  .vocs_MobileTopNav_topNavPopover a,
+  .vocs_MobileTopNav_sidebarPopover a {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.5rem 0 !important;
+    border-radius: 0 !important;
+    text-decoration: none !important;
+    color: var(--vocs-color-text, #333333) !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid var(--vocs-color-border, #e9ecef) !important;
+    transition: color 0.1s ease !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  /* Remove border from last link */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:last-child,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:last-child,
+  .vocs_MobileTopNav_topNavPopover a:last-child,
+  .vocs_MobileTopNav_sidebarPopover a:last-child {
+    border-bottom: none !important;
+  }
+  
+  /* Dark mode for navigation links */
+  .dark .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link,
+  .dark .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link,
+  .dark .vocs_MobileTopNav_topNavPopover a,
+  .dark .vocs_MobileTopNav_sidebarPopover a {
+    color: var(--vocs-color-text, #e5e5e5) !important;
+    border-bottom-color: var(--vocs-color-border, rgba(255,255,255,0.1)) !important;
+  }
+  
+  /* Hover effects for navigation links */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:hover,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
+  .vocs_MobileTopNav_topNavPopover a:hover,
+  .vocs_MobileTopNav_sidebarPopover a:hover {
+    color: var(--vocs-color-text-accent, #4338CA) !important;
+    background-color: transparent !important;
+  }
+  
+  .dark .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:hover,
+  .dark .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
+  .dark .vocs_MobileTopNav_topNavPopover a:hover,
+  .dark .vocs_MobileTopNav_sidebarPopover a:hover {
+    color: var(--vocs-color-text-accent, #9B98FF) !important;
+  }
+  
+  /* Remove any extra spacing or margins from the list */
+  .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_list,
+  .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_list,
+  .vocs_MobileTopNav_topNavPopover ul,
+  .vocs_MobileTopNav_sidebarPopover ul {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+  }
+}
+
+/* Fix padding for Vocs footer container with edit link and last updated */
+.vocs_Footer_container {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Remove specific padding from last updated since container now has it */
+.vocs_Footer_lastUpdated {
+  padding-left: 0 !important;
+}
+
+/* Add padding for footer navigation items */
+.vocs_Footer_navigationItem_left {
+  padding-left: 1rem !important;
+}
+
+.vocs_Footer_navigationItem_right {
+  padding-right: 1rem !important;
+}
+
+/* Fix text alignment for footer navigation text */
+.vocs_Footer_navigationItem_left .vocs_Footer_navigationTextInner {
+  text-align: left !important;
+}
+
+.vocs_Footer_navigationItem_right .vocs_Footer_navigationTextInner {
+  text-align: right !important;
+}
+
+/* ====== SIDEBAR SECTION HEADERS ====== */
+
+/* Add prominent section headers at the top of the navigation area based on current page */
+
+/* Agents section - only when on agents pages */
+body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before {
+  content: "Build agents";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Inboxes section - only when on inboxes pages */
+body:has([data-active="true"][href*="/inboxes/"]) .vocs_Sidebar_navigation::before {
+  content: "Build inboxes";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Protocol section - only when on protocol pages */
+body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before {
+  content: "Protocol";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Network section - only when on network pages */
+body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
+  content: "Network";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
+/* Dark mode border colors for sidebar section headers */
+.dark body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/inboxes/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
+  border-bottom-color: #A5B4FC;
+}
+
+/* Hide social links on homepage (they appear awkwardly above footer) */
+body:has(.custom-homepage) .vocs_Socials {
+  display: none !important;
+}
+
+/* Add section context to search results */
+.vocs_SearchDialog_result a[href*="/agents/"] .vocs_SearchDialog_titles::before {
+  content: "Build agents • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
+.vocs_SearchDialog_result a[href*="/inboxes/"] .vocs_SearchDialog_titles::before {
+  content: "Build inboxes • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
+.vocs_SearchDialog_result a[href*="/protocol/"] .vocs_SearchDialog_titles::before {
+  content: "Protocol • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+
+.vocs_SearchDialog_result a[href*="/network/"] .vocs_SearchDialog_titles::before {
+  content: "Network • ";
+  color: var(--vocs-color-text-accent);
+  font-weight: 500;
+  font-size: 0.8em;
+}
+

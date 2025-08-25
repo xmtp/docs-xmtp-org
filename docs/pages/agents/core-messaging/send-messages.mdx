@@ -1,0 +1,11 @@
+# Send messages
+
+Once you have the group chat or DM conversation, you can send messages in the conversation.
+
+```tsx [Node]
+// For a DM conversation
+await dm.send("Hello world");
+
+// OR for a group chat
+await group.send("Hello everyone");
+```

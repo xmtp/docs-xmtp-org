@@ -1,6 +1,3 @@
-import 'react-medium-image-zoom/dist/styles.css'
-import Mermaid from '../../components/Mermaid'
-
 # Cursors with XMTP
 
 This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
@@ -32,7 +29,7 @@ The XMTP SDKs use cursors to make message synchronization highly efficient. The 
 
 - **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
 
-- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/inboxes/list-stream-sync/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
 
 - **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
 
@@ -46,25 +43,6 @@ Each `sync()` function corresponds to a different type of cursor:
 
 For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
 
-<Mermaid
-  id="cursors"
-  chart={`
-sequenceDiagram
-  participant Client as Client <br> (Stores cursor)
-  participant Network as Network <br> (Stores group topic)
-
-  Note over Client: No cursor for topic yet
-  Client ->> Network: Initial conversation.sync()
-  Network ->> Client: Returns all messages from topic <br> (Msg1, Msg2, Msg3)
-  Note over Client: Stores new cursor for topic
-  Client ->> Client: Cursor points after Msg3
-  Note over Network: New messages arrive on group topic
-  Network ->> Client: streamAllMessages() <br> (Msg4, Msg5, Msg6)
-  Note over Client: Cursor unaffected by stream
-  Client ->> Network: Subsequent conversation.sync() <br> (Sends stored cursor from after Msg3)
-  Network ->> Client: Returns messages that occurred after cursor <br> (Msg4, Msg5, Msg6)
-  Note over Client: Advances cursor for topic
-  Client ->> Client: Cursor points after Msg6
-`} />
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
 
 By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.

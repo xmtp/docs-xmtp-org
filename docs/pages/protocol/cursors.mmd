@@ -1,0 +1,16 @@
+sequenceDiagram
+  participant Client as Client <br> (Stores cursor)
+  participant Network as Network <br> (Stores group topic)
+
+  Note over Client: No cursor for topic yet
+  Client ->> Network: Initial conversation.sync()
+  Network ->> Client: Returns all messages from topic <br> (Msg1, Msg2, Msg3)
+  Note over Client: Stores new cursor for topic
+  Client ->> Client: Cursor points after Msg3
+  Note over Network: New messages arrive on group topic
+  Network ->> Client: streamAllMessages() <br> (Msg4, Msg5, Msg6)
+  Note over Client: Cursor unaffected by stream
+  Client ->> Network: Subsequent conversation.sync() <br> (Sends stored cursor from after Msg3)
+  Network ->> Client: Returns messages that occurred after cursor <br> (Msg4, Msg5, Msg6)
+  Note over Client: Advances cursor for topic
+  Client ->> Client: Cursor points after Msg6
