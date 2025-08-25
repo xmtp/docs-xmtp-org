@@ -145,7 +145,7 @@ import "../styles.css";
 ## pages/doc-feedback.md
 # Documentation feedback
 
-We’re excited to share documentation for the latest version of XMTP.
+We're excited to share documentation for the latest version of XMTP.
 
 We continuously release new and updated documentation.
 
@@ -318,7 +318,7 @@ XMTP stores messages in the XMTP network before and after retrieval. App-specifi
 
 ### What are the XMTP message retention policies?
 
-#### For XMTP’s blockchain and node databases:
+#### For XMTP's blockchain and node databases:
 
 Currently, encrypted payloads are stored indefinitely.
 
@@ -394,7 +394,7 @@ To make it easier to use AI coding agents to build with XMTP, you can find an `l
 
 This `llms-full.txt` file includes all XMTP documentation in a single plain text file for easy parsing by AI agents.
 
-If you’re using an LLM tool that allows custom context, you can upload or point to `llms-full.txt` to enhance your AI coding experience with XMTP.
+If you're using an LLM tool that allows custom context, you can upload or point to `llms-full.txt` to enhance your AI coding experience with XMTP.
 
 
 ## pages/intro/xips.md
@@ -436,7 +436,7 @@ For all other topics, post to the [XMTP Community Forums](https://community.xmtp
 
 ## Check if an identity is reachable
 
-The first step to creating a conversation is to verify that participants’ identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
+The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
 
 Once you have the verified identities, you can create a new conversation, whether it's a group chat or direct message (DM).
 
@@ -1166,7 +1166,7 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with
 
 The backend returns a new invite link with a unique URL.
 
-Save the `linkUrl` to the client’s local database (alongside the XMTP `group_id`) so the link can be surfaced in the UI for copy/paste later and used in push notification handlers.
+Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`) so the link can be surfaced in the UI for copy/paste later and used in push notification handlers.
 
 ```json
 {
@@ -1434,7 +1434,7 @@ With XMTP, you can use various types of signatures to sign and verify payloads.
 
 ## Sign with an external wallet
 
-When a user creates, adds, removes, or revokes an XMTP inbox’s identity or installation, a signature is required.
+When a user creates, adds, removes, or revokes an XMTP inbox's identity or installation, a signature is required.
 
 ## Sign with an XMTP key
 
@@ -1490,7 +1490,7 @@ let isVerified = try client.verifySignature(
 
 ## Verify with the same inbox ID that signed
 
-You can use an XMTP key’s `installationId` to create a signature, then pass both the signature and `installationId` to another `installationId` with the same `inboxId` to verify that the signature came from a trusted sender.
+You can use an XMTP key's `installationId` to create a signature, then pass both the signature and `installationId` to another `installationId` with the same `inboxId` to verify that the signature came from a trusted sender.
 
 :::code-group
 
@@ -1825,7 +1825,7 @@ History syncs are accomplished using these components:
 
 ### Sync group
 
-A sync group is a special [Messaging Layer Security](/protocol/security) group that includes all of the user’s devices. The sync group is used to send serialized sync messages across the user's devices. The sync group is filtered out of most queries by default so they don’t appear in the user’s inbox.
+A sync group is a special [Messaging Layer Security](/protocol/security) group that includes all of the user's devices. The sync group is used to send serialized sync messages across the user's devices. The sync group is filtered out of most queries by default so they don't appear in the user's inbox.
 
 ### Sync worker
 
@@ -3410,7 +3410,7 @@ When a group is created, all groups have the same initial member "roles" set:
 - There are no admins
 - Each user added to the group starts out as a member
 
-The super admin has all of the [available permissions](#permissions) and can use them to adjust the group’s permissions and options.
+The super admin has all of the [available permissions](#permissions) and can use them to adjust the group's permissions and options.
 
 As the app developer, you can provide a UI that enables group participants to make further adjustments. For example, you can give the super admin the following permission options for group members when creating the group:
 
@@ -3432,7 +3432,7 @@ You can use member statuses, options, and permissions to create a custom policy 
 | Update group permissions | ❌ | ❌ | ❌ | ✅ |
 | Update group metadata | ✅ | ✅ | ✅ | ✅ |
 
-If you aren’t opinionated and don’t set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
+If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
 
 - Add member - All members
 - Remove member - Admin only
@@ -4166,7 +4166,7 @@ Messaging without optimistic sending:
 
 Note the slight delay after clicking **Send**.
 
-Implement optimistic sending to be able to immediately display the sent message in the sender’s UI while processing the message in the background. This provides the user with immediate feedback and enables them to continue messaging without waiting for their previous message to finish processing.
+Implement optimistic sending to be able to immediately display the sent message in the sender's UI while processing the message in the background. This provides the user with immediate feedback and enables them to continue messaging without waiting for their previous message to finish processing.
 
 Messaging with optimistic sending:
 
@@ -6518,7 +6518,7 @@ Here is the current standard content type:
 
 ### Text content type
 
-An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don’t need to perform any additional steps related to content types.
+An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don't need to perform any additional steps related to content types.
 
 :::code-group
 
@@ -6619,9 +6619,9 @@ Conversation created in an app on an SDK version **with** user consent support:
 
 - For a new conversation that a user created with a peer contact, the SDK sets the consent preference to `allowed`.
 
-  The user’s creation of the conversation with the contact is considered consent.
+  The user's creation of the conversation with the contact is considered consent.
 
-- For an existing conversation created by a peer contact that hasn’t had its consent preference updated on the network (`unknown`) and that the user responds to, the SDK will update the consent preference to `allowed`.
+- For an existing conversation created by a peer contact that hasn't had its consent preference updated on the network (`unknown`) and that the user responds to, the SDK will update the consent preference to `allowed`.
 
   The user's response to the conversation is considered consent.
 
@@ -7042,7 +7042,7 @@ Additionally, applying spam filtering or content moderation directly at the prot
 
 Instead, content filtering and moderation should be implemented at the app layer. Apps can decide how opinionated or lenient they want to be, tailoring their filtering approach to the needs of their users. For example, one app may choose to aggressively scan and block spam to provide a highly curated experience, attracting users who value more protection. Another app may opt for minimal or no filtering, appealing to users who prioritize full control and unfiltered communication.
 
-This flexibility enables different apps to serve different user preferences, fostering an ecosystem where users can choose the experience that best suits them. Whether an app scans messages or not, XMTP ensures that developers remain free to build in line with their own values, without imposing restrictions at the infrastructure level. This separation between the protocol and app layers is crucial to maintaining XMTP’s commitment to openness, interoperability, and user choice.
+This flexibility enables different apps to serve different user preferences, fostering an ecosystem where users can choose the experience that best suits them. Whether an app scans messages or not, XMTP ensures that developers remain free to build in line with their own values, without imposing restrictions at the infrastructure level. This separation between the protocol and app layers is crucial to maintaining XMTP's commitment to openness, interoperability, and user choice.
 
 :::tip
 
@@ -7090,7 +7090,7 @@ Topic.userWelcome(client.installationId).description
 
 ## Get a message topic ID
 
-Get the topic identifier for a group chat or DM conversation that’s already in progress. This topic ID tells your app where to listen on the network for push notifications about any new messages in a specific group chat or DM conversation.
+Get the topic identifier for a group chat or DM conversation that's already in progress. This topic ID tells your app where to listen on the network for push notifications about any new messages in a specific group chat or DM conversation.
 
 :::code-group
 
@@ -7168,7 +7168,7 @@ conversations.allPushTopics()
 
 Subscribe to all relevant topics, allowing your app to monitor for push notifications about both new and ongoing conversations.
 
-This code sample retrieves all topics associated with `alix`’s conversations, for example, enabling the app to receive push notifications only for conversations in which `alix` is a part of.
+This code sample retrieves all topics associated with `alix`'s conversations, for example, enabling the app to receive push notifications only for conversations in which `alix` is a part of.
 
 :::code-group
 
@@ -7216,9 +7216,9 @@ let encryptedMessageData =  Data(base64Encoded: encryptedMessage)
 
 :::
 
-Then determine whether it’s for a new conversation or an existing one.
+Then determine whether it's for a new conversation or an existing one.
 
-- **If it’s a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `fromWelcome`:
+- **If it's a Welcome message for a new conversation** (`alix.welcomeTopic() == received.topic`), initiate the conversation with `fromWelcome`:
 
   :::code-group
 
@@ -7238,7 +7238,7 @@ Then determine whether it’s for a new conversation or an existing one.
 
   :::
 
-- **If it’s a message for an existing conversation**, find the corresponding topic, sync the conversation, and process the new message:
+- **If it's a message for an existing conversation**, find the corresponding topic, sync the conversation, and process the new message:
 
   :::code-group
 
@@ -7346,13 +7346,13 @@ conversation.getHmacKeys()
 
 ## Run a push notification server
 
-To implement push notifications in your app, you must run a push notification server. This server acts as an intermediary between the XMTP network and your app’s push notification service, ensuring that users receive timely and relevant notifications.
+To implement push notifications in your app, you must run a push notification server. This server acts as an intermediary between the XMTP network and your app's push notification service, ensuring that users receive timely and relevant notifications.
 
 ### Why is a push notification server required?
 
-- **Continuous monitoring**: The XMTP network operates on a decentralized protocol, where messages are exchanged directly between clients. However, for push notifications, your app needs a dedicated server to continuously listen for new messages or events on the XMTP network, even when the user’s device is offline or the app is not running.
-- **Message processing**: Upon detecting new messages or events, the server processes them to determine their relevance and formats them appropriately for push notifications. This includes extracting necessary information, such as the sender’s identity and message content, to craft meaningful notifications.
-- **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](#understand-apple-entitlements-for-ios-apps) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user’s device.
+- **Continuous monitoring**: The XMTP network operates on a decentralized protocol, where messages are exchanged directly between clients. However, for push notifications, your app needs a dedicated server to continuously listen for new messages or events on the XMTP network, even when the user's device is offline or the app is not running.
+- **Message processing**: Upon detecting new messages or events, the server processes them to determine their relevance and formats them appropriately for push notifications. This includes extracting necessary information, such as the sender's identity and message content, to craft meaningful notifications.
+- **Integration with push notification services**: The server interfaces with platform-specific push notification services, like [Apple Push Notification Service](#understand-apple-entitlements-for-ios-apps) (APNs) for iOS or Firebase Cloud Messaging (FCM) for Android. It sends the processed notifications to these services, which then deliver them to the user's device.
 
 To learn more about running a push notification server, see [Understand push notifications with XMTP](/inboxes/push-notifs/understand-push-notifs).
 
@@ -7554,26 +7554,26 @@ At the highest level, push notifications with XMTP require these three elements:
 
 ## Understand message filtering
 
-Let’s dive deeper into how the XMTP push notification server filters messages to determine which ones to send to the push notification service. 
+Let's dive deeper into how the XMTP push notification server filters messages to determine which ones to send to the push notification service. 
 
 ![XMTP push notification server filtering flow](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pn-server-filtering.png)
 
-1. **Check if the server is subscribed to the message’s topic**
-    - A topic is a way to organize messages, and each message has a topic. To support push notifications, your app must [subscribe the server to the topics](https://docs.xmtp.org/inboxes/push-notifs/push-notifs#subscribe-to-topics) that are relevant to your users. For example, for a user Alix, you must subscribe to all topics associated with Alix’s conversations. The XMTP push notification server has a list of these subscriptions. Your push notification server should expose functions to post the subscriptions to. The SDKs use protobufs as a universal language that allows the creation of these functions in any language. For example, [here are bufs](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/push) generated from the [XMTP example push notification server](/inboxes/push-notifs/pn-server). You can use these directly if you clone and use the example server.
-    - If the arriving message’s topic is **not on the list**, the server ignores it.
-    - If the arriving message’s topic is **on the list**, the server proceeds to check the message with the next filter.
+1. **Check if the server is subscribed to the message's topic**
+    - A topic is a way to organize messages, and each message has a topic. To support push notifications, your app must [subscribe the server to the topics](https://docs.xmtp.org/inboxes/push-notifs/push-notifs#subscribe-to-topics) that are relevant to your users. For example, for a user Alix, you must subscribe to all topics associated with Alix's conversations. The XMTP push notification server has a list of these subscriptions. Your push notification server should expose functions to post the subscriptions to. The SDKs use protobufs as a universal language that allows the creation of these functions in any language. For example, [here are bufs](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/push) generated from the [XMTP example push notification server](/inboxes/push-notifs/pn-server). You can use these directly if you clone and use the example server.
+    - If the arriving message's topic is **not on the list**, the server ignores it.
+    - If the arriving message's topic is **on the list**, the server proceeds to check the message with the next filter.
 2. **Check the `shouldPush` field value**
     - Each [content type](/inboxes/content-types/content-types), such as text, attachment, or reply, can have
-    - A `shouldPush` boolean value is set at the content type level for each content type, such as text, attachment, or reply, so it can’t be overwritten on send. By default, this value is set to ***true*** for all content types except read receipts and reactions.
-    - If the message’s content type `shouldPush` value is ***false***, the server ignores the message.
-    - If the message’s content type `shouldPush` value is ***true***, the server proceeds to check the message with the next filter.
-3. **Check the message’s HMAC key**
+    - A `shouldPush` boolean value is set at the content type level for each content type, such as text, attachment, or reply, so it can't be overwritten on send. By default, this value is set to ***true*** for all content types except read receipts and reactions.
+    - If the message's content type `shouldPush` value is ***false***, the server ignores the message.
+    - If the message's content type `shouldPush` value is ***true***, the server proceeds to check the message with the next filter.
+3. **Check the message's HMAC key**
     - Each message sent with XMTP carries a single HMAC key. This key is updated with the encrypted message payload before being sent out.
-    - If the message is signed by an HMAC key that **matches** the user’s HMAC key, the push notification server ignores the message. This match means that the message was sent by the user themself, and they should not receive a push notification about a message they sent.
-    - If the message is signed by an HMAC key that **does not match** the user’s HMAC key, this means someone else sent the message and the user should be notified about it. At this point, the push notification server will send a notification.
+    - If the message is signed by an HMAC key that **matches** the user's HMAC key, the push notification server ignores the message. This match means that the message was sent by the user themself, and they should not receive a push notification about a message they sent.
+    - If the message is signed by an HMAC key that **does not match** the user's HMAC key, this means someone else sent the message and the user should be notified about it. At this point, the push notification server will send a notification.
 4. **Send to the push notification service**
     - The server sends the message to the push notification service.
-    - Once the push notification service has the message, it can format it appropriately for the push notification. This includes extracting necessary information, such as the sender’s identity and message content, to craft meaningful notifications. This is only possible with the push notifications service inside the app and not with the push notification server because the server doesn’t have the notion of a client and, therefore, can’t decrypt the message.
+    - Once the push notification service has the message, it can format it appropriately for the push notification. This includes extracting necessary information, such as the sender's identity and message content, to craft meaningful notifications. This is only possible with the push notifications service inside the app and not with the push notification server because the server doesn't have the notion of a client and, therefore, can't decrypt the message.
 
 XMTP provides an example XMTP push notification server that implements the filtering described here. To learn more, see [Run a push notification server for an app built with XMTP](/inboxes/push-notifs/pn-server).
 
@@ -7608,8 +7608,8 @@ Here are some sample answers to help you complete the application:
 - **App Type:** Messaging
 - **Does your app provide end-to-end encryption?:** Yes
 - **Explain why existing APIs are not adequate for your app:** The existing APIs always show some sort of notification when a push comes in. We don't want to show a notification for a user's own messages.
-- **Explain why your app doesn’t show a visible notification each time a push notification is received:** The server delivering notifications only knows of the existence of a conversation. It does not know who the sender or recipient is. That data is decoded on the device in the extension. As a result, it sends a push notification for every message that occurs in the conversation. We want to filter out notifications for notifications that the user themself sent.
-- **When your extension runs, what system and network resources does it need:** We might need to make a gRPC request to load additional information about a conversation. This is only necessary when we haven't stored the conversation details locally, which is expected to be less common than being able to just decrypt the conversation locally. For example, we might have a scenario in which a welcome message is pushed before it’s streamed.
+- **Explain why your app doesn't show a visible notification each time a push notification is received:** The server delivering notifications only knows of the existence of a conversation. It does not know who the sender or recipient is. That data is decoded on the device in the extension. As a result, it sends a push notification for every message that occurs in the conversation. We want to filter out notifications for notifications that the user themself sent.
+- **When your extension runs, what system and network resources does it need:** We might need to make a gRPC request to load additional information about a conversation. This is only necessary when we haven't stored the conversation details locally, which is expected to be less common than being able to just decrypt the conversation locally. For example, we might have a scenario in which a welcome message is pushed before it's streamed.
 - **How often does your extension run? What can trigger it to run:** The extension will run whenever a message is sent or received in a conversation. The frequency will depend on how active a user is.
 
 ## Understand displaying push notifications
@@ -7628,7 +7628,7 @@ There are some nuances to how push notifications can be handled once received by
         - `conversations.processWelcomeMessage`
     - Is the message in a conversation topic?
         - `conversation.processMessage`
-- If the app **cannot** **decrypt** the push notification before displaying it to the user, it can’t perform additional logic (should I display this?) before displaying the push notification.
+- If the app **cannot** **decrypt** the push notification before displaying it to the user, it can't perform additional logic (should I display this?) before displaying the push notification.
     
     For example, without the user notification entitlement, the app cannot decrypt and modify the push notification before displaying it to the user. The notification arrives on the device, and iOS handles displaying it automatically. You can decrypt the content after the notification is shown, but you cannot intercept it before display and decide not to show it, for example.
     
@@ -7636,9 +7636,9 @@ There are some nuances to how push notifications can be handled once received by
 
 XMTP uses Hash-based Message Authentication Code (HMAC) keys for push notifications. A user holds the HMAC keys for any conversation they join, but an outside observer only sees the keys without knowing who owns them. For instance, suppose Alix has HMAC key #1, and we also see HMAC keys #2 and #3. If Alix discloses that they hold key #1, then we know key #1 belongs to them. However, we have no way of knowing who holds keys #2 or #3 unless those individuals reveal that information. This design preserves privacy while enabling secure communication.
 
-The HMAC key is derived from a generated root HMAC key, the message’s group ID, and the number of 30-day periods since the Unix epoch, along with some salt. Anytime a user gets a new installation, they get new HMAC keys for it. In this case, how do the user’s older installations learn about the user’s new installation HMAC key so they can properly decrypt and route certain messages and push notifications for that newly added installation?
+The HMAC key is derived from a generated root HMAC key, the message's group ID, and the number of 30-day periods since the Unix epoch, along with some salt. Anytime a user gets a new installation, they get new HMAC keys for it. In this case, how do the user's older installations learn about the user's new installation HMAC key so they can properly decrypt and route certain messages and push notifications for that newly added installation?
 
-This is one of the jobs of the [history sync](/inboxes/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with HMAC keys for new installations. When a user’s new installation publishes updated HMAC info, older installations can see that update and must [resubscribe to topics](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new HMAC keys.
+This is one of the jobs of the [history sync](/inboxes/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with HMAC keys for new installations. When a user's new installation publishes updated HMAC info, older installations can see that update and must [resubscribe to topics](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new HMAC keys.
 
 ## Understand DM stitching and push notifications
 
@@ -7661,7 +7661,7 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
 ### How DM stitching works
 
 1. When fetching messages from any of the MLS groups associated with a DM conversation, the XMTP SDK responds with messages from all of the groups associated with the DM conversation.
-    - For example, let’s say you have three MLS groups associated with a DM conversation:
+    - For example, let's say you have three MLS groups associated with a DM conversation:
         - alix-bo-1
         - alix-bo-2
         - alix-bo-3
@@ -7677,7 +7677,7 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
 
 DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
 
-Let’s take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics. 
+Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics. 
 
 Therefore, when subscribing a DM conversations to push notifications, you should subscribe to a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
 
@@ -7934,9 +7934,9 @@ Sign with the wallet address you want to set as the recovery address to change t
 
 ## Sign to consent to receive broadcast messages
 
-When you click a **Subscribe** button built with XMTP’s consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
+When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
 
-For example, here’s the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
+For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
 
 ![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
 
@@ -8114,7 +8114,7 @@ XMTP uses regular key rotation achieved through a commit mechanism with a specif
 
 Validates the identity of the participants in the conversation, preventing impersonation.
 
-XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender’s identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
+XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender's identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
 
 ## Message integrity
 
@@ -8142,7 +8142,7 @@ User anonymity is achieved through a combination of the following functions:
 
 - XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
 
-- XMTP’s backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
+- XMTP's backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
 
 It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
 
@@ -9135,7 +9135,7 @@ These nodes in the `dev` and `production` XMTP network environments operate in U
 - Iran
 - North Korea 
 - Syria
-- The Crimea, Donetsk People’s Republic, and Luhansk People’s Republic regions of Ukraine
+- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
 
 ### Is XMTP a blockchain?
 

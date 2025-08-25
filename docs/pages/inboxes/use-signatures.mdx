@@ -4,7 +4,7 @@ With XMTP, you can use various types of signatures to sign and verify payloads.
 
 ## Sign with an external wallet
 
-When a user creates, adds, removes, or revokes an XMTP inbox’s identity or installation, a signature is required.
+When a user creates, adds, removes, or revokes an XMTP inbox's identity or installation, a signature is required.
 
 ## Sign with an XMTP key
 
@@ -60,7 +60,7 @@ let isVerified = try client.verifySignature(
 
 ## Verify with the same inbox ID that signed
 
-You can use an XMTP key’s `installationId` to create a signature, then pass both the signature and `installationId` to another `installationId` with the same `inboxId` to verify that the signature came from a trusted sender.
+You can use an XMTP key's `installationId` to create a signature, then pass both the signature and `installationId` to another `installationId` with the same `inboxId` to verify that the signature came from a trusted sender.
 
 :::code-group
 
