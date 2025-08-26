@@ -33,6 +33,7 @@ The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork det
 const debugInfo = await conversation?.debugInfo();
 
 console.log('Epoch:', debugInfo.epoch);
+console.log('Cursor:', debugInfo.cursor);
 console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
 console.log('Local Commit Log:', debugInfo.localCommitLog);
 console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
