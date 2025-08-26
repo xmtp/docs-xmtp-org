@@ -49,7 +49,7 @@ In practice, we ask that you provide attribution to XMTP to the best of the abil
 
 There are several typical ways in which this might apply:
 
-#### Exact reproductions
+### Exact reproductions
 
 If your online work _exactly reproduces_ text or images from this site, in whole or in part, please include a paragraph at the bottom of your page that reads:
 
@@ -57,7 +57,7 @@ If your online work _exactly reproduces_ text or images from this site, in whole
 
 Also, please link back to the original source page so that readers can refer to it for more information.
 
-#### Modified versions
+### Modified versions
 
 If your online work shows _modified_ text or images based on the content from this site, please include a paragraph at the bottom of your page that reads:
 
@@ -65,7 +65,7 @@ If your online work shows _modified_ text or images based on the content from th
 
 Again, please link back to the original source page so that readers can refer to it for more information. This is even more important when the content has been modified.
 
-#### Other media
+### Other media
 
 If you produce non-hypertext works, such as books, audio, or video, we ask that you make a best effort to include a spoken or written attribution in the spirit of the messages above.
 
@@ -114,80 +114,80 @@ The largest and most secure decentralized messaging network
 
 <CustomHomePage.TileGrid>
 
-<CustomHomePage.Tile 
-  title="Quantum-resistant" 
+<CustomHomePage.Tile
+  title="Quantum-resistant"
   description="Protection against 'harvest now, decrypt later' attacks through post-quantum cryptography"
 />
 
-<CustomHomePage.Tile 
-  title="End-to-end encrypted" 
+<CustomHomePage.Tile
+  title="End-to-end encrypted"
   description="Messages encrypted client-side and only recipients can decrypt them"
 />
 
-<CustomHomePage.Tile 
-  title="Decentralized" 
+<CustomHomePage.Tile
+  title="Decentralized"
   description="Messages are distributed across a censorship-resistant network of nodes"
 />
 
-<CustomHomePage.Tile 
-  title="Flexible identities" 
+<CustomHomePage.Tile
+  title="Flexible identities"
   description="Use any public DiD, like @ensdomains or @bluesky, or just a single device-bound passkey"
 />
 
-<CustomHomePage.Tile 
-  title="Built-in consent" 
+<CustomHomePage.Tile
+  title="Built-in consent"
   description="Inboxes are spam-free spaces for a user's chosen contacts only"
 />
 
-<CustomHomePage.Tile 
-  title="Rich content types" 
+<CustomHomePage.Tile
+  title="Rich content types"
   description="Send text, attachments, reactions, read receipts, onchain transactions, and more"
 />
 
 </CustomHomePage.TileGrid>
 
-<CustomHomePage.SectionTitle>
+<CustomHomePage.SectionTitle id="start-building">
 
-<h2 id="start-building">Start building today</h2>
+Start building today
 
 </CustomHomePage.SectionTitle>
 
 <CustomHomePage.SDKGrid>
 
-<CustomHomePage.SDKTile 
-  href="inboxes/sdks/browser" 
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/browser"
   lightSrc="/ts-logo-128.svg"
   darkSrc="/ts-logo-128.svg"
   alt="TypeScript"
   name="Browser SDK"
 />
 
-<CustomHomePage.SDKTile 
-  href="inboxes/sdks/node" 
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/node"
   lightSrc="/nodejsStackedDark.svg"
   darkSrc="/nodejsStackedLight.svg"
   alt="Node.js"
   name="Node SDK"
 />
 
-<CustomHomePage.SDKTile 
-  href="inboxes/sdks/react-native" 
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/react-native"
   lightSrc="/rn-header_logo.svg"
   darkSrc="/rn-header_logo.svg"
   alt="React Native"
   name="React Native SDK"
 />
 
-<CustomHomePage.SDKTile 
-  href="inboxes/sdks/android" 
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/android"
   lightSrc="/Kotlin_Icon.svg"
   darkSrc="/Kotlin_Icon.svg"
   alt="Android/Kotlin"
   name="Android SDK"
 />
 
-<CustomHomePage.SDKTile 
-  href="inboxes/sdks/ios" 
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/ios"
   lightSrc="/swift_logo_color.svg"
   darkSrc="/swift_logo_color.svg"
   alt="iOS/Swift"
@@ -197,6 +197,7 @@ The largest and most secure decentralized messaging network
 </CustomHomePage.SDKGrid>
 
 </CustomHomePage.Root>
+
 
 ## pages/inboxes/use-signatures.mdx
 # Use signatures with XMTP
@@ -233,7 +234,7 @@ let signature = try client.signWithInstallationKey(message: signatureText)
 
 ## Verify with the same installation that signed
 
- You can also sign with XMTP keys and verify that a payload was sent by the same client. 
+ You can also sign with XMTP keys and verify that a payload was sent by the same client.
 
 :::code-group
 
@@ -436,7 +437,7 @@ SubscribeWelcomes       0
 
 To return an individual statistic as a number, run:
 
-- For Browser, Node, iOS, and Android SDKs: 
+- For Browser, Node, iOS, and Android SDKs:
   - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
   - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
@@ -509,7 +510,7 @@ To learn more, see [Why build with XMTP?](/inboxes/intro/why-xmtp).
 
   <style>
    {`
-      /* Inline styles instead of styles.css bc vocs 
+      /* Inline styles instead of styles.css bc vocs
       search bug doesn't allow imports */
       .sdk-buttons {
          display: flex;
@@ -535,15 +536,15 @@ To learn more, see [Why build with XMTP?](/inboxes/intro/why-xmtp).
   </style>
 
   <div className="sdk-buttons">
-    <a href="/inboxes/sdks/browser" 
+    <a href="/inboxes/sdks/browser"
   className="sdk-button">Browser</a>
-    <a href="/inboxes/sdks/node" 
+    <a href="/inboxes/sdks/node"
   className="sdk-button">Node</a>
-    <a href="/inboxes/sdks/react-native" 
+    <a href="/inboxes/sdks/react-native"
   className="sdk-button">React Native</a>
-    <a href="/inboxes/sdks/android" 
+    <a href="/inboxes/sdks/android"
   className="sdk-button">Android</a>
-    <a href="/inboxes/sdks/ios" 
+    <a href="/inboxes/sdks/ios"
   className="sdk-button">iOS</a>
   </div>
 
@@ -561,8 +562,8 @@ To learn more, see [Why build with XMTP?](/inboxes/intro/why-xmtp).
 
 3. [Check if an identity is reachable on XMTP](/inboxes/core-messaging/create-conversations#check-if-an-identity-is-reachable).
 
-4. Create a [group chat](/inboxes/core-messaging/create-conversations) or [direct message](/inboxes/core-messaging/create-conversations) (DM) conversation. 
-   
+4. Create a [group chat](/inboxes/core-messaging/create-conversations) or [direct message](/inboxes/core-messaging/create-conversations) (DM) conversation.
+
    With XMTP, "conversation" refers to both group chat and DM conversations.
 
 5. [Send messages](/inboxes/core-messaging/send-messages) in a conversation.
@@ -588,13 +589,13 @@ To learn more, see [Why build with XMTP?](/inboxes/intro/why-xmtp).
 ## 💅🏽 Phase III: Enhance the user experience
 
 1. [Implement user consent](/inboxes/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts. You can use these consent values to filter conversations. For example:
-   
+
    - Conversations with **allowed** contacts go to a user's main inbox
    - Conversations with **unknown** contacts go to a possible spam tab
    - Conversations with **denied** contacts are hidden from view.
   
 2. Support rich [content types](/inboxes/content-types/content-types).
-   
+
    - [Attachments](/inboxes/content-types/attachments)
      - Single remote attachment
      - Multiple remote attachments
@@ -658,13 +659,13 @@ Build with XMTP to:
     In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP [user consent preferences](/inboxes/user-consent/user-consent), developers can give their users spam-free inboxes displaying conversations with chosen contacts only.
 
 - **Build on native crypto rails**
-    
+
     Build with XMTP to tap into the capabilities of crypto and web3. Support decentralized identities, crypto transactions, and more, directly in a messaging experience.
 
 - **Empower users to own and control their communications**
 
     With apps built with XMTP, users own their conversations, data, and identity. Combined with the interoperability that comes with protocols, this means users can access their end-to-end encrypted communications using any app built with XMTP.
-    
+
 - **Create with confidence**
 
     Developers are free to create the messaging experiences their users want—on a censorship-resistant protocol architected to last forever. Because XMTP isn't a closed proprietary platform, developers can build confidently, knowing their access and functionality can't be revoked by a central authority.
@@ -679,13 +680,13 @@ Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with
 
 - **XMTP builds in the open**
 
-    - Explore the documentation on this site
-    - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, node software powering the XMTP testnet.
-    - Explore the open source code for [xmtp.chat](https://github.com/xmtp/xmtp-js/tree/main/apps/xmtp.chat), an app made for devs to learn to build with XMTP—using an app built with XMTP.
+  - Explore the documentation on this site
+  - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, node software powering the XMTP testnet.
+  - Explore the open source code for [xmtp.chat](https://github.com/xmtp/xmtp-js/tree/main/apps/xmtp.chat), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
 - **XMTP is for everyone**
 
-    - [Join the conversation](https://community.xmtp.org/) and become part of the movement to redefine digital communications.
+  - [Join the conversation](https://community.xmtp.org/) and become part of the movement to redefine digital communications.
 
 
 ## pages/inboxes/intro/faq.mdx
@@ -729,13 +730,13 @@ XMTP can be used with EVM-compatible wallet apps that support ECDSA signing on t
 
 The XMTP SDK **does not** include a wallet app abstraction, as XMTP assumes that developers have a way to obtain a wallet app connection.
 
-### Chains 
+### Chains
 
-XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s. 
+XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s.
 
-Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.) 
+Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.)
 
-For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP. 
+For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP.
 
 XMTP is also chain-agnostic, so multi-chain support is possible.
 
@@ -789,7 +790,7 @@ Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging 
 
 ### Has XMTP undergone a security audit?
 
-A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024. 
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024.
 
 See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
@@ -801,25 +802,27 @@ XMTP stores messages in the XMTP network before and after retrieval. App-specifi
 
 ### What are the XMTP message retention policies?
 
-#### For XMTP's blockchain and node databases:
+#### For XMTP's blockchain and node databases
 
 Currently, encrypted payloads are stored indefinitely.
 
-In the coming year, a retention policy will be added. 
+In the coming year, a retention policy will be added.
 
 This retention policy would represent a minimum retention period, not a maximum.
 
 For example, a retention policy may look something like the following, though specifics are subject to change:
-  - One year for messages
-  - Indefinite storage for account information and personal preferences  
 
-The team is researching a way to provide this indefinite storage and have it scale forever. 
-- If research shows that it's possible, we'll share a plan for how it will be achieved. 
+- One year for messages
+- Indefinite storage for account information and personal preferences  
+
+The team is researching a way to provide this indefinite storage and have it scale forever.
+
+- If research shows that it's possible, we'll share a plan for how it will be achieved.
 - If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
 
 Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
-#### For the on-device database managed by the XMTP SDK:
+#### For the on-device database managed by the XMTP SDK
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
 
@@ -842,7 +845,7 @@ The XMTP community can propose and adopt standards for other content types, eith
 To learn more about content types, see [Content types](/inboxes/content-types/content-types).
 
 To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
- 
+
 ### Does XMTP have a maximum message size?
 
 Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).
@@ -1112,8 +1115,8 @@ Encode and encrypt an attachment for transport:
 ```swift [Swift]
 // Encode an attachment and encrypt the encoded content
 const encryptedAttachment = try RemoteAttachment.encodeEncrypted(
-	content: attachment,
-	codec: AttachmentCodec()
+ content: attachment,
+ codec: AttachmentCodec()
 )
 ```
 
@@ -1149,11 +1152,11 @@ Send a remote attachment and set the `contentType`:
 
 ```swift [Swift]
 try await conversation.send(
-	content: remoteAttachment,
-	options: .init(
-		contentType: ContentTypeRemoteAttachment,
-		fallback: "a description of the image"
-	)
+ content: remoteAttachment,
+ options: .init(
+  contentType: ContentTypeRemoteAttachment,
+  fallback: "a description of the image"
+ )
 )
 ```
 
@@ -1257,9 +1260,9 @@ import UIKIt
 import SwiftUI
 
 struct ContentView: View {
-	var body: some View {
-		Image(uiImage: UIImage(data: attachment.data))
-	}
+ var body: some View {
+  Image(uiImage: UIImage(data: attachment.data))
+ }
 }
 ```
 
@@ -1628,6 +1631,7 @@ yarn add @xmtp/content-type-remote-attachment
 ```bash [pnpm]
 pnpm add @xmtp/content-type-remote-attachment
 ```
+
 :::
 
 ### Import and register
@@ -2235,6 +2239,7 @@ Generally, reactions should be interpreted as emoji. So, "smile" would translate
 
 Reactions have `shouldPush` set to `false`, which means that reactions do not trigger push notifications as long as the notification server respects this flag.
 
+
 ## pages/inboxes/content-types/custom.mdx
 ---
 description: Learn how to build custom content types
@@ -2422,6 +2427,7 @@ The read receipt is provided as an **empty message** whose timestamp provides th
 
 You can use a read receipt timestamp to calculate the time since the last message was read. While iterating through messages, you can be sure that the last message was read at the timestamp of the read receipt if the string of the timestamp is lower.
 
+
 ## pages/inboxes/content-types/fallback.mdx
 # Use fallback text for content type compatibility
 
@@ -2534,8 +2540,8 @@ Here are standards-track content types that you can review, test, and adopt in y
 - [Attachment content type](/inboxes/content-types/attachments/#support-attachments-smaller-than-1mb): Use to send attachments smaller than 1MB.
 - [Remote attachment content type](/inboxes/content-types/attachments): Use to send attachments of any size.
 - [Multiple remote attachments content type](/inboxes/content-types/attachments#support-multiple-remote-attachments-of-any-size): Use to send attachments of any size.
-- [Read receipt content type](/inboxes/content-types/read-receipts): Use to send a read receipt, which is a `timestamp` that indicates when a message was read. 
-- [Reaction content type](/inboxes/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message. 
+- [Read receipt content type](/inboxes/content-types/read-receipts): Use to send a read receipt, which is a `timestamp` that indicates when a message was read.
+- [Reaction content type](/inboxes/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
 - [Reply content type](/inboxes/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 - [Onchain transaction reference content type](/inboxes/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
 - [Onchain transaction content type](/inboxes/content-types/transactions): Use to support sending transactions to a wallet for execution.
@@ -2727,6 +2733,7 @@ How you choose to display replies in your app is up to you. It might be useful t
 For example, in Discord, users can reply to individual messages, and the reply provides a link to the original message.
 
 Note that the user experience of replies in iMessage and Slack follows more of a threaded pattern, where messages display in logical groupings, or threads. This reply content type doesn't support the threaded pattern. If you'd like to request support for a threaded reply pattern, [post an XIP idea](https://community.xmtp.org/c/development/ideas/54).
+
 
 ## pages/inboxes/sdks/ios.mdx
 # Get started with the XMTP iOS SDK
@@ -3191,9 +3198,9 @@ try await conversation.updateConsent(.allowed) // .allowed | .denied
 
 :::
 
-## Stream consent preferences in real-time 
- 
-Listen for real-time updates to consent preferences: 
+## Stream consent preferences in real-time
+
+Listen for real-time updates to consent preferences:
 
 :::code-group
 
@@ -3426,7 +3433,7 @@ You can filter these unknown contacts to:
 
 ### Identify contacts the user might know
 
-To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses. 
+To identify contacts the user might know or want to know, you can look for signals in onchain data that imply an affinity between addresses.
 
 ```kotlin
 val inboxState = inboxStateForInboxId(inboxId)
@@ -3436,7 +3443,7 @@ val ethAddresses = identities
     .map { it.identifier }
 ```
 
-You can then display appropriate messages on a **You might know** tab, for example. 
+You can then display appropriate messages on a **You might know** tab, for example.
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" />
@@ -3444,7 +3451,7 @@ You can then display appropriate messages on a **You might know** tab, for examp
 
 ### Identify contacts the user might not know, including spammy or scammy requests
 
-To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example. 
+To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example.
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" />
@@ -3460,7 +3467,7 @@ The decision to scan unencrypted messages is yours as the app developer. If you 
 
 XMTP is a decentralized, open protocol built to ensure private, secure, and censorship-resistant communication. As such, XMTP can't read unencrypted messages, and therefore, it also can't scan or filter message contents for spammy or scammy material.
 
-The protocol can analyze onchain data signals, such as shared activity between wallet addresses, to infer potential affinities between addresses. However, because all XMTP repositories are open source, malicious actors could inspect these methods and develop workarounds to bypass them. 
+The protocol can analyze onchain data signals, such as shared activity between wallet addresses, to infer potential affinities between addresses. However, because all XMTP repositories are open source, malicious actors could inspect these methods and develop workarounds to bypass them.
 
 Additionally, applying spam filtering or content moderation directly at the protocol level would introduce centralization, which goes against the decentralized, permissionless, and open ethos of XMTP and web3. A protocol-driven approach could limit interoperability and trust by imposing subjective rules about content across all apps.
 
@@ -3826,7 +3833,7 @@ This ensures that older installations (or your XMTP push notification server cod
 
 ## Get HMAC keys for a conversation
 
-Gets the HMAC keys for a specific group chat or DM conversation. 
+Gets the HMAC keys for a specific group chat or DM conversation.
 
 For DM conversations, the response includes HMAC keys for all topics associated with the conversation. This is necessary because a single DM conversation can have multiple underlying topics due to DM stitching, where multiple conversations between the same participants are combined into one view.
 
@@ -3863,6 +3870,7 @@ To implement push notifications in your app, you must run a push notification se
 To learn more about running a push notification server, see [Understand push notifications with XMTP](/inboxes/push-notifs/understand-push-notifs).
 
 Then you can:
+
 - [Set up a Go push notification server](/inboxes/push-notifs/pn-server)
 - [Try push notifications with the Android example XMTP app](/inboxes/push-notifs/android-pn)
 - [Try push notifications with the iOS example XMTP app](/inboxes/push-notifs/ios-pn)
@@ -3990,10 +3998,11 @@ val envelope = getEnvelopeFromXMTP()
 val decodedMessage = conversation.decode(envelope)
 ```
 
+
 ## pages/inboxes/push-notifs/pn-server.mdx
 # Run a push notification server for an app built with XMTP
 
-This guide supplements the [core instructions](https://github.com/xmtp/example-notification-server-go/blob/np/export-kotlin-proto-code/README.md#local-setup) provided in the `example-notification-server-go` repository. The guide aims to address some common setup misconceptions and issues. 
+This guide supplements the [core instructions](https://github.com/xmtp/example-notification-server-go/blob/np/export-kotlin-proto-code/README.md#local-setup) provided in the `example-notification-server-go` repository. The guide aims to address some common setup misconceptions and issues.
 
 This guide is for macOS users, but the steps should be similar for Linux users.
 
@@ -4026,7 +4035,7 @@ If you need to upgrade Go on your system, you can do it via Homebrew:
 brew install go
 ```
 
-If you encounter an error like `Error: go 1.17.2 is already installed`, you already have Go installed on your system. 
+If you encounter an error like `Error: go 1.17.2 is already installed`, you already have Go installed on your system.
 
 You can check the version of Go installed on your system using:
 
@@ -4105,6 +4114,7 @@ You can now send notifications to your device using an [XMTP push notification c
   git checkout main
   git reset --hard origin/main
   ```
+
 - Here is a piece of code that points to the ports and network. Be sure to use TLS like this `./dev/run --xmtp-listener-tls --api`.
 
    :::code-group
@@ -4156,6 +4166,7 @@ You can now send notifications to your device using an [XMTP push notification c
    ```
 
    :::
+
 
 ## pages/inboxes/push-notifs/ios-pn.mdx
 # Try push notifications with the iOS example XMTP app
@@ -4210,6 +4221,7 @@ Start the server locally or deploy it to a hosting service.
 - Decode a notification envelope  
 When you receive a push notification, you may want to decode the notification envelope to display a message preview or other information.
 
+
 ## pages/inboxes/push-notifs/understand-push-notifs.mdx
 # Understand push notifications with XMTP
 
@@ -4227,7 +4239,7 @@ At the highest level, push notifications with XMTP require these three elements:
 
 ## Understand message filtering
 
-Let's dive deeper into how the XMTP push notification server filters messages to determine which ones to send to the push notification service. 
+Let's dive deeper into how the XMTP push notification server filters messages to determine which ones to send to the push notification service.
 
 ![XMTP push notification server filtering flow](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pn-server-filtering.png)
 
@@ -4296,15 +4308,16 @@ There are some nuances to how push notifications can be handled once received by
 | Android and web apps | Yes |
 | iOS app with user notification entitlement | Yes |
 | iOS app without user notification entitlement | No |
+
 - If the app **can** **decrypt** the push notification before displaying it to the user, it can perform additional logic (should I display this?) before displaying the push notification. For example, the app can decrypt the push notification, see the topic type, and process it accordingly:
-    - Is the message in a welcome topic?
-        - `conversations.processWelcomeMessage`
-    - Is the message in a conversation topic?
-        - `conversation.processMessage`
+  - Is the message in a welcome topic?
+    - `conversations.processWelcomeMessage`
+  - Is the message in a conversation topic?
+    - `conversation.processMessage`
 - If the app **cannot** **decrypt** the push notification before displaying it to the user, it can't perform additional logic (should I display this?) before displaying the push notification.
-    
+
     For example, without the user notification entitlement, the app cannot decrypt and modify the push notification before displaying it to the user. The notification arrives on the device, and iOS handles displaying it automatically. You can decrypt the content after the notification is shown, but you cannot intercept it before display and decide not to show it, for example.
-    
+
 ## Understand HMAC keys and push notifications
 
 XMTP uses Hash-based Message Authentication Code (HMAC) keys for push notifications. A user holds the HMAC keys for any conversation they join, but an outside observer only sees the keys without knowing who owns them. For instance, suppose Alix has HMAC key #1, and we also see HMAC keys #2 and #3. If Alix discloses that they hold key #1, then we know key #1 belongs to them. However, we have no way of knowing who holds keys #2 or #3 unless those individuals reveal that information. This design preserves privacy while enabling secure communication.
@@ -4338,11 +4351,11 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
         - alix-bo-1
         - alix-bo-2
         - alix-bo-3
-        
+
         Any messages sent in any of these DM conversations will display in all of these DM conversations.
-        
+
         For example, `alix.id` sends a message in alix-bo-1. `bo.id` is on alix-bo-3, but can still see messages sent in alix-bo-1.
-        
+
 2. When sending messages in a DM conversation, all installations in that DM will eventually converge to sending them to the same MLS group, even if they originally start off using different ones.
     - For example, `bo.id` sends a message in alix-bo-3. `alix.id` is on alix-bo-1, but can still see messages from alix-bo-3. When `alix.id` sends a reply to `bo.id`, it uses the most recently used DM conversation, alix-bo-3. In this way, all messaging will eventually move to alix-bo-3, and 1 and 2 will slowly fade away due to non-use.
 
@@ -4350,11 +4363,11 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
 
 DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
 
-Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics. 
+Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics.
 
 Therefore, when subscribing a DM conversations to push notifications, you should subscribe to a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
 
-For example, you must consider that with DM stitching, the conversation is moving from alix-bo-1 and alix-bo-3, for example, and [resubscribe appropriately](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys). 
+For example, you must consider that with DM stitching, the conversation is moving from alix-bo-1 and alix-bo-3, for example, and [resubscribe appropriately](/inboxes/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys).
 
 Also, you must consider that a welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.
 
@@ -4387,16 +4400,16 @@ In the welcomes database, the groups are of these types:
 One-to-one chat, group chat, and preferences groups in the welcome database are updated by apps as follows:
 
 - 1:1 chats
-    - `conversations.list`
-    - `syncAll`
-    - `streamAll`
+  - `conversations.list`
+  - `syncAll`
+  - `streamAll`
 - Group chats
-    - `conversations.list`
-    - `syncAll`
-    - `streamAll`
+  - `conversations.list`
+  - `syncAll`
+  - `streamAll`
 - Preferences
-    - `preferences.sync`
-    - `syncAll`
+  - `preferences.sync`
+  - `syncAll`
 
 <div>
   <img alt="groups in the welcome database" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/welcomes-db-3.png" width="500px" />
@@ -4407,7 +4420,7 @@ One-to-one chat, group chat, and preferences groups in the welcome database are 
 To describe preference sync, let's first focus on how the preferences group works.
 
 1. A preferences group has one member, which is one inbox ID.
-   
+
 2. Let's say Inbox ID Alix has an Installation A of App A on their phone. At this time, Inbox ID Alix has a preferences group that looks like this:
 
    <div>
@@ -4415,17 +4428,17 @@ To describe preference sync, let's first focus on how the preferences group work
    </div>
 
 3. Inbox ID Alix then logs in to an Installation B of App B on their phone. The next time Installation A runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
-    
+
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-2.png" width="300px" />
    </div>
-    
+
 4. Then let's say Inbox ID Alix logs in to an Installation C of App A on their tablet. The next time Installation A or B runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
-    
+
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png" width="300px" />
    </div>
-    
+
 ## Preferences sync worker
 
 Now, let's describe how the preferences sync worker helps keep user consent preferences in sync across existing app installations.
@@ -4434,25 +4447,25 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/a-block-bo.png" width="200px" />
-   </div>    
-    
+   </div>
+
 2. This sends a message to the preferences group in the group message database. This is not an actual chat message, but a serialized proto message that is not shown to app users.
-    
+
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" />
-   </div>    
-    
+   </div>
+
 3. When Installation B calls `preferences.sync` or `syncAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
-    
+
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" />
-   </div> 
-    
+   </div>
+
 4. Likewise, when Installation C calls `preferences.sync` or `syncAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
-    
+
    <div>
       <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" />
-   </div>   
+   </div>
 
 Preferences sync handles HMAC keys in the same way.
 
@@ -4570,7 +4583,7 @@ A history server acts as a bucket that holds encrypted sync payloads. The URL lo
 
 ### A user logged into a new app installation and doesn't see their conversations. What's going on?
 
-A debounce feature checks for new app installations, at most, once every 30 minutes. To circumvent the cool-down timer, send a message using a pre-existing app installation. 
+A debounce feature checks for new app installations, at most, once every 30 minutes. To circumvent the cool-down timer, send a message using a pre-existing app installation.
 
 Once [this issue](https://github.com/xmtp/libxmtp/issues/1309) is resolved, conversations will appear almost instantly.
 
@@ -4761,7 +4774,7 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 ## Stream new group chat and DM messages
 
-This function listens to the network for new messages within all active group chats and DMs. 
+This function listens to the network for new messages within all active group chats and DMs.
 
 Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
@@ -4952,7 +4965,7 @@ const [messages, setMessages] = useState<DecodedMessage[]>([]);
       onCloseCallback 
     ); 
   };
-``` 
+```
 
 ```kotlin [Kotlin]
     private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
@@ -5213,14 +5226,17 @@ You might also offer **manual backup** that enables users to create backups on d
 The frequency of archive creation depends on your users' messaging patterns and risk tolerance:
 
 For most users:
+
 - Weekly or monthly automated backups work well for regular message activity
 - Consider creating archives after important conversations or when users receive many messages
 
 For power users:
+
 - Daily automated backups for users who send/receive many messages
 - Allow manual backup creation before important events (travel, device changes)
 
 Backup triggers to consider:
+
 - Time-based: Daily, weekly, or monthly schedules
 - Activity-based: After a certain number of new messages (for example, every 100 messages)
 - Event-based: Before OS updates, app updates, or when users plan to switch devices
@@ -5364,6 +5380,7 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
 :::
+
 
 ## pages/inboxes/core-messaging/send-messages.mdx
 # Send messages
@@ -5696,7 +5713,7 @@ Disappearing messages are messages that are intended to be visible to users for 
 
 ### App-level disappearing messages vs. network-level message expiration
 
-Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network. 
+Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network.
 
 Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
 
@@ -5724,7 +5741,6 @@ For example:
 3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
 
 To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
-
 
 ### Set disappearing message settings on conversation create
 
@@ -6200,7 +6216,7 @@ This document provides suggested paths you might take to provide XMTP group chat
 ## Possible user experience flows
 
 1. A group member with permission to add group members [creates an invite link](#create-a-group-invite-link).
-2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page). 
+2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page).
 3. The non-member is granted access to the group in one of the following ways:
     - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
     - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
@@ -6236,8 +6252,8 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with any
 
 ```json
 {
-	groupName: "XMTP Builders",
-	groupImage: "https://...",
+ groupName: "XMTP Builders",
+ groupImage: "https://...",
 // Inviter can be inferred from the request auth token.
 // Backend doesn't need the actual group ID, since the client can keep track in their DB
 }
@@ -6251,8 +6267,8 @@ Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`
 
 ```json
 {
-	id: "abcdefg",
-	linkUrl: "https://converse.xyz/invite/abcdefg"
+ id: "abcdefg",
+ linkUrl: "https://converse.xyz/invite/abcdefg"
 }
 ```
 
@@ -6260,7 +6276,7 @@ Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`
 
 When a user clicks the invite link, the link can display a group invite landing page at `app.xyz`, for example.
 
-To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint. 
+To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint.
 
 For example, the invite landing page can display the group name, the invite link creator's profile, any other group metadata the app wants to show, and a Join button.
 
@@ -6281,11 +6297,11 @@ GET /groupInvite/abcdefg
 
 ```json
 {
-	id: "abcdefg",
-	linkUrl: "https://app.xyz/invite/abcdefg",
-	groupName: "XMTP Builders",
-	groupImage: "https://...",
-	createdBy: <InboxId>
+ id: "abcdefg",
+ linkUrl: "https://app.xyz/invite/abcdefg",
+ groupName: "XMTP Builders",
+ groupImage: "https://...",
+ createdBy: <InboxId>
 }
 ```
 
@@ -6297,7 +6313,7 @@ Can be used by the invitee to request to join the group.
 
 ```json
 {
-	inviteId: "abcdefg", // User info implied from auth token
+ inviteId: "abcdefg", // User info implied from auth token
 }
 ```
 
@@ -6305,8 +6321,8 @@ Can be used by the invitee to request to join the group.
 
 ```json
 {
-	id: "hijklmn", // The id of the join request
-	status: "pending"
+ id: "hijklmn", // The id of the join request
+ status: "pending"
 }
 ```
 
@@ -6342,9 +6358,9 @@ As soon as the link creator is detected as being online, they can receive a sile
 
 ### Automatic join via silent push notification to all group members
 
-If the group permits all members to add members, consider sending a silent background push notification to all group members. 
+If the group permits all members to add members, consider sending a silent background push notification to all group members.
 
-The first member detected as being online can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic. 
+The first member detected as being online can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic.
 
 This setup can take the dependency off the sole link creator being online and spreads it across the group, which can allow the group join to happen faster.
 
@@ -6442,7 +6458,7 @@ If the invite link creator approves the request, in the background, you can call
 
 ```json
 {
-	inviteId: "abcdefg", // User info implied from auth token
+ inviteId: "abcdefg", // User info implied from auth token
 }
 ```
 
@@ -6450,8 +6466,8 @@ If the invite link creator approves the request, in the background, you can call
 
 ```json
 {
-	id: "hijklmn" // id of the join request
-	status: 'pending'
+ id: "hijklmn" // id of the join request
+ status: 'pending'
 }
 ```
 
@@ -6475,9 +6491,9 @@ GET /groupJoinRequest/hijklmn
 
 ```json
 {
-	id: "hijklmn",
-	status: "approved"// Possible statuses ("approved", "rejected", "pending")
-	reason: null // Allow the system to pass a reason back to the client
+ id: "hijklmn",
+ status: "approved"// Possible statuses ("approved", "rejected", "pending")
+ reason: null // Allow the system to pass a reason back to the client
 }
 ```
 
@@ -6493,7 +6509,7 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
-	status: "approved"
+ status: "approved"
 }
 ```
 
@@ -6501,9 +6517,9 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
-	id: "hijklmn",
-	status: "approved",
-	reason: null // Allow the system to pass a reason back to the client
+ id: "hijklmn",
+ status: "approved",
+ reason: null // Allow the system to pass a reason back to the client
 }
 ```
 
@@ -6516,15 +6532,17 @@ XMTP enforces separate rate limits for read and write operations per client per 
 - **Read operations**: 20,000 requests per 5-minute window
 - **Write operations**: 3,000 messages published per 5-minute window
 
-When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error.
 
 **Read operations** include actions like:
+
 - Fetching conversations
 - Retrieving messages
 - Getting inbox state
 - Listing installations
 
 **Write operations** include actions like:
+
 - Sending chat messages
 - Adding and removing wallets
 - Adding and revoking installations
@@ -7051,14 +7069,14 @@ try await client.revokeAllOtherInstallations(signingKey)
 
 For a video walkthrough of this feature, see [🎥 walkthrough: Installation limits and static revocation](#-walkthrough-installation-limits-and-static-revocation).
 
-Static installation revocation enables users to revoke installations without needing to log in or have access to their installations. 
+Static installation revocation enables users to revoke installations without needing to log in or have access to their installations.
 
 This feature is especially useful in the following scenarios:
 
 - A user has reached the 10 installation limit and can't log in to revoke installations to make room for a new installation.
 - A user logs out of an app installation and chooses the option to delete their local database. Choosing this option will cause them to permanently lose access to the installation. For this reason, you should revoke the installation.
 
-In both scenarios, static revocation enables logged out users to revoke installations using only their recovery address signer. 
+In both scenarios, static revocation enables logged out users to revoke installations using only their recovery address signer.
 
 Here is how static installation revocation works behind the scenes:
 
@@ -7111,28 +7129,28 @@ await Client.revokeInstallations(
 
 ```kotlin [Kotlin]
         val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
-		
-	val toRevokeIds = states.first().installations.map { it.id }
+  
+ val toRevokeIds = states.first().installations.map { it.id }
 
-	Client.revokeInstallations(
-		api,
-		recoveryWallet,
-		inboxId,
-		toRevokeIds
-	)
+ Client.revokeInstallations(
+  api,
+  recoveryWallet,
+  inboxId,
+  toRevokeIds
+ )
 ```
 
 ```swift [Swift]
         let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
-		
-	let toRevokeIds = states.first.installations.map { $0.id }
+  
+ let toRevokeIds = states.first.installations.map { $0.id }
 
-	try await Client.revokeInstallations(
-		api: api,
-		signingKey: recoveryWallet,
-		inboxId: inboxId,
-		installationIds: toRevokeIds
-	)
+ try await Client.revokeInstallations(
+  api: api,
+  signingKey: recoveryWallet,
+  inboxId: inboxId,
+  installationIds: toRevokeIds
+ )
 ```
 
 :::
@@ -7194,10 +7212,11 @@ val states = client.inboxStatesForInboxIds(true, listOf(inboxID, inboxID))
 ```swift [Swift]
 let state = try await client.inboxState(refreshFromNetwork: true)
 let states = try await client.inboxStatesForInboxIds(
-	refreshFromNetwork: true,
-	inboxIds: [inboxID, inboxID]
+ refreshFromNetwork: true,
+ inboxIds: [inboxID, inboxID]
 )
 ```
+
 :::
 
 **Sample response**
@@ -7289,7 +7308,7 @@ try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRem
 
 When an inbox has multiple associated identities, the `identities` array is ordered by the `client_timestamp_ns` field, which sorts identities based on when they were added to the inbox, placing the earliest added identity first.
 
-This provides consistent display ordering and helps establish norms for which identity should be used for UI display purposes. 
+This provides consistent display ordering and helps establish norms for which identity should be used for UI display purposes.
 
 For UI display purposes, you can use the following logic to select the most appropriate identity:
 
@@ -7325,7 +7344,7 @@ The recovery identity and its signer can be used to sign transactions that remov
 
 For example, Alix can give Bo access to their inbox so Bo can see their groups and conversations and respond for Alix.
 
-If Alix decides they no longer want Bo have access to their inbox, Alix can use their recovery identity signer to remove Bo. 
+If Alix decides they no longer want Bo have access to their inbox, Alix can use their recovery identity signer to remove Bo.
 
 However, while Bo has access to Alix's inbox, Bo cannot remove Alix from their own inbox because Bo does not have access to Alix's recovery identity signer.
 
@@ -7337,7 +7356,7 @@ If a user logs in with an identity with address 0x62EE...309c and creates inbox 
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inboxes.png" width="350px" />
 </div>
 
-You can add an identity with address 0xd0e4...DCe8 to inbox 1, but both identities with addresses 0x62EE...309c and 0xd0e4...DCe8 would then have access to inbox 1 only. The identity with address 0xd0e4...DCe8 would no longer be able to access inbox 2. 
+You can add an identity with address 0xd0e4...DCe8 to inbox 1, but both identities with addresses 0x62EE...309c and 0xd0e4...DCe8 would then have access to inbox 1 only. The identity with address 0xd0e4...DCe8 would no longer be able to access inbox 2.
 
 <div>
   <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inbox-remap-id.png" width="350px" />
@@ -7349,9 +7368,9 @@ To help users avoid this state, ensure that your UX surfaces their ability to ad
 
 **Does the client create a new inbox ID or does it match it with the original inbox ID the identity was removed from?**
 
-The identity used to initiate a client should be matched to its original inbox ID. 
+The identity used to initiate a client should be matched to its original inbox ID.
 
-You do have the ability to rotate inbox IDs if a user reaches the limit of 256 identity actions (adding, removing, or revoking identities or installations). Hopefully, users won't reach this limit, but if they do, inbox IDs have a nonce and can be created an infinite number of times. 
+You do have the ability to rotate inbox IDs if a user reaches the limit of 256 identity actions (adding, removing, or revoking identities or installations). Hopefully, users won't reach this limit, but if they do, inbox IDs have a nonce and can be created an infinite number of times.
 
 However, anytime a new inbox ID is created for an identity, the conversations and messages in any existing inbox ID associated with the identity are lost.
 
@@ -7359,7 +7378,7 @@ However, anytime a new inbox ID is created for an identity, the conversations an
 
 The identity accesses that inbox ID and does not create a new inbox ID.
 
-For example, let's say that you create a client with an identity with address 0x62EE...309c. Inbox ID 1 is generated from that identity. 
+For example, let's say that you create a client with an identity with address 0x62EE...309c. Inbox ID 1 is generated from that identity.
 
 <div>
 <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1.png" width="150px" />
@@ -7786,35 +7805,35 @@ data class ClientOptions(
 import LibXMTP
 
 public struct ClientOptions {
-	// Specify network options
-	public struct Api {
-		/// Specify which XMTP network to connect to. Defaults to ``.dev``
-		public var env: XMTPEnvironment = .dev
+ // Specify network options
+ public struct Api {
+  /// Specify which XMTP network to connect to. Defaults to ``.dev``
+  public var env: XMTPEnvironment = .dev
 
-		/// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
-		public var isSecure: Bool = true
+  /// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
+  public var isSecure: Bool = true
 
-		/// Add a client app version identifier that's included with API requests.
-		/// Production apps are strongly encouraged to set this value.
-		///
-		/// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
-		///
-		/// Setting this value provides telemetry that shows which apps are using the
-		/// XMTP client SDK. This information can help XMTP developers provide app
-		/// support, especially around communicating important SDK updates, including
-		/// deprecations and required upgrades.
-		public var appVersion: String?
-	}
+  /// Add a client app version identifier that's included with API requests.
+  /// Production apps are strongly encouraged to set this value.
+  ///
+  /// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+  ///
+  /// Setting this value provides telemetry that shows which apps are using the
+  /// XMTP client SDK. This information can help XMTP developers provide app
+  /// support, especially around communicating important SDK updates, including
+  /// deprecations and required upgrades.
+  public var appVersion: String?
+ }
 
-	public var api = Api()
-	public var codecs: [any ContentCodec] = []
+ public var api = Api()
+ public var codecs: [any ContentCodec] = []
 
-	/// `preAuthenticateToInboxCallback` will be called immediately before an Auth Inbox signature is requested from the user
-	public var preAuthenticateToInboxCallback: PreEventCallback?
+ /// `preAuthenticateToInboxCallback` will be called immediately before an Auth Inbox signature is requested from the user
+ public var preAuthenticateToInboxCallback: PreEventCallback?
 
-	public var dbEncryptionKey: Data
-	public var dbDirectory: String?
-	public var historySyncUrl: String?
+ public var dbEncryptionKey: Data
+ public var dbDirectory: String?
+ public var historySyncUrl: String?
 }
 ```
 
@@ -7903,7 +7922,7 @@ let client = try await Client.build(
 When you log a user out of your app, you can give them the option to delete their local database.
 
 :::tip[Important]
-If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in. 
+If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in.
 :::
 
 :::code-group
@@ -8880,10 +8899,10 @@ Think of it as a bookmark in the chronological log of messages and events for a 
 
 The primary role of a cursor becomes evident when you use the `sync()` functions (`conversation.sync()`, `conversations.sync()`, and `conversations.syncAll()`).
 
-1.  **Initial sync**: The first time an app installation calls `sync()` for a specific conversation, it fetches all available messages and events from the network for that conversation's topic.
-2.  **Cursor placement**: Once the sync is complete, the SDK places a cursor at the end of that batch of fetched messages.
-3.  **Subsequent syncs**: On the next `sync()` call for that same conversation, the client sends its current cursor position to the network. The network then returns only the messages and events that have occurred *after* that cursor.
-4.  **Cursor advancement**: After the new messages are successfully fetched, the SDK advances the cursor to the new latest point.
+1. **Initial sync**: The first time an app installation calls `sync()` for a specific conversation, it fetches all available messages and events from the network for that conversation's topic.
+2. **Cursor placement**: Once the sync is complete, the SDK places a cursor at the end of that batch of fetched messages.
+3. **Subsequent syncs**: On the next `sync()` call for that same conversation, the client sends its current cursor position to the network. The network then returns only the messages and events that have occurred *after* that cursor.
+4. **Cursor advancement**: After the new messages are successfully fetched, the SDK advances the cursor to the new latest point.
 
 This process ensures that each `sync()` call only retrieves what's new, making synchronization efficient by avoiding the re-downloading of messages the client already has.
 
@@ -8915,7 +8934,7 @@ By understanding cursors, you can better reason about the behavior of your app's
 
 
 ## pages/protocol/security.mdx
-# Messaging security properties with XMTP 
+# Messaging security properties with XMTP
 
 XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
 
@@ -8943,7 +8962,7 @@ Message confidentiality is achieved through symmetric encryption, ensuring that 
 
 ## Forward secrecy
 
-Ensures that even if current session keys are compromised, past messages remain secure. 
+Ensures that even if current session keys are compromised, past messages remain secure.
 
 MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
 
@@ -8961,7 +8980,7 @@ XMTP uses digital signatures to strongly guarantee message authenticity. These s
 
 ## Message integrity
 
-Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered. 
+Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered.
 
 XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
 
@@ -9021,7 +9040,7 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 ## pages/agents/agent-security.mdx
 # Follow agent security best practices
 
-For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond. 
+For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond.
 
 Like any other user, this means your agent holds the cryptographic keys required to decrypt and send messages in the conversation. As an agent developer, it's important to uphold the security of these keys and messages.
 
@@ -9031,6 +9050,7 @@ Here are some security best practices:
 - **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
 - **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
 
+
 ## pages/agents/debug-agents.mdx
 # Debug an agent
 
@@ -9038,7 +9058,7 @@ You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat),
 
 Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
 
-You can use this code to get your agent's client information, which provides useful values for debugging: 
+You can use this code to get your agent's client information, which provides useful values for debugging:
 
 ```tsx [Node]
 const clientsByAddress = client.accountIdentifier?.identifier;
@@ -9097,6 +9117,7 @@ console.log(`
 This section covers how to deploy an agent using Railway—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
 
 Alternative platforms include:
+
 - Heroku
 - Fly.io
 - Render
@@ -9159,11 +9180,11 @@ const receiverClient = await Client.create(signer, {
 ## 5. Configure environment variables
 
 1. Get the connection string for your database.
-   
+
    ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
 
 2. Add the connection string and any other required environment variables to your service.
-   
+
    ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
 
 ## 6. Deploy your agent
@@ -9177,6 +9198,7 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 ## Example Railway deployment
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
 
 ## pages/agents/content-types/attachments.mdx
 # Support attachments with your agent built with XMTP
@@ -9625,6 +9647,7 @@ To learn more, see the [Thinking reaction example](https://github.com/ephemeraHQ
 
 Reactions have `shouldPush` set to `false`, which means that reactions do not trigger push notifications as long as the notification server respects this flag.
 
+
 ## pages/agents/content-types/content-types.mdx
 # Understand content types with XMTP
 
@@ -9661,7 +9684,7 @@ A standards-track content type is one that's being actively reviewed for adoptio
 Here are standards-track content types that you can review, test, and adopt in your agent today:
 
 - [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
-- [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message. 
+- [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
 - [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 - [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
 - [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.
@@ -9784,13 +9807,13 @@ XMTP can be used with EVM-compatible wallet apps that support ECDSA signing on t
 
 The XMTP SDK **does not** include a wallet app abstraction, as XMTP assumes that developers have a way to obtain a wallet app connection.
 
-### Chains 
+### Chains
 
-XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s. 
+XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s.
 
-Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.) 
+Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.)
 
-For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP. 
+For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP.
 
 XMTP is also chain-agnostic, so multi-chain support is possible.
 
@@ -9844,7 +9867,7 @@ Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging 
 
 ### Has XMTP undergone a security audit?
 
-A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024. 
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024.
 
 See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
@@ -9856,25 +9879,27 @@ XMTP stores messages in the XMTP network before and after retrieval. App-specifi
 
 ### What are the XMTP message retention policies?
 
-#### For XMTP's blockchain and node databases:
+#### For XMTP's blockchain and node databases
 
 Currently, encrypted payloads are stored indefinitely.
 
-In the coming year, a retention policy will be added. 
+In the coming year, a retention policy will be added.
 
 This retention policy would represent a minimum retention period, not a maximum.
 
 For example, a retention policy may look something like the following, though specifics are subject to change:
-  - One year for messages
-  - Indefinite storage for account information and personal preferences  
 
-The team is researching a way to provide this indefinite storage and have it scale forever. 
-- If research shows that it's possible, we'll share a plan for how it will be achieved. 
+- One year for messages
+- Indefinite storage for account information and personal preferences  
+
+The team is researching a way to provide this indefinite storage and have it scale forever.
+
+- If research shows that it's possible, we'll share a plan for how it will be achieved.
 - If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
 
 Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
-#### For the on-device database managed by the XMTP SDK:
+#### For the on-device database managed by the XMTP SDK
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
 
@@ -9897,7 +9922,7 @@ The XMTP community can propose and adopt standards for other content types, eith
 To learn more about content types, see [Content types](/agents/content-types/content-types).
 
 To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
- 
+
 ### Does XMTP have a maximum message size?
 
 Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).
@@ -9945,13 +9970,13 @@ Build with XMTP to:
     In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP user consent preferences, developers can give their users spam-free inboxes displaying conversations with chosen contacts only.
 
 - **Build on native crypto rails**
-    
+
     Build with XMTP to tap into the capabilities of crypto and web3. Support decentralized identities, crypto transactions, and more, directly in a messaging experience.
 
 - **Empower users to own and control their communications**
 
     With apps built with XMTP, users own their conversations, data, and identity. Combined with the interoperability that comes with protocols, this means users can access their end-to-end encrypted communications using any app built with XMTP.
-    
+
 - **Create with confidence**
 
     Developers are free to create the messaging experiences their users want—on a censorship-resistant protocol architected to last forever. Because XMTP isn't a closed proprietary platform, developers can build confidently, knowing their access and functionality can't be revoked by a central authority.
@@ -9966,13 +9991,13 @@ Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with
 
 - **XMTP builds in the open**
 
-    - Explore the documentation on this site
-    - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, node software powering the XMTP testnet.
-    - Explore the open source code for [xmtp.chat](https://github.com/xmtp/xmtp-js/tree/main/apps/xmtp.chat), an app made for devs to learn to build with XMTP—using an app built with XMTP.
+  - Explore the documentation on this site
+  - Explore the open [XMTP GitHub org](https://github.com/xmtp), which contains code for LibXMTP, XMTP SDKs, and xmtpd, node software powering the XMTP testnet.
+  - Explore the open source code for [xmtp.chat](https://github.com/xmtp/xmtp-js/tree/main/apps/xmtp.chat), an app made for devs to learn to build with XMTP—using an app built with XMTP.
 
 - **XMTP is for everyone**
 
-    - [Join the conversation](https://community.xmtp.org/) and become part of the movement to redefine digital communications.
+  - [Join the conversation](https://community.xmtp.org/) and become part of the movement to redefine digital communications.
 
 
 ## pages/agents/get-started/build-an-agent.mdx
@@ -9981,6 +10006,7 @@ Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with
 This tutorial provides a map to building agents with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
 
 Building with XMTP gives your agent access to:
+
 - The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
 - The building blocks of AI + money + secure chat
 - Users on apps built with XMTP, including Coinbase Wallet, Convos, and more
@@ -10054,15 +10080,15 @@ To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ
 
 ### Support attachments
 
-To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent and [Support attachments](/agents/content-types/attachments) documentation. 
+To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent and [Support attachments](/agents/content-types/attachments) documentation.
 
 ### Support replies
 
-To learn more, see [Support replies](/agents/content-types/replies) documentation. 
+To learn more, see [Support replies](/agents/content-types/replies) documentation.
 
 ### Support reactions
 
-To learn more, see [Support reactions](/agents/content-types/reactions) documentation. 
+To learn more, see [Support reactions](/agents/content-types/reactions) documentation.
 
 ### Observe rate limits
 
@@ -10095,6 +10121,7 @@ To learn more, see [Deploy an agent](/agents/deploy-agent).
 [Complete this form](https://docs.google.com/forms/d/e/1FAIpQLSfZ7JgOt4tw36dGLL9cEmw_y09VoE5_Knk7X6EnJd1IJ3CLEg/viewform) to tell the team about your project, get feedback, and collaborate on possibly getting it featured.
 
 :::
+
 
 ## pages/agents/core-messaging/send-messages.mdx
 # Send messages
@@ -10198,15 +10225,17 @@ XMTP enforces separate rate limits for read and write operations per client per 
 - **Read operations**: 20,000 requests per 5-minute window
 - **Write operations**: 3,000 messages published per 5-minute window
 
-When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error. 
+When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error.
 
 **Read operations** include actions like:
+
 - Fetching conversations
 - Retrieving messages
 - Getting inbox state
 - Listing installations
 
 **Write operations** include actions like:
+
 - Sending chat messages
 - Adding and removing wallets
 - Adding and revoking installations
@@ -10303,7 +10332,7 @@ for await (const conversation of stream) {
 
 ## Stream new group chat and DM messages
 
-This function listens to the network for new messages within all active group chats and DMs. 
+This function listens to the network for new messages within all active group chats and DMs.
 
 Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
@@ -10569,7 +10598,7 @@ You can use a `local` network environment to have a client communicate with an X
 When you log a user out of your app, you can give them the option to delete their local database.
 
 :::tip[Important]
-If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in. 
+If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in.
 :::
 
 ```tsx [Node]
@@ -10815,6 +10844,7 @@ With XMTP, your agent has an inbox that you use to access its messages. An inbox
 When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
 
 For example, consider deploying your agent to these platforms:
+
 - Local development: Creates an installation
 - Railway: Creates another installation
 - Production server: Creates another installation
@@ -10822,6 +10852,7 @@ For example, consider deploying your agent to these platforms:
 Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
 
 For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
+
 - Local development: `local` network
 - Railway: `dev` network  
 - Production server: `production` network
@@ -10831,6 +10862,7 @@ For example, if you deploy your agent across these network environments, you wil
 </div>
 
 If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
+
 - Local development: `production` network
 - Railway: `production` network
 - Production server: `production` network
@@ -10852,6 +10884,7 @@ Here are some best practices for agent installation management:
 ### Deploy to a new platform
 
 When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
+
 - Your agent creates a new installation for the new platform
 - If you already have 10 installations, you'll need to [revoke one first](#revoke-agent-installations)
 - The new installation will start fresh without conversation history
@@ -10859,6 +10892,7 @@ When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
 ### Update an existing deployment
 
 When you redeploy your agent to the same platform:
+
 - If the platform preserves the database, the same installation continues working
 - If the platform doesn't preserve the database, a new installation is created
 
@@ -10913,7 +10947,7 @@ These nodes in the `dev` and `production` XMTP network environments operate in U
 
 - Cuba
 - Iran
-- North Korea 
+- North Korea
 - Syria
 - The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
 
@@ -10930,7 +10964,7 @@ The `dev` and `production` XMTP network environments do not use a blockchain. No
 
 ### Will I be able to run my own XMTP node?
 
-At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network. 
+At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
 
 To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
 
@@ -10970,6 +11004,7 @@ Here is a map of node locations:
 </div>
 
 A purple pin indicates that the node is operated by a non-profit organization.
+
 
 # Summary
 
