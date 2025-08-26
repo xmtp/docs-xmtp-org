@@ -149,10 +149,11 @@ const SDKTile: React.FC<SDKTileProps> = ({
   );
 };
 
-const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
+const SectionTitle: React.FC<{ children: React.ReactNode; id?: string }> = ({
   children,
+  id,
 }) => (
-  <h2 className="custom-homepage-tile-title custom-homepage-section-title">
+  <h2 className="custom-homepage-tile-title custom-homepage-section-title" id={id}>
     {children}
   </h2>
 );
