@@ -30,10 +30,10 @@ The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork det
 
 ```typescript [Browser, Node]
 // Get detailed debug information for a conversation
-const debugInfo = await conversation?.getDebugInformation();
+const debugInfo = await conversation?.debugInfo();
 
 console.log('Epoch:', debugInfo.epoch);
-console.log('Fork Status:', debugInfo.isCommitLogForked); // 'true', 'false', or 'undefined'
+console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
 console.log('Local Commit Log:', debugInfo.localCommitLog);
 console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
 console.log('Fork Details:', debugInfo.forkDetails);
@@ -61,7 +61,7 @@ You can also check fork status directly from conversation lists:
 const conversations = await client.conversations.list();
 
 conversations.forEach(conversation => {
-  if (conversation.isCommitLogForked === 'true') {
+  if (conversation.isCommitLogForked) {
     console.log(`Conversation ${conversation.id} is forked`);
   }
 });
