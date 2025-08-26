@@ -391,35 +391,35 @@ data class ClientOptions(
 import LibXMTP
 
 public struct ClientOptions {
-	// Specify network options
-	public struct Api {
-		/// Specify which XMTP network to connect to. Defaults to ``.dev``
-		public var env: XMTPEnvironment = .dev
+ // Specify network options
+ public struct Api {
+  /// Specify which XMTP network to connect to. Defaults to ``.dev``
+  public var env: XMTPEnvironment = .dev
 
-		/// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
-		public var isSecure: Bool = true
+  /// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
+  public var isSecure: Bool = true
 
-		/// Add a client app version identifier that's included with API requests.
-		/// Production apps are strongly encouraged to set this value.
-		///
-		/// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
-		///
-		/// Setting this value provides telemetry that shows which apps are using the
-		/// XMTP client SDK. This information can help XMTP developers provide app
-		/// support, especially around communicating important SDK updates, including
-		/// deprecations and required upgrades.
-		public var appVersion: String?
-	}
+  /// Add a client app version identifier that's included with API requests.
+  /// Production apps are strongly encouraged to set this value.
+  ///
+  /// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+  ///
+  /// Setting this value provides telemetry that shows which apps are using the
+  /// XMTP client SDK. This information can help XMTP developers provide app
+  /// support, especially around communicating important SDK updates, including
+  /// deprecations and required upgrades.
+  public var appVersion: String?
+ }
 
-	public var api = Api()
-	public var codecs: [any ContentCodec] = []
+ public var api = Api()
+ public var codecs: [any ContentCodec] = []
 
-	/// `preAuthenticateToInboxCallback` will be called immediately before an Auth Inbox signature is requested from the user
-	public var preAuthenticateToInboxCallback: PreEventCallback?
+ /// `preAuthenticateToInboxCallback` will be called immediately before an Auth Inbox signature is requested from the user
+ public var preAuthenticateToInboxCallback: PreEventCallback?
 
-	public var dbEncryptionKey: Data
-	public var dbDirectory: String?
-	public var historySyncUrl: String?
+ public var dbEncryptionKey: Data
+ public var dbDirectory: String?
+ public var historySyncUrl: String?
 }
 ```
 
@@ -508,7 +508,7 @@ let client = try await Client.build(
 When you log a user out of your app, you can give them the option to delete their local database.
 
 :::tip[Important]
-If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in. 
+If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in.
 :::
 
 :::code-group

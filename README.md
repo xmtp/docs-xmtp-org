@@ -92,6 +92,32 @@ As you make and save changes to markdown files, the website automatically update
 
 Note that any changes you save to markdown files aren't reflected in this static build because the command serves the website from the `dist` directory, not the editable markdown files.
 
+### Check spelling and markdown formatting
+
+The project includes tools to help maintain documentation quality:
+
+#### Spell checking
+
+```bash
+$ npm run spell
+```
+
+This checks all markdown files for spelling errors using cspell.
+
+#### Markdown linting
+
+```bash
+$ npm run lint:md
+```
+
+This checks all markdown files for formatting issues (trailing spaces, missing alt text, etc.).
+
+```bash
+$ npm run lint:md:fix
+```
+
+This automatically fixes formatting issues that can be corrected automatically (trailing spaces, missing newlines, etc.).
+
 ## What to expect
 
 After you've submitted your PR, the `docs.xmtp.org` team will review your PR and either:

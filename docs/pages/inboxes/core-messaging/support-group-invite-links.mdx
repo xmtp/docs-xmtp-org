@@ -5,7 +5,7 @@ This document provides suggested paths you might take to provide XMTP group chat
 ## Possible user experience flows
 
 1. A group member with permission to add group members [creates an invite link](#create-a-group-invite-link).
-2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page). 
+2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page).
 3. The non-member is granted access to the group in one of the following ways:
     - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
     - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
@@ -41,8 +41,8 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with any
 
 ```json
 {
-	groupName: "XMTP Builders",
-	groupImage: "https://...",
+ groupName: "XMTP Builders",
+ groupImage: "https://...",
 // Inviter can be inferred from the request auth token.
 // Backend doesn't need the actual group ID, since the client can keep track in their DB
 }
@@ -56,8 +56,8 @@ Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`
 
 ```json
 {
-	id: "abcdefg",
-	linkUrl: "https://converse.xyz/invite/abcdefg"
+ id: "abcdefg",
+ linkUrl: "https://converse.xyz/invite/abcdefg"
 }
 ```
 
@@ -65,7 +65,7 @@ Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`
 
 When a user clicks the invite link, the link can display a group invite landing page at `app.xyz`, for example.
 
-To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint. 
+To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint.
 
 For example, the invite landing page can display the group name, the invite link creator's profile, any other group metadata the app wants to show, and a Join button.
 
@@ -86,11 +86,11 @@ GET /groupInvite/abcdefg
 
 ```json
 {
-	id: "abcdefg",
-	linkUrl: "https://app.xyz/invite/abcdefg",
-	groupName: "XMTP Builders",
-	groupImage: "https://...",
-	createdBy: <InboxId>
+ id: "abcdefg",
+ linkUrl: "https://app.xyz/invite/abcdefg",
+ groupName: "XMTP Builders",
+ groupImage: "https://...",
+ createdBy: <InboxId>
 }
 ```
 
@@ -102,7 +102,7 @@ Can be used by the invitee to request to join the group.
 
 ```json
 {
-	inviteId: "abcdefg", // User info implied from auth token
+ inviteId: "abcdefg", // User info implied from auth token
 }
 ```
 
@@ -110,8 +110,8 @@ Can be used by the invitee to request to join the group.
 
 ```json
 {
-	id: "hijklmn", // The id of the join request
-	status: "pending"
+ id: "hijklmn", // The id of the join request
+ status: "pending"
 }
 ```
 
@@ -147,9 +147,9 @@ As soon as the link creator is detected as being online, they can receive a sile
 
 ### Automatic join via silent push notification to all group members
 
-If the group permits all members to add members, consider sending a silent background push notification to all group members. 
+If the group permits all members to add members, consider sending a silent background push notification to all group members.
 
-The first member detected as being online can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic. 
+The first member detected as being online can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic.
 
 This setup can take the dependency off the sole link creator being online and spreads it across the group, which can allow the group join to happen faster.
 
@@ -247,7 +247,7 @@ If the invite link creator approves the request, in the background, you can call
 
 ```json
 {
-	inviteId: "abcdefg", // User info implied from auth token
+ inviteId: "abcdefg", // User info implied from auth token
 }
 ```
 
@@ -255,8 +255,8 @@ If the invite link creator approves the request, in the background, you can call
 
 ```json
 {
-	id: "hijklmn" // id of the join request
-	status: 'pending'
+ id: "hijklmn" // id of the join request
+ status: 'pending'
 }
 ```
 
@@ -280,9 +280,9 @@ GET /groupJoinRequest/hijklmn
 
 ```json
 {
-	id: "hijklmn",
-	status: "approved"// Possible statuses ("approved", "rejected", "pending")
-	reason: null // Allow the system to pass a reason back to the client
+ id: "hijklmn",
+ status: "approved"// Possible statuses ("approved", "rejected", "pending")
+ reason: null // Allow the system to pass a reason back to the client
 }
 ```
 
@@ -298,7 +298,7 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
-	status: "approved"
+ status: "approved"
 }
 ```
 
@@ -306,8 +306,8 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
-	id: "hijklmn",
-	status: "approved",
-	reason: null // Allow the system to pass a reason back to the client
+ id: "hijklmn",
+ status: "approved",
+ reason: null // Allow the system to pass a reason back to the client
 }
 ```

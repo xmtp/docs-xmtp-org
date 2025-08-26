@@ -86,7 +86,7 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 ## Stream new group chat and DM messages
 
-This function listens to the network for new messages within all active group chats and DMs. 
+This function listens to the network for new messages within all active group chats and DMs.
 
 Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
@@ -277,7 +277,7 @@ const [messages, setMessages] = useState<DecodedMessage[]>([]);
       onCloseCallback 
     ); 
   };
-``` 
+```
 
 ```kotlin [Kotlin]
     private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())

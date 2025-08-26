@@ -1,4 +1,4 @@
-# Messaging security properties with XMTP 
+# Messaging security properties with XMTP
 
 XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
 
@@ -26,7 +26,7 @@ Message confidentiality is achieved through symmetric encryption, ensuring that 
 
 ## Forward secrecy
 
-Ensures that even if current session keys are compromised, past messages remain secure. 
+Ensures that even if current session keys are compromised, past messages remain secure.
 
 MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
 
@@ -44,7 +44,7 @@ XMTP uses digital signatures to strongly guarantee message authenticity. These s
 
 ## Message integrity
 
-Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered. 
+Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered.
 
 XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
 
