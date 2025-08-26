@@ -209,14 +209,17 @@ You might also offer **manual backup** that enables users to create backups on d
 The frequency of archive creation depends on your users' messaging patterns and risk tolerance:
 
 For most users:
+
 - Weekly or monthly automated backups work well for regular message activity
 - Consider creating archives after important conversations or when users receive many messages
 
 For power users:
+
 - Daily automated backups for users who send/receive many messages
 - Allow manual backup creation before important events (travel, device changes)
 
 Backup triggers to consider:
+
 - Time-based: Daily, weekly, or monthly schedules
 - Activity-based: After a certain number of new messages (for example, every 100 messages)
 - Event-based: Before OS updates, app updates, or when users plan to switch devices

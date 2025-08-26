@@ -38,13 +38,13 @@ XMTP can be used with EVM-compatible wallet apps that support ECDSA signing on t
 
 The XMTP SDK **does not** include a wallet app abstraction, as XMTP assumes that developers have a way to obtain a wallet app connection.
 
-### Chains 
+### Chains
 
-XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s. 
+XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s.
 
-Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.) 
+Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.)
 
-For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP. 
+For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP.
 
 XMTP is also chain-agnostic, so multi-chain support is possible.
 
@@ -98,7 +98,7 @@ Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging 
 
 ### Has XMTP undergone a security audit?
 
-A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024. 
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024.
 
 See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
@@ -110,25 +110,27 @@ XMTP stores messages in the XMTP network before and after retrieval. App-specifi
 
 ### What are the XMTP message retention policies?
 
-#### For XMTP's blockchain and node databases:
+#### For XMTP's blockchain and node databases
 
 Currently, encrypted payloads are stored indefinitely.
 
-In the coming year, a retention policy will be added. 
+In the coming year, a retention policy will be added.
 
 This retention policy would represent a minimum retention period, not a maximum.
 
 For example, a retention policy may look something like the following, though specifics are subject to change:
-  - One year for messages
-  - Indefinite storage for account information and personal preferences  
 
-The team is researching a way to provide this indefinite storage and have it scale forever. 
-- If research shows that it's possible, we'll share a plan for how it will be achieved. 
+- One year for messages
+- Indefinite storage for account information and personal preferences  
+
+The team is researching a way to provide this indefinite storage and have it scale forever.
+
+- If research shows that it's possible, we'll share a plan for how it will be achieved.
 - If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
 
 Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
-#### For the on-device database managed by the XMTP SDK:
+#### For the on-device database managed by the XMTP SDK
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
 
@@ -151,7 +153,7 @@ The XMTP community can propose and adopt standards for other content types, eith
 To learn more about content types, see [Content types](/agents/content-types/content-types).
 
 To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
- 
+
 ### Does XMTP have a maximum message size?
 
 Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).

@@ -5,6 +5,7 @@ With XMTP, your agent has an inbox that you use to access its messages. An inbox
 When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
 
 For example, consider deploying your agent to these platforms:
+
 - Local development: Creates an installation
 - Railway: Creates another installation
 - Production server: Creates another installation
@@ -12,6 +13,7 @@ For example, consider deploying your agent to these platforms:
 Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
 
 For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
+
 - Local development: `local` network
 - Railway: `dev` network  
 - Production server: `production` network
@@ -21,6 +23,7 @@ For example, if you deploy your agent across these network environments, you wil
 </div>
 
 If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
+
 - Local development: `production` network
 - Railway: `production` network
 - Production server: `production` network
@@ -42,6 +45,7 @@ Here are some best practices for agent installation management:
 ### Deploy to a new platform
 
 When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
+
 - Your agent creates a new installation for the new platform
 - If you already have 10 installations, you'll need to [revoke one first](#revoke-agent-installations)
 - The new installation will start fresh without conversation history
@@ -49,6 +53,7 @@ When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
 ### Update an existing deployment
 
 When you redeploy your agent to the same platform:
+
 - If the platform preserves the database, the same installation continues working
 - If the platform doesn't preserve the database, a new installation is created
 

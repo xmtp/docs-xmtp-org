@@ -34,7 +34,7 @@ In practice, we ask that you provide attribution to XMTP to the best of the abil
 
 There are several typical ways in which this might apply:
 
-#### Exact reproductions
+### Exact reproductions
 
 If your online work _exactly reproduces_ text or images from this site, in whole or in part, please include a paragraph at the bottom of your page that reads:
 
@@ -42,7 +42,7 @@ If your online work _exactly reproduces_ text or images from this site, in whole
 
 Also, please link back to the original source page so that readers can refer to it for more information.
 
-#### Modified versions
+### Modified versions
 
 If your online work shows _modified_ text or images based on the content from this site, please include a paragraph at the bottom of your page that reads:
 
@@ -50,6 +50,6 @@ If your online work shows _modified_ text or images based on the content from th
 
 Again, please link back to the original source page so that readers can refer to it for more information. This is even more important when the content has been modified.
 
-#### Other media
+### Other media
 
 If you produce non-hypertext works, such as books, audio, or video, we ask that you make a best effort to include a spoken or written attribution in the spirit of the messages above.

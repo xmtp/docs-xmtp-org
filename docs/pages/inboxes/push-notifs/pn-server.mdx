@@ -1,6 +1,6 @@
 # Run a push notification server for an app built with XMTP
 
-This guide supplements the [core instructions](https://github.com/xmtp/example-notification-server-go/blob/np/export-kotlin-proto-code/README.md#local-setup) provided in the `example-notification-server-go` repository. The guide aims to address some common setup misconceptions and issues. 
+This guide supplements the [core instructions](https://github.com/xmtp/example-notification-server-go/blob/np/export-kotlin-proto-code/README.md#local-setup) provided in the `example-notification-server-go` repository. The guide aims to address some common setup misconceptions and issues.
 
 This guide is for macOS users, but the steps should be similar for Linux users.
 
@@ -33,7 +33,7 @@ If you need to upgrade Go on your system, you can do it via Homebrew:
 brew install go
 ```
 
-If you encounter an error like `Error: go 1.17.2 is already installed`, you already have Go installed on your system. 
+If you encounter an error like `Error: go 1.17.2 is already installed`, you already have Go installed on your system.
 
 You can check the version of Go installed on your system using:
 
@@ -112,6 +112,7 @@ You can now send notifications to your device using an [XMTP push notification c
   git checkout main
   git reset --hard origin/main
   ```
+
 - Here is a piece of code that points to the ports and network. Be sure to use TLS like this `./dev/run --xmtp-listener-tls --api`.
 
    :::code-group

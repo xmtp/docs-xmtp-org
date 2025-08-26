@@ -266,7 +266,7 @@ This ensures that older installations (or your XMTP push notification server cod
 
 ## Get HMAC keys for a conversation
 
-Gets the HMAC keys for a specific group chat or DM conversation. 
+Gets the HMAC keys for a specific group chat or DM conversation.
 
 For DM conversations, the response includes HMAC keys for all topics associated with the conversation. This is necessary because a single DM conversation can have multiple underlying topics due to DM stitching, where multiple conversations between the same participants are combined into one view.
 
@@ -303,6 +303,7 @@ To implement push notifications in your app, you must run a push notification se
 To learn more about running a push notification server, see [Understand push notifications with XMTP](/inboxes/push-notifs/understand-push-notifs).
 
 Then you can:
+
 - [Set up a Go push notification server](/inboxes/push-notifs/pn-server)
 - [Try push notifications with the Android example XMTP app](/inboxes/push-notifs/android-pn)
 - [Try push notifications with the iOS example XMTP app](/inboxes/push-notifs/ios-pn)

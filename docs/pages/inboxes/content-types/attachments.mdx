@@ -239,8 +239,8 @@ Encode and encrypt an attachment for transport:
 ```swift [Swift]
 // Encode an attachment and encrypt the encoded content
 const encryptedAttachment = try RemoteAttachment.encodeEncrypted(
-	content: attachment,
-	codec: AttachmentCodec()
+ content: attachment,
+ codec: AttachmentCodec()
 )
 ```
 
@@ -276,11 +276,11 @@ Send a remote attachment and set the `contentType`:
 
 ```swift [Swift]
 try await conversation.send(
-	content: remoteAttachment,
-	options: .init(
-		contentType: ContentTypeRemoteAttachment,
-		fallback: "a description of the image"
-	)
+ content: remoteAttachment,
+ options: .init(
+  contentType: ContentTypeRemoteAttachment,
+  fallback: "a description of the image"
+ )
 )
 ```
 
@@ -384,9 +384,9 @@ import UIKIt
 import SwiftUI
 
 struct ContentView: View {
-	var body: some View {
-		Image(uiImage: UIImage(data: attachment.data))
-	}
+ var body: some View {
+  Image(uiImage: UIImage(data: attachment.data))
+ }
 }
 ```
 
@@ -755,6 +755,7 @@ yarn add @xmtp/content-type-remote-attachment
 ```bash [pnpm]
 pnpm add @xmtp/content-type-remote-attachment
 ```
+
 :::
 
 ### Import and register
