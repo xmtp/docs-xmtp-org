@@ -1,6 +1,6 @@
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 import pytz
 
 # Function to extract content from markdown files
@@ -30,8 +30,9 @@ def generate_llms_txt(directory, output_file='llms/llms-full.txt'):  # Updated f
             llms_file.write("# XMTP Full Documentation\n\n")
             
             # Add timestamp
+            pacific_tz = pytz.timezone('US/Pacific')
             current_time = datetime.now(timezone.utc).astimezone(pacific_tz)
-            timestamp = current_time.strftime("Generated at %I:%M %p Pacific / %B %d, %Y")
+            timestamp = current_time.strftime("Generated at %I:%M %p %Z / %B %d, %Y")
             llms_file.write(f"{timestamp}\n\n")
             llms_file.write("## Instructions for AI Tools\n\n")
             llms_file.write("This documentation includes code samples for multiple SDKs. Please use the code samples that correspond to the SDK you are working with:\n\n")
