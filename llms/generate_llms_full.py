@@ -30,8 +30,7 @@ def generate_llms_txt(directory, output_file='llms/llms-full.txt'):  # Updated f
             llms_file.write("# XMTP Full Documentation\n\n")
             
             # Add timestamp
-            pacific_tz = pytz.timezone('US/Pacific')
-            current_time = datetime.now(pacific_tz)
+            current_time = datetime.now(timezone.utc).astimezone(pacific_tz)
             timestamp = current_time.strftime("Generated at %I:%M %p Pacific / %B %d, %Y")
             llms_file.write(f"{timestamp}\n\n")
             llms_file.write("## Instructions for AI Tools\n\n")
