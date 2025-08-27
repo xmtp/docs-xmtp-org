@@ -1,5 +1,7 @@
 # XMTP Full Documentation
 
+Generated at 08:22 PM UTC / August 27, 2025
+
 ## Instructions for AI Tools
 
 This documentation includes code samples for multiple SDKs. Please use the code samples that correspond to the SDK you are working with:
@@ -558,7 +560,7 @@ To learn more, see [Why build with XMTP?](/inboxes/intro/why-xmtp).
 
 1. [Create an EOA or SCW signer](/inboxes/core-messaging/create-a-signer).
 
-2. [Create an XMTP client](/inboxes/core-messaging/create-a-client).
+2. [Create an XMTP client](/inboxes/core-messaging/create-a-client). Be sure to set the `appVersion` client option.
 
 3. [Check if an identity is reachable on XMTP](/inboxes/core-messaging/create-conversations#check-if-an-identity-is-reachable).
 
@@ -7574,12 +7576,20 @@ type ClientOptions = {
    * Add a client app version identifier that's included with API requests.
    * Production apps are strongly encouraged to set this value.
    *
-   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
    *
+   * For example: `appVersion: 'alix/2.x'`
+   * 
+   * If you have an app and an agent, it's best to distinguish them from each other by 
+   * adding `-app` and `-agent` to the names. For example:
+   * 
+   * - App: `appVersion: 'alix-app/3.x'`
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   * 
    * Setting this value provides telemetry that shows which apps are using the
-   * XMTP client SDK. This information can help XMTP developers provide app
-   * support, especially around communicating important SDK updates, including
-   * deprecations and required upgrades.
+   * XMTP client SDK. This information can help XMTP core developers provide you with app
+   * support, especially around communicating important SDK updates, deprecations,
+   * and required upgrades.
    */
   appVersion?: string;
   /**
@@ -7655,12 +7665,20 @@ type ClientOptions = {
    * Add a client app version identifier that's included with API requests.
    * Production apps are strongly encouraged to set this value.
    *
-   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
    *
+   * For example: `appVersion: 'alix/2.x'`
+   * 
+   * If you have an app and an agent, it's best to distinguish them from each other by 
+   * adding `-app` and `-agent` to the names. For example:
+   * 
+   * - App: `appVersion: 'alix-app/3.x'`
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   * 
    * Setting this value provides telemetry that shows which apps are using the
-   * XMTP client SDK. This information can help XMTP developers provide app
-   * support, especially around communicating important SDK updates, including
-   * deprecations and required upgrades.
+   * XMTP client SDK. This information can help XMTP core developers provide you with app
+   * support, especially around communicating important SDK updates, deprecations,
+   * and required upgrades.
    */
   appVersion?: string;
   /**
@@ -7730,12 +7748,20 @@ type ClientOptions = {
    * Add a client app version identifier that's included with API requests.
    * Production apps are strongly encouraged to set this value.
    *
-   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
    *
+   * For example: `appVersion: 'alix/2.x'`
+   * 
+   * If you have an app and an agent, it's best to distinguish them from each other by 
+   * adding `-app` and `-agent` to the names. For example:
+   * 
+   * - App: `appVersion: 'alix-app/3.x'`
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   * 
    * Setting this value provides telemetry that shows which apps are using the
-   * XMTP client SDK. This information can help XMTP developers provide app
-   * support, especially around communicating important SDK updates, including
-   * deprecations and required upgrades.
+   * XMTP client SDK. This information can help XMTP core developers provide you with app
+   * support, especially around communicating important SDK updates, deprecations,
+   * and required upgrades.
    */
   appVersion?: string;
   /**
@@ -7789,12 +7815,20 @@ data class ClientOptions(
          * Add a client app version identifier that's included with API requests.
          * Production apps are strongly encouraged to set this value.
          *
-         * For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+         * You can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+         *
+         * For example: `appVersion: 'alix/2.x'`
+         *
+         * If you have an app and an agent, it's best to distinguish them from each other by 
+         * adding `-app` and `-agent` to the names. For example:
+         *
+         * - App: `appVersion: 'alix-app/3.x'`
+         * - Agent: `appVersion: 'alix-agent/2.x'`
          *
          * Setting this value provides telemetry that shows which apps are using the
-         * XMTP client SDK. This information can help XMTP developers provide app
-         * support, especially around communicating important SDK updates, including
-         * deprecations and required upgrades.
+         * XMTP client SDK. This information can help XMTP core developers provide you
+         * with app support, especially around communicating important SDK updates, 
+         * deprecations, and required upgrades.
          */
         val appVersion: String? = null,
     )
@@ -7816,12 +7850,19 @@ public struct ClientOptions {
   /// Add a client app version identifier that's included with API requests.
   /// Production apps are strongly encouraged to set this value.
   ///
-  /// For example, you can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+  /// You can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+  ///
+  /// For example: `appVersion: 'alix/2.x'`
+  /// 
+  /// If you have an app and an agent, it's best to distinguish them from each other by 
+  /// adding `-app` and `-agent` to the names. For example:
+  /// - App: `appVersion: 'alix-app/3.x'`
+  /// - Agent: `appVersion: 'alix-agent/2.x'`
   ///
   /// Setting this value provides telemetry that shows which apps are using the
-  /// XMTP client SDK. This information can help XMTP developers provide app
-  /// support, especially around communicating important SDK updates, including
-  /// deprecations and required upgrades.
+  /// XMTP client SDK. This information can help XMTP core developers provide you
+  //  with app support, especially around communicating important SDK updates,
+  /// deprecations, and required upgrades.
   public var appVersion: String?
  }
 
@@ -7838,6 +7879,21 @@ public struct ClientOptions {
 ```
 
 :::
+
+### Set the `appVersion` client option
+
+Be sure to set the `appVersion` client option for your production app.
+
+You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+
+For example: `appVersion: 'alix/2.x'`
+
+If you have an app and an agent, it's best to distinguish them from each other by adding `-app` and `-agent` to the names. For example:
+
+- App: `appVersion: 'alix-app/3.x'`
+- Agent: `appVersion: 'alix-agent/2.x'`
+
+The `appVersion` value is included with API requests to provide telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide you with app support, especially around communicating important SDK updates, deprecations, and required upgrades.
 
 ### XMTP network environments
 
@@ -10041,7 +10097,12 @@ const signer: Signer = ...;
 const env: XmtpEnv = "dev";
 
 // create the client
-const client = await Client.create(signer, { encryptionKey, env });
+const client = await Client.create(signer, {
+  encryptionKey,
+  env,
+  appVersion: 'alix-agent/2.x'
+});
+
 // sync the client to get the latest messages
 await client.conversations.sync();
 
@@ -10529,10 +10590,16 @@ type ClientOptions = {
    * Add a client app version identifier that's included with API requests.
    * Production apps are strongly encouraged to set this value.
    *
-   * For example, you can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
+   * For example, `appVersion: 'alix/2.x'`
    *
-   * Setting this value provides telemetry that shows which apps are using the
-   * XMTP client SDK. This information can help XMTP developers provide app
+   * If you have an agent and an app, it's best to distinguish them from each other by 
+   * adding `-agent` and `-app` to the names. For example:
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   * - App: `appVersion: 'alix-app/3.x'`
+   * 
+   * Setting this value provides telemetry that shows which agents are using the
+   * XMTP client SDK. This information can help XMTP core developers provide you with agent
    * support, especially around communicating important SDK updates, including
    * deprecations and required upgrades.
    */
@@ -10578,6 +10645,21 @@ type ClientOptions = {
   loggingLevel?: LogLevel;
 };
 ```
+
+### Set the `appVersion` client option
+
+Be sure to set the `appVersion` client option for your production agent.
+
+You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
+
+For example: `appVersion: 'alix/2.x'`
+
+If you have an agent and an app, it's best to distinguish them from each other by adding `-agent` and `-app` to the names. For example:
+
+- Agent: `appVersion: 'alix-agent/2.x'`
+- App: `appVersion: 'alix-app/3.x'`
+
+The `appVersion` value is included with API requests to provide telemetry that shows which agents are using the XMTP client SDK. This information can help XMTP core developers provide you with agent support, especially around communicating important SDK updates, deprecations, and required upgrades.
 
 ### XMTP network environments
 
