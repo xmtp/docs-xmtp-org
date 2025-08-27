@@ -1,7 +1,11 @@
 import os
 import sys
 from datetime import datetime, timezone
-import pytz
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    # Fallback for Python < 3.9
+    import pytz
 
 # Function to extract content from markdown files
 # Handles file reading and error cases
@@ -30,7 +34,11 @@ def generate_llms_txt(directory, output_file='llms/llms-full.txt'):  # Updated f
             llms_file.write("# XMTP Full Documentation\n\n")
             
             # Add timestamp
-            pacific_tz = pytz.timezone('US/Pacific')
+            try:
+                pacific_tz = ZoneInfo('US/Pacific')
+            except NameError:
+                # Fallback for Python < 3.9
+                pacific_tz = pytz.timezone('US/Pacific')
             current_time = datetime.now(timezone.utc).astimezone(pacific_tz)
             timestamp = current_time.strftime("Generated at %I:%M %p %Z / %B %d, %Y")
             llms_file.write(f"{timestamp}\n\n")
