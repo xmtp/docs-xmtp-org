@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 01:33 AM UTC / August 29, 2025
+Generated at 03:46 PM UTC / August 29, 2025
 
 ## Instructions for AI Tools
 
@@ -4226,7 +4226,7 @@ Also, you must consider that a welcome message will be sent when a DM conversati
 ## pages/inboxes/sdks/node.mdx
 # Get started with the XMTP Node SDK
 
-Use the XMTP Node SDK to build agents and other server-side applications that interact with the XMTP network.
+Use the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) to build agents and other server-side applications that interact with the XMTP network.
 
 :::tip[🤖 Building an agent?]
 
@@ -4303,7 +4303,7 @@ await client.conversations.syncAll(["allowed"]);
 ## pages/inboxes/sdks/browser.mdx
 # Get started with the XMTP Browser SDK
 
-Use the XMTP Browser SDK to build web-based apps, tools, and experiences with secure, private, and decentralized messaging.
+Use the [XMTP Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk) to build web-based apps, tools, and experiences with secure, private, and decentralized messaging.
 
 The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
@@ -4374,7 +4374,7 @@ await client.conversations.syncAll(["allowed"]);
 ## pages/inboxes/sdks/ios.mdx
 # Get started with the XMTP iOS SDK
 
-Use the XMTP Swift SDK to build secure, private, and decentralized messaging into your iOS app.
+Use the [XMTP iOS SDK](https://github.com/xmtp/xmtp-ios) to build secure, private, and decentralized messaging into your iOS app.
 
 The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
@@ -4437,7 +4437,7 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 ## pages/inboxes/sdks/android.mdx
 # Get started with the XMTP Android SDK
 
-Use the XMTP Kotlin SDK to build secure, private, and decentralized messaging into your Android app.
+Use the [XMTP Android SDK](https://github.com/xmtp/xmtp-android) to build secure, private, and decentralized messaging into your Android app.
 
 The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
@@ -4502,7 +4502,7 @@ client.conversations.syncAll(consentStates = ConsentState.ALLOWED)
 ## pages/inboxes/sdks/react-native.mdx
 # Get started with the XMTP React Native SDK
 
-Use the XMTP React Native SDK to build secure, private, and decentralized messaging into your cross-platform mobile app.
+Use the [XMTP React Native SDK](https://github.com/xmtp/xmtp-react-native) to build secure, private, and decentralized messaging into your cross-platform mobile app.
 
 The guide provides some quickstart code, as well as a map to building a [secure messaging app](/protocol/security) with XMTP, including support for:
 
