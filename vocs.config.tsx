@@ -26,8 +26,8 @@ export default defineConfig({
       if (documentId.includes('/agents/')) {
         return 1.2;
       }
-      // Boost inboxes section pages slightly  
-      if (documentId.includes('/inboxes/')) {
+      // Boost chat-apps section pages slightly  
+      if (documentId.includes('/chat-apps/')) {
         return 1.1;
       }
       // Default boost for other sections
@@ -38,8 +38,8 @@ export default defineConfig({
       // Add section info to the result for display purposes
       if (result.id.includes('/agents/')) {
         result.section = 'Build agents';
-      } else if (result.id.includes('/inboxes/')) {
-        result.section = 'Build inboxes';  
+      } else if (result.id.includes('/chat-apps/')) {
+        result.section = 'Build chat apps';  
       } else if (result.id.includes('/protocol/')) {
         result.section = 'Protocol';
       } else if (result.id.includes('/network/')) {
@@ -71,7 +71,7 @@ export default defineConfig({
   iconUrl: "/x-mark-blue-lightmode.png",
   topNav: [
     { text: "Build agents", link: '/agents/get-started/build-an-agent', match: '/agents' },
-    { text: "Build inboxes", link: '/inboxes/intro/get-started', match: '/inboxes' },
+    { text: "Build chat apps", link: '/chat-apps/intro/get-started', match: '/chat-apps' },
     { text: "Protocol", link: '/protocol/envelope-types' },
     { text: "Network", link: '/network/run-a-node' },
   ],
