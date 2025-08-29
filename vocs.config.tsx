@@ -70,8 +70,9 @@ export default defineConfig({
   },
   iconUrl: "/x-mark-blue-lightmode.png",
   topNav: [
-    { text: "Build agents", link: '/agents/get-started/build-an-agent', match: '/agents' },
-    { text: "Build inboxes", link: '/inboxes/intro/get-started', match: '/inboxes' },
+    { text: "Build agents", link: '/agents/get-started/build-an-agent' },
+    { text: "Build inboxes", link: '/inboxes/intro/get-started' },
+    { text: "Fund agents and apps", link: '/fund-agents-apps/get-started' },
     { text: "Protocol", link: '/protocol/envelope-types' },
     { text: "Network", link: '/network/run-a-node' },
   ],

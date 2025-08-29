@@ -61,6 +61,11 @@ export const sidebarConfig = {
           text: "Observe rate limits",
           link: "/agents/core-messaging/rate-limits",
         },
+        {
+          text: "Keep your agent funded",
+          link: "/fund-agents-apps/get-started",
+        },
+
       ],
     },
     {
@@ -119,6 +124,32 @@ export const sidebarConfig = {
       link: "/network/network-nodes",
     },
   ],
+  '/fund-agents-apps/': [
+        {
+          text: "Get started",
+          link: "/fund-agents-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-agents-apps/calculate-fees",
+        },
+        {
+          text: "Fund your app",
+          link: "/fund-agents-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-agents-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-agents-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-agents-apps/glossary",
+        },
+      ],
   '/protocol/': [
     {
       text: "XMTP Improvement Proposals",
@@ -257,6 +288,10 @@ export const sidebarConfig = {
         {
           text: "Observe rate limits",
           link: "/inboxes/core-messaging/rate-limits",
+        },
+        {
+          text: "Keep your app funded",
+          link: "/fund-agents-apps/get-started",
         },
       ],
     },
