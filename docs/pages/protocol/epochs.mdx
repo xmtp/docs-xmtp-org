@@ -1,0 +1,18 @@
+# Epochs with XMTP
+
+With XMTP, each [commit](/protocol/envelope-types#commit-messages) starts a new epoch, which represents the current cryptographic state of a group chat.
+
+Epochs work according to these requirements:
+
+- Sequential numbering: Epochs are strictly ordered and increase by one with each commit (epoch 1, epoch 2, etc.).
+- New keys: Each epoch introduces a fresh encryption key, and the key from the previous epoch is discarded once the new one is in use.
+- Decryption requirement: To read messages or commits in a given epoch, a member must have the correct epoch key.
+- Fork risk: If members diverge on which epoch they're in (e.g., due to missed or out-of-order commits), they won't be able to decrypt each other's messages, causing a fork.
+
+[Intents](/protocol/intents) exist to help ensure that commits, and therefore epochs, are applied consistently and in the right order.
+
+## Epoch flow
+
+This diagram illustrates a case in which commits 2 and 3 arrive at nearly the same time. With XMTP epochs, the first commit to arrive (commit 2) wins. Using [intents]((/protocol/intents)), commit 3 is able to retry and success based on epoch 2.
+
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/epochs.png)

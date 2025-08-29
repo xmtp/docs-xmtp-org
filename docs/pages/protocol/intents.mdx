@@ -6,7 +6,7 @@ Developers building apps and agents with XMTP don't need to work with intents di
 
 ## Intent actions
 
-An intent represents an action that intends to change the state of a group chat via a commit, along with enough information to retry the action if it fails.
+An intent represents an action that intends to change the state of a group chat via a [commit](/protocol/envelope-types#commit-messages), along with enough information to retry the action if it fails.
 
 Each commit rotates the group's encryption state into a new epoch and therefore must be strictly ordered. If commits arrive out of order or conflict, groups can fork, making some members unable to decrypt other members' messages.
 
@@ -25,9 +25,9 @@ Each intent progresses through a series of states as it is processed:
 
 - **To publish**: Intent has been created and queued, but not yet sent
 - **Published**: Commit has been sent to the network
-- **Error**: Intent failed (e.g., permission denied, removed from the group)
-  - Retryable error: Can be retried on the next sync. For example, a temporary failure to publish the commit.
-  - Non-retryable error: Can't be retried and moves the intent to the **Error** state. For example, a member without adequate permission tries to add a member.
+- **Error**: Intent failed (e.g., permission denied, removed from the group). Can be:
+  - Retryable: Can be retried on the next sync. For example, a temporary failure to publish the commit due to the app restarting.
+  - Non-retryable: Can't be retried and moves the intent to the **Error** state. For example, a member without adequate permission tries to add a member.
 - **Processed**: Intermediate state during handling
 - **Committed**: Commit has been accepted into the group's state
 
