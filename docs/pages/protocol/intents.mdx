@@ -1,49 +1,38 @@
 # Intents with XMTP
 
-With XMTP, intents are a bookkeeping mechanism used inside the protocol to ensure that changes to group state are applied consistently and reliably.
+Intents provide an internal state machine, or "bookkeeping" mechanism, for reliably applying changes to XMTP group chat states, even when the process encounters retries, crashes, race conditions, or ordering issues.
 
-Intents are XMTP's internal state machine for reliably applying group operations. They exist to handle retries, crashes, and ordering issues, ensuring group messaging remains consistent. Developers using XMTP don't need to work with intents directly, but understanding them provides insight into how the protocol maintains integrity behind the scenes.
+Developers building apps and agents with XMTP don't need to work with intents directly, but understanding them provides insight into how the protocol maintains integrity behind the scenes.
 
-Intents represent an action that should happen in the network (e.g., add member, remove member, send message), along with enough information to retry the action if it fails or the client restarts. Intents are not something app developers interact with directly. They are part of the protocol's internal machinery.
+## Intent actions
 
-## Why intents exist
+An intent represents an action that intends to change the state of a group chat via a commit, along with enough information to retry the action if it fails.
 
-Group messaging in XMTP relies on commits, which must be strictly ordered. Each commit rotates the group's encryption state into a new epoch. If commits arrive out of order or conflict, groups can fork, making some members unable to decrypt other members' messages.
+Each commit rotates the group's encryption state into a new epoch and therefore must be strictly ordered. If commits arrive out of order or conflict, groups can fork, making some members unable to decrypt other members' messages.
 
-Intents help prevent forks by making sure every commit is eventually published and acknowledged in the correct order.
+Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. This helps prevent forks by making sure every commit is eventually published in the correct order.
 
-They are the “engine” ensuring that group operations survive crashes, retries, and race conditions.
-
-Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. They ensure that an intended operation eventually succeeds or fails cleanly, even if a device crashes or the network races.
-
-## Types of intents
-
-Examples of intents include:
+Examples of intent actions include:
 
 - Add member: Add a participant to a group
 - Remove member: Remove a participant from a group
 - Send message: Deliver an application message to the group
 - Change metadata: Rename a group, for example
 
-Each of these operations maps to a commit in the underlying Messaging Layer Security (MLS) protocol.
-
 ## Intent states
 
 Each intent progresses through a series of states as it is processed:
 
-- To publish: Intent has been created and queued, but not yet sent
-- Published: Commit has been sent to the network
-- Committed: Commit has been accepted into the group's state
-- Error: Intent failed (e.g., permission denied, removed from the group)
-- Process: Intermediate state during handling
+- **To publish**: Intent has been created and queued, but not yet sent
+- **Published**: Commit has been sent to the network
+- **Error**: Intent failed (e.g., permission denied, removed from the group)
+  - Retryable error: Can be retried on the next sync. For example, a temporary failure to publish the commit.
+  - Non-retryable error: Can't be retried and moves the intent to the **Error** state. For example, a member without adequate permission tries to add a member.
+- **Processed**: Intermediate state during handling
+- **Committed**: Commit has been accepted into the group's state
 
-By tracking state, XMTP ensures that if an app crashes mid-operation, it can resume later from the stored state without losing intent information.
+By tracking intent states, XMTP ensures that if an app crashes before a commit has been accepted, for example, the commit process can resume later from the stored state without losing intent information.
 
-## Error handling
+## Example intent flow
 
-Not all errors are the same:
-
-- Retryable errors (e.g., temporary failure to publish) can be retried on the next sync.
-- Non-retryable errors (e.g., trying to add a member without permission) are final and move the intent to the Error state.
-
-This distinction is critical for keeping group state consistent across all members.
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/intents-flow.png)
