@@ -83,4 +83,4 @@ An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It ma
 
 Gas fees are charged for onchain transactions on the XMTP Appchain. These transactions are typically for group membership, identity, and payer-related updates. Fees are paid with USDC directly held by payer wallets on the XMTP Appchain.
 
-When you [fund your payer wallet](/fund-apps/fund-your-app) using the XMTP Funding Portal, it automatically bridges an optimized percentage of the USDC funds to the XMTP Appchain to cover gas fees.
+When you [fund your payer wallet](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal, it automatically bridges an optimized percentage of the USDC funds to the XMTP Appchain to cover gas fees.

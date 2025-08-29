@@ -20,15 +20,15 @@ This guide provides a timeline and checklist to prepare your app for this transi
 
 Complete these tasks by **December 9, 2025**, to ensure your app can send messages on the decentralized XMTP Broadcast Network.
 
-1. **From August 12**: Deploy the [XMTP Gateway Service](/fund-apps/run-gateway) to enable your app or agent to send messages and pay fees to the XMTP Broadcast Network and XMTP Appchain.
-2. **From August 12 and before December 9**: [Fund your app](/fund-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
-3. **From October 7**: Update your app to use a [decentralization-ready XMTP SDK](/fund-apps/update-sdk) to connect to your XMTP Gateway Service.
+1. **From August 12**: Deploy the [XMTP Gateway Service](/fund-agents-apps/run-gateway) to enable your app or agent to send messages and pay fees to the XMTP Broadcast Network and XMTP Appchain.
+2. **From August 12 and before December 9**: [Fund your app](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
+3. **From October 7**: Update your app to use a [decentralization-ready XMTP SDK](/fund-agents-apps/update-sdk) to connect to your XMTP Gateway Service.
 
 ## Recommended next steps
 
-- Learn about [XMTP fees](/fund-apps/calculate-fees).
+- Learn about [XMTP fees](/fund-agents-apps/calculate-fees).
 - [Estimate your app's monthly fees](#TODO).
 - Test your implementation:
-  - Verify that your [XMTP Gateway Service](/fund-apps/run-gateway) and [funding](/fund-apps/fund-your-app) are working correctly.
+  - Verify that your [XMTP Gateway Service](/fund-agents-apps/run-gateway) and [funding](/fund-agents-apps/fund-your-app) are working correctly.
   - Simulate your app's usage to run a thorough a projected fee analysis using the XMTP Funding Portal.
-- [Set up monitoring](/fund-apps/run-gateway#metrics-and-observability) and automated tests for your XMTP Gateway Service.
+- [Set up monitoring](/fund-agents-apps/run-gateway#metrics-and-observability) and automated tests for your XMTP Gateway Service.

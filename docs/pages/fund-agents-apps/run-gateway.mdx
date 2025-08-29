@@ -86,8 +86,6 @@ You can provide the configuration options for your XMTP Gateway Service either d
 | Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                  |
 | Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                      |
 
-{/* TODO:nm: Include all non-required options */}
-
 ### Metrics and observability
 
 If the XMTP Gateway Service is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
@@ -96,7 +94,7 @@ If the XMTP Gateway Service is configured with the `--metrics.enable` flag, it w
 
 The private key for your XMTP Gateway Service must belong to a payer wallet that has allocated funds for messaging in the XMTP Funding Portal.
 
-To learn more, see [Fund your app to send messages with XMTP](/fund-apps/fund-your-app).
+To learn more, see [Fund your app to send messages with XMTP](/fund-agents-apps/fund-your-app).
 
 ## Authenticate users
 
@@ -112,20 +110,20 @@ Browser and mobile client apps that need user authentication must customize the 
 
 ### In your client
 
-When creating a XMTP client, you can optionally provide an `payerAuthTokenFetcher` as part of client configuration.
+When creating a XMTP client, you can optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
 
 The value returned by this function will be included all client requests to the XMTP Gateway Service. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway Service, and after any request to the XMTP Gateway Service fails due to a `PermissionDenied` error.
 
-### Create a `payerAuthTokenFetcher`
+### Create a `gatewayAuthTokenFetcher`
 
-A Payer Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
+A Gateway Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
 
 :::code-group
 
 ```tsx [Browser]
-import type { PayerAuthTokenFetcher } from "@xmtp/browser-sdk";
+import type { GatewayAuthTokenFetcher } from "@xmtp/browser-sdk";
 
-const authTokenFetcher: PayerAuthTokenFetcher = {
+const authTokenFetcher: GatewayAuthTokenFetcher = {
   fetchAuthToken: async () => {
     // Get the auth token from your app somehow
     return "my-auth-token";
@@ -134,9 +132,9 @@ const authTokenFetcher: PayerAuthTokenFetcher = {
 ```
 
 ```tsx [Node]
-import type { PayerAuthTokenFetcher } from "@xmtp/node-sdk";
+import type { GatewayAuthTokenFetcher } from "@xmtp/node-sdk";
 
-const authTokenFetcher: PayerAuthTokenFetcher = {
+const authTokenFetcher: GatewayAuthTokenFetcher = {
   fetchAuthToken: async () => {
     return "my-auth-token";
   },
@@ -144,9 +142,9 @@ const authTokenFetcher: PayerAuthTokenFetcher = {
 ```
 
 ```tsx [React Native]
-import type { PayerAuthTokenFetcher } from "@xmtp/react-native-sdk";
+import type { GatewayAuthTokenFetcher } from "@xmtp/react-native-sdk";
 
-const authTokenFetcher: PayerAuthTokenFetcher = {
+const authTokenFetcher: GatewayAuthTokenFetcher = {
   fetchAuthToken: async () => {
     return "my-auth-token";
   },
@@ -154,7 +152,7 @@ const authTokenFetcher: PayerAuthTokenFetcher = {
 ```
 
 ```kotlin [Kotlin]
-class MyAuthTokenFetcher : PayerAuthTokenFetcher {
+class MyAuthTokenFetcher : GatewayAuthTokenFetcher {
     override suspend fun fetchAuthToken(): String {
         return "my-auth-token"
     }
@@ -162,7 +160,7 @@ class MyAuthTokenFetcher : PayerAuthTokenFetcher {
 ```
 
 ```swift [Swift]
-public struct MyAuthTokenFetcher: PayerAuthTokenFetcher {
+public struct MyAuthTokenFetcher: GatewayAuthTokenFetcher {
     public func fetchAuthToken() async throws -> String {
         return "my-auth-token"
     }
@@ -173,7 +171,7 @@ public struct MyAuthTokenFetcher: PayerAuthTokenFetcher {
 
 ### In the XMTP Gateway Service
 
-The `PayerServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `payer.Identity` struct, which identifies the user in a way that is unique to your app.
+The `GatewayServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `gateway.Identity` struct, which identifies the user in a way that is unique to your app.
 
 This identity will then be used for rate limiting, and will be passed to your `AuthorizePublishFn` as additional context.
 
@@ -181,9 +179,28 @@ This identity will then be used for rate limiting, and will be passed to your `A
 
 ```go [IP Address]
 //  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
-payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
-	WithIdentityFn(payer.IPIdentityFn).
-	Build()
+package main
+
+import (
+	"context"
+	"log"
+	"slices"
+
+	"github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+func main() {
+	// This will gather all the config from environment variables and flags
+	gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+		// The gateway service will use the IP address of the client as the identity by default
+		Build()
+	if err != nil {
+		log.Fatalf("Failed to build gateway service: %v", err)
+	}
+
+	gatewayService.WaitForShutdown()
+}
+
 ```
 
 ```go [JWT]
@@ -195,7 +212,7 @@ import (
 	"log"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/xmtp/xmtpd/pkg/payer"
+	"github.com/xmtp/xmtpd/pkg/gateway"
 )
 
 const EXPECTED_ISSUER = "my-app.com"
@@ -207,11 +224,11 @@ var (
 )
 
 // jwtIdentityFn creates an identity function that verifies JWTs
-func jwtIdentityFn(publicKey []byte) payer.IdentityFn {
-	return func(ctx context.Context) (payer.Identity, error) {
-		authHeader := payer.AuthorizationHeaderFromContext(ctx)
+func jwtIdentityFn(publicKey []byte) gateway.IdentityFn {
+	return func(ctx context.Context) (gateway.Identity, error) {
+		authHeader := gateway.AuthorizationHeaderFromContext(ctx)
 		if authHeader == "" {
-			return payer.Identity{}, payer.NewUnauthenticatedError(
+			return gateway.Identity{}, gateway.NewUnauthenticatedError(
 				"Missing JWT token",
 				ErrMissingToken,
 			)
@@ -224,7 +241,7 @@ func jwtIdentityFn(publicKey []byte) payer.IdentityFn {
 			func(token *jwt.Token) (interface{}, error) {
 				// Verify signing method
 				if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
-					return nil, payer.NewPermissionDeniedError(
+					return nil, gateway.NewPermissionDeniedError(
 						"Invalid signing method",
 						ErrInvalidSignature,
 					)
@@ -234,13 +251,16 @@ func jwtIdentityFn(publicKey []byte) payer.IdentityFn {
 			jwt.WithIssuer(EXPECTED_ISSUER),
 		)
 		if err != nil {
-			return payer.Identity{}, payer.NewPermissionDeniedError("failed to validate token", err)
+			return gateway.Identity{}, gateway.NewPermissionDeniedError(
+				"failed to validate token",
+				err,
+			)
 		}
 
 		// Extract claims
 		claims, ok := token.Claims.(*jwt.RegisteredClaims)
 		if !ok || !token.Valid {
-			return payer.Identity{}, payer.NewPermissionDeniedError(
+			return gateway.Identity{}, gateway.NewPermissionDeniedError(
 				"failed to validate token",
 				ErrInvalidToken,
 			)
@@ -248,14 +268,14 @@ func jwtIdentityFn(publicKey []byte) payer.IdentityFn {
 
 		userID, err := claims.GetSubject()
 		if err != nil {
-			return payer.Identity{}, payer.NewPermissionDeniedError(
+			return gateway.Identity{}, gateway.NewPermissionDeniedError(
 				"failed to get subject from token",
 				err,
 			)
 		}
 
 		// Return identity based on JWT claims
-		return payer.NewUserIdentity(userID), nil
+		return gateway.NewUserIdentity(userID), nil
 	}
 }
 
@@ -263,18 +283,16 @@ func main() {
 	// In a real application, this would be a secure key loaded from environment/config
 	publicKey := []byte("your-applications-public-key")
 
-	payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+	gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
 		WithIdentityFn(jwtIdentityFn(publicKey)).
 		Build()
 	if err != nil {
-		log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
+		log.Fatalf("Failed to build gateway service: %v", err)
 	}
 
-	err = payerService.Serve(context.Background())
-	if err != nil {
-		log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
-	}
+	gatewayService.WaitForShutdown()
 }
+
 
 ```
 
@@ -321,42 +339,6 @@ func main() {
 }
 ```
 
-```go [Rate Limiter]
-package main
-
-import (
-	"context"
-	"log"
-	"time"
-
-	"github.com/xmtp/xmtpd/pkg/payer"
-)
-
-func main() {
-	cfg := payer.MustLoadConfig()
-
-	payerService, err := payer.NewPayerServiceBuilder(cfg).
-		// Rate limit to allow 50 requests per minute and 10,000 requests per day
-		WithAuthorizers(payer.NewRateLimitAuthorizer(cfg, payer.RateLimit{
-			MaxRequests: 50,
-			Window:      time.Minute,
-		}), payer.NewRateLimitAuthorizer(cfg, payer.RateLimit{
-			MaxRequests: 10000,
-			Window:      time.Hour * 24,
-		})).
-		Build()
-	if err != nil {
-		log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
-	}
-
-	err = payerService.Serve(context.Background())
-	if err != nil {
-		log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
-	}
-}
-
-```
-
 :::
 
 ## Deploy your XMTP Gateway Service
@@ -366,7 +348,7 @@ Deploy the XMTP Gateway Service on your infrastructure of choice, such as a cont
 We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
 
 ```bash
-docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/payer-service-example:latest
+docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
 ```
 
 Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the [`examples/docker`](#TODO) directory that you can use as a starting point.
