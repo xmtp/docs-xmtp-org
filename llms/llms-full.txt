@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 03:46 PM UTC / August 29, 2025
+Generated at 11:41 PM UTC / August 29, 2025
 
 ## Instructions for AI Tools
 
@@ -39,7 +39,7 @@ The largest and most secure decentralized messaging network
 
 <div className="custom-homepage-cta-container">
   <a href="/agents/get-started/build-an-agent" className="custom-homepage-cta-button custom-homepage-cta-button--primary">Build an agent</a>
-  <a href="/chat-apps/intro/get-started" className="custom-homepage-cta-button custom-homepage-cta-button--secondary">Build an inbox</a>
+  <a href="/chat-apps/intro/get-started" className="custom-homepage-cta-button custom-homepage-cta-button--secondary">Build a chat app</a>
 </div>
 
 <CustomHomePage.TileGrid>
@@ -66,7 +66,7 @@ The largest and most secure decentralized messaging network
 
 <CustomHomePage.Tile
   title="Built-in consent"
-  description="Inboxes are spam-free spaces for a user's chosen contacts only"
+  description="Chats are spam-free spaces for a user's chosen contacts only"
 />
 
 <CustomHomePage.Tile
@@ -307,7 +307,7 @@ For reference, here's an example Railway deployment of a [gm-bot](https://railwa
 ## pages/agents/debug-agents.mdx
 # Debug an agent
 
-You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web chat app for developers.
 
 Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
 
@@ -379,9 +379,9 @@ Build with XMTP to:
 
     Using the [Messaging Layer Security](/protocol/security) (MLS) standard, a ratified [IETF](https://www.ietf.org/about/introduction/) standard, XMTP provides end-to-end encrypted messaging with forward secrecy and post-compromise security.
 
-- **Provide spam-free inboxes**
+- **Provide spam-free chats**
 
-    In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP user consent preferences, developers can give their users spam-free inboxes displaying conversations with chosen contacts only.
+    In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP user consent preferences, developers can give their users spam-free chats displaying conversations with chosen contacts only.
 
 - **Build on native crypto rails**
 
@@ -2107,14 +2107,544 @@ if (message.contentType.sameAs(ContentTypeReply)) {
 ```
 
 
+## pages/protocol/envelope-types.mdx
+# Envelope types with XMTP
+
+This document covers **envelope types** that clients can publish to XMTP APIs. These are the top-level message structures that can be sent and received through the XMTP network. This information is primarily useful for:
+
+- Developers contributing to the XMTP protocol itself
+- Understanding XMTP internals and debugging
+- Reading XMTP Improvement Proposals (XIPs)
+
+The envelope types described here are handled automatically by XMTP SDKs and rarely need direct interaction from app developers.
+
+For **app development**, you'll typically work with [content types](/chat-apps/content-types/content-types) instead. Content types define how your app's messages are structured and encoded (text, attachments, reactions, etc.) and are what you'll use in your day-to-day development.
+
+## Overview
+
+XMTP supports several envelope types that clients can publish to the network:
+
+- **Group message envelopes**: Contain MLS protocol messages (application messages and commits)
+- **Welcome message envelopes**: Bootstrap new members into existing groups
+- **Key package envelopes**: Register cryptographic credentials for user installations
+- **Identity update envelopes**: Verify and authenticate user identities
+
+These envelope types work together to enable secure group communication with [forward secrecy and post-compromise security](/protocol/security).
+
+**Note**: In the MLS context, "group" refers to any collection of clients that share cryptographic state, which includes both direct message (1:1) or group chat conversations.
+
+## Group message envelope
+
+A group message envelope contains an MLS protocol message that can be either an application message or a commit message. This is the primary envelope type used for day-to-day communication.
+
+### Application messages
+
+Application messages represent the actual content that users send to each other, including:
+
+- Text messages
+- Attachments
+- Reactions
+- Read receipts
+- On-chain transaction references
+- Custom content types
+
+Application messages are:
+
+- Encrypted using the group's shared secrets
+- Authenticated with sender signatures
+- Encoded using XMTP content types
+- Sent on the `groupMessage` topic
+
+### Commit messages
+
+Commit messages update the group's cryptographic state, membership, and permissions. While technically a single message type, commit messages serve many different purposes.
+
+Understanding commit messages is especially helpful when debugging and understanding your app's user experience. For example:
+
+- Different commit types help explain why certain messages appear in logs
+- Some commits happen invisibly, while others are tied to user actions
+
+#### User-initiated commits
+
+- **Add member commits**: When a user explicitly adds someone to a group
+- **Remove member commits**: When a user removes someone from a group  
+- **Update metadata commits**: When a user changes group name, description, or permissions
+- **Update permissions commits**: When a user modifies group permission settings
+
+#### System-initiated commits
+
+- **Key update commits**: Automatically generated when a new member joins before sending their first message
+- **Missing member commits**: Triggered when the system detects someone is missing from the group
+- **Scheduled commits**: Periodic commits for security maintenance
+
+#### MLS protocol commits
+
+- **Update path commits**: Generated by the MLS protocol for key rotation and security
+- **External sender commits**: For handling external participants
+
+For more information about MLS commits, see [RFC 9420 Section 12.4](https://www.rfc-editor.org/rfc/rfc9420.html#section-12.4).
+
+## Welcome message envelope
+
+A welcome message envelope bootstraps a new member into an existing group. The welcome is dependent on the newcomer's [key package](#key-package-envelope) and provides the new member with the current state of the group after application of a [commit message](#commit-messages).
+
+A welcome message contains:
+
+- Group context information
+- Encrypted group secrets
+- Tree structure for the group
+- Confirmation tags for epoch verification
+
+If decryption fails due to an outdated or missing key package, the SDK automatically fetches the latest package and retries.
+
+## Key package envelope
+
+A key package envelope registers cryptographic credentials for a user installation. XMTP SDKs create and upload fresh key packages behind the scenes when an installation is initialized or rotated.
+
+Think of a key package as a calling card for an installation that says: here's how to encrypt to me, here's how long this card is valid, and it's signed so you can trust it.
+
+A key package contains:
+
+- Public key for encrypting welcome messages
+- Signature key for authentication
+- Capabilities (supported protocol version, cipher suites, lifetime, etc.)
+- Credential for identity verification
+- Content of the leaf node representing this client
+
+Group members cache key packages to authenticate future handshakes and welcome material, enabling asynchronous addition of clients to groups.
+
+When an app inspects a group member, the SDK provides a `PublicIdentity` object containing the decoded fields, allowing apps to display identity information or check if the key package has expired.
+
+## Identity update envelope
+
+An identity update envelope verifies and authenticates a user identity across the network. It is signed by the user's identity and verifiable by peers.
+
+Identity update envelopes enable group members to rotate their signature or HPKE keys while preserving group continuity and authenticity.
+
+They handle:
+
+- Linking an installation to an XMTP inbox
+- Key rotation and revocation
+- Linking multiple devices (though [history sync](/chat-apps/list-stream-sync/history-sync) is used to synchronize data between those devices)
+
+Identity update messages are stored permanently to ensure continuity of trust and identity verification.
+
+
+## pages/protocol/signatures.mdx
+---
+description: "Learn about wallet signature types when using XMTP"
+---
+
+# Wallet signatures with XMTP
+
+Learn about the types of wallet address signatures you might be prompted to provide when using apps built with XMTP. These signatures are always made with a specific wallet address controlled by your wallet.
+
+## First-time app installation use
+
+The first time you use an installation of an app built with XMTP, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. For example:
+
+```text
+XMTP : Authenticate to inbox
+
+Inbox ID: ${INBOX_ID}
+Current time: ${YYYY-MM-DD HH:MM:SS UTC}
+```
+
+More specifically, the message will request that you sign:
+
+- A **Grant messaging access to app** message to grant the app installation access to messaging owned by your signing wallet address. For example:
+
+  ```text
+  - Grant messaging access to app
+    (ID: ${hex(INSTALLATION_PUBLIC_KEY)})
+  ```
+
+- A **Create inbox** message to create an XMTP inbox owned by your signing address, but only if you have never used an app installation built with XMTP v3 before. For example:
+
+  ```text
+  - Create inbox
+    (Owner: ${INITIAL_ADDRESS})
+  ```
+
+Sign the **XMTP : Authenticate to inbox** message with your wallet address to consent to the message requests.
+
+<img width="400" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/authen-to-inbox.PNG" alt="MetaMask wallet browser extension Sign this message? window showing an XMTP: Authenticate to inbox message" />
+
+## Sign to add another address to your inbox
+
+You can add another wallet address to your inbox at any time. For example, you might have started using an app with one wallet address and now want to use the app with an additional wallet address.
+
+If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. For example:
+
+```text
+- Link address to inbox
+  (Address: ${ASSOCIATED_ADDRESS})
+```
+
+Sign with the wallet address you want to add to grant it access to the inbox. You can now use your inbox to exchange messages using the wallet address you just added.
+
+## Sign to remove address from your inbox
+
+You can remove a wallet address from your inbox at any time.
+
+If you decide to remove a wallet address from your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign an **Unlink address from inbox** message. For example:
+
+```text
+- Unlink address from inbox
+  (Address: ${ASSOCIATED_ADDRESS})
+```
+
+Sign with the wallet address you want to remove to unlink it from your inbox. You can no longer access your inbox using the wallet address you removed.
+
+## Sign to change inbox recovery address
+
+The first time you used an app installation built with XMTP v3, the wallet address you used to create an inbox is automatically set as the inbox recovery address. You can change the recovery address to a different wallet address at any time.
+
+If you decide to change the recovery address, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Change inbox recovery address** message. For example:
+
+```text
+- Change inbox recovery address
+  (Address: ${NEW_RECOVERY_ADDRESS})
+```
+
+Sign with the wallet address you want to set as the recovery address to change the recovery address.
+
+## Sign to consent to receive broadcast messages
+
+When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
+
+For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
+
+![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
+
+When you click **Sign**, you're consenting to receive broadcast messages from the publisher at your connected wallet address. You can see the publisher's sending address in the **Signature request** window.
+
+When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
+
+To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
+
+
+## pages/protocol/xips.mdx
+# XMTP Improvement Proposals (XIPs)
+
+An XIP is a design document that proposes a new feature or improvement for XMTP or its processes or environment.
+
+XIPs intend to be the primary mechanisms for:
+
+- Proposing new features
+- Collecting community technical input on an issue
+- Documenting the design decisions that have gone into XMTP
+
+For these reasons, XIPs are a great way to learn about XMTP's newest features and participate in shaping the evolution of the protocol.
+
+To review the latest XIPs, see [Improvement Proposals](https://community.xmtp.org/c/xips/xip-drafts/53).
+
+To learn more about XIPs and how to participate in the process, including authoring an XIP of your own, see [XIP purpose, process, and guidelines](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md).
+
+
+## pages/protocol/topics.mdx
+# Topics with XMTP
+
+This document describes the concept of **topics** on the XMTP network. Topics are used to address and route [envelopes](/protocol/envelope-types), forming the backbone of the XMTP pub/sub messaging system.
+
+While XMTP SDKs manage topic subscriptions automatically, understanding them can be helpful for protocol-level development, debugging, and building services like push notification servers.
+
+## Topic naming convention
+
+XMTP topics follow a standardized format that indicates the protocol version, message type, and a unique identifier. The general structure is:
+
+`/xmtp/mls/1/{topic-type}-{identifier}/proto`
+
+- `/xmtp/mls/1/`: The protocol namespace, indicating XMTP with MLS, version 1.
+- `{topic-type}`: A single letter representing the purpose of the topic (for example, `g` for group, `w` for welcome).
+- `{identifier}`: A unique ID for the specific conversation or installation.
+- `/proto`: The payload serialization format.
+
+## Core topics in XMTP
+
+XMTP uses two primary topic types for delivering messages.
+
+### Group message topic
+
+The group message topic is used to send and receive messages within a specific conversation (both 1:1 DMs and group chats). Each conversation has its own unique topic.
+
+- **Format**: `/xmtp/mls/1/g-$conversationId/proto`
+- **Envelope**: [Group message envelope](/protocol/envelope-types#group-message-envelope)
+- **Purpose**: Carries all ongoing communication for a conversation, including [application messages](/protocol/envelope-types#application-messages) (text, reactions, etc.) and [commit messages](/protocol/envelope-types#commit-messages) that modify the group state.
+- **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value.
+
+> **Note on [DM stitching](/chat-apps/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications): For direct messages, multiple underlying conversations might be "stitched" together in the UI. For push notifications to be reliable, an app must subscribe to the group message topic for each of these underlying conversations.
+
+### Welcome message topic
+
+The welcome message topic is used to deliver a `Welcome` message to a new member of a group. This message bootstraps the new member, providing them with the group's state so they can participate.
+
+- **Format**: `/xmtp/mls/1/w-$installationId/proto`
+- **Envelope**: [Welcome message envelope](/protocol/envelope-types#welcome-message-envelope)
+- **Purpose**: To notify a specific app installation that it has been added to a new conversation.
+- **Usage**: A push notification server subscribes to an installation's welcome topic to be notified when that installation is invited to a new group chat or DM. The SDKs provide this via methods like `client.welcomeTopic()`.
+
+## How other envelopes are handled
+
+Not all envelope types are broadcast on persistent pub/sub topics.
+
+- **[Key package envelopes](/protocol/envelope-types#key-package-envelope)**: These are not sent over a topic. Instead, they are published to a network-level store where they can be retrieved by other clients who need to start a conversation or add a new member to a group.
+
+- **[Identity update envelopes](/protocol/envelope-types#identity-update-envelope)**: These are also not sent over a topic. They are stored permanently on the XMTP network to ensure the continuity and verifiability of a user's identity across their devices.
+
+
+## pages/protocol/security.mdx
+# Messaging security properties with XMTP
+
+XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
+
+- Advanced cryptographic techniques
+- Secure key management practices
+- MLS ([Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html))
+
+Specifically, XMTP messaging provides the comprehensive security properties covered in the following sections. In these sections, **group** refers to the MLS concept of a group, which includes both 1:1 and group conversations.
+
+🎥 **walkthrough: XMTP and MLS**
+
+This video provides a walkthrough of XMTP's implementation of MLS.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/g6I9qXOkDMo?si=o5pD2xwa_yynoP5s" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/xmtp_mls).
+
+## A deep dive into messaging security properties
+
+### Message confidentiality
+
+Ensures that the contents of messages in transit can't be read without the corresponding encryption keys.
+
+Message confidentiality is achieved through symmetric encryption, ensuring that only intended recipients can read the message content. [AEAD](#cryptographic-tools-in-use) (Authenticated Encryption with Associated Data) is used to encrypt the message content, providing robust protection against unauthorized access.
+
+## Forward secrecy
+
+Ensures that even if current session keys are compromised, past messages remain secure.
+
+MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
+
+## Post-compromise security
+
+Ensures that future messages remain secure even if current encryption keys are compromised.
+
+XMTP uses regular key rotation achieved through a commit mechanism with a specific update path in MLS, meaning a new group secret is encrypted to all other members. This essentially resets the key and an attacker with the old state can't derive the new secret, as long as the private key from the leaf node in the ratchet tree construction hasn't been compromised. This ensures forward secrecy and protection against future compromises.
+
+## Message authentication
+
+Validates the identity of the participants in the conversation, preventing impersonation.
+
+XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender's identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
+
+## Message integrity
+
+Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered.
+
+XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
+
+## Quantum resistance
+
+Protects against future quantum computer attacks through post-quantum cryptography.
+
+XMTP implements quantum-resistant encryption to protect against "Harvest Now, Decrypt Later" (HNDL) attacks, where adversaries store encrypted messages until quantum computers become powerful enough to break current encryption. XMTP uses a hybrid approach that combines post-quantum algorithms with conventional cryptography, ensuring protection against future quantum threats without compromising current security.
+
+The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
+
+## User anonymity
+
+Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
+
+User anonymity is achieved through a combination of the following functions:
+
+- MLS Welcome messages encrypt the sender metadata and group ID, protecting the social graph.
+
+- XMTP adds a layer of encryption to MLS Welcome messages using [HPKE](#cryptographic-tools-in-use) (Hybrid Public Key Encryption). This prevents multiple recipients of the same Welcome message from being correlated to the same group.
+
+- XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
+
+- XMTP's backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
+
+It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
+
+XMTP currently hides the sender of Welcome messages (used to add users to a group) but doesn't hide the Welcome message recipients. This makes it possible to determine how many groups a user was invited to but not whether the user did anything about the invitations.
+
+## Cryptographic tools in use
+
+XMTP messaging uses the ciphersuite _MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519_.
+
+Here is a summary of individual cryptographic tools used to collectively ensure that XMTP messaging is secure, authenticated, and tamper-proof:
+
+- [HPKE](https://www.rfc-editor.org/rfc/rfc9180.html)
+
+    Used to encrypt Welcome messages, protect the identities of group invitees, and maintain the confidentiality of group membership. We use the ciphersuite HPKEX25519.
+
+- [AEAD](https://developers.google.com/tink/aead)
+
+    Used to ensure both confidentiality and integrity of messages. In particular, we use the ciphersuite CHACHA20POLY1305.
+
+- [SHA3_256 and SHA2_256](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf)
+
+    XMTP uses two cryptographic hash functions to ensure data integrity and provide strong cryptographic binding. SHA3_256 is used in the multi-wallet identity structure. SHA2_256 is used in MLS. The ciphersuite is SHA256.
+
+- [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
+
+    Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
+
+- [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
+
+    Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
+
+
+## pages/protocol/cursors.mdx
+# Cursors with XMTP
+
+This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
+
+While cursors are managed automatically by the XMTP SDKs, understanding how they work is crucial for debugging and for grasping the underlying mechanics of message synchronization.
+
+## What is a cursor?
+
+A cursor is a pointer or a marker that an XMTP client maintains for each topic it subscribes to (both [group message topics](/protocol/topics#group-message-topic) and [welcome message topics](/protocol/topics#welcome-message-topic)). This cursor is stored locally and is specific to each app installation.
+
+Think of it as a bookmark in the chronological log of messages and events for a given topic. Its purpose is to remember the exact point up to which an installation has successfully synchronized its data.
+
+## How cursors work with `sync()`
+
+The primary role of a cursor becomes evident when you use the `sync()` functions (`conversation.sync()`, `conversations.sync()`, and `conversations.syncAll()`).
+
+1. **Initial sync**: The first time an app installation calls `sync()` for a specific conversation, it fetches all available messages and events from the network for that conversation's topic.
+2. **Cursor placement**: Once the sync is complete, the SDK places a cursor at the end of that batch of fetched messages.
+3. **Subsequent syncs**: On the next `sync()` call for that same conversation, the client sends its current cursor position to the network. The network then returns only the messages and events that have occurred *after* that cursor.
+4. **Cursor advancement**: After the new messages are successfully fetched, the SDK advances the cursor to the new latest point.
+
+This process ensures that each `sync()` call only retrieves what's new, making synchronization efficient by avoiding the re-downloading of messages the client already has.
+
+### How Cursors Enable Efficient Sync
+
+The XMTP SDKs use cursors to make message synchronization highly efficient. The design principle is to fetch new data from the network with `sync()` while providing access to historical data from a local database.
+
+- **`sync()` fetches new data from the network:** The `sync()` functions are designed specifically to retrieve new messages and events from the network. To do this efficiently, the SDK advances the cursor to the position of the last synchronized item. On subsequent `sync()` calls, the client provides this cursor, and the network returns only what has arrived since. This forward-only cursor movement is an intentional design choice that prevents re-downloading data the client already has.
+
+- **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
+
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/chat-apps/list-stream-sync/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+
+- **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
+
+## Cursors for different sync functions
+
+Each `sync()` function corresponds to a different type of cursor:
+
+- `conversation.sync()`: This operates on the **group message topic** for a single conversation. It moves the cursor for that specific conversation, fetching new messages or group updates (like name changes).
+- `conversations.sync()`: This operates on the **welcome message topic**. It moves the cursor for welcome messages, fetching any new conversations the user has been invited to. It does *not* fetch the contents of those new conversations.
+- `conversations.syncAll()`: This is the most comprehensive sync. It effectively performs the actions of the other two syncs for all of the user's conversations. It moves the cursors for the welcome topic *and* for every individual group message topic, ensuring the client has fetched all new conversations and all new messages in existing conversations.
+
+For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
+
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
+
+By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
+
+
+## pages/network/run-a-node.mdx
+# Run an XMTP network node
+
+A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
+
+To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp).
+
+## Interested in becoming a registered XMTP node operator?
+
+1. Review [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+2. [Submit an application](https://docs.google.com/forms/d/e/1FAIpQLScBpJ0i962xBPpZZeI6q7-UMo5Bc2JkhvHR_v2rliLDoBkzXQ/viewform?usp=sharing) to become a registered node operator.
+
+## Already a registered node operator?
+
+To get started, see the [xmtpd-infrastructure](https://github.com/xmtp/xmtpd-infrastructure) repository, which provides infrastructure-as-code examples and tooling to help node operators deploy and manage xmtpd nodes.
+
+## FAQ about the XMTP network
+
+To follow and provide feedback on the engineering work covered in this FAQ, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
+
+### Is the XMTP network decentralized?
+
+A testnet of the decentralized XMTP network was launched in early December 2024.
+
+All of the nodes in the `dev` and `production` XMTP network environments are still operated by [Ephemera](https://ephemerahq.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+
+These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
+
+- Cuba
+- Iran
+- North Korea
+- Syria
+- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
+
+### Is XMTP a blockchain?
+
+The testnet of the decentralized XMTP network includes two distributed systems:
+
+- The XMTP broadcast network
+- The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
+
+To learn more, see [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp).
+
+The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
+
+### Will I be able to run my own XMTP node?
+
+At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
+
+To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+
+### Does XMTP have a token?
+
+XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
+
+
+## pages/network/network-nodes.mdx
+# XMTP testnet nodes
+
+For real-time statuses of nodes in the XMTP testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
+The following table lists the nodes currently registered to power the XMTP testnet.
+
+|  | Node operator | Node address |
+|-----|---------------|--------------|
+| 1 | Artifact Capital | xmtp.artifact.systems:443 |
+| 2 | Crystal One | xmtp.node-op.com:443 |
+| 3 | Emerald Onion | xmtp.disobey.net:443 |
+| 4 | Encapsulate | lb.validator.xmtp.testnet.encapsulate.xyz:443 |
+| 5 | Ethereum Name Service (ENS) | grpc.ens-xmtp.com:443 |
+| 6 | Laminated Labs | xmtp.validators.laminatedlabs.net:443 |
+| 7 | Next.id | xmtp.nextnext.id:443 |
+| 8 | Nodle | xmtpd.nodleprotocol.io:443 |
+| 9 | Ephemera | grpc.testnet.xmtp.network:443 |
+| 10 | Ephemera | grpc2.testnet.xmtp.network:443 |
+
+Here is a map of node locations:
+
+<div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden" }}>
+  <iframe
+    src="https://www.google.com/maps/d/embed?mid=18y4nFTXQKdgiSJCQbEGl5dojPoHL3LQ&ehbc=2E312F&noprof=1"
+    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
+    allowFullScreen=""
+    loading="lazy"
+  ></iframe>
+</div>
+
+A purple pin indicates that the node is operated by a non-profit organization.
+
+
 ## pages/chat-apps/debug-your-app.mdx
-# Debug your inbox app
+# Debug your chat app
 
 This document covers tools and features available for debugging building with XMTP, including stress testing, group chat diagnostics, logging, and network monitoring capabilities.
 
 ## XMTP Debug
 
-You can use the XMTP Debug tool to stress and burn-in test your inbox app on the `local` and `dev` XMTP environments.
+You can use the XMTP Debug tool to stress and burn-in test your chat app on the `local` and `dev` XMTP environments.
 
 To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_debug/README.md).
 
@@ -4234,11 +4764,11 @@ For building AI agents, use the [Build an agent with XMTP](/agents/get-started/b
 
 :::
 
-For all other server-side applications, including backends for chat inboxes, follow the get started guide below, which provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
+For all other server-side applications, including backends for chat apps, follow the get started guide below, which provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
-- Spam-free inboxes using user consent preferences
+- Spam-free chats using user consent preferences
 
 ## Quickstart
 
@@ -4309,7 +4839,7 @@ The guide provides some quickstart code, as well as a map to building a [secure 
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
-- Spam-free inboxes using user consent preferences
+- Spam-free chats using user consent preferences
 
 ## Quickstart
 
@@ -4380,7 +4910,7 @@ The guide provides some quickstart code, as well as a map to building a [secure 
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
-- Spam-free inboxes using user consent preferences
+- Spam-free chats using user consent preferences
 
 ## Quickstart
 
@@ -4443,7 +4973,7 @@ The guide provides some quickstart code, as well as a map to building a [secure 
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
-- Spam-free inboxes using user consent preferences
+- Spam-free chats using user consent preferences
 
 ## Quickstart
 
@@ -4508,7 +5038,7 @@ The guide provides some quickstart code, as well as a map to building a [secure 
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
-- Spam-free inboxes using user consent preferences
+- Spam-free chats using user consent preferences
 
 ## Quickstart
 
@@ -7838,9 +8368,9 @@ Build with XMTP to:
 
     Using the [Messaging Layer Security](/protocol/security) (MLS) standard, a ratified [IETF](https://www.ietf.org/about/introduction/) standard, XMTP provides end-to-end encrypted messaging with forward secrecy and post-compromise security.
 
-- **Provide spam-free inboxes**
+- **Provide spam-free chats**
 
-    In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP [user consent preferences](/chat-apps/user-consent/user-consent), developers can give their users spam-free inboxes displaying conversations with chosen contacts only.
+    In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception. However, with XMTP [user consent preferences](/chat-apps/user-consent/user-consent), developers can give their users spam-free chats displaying conversations with chosen contacts only.
 
 - **Build on native crypto rails**
 
@@ -8120,7 +8650,7 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 - [Use llms-full.txt](/chat-apps/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
-- [Use xmtp.chat](https://xmtp.chat), the official web inbox for developers, to interact with and test your app
+- [Use xmtp.chat](https://xmtp.chat), the official web chat app for developers, to interact with and test your app
 
 - [Run a local XMTP node](https://github.com/xmtp/xmtp-local-node/tree/main) for development and testing.
 
@@ -8180,7 +8710,7 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 ## 🧪 Phase IV: Test and debug
 
-- [Stress and burn-in test](/chat-apps/debug-your-app#xmtp-debug) your inbox app.
+- [Stress and burn-in test](/chat-apps/debug-your-app#xmtp-debug) your chat app.
 
 - [Enable file logging](/chat-apps/debug-your-app#file-logging).
 
@@ -10068,11 +10598,11 @@ Note that the user experience of replies in iMessage and Slack follows more of a
 
 
 ## pages/chat-apps/user-consent/user-consent.mdx
-# Understand how user consent preferences support spam-free inboxes
+# Understand how user consent preferences support spam-free chats
 
 In any open and permissionless messaging ecosystem, spam is an inevitable reality, and XMTP is no exception.
 
-However, with XMTP, you can give your users inboxes that are **spam-free spaces for chosen contacts only** by supporting user consent preferences.
+However, with XMTP, you can give your users chats that are **spam-free spaces for chosen contacts only** by supporting user consent preferences.
 
 ## 🎥 walkthrough: Consent
 
@@ -10150,9 +10680,9 @@ Conversation created in an app on an SDK version **without** user consent suppor
 
 
 ## pages/chat-apps/user-consent/support-user-consent.mdx
-# Support user consent preferences to provide spam-free inboxes
+# Support user consent preferences to provide spam-free chats
 
-Use the following methods to provide users with control over their messaging experience, ensuring their inboxes are tailored to their preferences and spam-free.
+Use the following methods to provide users with control over their messaging experience, ensuring their chats are tailored to their preferences and spam-free.
 
 ## Sync new consent preferences from the network
 
@@ -10553,539 +11083,9 @@ This flexibility enables different apps to serve different user preferences, fos
 
 :::tip
 
-Is your app using a great third-party or public good tool to help with spam and keep inboxes safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
+Is your app using a great third-party or public good tool to help with spam and keep chats safe? Open an [issue](https://github.com/xmtp/docs-xmtp-org/issues) to share information about it.
 
 :::
-
-
-## pages/protocol/envelope-types.mdx
-# Envelope types with XMTP
-
-This document covers **envelope types** that clients can publish to XMTP APIs. These are the top-level message structures that can be sent and received through the XMTP network. This information is primarily useful for:
-
-- Developers contributing to the XMTP protocol itself
-- Understanding XMTP internals and debugging
-- Reading XMTP Improvement Proposals (XIPs)
-
-The envelope types described here are handled automatically by XMTP SDKs and rarely need direct interaction from app developers.
-
-For **app development**, you'll typically work with [content types](/chat-apps/content-types/content-types) instead. Content types define how your app's messages are structured and encoded (text, attachments, reactions, etc.) and are what you'll use in your day-to-day development.
-
-## Overview
-
-XMTP supports several envelope types that clients can publish to the network:
-
-- **Group message envelopes**: Contain MLS protocol messages (application messages and commits)
-- **Welcome message envelopes**: Bootstrap new members into existing groups
-- **Key package envelopes**: Register cryptographic credentials for user installations
-- **Identity update envelopes**: Verify and authenticate user identities
-
-These envelope types work together to enable secure group communication with [forward secrecy and post-compromise security](/protocol/security).
-
-**Note**: In the MLS context, "group" refers to any collection of clients that share cryptographic state, which includes both direct message (1:1) or group chat conversations.
-
-## Group message envelope
-
-A group message envelope contains an MLS protocol message that can be either an application message or a commit message. This is the primary envelope type used for day-to-day communication.
-
-### Application messages
-
-Application messages represent the actual content that users send to each other, including:
-
-- Text messages
-- Attachments
-- Reactions
-- Read receipts
-- On-chain transaction references
-- Custom content types
-
-Application messages are:
-
-- Encrypted using the group's shared secrets
-- Authenticated with sender signatures
-- Encoded using XMTP content types
-- Sent on the `groupMessage` topic
-
-### Commit messages
-
-Commit messages update the group's cryptographic state, membership, and permissions. While technically a single message type, commit messages serve many different purposes.
-
-Understanding commit messages is especially helpful when debugging and understanding your app's user experience. For example:
-
-- Different commit types help explain why certain messages appear in logs
-- Some commits happen invisibly, while others are tied to user actions
-
-#### User-initiated commits
-
-- **Add member commits**: When a user explicitly adds someone to a group
-- **Remove member commits**: When a user removes someone from a group  
-- **Update metadata commits**: When a user changes group name, description, or permissions
-- **Update permissions commits**: When a user modifies group permission settings
-
-#### System-initiated commits
-
-- **Key update commits**: Automatically generated when a new member joins before sending their first message
-- **Missing member commits**: Triggered when the system detects someone is missing from the group
-- **Scheduled commits**: Periodic commits for security maintenance
-
-#### MLS protocol commits
-
-- **Update path commits**: Generated by the MLS protocol for key rotation and security
-- **External sender commits**: For handling external participants
-
-For more information about MLS commits, see [RFC 9420 Section 12.4](https://www.rfc-editor.org/rfc/rfc9420.html#section-12.4).
-
-## Welcome message envelope
-
-A welcome message envelope bootstraps a new member into an existing group. The welcome is dependent on the newcomer's [key package](#key-package-envelope) and provides the new member with the current state of the group after application of a [commit message](#commit-messages).
-
-A welcome message contains:
-
-- Group context information
-- Encrypted group secrets
-- Tree structure for the group
-- Confirmation tags for epoch verification
-
-If decryption fails due to an outdated or missing key package, the SDK automatically fetches the latest package and retries.
-
-## Key package envelope
-
-A key package envelope registers cryptographic credentials for a user installation. XMTP SDKs create and upload fresh key packages behind the scenes when an installation is initialized or rotated.
-
-Think of a key package as a calling card for an installation that says: here's how to encrypt to me, here's how long this card is valid, and it's signed so you can trust it.
-
-A key package contains:
-
-- Public key for encrypting welcome messages
-- Signature key for authentication
-- Capabilities (supported protocol version, cipher suites, lifetime, etc.)
-- Credential for identity verification
-- Content of the leaf node representing this client
-
-Group members cache key packages to authenticate future handshakes and welcome material, enabling asynchronous addition of clients to groups.
-
-When an app inspects a group member, the SDK provides a `PublicIdentity` object containing the decoded fields, allowing apps to display identity information or check if the key package has expired.
-
-## Identity update envelope
-
-An identity update envelope verifies and authenticates a user identity across the network. It is signed by the user's identity and verifiable by peers.
-
-Identity update envelopes enable group members to rotate their signature or HPKE keys while preserving group continuity and authenticity.
-
-They handle:
-
-- Linking an installation to an XMTP inbox
-- Key rotation and revocation
-- Linking multiple devices (though [history sync](/chat-apps/list-stream-sync/history-sync) is used to synchronize data between those devices)
-
-Identity update messages are stored permanently to ensure continuity of trust and identity verification.
-
-
-## pages/protocol/signatures.mdx
----
-description: "Learn about wallet signature types when using XMTP"
----
-
-# Wallet signatures with XMTP
-
-Learn about the types of wallet address signatures you might be prompted to provide when using apps built with XMTP. These signatures are always made with a specific wallet address controlled by your wallet.
-
-## First-time app installation use
-
-The first time you use an installation of an app built with XMTP, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. For example:
-
-```text
-XMTP : Authenticate to inbox
-
-Inbox ID: ${INBOX_ID}
-Current time: ${YYYY-MM-DD HH:MM:SS UTC}
-```
-
-More specifically, the message will request that you sign:
-
-- A **Grant messaging access to app** message to grant the app installation access to messaging owned by your signing wallet address. For example:
-
-  ```text
-  - Grant messaging access to app
-    (ID: ${hex(INSTALLATION_PUBLIC_KEY)})
-  ```
-
-- A **Create inbox** message to create an XMTP inbox owned by your signing address, but only if you have never used an app installation built with XMTP v3 before. For example:
-
-  ```text
-  - Create inbox
-    (Owner: ${INITIAL_ADDRESS})
-  ```
-
-Sign the **XMTP : Authenticate to inbox** message with your wallet address to consent to the message requests.
-
-<img width="400" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/authen-to-inbox.PNG" alt="MetaMask wallet browser extension Sign this message? window showing an XMTP: Authenticate to inbox message" />
-
-## Sign to add another address to your inbox
-
-You can add another wallet address to your inbox at any time. For example, you might have started using an app with one wallet address and now want to use the app with an additional wallet address.
-
-If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. For example:
-
-```text
-- Link address to inbox
-  (Address: ${ASSOCIATED_ADDRESS})
-```
-
-Sign with the wallet address you want to add to grant it access to the inbox. You can now use your inbox to exchange messages using the wallet address you just added.
-
-## Sign to remove address from your inbox
-
-You can remove a wallet address from your inbox at any time.
-
-If you decide to remove a wallet address from your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign an **Unlink address from inbox** message. For example:
-
-```text
-- Unlink address from inbox
-  (Address: ${ASSOCIATED_ADDRESS})
-```
-
-Sign with the wallet address you want to remove to unlink it from your inbox. You can no longer access your inbox using the wallet address you removed.
-
-## Sign to change inbox recovery address
-
-The first time you used an app installation built with XMTP v3, the wallet address you used to create an inbox is automatically set as the inbox recovery address. You can change the recovery address to a different wallet address at any time.
-
-If you decide to change the recovery address, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Change inbox recovery address** message. For example:
-
-```text
-- Change inbox recovery address
-  (Address: ${NEW_RECOVERY_ADDRESS})
-```
-
-Sign with the wallet address you want to set as the recovery address to change the recovery address.
-
-## Sign to consent to receive broadcast messages
-
-When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
-
-For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
-
-![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
-
-When you click **Sign**, you're consenting to receive broadcast messages from the publisher at your connected wallet address. You can see the publisher's sending address in the **Signature request** window.
-
-When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
-
-To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
-
-
-## pages/protocol/xips.mdx
-# XMTP Improvement Proposals (XIPs)
-
-An XIP is a design document that proposes a new feature or improvement for XMTP or its processes or environment.
-
-XIPs intend to be the primary mechanisms for:
-
-- Proposing new features
-- Collecting community technical input on an issue
-- Documenting the design decisions that have gone into XMTP
-
-For these reasons, XIPs are a great way to learn about XMTP's newest features and participate in shaping the evolution of the protocol.
-
-To review the latest XIPs, see [Improvement Proposals](https://community.xmtp.org/c/xips/xip-drafts/53).
-
-To learn more about XIPs and how to participate in the process, including authoring an XIP of your own, see [XIP purpose, process, and guidelines](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md).
-
-
-## pages/protocol/topics.mdx
-# Topics with XMTP
-
-This document describes the concept of **topics** on the XMTP network. Topics are used to address and route [envelopes](/protocol/envelope-types), forming the backbone of the XMTP pub/sub messaging system.
-
-While XMTP SDKs manage topic subscriptions automatically, understanding them can be helpful for protocol-level development, debugging, and building services like push notification servers.
-
-## Topic naming convention
-
-XMTP topics follow a standardized format that indicates the protocol version, message type, and a unique identifier. The general structure is:
-
-`/xmtp/mls/1/{topic-type}-{identifier}/proto`
-
-- `/xmtp/mls/1/`: The protocol namespace, indicating XMTP with MLS, version 1.
-- `{topic-type}`: A single letter representing the purpose of the topic (for example, `g` for group, `w` for welcome).
-- `{identifier}`: A unique ID for the specific conversation or installation.
-- `/proto`: The payload serialization format.
-
-## Core topics in XMTP
-
-XMTP uses two primary topic types for delivering messages.
-
-### Group message topic
-
-The group message topic is used to send and receive messages within a specific conversation (both 1:1 DMs and group chats). Each conversation has its own unique topic.
-
-- **Format**: `/xmtp/mls/1/g-$conversationId/proto`
-- **Envelope**: [Group message envelope](/protocol/envelope-types#group-message-envelope)
-- **Purpose**: Carries all ongoing communication for a conversation, including [application messages](/protocol/envelope-types#application-messages) (text, reactions, etc.) and [commit messages](/protocol/envelope-types#commit-messages) that modify the group state.
-- **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value.
-
-> **Note on [DM stitching](/chat-apps/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications): For direct messages, multiple underlying conversations might be "stitched" together in the UI. For push notifications to be reliable, an app must subscribe to the group message topic for each of these underlying conversations.
-
-### Welcome message topic
-
-The welcome message topic is used to deliver a `Welcome` message to a new member of a group. This message bootstraps the new member, providing them with the group's state so they can participate.
-
-- **Format**: `/xmtp/mls/1/w-$installationId/proto`
-- **Envelope**: [Welcome message envelope](/protocol/envelope-types#welcome-message-envelope)
-- **Purpose**: To notify a specific app installation that it has been added to a new conversation.
-- **Usage**: A push notification server subscribes to an installation's welcome topic to be notified when that installation is invited to a new group chat or DM. The SDKs provide this via methods like `client.welcomeTopic()`.
-
-## How other envelopes are handled
-
-Not all envelope types are broadcast on persistent pub/sub topics.
-
-- **[Key package envelopes](/protocol/envelope-types#key-package-envelope)**: These are not sent over a topic. Instead, they are published to a network-level store where they can be retrieved by other clients who need to start a conversation or add a new member to a group.
-
-- **[Identity update envelopes](/protocol/envelope-types#identity-update-envelope)**: These are also not sent over a topic. They are stored permanently on the XMTP network to ensure the continuity and verifiability of a user's identity across their devices.
-
-
-## pages/protocol/security.mdx
-# Messaging security properties with XMTP
-
-XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
-
-- Advanced cryptographic techniques
-- Secure key management practices
-- MLS ([Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html))
-
-Specifically, XMTP messaging provides the comprehensive security properties covered in the following sections. In these sections, **group** refers to the MLS concept of a group, which includes both 1:1 and group conversations.
-
-🎥 **walkthrough: XMTP and MLS**
-
-This video provides a walkthrough of XMTP's implementation of MLS.
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/g6I9qXOkDMo?si=o5pD2xwa_yynoP5s" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
-
-To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/xmtp_mls).
-
-## A deep dive into messaging security properties
-
-### Message confidentiality
-
-Ensures that the contents of messages in transit can't be read without the corresponding encryption keys.
-
-Message confidentiality is achieved through symmetric encryption, ensuring that only intended recipients can read the message content. [AEAD](#cryptographic-tools-in-use) (Authenticated Encryption with Associated Data) is used to encrypt the message content, providing robust protection against unauthorized access.
-
-## Forward secrecy
-
-Ensures that even if current session keys are compromised, past messages remain secure.
-
-MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
-
-## Post-compromise security
-
-Ensures that future messages remain secure even if current encryption keys are compromised.
-
-XMTP uses regular key rotation achieved through a commit mechanism with a specific update path in MLS, meaning a new group secret is encrypted to all other members. This essentially resets the key and an attacker with the old state can't derive the new secret, as long as the private key from the leaf node in the ratchet tree construction hasn't been compromised. This ensures forward secrecy and protection against future compromises.
-
-## Message authentication
-
-Validates the identity of the participants in the conversation, preventing impersonation.
-
-XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender's identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
-
-## Message integrity
-
-Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered.
-
-XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
-
-## Quantum resistance
-
-Protects against future quantum computer attacks through post-quantum cryptography.
-
-XMTP implements quantum-resistant encryption to protect against "Harvest Now, Decrypt Later" (HNDL) attacks, where adversaries store encrypted messages until quantum computers become powerful enough to break current encryption. XMTP uses a hybrid approach that combines post-quantum algorithms with conventional cryptography, ensuring protection against future quantum threats without compromising current security.
-
-The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
-
-## User anonymity
-
-Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
-
-User anonymity is achieved through a combination of the following functions:
-
-- MLS Welcome messages encrypt the sender metadata and group ID, protecting the social graph.
-
-- XMTP adds a layer of encryption to MLS Welcome messages using [HPKE](#cryptographic-tools-in-use) (Hybrid Public Key Encryption). This prevents multiple recipients of the same Welcome message from being correlated to the same group.
-
-- XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
-
-- XMTP's backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
-
-It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
-
-XMTP currently hides the sender of Welcome messages (used to add users to a group) but doesn't hide the Welcome message recipients. This makes it possible to determine how many groups a user was invited to but not whether the user did anything about the invitations.
-
-## Cryptographic tools in use
-
-XMTP messaging uses the ciphersuite _MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519_.
-
-Here is a summary of individual cryptographic tools used to collectively ensure that XMTP messaging is secure, authenticated, and tamper-proof:
-
-- [HPKE](https://www.rfc-editor.org/rfc/rfc9180.html)
-
-    Used to encrypt Welcome messages, protect the identities of group invitees, and maintain the confidentiality of group membership. We use the ciphersuite HPKEX25519.
-
-- [AEAD](https://developers.google.com/tink/aead)
-
-    Used to ensure both confidentiality and integrity of messages. In particular, we use the ciphersuite CHACHA20POLY1305.
-
-- [SHA3_256 and SHA2_256](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf)
-
-    XMTP uses two cryptographic hash functions to ensure data integrity and provide strong cryptographic binding. SHA3_256 is used in the multi-wallet identity structure. SHA2_256 is used in MLS. The ciphersuite is SHA256.
-
-- [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
-
-    Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
-
-- [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
-
-    Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
-
-
-## pages/protocol/cursors.mdx
-# Cursors with XMTP
-
-This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
-
-While cursors are managed automatically by the XMTP SDKs, understanding how they work is crucial for debugging and for grasping the underlying mechanics of message synchronization.
-
-## What is a cursor?
-
-A cursor is a pointer or a marker that an XMTP client maintains for each topic it subscribes to (both [group message topics](/protocol/topics#group-message-topic) and [welcome message topics](/protocol/topics#welcome-message-topic)). This cursor is stored locally and is specific to each app installation.
-
-Think of it as a bookmark in the chronological log of messages and events for a given topic. Its purpose is to remember the exact point up to which an installation has successfully synchronized its data.
-
-## How cursors work with `sync()`
-
-The primary role of a cursor becomes evident when you use the `sync()` functions (`conversation.sync()`, `conversations.sync()`, and `conversations.syncAll()`).
-
-1. **Initial sync**: The first time an app installation calls `sync()` for a specific conversation, it fetches all available messages and events from the network for that conversation's topic.
-2. **Cursor placement**: Once the sync is complete, the SDK places a cursor at the end of that batch of fetched messages.
-3. **Subsequent syncs**: On the next `sync()` call for that same conversation, the client sends its current cursor position to the network. The network then returns only the messages and events that have occurred *after* that cursor.
-4. **Cursor advancement**: After the new messages are successfully fetched, the SDK advances the cursor to the new latest point.
-
-This process ensures that each `sync()` call only retrieves what's new, making synchronization efficient by avoiding the re-downloading of messages the client already has.
-
-### How Cursors Enable Efficient Sync
-
-The XMTP SDKs use cursors to make message synchronization highly efficient. The design principle is to fetch new data from the network with `sync()` while providing access to historical data from a local database.
-
-- **`sync()` fetches new data from the network:** The `sync()` functions are designed specifically to retrieve new messages and events from the network. To do this efficiently, the SDK advances the cursor to the position of the last synchronized item. On subsequent `sync()` calls, the client provides this cursor, and the network returns only what has arrived since. This forward-only cursor movement is an intentional design choice that prevents re-downloading data the client already has.
-
-- **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
-
-- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/chat-apps/list-stream-sync/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
-
-- **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
-
-## Cursors for different sync functions
-
-Each `sync()` function corresponds to a different type of cursor:
-
-- `conversation.sync()`: This operates on the **group message topic** for a single conversation. It moves the cursor for that specific conversation, fetching new messages or group updates (like name changes).
-- `conversations.sync()`: This operates on the **welcome message topic**. It moves the cursor for welcome messages, fetching any new conversations the user has been invited to. It does *not* fetch the contents of those new conversations.
-- `conversations.syncAll()`: This is the most comprehensive sync. It effectively performs the actions of the other two syncs for all of the user's conversations. It moves the cursors for the welcome topic *and* for every individual group message topic, ensuring the client has fetched all new conversations and all new messages in existing conversations.
-
-For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
-
-![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
-
-By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
-
-
-## pages/network/run-a-node.mdx
-# Run an XMTP network node
-
-A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
-
-To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp).
-
-## Interested in becoming a registered XMTP node operator?
-
-1. Review [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
-2. [Submit an application](https://docs.google.com/forms/d/e/1FAIpQLScBpJ0i962xBPpZZeI6q7-UMo5Bc2JkhvHR_v2rliLDoBkzXQ/viewform?usp=sharing) to become a registered node operator.
-
-## Already a registered node operator?
-
-To get started, see the [xmtpd-infrastructure](https://github.com/xmtp/xmtpd-infrastructure) repository, which provides infrastructure-as-code examples and tooling to help node operators deploy and manage xmtpd nodes.
-
-## FAQ about the XMTP network
-
-To follow and provide feedback on the engineering work covered in this FAQ, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
-
-### Is the XMTP network decentralized?
-
-A testnet of the decentralized XMTP network was launched in early December 2024.
-
-All of the nodes in the `dev` and `production` XMTP network environments are still operated by [Ephemera](https://ephemerahq.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
-
-These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
-
-- Cuba
-- Iran
-- North Korea
-- Syria
-- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
-
-### Is XMTP a blockchain?
-
-The testnet of the decentralized XMTP network includes two distributed systems:
-
-- The XMTP broadcast network
-- The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
-
-To learn more, see [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp).
-
-The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
-
-### Will I be able to run my own XMTP node?
-
-At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
-
-To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
-
-### Does XMTP have a token?
-
-XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
-
-
-## pages/network/network-nodes.mdx
-# XMTP testnet nodes
-
-For real-time statuses of nodes in the XMTP testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
-The following table lists the nodes currently registered to power the XMTP testnet.
-
-|  | Node operator | Node address |
-|-----|---------------|--------------|
-| 1 | Artifact Capital | xmtp.artifact.systems:443 |
-| 2 | Crystal One | xmtp.node-op.com:443 |
-| 3 | Emerald Onion | xmtp.disobey.net:443 |
-| 4 | Encapsulate | lb.validator.xmtp.testnet.encapsulate.xyz:443 |
-| 5 | Ethereum Name Service (ENS) | grpc.ens-xmtp.com:443 |
-| 6 | Laminated Labs | xmtp.validators.laminatedlabs.net:443 |
-| 7 | Next.id | xmtp.nextnext.id:443 |
-| 8 | Nodle | xmtpd.nodleprotocol.io:443 |
-| 9 | Ephemera | grpc.testnet.xmtp.network:443 |
-| 10 | Ephemera | grpc2.testnet.xmtp.network:443 |
-
-Here is a map of node locations:
-
-<div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden" }}>
-  <iframe
-    src="https://www.google.com/maps/d/embed?mid=18y4nFTXQKdgiSJCQbEGl5dojPoHL3LQ&ehbc=2E312F&noprof=1"
-    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: 0 }}
-    allowFullScreen=""
-    loading="lazy"
-  ></iframe>
-</div>
-
-A purple pin indicates that the node is operated by a non-profit organization.
 
 
 # Summary
