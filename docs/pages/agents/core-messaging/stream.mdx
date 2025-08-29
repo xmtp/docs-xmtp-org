@@ -1,0 +1,114 @@
+# Stream conversations and messages
+
+## Stream new group chat and DM conversations
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/agents/core-messaging/create-conversations). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+```js [Node]
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
+    // Received a conversation
+    console.log("New conversation:", conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
+  }
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log("New conversation:", conversation);
+}
+```
+
+## Stream new group chat and DM messages
+
+This function listens to the network for new messages within all active group chats and DMs.
+
+Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+```js [Node]
+// stream all messages from conversations
+const stream = await client.conversations.streamAllMessages({
+  onValue: (message) => {
+    // Received a message
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log("Stream failed");
+  }
+});
+ 
+// stream only group messages
+const groupMessageStream = await client.conversations.streamAllGroupMessages({
+  onValue: (message) => {
+    console.log("New group message:", message);
+  }
+});
+ 
+// stream only dm messages
+const dmMessageStream = await client.conversations.streamAllDmMessages({
+  onValue: (message) => {
+    console.log("New DM message:", message);
+  }
+});
+ 
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log("New message:", message);
+}
+```
+
+## Handle stream failures
+
+:::warning
+
+Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
+:::
+
+```ts [Node]
+// disable automatic reconnects
+const stream = await client.conversations.streamAllMessages({
+  retryOnFail: false,
+  onValue: (message) => {
+    console.log("New message:", message);
+  }
+});
+
+// use stream options with retry configuration
+const stream = await client.conversations.streamAllMessages({
+  retryAttempts: 10,
+  retryDelay: 20000, // 20 seconds
+  onValue: (message) => {
+    console.log("New message:", message);
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+  onFail: () => {
+    console.log("Stream failed after retries");
+  },
+  onRestart: () => {
+    console.log("Stream restarted");
+  },
+  onRetry: (attempt, maxAttempts) => {
+    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
+  },
+});
+```

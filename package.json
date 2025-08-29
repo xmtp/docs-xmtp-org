@@ -7,20 +7,24 @@
     "dev": "vocs dev",
     "build": "vocs build",
     "preview": "vocs preview",
-    "spell": "cspell"
+    "spell": "cspell",
+    "lint:md": "markdownlint 'docs/**/*.md' 'docs/**/*.mdx'",
+    "lint:md:fix": "markdownlint --fix 'docs/**/*.md' 'docs/**/*.mdx'"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
-    "@xmtp/react-sdk": "^8.0.1",
     "mermaid": "^11.9.0",
-    "react": "latest",
-    "react-dom": "latest",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-medium-image-zoom": "^5.2.14",
-    "vocs": "latest"
+    "react-router": "^7.8.2",
+    "vocs": "^1.0.13"
   },
   "devDependencies": {
-    "@types/react": "latest",
+    "@types/react": "^19.0.0",
     "cspell": "^9.1.3",
+    "markdownlint-cli": "^0.45.0",
+    "markdownlint-rule-search-replace": "^1.2.0",
     "typescript": "latest"
   }
 }

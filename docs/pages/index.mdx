@@ -1,61 +1,112 @@
-import { CustomHomePage } from "../components/CustomHomePage";
-import "../styles.css";
+---
+title: Build with XMTP
+layout: landing
+showLogo: false
+---
+
+import { CustomHomePage } from '../components/CustomHomePage'
 
 <CustomHomePage.Root>
-   <CustomHomePage.Headline>Build with XMTP</CustomHomePage.Headline>
-   <CustomHomePage.Subhead>
-      The largest decentralized network for quantum-resistant, MLS end-to-end encrypted messaging
-   </CustomHomePage.Subhead>
-   <CustomHomePage.SectionTitle>📥 Build a chat inbox</CustomHomePage.SectionTitle>
-   <CustomHomePage.Description>
-      Use an XMTP SDK:
-   </CustomHomePage.Description>
-   <CustomHomePage.SDKGrid>
-      <CustomHomePage.SDKTile href="sdks/browser" src="/ts-logo-128.svg" alt="TypeScript logo" name="Browser" />
-      <CustomHomePage.SDKTile href="sdks/node" lightSrc="/nodejsStackedDark.svg" darkSrc="/nodejsStackedLight.svg" alt="Node.js" name="Node" />
-      <CustomHomePage.SDKTile href="sdks/react-native" src="/rn-header_logo.svg" alt="React Native logo" name="RN" />
-      <CustomHomePage.SDKTile href="sdks/ios" src="/swift_logo_color.svg" alt="iOS logo" name="iOS" />
-      <CustomHomePage.SDKTile href="sdks/android" src="/Kotlin_Icon.svg" alt="Android logo" name="Android" />
-   </CustomHomePage.SDKGrid>
-   <CustomHomePage.SectionTitle>🤖 Build an agent</CustomHomePage.SectionTitle>
-      <CustomHomePage.Description>
-         Use this tutorial:
-      </CustomHomePage.Description>
-   <CustomHomePage.SDKGrid>
-      <CustomHomePage.SDKTile href="agents/build-an-agent" darkSrc="/agent-tute-icon-light.png" lightSrc="/agent-tute-icon-dark.png" alt="agent logo" name="Agent tutorial" />
-   </CustomHomePage.SDKGrid>
-   <CustomHomePage.SectionTitle>Learn more</CustomHomePage.SectionTitle>
-   <CustomHomePage.TileGrid>
-      <CustomHomePage.Tile
-         href="/intro/intro"
-         title="Intro to XMTP"
-         description="Get an intro to XMTP and why you should build with it"
-         />
-      <CustomHomePage.Tile
-         href="/fund-apps/get-started"
-         title="Fund your app"
-         description="Prep and fund your app to pay messaging fees starting on Dec 9, 2025"
-         />
-      <CustomHomePage.Tile
-         href="/protocol/envelope-types"
-         title="Learn protocol concepts"
-         description="Dive deeper into XMTP by learning about key protocol concepts"
-         />
-      <CustomHomePage.Tile
-         href="https://xmtp.chat/"
-         title="Build with xmtp.chat"
-         description="Build with this interactive dev tool and starter reference app implementation"
-         isExternal={true}
-         />
-      <CustomHomePage.Tile
-         href="/network/run-a-node"
-         title="Run an XMTP node"
-         description="Learn about network nodes and how to become a registered node operator"
-         />
-      <CustomHomePage.Tile
-         href="/intro/xips"
-         title="Review XIPs"
-         description="Read and provide feedback on the latest XMTP Improvement Proposals"
-         />
-   </CustomHomePage.TileGrid>
+
+<CustomHomePage.Headline>
+
+Build with <img src="/x-mark-blue-lightmode.png" alt="XMTP" className="xmtp-logo-light-mode" /><img src="/x-mark-blue-darkmode.png" alt="XMTP" className="xmtp-logo-dark-mode" /> XMTP
+
+</CustomHomePage.Headline>
+
+<CustomHomePage.Subhead>
+
+The largest and most secure decentralized messaging network
+
+</CustomHomePage.Subhead>
+
+<div className="custom-homepage-cta-container">
+  <a href="/agents/get-started/build-an-agent" className="custom-homepage-cta-button custom-homepage-cta-button--primary">Build an agent</a>
+  <a href="/inboxes/intro/get-started" className="custom-homepage-cta-button custom-homepage-cta-button--secondary">Build an inbox</a>
+</div>
+
+<CustomHomePage.TileGrid>
+
+<CustomHomePage.Tile
+  title="Quantum-resistant"
+  description="Protection against 'harvest now, decrypt later' attacks through post-quantum cryptography"
+/>
+
+<CustomHomePage.Tile
+  title="End-to-end encrypted"
+  description="Messages encrypted client-side and only recipients can decrypt them"
+/>
+
+<CustomHomePage.Tile
+  title="Decentralized"
+  description="Messages are distributed across a censorship-resistant network of nodes"
+/>
+
+<CustomHomePage.Tile
+  title="Flexible identities"
+  description="Use any public DiD, like @ensdomains or @bluesky, or just a single device-bound passkey"
+/>
+
+<CustomHomePage.Tile
+  title="Built-in consent"
+  description="Inboxes are spam-free spaces for a user's chosen contacts only"
+/>
+
+<CustomHomePage.Tile
+  title="Rich content types"
+  description="Send text, attachments, reactions, read receipts, onchain transactions, and more"
+/>
+
+</CustomHomePage.TileGrid>
+
+<CustomHomePage.SectionTitle id="start-building">
+
+Start building today
+
+</CustomHomePage.SectionTitle>
+
+<CustomHomePage.SDKGrid>
+
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/browser"
+  lightSrc="/ts-logo-128.svg"
+  darkSrc="/ts-logo-128.svg"
+  alt="TypeScript"
+  name="Browser SDK"
+/>
+
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/node"
+  lightSrc="/nodejsStackedDark.svg"
+  darkSrc="/nodejsStackedLight.svg"
+  alt="Node.js"
+  name="Node SDK"
+/>
+
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/react-native"
+  lightSrc="/rn-header_logo.svg"
+  darkSrc="/rn-header_logo.svg"
+  alt="React Native"
+  name="React Native SDK"
+/>
+
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/android"
+  lightSrc="/Kotlin_Icon.svg"
+  darkSrc="/Kotlin_Icon.svg"
+  alt="Android/Kotlin"
+  name="Android SDK"
+/>
+
+<CustomHomePage.SDKTile
+  href="inboxes/sdks/ios"
+  lightSrc="/swift_logo_color.svg"
+  darkSrc="/swift_logo_color.svg"
+  alt="iOS/Swift"
+  name="iOS SDK"
+/>
+
+</CustomHomePage.SDKGrid>
+
 </CustomHomePage.Root>

@@ -1,4 +1,4 @@
-# Messaging security properties with XMTP 
+# Messaging security properties with XMTP
 
 XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
 
@@ -26,7 +26,7 @@ Message confidentiality is achieved through symmetric encryption, ensuring that 
 
 ## Forward secrecy
 
-Ensures that even if current session keys are compromised, past messages remain secure. 
+Ensures that even if current session keys are compromised, past messages remain secure.
 
 MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
 
@@ -40,11 +40,11 @@ XMTP uses regular key rotation achieved through a commit mechanism with a specif
 
 Validates the identity of the participants in the conversation, preventing impersonation.
 
-XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender’s identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
+XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender's identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
 
 ## Message integrity
 
-Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered. 
+Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered.
 
 XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
 
@@ -68,7 +68,7 @@ User anonymity is achieved through a combination of the following functions:
 
 - XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
 
-- XMTP’s backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
+- XMTP's backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
 
 It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
 
@@ -96,6 +96,6 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 
     Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
 
-- [XWING KEM](https://github.com/cryspen/xwing)
+- [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
 
     Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.

@@ -1,0 +1,125 @@
+# Tutorial: Build an agent that uses XMTP
+
+This tutorial provides a map to building agents with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
+
+Building with XMTP gives your agent access to:
+
+- The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
+- The building blocks of AI + money + secure chat
+- Users on apps built with XMTP, including Coinbase Wallet, Convos, and more
+
+## Resources to get started
+
+### Quickstart video guide
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+
+### Agent examples
+
+From a simple agent that replies "GM" to one that supports onchain transactions, explore and run a dozen [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk).
+
+### Cursor rules
+
+You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
+
+## Build an agent
+
+### Listen for and send messages
+
+These are the steps to initialize the XMTP listener and send messages.
+
+```tsx [Node]
+// import the xmtp sdk
+import { Client, type XmtpEnv, type Signer } from "@xmtp/node-sdk";
+
+// encryption key, must be consistent across runs
+const encryptionKey: Uint8Array = ...;
+const signer: Signer = ...;
+const env: XmtpEnv = "dev";
+
+// create the client
+const client = await Client.create(signer, {
+  encryptionKey,
+  env,
+  appVersion: 'alix-agent/2.x'
+});
+
+// sync the client to get the latest messages
+await client.conversations.sync();
+
+// listen to all messages
+const stream = await client.conversations.streamAllMessages();
+for await (const message of stream) {
+  // ignore messages from the agent
+  if (message?.senderInboxId === client.inboxId) continue;
+  // get the conversation by id
+  const conversation = await client.conversations.getConversationById(message.conversationId);
+  // send a message from the agent
+  await conversation.send("gm");
+}
+```
+
+### Get the address of a user
+
+Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, such as EOAs and SCWs.
+
+:::tip
+
+An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
+
+:::
+
+```tsx [Node]
+const inboxState = await client.preferences.inboxStateFromInboxIds([
+  message.senderInboxId,
+]);
+const addressFromInboxId = inboxState[0].identifiers[0].identifier;
+```
+
+### Support onchain transactions and transaction references
+
+To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent, as well as the [Support onchain transactions](/agents/content-types/transactions) and [Support onchain transaction references](/agents/content-types/transaction-refs) (receipts) documentation.
+
+### Support attachments
+
+To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent and [Support attachments](/agents/content-types/attachments) documentation.
+
+### Support replies
+
+To learn more, see [Support replies](/agents/content-types/replies) documentation.
+
+### Support reactions
+
+To learn more, see [Support reactions](/agents/content-types/reactions) documentation.
+
+### Observe rate limits
+
+XMTP enforces separate rate limits for read and write operations per client.
+
+To learn more, see [Observe rate limits](/agents/core-messaging/rate-limits)
+
+### Follow security best practices
+
+To learn more, see [Follow agent security best practices](/agents/agent-security)
+
+## Manage agent installations
+
+To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
+
+## Debug an agent
+
+To learn more, see [Debug an agent](/agents/debug-agents)
+
+## Deploy an agent
+
+To learn more, see [Deploy an agent](/agents/deploy-agent).
+
+## Get featured
+
+:::tip
+
+**Want your agent or mini-app featured on TBA?**
+
+[Complete this form](https://docs.google.com/forms/d/e/1FAIpQLSfZ7JgOt4tw36dGLL9cEmw_y09VoE5_Knk7X6EnJd1IJ3CLEg/viewform) to tell the team about your project, get feedback, and collaborate on possibly getting it featured.
+
+:::
