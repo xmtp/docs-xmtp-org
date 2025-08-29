@@ -23,7 +23,7 @@ You can create a payer wallet using common non-custodial wallet apps, such as Co
 
 If useful for shared budgets, you can use a multisig wallet. For example, a Gnosis Safe or any ERC-1271 wallet can own a balance in the Payer Registry and sign allowance approvals.
 
-You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-apps/run-gateway).
+You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-agents-apps/run-gateway).
 
 ## Step 2: Fund your payer wallet with USDC on Base
 
@@ -70,8 +70,8 @@ You can use the Usage panel on the home page of the XMTP Funding Portal to revie
 
 Before data can display in the Usage panel, you must have completed the following on the appropriate network (testnet or mainnet):
 
-1. [Deployed your XMTP Gateway Service](/fund-apps/run-gateway)
-2. Updated your app to [use a compatible XMTP SDK](/fund-apps/update-sdk)
+1. [Deployed your XMTP Gateway Service](/fund-agents-apps/run-gateway)
+2. Updated your app to [use a compatible XMTP SDK](/fund-agents-apps/update-sdk)
 3. Sent messages using your app
 
 We recommend funding an allowance for 3-6 months of estimated usage.
