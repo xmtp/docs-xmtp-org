@@ -1,0 +1,38 @@
+# Intents with XMTP
+
+Intents provide an internal state machine, or "bookkeeping" mechanism, for reliably applying changes to XMTP group chat states, even when the process encounters retries, crashes, race conditions, or ordering issues.
+
+Developers building apps and agents with XMTP don't need to work with intents directly, but understanding them provides insight into how the protocol maintains integrity behind the scenes.
+
+## Intent actions
+
+An intent represents an action that intends to change the state of a group chat via a [commit](/protocol/envelope-types#commit-messages), along with enough information to retry the action if it fails.
+
+Each commit rotates the group's encryption state into a new [epoch](/protocol/epochs) and therefore must be strictly ordered. If commits arrive out of order or conflict, groups can fork, making some members unable to decrypt other members' messages.
+
+Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. This helps prevent forks by making sure every commit is eventually published in the correct order.
+
+Examples of intent actions include:
+
+- Add member: Add a participant to a group
+- Remove member: Remove a participant from a group
+- Send message: Deliver an application message to the group
+- Change metadata: Rename a group, for example
+
+## Intent states
+
+Each intent progresses through a series of states as it is processed:
+
+- **To publish**: Intent has been created and queued, but not yet sent
+- **Published**: Commit has been sent to the network
+- **Error**: Intent failed (e.g., permission denied, removed from the group). Can be:
+  - Retryable: Can be retried on the next sync. For example, a temporary failure to publish the commit due to the app restarting.
+  - Non-retryable: Can't be retried and moves the intent to the **Error** state. For example, a member without adequate permission tries to add a member.
+- **Processed**: Intermediate state during handling
+- **Committed**: Commit has been accepted into the group's state
+
+By tracking intent states, XMTP ensures that if an app crashes before a commit has been accepted, for example, the commit process can resume later from the stored state without losing intent information.
+
+## Example intent flow
+
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/intents-flow.png)
