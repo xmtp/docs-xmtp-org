@@ -9,7 +9,12 @@ Epochs work according to these requirements:
 - Decryption requirement: To read messages or commits in a given epoch, a member must have the correct epoch key.
 - Fork risk: If members diverge on which epoch they're in (e.g., due to missed or out-of-order commits), they won't be able to decrypt each other's messages, causing a fork.
 
-[Intents](/protocol/intents) exist to help ensure that commits, and therefore epochs, are applied consistently and in the right order.
+[Intents](/protocol/intents) help ensure two types of ordering:
+
+- **Epoch ordering**: Commits must be published in the correct epoch (one greater than the last applied epoch) to be processed by clients
+- **Consistent ordering**: All clients must receive published commits in the same order to prevent forks, regardless of epoch validity
+
+Intents achieve epoch ordering by enabling retries, while relying on the server's guarantee of consistent ordering across all clients.
 
 ## Handle concurrent commits
 

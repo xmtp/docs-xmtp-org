@@ -25,11 +25,10 @@ Each intent progresses through a series of states as it is processed:
 
 - **To publish**: Intent has been created and queued, but not yet sent
 - **Published**: Commit has been sent to the network
-- **Error**: Intent failed (e.g., permission denied, removed from the group). Can be:
-  - Retryable: Can be retried on the next sync. For example, a temporary failure to publish the commit due to the app restarting.
-  - Non-retryable: Can't be retried and moves the intent to the **Error** state. For example, a member without adequate permission tries to add a member.
-- **Processed**: Intermediate state during handling
-- **Committed**: Commit has been accepted into the group's state
+- **Error**: Intent failed with a permanent, non-retryable error (for example, a member without adequate permission tries to add a member, or the member was removed from the group). These intents will not be retried.
+  - Note: Temporary, retryable failures (such as network issues or app restarts) keep the intent in the **To publish** state for retry on the next sync.
+- **Committed**: Commit has been accepted into the group's state, and dependent operations can now be performed. For example, after adding group members, welcome messages can be sent with the new encryption state.
+- **Processed**: Intent is fully complete and all related operations have finished
 
 By tracking intent states, XMTP ensures that if an app crashes before a commit has been accepted, for example, the commit process can resume later from the stored state without losing intent information.
 
