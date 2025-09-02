@@ -8,9 +8,9 @@ Developers building apps and agents with XMTP don't need to work with intents di
 
 An intent represents an action that intends to change the state of a group chat via a [commit](/protocol/envelope-types#commit-messages), along with enough information to retry the action if it fails.
 
-Each commit rotates the group's encryption state into a new [epoch](/protocol/epochs) and therefore must be strictly ordered. If commits arrive out of order or conflict, groups can fork, making some members unable to decrypt other members' messages.
+Each commit rotates the group's encryption state into a new [epoch](/protocol/epochs) and must be applied in epoch order. If a client processes a commit that is in an incorrect epoch, it will simply discard the commit.
 
-Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. This helps prevent forks by making sure every commit is eventually published in the correct order.
+Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. This ensures that every commit is eventually published in the correct epoch.
 
 Examples of intent actions include:
 
