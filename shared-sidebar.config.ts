@@ -161,30 +161,30 @@ export const sidebarConfig = {
       link: "/protocol/signatures",
     },
   ],
-  '/inboxes/': [
+  '/chat-apps/': [
     {
       text: "Intro to XMTP",
       collapsed: false,
       items: [
         {
           text: "Get started",
-          link: "/inboxes/intro/get-started",
+          link: "/chat-apps/intro/get-started",
         },
         {
           text: "Why XMTP?",
-          link: "/inboxes/intro/why-xmtp",
+          link: "/chat-apps/intro/why-xmtp",
         },
         {
           text: "FAQ",
-          link: "/inboxes/intro/faq",
+          link: "/chat-apps/intro/faq",
         },
         {
           text: "Build with LLMs",
-          link: "/inboxes/intro/build-with-llms",
+          link: "/chat-apps/intro/build-with-llms",
         },
         {
           text: "Dev support",
-          link: "/inboxes/intro/dev-support",
+          link: "/chat-apps/intro/dev-support",
         },
         {
           text: "Roadmap",
@@ -198,23 +198,23 @@ export const sidebarConfig = {
       items: [
         {
           text: "Browser SDK",
-          link: "/inboxes/sdks/browser",
+          link: "/chat-apps/sdks/browser",
         },
         {
           text: "Node SDK",
-          link: "/inboxes/sdks/node",
+          link: "/chat-apps/sdks/node",
         },
         {
           text: "React Native SDK",
-          link: "/inboxes/sdks/react-native",
+          link: "/chat-apps/sdks/react-native",
         },
         {
           text: "Android SDK",
-          link: "/inboxes/sdks/android",
+          link: "/chat-apps/sdks/android",
         },
         {
           text: "iOS SDK",
-          link: "/inboxes/sdks/ios",
+          link: "/chat-apps/sdks/ios",
         },
       ],
     },
@@ -224,39 +224,39 @@ export const sidebarConfig = {
       items: [
         {
           text: "Create an EOA or SCW signer",
-          link: "/inboxes/core-messaging/create-a-signer",
+          link: "/chat-apps/core-messaging/create-a-signer",
         },
         {
           text: "Create a client",
-          link: "/inboxes/core-messaging/create-a-client",
+          link: "/chat-apps/core-messaging/create-a-client",
         },
         {
           text: "Create conversations",
-          link: "/inboxes/core-messaging/create-conversations",
+          link: "/chat-apps/core-messaging/create-conversations",
         },
         {
           text: "Send messages",
-          link: "/inboxes/core-messaging/send-messages",
+          link: "/chat-apps/core-messaging/send-messages",
         },
         {
           text: "Manage group permissions",
-          link: "/inboxes/core-messaging/group-permissions",
+          link: "/chat-apps/core-messaging/group-permissions",
         },
         {
           text: "Manage group metadata",
-          link: "/inboxes/core-messaging/group-metadata",
+          link: "/chat-apps/core-messaging/group-metadata",
         },
         {
           text: "Support group invite links",
-          link: "/inboxes/core-messaging/support-group-invite-links",
+          link: "/chat-apps/core-messaging/support-group-invite-links",
         },
         {
           text: "Manage inboxes, IDs, and installations",
-          link: "/inboxes/core-messaging/manage-inboxes",
+          link: "/chat-apps/core-messaging/manage-inboxes",
         },
         {
           text: "Observe rate limits",
-          link: "/inboxes/core-messaging/rate-limits",
+          link: "/chat-apps/core-messaging/rate-limits",
         },
       ],
     },
@@ -266,27 +266,27 @@ export const sidebarConfig = {
       items: [
         {
           text: "List conversations",
-          link: "/inboxes/list-stream-sync/list",
+          link: "/chat-apps/list-stream-sync/list",
         },
         {
           text: "Stream messages",
-          link: "/inboxes/list-stream-sync/stream",
+          link: "/chat-apps/list-stream-sync/stream",
         },
         {
           text: "Sync conversations and messages",
-          link: "/inboxes/list-stream-sync/sync-and-syncall",
+          link: "/chat-apps/list-stream-sync/sync-and-syncall",
         },
         {
           text: "Sync preferences",
-          link: "/inboxes/list-stream-sync/sync-preferences",
+          link: "/chat-apps/list-stream-sync/sync-preferences",
         },
         {
           text: "Support backups",
-          link: "/inboxes/list-stream-sync/archive-backups",
+          link: "/chat-apps/list-stream-sync/archive-backups",
         },
         {
           text: "History sync",
-          link: "/inboxes/list-stream-sync/history-sync",
+          link: "/chat-apps/list-stream-sync/history-sync",
         },
       ],
     },
@@ -296,53 +296,53 @@ export const sidebarConfig = {
       items: [
         {
           text: "Understand content types",
-          link: "/inboxes/content-types/content-types",
+          link: "/chat-apps/content-types/content-types",
         },
         {
           text: "Attachments",
-          link: "/inboxes/content-types/attachments",
+          link: "/chat-apps/content-types/attachments",
         },
         {
           text: "Onchain transactions",
-          link: "/inboxes/content-types/transactions",
+          link: "/chat-apps/content-types/transactions",
         },
         {
           text: "Onchain transaction references",
-          link: "/inboxes/content-types/transaction-refs",
+          link: "/chat-apps/content-types/transaction-refs",
         },
         {
           text: "Reactions",
-          link: "/inboxes/content-types/reactions",
+          link: "/chat-apps/content-types/reactions",
         },
         {
           text: "Replies",
-          link: "/inboxes/content-types/replies",
+          link: "/chat-apps/content-types/replies",
         },
         {
           text: "Read receipts",
-          link: "/inboxes/content-types/read-receipts",
+          link: "/chat-apps/content-types/read-receipts",
         },
         {
           text: "Custom content",
-          link: "/inboxes/content-types/custom",
+          link: "/chat-apps/content-types/custom",
         },
         {
           text: "Fallback text for compatibility",
-          link: "/inboxes/content-types/fallback",
+          link: "/chat-apps/content-types/fallback",
         },
       ],
     },
     {
-      text: "Support spam-free inboxes",
+      text: "Support spam-free chat apps",
       collapsed: false,
       items: [
         {
           text: "Understand user consent",
-          link: "/inboxes/user-consent/user-consent",
+          link: "/chat-apps/user-consent/user-consent",
         },
         {
           text: "Support user consent",
-          link: "/inboxes/user-consent/support-user-consent",
+          link: "/chat-apps/user-consent/support-user-consent",
         },
       ],
     },
@@ -352,34 +352,34 @@ export const sidebarConfig = {
       items: [
         {
           text: "Understand push notifications",
-          link: "/inboxes/push-notifs/understand-push-notifs",
+          link: "/chat-apps/push-notifs/understand-push-notifs",
         },
         {
           text: "Support push notifications",
-          link: "/inboxes/push-notifs/push-notifs",
+          link: "/chat-apps/push-notifs/push-notifs",
         },
         {
           text: "Run a push notifications server",
-          link: "/inboxes/push-notifs/pn-server",
+          link: "/chat-apps/push-notifs/pn-server",
         },
         {
           text: "Try Android push notifications",
-          link: "/inboxes/push-notifs/android-pn",
+          link: "/chat-apps/push-notifs/android-pn",
         },
         {
           text: "Try iOS push notifications",
-          link: "/inboxes/push-notifs/ios-pn",
+          link: "/chat-apps/push-notifs/ios-pn",
         },
       ],
     },
     {
       text: "Debug your app",
-      link: "/inboxes/debug-your-app",
+      link: "/chat-apps/debug-your-app",
       items: [],
     },
     {
       text: "Sign and verify payloads",
-      link: "/inboxes/use-signatures",
+      link: "/chat-apps/use-signatures",
       items: [],
     },
   ],
