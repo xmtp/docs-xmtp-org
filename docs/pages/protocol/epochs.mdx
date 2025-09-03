@@ -2,6 +2,8 @@
 
 With XMTP, each [commit](/protocol/envelope-types#commit-messages) starts a new epoch, which represents the current cryptographic state of a group chat.
 
+Epochs are a core concept from [Messaging Layer Security](https://messaginglayersecurity.rocks/) (MLS), which XMTP implements for secure group messaging.
+
 Epochs work according to these requirements:
 
 - Sequential numbering: Epochs are strictly ordered and increase by one with each commit (epoch 1, epoch 2, etc.).
