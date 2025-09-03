@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 12:07 AM UTC / September 03, 2025
+Generated at 06:29 PM UTC / September 03, 2025
 
 ## Instructions for AI Tools
 
@@ -2324,6 +2324,103 @@ When you provide consent, you're adding the publisher's address to your personal
 To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
 
 
+## pages/protocol/intents.mdx
+# Intents with XMTP
+
+Intents provide an internal state machine, or "bookkeeping" mechanism, for reliably applying changes to XMTP group chat states, even when the process encounters retries, crashes, race conditions, or ordering issues.
+
+Developers building apps and agents with XMTP don't need to work with intents directly, but understanding them provides insight into how the protocol maintains integrity behind the scenes.
+
+## Intent actions
+
+An intent represents an action that intends to change the state of a group chat via a [commit](/protocol/envelope-types#commit-messages), along with enough information to retry the action if it fails.
+
+Each commit rotates the group's encryption state into a new [epoch](/protocol/epochs) and must be applied in epoch order. If a client processes a commit that is in an incorrect epoch, it will simply discard the commit.
+
+Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. This ensures that every commit is eventually published in the correct epoch.
+
+Examples of intent actions include:
+
+- Add member: Add a participant to a group
+- Remove member: Remove a participant from a group
+- Send message: Deliver an application message to the group
+- Change metadata: Rename a group, for example
+
+## Intent states
+
+Each intent progresses through a series of states as it is processed:
+
+- **To publish**: Intent has been created and queued, but not yet sent
+- **Published**: Commit has been sent to the network
+- **Error**: Intent failed with a permanent, non-retryable error (for example, a member without adequate permission tries to add a member, or the member was removed from the group). These intents will not be retried.
+  - Note: Temporary, retryable failures (such as network issues or app restarts) keep the intent in the **To publish** state for retry on the next sync.
+- **Committed**: Commit has been accepted into the group's state, and dependent operations can now be performed. For example, after adding group members, welcome messages can be sent with the new encryption state.
+- **Processed**: Intent is fully complete and all related operations have finished
+
+By tracking intent states, XMTP ensures that if an app crashes before a commit has been accepted, for example, the commit process can resume later from the stored state without losing intent information.
+
+## Example intent flow
+
+![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/intents-flow.png)
+
+
+## pages/protocol/overview.mdx
+# XMTP protocol overview
+
+XMTP is a decentralized messaging protocol that enables secure, end-to-end encrypted communication between blockchain addresses. This section covers the technical foundations and implementation details of how XMTP works under the hood.
+
+## Architecture fundamentals
+
+With XMTP, messages are routed through **[topics](/protocol/topics)**, which are unique addresses that identify conversation channels. Messages are packaged as **[envelope types](/protocol/envelope-types)** that contain the actual message data plus metadata for routing and processing.
+
+The protocol prioritizes **security** through advanced cryptographic techniques, delivering end-to-end encryption for both 1:1 and group conversations. To learn more, see XMTP's [security properties](/protocol/security) and how [wallet signatures](/protocol/signatures) authenticate users.
+
+## Group messaging mechanics
+
+For group conversations, XMTP introduces sophisticated state management:
+
+- **[Epochs](/protocol/epochs)** represent the cryptographic state of a group at any point in time. Each group operation (like adding members) creates a new epoch with fresh encryption keys. This concept comes from [Messaging Layer Security](https://messaginglayersecurity.rocks/), which XMTP builds upon.
+
+- **[Intents](/protocol/intents)** provide reliable state management through an internal bookkeeping system that handles retries, crashes, and race conditions when applying group changes.
+
+- **[Cursors](/protocol/cursors)** enable efficient message synchronization by tracking where each client left off when fetching new messages.
+
+## Key concepts
+
+| Concept | Purpose | Key benefit |
+|---------|---------|-------------|
+| [Security](/protocol/security) | End-to-end encryption | Privacy and message integrity |
+| [Topics](/protocol/topics) | Message routing and addressing | Efficient pub/sub architecture |
+| [Envelope types](/protocol/envelope-types) | Message format and structure | Standardized communication protocol |
+| [Epochs](/protocol/epochs) | Group cryptographic state | Key rotation and post-compromise security |
+| [Intents](/protocol/intents) | Reliable group operations | Consistency despite network issues |
+| [Cursors](/protocol/cursors) | Message synchronization | Efficient incremental updates |
+| [Wallet signatures](/protocol/signatures) | Authentication | Verified sender identity |
+
+## Protocol evolution
+
+XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), which are design documents that propose new features and improvements. This governance process ensures systematic and decentralized protocol development.
+
+## Additional resources
+
+For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
+
+- [Encryption](https://xmtp.org/docs/concepts/encryption)
+- [Identity](https://xmtp.org/docs/concepts/identity)
+- [Consent](https://xmtp.org/docs/concepts/consent)
+- [Decentralizing XMTP](https://xmtp.org/docs/concepts/decentralizing-xmtp)
+
+## Who should read these docs
+
+The protocol documentation is designed for:
+
+- **Protocol contributors** working on XMTP's core implementation
+- **Security researchers** auditing XMTP's cryptographic design
+- **Anyone curious** about the technical details behind XMTP's messaging
+
+For most developers, the [Build chat apps](/chat-apps/intro/get-started) and [Build agents](/agents/get-started/build-an-agent) sections provide the practical guidance needed to build with XMTP.
+
+
 ## pages/protocol/xips.mdx
 # XMTP Improvement Proposals (XIPs)
 
@@ -2495,6 +2592,36 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 - [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
 
     Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
+
+
+## pages/protocol/epochs.mdx
+# Epochs with XMTP
+
+With XMTP, each [commit](/protocol/envelope-types#commit-messages) starts a new epoch, which represents the current cryptographic state of a group chat.
+
+Epochs are a core concept from [Messaging Layer Security](https://messaginglayersecurity.rocks/) (MLS), which XMTP implements for secure group messaging.
+
+Epochs work according to these requirements:
+
+- Sequential numbering: Epochs are strictly ordered and increase by one with each commit (epoch 1, epoch 2, etc.).
+- New keys: Each epoch introduces a fresh encryption key, and keys from previous epochs are discarded (with the exception of a configurable number of recent past epochs that may be retained for special cases).
+- Decryption requirement: To read messages or commits in a given epoch, a member must have the correct epoch key.
+- Fork risk: If members diverge on which epoch they're in (e.g., due to missed or out-of-order commits), they won't be able to decrypt each other's messages, causing a fork.
+
+[Intents](/protocol/intents) help ensure two types of ordering:
+
+- **Epoch ordering**: Commits must be published in the correct epoch (one greater than the last applied epoch) to be processed by clients
+- **Consistent ordering**: All clients must receive published commits in the same order to prevent forks, regardless of epoch validity
+
+Intents achieve epoch ordering by enabling retries, while relying on the server's guarantee of consistent ordering across all clients.
+
+## Handle concurrent commits
+
+When multiple commits arrive at nearly the same time, XMTP uses a "first-to-arrive wins" approach. For example, if commits 2 and 3 both attempt to advance from epoch 1, whichever commit arrived first becomes the accepted next epoch, and the other commit is rejected.
+
+For example, if commit 2 arrived first, it will be built on epoch 2 and commit 3 will be rejected.
+
+However, [intents](/protocol/intents) provide a mechanism for the rejected commit 3 to be retried. The intent can be reprocessed against the new epoch 2 state, allowing the operation to succeed in the updated context rather than being permanently lost.
 
 
 ## pages/protocol/cursors.mdx
@@ -11090,4 +11217,4 @@ Is your app using a great third-party or public good tool to help with spam and 
 
 # Summary
 
-This documentation contains 75 files.
+This documentation contains 78 files.
