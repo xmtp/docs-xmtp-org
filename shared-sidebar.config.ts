@@ -121,24 +121,40 @@ export const sidebarConfig = {
   ],
   '/protocol/': [
     {
+      text: "Overview",
+      link: "/protocol/overview",
+    },
+    {
       text: "XMTP Improvement Proposals",
       link: "/protocol/xips",
     },
     {
-      text: "Envelope types",
-      link: "/protocol/envelope-types",
+      text: "Security",
+      link: "/protocol/security",
     },
     {
       text: "Topics",
       link: "/protocol/topics",
     },
     {
+      text: "Envelope types",
+      link: "/protocol/envelope-types",
+    },
+    {
+      text: "Epochs",
+      link: "/protocol/epochs",
+    },
+    {
+      text: "Intents",
+      link: "/protocol/intents",
+    },
+    {
       text: "Cursors",
       link: "/protocol/cursors",
     },
     {
-      text: "Security",
-      link: "/protocol/security",
+      text: "Wallet signatures",
+      link: "/protocol/signatures",
     },
     {
       text: "Encryption",
@@ -155,10 +171,6 @@ export const sidebarConfig = {
     {
       text: "Decentralization",
       link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
-    },
-    {
-      text: "Wallet signatures",
-      link: "/protocol/signatures",
     },
   ],
   '/chat-apps/': [
