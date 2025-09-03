@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 07:35 PM UTC / September 03, 2025
+Generated at 09:51 PM UTC / September 03, 2025
 
 ## Instructions for AI Tools
 
