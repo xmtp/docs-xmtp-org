@@ -95,7 +95,7 @@ The `isActive()` method determines whether the current user is still an active m
 
 You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
 
-## Paginating the conversation list
+## Paginate the conversation list
 
 You can paginate the conversation list by using the `limit` parameter and either the `createdAtNs` or `lastActivityNs` parameters.
 
@@ -118,13 +118,15 @@ let secondPage = try await client.conversations.list(lastActivityBeforeNs: first
 
 :::
 
-:::warning[warning]
+:::warning[Warning]
 
 Sorting the list by `lastActivityNs` may lead to conversations "jumping" between pages as new messages come in, leading to an unstable sort and an incomplete list of conversations.
 
-Applications should only sort conversations by `lastActivityNs` when paginating if they expect not to receive new messages in the conversations unexpectedly (applications that don't utilize streaming), or where the page size is very large and missed conversations are acceptable.
+Apps should only sort conversations by `lastActivityNs` when paginating if they expect not to receive new messages in the conversations unexpectedly (apps that don't utilize streaming), or where the page size is very large and missed conversations are acceptable.
 
-To paginate against a stably sorted list you should use the `createdAtBeforeNs` parameter for filtering and an `orderBy` of `createdAt`, and perform the final sort of conversations in your application.
+To paginate against a stably sorted list you should use the `createdAtBeforeNs` parameter for filtering and an `orderBy` of `createdAt`, and perform the final sort of conversations in your app.
+
+:::
 
 :::code-group
 
@@ -140,7 +142,5 @@ val secondPage = try client.conversations.list(
 let firstPage = try await client.conversations.list(limit: 10, orderBy: .createdAt)
 let secondPage = try await client.conversations.list(createdAtBeforeNs: firstPage.last!.createdAtNs, limit: 10)
 ```
-
-:::
 
 :::
