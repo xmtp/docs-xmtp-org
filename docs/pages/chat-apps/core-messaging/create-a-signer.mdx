@@ -1,6 +1,6 @@
-# Create a EOA or SCW signer
+# Create an EOA, SCW, or passkey signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs). They also support message signing with passkeys. All SDK clients accept a signer object (or instance), which provides a method for signing messages.
 
 ## Create an Externally Owned Account signer
 
@@ -239,6 +239,39 @@ public struct SCWallet: SigningKey {
         return SignedData(signature.hexStringToByteArray )
     }
 }
+```
+
+:::
+
+## Create a passkey signer
+
+The passkey signer has the same 3 required properties as the EOA and SCW signers, but also requires a function that returns the hex-encoded 32-byte public key of the passkey.
+
+:::code-group
+
+```tsx [Browser]
+
+
+```
+
+```tsx [Node]
+
+
+```
+
+```tsx [React Native]
+
+
+```
+
+```kotlin [Kotlin]
+
+
+```
+
+```swift [Swift]
+
+
 ```
 
 :::
