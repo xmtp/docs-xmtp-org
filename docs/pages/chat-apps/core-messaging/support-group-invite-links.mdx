@@ -37,7 +37,7 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with any
 
 ### `POST /groupInvite`
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -48,7 +48,7 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with any
 }
 ```
 
-**Example response**
+#### Example response
 
 The backend returns a new invite link with a unique URL.
 
@@ -76,13 +76,13 @@ When a user clicks the Join button on the invite landing page:
 
 ### `GET /groupInvite/:id`
 
-**Example request**
+#### Example request
 
 ```html
 GET /groupInvite/abcdefg
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -98,7 +98,7 @@ GET /groupInvite/abcdefg
 
 Can be used by the invitee to request to join the group.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -106,7 +106,7 @@ Can be used by the invitee to request to join the group.
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -123,7 +123,7 @@ When the invitee clicks the invite link to request to join the group, consider g
 
 As soon as the link creator is detected as being online, they can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -135,7 +135,7 @@ As soon as the link creator is detected as being online, they can receive a sile
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -153,7 +153,7 @@ The first member detected as being online can receive a silent push notification
 
 This setup can take the dependency off the sole link creator being online and spreads it across the group, which can allow the group join to happen faster.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -166,7 +166,7 @@ This setup can take the dependency off the sole link creator being online and sp
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -183,7 +183,7 @@ Consider having the link creator receive a push notification about a specific in
 
 For example, you can send a push notification to the invite link creator saying, "User X has requested to join Group Y through your invite link." Give the link creator a way to approve or reject the request.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -197,7 +197,7 @@ For example, you can send a push notification to the invite link creator saying,
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -213,7 +213,7 @@ To handle cases where the push notification fails to deliver (maybe the user is 
 
 Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/issues) in the LibXMTP repo to request it.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -222,7 +222,7 @@ Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/iss
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -243,7 +243,7 @@ Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/iss
 
 If the invite link creator approves the request, in the background, you can call LibXMTP to load the group and add the member.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -251,7 +251,7 @@ If the invite link creator approves the request, in the background, you can call
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -270,13 +270,13 @@ You can poll a `/groups/joinFromInvite` endpoint to check the invite status and 
 
 You can provide this endpoint as a way for an invitee to check the status of their request to join a group.
 
-**Example request**
+#### Example request
 
 ```html
 GET /groupJoinRequest/hijklmn
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -292,7 +292,7 @@ Once the invite link creator has approved or rejected the request, you can make 
 
 ### `PUT /groupJoinRequest/:id`
 
-**Example request**
+#### Example request
 
 You can have the invite link creator mark an invite as approved or rejected. For basic invite links, approval can happen as soon as the push notification has been received.
 
@@ -302,7 +302,7 @@ You can have the invite link creator mark an invite as approved or rejected. For
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {

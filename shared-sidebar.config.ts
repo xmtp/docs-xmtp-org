@@ -158,19 +158,19 @@ export const sidebarConfig = {
     },
     {
       text: "Encryption",
-      link: "https://xmtp.org/docs/concepts/encryption",
+      link: "https://xmtp.org/vision/concepts/encryption",
     },
     {
       text: "Identity",
-      link: "https://xmtp.org/docs/concepts/identity",
+      link: "https://xmtp.org/vision/concepts/identity",
     },
     {
       text: "Consent",
-      link: "https://xmtp.org/docs/concepts/consent",
+      link: "https://xmtp.org/vision/concepts/consent",
     },
     {
       text: "Decentralization",
-      link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
+      link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
     },
   ],
   '/chat-apps/': [
