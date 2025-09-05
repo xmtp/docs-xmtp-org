@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 07:35 PM UTC / September 03, 2025
+Generated at 07:53 PM UTC / September 05, 2025
 
 ## Instructions for AI Tools
 
@@ -1102,7 +1102,7 @@ The app's developer can provide a UI that enables group participants to make fur
 - Update group metadata
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings" />
 </div>
 
 You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
@@ -1374,7 +1374,7 @@ For example, if you deploy your agent across these network environments, you wil
 - Production server: `production` network
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png" width="500px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png" width="500px" alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each" />
 </div>
 
 If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
@@ -1384,7 +1384,7 @@ If you deploy your agent to this same network environment, you have 1 inbox with
 - Production server: `production` network
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png" width="500px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png" width="500px" alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations" />
 </div>
 
 Here are some best practices for agent installation management:
@@ -2361,7 +2361,7 @@ By tracking intent states, XMTP ensures that if an app crashes before a commit h
 
 ## Example intent flow
 
-![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/intents-flow.png)
+![Flow diagram showing the progression of an intent through different states: Pending → Committed → Processed, illustrating how XMTP tracks and manages group operations](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/intents-flow.png)
 
 
 ## pages/protocol/overview.mdx
@@ -2670,7 +2670,7 @@ Each `sync()` function corresponds to a different type of cursor:
 
 For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
 
-![](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
+![Sequence diagram showing cursor flow during conversation.sync() operation, illustrating how cursors track message positions and enable incremental synchronization](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
 
 By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
 
@@ -3106,13 +3106,13 @@ If needed, you can turn off history sync by setting the `historySyncUrl` client 
 When your app initializes an XMTP client and a `historySyncUrl` client option is present, history sync automatically triggers an initial sync request and creates an encrypted payload.
 
 <div>
-    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step1.png" width="600px" />
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step1.png" width="600px" alt="Diagram showing step 1 of history sync: client initialization triggers sync request and creates encrypted payload" />
 </div>
 
 History sync then uploads the payload, sends a sync reply, and pulls all conversation state history into the new app installation, merging it with the existing app installations in the sync group.
 
 <div>
-    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step2.png" width="600px" />
+    <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step2.png" width="600px" alt="Diagram showing step 2 of history sync: payload upload, sync reply, and merging conversation state history across app installations" />
 </div>
 
 Ongoing updates to history are streamed automatically. Updates, whether for user consent preferences or messages, are sent across the sync group, ensuring all app installations have up-to-date information.
@@ -3665,19 +3665,19 @@ To describe preference sync, let's first focus on how the preferences group work
 2. Let's say Inbox ID Alix has an Installation A of App A on their phone. At this time, Inbox ID Alix has a preferences group that looks like this:
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-1.png" width="300px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-1.png" width="300px" alt="Diagram showing preferences group with one member (Inbox ID Alix) and Installation A of App A" />
    </div>
 
 3. Inbox ID Alix then logs in to an Installation B of App B on their phone. The next time Installation A runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-2.png" width="300px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-2.png" width="300px" alt="Diagram showing preferences group updated to include Installation B of App B after Alix logs in to a second app" />
    </div>
 
 4. Then let's say Inbox ID Alix logs in to an Installation C of App A on their tablet. The next time Installation A or B runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png" width="300px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png" width="300px" alt="Diagram showing preferences group updated to include Installation C of App A on tablet after Alix logs in to a third installation" />
    </div>
 
 ## Preferences sync worker
@@ -3687,25 +3687,25 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 1. Let's say Inbox ID Alix uses Installation A to block Inbox ID Bo.
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/a-block-bo.png" width="200px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/a-block-bo.png" width="200px" alt="Diagram showing Installation A blocking Inbox ID Bo" />
    </div>
 
 2. This sends a message to the preferences group in the group message database. This is not an actual chat message, but a serialized proto message that is not shown to app users.
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" alt="Diagram showing serialized proto message sent to preferences group in the group message database" />
    </div>
 
 3. When Installation B calls `preferences.sync` or `syncAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" alt="Diagram showing Installation B processing the sync message to block Inbox ID Bo" />
    </div>
 
 4. Likewise, when Installation C calls `preferences.sync` or `syncAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
 
    <div>
-      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" />
+      <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" alt="Diagram showing Installation C processing the sync message to block Inbox ID Bo" />
    </div>
 
 Preferences sync handles HMAC keys in the same way.
@@ -6151,7 +6151,7 @@ As the app developer, you can provide a UI that enables group participants to ma
 - Update group metadata
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings" />
 </div>
 
 You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
@@ -7646,7 +7646,7 @@ For more agent-specific guidance, see [Manage agent installations](/agents/core-
 The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/create-inbox-install.png" width="250px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/create-inbox-install.png" width="250px" alt="Diagram showing creation of inbox ID and installation ID when a user first creates a client with their identity" />
 </div>
 
 When you make subsequent calls to create a client for the same identity and a local database is not present, the client uses the same inbox ID, but creates a new installation ID.
@@ -7654,13 +7654,13 @@ When you make subsequent calls to create a client for the same identity and a lo
 An inbox ID can have up to 10 app installations before it needs to [revoke installations](#revoke-installations).
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-installation.png" width="250px" alt="Diagram showing how creating a client for the same identity without a local database creates a new installation ID with the same inbox ID" />
 </div>
 
 You can enable a user to add multiple identities to their inbox. Added identities use the same inbox ID and the installation ID of the installation used to add the identity.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-id.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/add-id.png" width="350px" alt="Diagram showing how adding multiple identities to an inbox uses the same inbox ID and installation ID" />
 </div>
 
 You can enable a user to remove an identity from their inbox. You cannot remove the recovery identity.
@@ -7757,13 +7757,13 @@ You can revoke all installations other than the currently accessed installation.
 For example, consider a user using this current installation:
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install-id.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/current-install-id.png" width="350px" alt="Diagram showing a user's current installation among multiple installations for their inbox" />
 </div>
 
 When the user revokes all other installations, the action removes their identity's access to all installations other than the current installation:
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install-id.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/revoke-install-id.png" width="350px" alt="Diagram showing the result after revoking all other installations, leaving only the current installation active" />
 </div>
 
 An inbox ID can have up to 10 app installations before it needs to revoke an installation.
@@ -7914,7 +7914,7 @@ let inboxId = try await client.inboxIdFromIdentity(identity: identity)
 
 View the state of any inbox to see the identities, installations, and other information associated with the `inboxId`.
 
-#### Sample request
+### Sample request
 
 :::code-group
 
@@ -8052,19 +8052,19 @@ For UI display purposes, you can use the following logic to select the most appr
 Consider an inbox with three associated identities:
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/three-ids.png" width="650px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/three-ids.png" width="650px" alt="Diagram showing an inbox with three associated identities (wallet addresses)" />
 </div>
 
 If the user removes an identity from the inbox, the identity no longer has access to the inbox it was removed from.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/removed-id.png" width="650px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/removed-id.png" width="650px" alt="Diagram showing the state after removing one identity from the inbox, leaving two remaining identities" />
 </div>
 
 The identity can no longer be added to or used to access conversations in that inbox. If someone sends a message to the identity, the message is not associated with the original inbox. If the user logs in to a new installation with the identity, this will create a new inbox ID.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox-id.png" width="650px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/new-inbox-id.png" width="650px" alt="Diagram showing how a removed identity creates a new inbox ID when logging into a new installation" />
 </div>
 
 ### How is the recovery identity used?
@@ -8082,13 +8082,13 @@ However, while Bo has access to Alix's inbox, Bo cannot remove Alix from their o
 If a user logs in with an identity with address 0x62EE...309c and creates inbox 1 and then logs in with an identity with address 0xd0e4...DCe8 and creates inbox 2; there is no way to combine inbox 1 and 2.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inboxes.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inboxes.png" width="350px" alt="Diagram showing two separate inboxes created by logging in with two different identities" />
 </div>
 
 You can add an identity with address 0xd0e4...DCe8 to inbox 1, but both identities with addresses 0x62EE...309c and 0xd0e4...DCe8 would then have access to inbox 1 only. The identity with address 0xd0e4...DCe8 would no longer be able to access inbox 2.
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inbox-remap-id.png" width="350px" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/two-inbox-remap-id.png" width="350px" alt="Diagram showing how adding an identity to inbox 1 removes its access to inbox 2" />
 </div>
 
 To help users avoid this state, ensure that your UX surfaces their ability to add multiple identities to a single inbox.
@@ -8110,7 +8110,7 @@ The identity accesses that inbox ID and does not create a new inbox ID.
 For example, let's say that you create a client with an identity with address 0x62EE...309c. Inbox ID 1 is generated from that identity.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1.png" width="150px" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1.png" width="150px" alt="Simple diagram showing inbox ID 1 with one identity" />
 </div>
 
 If you then add an identity with address 0xd0e4...DCe8 to inbox ID 1, the identity is also associated with inbox ID 1.
@@ -8120,19 +8120,19 @@ If you then log into a new app installation with the identity with address 0xd0e
 Once the identity with address 0xd0e4...DCe8 has been associated with inbox ID 1, it can then be used to log into inbox ID 1 using a new app installation.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2.png" width="350px" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2.png" width="350px" alt="Diagram showing inbox ID 1 with two identities after adding a second identity" />
 </div>
 
 The inverse is also true. Let's say an identity with address 0xd0e4...DCe8 was previously used to create and log into inbox ID 2.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-inbox2-id2.png" width="350px" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-inbox2-id2.png" width="350px" alt="Diagram showing two separate inboxes, each with their own identity, before identity migration" />
 </div>
 
 If the identity is then added as an associated identity to inbox ID 1, the identity will no longer be able to log into inbox ID 2.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2-inverse.png" width="350px" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2-inverse.png" width="350px" alt="Diagram showing the result after moving an identity from inbox 2 to inbox 1, leaving inbox 2 empty" />
 </div>
 
 To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox ID 2 again, you can use the recovery identity for inbox ID 2 to add a different identity to inbox ID 2 and have the user use that identity access it.
@@ -9977,7 +9977,7 @@ struct ContentView: View {
 
 :::
 
-To handle unsupported content types, refer to the [fallback]() section.
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
 
 ## Support multiple remote attachments of any size
 
@@ -11179,7 +11179,7 @@ val ethAddresses = identities
 You can then display appropriate messages on a **You might know** tab, for example.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" alt="Screenshot of a mobile chat app showing a 'You might know' tab with filtered conversation requests" />
 </div>
 
 ### Identify contacts the user might not know, including spammy or scammy requests
@@ -11187,7 +11187,7 @@ You can then display appropriate messages on a **You might know** tab, for examp
 To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" />
+<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" alt="Screenshot of a mobile chat app showing a 'Hidden requests' tab with filtered messages from unknown contacts or potentially spammy content" />
 </div>
 
 The decision to scan unencrypted messages is yours as the app developer. If you take this approach:
