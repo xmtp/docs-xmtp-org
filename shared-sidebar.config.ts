@@ -281,7 +281,7 @@ export const sidebarConfig = {
           link: "/chat-apps/list-stream-sync/list",
         },
         {
-          text: "Stream messages",
+          text: "Stream conversations and messages",
           link: "/chat-apps/list-stream-sync/stream",
         },
         {
