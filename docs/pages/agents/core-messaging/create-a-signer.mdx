@@ -78,8 +78,11 @@ const signer: Signer = {
 
 ## Create a passkey signer
 
-The passkey signer has the same 3 required properties as the EOA and SCW signers, but also requires a function that returns the hex-encoded 32-byte public key of the passkey.
+You can use a third-party passkey solution to create a passkey signer. 
 
- ```tsx [Node]
- 
- ```
+Use your chosen solution to obtain the following information:
+
+- Passkey identifier: Hex-encoded 64-byte public key of the passkey
+- Signature data: Passkey signature in the correct format for XMTP
+
+You can then pass this information to the [`add_passkey_signature` function](https://github.com/xmtp/libxmtp/blob/c0c6fb6c4740345ff747596c76a9be53bf47b5ef/bindings_ffi/src/mls.rs#L367-L385) in the FFI bindings in the LibXMTP core library.

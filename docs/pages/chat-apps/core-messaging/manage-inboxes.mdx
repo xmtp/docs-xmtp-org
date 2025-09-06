@@ -2,7 +2,7 @@
 
 With XMTP, a user can have one or more **inboxes** they use to access their messages. An inbox ID is a stable identifier for a user's messaging identity and is used as the destination for messages in direct message and group conversations. It is derived from the public key material in their key package.
 
-An inbox can have multiple **identities** associated with it. An identity has a kind, such as EOA, SCW, or passkey and a string. In the case of an EOA or SCW, the string is an Ethereum address. In the case of a passkey, the string is a hex-encoded 32-byte public key. This extensible inbox-based identity model means that support for additional kinds of identities, such as Bitcoin or Bluesky, can be added in the future.
+An inbox can have multiple **identities** associated with it. An identity has a kind, such as EOA, SCW, or passkey and a string. In the case of an EOA or SCW, the string is an Ethereum address. In the case of a passkey, the string is a hex-encoded 64-byte public key. This extensible inbox-based identity model means that support for additional kinds of identities, such as Bitcoin or Bluesky, can be added in the future.
 
 All messages associated with these identities flow through the one inbox ID and are accessible in any XMTP app.
 
