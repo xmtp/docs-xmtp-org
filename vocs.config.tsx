@@ -72,7 +72,7 @@ export default defineConfig({
   topNav: [
     { text: "Build agents", link: '/agents/get-started/build-an-agent', match: '/agents' },
     { text: "Build chat apps", link: '/chat-apps/intro/get-started', match: '/chat-apps' },
-    { text: "Protocol", link: '/protocol/envelope-types' },
+    { text: "Protocol", link: '/protocol/overview' },
     { text: "Network", link: '/network/run-a-node' },
   ],
   ogImageUrl: {

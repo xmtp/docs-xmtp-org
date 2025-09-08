@@ -121,44 +121,56 @@ export const sidebarConfig = {
   ],
   '/protocol/': [
     {
+      text: "Overview",
+      link: "/protocol/overview",
+    },
+    {
       text: "XMTP Improvement Proposals",
       link: "/protocol/xips",
-    },
-    {
-      text: "Envelope types",
-      link: "/protocol/envelope-types",
-    },
-    {
-      text: "Topics",
-      link: "/protocol/topics",
-    },
-    {
-      text: "Cursors",
-      link: "/protocol/cursors",
     },
     {
       text: "Security",
       link: "/protocol/security",
     },
     {
-      text: "Encryption",
-      link: "https://xmtp.org/docs/concepts/encryption",
+      text: "Topics",
+      link: "/protocol/topics",
     },
     {
-      text: "Identity",
-      link: "https://xmtp.org/docs/concepts/identity",
+      text: "Envelope types",
+      link: "/protocol/envelope-types",
     },
     {
-      text: "Consent",
-      link: "https://xmtp.org/docs/concepts/consent",
+      text: "Epochs",
+      link: "/protocol/epochs",
     },
     {
-      text: "Decentralization",
-      link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
+      text: "Intents",
+      link: "/protocol/intents",
+    },
+    {
+      text: "Cursors",
+      link: "/protocol/cursors",
     },
     {
       text: "Wallet signatures",
       link: "/protocol/signatures",
+    },
+    {
+      text: "Encryption",
+      link: "https://xmtp.org/vision/concepts/encryption",
+    },
+    {
+      text: "Identity",
+      link: "https://xmtp.org/vision/concepts/identity",
+    },
+    {
+      text: "Consent",
+      link: "https://xmtp.org/vision/concepts/consent",
+    },
+    {
+      text: "Decentralization",
+      link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
     },
   ],
   '/chat-apps/': [
@@ -269,7 +281,7 @@ export const sidebarConfig = {
           link: "/chat-apps/list-stream-sync/list",
         },
         {
-          text: "Stream messages",
+          text: "Stream conversations and messages",
           link: "/chat-apps/list-stream-sync/stream",
         },
         {

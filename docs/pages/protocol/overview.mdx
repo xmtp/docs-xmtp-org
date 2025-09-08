@@ -1,0 +1,54 @@
+# XMTP protocol overview
+
+XMTP is a decentralized messaging protocol that enables secure, end-to-end encrypted communication between blockchain addresses. This section covers the technical foundations and implementation details of how XMTP works under the hood.
+
+## Architecture fundamentals
+
+With XMTP, messages are routed through **[topics](/protocol/topics)**, which are unique addresses that identify conversation channels. Messages are packaged as **[envelope types](/protocol/envelope-types)** that contain the actual message data plus metadata for routing and processing.
+
+The protocol prioritizes **security** through advanced cryptographic techniques, delivering end-to-end encryption for both 1:1 and group conversations. To learn more, see XMTP's [security properties](/protocol/security) and how [wallet signatures](/protocol/signatures) authenticate users.
+
+## Group messaging mechanics
+
+For group conversations, XMTP introduces sophisticated state management:
+
+- **[Epochs](/protocol/epochs)** represent the cryptographic state of a group at any point in time. Each group operation (like adding members) creates a new epoch with fresh encryption keys. This concept comes from [Messaging Layer Security](https://messaginglayersecurity.rocks/), which XMTP builds upon.
+
+- **[Intents](/protocol/intents)** provide reliable state management through an internal bookkeeping system that handles retries, crashes, and race conditions when applying group changes.
+
+- **[Cursors](/protocol/cursors)** enable efficient message synchronization by tracking where each client left off when fetching new messages.
+
+## Key concepts
+
+| Concept | Purpose | Key benefit |
+|---------|---------|-------------|
+| [Security](/protocol/security) | End-to-end encryption | Privacy and message integrity |
+| [Topics](/protocol/topics) | Message routing and addressing | Efficient pub/sub architecture |
+| [Envelope types](/protocol/envelope-types) | Message format and structure | Standardized communication protocol |
+| [Epochs](/protocol/epochs) | Group cryptographic state | Key rotation and post-compromise security |
+| [Intents](/protocol/intents) | Reliable group operations | Consistency despite network issues |
+| [Cursors](/protocol/cursors) | Message synchronization | Efficient incremental updates |
+| [Wallet signatures](/protocol/signatures) | Authentication | Verified sender identity |
+
+## Protocol evolution
+
+XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), which are design documents that propose new features and improvements. This governance process ensures systematic and decentralized protocol development.
+
+## Additional resources
+
+For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
+
+- [Encryption](https://xmtp.org/vision/concepts/encryption)
+- [Identity](https://xmtp.org/vision/concepts/identity)
+- [Consent](https://xmtp.org/vision/concepts/consent)
+- [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp)
+
+## Who should read these docs
+
+The protocol documentation is designed for:
+
+- **Protocol contributors** working on XMTP's core implementation
+- **Security researchers** auditing XMTP's cryptographic design
+- **Anyone curious** about the technical details behind XMTP's messaging
+
+For most developers, the [Build chat apps](/chat-apps/intro/get-started) and [Build agents](/agents/get-started/build-an-agent) sections provide the practical guidance needed to build with XMTP.
