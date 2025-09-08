@@ -125,52 +125,70 @@ export const sidebarConfig = {
       link: "/protocol/overview",
     },
     {
-      text: "XMTP Improvement Proposals",
-      link: "/protocol/xips",
-    },
-    {
-      text: "Security",
-      link: "/protocol/security",
-    },
-    {
-      text: "Topics",
-      link: "/protocol/topics",
-    },
-    {
-      text: "Envelope types",
-      link: "/protocol/envelope-types",
-    },
-    {
-      text: "Epochs",
-      link: "/protocol/epochs",
-    },
-    {
-      text: "Intents",
-      link: "/protocol/intents",
-    },
-    {
-      text: "Cursors",
-      link: "/protocol/cursors",
-    },
-    {
-      text: "Wallet signatures",
-      link: "/protocol/signatures",
-    },
-    {
       text: "Encryption",
-      link: "https://xmtp.org/vision/concepts/encryption",
+      collapsed: false,
+      items: [
+        {
+          text: "Security",
+          link: "/protocol/security",
+        },
+        {
+          text: "Epochs",
+          link: "/protocol/epochs",
+        },
+        {
+          text: "Envelope types",
+          link: "/protocol/envelope-types",
+        },
+        {
+          text: "Vision: Encryption",
+          link: "https://xmtp.org/vision/concepts/encryption",
+        },      
+      ],
     },
     {
       text: "Identity",
-      link: "https://xmtp.org/vision/concepts/identity",
+      collapsed: false,
+      items: [
+        {
+          text: "Inboxes, identities, and installations",
+          link: "/protocol/identity",
+        },
+        {
+          text: "Wallet signatures",
+          link: "/protocol/signatures",
+        },
+        {
+          text: "Vision: Identity",
+          link: "https://xmtp.org/vision/concepts/identity",
+        },     
+      ],
     },
     {
-      text: "Consent",
-      link: "https://xmtp.org/vision/concepts/consent",
+      text: "Delivery",
+      collapsed: false,
+      items: [
+        {
+          text: "Topics",
+          link: "/protocol/topics",
+        },
+        {
+          text: "Cursors",
+          link: "/protocol/cursors",
+        },
+        {
+          text: "Intents",
+          link: "/protocol/intents",
+        },
+        {
+          text: "Vision: Decentralization",
+          link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
+        }, 
+      ],
     },
     {
-      text: "Decentralization",
-      link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
+      text: "XMTP Improvement Proposals",
+      link: "/protocol/xips",
     },
   ],
   '/chat-apps/': [
