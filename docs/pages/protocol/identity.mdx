@@ -27,7 +27,7 @@ An **identity** is an addressable account that can be associated with an inbox I
 
 An **installation** represents a specific app installation that can access an inbox. Each installation has its own cryptographic keys for signing messages and participating in conversations.
 
-- Generated when someone uses your app with an identity they've never used with an app built with XMTP
+- Generated automatically when `Client.create()` is called for the first time with an identity that hasn't been used with XMTP before
 - Multiple installations can access the same inbox (up to 10)
 - Installations can be revoked by the recovery identity
 
