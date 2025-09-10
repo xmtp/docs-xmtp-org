@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 07:53 PM UTC / September 05, 2025
+Generated at 11:30 PM UTC / September 10, 2025
 
 ## Instructions for AI Tools
 
@@ -2367,35 +2367,71 @@ By tracking intent states, XMTP ensures that if an app crashes before a commit h
 ## pages/protocol/overview.mdx
 # XMTP protocol overview
 
-XMTP is a decentralized messaging protocol that enables secure, end-to-end encrypted communication between blockchain addresses. This section covers the technical foundations and implementation details of how XMTP works under the hood.
+XMTP is a decentralized messaging protocol that enables secure, end-to-end encrypted communication between any identities that can produce a verifiable cryptographic signature.
 
-## Architecture fundamentals
+XMTP implements [Messaging Layer Security](https://messaginglayersecurity.rocks/) (MLS), which is designed to operate within the context of a messaging service. As the messaging service, XMTP needs to provide two services to facilitate messaging using MLS:
 
-With XMTP, messages are routed through **[topics](/protocol/topics)**, which are unique addresses that identify conversation channels. Messages are packaged as **[envelope types](/protocol/envelope-types)** that contain the actual message data plus metadata for routing and processing.
+- An [authentication service](https://messaginglayersecurity.rocks/mls-architecture/draft-ietf-mls-architecture.html#name-authentication-service)
+- A [delivery service](https://messaginglayersecurity.rocks/mls-architecture/draft-ietf-mls-architecture.html#name-delivery-service)
 
-The protocol prioritizes **security** through advanced cryptographic techniques, delivering end-to-end encryption for both 1:1 and group conversations. To learn more, see XMTP's [security properties](/protocol/security) and how [wallet signatures](/protocol/signatures) authenticate users.
+This section covers the elements of XMTP that provide these services.
 
-## Group messaging mechanics
+:::info[Who should read these docs]
 
-For group conversations, XMTP introduces sophisticated state management:
+This protocol documentation is designed for:
 
-- **[Epochs](/protocol/epochs)** represent the cryptographic state of a group at any point in time. Each group operation (like adding members) creates a new epoch with fresh encryption keys. This concept comes from [Messaging Layer Security](https://messaginglayersecurity.rocks/), which XMTP builds upon.
+- Protocol contributors working on XMTP's core implementation
+- Security researchers auditing XMTP's cryptographic design
+- Anyone curious about the technical details behind XMTP's messaging
 
-- **[Intents](/protocol/intents)** provide reliable state management through an internal bookkeeping system that handles retries, crashes, and race conditions when applying group changes.
+For most developers, the [Build chat apps](/chat-apps/intro/get-started) and [Build agents](/agents/get-started/build-an-agent) sections provide the practical guidance needed to build with XMTP.
 
-- **[Cursors](/protocol/cursors)** enable efficient message synchronization by tracking where each client left off when fetching new messages.
+:::
 
-## Key concepts
+## Encryption
 
-| Concept | Purpose | Key benefit |
-|---------|---------|-------------|
-| [Security](/protocol/security) | End-to-end encryption | Privacy and message integrity |
-| [Topics](/protocol/topics) | Message routing and addressing | Efficient pub/sub architecture |
-| [Envelope types](/protocol/envelope-types) | Message format and structure | Standardized communication protocol |
-| [Epochs](/protocol/epochs) | Group cryptographic state | Key rotation and post-compromise security |
-| [Intents](/protocol/intents) | Reliable group operations | Consistency despite network issues |
-| [Cursors](/protocol/cursors) | Message synchronization | Efficient incremental updates |
-| [Wallet signatures](/protocol/signatures) | Authentication | Verified sender identity |
+The encryption elements are mainly defined by MLS, with some additions by XMTP. To learn more, see:
+
+- [Security](/protocol/security)
+  
+  XMTP and MLS prioritize security, privacy, and message integrity through advanced cryptographic techniques, delivering end-to-end 
+  encryption for both 1:1 and group conversations
+
+- [Epochs](/protocol/epochs)
+
+  Represent the cryptographic state of a group at any point in time. Each group operation (like adding members) creates a new epoch with fresh encryption keys
+
+- [Envelope types](/protocol/envelope-types)
+
+  Messages are packaged as envelope types that contain the actual message data plus metadata for routing and processing.
+
+## Identity
+
+The identity elements are mainly defined by XMTP. To learn more, see:
+
+- [Inboxes, identities, and installations](/protocol/identity)
+
+  The identity model includes an inbox ID and its associated identities and installations.
+
+- [Wallet signatures](/protocol/signatures)
+
+  Authenticate users using verifiable cryptographic signatures.
+
+## Delivery
+
+The delivery elements are mainly defined by XMTP. To learn more, see:
+
+- [Topics](/protocol/topics)
+
+  Messages are routed through topics, which are unique addresses that identify conversation channels. 
+
+- [Cursors](/protocol/cursors)
+
+  Enable efficient message synchronization by tracking where each client left off when fetching new messages.
+
+- [Intents](/protocol/intents)
+
+  Provide reliable groupstate management through an internal bookkeeping system that handles retries, crashes, and race conditions when applying group changes.
 
 ## Protocol evolution
 
@@ -2405,20 +2441,10 @@ XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), wh
 
 For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
 
-- [Encryption](https://xmtp.org/vision/concepts/encryption)
+- [Security](https://xmtp.org/vision/concepts/encryption)
 - [Identity](https://xmtp.org/vision/concepts/identity)
 - [Consent](https://xmtp.org/vision/concepts/consent)
 - [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp)
-
-## Who should read these docs
-
-The protocol documentation is designed for:
-
-- **Protocol contributors** working on XMTP's core implementation
-- **Security researchers** auditing XMTP's cryptographic design
-- **Anyone curious** about the technical details behind XMTP's messaging
-
-For most developers, the [Build chat apps](/chat-apps/intro/get-started) and [Build agents](/agents/get-started/build-an-agent) sections provide the practical guidance needed to build with XMTP.
 
 
 ## pages/protocol/xips.mdx
@@ -2592,6 +2618,99 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 - [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
 
     Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
+
+## FAQ about messaging security
+
+1. **Can XMTP read user messages?**
+
+   No, messages are encrypted end-to-end. Only participants in a conversation have the keys to decrypt the messages in it. Your app cannot decrypt messages either.
+
+2. **How does XMTP's encryption compare to Signal or WhatsApp?**
+
+   XMTP provides the same security properties (forward secrecy and post-compromise security) as Signal and WhatsApp, using the newer, more efficient MLS protocol.
+
+3. **Can others see who users are messaging with?**
+
+   No. Message recipients are encrypted, so even network nodes cannot see who is messaging whom. Nodes can only see timing and size of encrypted messages.
+
+4. **What happens if a user loses access to their wallet?**
+
+   They'll need to start new conversations from their new wallet. Messages sent to their old wallet address can't be decrypted without access to that wallet.
+
+5. **Are group messages as secure as direct messages?**
+
+   Yes, MLS provides the same security properties for both group and direct messages. In fact, MLS is particularly efficient for group messaging.
+
+6. **What if a user suspects their wallet is compromised?**
+
+   Due to forward secrecy, even if someone gains access to their wallet, they can't read their past messages. They should start using a new wallet immediately - this ensures attackers won't be able to read future messages either.
+
+7. **How does encryption work across different XMTP apps?**
+
+   All XMTP apps use the same MLS protocol, ensuring consistent encryption across the ecosystem regardless of which app users choose.
+
+
+## pages/protocol/identity.mdx
+# Identity model with XMTP
+
+XMTP's identity model includes an inbox ID and its associated identities and installations.
+
+With an inbox ID at its core, instead of a specific wallet address or other identity value, the model is designed for extensibility. A user can associate any number of identity types to their inbox ID and use them to send and receive messages. This gives the user the freedom to add and remove identity types as they naturally change over time, while maintaining the same stable inbox destination for their messages.
+
+![Diagram showing a core inbox ID associated with multiple identities, with access to multiple apps](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/multi-id.png)
+
+The identity model also allows XMTP to support any identity type, as long as it can produce a verifiable cryptographic signature. Currently supported identity types include Ethereum EOAs, Ethereum smart contract wallets, and passkeys.
+
+## Inbox ID
+
+An **inbox ID** is a user's stable destination for their messages. Their inbox ID remains constant even as they add or remove [identities](#identity) and [installations](#installations).
+
+The inbox ID is derived from the hash of the first associated wallet address and a nonce and acts as an opaque identifier that apps use for messaging.
+
+## Identity
+
+An **identity** is an addressable account that can be associated with an inbox ID. Each identity has a type (like EOA, smart contract wallet, or passkey) and an identifier (like an Ethereum address).
+
+- Multiple identities can be linked to a single inbox ID
+- The first identity becomes the **recovery identity** with special privileges
+- All messages sent to any associated identity are delivered to the same inbox
+- Any identity that can produce a verifiable cryptographic signature can be supported by XMTP
+
+## Installation
+
+An **installation** represents a specific app installation that can access an inbox. Each installation has its own cryptographic keys for signing messages and participating in conversations.
+
+- Generated automatically when `Client.create()` is called for the first time with an identity that hasn't been used with XMTP before
+- Multiple installations can access the same inbox (up to 10)
+- Installations can be revoked by the recovery identity
+
+## Relationships
+
+**One inbox ID** → **multiple identities**: Users can receive messages as any of their identities, all flowing to the same inbox
+
+```
+Inbox ID (stable destination for messages)
+├── Identity 1 (recovery identity, first identity added to an inbox) 
+├── Identity 2 (EOA wallet)
+├── Identity 3 (SCW wallet)
+└── Any identity that can produce a verifiable cryptographic signature
+```
+
+**One identity** → **multiple installations**: Users can access their messages from different apps on the same or different devices
+
+```
+Each identity can authenticate new installations:
+├── Installation A (phone app)
+├── Installation B (web app)  
+├── Installation C (desktop app)  
+└── Up to 10 installations
+```
+
+## Identity actions
+
+To learn how to build agents with identity actions, see [Manage XMTP inboxes, identities, and installations](/agents/core-messaging/agent-installations).
+
+To learn how to build chat apps with identity actions, see [Manage XMTP inboxes, identities, and installations](/chat-apps/core-messaging/manage-inboxes).
 
 
 ## pages/protocol/epochs.mdx
@@ -11217,4 +11336,4 @@ Is your app using a great third-party or public good tool to help with spam and 
 
 # Summary
 
-This documentation contains 78 files.
+This documentation contains 79 files.
