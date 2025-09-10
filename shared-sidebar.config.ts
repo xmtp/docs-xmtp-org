@@ -140,10 +140,6 @@ export const sidebarConfig = {
           text: "Envelope types",
           link: "/protocol/envelope-types",
         },
-        {
-          text: "Vision: Encryption",
-          link: "https://xmtp.org/vision/concepts/encryption",
-        },      
       ],
     },
     {
@@ -158,10 +154,6 @@ export const sidebarConfig = {
           text: "Wallet signatures",
           link: "/protocol/signatures",
         },
-        {
-          text: "Vision: Identity",
-          link: "https://xmtp.org/vision/concepts/identity",
-        },     
       ],
     },
     {
@@ -180,15 +172,39 @@ export const sidebarConfig = {
           text: "Intents",
           link: "/protocol/intents",
         },
-        {
-          text: "Vision: Decentralization",
-          link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
-        }, 
       ],
     },
     {
-      text: "XMTP Improvement Proposals",
-      link: "/protocol/xips",
+      text: "Evolution",
+      collapsed: false,
+      items: [
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/protocol/xips",
+        },
+      ],
+    },
+    {
+      text: "Vision",
+      collapsed: false,
+      items: [
+        {
+          text: "Security",
+          link: "https://xmtp.org/vision/concepts/encryption",
+        },      
+        {
+          text: "Identity",
+          link: "https://xmtp.org/vision/concepts/identity",
+        },     
+        {
+          text: "Consent",
+          link: "https://xmtp.org/vision/concepts/consent",
+        }, 
+        {
+          text: "Decentralization",
+          link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
+        }, 
+      ],
     },
   ],
   '/chat-apps/': [
