@@ -26,7 +26,7 @@ export const sidebarConfig = {
       collapsed: false,
       items: [
         {
-          text: "Create an EOA or SCW signer",
+          text: "Create an EOA, SCW, or passkey signer",
           link: "/agents/core-messaging/create-a-signer",
         },
         {
@@ -269,7 +269,7 @@ export const sidebarConfig = {
       collapsed: false,
       items: [
         {
-          text: "Create an EOA or SCW signer",
+          text: "Create an EOA, SCW, or passkey signer",
           link: "/chat-apps/core-messaging/create-a-signer",
         },
         {
