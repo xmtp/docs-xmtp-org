@@ -18,7 +18,7 @@
     "react-dom": "^19.0.0",
     "react-medium-image-zoom": "^5.2.14",
     "react-router": "^7.8.2",
-    "vocs": "^1.0.13"
+    "vocs": "https://github.com/sashaaldrick/vocs/releases/download/v1.0.13-search-fix-release/vocs-1.0.13-search-fix.tgz"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
