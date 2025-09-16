@@ -7,9 +7,9 @@ This document provides suggested paths you might take to provide XMTP group chat
 1. A group member with permission to add group members [creates an invite link](#create-a-group-invite-link).
 2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page).
 3. The non-member is granted access to the group in one of the following ways:
-    - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
-    - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
-    - [Manual join via push notification to the link creator](#manual-join-via-push-notification-to-link-creator)
+   - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
+   - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
+   - [Manual join via push notification to the link creator](#manual-join-via-push-notification-to-link-creator)
 4. [Add the invitee to the group](#add-the-member-to-the-group)
 5. [Check and manage the invite status](#check-the-invite-status)
 
@@ -19,15 +19,24 @@ These diagrams help illustrate the sequence of interactions between users and pa
 
 #### Option 1: Automatic join via silent push notification to the link creator
 
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png" alt="Sequence diagram for Automatic join via silent push notification to the link creator" />
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png"
+  alt="Sequence diagram for Automatic join via silent push notification to the link creator"
+/>
 
 #### Option 2: Automatic join via silent push notification to all group members
 
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png" alt="Sequence diagram for Automatic join via silent push notification to all group members" />
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png"
+  alt="Sequence diagram for Automatic join via silent push notification to all group members"
+/>
 
 #### Option 3: Manual join via push notification to the link creator
 
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png" alt="Sequence diagram for Manual join via push notification to the link creator" />
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png"
+  alt="Sequence diagram for Manual join via push notification to the link creator"
+/>
 
 ## Create a group invite link
 
@@ -41,10 +50,10 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with any
 
 ```json
 {
- groupName: "XMTP Builders",
- groupImage: "https://...",
-// Inviter can be inferred from the request auth token.
-// Backend doesn't need the actual group ID, since the client can keep track in their DB
+  "groupName": "XMTP Builders",
+  "groupImage": "https://..."
+  // Inviter can be inferred from the request auth token.
+  // Backend doesn't need the actual group ID, since the client can keep track in their DB
 }
 ```
 
@@ -56,8 +65,8 @@ Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`
 
 ```json
 {
- id: "abcdefg",
- linkUrl: "https://converse.xyz/invite/abcdefg"
+  "id": "abcdefg",
+  "linkUrl": "https://converse.xyz/invite/abcdefg"
 }
 ```
 
@@ -102,7 +111,7 @@ Can be used by the invitee to request to join the group.
 
 ```json
 {
- inviteId: "abcdefg", // User info implied from auth token
+  "inviteId": "abcdefg" // User info implied from auth token
 }
 ```
 
@@ -110,8 +119,8 @@ Can be used by the invitee to request to join the group.
 
 ```json
 {
- id: "hijklmn", // The id of the join request
- status: "pending"
+  "id": "hijklmn", // The id of the join request
+  "status": "pending"
 }
 ```
 
@@ -243,15 +252,15 @@ Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/iss
 
 If the invite link creator approves the request, in the background, you can call LibXMTP to load the group and add the member.
 
-#### Example request
+### Example request
 
 ```json
 {
- inviteId: "abcdefg", // User info implied from auth token
+  "inviteId": "abcdefg" // User info implied from auth token
 }
 ```
 
-#### Example response
+### Example response
 
 ```json
 {
@@ -298,7 +307,7 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
- status: "approved"
+  "status": "approved"
 }
 ```
 
@@ -306,8 +315,8 @@ You can have the invite link creator mark an invite as approved or rejected. For
 
 ```json
 {
- id: "hijklmn",
- status: "approved",
- reason: null // Allow the system to pass a reason back to the client
+  "id": "hijklmn",
+  "status": "approved",
+  "reason": null // Allow the system to pass a reason back to the client
 }
 ```

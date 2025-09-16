@@ -108,10 +108,10 @@ const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId]);
 
 // New Group with Metadata
 const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
-  name: "The Group Name",
-  imageUrl: "www.groupImage.com",
-  description: "The description of the group",
-  permissionLevel: "admin_only", // 'all_members' | 'admin_only'
+  name: 'The Group Name',
+  imageUrl: 'www.groupImage.com',
+  description: 'The description of the group',
+  permissionLevel: 'admin_only', // 'all_members' | 'admin_only'
 });
 ```
 
@@ -168,7 +168,7 @@ To learn more about optimistically sending messages using `prepareMessage()` and
 const optimisticGroup = await alixClient.conversations.newGroupOptimistic();
 
 // send optimistic message (stays local)
-await optimisticGroup.sendOptimistic("gm");
+await optimisticGroup.sendOptimistic('gm');
 
 // later, sync the group by adding members
 await optimisticGroup.addMembers([boClient.inboxId]);
@@ -181,7 +181,7 @@ await optimisticGroup.publishMessages();
 const optimisticGroup = client.conversations.newGroupOptimistic();
 
 // send optimistic message (stays local)
-optimisticGroup.sendOptimistic("gm");
+optimisticGroup.sendOptimistic('gm');
 
 // later, sync the group by adding members
 await optimisticGroup.addMembers([boClient.inboxId]);
@@ -193,7 +193,7 @@ await optimisticGroup.publishMessages();
 const optimisticGroup = await boClient.conversations.newGroupOptimistic();
 
 // Prepare a message (stays local)
-await optimisticGroup.prepareMessage("Hello group!");
+await optimisticGroup.prepareMessage('Hello group!');
 
 // Later, add members and sync
 await optimisticGroup.addMembers([alixClient.inboxId]); // also syncs group to the network
@@ -268,9 +268,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Browser]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);
@@ -281,9 +280,8 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);

@@ -9,44 +9,52 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 - Pick your SDK:
 
   <style>
-   {`
-      /* Inline styles instead of styles.css bc vocs
-      search bug doesn't allow imports */
-      .sdk-buttons {
-         display: flex;
-         gap: 20px;
-         flex-wrap: wrap;
-         margin: 20px 0;
-      }
 
-      .sdk-button {
-         padding: 8px 16px;
-         background-color: #4F46E5;
-         border-radius: 5px;
-         text-decoration: none;
-         color: #ffffff;
-         font-weight: 400;
-         transition: all 0.2s;
-      }
+{`
+/*Inline styles instead of styles.css bc vocs
+search bug doesn't allow imports*/
+.sdk-buttons {
+   display: flex;
+   gap: 20px;
+   flex-wrap: wrap;
+   margin: 20px 0;
+}
 
-      .sdk-button:hover {
-         background-color: #4338CA;
-      }
-   `}
+.sdk-button {
+   padding: 8px 16px;
+   background-color: #4F46E5;
+   border-radius: 5px;
+   text-decoration: none;
+   color: #ffffff;
+   font-weight: 400;
+   transition: all 0.2s;
+}
+
+.sdk-button:hover {
+   background-color: #4338CA;
+}
+
+`}
+
   </style>
 
-  <div className="sdk-buttons">
-    <a href="/chat-apps/sdks/browser"
-  className="sdk-button">Browser</a>
-    <a href="/chat-apps/sdks/node"
-  className="sdk-button">Node</a>
-    <a href="/chat-apps/sdks/react-native"
-  className="sdk-button">React Native</a>
-    <a href="/chat-apps/sdks/android"
-  className="sdk-button">Android</a>
-    <a href="/chat-apps/sdks/ios"
-  className="sdk-button">iOS</a>
-  </div>
+<div className="sdk-buttons">
+  <a href="/chat-apps/sdks/browser" className="sdk-button">
+    Browser
+  </a>
+  <a href="/chat-apps/sdks/node" className="sdk-button">
+    Node
+  </a>
+  <a href="/chat-apps/sdks/react-native" className="sdk-button">
+    React Native
+  </a>
+  <a href="/chat-apps/sdks/android" className="sdk-button">
+    Android
+  </a>
+  <a href="/chat-apps/sdks/ios" className="sdk-button">
+    iOS
+  </a>
+</div>
 
 - [Use llms-full.txt](/chat-apps/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
@@ -89,13 +97,11 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 ## 💅🏽 Phase III: Enhance the user experience
 
 1. [Implement user consent](/chat-apps/user-consent/support-user-consent), which provides a consent value of either **unknown**, **allowed** or **denied** to each of a user's contacts. You can use these consent values to filter conversations. For example:
-
    - Conversations with **allowed** contacts go to a user's main inbox
    - Conversations with **unknown** contacts go to a possible spam tab
    - Conversations with **denied** contacts are hidden from view.
-  
-2. Support rich [content types](/chat-apps/content-types/content-types).
 
+2. Support rich [content types](/chat-apps/content-types/content-types).
    - [Attachments](/chat-apps/content-types/attachments)
      - Single remote attachment
      - Multiple remote attachments

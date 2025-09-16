@@ -30,10 +30,10 @@ After importing the package, you can register the codec.
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
+} from '@xmtp/content-type-remote-attachment';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
 });
 ```
@@ -50,7 +50,7 @@ const data = await new Promise((resolve, reject) => {
     if (reader.result instanceof ArrayBuffer) {
       resolve(reader.result);
     } else {
-      reject(new Error("Not an ArrayBuffer"));
+      reject(new Error('Not an ArrayBuffer'));
     }
   };
   reader.readAsArrayBuffer(image);
@@ -88,7 +88,7 @@ const remoteAttachment = {
   salt: encryptedEncoded.salt,
   nonce: encryptedEncoded.nonce,
   secret: encryptedEncoded.secret,
-  scheme: "https://",
+  scheme: 'https://',
   filename: attachment.filename,
   contentLength: attachment.data.byteLength,
 };
@@ -107,7 +107,7 @@ await conversation.send(remoteAttachment, {
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```tsx [Node]
-import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
 
 if (message.contentType.sameAs(RemoteAttachmentContentType)) {
   const attachment = await RemoteAttachmentCodec.load(message.content, client);
@@ -131,7 +131,7 @@ const objectURL = URL.createObjectURL(
   })
 );
 
-const img = document.createElement("img");
+const img = document.createElement('img');
 img.src = objectURL;
 img.title = attachment.filename;
 ```

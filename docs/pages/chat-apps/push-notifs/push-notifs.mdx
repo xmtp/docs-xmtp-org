@@ -8,6 +8,8 @@ Get the topic identifier for an app installation. This topic ID tells your app w
 
 :::code-group
 
+{/*prettier-ignore*/}
+
 ```tsx [React Native]
 // Request
 alix.welcomeTopic()
@@ -39,6 +41,8 @@ Topic.userWelcome(client.installationId).description
 Get the topic identifier for a group chat or DM conversation that's already in progress. This topic ID tells your app where to listen on the network for push notifications about any new messages in a specific group chat or DM conversation.
 
 :::code-group
+
+{/*prettier-ignore*/}
 
 ```tsx [React Native]
 // Request
@@ -73,7 +77,7 @@ Lists topics for a specific DM conversation.
 :::code-group
 
 ```tsx [React Native]
-conversation.getPushTopics()
+conversation.getPushTopics();
 ```
 
 ```kotlin [Kotlin]
@@ -97,7 +101,7 @@ To learn more, see [Understand DM stitching and push notifications](/chat-apps/p
 :::code-group
 
 ```tsx [React Native]
-conversations.allPushTopics()
+conversations.allPushTopics();
 ```
 
 ```kotlin [Kotlin]
@@ -132,7 +136,7 @@ val topics = conversations.map { it.topic }.toMutableList()
 subscribeAll(topics.push(Topic.userWelcome(client.installationId).description))
 ```
 
-```swift [Swift]
+````swift [Swift]
 let conversations = try await alix.conversations.list()
 var topics = conversations.map { $0.topic }
 
@@ -148,7 +152,7 @@ On receipt of a push notification, decode it:
 
 ```tsx [React Native]
 const receivedBytes = Buffer.from(received.message, "base64").toString("utf-8");
-```
+````
 
 ```kotlin [Kotlin]
 val encryptedMessage = remoteMessage.data["encryptedMessage"]
@@ -169,9 +173,7 @@ Then determine whether it's for a new conversation or an existing one.
   :::code-group
 
   ```tsx [React Native]
-  const conversation = await alix.conversations.fromWelcome(
-    receivedBytes
-  );
+  const conversation = await alix.conversations.fromWelcome(receivedBytes);
   ```
 
   ```kotlin [Kotlin]
@@ -277,7 +279,7 @@ To learn more, see [Understand DM stitching and push notifications](/chat-apps/p
 :::code-group
 
 ```tsx [React Native]
-conversation.getHmacKeys()
+conversation.getHmacKeys();
 ```
 
 ```kotlin [Kotlin]

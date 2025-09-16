@@ -1,0 +1,2 @@
+# Exclude files that have markdown formatting issues with Prettier
+docs/pages/chat-apps/intro/get-started.mdx

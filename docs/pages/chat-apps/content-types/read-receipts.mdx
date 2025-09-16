@@ -33,19 +33,17 @@ pnpm add @xmtp/content-type-read-receipt
 :::code-group
 
 ```js [Browser]
-import {
-  ReadReceiptCodec,
-} from "@xmtp/content-type-read-receipt";
+import { ReadReceiptCodec } from '@xmtp/content-type-read-receipt';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new ReadReceiptCodec()],
 });
 ```
 
 ```js [React Native]
 const client = await Client.create(signer, {
-  env: "production",
+  env: 'production',
   codecs: [new ReadReceiptCodec()],
 });
 ```
@@ -118,7 +116,7 @@ if (message.contentType.sameAs(ContentTypeReadReceipt)) {
 ```
 
 ```js [React Native]
-if (message.contentTypeId === "xmtp.org/readReceipt:1.0") {
+if (message.contentTypeId === 'xmtp.org/readReceipt:1.0') {
   return message.sent; //Date received
 }
 ```
