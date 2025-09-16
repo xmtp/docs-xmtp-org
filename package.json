@@ -6,8 +6,8 @@
   "scripts": {
     "build": "vocs build",
     "dev": "vocs dev",
-    "lint:md:fix": "markdownlint --fix 'docs/**/*.md' 'docs/**/*.mdx'",
-    "lint:md": "markdownlint 'docs/**/*.md' 'docs/**/*.mdx'",
+    "lint:md:fix": "npm run prettier:fix && markdownlint --fix 'docs/**/*.md' 'docs/**/*.mdx'",
+    "lint:md": "npm run prettier:lint && markdownlint 'docs/**/*.md' 'docs/**/*.mdx'",
     "prettier:lint": "prettier --ignore-path .gitignore docs",
     "prettier:fix": "npm run prettier:lint -- --write",
     "preview": "vocs preview",
