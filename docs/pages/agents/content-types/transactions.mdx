@@ -33,9 +33,7 @@ pnpm i @xmtp/content-type-wallet-send-calls
 After importing the package, you can register the codec.
 
 ```js [Node]
-import {
-  WalletSendCallsCodec,
-} from "@xmtp/content-type-wallet-send-calls";
+import { WalletSendCallsCodec } from "@xmtp/content-type-wallet-send-calls";
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
   env: "dev",

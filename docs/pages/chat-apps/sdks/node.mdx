@@ -25,7 +25,7 @@ const signer: Signer = {
   type: "EOA",
   getIdentifier: () => ({
     identifier: "0x...", // Ethereum address as the identifier
-    identifierKind: IdentifierKind.Ethereum
+    identifierKind: IdentifierKind.Ethereum,
   }),
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -43,7 +43,7 @@ const client = await Client.create(signer, { dbEncryptionKey });
 // 3. Start a new conversation
 const group = await client.conversations.newGroup(
   [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
+  createGroupOptions /* optional */,
 );
 
 // 4. Send messages
@@ -51,7 +51,9 @@ await group.send("Hello everyone");
 
 // 5. List, stream, and sync
 // List existing conversations
-const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
 // Stream new messages
 const stream = await client.conversations.streamAllMessages({
   consentStates: [ConsentState.Allowed],
@@ -60,7 +62,7 @@ const stream = await client.conversations.streamAllMessages({
   },
   onError: (error) => {
     console.error(error);
-  }
+  },
 });
 
 // Or use for-await loop
@@ -69,6 +71,6 @@ for await (const message of stream) {
   console.log("New message:", message);
 }
 // Sync all new welcomes, preference updates, conversations,
-// and messages from allowed conversations 
+// and messages from allowed conversations
 await client.conversations.syncAll(["allowed"]);
 ```

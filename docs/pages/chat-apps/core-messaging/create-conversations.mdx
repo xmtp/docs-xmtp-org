@@ -91,14 +91,14 @@ If you want to provide faster and offline group creation, consider using [optimi
 ```js [Browser]
 const group = await client.conversations.newGroup(
   [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
+  createGroupOptions /* optional */,
 );
 ```
 
 ```js [Node]
 const group = await client.conversations.newGroup(
   [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
+  createGroupOptions /* optional */,
 );
 ```
 
@@ -268,9 +268,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Browser]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);
@@ -281,9 +280,8 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);

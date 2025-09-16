@@ -15,15 +15,27 @@ Conversations are listed in descending order by their `lastMessage` created at v
 :::code-group
 
 ```js [Browser]
-const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
-const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
-const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
+const allGroups = await client.conversations.listGroups({
+  consentStates: [ConsentState.Allowed],
+});
+const allDms = await client.conversations.listDms({
+  consentStates: [ConsentState.Allowed],
+});
 ```
 
 ```js [Node]
-const allConversations = await client.conversations.list({ consentStates: [ConsentState.Allowed] });
-const allGroups = await client.conversations.listGroups({ consentStates: [ConsentState.Allowed] });
-const allDms = await client.conversations.listDms({ consentStates: [ConsentState.Allowed] });
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
+const allGroups = await client.conversations.listGroups({
+  consentStates: [ConsentState.Allowed],
+});
+const allDms = await client.conversations.listDms({
+  consentStates: [ConsentState.Allowed],
+});
 ```
 
 ```tsx [React Native]
@@ -32,17 +44,15 @@ await alix.conversations.list(["allowed"]);
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
-await alix.conversations.list(
-  {
-    members: false,
-    consentState: false,
-    description: false,
-    creatorInboxId: false,
-    addedByInboxId: false,
-    isActive: false,
-    lastMessage: true,
-  },
-);
+await alix.conversations.list({
+  members: false,
+  consentState: false,
+  description: false,
+  creatorInboxId: false,
+  addedByInboxId: false,
+  isActive: false,
+  lastMessage: true,
+});
 ```
 
 ```kotlin [Kotlin]

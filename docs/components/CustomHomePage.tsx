@@ -70,8 +70,7 @@ const ExternalLinkIcon = () => (
     stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
-    className="custom-homepage-tile-external-icon"
-  >
+    className="custom-homepage-tile-external-icon">
     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
     <polyline points="15 3 21 3 21 9"></polyline>
     <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -93,11 +92,7 @@ const Tile: React.FC<TileProps> = ({
     </>
   );
 
-  return (
-    <div className="custom-homepage-tile">
-      {content}
-    </div>
-  );
+  return <div className="custom-homepage-tile">{content}</div>;
 };
 
 interface SDKTileProps {
@@ -153,7 +148,9 @@ const SectionTitle: React.FC<{ children: React.ReactNode; id?: string }> = ({
   children,
   id,
 }) => (
-  <h2 className="custom-homepage-tile-title custom-homepage-section-title" id={id}>
+  <h2
+    className="custom-homepage-tile-title custom-homepage-section-title"
+    id={id}>
     {children}
   </h2>
 );

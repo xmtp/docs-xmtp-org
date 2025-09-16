@@ -151,21 +151,25 @@ html body .custom-homepage-sdk-grid {
 }
 
 .custom-homepage-cta-button--primary {
-  background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   color: white;
-  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3), 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 8px 32px rgba(79, 70, 229, 0.3),
+    0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .custom-homepage-cta-button--secondary {
   background: rgba(224, 231, 255, 0.8);
-  color: #4F46E5;
-  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.1), 0 1px 3px rgba(0, 0, 0, 0.05);
+  color: #4f46e5;
+  box-shadow:
+    0 8px 32px rgba(79, 70, 229, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* Dark mode button adjustments */
 .dark .custom-homepage-cta-button--secondary {
   background: rgba(224, 231, 255, 0.15);
-  color: #A5B4FC;
+  color: #a5b4fc;
 }
 
 .custom-homepage-cta-button:hover {
@@ -173,18 +177,24 @@ html body .custom-homepage-sdk-grid {
 }
 
 .custom-homepage-cta-button--primary:hover {
-  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.4), 0 2px 8px rgba(0, 0, 0, 0.1);
-  background: linear-gradient(135deg, #4338CA 0%, #5B21B6 100%);
+  box-shadow:
+    0 12px 40px rgba(79, 70, 229, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #4338ca 0%, #5b21b6 100%);
 }
 
 .custom-homepage-cta-button--secondary:hover {
   background: rgba(199, 210, 254, 0.9);
-  box-shadow: 0 12px 40px rgba(79, 70, 229, 0.2), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 12px 40px rgba(79, 70, 229, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .dark .custom-homepage-cta-button--secondary:hover {
   background: rgba(199, 210, 254, 0.2);
-  box-shadow: 0 12px 40px rgba(165, 180, 252, 0.3), 0 2px 8px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 12px 40px rgba(165, 180, 252, 0.3),
+    0 2px 8px rgba(255, 255, 255, 0.1);
 }
 
 .custom-homepage {
@@ -260,7 +270,7 @@ html body .custom-homepage-sdk-grid {
   .custom-homepage {
     padding: 2rem 1.5rem;
   }
-  
+
   .custom-homepage-headline-text {
     font-size: 2.5rem;
     line-height: 1.2;
@@ -373,7 +383,9 @@ html body .custom-homepage-sdk-grid {
   border-radius: 16px;
   padding: 2rem;
   color: var(--vocs-color-text);
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 1px 2px -1px rgba(0, 0, 0, 0.06);
   display: block;
 }
 
@@ -396,7 +408,12 @@ html body .custom-homepage-sdk-grid {
 
 /* Dark mode adjustments */
 .dark .custom-homepage-tile {
-  background-color: rgba(255, 255, 255, 0.01); /* Slightly lighter than the background */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.01
+  ); /* Slightly lighter than the background */
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
 }
@@ -442,19 +459,27 @@ li ol ~ p {
 
 /* Reduce section header padding */
 .vocs_Sidebar_sectionHeader {
-  padding-top: var(--vocs-space_6) !important; /* Reduced from space_12. Space above section heading. */
+  padding-top: var(
+    --vocs-space_6
+  ) !important; /* Reduced from space_12. Space above section heading. */
 }
 
 /* Reduce level items padding */
 .vocs_Sidebar_level .vocs_Sidebar_items {
-  padding-top: var(--vocs-space_8) !important; /* Reduced from space_6. Space above l2 items in section. */
+  padding-top: var(
+    --vocs-space_8
+  ) !important; /* Reduced from space_6. Space above l2 items in section. */
 }
 
 /* Reduce main items container padding and gap */
 .vocs_Sidebar_items {
   gap: 0.5em !important; /* Reduced from 0.625em. Space between each l1 item in section. */
-  padding-top: var(--vocs-space_6) !important; /* Reduced from space_16. Space above block of l1 items in section. */
-  padding-bottom: var(--vocs-space_6) !important; /* Reduced from space_16. Space below block of l1 items in section. */
+  padding-top: var(
+    --vocs-space_6
+  ) !important; /* Reduced from space_16. Space above block of l1 items in section. */
+  padding-bottom: var(
+    --vocs-space_6
+  ) !important; /* Reduced from space_16. Space below block of l1 items in section. */
 }
 
 /* Custom Homepage SDK grid */
@@ -493,7 +518,9 @@ li ol ~ p {
   text-decoration: none;
   color: var(--vocs-color-text);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   height: auto;
   text-align: center;
   min-height: 120px;
@@ -502,8 +529,10 @@ li ol ~ p {
 
 .custom-homepage-sdk-tile:hover {
   transform: translateY(-1px);
-  box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.1), 0 10px 10px -5px rgba(79, 70, 229, 0.04);
-  border-color: #4F46E5;
+  box-shadow:
+    0 20px 25px -5px rgba(79, 70, 229, 0.1),
+    0 10px 10px -5px rgba(79, 70, 229, 0.04);
+  border-color: #4f46e5;
 }
 
 .custom-homepage-sdk-icon {
@@ -520,13 +549,13 @@ li ol ~ p {
 
 /* Add indigo accent bar to SDK tiles */
 .custom-homepage-sdk-tile::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #4F46E5, #6366F1);
+  background: linear-gradient(90deg, #4f46e5, #6366f1);
   opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 12px 12px 0 0;
@@ -565,7 +594,7 @@ li ol ~ p {
   transform: translateY(-4px);
   background-color: rgba(255, 255, 255, 0.03);
   box-shadow: 0 8px 16px rgba(79, 70, 229, 0.2);
-  border-color: #6366F1;
+  border-color: #6366f1;
 }
 
 .custom-homepage-section-title {
@@ -592,8 +621,6 @@ li ol ~ p {
   }
 }
 
-
-
 .description {
   font-size: 1.1rem;
   line-height: 1.6;
@@ -613,14 +640,13 @@ li ol ~ p {
 .vocs_NavigationMenu_link {
   font-size: 1rem !important;
   font-weight: 500 !important;
-  margin-right: .75rem !important;
+  margin-right: 0.75rem !important;
 }
 
 /* Remove margin from the last link to prevent overflow */
 .vocs_NavigationMenu_link:last-child {
   margin-right: 0 !important;
 }
-
 
 /* Center the footer properly */
 .vocs_Footer {
@@ -644,13 +670,13 @@ li ol ~ p {
   .vocs_MobileTopNav_navigation:not(.vocs_MobileTopNav_navigation_compact) {
     display: none !important;
   }
-  
+
   /* Hide compact navigation initially */
   .vocs_MobileTopNav_navigation_compact {
     display: block !important;
     position: relative;
   }
-  
+
   /* Style the compact nav as a dropdown trigger */
   .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
     display: flex !important;
@@ -663,13 +689,13 @@ li ol ~ p {
     cursor: pointer !important;
     text-decoration: none !important;
   }
-  
 
-  
-    /* Only inject logo when Vocs doesn't generate the real one */
-  .vocs_MobileTopNav_section:first-child:not(:has(.vocs_MobileTopNav_logo))::before {
-    content: '';
-    background-image: url('/logomark-light-purple.png');
+  /* Only inject logo when Vocs doesn't generate the real one */
+  .vocs_MobileTopNav_section:first-child:not(
+      :has(.vocs_MobileTopNav_logo)
+    )::before {
+    content: "";
+    background-image: url("/logomark-light-purple.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: left center;
@@ -681,8 +707,11 @@ li ol ~ p {
   }
 
   /* Dark mode logo - only when no real logo */
-  .dark .vocs_MobileTopNav_section:first-child:not(:has(.vocs_MobileTopNav_logo))::before {
-    background-image: url('/logomark-dark-purple.png');
+  .dark
+    .vocs_MobileTopNav_section:first-child:not(
+      :has(.vocs_MobileTopNav_logo)
+    )::before {
+    background-image: url("/logomark-dark-purple.png");
   }
 
   /* Make the first section a flexbox to align logo and nav */
@@ -692,7 +721,7 @@ li ol ~ p {
   }
 
   /* Homepage mobile navigation with working dropdown */
-  
+
   /* Style the real menu trigger consistently on ALL pages */
   .vocs_MobileTopNav_menuTrigger {
     display: flex !important;
@@ -704,13 +733,15 @@ li ol ~ p {
     border: none !important;
     cursor: pointer !important;
   }
-  
+
   /* Style homepage compact nav button - use presence of custom homepage instead of data-layout */
   body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact {
     position: relative !important;
   }
-  
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
+
+  body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem {
     display: flex !important;
     align-items: center !important;
     gap: 0.5rem !important;
@@ -724,29 +755,38 @@ li ol ~ p {
     pointer-events: auto !important;
     transition: all 0.2s ease !important;
   }
-  
-  
+
   /* Dark mode specific styling for the button */
-  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem {
+  .dark
+    body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem {
     background: rgba(155, 152, 255, 0.15) !important;
     border: 1px solid rgba(155, 152, 255, 0.3) !important;
     color: #e5e5e5 !important;
   }
-  
+
   /* Hover effects for both light and dark modes */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover {
+  body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem:hover {
     background: rgba(86, 83, 198, 0.2) !important;
     border-color: rgba(86, 83, 198, 0.4) !important;
   }
-  
-  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover {
+
+  .dark
+    body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem:hover {
     background: rgba(155, 152, 255, 0.25) !important;
     border-color: rgba(155, 152, 255, 0.5) !important;
   }
-  
+
   /* Add dropdown arrow */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem::after {
-    content: '';
+  body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem::after {
+    content: "";
     width: 12px;
     height: 7px;
     margin-left: 0.5rem;
@@ -758,23 +798,28 @@ li ol ~ p {
     opacity: 0.8;
     transition: opacity 0.2s ease;
   }
-  
+
   /* Dark mode arrow - more visible */
-  .dark body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem::after {
+  .dark
+    body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem::after {
     background-image: url("data:image/svg+xml,%3Csvg width='12' height='7' viewBox='0 0 12 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23e5e5e5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     opacity: 0.9;
   }
-  
+
   /* Make arrow more visible on hover */
-  body:has(.custom-homepage) .vocs_MobileTopNav_navigation_compact .vocs_MobileTopNav_navigationItem:hover::after {
+  body:has(.custom-homepage)
+    .vocs_MobileTopNav_navigation_compact
+    .vocs_MobileTopNav_navigationItem:hover::after {
     opacity: 1;
   }
-  
+
   /* Hide the original navigation menu on homepage to prevent conflicts */
   body:has(.custom-homepage) .vocs_MobileTopNav_navigation.vocs_NavigationMenu {
     display: none !important;
   }
-  
+
   /* Style interior page mobile dropdown to match homepage styling */
   .vocs_MobileTopNav_menuTrigger {
     display: flex !important;
@@ -787,24 +832,24 @@ li ol ~ p {
     cursor: pointer !important;
     transition: all 0.2s ease !important;
   }
-  
+
   /* Dark mode for interior page button */
   .dark .vocs_MobileTopNav_menuTrigger {
     background: rgba(155, 152, 255, 0.15) !important;
     border: 1px solid rgba(155, 152, 255, 0.3) !important;
   }
-  
+
   /* Hover effects for interior page button */
   .vocs_MobileTopNav_menuTrigger:hover {
     background: rgba(86, 83, 198, 0.2) !important;
     border-color: rgba(86, 83, 198, 0.4) !important;
   }
-  
+
   .dark .vocs_MobileTopNav_menuTrigger:hover {
     background: rgba(155, 152, 255, 0.25) !important;
     border-color: rgba(155, 152, 255, 0.5) !important;
   }
-  
+
   /* Style the interior page dropdown content to match homepage */
   .vocs_MobileTopNav_topNavPopover,
   .vocs_MobileTopNav_sidebarPopover {
@@ -816,7 +861,7 @@ li ol ~ p {
     max-width: 280px !important;
     min-width: 200px !important;
   }
-  
+
   /* Dark mode for interior page dropdown content */
   .dark .vocs_MobileTopNav_topNavPopover,
   .dark .vocs_MobileTopNav_sidebarPopover {
@@ -824,7 +869,7 @@ li ol ~ p {
     border: 1px solid var(--vocs-color-border, #404040) !important;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3) !important;
   }
-  
+
   /* Style the navigation links in interior page dropdown */
   .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link,
   .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link,
@@ -846,7 +891,7 @@ li ol ~ p {
     width: 100% !important;
     margin: 0 !important;
   }
-  
+
   /* Remove border from last link */
   .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:last-child,
   .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:last-child,
@@ -854,32 +899,35 @@ li ol ~ p {
   .vocs_MobileTopNav_sidebarPopover a:last-child {
     border-bottom: none !important;
   }
-  
+
   /* Dark mode for navigation links */
   .dark .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link,
   .dark .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link,
   .dark .vocs_MobileTopNav_topNavPopover a,
   .dark .vocs_MobileTopNav_sidebarPopover a {
     color: var(--vocs-color-text, #e5e5e5) !important;
-    border-bottom-color: var(--vocs-color-border, rgba(255,255,255,0.1)) !important;
+    border-bottom-color: var(
+      --vocs-color-border,
+      rgba(255, 255, 255, 0.1)
+    ) !important;
   }
-  
+
   /* Hover effects for navigation links */
   .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:hover,
   .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
   .vocs_MobileTopNav_topNavPopover a:hover,
   .vocs_MobileTopNav_sidebarPopover a:hover {
-    color: var(--vocs-color-text-accent, #4338CA) !important;
+    color: var(--vocs-color-text-accent, #4338ca) !important;
     background-color: transparent !important;
   }
-  
+
   .dark .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_link:hover,
   .dark .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_link:hover,
   .dark .vocs_MobileTopNav_topNavPopover a:hover,
   .dark .vocs_MobileTopNav_sidebarPopover a:hover {
-    color: var(--vocs-color-text-accent, #9B98FF) !important;
+    color: var(--vocs-color-text-accent, #9b98ff) !important;
   }
-  
+
   /* Remove any extra spacing or margins from the list */
   .vocs_MobileTopNav_topNavPopover .vocs_NavigationMenu_list,
   .vocs_MobileTopNav_sidebarPopover .vocs_NavigationMenu_list,
@@ -926,63 +974,75 @@ li ol ~ p {
 /* Add prominent section headers at the top of the navigation area based on current page */
 
 /* Agents section - only when on agents pages */
-body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before {
+body:has([data-active="true"][href*="/agents/"])
+  .vocs_Sidebar_navigation::before {
   content: "Build agents";
   display: block;
   font-size: 1rem;
   font-weight: 600;
   color: var(--vocs-color-text);
-  padding: 0 0 .25rem 0;
-  margin: 0 0 .5rem 0;
-  border-bottom: 2px solid #4F46E5;
+  padding: 0 0 0.25rem 0;
+  margin: 0 0 0.5rem 0;
+  border-bottom: 2px solid #4f46e5;
   text-align: left;
 }
 
 /* Chat apps section - only when on chat apps pages */
-body:has([data-active="true"][href*="/chat-apps/"]) .vocs_Sidebar_navigation::before {
+body:has([data-active="true"][href*="/chat-apps/"])
+  .vocs_Sidebar_navigation::before {
   content: "Build chat apps";
   display: block;
   font-size: 1rem;
   font-weight: 600;
   color: var(--vocs-color-text);
-  padding: 0 0 .25rem 0;
-  margin: 0 0 .5rem 0;
-  border-bottom: 2px solid #4F46E5;
+  padding: 0 0 0.25rem 0;
+  margin: 0 0 0.5rem 0;
+  border-bottom: 2px solid #4f46e5;
   text-align: left;
 }
 
 /* Protocol section - only when on protocol pages */
-body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before {
+body:has([data-active="true"][href*="/protocol/"])
+  .vocs_Sidebar_navigation::before {
   content: "Protocol";
   display: block;
   font-size: 1rem;
   font-weight: 600;
   color: var(--vocs-color-text);
-  padding: 0 0 .25rem 0;
-  margin: 0 0 .5rem 0;
-  border-bottom: 2px solid #4F46E5;
+  padding: 0 0 0.25rem 0;
+  margin: 0 0 0.5rem 0;
+  border-bottom: 2px solid #4f46e5;
   text-align: left;
 }
 
 /* Network section - only when on network pages */
-body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
+body:has([data-active="true"][href*="/network/"])
+  .vocs_Sidebar_navigation::before {
   content: "Network";
   display: block;
   font-size: 1rem;
   font-weight: 600;
   color: var(--vocs-color-text);
-  padding: 0 0 .25rem 0;
-  margin: 0 0 .5rem 0;
-  border-bottom: 2px solid #4F46E5;
+  padding: 0 0 0.25rem 0;
+  margin: 0 0 0.5rem 0;
+  border-bottom: 2px solid #4f46e5;
   text-align: left;
 }
 
 /* Dark mode border colors for sidebar section headers */
-.dark body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before,
-.dark body:has([data-active="true"][href*="/chat-apps/"]) .vocs_Sidebar_navigation::before,
-.dark body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before,
-.dark body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
-  border-bottom-color: #A5B4FC;
+.dark
+  body:has([data-active="true"][href*="/agents/"])
+  .vocs_Sidebar_navigation::before,
+.dark
+  body:has([data-active="true"][href*="/chat-apps/"])
+  .vocs_Sidebar_navigation::before,
+.dark
+  body:has([data-active="true"][href*="/protocol/"])
+  .vocs_Sidebar_navigation::before,
+.dark
+  body:has([data-active="true"][href*="/network/"])
+  .vocs_Sidebar_navigation::before {
+  border-bottom-color: #a5b4fc;
 }
 
 /* Hide social links on homepage (they appear awkwardly above footer) */
@@ -991,31 +1051,38 @@ body:has(.custom-homepage) .vocs_Socials {
 }
 
 /* Add section context to search results */
-.vocs_SearchDialog_result a[href*="/agents/"] .vocs_SearchDialog_titles::before {
+.vocs_SearchDialog_result
+  a[href*="/agents/"]
+  .vocs_SearchDialog_titles::before {
   content: "Build agents • ";
   color: var(--vocs-color-text-accent);
   font-weight: 500;
   font-size: 0.8em;
 }
 
-.vocs_SearchDialog_result a[href*="/chat-apps/"] .vocs_SearchDialog_titles::before {
+.vocs_SearchDialog_result
+  a[href*="/chat-apps/"]
+  .vocs_SearchDialog_titles::before {
   content: "Build chat apps • ";
   color: var(--vocs-color-text-accent);
   font-weight: 500;
   font-size: 0.8em;
 }
 
-.vocs_SearchDialog_result a[href*="/protocol/"] .vocs_SearchDialog_titles::before {
+.vocs_SearchDialog_result
+  a[href*="/protocol/"]
+  .vocs_SearchDialog_titles::before {
   content: "Protocol • ";
   color: var(--vocs-color-text-accent);
   font-weight: 500;
   font-size: 0.8em;
 }
 
-.vocs_SearchDialog_result a[href*="/network/"] .vocs_SearchDialog_titles::before {
+.vocs_SearchDialog_result
+  a[href*="/network/"]
+  .vocs_SearchDialog_titles::before {
   content: "Network • ";
   color: var(--vocs-color-text-accent);
   font-weight: 500;
   font-size: 0.8em;
 }
-

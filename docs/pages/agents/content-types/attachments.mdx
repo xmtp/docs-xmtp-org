@@ -73,7 +73,7 @@ Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 ```tsx [Node]
 const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
   attachment,
-  new AttachmentCodec()
+  new AttachmentCodec(),
 );
 ```
 
@@ -128,7 +128,7 @@ Once you've created the attachment object, you can create a preview to show in t
 const objectURL = URL.createObjectURL(
   new Blob([Buffer.from(attachment.data)], {
     type: attachment.mimeType,
-  })
+  }),
 );
 
 const img = document.createElement("img");

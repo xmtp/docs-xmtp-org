@@ -1,7 +1,7 @@
 function shouldShowPopup() {
   // Testing mode - uncomment the line below to force popup to show immediately
   // localStorage.setItem("testingMode", "true");
-  
+
   // Check if testing mode is enabled
   if (localStorage.getItem("testingMode") === "true") {
     return true;

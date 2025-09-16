@@ -26,7 +26,10 @@ const dm = await client.conversations.findOrCreateDm(recipientInboxId);
 await dm.send("Hello world");
 
 // OR for a group chat
-const group = await client.conversations.newGroup([recipientInboxId1, recipientInboxId2]);
+const group = await client.conversations.newGroup([
+  recipientInboxId1,
+  recipientInboxId2,
+]);
 await group.send("Hello everyone");
 ```
 
@@ -91,7 +94,12 @@ conversation.sendOptimistic("Hello world");
 
 // For custom content types, specify the content type
 const customContent = { foo: "bar" };
-const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+const contentType = {
+  authorityId: "example",
+  typeId: "test",
+  versionMajor: 1,
+  versionMinor: 0,
+};
 conversation.sendOptimistic(customContent, contentType);
 ```
 
@@ -101,7 +109,12 @@ conversation.sendOptimistic("Hello world");
 
 // For custom content types, specify the content type
 const customContent = { foo: "bar" };
-const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+const contentType = {
+  authorityId: "example",
+  typeId: "test",
+  versionMajor: 1,
+  versionMinor: 0,
+};
 conversation.sendOptimistic(customContent, contentType);
 ```
 
@@ -115,7 +128,7 @@ const contentType = new ContentTypeId({
   authorityId: "example",
   typeId: "test",
   versionMajor: 1,
-  versionMinor: 0
+  versionMinor: 0,
 });
 await conversation.prepareMessage(customContent, contentType);
 ```
@@ -165,7 +178,7 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
   try {
     // Add message to UI immediately
     conversation.sendOptimistic(messageText);
-    
+
     // Actually send the message to the network
     await conversation.publishMessages();
     return true;
@@ -183,7 +196,7 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
   try {
     // Add message to UI immediately
     conversation.sendOptimistic(messageText);
-    
+
     // Actually send the message to the network
     await conversation.publishMessages();
     return true;
@@ -197,11 +210,14 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 ```tsx [React Native]
 // Publish all pending optimistically sent messages to the network
 // Call this only after using prepareMessage to send a message locally
-async function sendMessageWithOptimisticUI(conversation: Conversation, messageText: string): Promise<boolean> {
+async function sendMessageWithOptimisticUI(
+  conversation: Conversation,
+  messageText: string,
+): Promise<boolean> {
   try {
     // Add message to UI immediately
     await conversation.prepareMessage(messageText);
-    
+
     // Actually send the message to the network
     await conversation.publishMessages();
     return true;
@@ -219,7 +235,7 @@ suspend fun sendMessageWithOptimisticUI(conversation: Conversation, messageText:
     return try {
         // Add message to UI immediately
         conversation.prepareMessage(messageText)
-        
+
         // Actually send the message to the network
         conversation.publishMessages()
         true
@@ -237,7 +253,7 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
     do {
         // Add message to UI immediately
         try await conversation.prepareMessage(messageText)
-        
+
         // Actually send the message to the network
         try await conversation.publishMessages()
         return true
@@ -365,50 +381,38 @@ For example:
 
 ```js [Browser]
 // DM
-await client.conversations.newDm(
-  inboxId,
-  {
-    messageDisappearingSettings: {
-      fromNs: 1738620126404999936n,
-      inNs: 1800000000000000n
-    }
-  }
-)
+await client.conversations.newDm(inboxId, {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936n,
+    inNs: 1800000000000000n,
+  },
+});
 
 // Group
-await client.conversations.newGroup(
-  [inboxId],
-  { 
-    messageDisappearingSettings: {
-      fromNs: 1738620126404999936n,
-      inNs: 1800000000000000n
-    }
-  }
-)
+await client.conversations.newGroup([inboxId], {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936n,
+    inNs: 1800000000000000n,
+  },
+});
 ```
 
 ```js [Node]
 // DM
-await client.conversations.newDm(
-  inboxId,
-  {
-    messageDisappearingSettings: {
-      fromNs: 1738620126404999936,
-      inNs: 1800000000000000
-    }
-  }
-)
+await client.conversations.newDm(inboxId, {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936,
+    inNs: 1800000000000000,
+  },
+});
 
 // Group
-await client.conversations.newGroup(
-  [inboxId],
-  { 
-    messageDisappearingSettings: {
-      fromNs: 1738620126404999936,
-      inNs: 1800000000000000
-    }
-  }
-)
+await client.conversations.newGroup([inboxId], {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936,
+    inNs: 1800000000000000,
+  },
+});
 ```
 
 ```tsx [React Native]
@@ -426,7 +430,7 @@ await client.conversations.newConversation(
 // Group
 await client.conversations.newGroup(
   [inboxId],
-  { 
+  {
     disappearingMessageSettings: DisappearingMessageSettings(
       disappearStartingAtNs: 1738620126404999936,
       retentionDurationInNs: 1800000000000000
@@ -485,23 +489,29 @@ For example:
 
 ```tsx [Browser]
 // Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n)
+await conversation.updateMessageDisappearingSettings(
+  1738620126404999936n,
+  1800000000000000n,
+);
 
 // Clear disappearing message settings
-await conversation.removeMessageDisappearingSettings()
+await conversation.removeMessageDisappearingSettings();
 ```
 
 ```tsx [Node]
 // Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(1738620126404999936, 1800000000000000)
+await conversation.updateMessageDisappearingSettings(
+  1738620126404999936,
+  1800000000000000,
+);
 
 // Clear disappearing message settings
-await conversation.removeMessageDisappearingSettings()
+await conversation.removeMessageDisappearingSettings();
 ```
 
 ```tsx [React Native]
-await conversation.updateDisappearingMessageSettings(updatedSettings)
-await conversation.clearDisappearingMessageSettings()
+await conversation.updateDisappearingMessageSettings(updatedSettings);
+await conversation.clearDisappearingMessageSettings();
 ```
 
 ```kotlin [Kotlin]
@@ -524,22 +534,22 @@ For example:
 
 ```tsx [Browser]
 // Get the disappearing message settings
-const settings = await conversation.messageDisappearingSettings()
+const settings = await conversation.messageDisappearingSettings();
 
 // Check if disappearing messages are enabled
-const isEnabled = await conversation.isDisappearingMessagesEnabled()
+const isEnabled = await conversation.isDisappearingMessagesEnabled();
 ```
 
 ```tsx [Node]
 // Get the disappearing message settings
-const settings = conversation.messageDisappearingSettings()
+const settings = conversation.messageDisappearingSettings();
 
-const isEnabled = conversation.isDisappearingMessagesEnabled()
+const isEnabled = conversation.isDisappearingMessagesEnabled();
 ```
 
 ```tsx [React Native]
-conversation.disappearingMessageSettings
-conversation.isDisappearingMessagesEnabled()
+conversation.disappearingMessageSettings;
+conversation.isDisappearingMessagesEnabled();
 ```
 
 ```kotlin [Kotlin]

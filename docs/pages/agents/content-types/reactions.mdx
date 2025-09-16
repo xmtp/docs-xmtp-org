@@ -31,9 +31,7 @@ pnpm add @xmtp/content-type-reaction
 After importing the package, you can register the codec.
 
 ```jsx [Node]
-import {
-  ReactionCodec,
-} from "@xmtp/content-type-reaction";
+import { ReactionCodec } from "@xmtp/content-type-reaction";
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
   env: "dev",

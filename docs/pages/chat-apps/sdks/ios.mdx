@@ -55,6 +55,6 @@ for await message in try await client.conversations.streamAllMessages(type: /* O
     // Received a message
 }
 // Sync all new welcomes, preference updates, conversations,
-// and messages from allowed conversations 
+// and messages from allowed conversations
 try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```

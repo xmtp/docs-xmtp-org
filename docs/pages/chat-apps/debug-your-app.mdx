@@ -32,23 +32,23 @@ The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork det
 // Get detailed debug information for a conversation
 const debugInfo = await conversation?.debugInfo();
 
-console.log('Epoch:', debugInfo.epoch);
-console.log('Cursor:', debugInfo.cursor);
-console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
-console.log('Local Commit Log:', debugInfo.localCommitLog);
-console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
-console.log('Fork Details:', debugInfo.forkDetails);
+console.log("Epoch:", debugInfo.epoch);
+console.log("Cursor:", debugInfo.cursor);
+console.log("Fork Status:", debugInfo.isCommitLogForked); // true, false, or undefined
+console.log("Local Commit Log:", debugInfo.localCommitLog);
+console.log("Remote Commit Log:", debugInfo.remoteCommitLog);
+console.log("Fork Details:", debugInfo.forkDetails);
 ```
 
 ```typescript [React Native, Kotlin, Swift]
 // Get detailed debug information for a conversation
 const debugInfo = await conversation?.getDebugInformation();
 
-console.log('Epoch:', debugInfo.epoch);
-console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
-console.log('Local Commit Log:', debugInfo.localCommitLog);
-console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
-console.log('Fork Details:', debugInfo.forkDetails);
+console.log("Epoch:", debugInfo.epoch);
+console.log("Fork Status:", debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
+console.log("Local Commit Log:", debugInfo.localCommitLog);
+console.log("Remote Commit Log:", debugInfo.remoteCommitLog);
+console.log("Fork Details:", debugInfo.forkDetails);
 ```
 
 :::
@@ -61,7 +61,7 @@ You can also check fork status directly from conversation lists:
 // Check fork status when listing conversations
 const conversations = await client.conversations.list();
 
-conversations.forEach(conversation => {
+conversations.forEach((conversation) => {
   if (conversation.isCommitLogForked) {
     console.log(`Conversation ${conversation.id} is forked`);
   }
@@ -72,8 +72,8 @@ conversations.forEach(conversation => {
 // Check fork status when listing conversations
 const conversations = await client.conversations.list();
 
-conversations.forEach(conversation => {
-  if (conversation.commitLogForkStatus === 'forked') {
+conversations.forEach((conversation) => {
+  if (conversation.commitLogForkStatus === "forked") {
     console.log(`Conversation ${conversation.id} is forked`);
   }
 });
@@ -171,7 +171,7 @@ const result1 = await client.debugInformation.uploadDebugArchive();
 
 // Upload to custom server (serverUrl provided)
 const result2 = await client.debugInformation.uploadDebugArchive(
-  "https://my-debug-server.com/api/upload"
+  "https://my-debug-server.com/api/upload",
 );
 ```
 
@@ -179,27 +179,27 @@ const result2 = await client.debugInformation.uploadDebugArchive(
 
 #### API statistics
 
-| Statistic | Description |
-|-----------|-------------|
-| UploadKeyPackage | Number of times key packages have been uploaded. |
-| FetchKeyPackage | Number of times key packages have been fetched. |
-| SendGroupMessages | Number of times messages have been sent to group chat and DM conversations. |
-| SendWelcomeMessages | Number of times welcome messages have been sent. |
-| QueryGroupMessages | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
-| QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages. |
+| Statistic            | Description                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| UploadKeyPackage     | Number of times key packages have been uploaded.                                                        |
+| FetchKeyPackage      | Number of times key packages have been fetched.                                                         |
+| SendGroupMessages    | Number of times messages have been sent to group chat and DM conversations.                             |
+| SendWelcomeMessages  | Number of times welcome messages have been sent.                                                        |
+| QueryGroupMessages   | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
+| QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages.                                       |
 
 #### Identity statistics
 
-| Statistic | Description |
-|-----------|-------------|
-| PublishIdentityUpdate | Number of times identity updates have been published. |
-| GetIdentityUpdatesV2 | Number of times identity updates have been fetched. |
-| GetInboxIds | Number of times inbox ID queries have been made. |
-| VerifySCWSignatures | Number of times smart contract wallet signature verifications have been performed. |
+| Statistic             | Description                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| PublishIdentityUpdate | Number of times identity updates have been published.                              |
+| GetIdentityUpdatesV2  | Number of times identity updates have been fetched.                                |
+| GetInboxIds           | Number of times inbox ID queries have been made.                                   |
+| VerifySCWSignatures   | Number of times smart contract wallet signature verifications have been performed. |
 
 #### Stream statistics
 
-| Statistic | Description |
-|-----------|-------------|
+| Statistic         | Description                                                                                                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
 | SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
-| SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations. |
+| SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations.      |

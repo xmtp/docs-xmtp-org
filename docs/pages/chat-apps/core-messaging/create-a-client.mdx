@@ -14,8 +14,7 @@ This video provides a walkthrough of creating and building a client.
   frameBorder="0"
   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
   referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
+  allowFullScreen></iframe>
 
 ### How it works
 
@@ -74,13 +73,15 @@ To call `Client.create()`, you must pass in a required `signer` and can also pas
 import { Client, type Signer } from "@xmtp/browser-sdk";
 
 // create a signer
-const signer: Signer = { /* ... */ };
+const signer: Signer = {
+  /* ... */
+};
 
 const client = await Client.create(
   signer,
   // client options
   {
-  // Note: dbEncryptionKey is not used for encryption in browser environments
+    // Note: dbEncryptionKey is not used for encryption in browser environments
   },
 );
 ```
@@ -90,7 +91,9 @@ import { Client, type Signer } from "@xmtp/node-sdk";
 import { getRandomValues } from "node:crypto";
 
 // create a signer
-const signer: Signer = { /* ... */ };
+const signer: Signer = {
+  /* ... */
+};
 
 /**
  * The database encryption key is optional but strongly recommended for
@@ -165,13 +168,13 @@ type ClientOptions = {
    * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
    *
    * For example: `appVersion: 'alix/2.x'`
-   * 
-   * If you have an app and an agent, it's best to distinguish them from each other by 
+   *
+   * If you have an app and an agent, it's best to distinguish them from each other by
    * adding `-app` and `-agent` to the names. For example:
-   * 
+   *
    * - App: `appVersion: 'alix-app/3.x'`
    * - Agent: `appVersion: 'alix-agent/2.x'`
-   * 
+   *
    * Setting this value provides telemetry that shows which apps are using the
    * XMTP client SDK. This information can help XMTP core developers provide you with app
    * support, especially around communicating important SDK updates, deprecations,
@@ -239,7 +242,6 @@ type ClientOptions = {
    */
   disableDeviceSync?: boolean;
 };
-
 ```
 
 ```tsx [Node]
@@ -258,13 +260,13 @@ type ClientOptions = {
    * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
    *
    * For example: `appVersion: 'alix/2.x'`
-   * 
-   * If you have an app and an agent, it's best to distinguish them from each other by 
+   *
+   * If you have an app and an agent, it's best to distinguish them from each other by
    * adding `-app` and `-agent` to the names. For example:
-   * 
+   *
    * - App: `appVersion: 'alix-app/3.x'`
    * - Agent: `appVersion: 'alix-agent/2.x'`
-   * 
+   *
    * Setting this value provides telemetry that shows which apps are using the
    * XMTP client SDK. This information can help XMTP core developers provide you with app
    * support, especially around communicating important SDK updates, deprecations,
@@ -337,7 +339,7 @@ type ClientOptions = {
   /**
    * Specify which XMTP environment to connect to. (default: `dev`)
    */
-  env: 'local' | 'dev' | 'production'
+  env: "local" | "dev" | "production";
   /**
    * Add a client app version identifier that's included with API requests.
    * Production apps are strongly encouraged to set this value.
@@ -345,13 +347,13 @@ type ClientOptions = {
    * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
    *
    * For example: `appVersion: 'alix/2.x'`
-   * 
-   * If you have an app and an agent, it's best to distinguish them from each other by 
+   *
+   * If you have an app and an agent, it's best to distinguish them from each other by
    * adding `-app` and `-agent` to the names. For example:
-   * 
+   *
    * - App: `appVersion: 'alix-app/3.x'`
    * - Agent: `appVersion: 'alix-agent/2.x'`
-   * 
+   *
    * Setting this value provides telemetry that shows which apps are using the
    * XMTP client SDK. This information can help XMTP core developers provide you with app
    * support, especially around communicating important SDK updates, deprecations,
@@ -361,28 +363,28 @@ type ClientOptions = {
   /**
    * REQUIRED specify the encryption key for the database. The encryption key must be exactly 32 bytes.
    */
-  dbEncryptionKey: Uint8Array
+  dbEncryptionKey: Uint8Array;
   /**
    * Set optional callbacks for handling identity setup
    */
-  preAuthenticateToInboxCallback?: () => Promise<void> | void
+  preAuthenticateToInboxCallback?: () => Promise<void> | void;
   /**
    * OPTIONAL specify the XMTP managed database directory
    */
-  dbDirectory?: string
+  dbDirectory?: string;
   /**
    * OPTIONAL specify a url to sync message history from
    */
-  historySyncUrl?: string
+  historySyncUrl?: string;
   /**
    * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
    */
-  customLocalHost?: string
+  customLocalHost?: string;
   /**
    * Allow configuring codecs for additional content types
    */
-  codecs?: ContentCodec[]
-}
+  codecs?: ContentCodec[];
+};
 ```
 
 ```kotlin [Kotlin]
@@ -413,7 +415,7 @@ data class ClientOptions(
          *
          * For example: `appVersion: 'alix/2.x'`
          *
-         * If you have an app and an agent, it's best to distinguish them from each other by 
+         * If you have an app and an agent, it's best to distinguish them from each other by
          * adding `-app` and `-agent` to the names. For example:
          *
          * - App: `appVersion: 'alix-app/3.x'`
@@ -421,7 +423,7 @@ data class ClientOptions(
          *
          * Setting this value provides telemetry that shows which apps are using the
          * XMTP client SDK. This information can help XMTP core developers provide you
-         * with app support, especially around communicating important SDK updates, 
+         * with app support, especially around communicating important SDK updates,
          * deprecations, and required upgrades.
          */
         val appVersion: String? = null,
@@ -447,8 +449,8 @@ public struct ClientOptions {
   /// You can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
   ///
   /// For example: `appVersion: 'alix/2.x'`
-  /// 
-  /// If you have an app and an agent, it's best to distinguish them from each other by 
+  ///
+  /// If you have an app and an agent, it's best to distinguish them from each other by
   /// adding `-app` and `-agent` to the names. For example:
   /// - App: `appVersion: 'alix-app/3.x'`
   /// - Agent: `appVersion: 'alix-agent/2.x'`

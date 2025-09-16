@@ -16,7 +16,7 @@ const stream = await client.conversations.stream({
   },
   onFail: () => {
     console.log("Stream failed");
-  }
+  },
 });
 
 // Or use for-await loop
@@ -51,23 +51,23 @@ const stream = await client.conversations.streamAllMessages({
   },
   onFail: () => {
     console.log("Stream failed");
-  }
+  },
 });
- 
+
 // stream only group messages
 const groupMessageStream = await client.conversations.streamAllGroupMessages({
   onValue: (message) => {
     console.log("New group message:", message);
-  }
+  },
 });
- 
+
 // stream only dm messages
 const dmMessageStream = await client.conversations.streamAllDmMessages({
   onValue: (message) => {
     console.log("New DM message:", message);
-  }
+  },
 });
- 
+
 // Or use for-await loop
 for await (const message of stream) {
   // Received a message
@@ -88,7 +88,7 @@ const stream = await client.conversations.streamAllMessages({
   retryOnFail: false,
   onValue: (message) => {
     console.log("New message:", message);
-  }
+  },
 });
 
 // use stream options with retry configuration

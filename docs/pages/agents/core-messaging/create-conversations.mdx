@@ -25,7 +25,7 @@ Once you have the verified identities, create a new group chat. The maximum grou
 ```js [Node]
 const group = await client.conversations.newGroup(
   [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
+  createGroupOptions /* optional */,
 );
 ```
 
@@ -43,9 +43,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);
