@@ -34,8 +34,8 @@ After importing the package, you can register the codec.
 import {
   ReactionCodec,
 } from "@xmtp/content-type-reaction";
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: "dev",
   codecs: [new ReactionCodec()],
 });
@@ -78,6 +78,3 @@ if (message.contentType.sameAs(ContentTypeReaction)) {
 
 To learn more, see the [Thinking reaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
 
-## Notifications and reactions
-
-Reactions have `shouldPush` set to `false`, which means that reactions do not trigger push notifications as long as the notification server respects this flag.

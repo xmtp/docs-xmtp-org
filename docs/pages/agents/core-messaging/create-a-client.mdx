@@ -1,10 +1,10 @@
-# Create an XMTP client
+# Create an XMTP Agent
 
-Create an XMTP client that can use the signing capabilities provided by the [signer](/agents/core-messaging/create-a-signer). This signer links the client to the appropriate EOA or SCW.
+Create an XMTP agent that can use the signing capabilities provided by the [signer](/agents/core-messaging/create-a-signer). This signer links the agent to the appropriate EOA or SCW.
 
-## Understand creating and building a client
+## Understand creating and building an agent
 
-This video provides a walkthrough of creating and building a client.
+This video provides a walkthrough of creating and building an agent.
 
 <iframe
   width="560"
@@ -19,7 +19,7 @@ This video provides a walkthrough of creating and building a client.
 
 ### How it works
 
-When you call `Client.create()`, the following steps happen under the hood:
+When you call `Agent.create()`, the following steps happen under the hood:
 
 1. Extracts the `signer` and retrieves the wallet address from it.
 2. Checks the XMTP identity ledger to find an inbox ID associated with the signer address. The inbox ID serves as the user's identity on the XMTP network.
@@ -30,17 +30,17 @@ When you call `Client.create()`, the following steps happen under the hood:
    2. If it finds an existing local database:
       - **For the Node, React Native, Android, and iOS SDKs**: It checks if the provided `dbEncryptionKey` matches. If it matches, it uses the existing database. If not, it creates a new database encrypted with the provided key.
       - **For the Browser SDK**: A `dbEncryptionKey` is not used for encryption due to technical limitations in web environments. Be aware that the database is not encrypted.
-4. Returns the XMTP client, ready to send and receive messages.
+4. Returns the XMTP agent, ready to send and receive messages.
 
 ### Keep the database encryption key safe
 
 The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
 
-The encryption key is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client.
+The encryption key is critical to the stability and continuity of an XMTP agent. It encrypts the local SQLite database created when you call `Agent.create()`, and must be provided every time you create or build an agent.
 
 This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
 
-If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Agent.create()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the agent may be unable to access the database. The agent will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
 
 Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages**.
 
@@ -62,30 +62,35 @@ If you want to inspect the database visually, you can use [DB Browser for SQLite
 
 ![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
 
-## Create a client
+## Create an agent
 
-To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
+To call `Agent.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP agent](#configure-an-xmtp-agent).
 
 ```tsx [Node]
-import { Client, type Signer } from "@xmtp/node-sdk";
+import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
 import { getRandomValues } from "node:crypto";
 
-// create a signer
-const signer: Signer = { /* ... */ };
+// Option 1: Create a local user + signer (for testing)
+const user = createUser();
+const signer = createSigner(user);
+
+// Option 2: Use your own wallet signer
+// const signer: Signer = { /* ... */ };
 
 /**
  * The database encryption key is optional but strongly recommended for
  * secure local storage of the database.
  *
- * This value must be consistent when creating a client with an existing
+ * This value must be consistent when creating an agent with an existing
  * database.
  */
 const dbEncryptionKey = getRandomValues(new Uint8Array(32));
 
-const client = await Client.create(
+const agent = await Agent.create(
   signer,
-  // client options
+  // agent options
   {
+    env: "dev", // or 'production'
     dbEncryptionKey,
     // Optional: Use a function to dynamically set the database path based on inbox ID
     // dbPath: (inboxId) => `./agent-databases/xmtp-${inboxId}.db3`,
@@ -93,15 +98,14 @@ const client = await Client.create(
 );
 ```
 
-### Configure an XMTP client
+### Configure an XMTP agent
 
-You can configure an XMTP client with these options passed to `Client.create`:
+You can configure an XMTP agent with these options passed to `Agent.create`:
 
 ```tsx [Node]
 import type { ContentCodec } from "@xmtp/content-type-primitives";
-import type { LogLevel } from "@xmtp/node-bindings";
 
-type ClientOptions = {
+type AgentOptions = {
   /**
    * Specify which XMTP environment to connect to. (default: `dev`)
    */
@@ -163,16 +167,12 @@ type ClientOptions = {
    * Enable structured JSON logging
    */
   structuredLogging?: boolean;
-  /**
-   * Logging level
-   */
-  loggingLevel?: LogLevel;
 };
 ```
 
-### Set the `appVersion` client option
+### Set the `appVersion` agent option
 
-Be sure to set the `appVersion` client option for your production agent.
+Be sure to set the `appVersion` agent option for your production agent.
 
 You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
 
@@ -183,7 +183,7 @@ If you have an agent and an app, it's best to distinguish them from each other b
 - Agent: `appVersion: 'alix-agent/2.x'`
 - App: `appVersion: 'alix-app/3.x'`
 
-The `appVersion` value is included with API requests to provide telemetry that shows which agents are using the XMTP client SDK. This information can help XMTP core developers provide you with agent support, especially around communicating important SDK updates, deprecations, and required upgrades.
+The `appVersion` value is included with API requests to provide telemetry that shows which agents are using the XMTP agent SDK. This information can help XMTP core developers provide you with agent support, especially around communicating important SDK updates, deprecations, and required upgrades.
 
 ### XMTP network environments
 
@@ -192,14 +192,14 @@ XMTP provides `dev` and `production` network environments. These networks are co
 For example, an XMTP identity on the `dev` network is completely distinct from the XMTP identity on the `production` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `dev` network can't be accessed from or moved to the `production` network, and vice versa.
 
 :::tip
-When you create a client, it connects to the XMTP `dev` network by default. Set your client's network environment using the appropriate [client option](#configure-an-xmtp-client).
+When you create an agent, it connects to the XMTP `dev` network by default. Set your agent's network environment using the appropriate [agent option](#configure-an-xmtp-agent).
 :::
 
 The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
 
-You can use a `local` network environment to have a client communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
+You can use a `local` network environment to have an agent communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
 
-## Log out a client
+## Log out an agent
 
 When you log a user out of your app, you can give them the option to delete their local database.
 
@@ -209,7 +209,7 @@ If the user chooses to delete their local database, they will lose all of their 
 
 ```tsx [Node]
 /**
- * The Node SDK client does not have a method to delete the local database.
+ * The Agent SDK does not have a method to delete the local database.
  * Simply delete the local database file from the file system.
  */
 ```

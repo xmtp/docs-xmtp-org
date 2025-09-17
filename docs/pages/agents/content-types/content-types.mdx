@@ -26,6 +26,41 @@ An agent built with XMTP uses the `TextCodec` (plain text) standard content type
 await conversation.send("gm");
 ```
 
+## Receiving content types
+
+When your agent receives messages with different content types, you can use the `types` hook to handle them appropriately:
+
+```jsx [Node]
+// Listen for specific content types
+agent.on("attachment", async (ctx) => {
+  console.log("Received attachment:", ctx.message.content);
+  // Handle attachment logic
+});
+
+agent.on("reaction", async (ctx) => {
+  console.log("Received reaction:", ctx.message.content);
+  // Handle reaction logic
+});
+
+agent.on("reply", async (ctx) => {
+  console.log("Received reply:", ctx.message.content);
+  // Handle reply logic
+});
+
+agent.on("transaction", async (ctx) => {
+  console.log("Received transaction:", ctx.message.content);
+  // Handle transaction logic
+});
+
+// For custom content types, you can access the content type directly
+agent.on("message", async (ctx) => {
+  const contentType = ctx.message.contentType;
+  if (contentType?.typeId === "my-custom-type") {
+    console.log("Received custom content:", ctx.message.content);
+  }
+});
+```
+
 ## Standards-track content types
 
 A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
@@ -35,5 +70,6 @@ Here are standards-track content types that you can review, test, and adopt in y
 - [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
 - [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
 - [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
-- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
-- [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.
+- [Transactions content type](/agents/content-types/transactions): Use to send transaction requests to wallets and share references to completed onchain transactions.
+- [Markdown content type](/agents/content-types/markdown): Use to send rich text messages with formatting, links, and structured content.
+- [Inline actions content type](/agents/content-types/inline-actions): Use to send interactive button-based UI following the XIP-67 specification.

@@ -7,7 +7,7 @@ The first step to creating a conversation is to verify that participants' identi
 Once you have the verified identities, you can create a new conversation, whether it's a group chat or direct message (DM).
 
 ```js [Node]
-import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
+import { Agent, IdentifierKind, type Identifier } from "@xmtp/agent-sdk";
 
 const identifiers: Identifier[] = [
   { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
@@ -15,7 +15,7 @@ const identifiers: Identifier[] = [
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
-const response = await Client.canMessage(identifiers);
+const response = await Agent.canMessage(identifiers);
 ```
 
 ## Create a new group chat
@@ -23,7 +23,7 @@ const response = await Client.canMessage(identifiers);
 Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
 
 ```js [Node]
-const group = await client.conversations.newGroup(
+const group = await agent.client.conversations.newGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
@@ -34,7 +34,7 @@ const group = await client.conversations.newGroup(
 Once you have the verified identity, get its inbox ID and create a new DM:
 
 ```js [Node]
-const group = await client.conversations.newDm(bo.inboxId);
+const dm = await agent.client.conversations.newDm(bo.inboxId);
 ```
 
 ## Conversation helper methods
@@ -43,13 +43,13 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
+const conversationById = await agent.client.conversations.getConversationById(
   conversationId
 );
 
 // get a message by its ID
-const messageById = await client.conversations.getMessageById(messageId);
+const messageById = await agent.client.conversations.getMessageById(messageId);
 
 // get a 1:1 conversation by a peer's inbox ID
-const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+const dmByInboxId = await agent.client.conversations.getDmByInboxId(peerInboxId);
 ```

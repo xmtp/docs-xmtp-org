@@ -2,113 +2,62 @@
 
 ## Stream new group chat and DM conversations
 
-Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/agents/core-messaging/create-conversations). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+With the agent-sdk, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
 
 ```js [Node]
-const stream = await client.conversations.stream({
-  onValue: (conversation) => {
-    // Received a conversation
-    console.log("New conversation:", conversation);
-  },
-  onError: (error) => {
-    // Log any stream errors
-    console.error(error);
-  },
-  onFail: () => {
-    console.log("Stream failed");
-  }
+// Listen for new DM conversations
+agent.on("dm", async (ctx) => {
+  console.log("New DM conversation:", ctx.conversation.id);
+  await ctx.conversation.send("Welcome to our DM!");
 });
 
-// Or use for-await loop
-for await (const conversation of stream) {
-  // Received a conversation
-  console.log("New conversation:", conversation);
-}
+// Listen for new group conversations
+agent.on("group", async (ctx) => {
+  console.log("New group conversation:", ctx.conversation.id);
+  await ctx.conversation.send("Hello group!");
+});
 ```
 
 ## Stream new group chat and DM messages
 
-This function listens to the network for new messages within all active group chats and DMs.
-
-Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
-
-:::warning[Important]
-
-The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
-
-:::
+With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
 
 ```js [Node]
-// stream all messages from conversations
-const stream = await client.conversations.streamAllMessages({
-  onValue: (message) => {
-    // Received a message
-    console.log("New message:", message);
-  },
-  onError: (error) => {
-    // Log any stream errors
-    console.error(error);
-  },
-  onFail: () => {
-    console.log("Stream failed");
-  }
+// Listen for text messages
+agent.on("text", async (ctx) => {
+  console.log("New text message:", ctx.message.content);
+  await ctx.conversation.send("Got your message!");
 });
- 
-// stream only group messages
-const groupMessageStream = await client.conversations.streamAllGroupMessages({
-  onValue: (message) => {
-    console.log("New group message:", message);
-  }
+
+// Listen for reactions
+agent.on("reaction", async (ctx) => {
+  console.log("New reaction:", ctx.message.content);
 });
- 
-// stream only dm messages
-const dmMessageStream = await client.conversations.streamAllDmMessages({
-  onValue: (message) => {
-    console.log("New DM message:", message);
-  }
+
+// Listen for replies
+agent.on("reply", async (ctx) => {
+  console.log("New reply:", ctx.message.content);
 });
- 
-// Or use for-await loop
-for await (const message of stream) {
-  // Received a message
-  console.log("New message:", message);
-}
+
+// Handle uncaught errors
+agent.on("unhandledError", (error) => {
+  console.error("Agent error", error);
+});
 ```
 
-## Handle stream failures
+## Handle errors and failures
 
-:::warning
+The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
 
-Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
-:::
-
-```ts [Node]
-// disable automatic reconnects
-const stream = await client.conversations.streamAllMessages({
-  retryOnFail: false,
-  onValue: (message) => {
-    console.log("New message:", message);
-  }
+```js [Node]
+// Handle uncaught errors
+agent.on("unhandledError", (error) => {
+  console.error("Agent error:", error);
+  // Handle the error appropriately
 });
 
-// use stream options with retry configuration
-const stream = await client.conversations.streamAllMessages({
-  retryAttempts: 10,
-  retryDelay: 20000, // 20 seconds
-  onValue: (message) => {
-    console.log("New message:", message);
-  },
-  onError: (error) => {
-    console.error("Stream error:", error);
-  },
-  onFail: () => {
-    console.log("Stream failed after retries");
-  },
-  onRestart: () => {
-    console.log("Stream restarted");
-  },
-  onRetry: (attempt, maxAttempts) => {
-    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
-  },
+// Log when the agent starts
+agent.on("start", () => {
+  console.log("Agent is running and ready to receive messages");
 });
 ```

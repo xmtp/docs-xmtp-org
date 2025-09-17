@@ -1,6 +1,6 @@
 # Support attachments with your agent built with XMTP
 
-Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
+XMTP agents can handle file attachments through a secure, encrypted system using remote storage. The SDK provides utility functions to simplify attachment processing, encryption, and decryption.
 
 ## Install the package
 
@@ -22,116 +22,253 @@ pnpm add @xmtp/content-type-remote-attachment
 
 :::
 
-## Configure the content type
+## Setup
 
-After importing the package, you can register the codec.
+First, register the required codecs when creating your agent:
 
-```jsx [Node]
+```typescript
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: "dev",
-  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+
+const agent = await Agent.createFromEnv({
+  codecs: [new RemoteAttachmentCodec(), new AttachmentCodec()],
+  env: process.env.XMTP_ENV as "local" | "dev" | "production",
 });
 ```
 
-## Send a remote attachment
+## Utility Functions
 
-Load the file. This example uses a web browser to load the file:
+Import attachment utilities from the shared utilities:
 
-```jsx [Node]
-//image is the uploaded event.target.files[0];
-const data = await new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => {
-    if (reader.result instanceof ArrayBuffer) {
-      resolve(reader.result);
-    } else {
-      reject(new Error("Not an ArrayBuffer"));
-    }
-  };
-  reader.readAsArrayBuffer(image);
-});
+```typescript
+import {
+  createRemoteAttachmentFromData,
+  createRemoteAttachmentFromFile,
+  encryptAttachment,
+  loadRemoteAttachment,
+} from "../../utils/attachment";
 ```
 
-Create an attachment object:
+## Core Functions
 
-```tsx [Node]
-// Local file details
-const attachment = {
-  filename: image?.name,
-  mimeType: image?.type,
-  data: new Uint8Array(data),
-};
+**Encrypt attachment data:**
+
+```typescript
+const encrypted = await encryptAttachment(
+  new Uint8Array(fileData),
+  "filename.jpg",
+  "image/jpeg",
+);
+// Returns: { encryptedData: Uint8Array, filename: string }
 ```
 
-Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+**Create remote attachment from file:**
 
-```tsx [Node]
-const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
-  attachment,
-  new AttachmentCodec()
+```typescript
+const remoteAttachment = await createRemoteAttachmentFromFile(
+  "./path/to/file.jpg",
+  "https://ipfs.io/ipfs/hash",
+  "image/jpeg",
 );
 ```
 
-Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
+**Create remote attachment from data:**
 
-Now that you have a `url`, you can create a `RemoteAttachment`:
-
-```jsx [Node]
-const remoteAttachment = {
-  url: url,
-  contentDigest: encryptedEncoded.digest,
-  salt: encryptedEncoded.salt,
-  nonce: encryptedEncoded.nonce,
-  secret: encryptedEncoded.secret,
-  scheme: "https://",
-  filename: attachment.filename,
-  contentLength: attachment.data.byteLength,
-};
+```typescript
+const remoteAttachment = await createRemoteAttachmentFromData(
+  new Uint8Array(fileData),
+  "filename.jpg",
+  "image/jpeg",
+  "https://ipfs.io/ipfs/hash",
+);
 ```
 
-Now that you have a remote attachment, you can send it:
+**Load and decode received attachment:**
 
-```jsx [Node]
-await conversation.send(remoteAttachment, {
-  contentType: ContentTypeRemoteAttachment,
+```typescript
+const receivedAttachment = await loadRemoteAttachment(
+  ctx.message.content,
+  agent.client,
+);
+// Returns: { data: Uint8Array, filename: string, mimeType: string }
+```
+
+## Handling Attachments
+
+**Send attachments:**
+
+```typescript
+// For text messages - send default attachment
+agent.on("text", async (ctx) => {
+  const encrypted = await encryptAttachment(
+    new Uint8Array(await readFile("./logo.png")),
+    "logo.png",
+    "image/png",
+  );
+
+  const fileUrl = await uploadToPinata(
+    encrypted.encryptedData,
+    encrypted.filename,
+  );
+
+  const remoteAttachment = await createRemoteAttachmentFromFile(
+    "./logo.png",
+    fileUrl,
+    "image/png",
+  );
+
+  await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
 });
 ```
 
-## Receive, decode, and decrypt a remote attachment
+**Receive and process attachments:**
 
-Now that you can send a remote attachment, you need a way to receive it. For example:
+```typescript
+agent.on("attachment", async (ctx) => {
+  // Load and decode the received attachment
+  const receivedAttachment = await loadRemoteAttachment(
+    ctx.message.content,
+    agent.client,
+  );
 
-```tsx [Node]
-import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+  const filename = receivedAttachment.filename || "unnamed";
+  const mimeType = receivedAttachment.mimeType || "application/octet-stream";
 
-if (message.contentType.sameAs(RemoteAttachmentContentType)) {
-  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+  console.log(`Processing attachment: ${filename} (${mimeType})`);
+
+  // Send acknowledgment
+  await ctx.conversation.send(
+    `I received your attachment "${filename}"! Processing it now...`,
+  );
+
+  // Re-encrypt and upload (optional)
+  const encrypted = await encryptAttachment(
+    receivedAttachment.data,
+    filename,
+    mimeType,
+  );
+
+  const fileUrl = await uploadToPinata(
+    encrypted.encryptedData,
+    encrypted.filename,
+  );
+
+  // Create and send new remote attachment
+  const reEncodedAttachment = await createRemoteAttachmentFromData(
+    receivedAttachment.data,
+    filename,
+    mimeType,
+    fileUrl,
+  );
+
+  await ctx.conversation.send(reEncodedAttachment, ContentTypeRemoteAttachment);
+});
+```
+
+## Storage Integration
+
+The examples use Pinata for IPFS storage, but you can integrate with any storage service:
+
+```typescript
+// Example upload function (implement based on your storage provider)
+async function uploadToPinata(
+  data: Uint8Array,
+  filename: string,
+): Promise<string> {
+  // Upload to IPFS/storage and return URL
+  return "https://ipfs.io/ipfs/your-hash";
 }
 ```
 
-You now have the original attachment:
+## Complete Example
 
-```bash [Bash]
-attachment.filename // => "screenshot.png"
-attachment.mimeType // => "image/png",
-attachment.data // => [the PNG data]
-```
+Here's a complete example of an agent that handles attachments:
 
-Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+```typescript
+import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+  ContentTypeRemoteAttachment,
+} from "@xmtp/content-type-remote-attachment";
+import {
+  createRemoteAttachmentFromData,
+  createRemoteAttachmentFromFile,
+  encryptAttachment,
+  loadRemoteAttachment,
+} from "../../utils/attachment";
 
-```tsx [Node]
-const objectURL = URL.createObjectURL(
-  new Blob([Buffer.from(attachment.data)], {
-    type: attachment.mimeType,
-  })
-);
+const agent = await Agent.create(signer, {
+  env: "dev",
+  codecs: [new RemoteAttachmentCodec(), new AttachmentCodec()],
+});
 
-const img = document.createElement("img");
-img.src = objectURL;
-img.title = attachment.filename;
+// Handle attachment messages
+agent.on("attachment", async (ctx) => {
+  const receivedAttachment = await loadRemoteAttachment(
+    ctx.message.content,
+    agent.client,
+  );
+
+  const filename = receivedAttachment.filename || "unnamed";
+  const mimeType = receivedAttachment.mimeType || "application/octet-stream";
+
+  console.log(`Processing attachment: ${filename} (${mimeType})`);
+
+  // Send acknowledgment
+  await ctx.conversation.send(
+    `I received your attachment "${filename}"! Processing it now...`,
+  );
+
+  // Process the attachment (example: re-encrypt and upload)
+  const encrypted = await encryptAttachment(
+    receivedAttachment.data,
+    filename,
+    mimeType,
+  );
+
+  const fileUrl = await uploadToPinata(
+    encrypted.encryptedData,
+    encrypted.filename,
+  );
+
+  // Send back the processed attachment
+  const reEncodedAttachment = await createRemoteAttachmentFromData(
+    receivedAttachment.data,
+    filename,
+    mimeType,
+    fileUrl,
+  );
+
+  await ctx.conversation.send(reEncodedAttachment, ContentTypeRemoteAttachment);
+});
+
+// Handle text messages that request attachments
+agent.on("text", async (ctx) => {
+  if (ctx.message.content.toLowerCase().includes("logo")) {
+    // Send a sample attachment
+    const encrypted = await encryptAttachment(
+      new Uint8Array(await readFile("./logo.png")),
+      "logo.png",
+      "image/png",
+    );
+
+    const fileUrl = await uploadToPinata(
+      encrypted.encryptedData,
+      encrypted.filename,
+    );
+
+    const remoteAttachment = await createRemoteAttachmentFromFile(
+      "./logo.png",
+      fileUrl,
+      "image/png",
+    );
+
+    await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
+  }
+});
+
+await agent.start();
 ```

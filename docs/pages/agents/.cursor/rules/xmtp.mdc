@@ -1,0 +1,992 @@
+---
+alwaysApply: true
+---
+
+# Vibe coding XMTP Agents
+
+This SDK is based on familiar Node.js patterns: you register event listeners, compose middleware, and extend behavior just like you would in frameworks such as [Express](https://expressjs.com/). This makes it easy to bring existing JavaScript and TypeScript skills into building conversational agents.
+
+## Installation
+
+Choose your package manager:
+
+```bash
+npm install @xmtp/agent-sdk
+# or
+pnpm add @xmtp/agent-sdk
+# or
+yarn add @xmtp/agent-sdk
+```
+
+## Quick Start
+
+```ts
+import { createUser, createSigner, Agent, getTestUrl } from "@xmtp/agent-sdk";
+
+// 1. Create a local user + signer (you can plug in your own wallet signer)
+const user = createUser();
+const signer = createSigner(user);
+
+// 2. Spin up the agent
+const agent = await Agent.create(signer, {
+  env: "dev", // or 'production'
+  dbPath: null, // in-memory store; provide a path to persist
+});
+
+// 3. Respond to text messages
+agent.on("text", async (ctx) => {
+  await ctx.conversation.send("Hello from my XMTP Agent! 👋");
+});
+
+// 4. Log when we're ready
+agent.on("start", () => {
+  console.log(`We are online: ${getTestUrl(agent)}`);
+});
+
+await agent.start();
+```
+
+## Environment Variables
+
+The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code. Simply set the following variables and call `Agent.createFromEnv()`:
+
+**Available Variables:**
+
+| Variable                 | Purpose                                                                                                                      | Example                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | [Private key for wallet](https://docs.xmtp.org/inboxes/core-messaging/create-a-signer)                                       | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | [Network environment](https://docs.xmtp.org/agents/core-messaging/create-a-client#xmtp-network-environments)                 | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | [Database encryption key](https://docs.xmtp.org/agents/core-messaging/create-a-client#keep-the-database-encryption-key-safe) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+
+Using the environment variables, you can setup your agent in just a few lines of code:
+
+```ts
+// Load variables from .env file
+process.loadEnvFile(".env");
+
+// Create agent using environment variables
+const agent = await Agent.createFromEnv();
+```
+
+Agents can also recognize the following environment variables:
+
+| Variable           | Purpose                                                              | Example                 |
+| ------------------ | -------------------------------------------------------------------- | ----------------------- |
+| `XMTP_FORCE_DEBUG` | [Activate debugging logs](https://docs.xmtp.org/agents/debug-agents) | `XMTP_FORCE_DEBUG=true` |
+
+## Core Concepts
+
+### 1. Event‑Driven Architecture
+
+Subscribe only to what you need using Node’s `EventEmitter` interface. Events you can listen for:
+
+**Message Events**
+
+- `text` – a new incoming text message
+- `reaction` – a new incoming reaction message
+- `reply` – a new incoming reply message
+- `attachment` – a new incoming remote attachment message
+- `unknownMessage` – a message that doesn't match any specific type
+
+**Conversation Events**
+
+- `dm` – a new DM conversation
+- `group` – a new group conversation
+
+**Lifecycle Events**
+
+- `start` / `stop` – agent lifecycle events
+- `unhandledError` – unhandled errors
+
+**Example**
+
+```ts
+// Handle different message types
+agent.on("text", async (ctx) => {
+  console.log(`Text message: ${ctx.message.content}`);
+});
+
+agent.on("reaction", async (ctx) => {
+  console.log(`Reaction: ${ctx.message.content}`);
+});
+
+agent.on("reply", async (ctx) => {
+  console.log(`Reply to: ${ctx.message.content.reference}`);
+});
+
+// Handle new conversations
+agent.on("dm", async (ctx) => {
+  await ctx.conversation.send("Welcome to our DM!");
+});
+
+agent.on("group", async (ctx) => {
+  await ctx.conversation.send("Hello group!");
+});
+
+// Handle uncaught errors
+agent.on("unhandledError", (error) => {
+  console.error("Agent error", error);
+});
+```
+
+### 2. Middleware Support
+
+Extend your agent with custom business logic using middlewares. Compose cross-cutting behavior like routing, telemetry, rate limiting, analytics, and feature flags, or plug in your own.
+
+#### Standard Middleware
+
+Middlewares can be registered with `agent.use` either one at a time or as an array. They are executed in the order they were added.
+
+Middleware functions receive a `ctx` (context) object and a `next` function. Normally, a middleware calls `next()` to hand off control to the next one in the chain. However, a middleware can also alter the flow in the following ways:
+
+1. Use `next()` to continue the chain and pass control to the next middleware
+2. Use `return` to stop the chain and prevent events from firing
+3. Use `throw` to trigger the error-handling middleware chain
+
+**Example**
+
+```ts
+import { Agent, AgentMiddleware } from "@xmtp/agent-sdk";
+
+const onlyText: AgentMiddleware = async (ctx, next) => {
+  if (typeof ctx.message.content === "string") {
+    // Continue to next middleware
+    await next();
+  }
+  // Break middleware chain
+  return;
+};
+
+const agent = await Agent.createFromEnv();
+agent.use(onlyText);
+```
+
+#### Error-Handling Middleware
+
+Error middleware can be registered with `agent.errors.use` either one at a time or as an array. They are executed in the order they were added.
+
+Error middleware receives the `error`, `ctx`, and a `next` function. Just like regular middleware, the flow in error middleware depends on how to use `next`:
+
+1. Use `next()` to mark the error as handled and continue with the main middleware chain
+2. Use `next(error)` to forward the original (or transformed) error to the next error handler
+3. Use `return` to end error handling and stop the middleware chain
+4. Use `throw` to raise a new error to be caught by the error chain
+
+**Example**
+
+```ts
+import { Agent, AgentErrorMiddleware } from "@xmtp/agent-sdk";
+
+const errorHandler: AgentErrorMiddleware = async (error, ctx, next) => {
+  if (error instanceof Error) {
+    // Transform the error and pass it along
+    await next(`Validation failed: ${error.message}`);
+  } else {
+    // Let other error handlers deal with it
+    await next(error);
+  }
+};
+
+const agent = await Agent.createFromEnv();
+agent.errors.use(errorHandler);
+```
+
+#### Default Error Handler
+
+Any error not handled by custom error middleware is caught by the default error handler and published to the `unhandledError` topic, where it can be observed.
+
+**Example**
+
+```ts
+agent.on("unhandledError", (error) => {
+  console.log("Caught error", error);
+});
+```
+
+### 3. Built‑in Filters
+
+Instead of manually checking every incoming message, you can use the provided filters.
+
+**Example**
+
+```ts
+import { filter } from "@xmtp/agent-sdk";
+
+// Using filter in message handler
+agent.on("text", async (ctx) => {
+  if (filter.isText(ctx.message)) {
+    await ctx.conversation.send("You sent a text message!");
+  }
+});
+
+// Combine multiple conditions
+agent.on("text", async (ctx) => {
+  if (
+    filter.hasDefinedContent(ctx.message) &&
+    !filter.fromSelf(ctx.message, ctx.client) &&
+    filter.isText(ctx.message)
+  ) {
+    await ctx.conversation.send("Valid text message received ✅");
+  }
+});
+```
+
+For convenience, the `filter` object can also be imported as `f`:
+
+```ts
+// You can import either name:
+import { filter, f } from "@xmtp/agent-sdk";
+
+// Both work the same way:
+if (f.isText(ctx.message)) {
+  // Handle message...
+}
+```
+
+**Available Filters:**
+
+You can find all available prebuilt filters [here](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
+
+### 4. Rich Context
+
+Every message event handler receives a `MessageContext` with:
+
+- `message` – the decoded message object
+- `conversation` – the active conversation object
+- `client` – underlying XMTP client
+- Helpers like `sendTextReply()`, `sendReaction()`, `getSenderAddress`, and more
+
+**Example**
+
+```ts
+agent.on("text", async (ctx) => {
+  await ctx.sendTextReply("Reply using helper ✨");
+});
+```
+
+## Adding Custom Content Types
+
+Pass `codecs` when creating your agent to extend supported content:
+
+```ts
+const agent = await Agent.create(signer, {
+  env: "dev",
+  dbPath: null,
+  codecs: [new MyContentType()],
+});
+```
+
+## Prompt example to code an agent
+
+Prompt: "Lets create a multiplier agent that gets a number and returns its 2x multiple (use claude max)"
+
+Code:
+
+```ts
+import fs from "fs";
+import { Agent, createSigner, createUser, getTestUrl } from "@xmtp/agent-sdk";
+
+process.loadEnvFile(".env");
+
+const agent = await Agent.create(
+  createSigner(createUser(process.env.XMTP_WALLET_KEY as `0x${string}`)),
+  {
+    env: process.env.XMTP_ENV as "local" | "dev" | "production",
+  },
+);
+
+agent.on("text", async (ctx) => {
+  const messageContent = ctx.message.content.trim();
+  console.log("New message received: ", messageContent);
+
+  try {
+    // Parse the message to extract two numbers
+    const result = parseAndMultiply(messageContent);
+    await ctx.conversation.send(result);
+  } catch (error) {
+    console.error("Error processing message:", error);
+    await ctx.conversation.send(
+      "Please send two numbers separated by space, comma, or 'x'. Examples: '5 3', '5,3', '5 x 3', 'multiply 5 and 3'",
+    );
+  }
+});
+
+agent.on("dm", (ctx) => {
+  console.log("New conversation created with id: ", ctx.conversation.id);
+});
+
+agent.on("start", () => {
+  console.log(`Multiplication Agent is running...`);
+  console.log(`Address: ${agent.client.accountIdentifier?.identifier}`);
+  console.log(`🔗${getTestUrl(agent)}`);
+  console.log(`Send a number to multiply!`);
+});
+
+await agent.start();
+function parseAndMultiply(message: string): string {
+  // Extract the first number from the message
+  const match = message.match(/(\d+(?:\.\d+)?)/);
+
+  if (!match) {
+    throw new Error("Could not find a number to multiply");
+  }
+
+  const number = parseFloat(match[1]);
+  const result = number * 2;
+  return `${number} × 2 = ${result}`;
+}
+```
+
+## Identifiers Reference
+
+### XMTP Identifiers
+
+**Ethereum Address**: `0x` + 40 hex chars (e.g., `0xfb55CB623f2aB58Da17D8696501054a2ACeD1944`)
+
+**Private Key**: `0x` + 64 hex chars (e.g., `0x11567776b95bdbed513330f503741e19877bf7fe73e7957bf6f0ecf3e267fdb8`)
+
+**Encryption Key**: 64 hex chars, no prefix (e.g., `11973168e34839f9d31749ad77204359c5c39c404e1154eacb7f35a867ee47de`)
+
+**Inbox ID**: 64 hex chars, no prefix (e.g., `1180478fde9f6dfd4559c25f99f1a3f1505e1ad36b9c3a4dd3d5afb68c419179`)
+
+**Installation ID**: 64 hex chars, no prefix (e.g., `a83166f3ab057f28d634cc04df5587356063dba11bf7d6bcc08b21a8802f4028`)
+
+### Example User Credentials Set
+
+```json
+{
+  "accountAddress": "0xfb55CB623f2aB58Da17D8696501054a2ACeD1944",
+  "privateKey": "0x11567776b95bdbed513330f503741e19877bf7fe73e7957bf6f0ecf3e267fdb8",
+  "encryptionKey": "11973168e34839f9d31749ad77204359c5c39c404e1154eacb7f35a867ee47de",
+  "inboxId": "1180478fde9f6dfd4559c25f99f1a3f1505e1ad36b9c3a4dd3d5afb68c419179",
+  "installationId": "a83166f3ab057f28d634cc04df5587356063dba11bf7d6bcc08b21a8802f4028"
+}
+```
+
+## Working with Members
+
+All conversations, both Groups and DMs, have a members() method that returns an array of GroupMember objects:
+
+```typescript
+// Get members from any conversation type (DM or Group)
+const members = await conversation.members();
+
+// Find a specific member
+const member = members.find(
+  (member) => member.inboxId.toLowerCase() === targetInboxId.toLowerCase(),
+);
+
+// Get member's Ethereum address
+if (member) {
+  const ethIdentifier = member.accountIdentifiers.find(
+    (id) => id.identifierKind === IdentifierKind.Ethereum,
+  );
+
+  if (ethIdentifier) {
+    const ethereumAddress = ethIdentifier.identifier;
+    console.log(`Found Ethereum address: ${ethereumAddress}`);
+  }
+
+  // Get installation ID
+  if (member.installationIds.length > 0) {
+    const installationId = member.installationIds[0];
+    console.log(`Found installation ID: ${installationId}`);
+  }
+}
+```
+
+## Working with Conversations
+
+XMTP provides two main conversation types:
+
+### Direct Messages (DMs)
+
+```typescript
+// Create a new DM
+const dm = await client.conversations.newDm("inboxId123");
+
+// Or create using an Ethereum address
+const dmByAddress = await client.conversations.newDmWithIdentifier({
+  identifier: "0x7c40611372d354799d138542e77243c284e460b2",
+  identifierKind: IdentifierKind.Ethereum,
+});
+
+// Send a message
+await dm.send("Hello!");
+
+// Access peer's inbox ID
+const peerInboxId = dm.peerInboxId;
+```
+
+### Groups
+
+```typescript
+// Create a new group
+const group = await client.conversations.newGroup(["inboxId1", "inboxId2"], {
+  groupName: "My Group",
+  groupDescription: "Group description",
+});
+
+// Update group metadata
+await group.updateName("New Group Name");
+await group.updateDescription("Updated description");
+
+// Manage members
+await group.addMembers(["newMemberInboxId"]);
+await group.removeMembers(["memberToRemoveInboxId"]);
+
+// Manage permissions
+await group.addAdmin("memberInboxId");
+await group.addSuperAdmin("memberInboxId");
+```
+
+Example usage:
+
+```typescript
+// Create a group with some initial settings
+const group = await client.conversations.newGroup([inboxId1, inboxId2], {
+  groupName: "Project Discussion",
+  groupDescription: "A group for our project collaboration",
+  groupImageUrlSquare: "https://example.com/image.jpg",
+});
+
+// Update group settings later
+await group.updateName("Updated Project Name");
+await group.updateDescription("Our awesome project discussion");
+await group.updateImageUrl("https://example.com/new-image.jpg");
+```
+
+Retrieve all messages at once from the local database:
+
+```typescript
+// First sync the conversations from the network to update the local db
+await client.conversations.sync();
+
+// Then get all messages as an array
+const messages = await conversation.messages();
+```
+
+## Key Type References
+
+```tsx
+// Client Class
+declare class Client {
+  constructor(client: Client$1, signer: Signer, codecs: ContentCodec[]);
+  static create(
+    signer: Signer,
+    encryptionKey: Uint8Array,
+    options?: ClientOptions,
+  ): Promise<Client>;
+  get inboxId(): string;
+  get installationId(): string;
+  get conversations(): Conversations;
+  get preferences(): Preferences;
+}
+
+// Conversations Class
+declare class Conversations {
+  constructor(client: Client, conversations: Conversations$1);
+  getConversationById(id: string): Promise<Dm | Group | undefined>;
+  newGroupWithIdentifiers(
+    identifiers: Identifier[],
+    options?: CreateGroupOptions,
+  ): Promise<Group>;
+  newGroup(inboxIds: string[], options?: CreateGroupOptions): Promise<Group>;
+  newDmWithIdentifier(
+    identifier: Identifier,
+    options?: CreateDmOptions,
+  ): Promise<Dm>;
+  newDm(inboxId: string, options?: CreateDmOptions): Promise<Dm>;
+  sync(): Promise<void>;
+  streamAllMessages(
+    callback?: StreamCallback<DecodedMessage>,
+  ): Promise<AsyncStream<DecodedMessage<any>>>;
+}
+
+// Conversation Base Class
+declare class Conversation {
+  client: Client;
+  constructor(
+    client: Client,
+    conversation: Conversation$1,
+    lastMessage?: Message | null,
+  );
+  get id(): string;
+  send<T>(content: T, options?: SendOptions): Promise<string>;
+  messages<T>(options?: PaginationOptions): Promise<Array<DecodedMessage<T>>>;
+  members(): Promise<GroupMember[]>;
+}
+
+// Dm Class
+declare class Dm extends Conversation {
+  constructor(
+    client: Client,
+    conversation: Conversation$1,
+    lastMessage?: Message | null,
+  );
+  get peerInboxId(): string;
+}
+
+// Group Class
+declare class Group extends Conversation {
+  constructor(
+    client: Client,
+    conversation: Conversation$1,
+    lastMessage?: Message | null,
+  );
+  get name(): string;
+  updateName(name: string): Promise<void>;
+  get imageUrl(): string;
+  updateImageUrl(imageUrl: string): Promise<void>;
+  get description(): string;
+  updateDescription(description: string): Promise<void>;
+  get admins(): string[];
+  get superAdmins(): string[];
+  isAdmin(inboxId: string): boolean;
+  isSuperAdmin(inboxId: string): boolean;
+  addMembersByIdentifiers(identifiers: Identifier[]): Promise<void>;
+  addMembers(inboxIds: string[]): Promise<void>;
+  removeMembers(inboxIds: string[]): Promise<void>;
+  addAdmin(inboxId: string): Promise<void>;
+  removeAdmin(inboxId: string): Promise<void>;
+  addSuperAdmin(inboxId: string): Promise<void>;
+  removeSuperAdmin(inboxId: string): Promise<void>;
+}
+
+// GroupMember Class
+declare class GroupMember {
+  inboxId: string;
+  accountIdentifiers: Array<Identifier>;
+  installationIds: Array<string>;
+  permissionLevel: PermissionLevel;
+  consentState: ConsentState;
+}
+
+// DecodedMessage Class
+declare class DecodedMessage<T = any> {
+  content: T;
+  contentType: ContentTypeId | undefined;
+  conversationId: string;
+  id: string;
+  senderInboxId: string;
+  sentAt: Date;
+  constructor(client: Client, message: Message);
+}
+
+// Identifier Interface
+export interface Identifier {
+  identifier: string;
+  identifierKind: IdentifierKind;
+}
+
+export declare const enum IdentifierKind {
+  Ethereum = 0,
+  Passkey = 1,
+}
+
+// CreateGroupOptions Interface
+export interface CreateGroupOptions {
+  groupName?: string;
+  groupImageUrlSquare?: string;
+  groupDescription?: string;
+}
+```
+
+## Group Permissions System
+
+XMTP provides fine-grained control over group actions through a permissions system with configurable policies and member roles.
+
+### Core Types
+
+```typescript
+export declare const enum PermissionUpdateType {
+  AddMember = 0, // Who can add new members
+  RemoveMember = 1, // Who can remove members
+  AddAdmin = 2, // Who can grant admin status
+  RemoveAdmin = 3, // Who can remove admin status
+  UpdateMetadata = 4, // Who can update group info
+}
+
+export declare const enum PermissionPolicy {
+  Allow = 0, // All members can perform action
+  Deny = 1, // No one can perform action
+  Admin = 2, // Only admins can perform action
+  SuperAdmin = 3, // Only super admins can perform action
+  DoesNotExist = 4, // Legacy - permission doesn't exist
+  Other = 5, // Reserved for custom policies
+}
+
+export interface CreateGroupOptions {
+  permissions?: GroupPermissionsOptions;
+  groupName?: string;
+  groupImageUrlSquare?: string;
+  groupDescription?: string;
+  customPermissionPolicySet?: PermissionPolicySet;
+  messageDisappearingSettings?: MessageDisappearingSettings;
+}
+```
+
+### Member Roles
+
+- **Member**: Basic group participant
+- **Admin**: Can perform admin-level actions based on group settings
+- **Super Admin**: Has all permissions, can manage other admins
+
+### Default Permissions
+
+New groups use the `All_Members` policy set:
+
+- `AddMember`: Allow (all members)
+- `RemoveMember`: Admin only
+- `AddAdmin/RemoveAdmin`: Super Admin only
+- `UpdateMetadata`: Allow (all members)
+
+### Managing Permissions
+
+```typescript
+// Check roles
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// Get role lists
+const admins = group.admins;
+const superAdmins = group.superAdmins;
+
+// Manage admin status
+await group.addAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
+```
+
+### Custom Permission Examples
+
+```typescript
+// Admin-controlled group
+const adminOnlyPermissions = {
+  AddMember: PermissionPolicy.Admin,
+  RemoveMember: PermissionPolicy.Admin,
+  UpdateMetadata: PermissionPolicy.Admin,
+  AddAdmin: PermissionPolicy.SuperAdmin,
+  RemoveAdmin: PermissionPolicy.SuperAdmin,
+};
+
+// Locked group (super admin only)
+const lockedPermissions = {
+  AddMember: PermissionPolicy.SuperAdmin,
+  RemoveMember: PermissionPolicy.SuperAdmin,
+  UpdateMetadata: PermissionPolicy.SuperAdmin,
+  AddAdmin: PermissionPolicy.SuperAdmin,
+  RemoveAdmin: PermissionPolicy.SuperAdmin,
+};
+```
+
+## Other Notes
+
+If no `dbPath` is provided, the client will use the current working directory. You can also specify a custom path for the database.
+
+```jsx
+function getDbPath(description: string = "xmtp") {
+  //Checks if the environment is a Railway deployment
+  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
+  // Create database directory if it doesn't exist
+  if (!fs.existsSync(volumePath)) {
+    fs.mkdirSync(volumePath, { recursive: true });
+  }
+  return `${volumePath}/${process.env.XMTP_ENV}-${description}.db3`;
+}
+
+// Create a client with db path
+const client = await Client.create(signer, {
+  env: XMTP_ENV as XmtpEnv,
+  dbPath: getDbPath(),
+});
+```
+
+## Inline Actions
+
+Interactive button-based UI for XMTP agents following the XIP-67 specification. Users can tap buttons instead of typing commands.
+
+## Quick Start
+
+```typescript
+import {
+  ActionBuilder,
+  inlineActionsMiddleware,
+  registerAction,
+} from "./inline-actions";
+
+// 1. Add middleware to your agent
+agent.use(inlineActionsMiddleware);
+
+// 2. Register action handlers
+registerAction("my-action", async (ctx) => {
+  await ctx.conversation.send("Action executed!");
+});
+
+// 3. Send interactive buttons
+await ActionBuilder.create("my-menu", "Choose an option:")
+  .add("my-action", "Click Me")
+  .add("other-action", "Cancel")
+  .send(ctx);
+```
+
+## Core Functions
+
+### ActionBuilder
+
+Create interactive button menus:
+
+```typescript
+await ActionBuilder.create("menu-id", "Description")
+  .add("action-id", "Button Label") // primary|secondary|danger
+  .add("action-id-2", "Another Button")
+  .send(ctx);
+```
+
+### Helper Functions
+
+**Confirmation dialogs:**
+
+```typescript
+await sendConfirmation(
+  ctx,
+  "Delete this item?",
+  async (ctx) => await ctx.conversation.send("Deleted!"),
+  async (ctx) => await ctx.conversation.send("Cancelled"),
+);
+```
+
+**Selection menus:**
+
+```typescript
+await sendSelection(ctx, "Pick a color:", [
+  {
+    id: "red",
+    label: "🔴 Red",
+    handler: async (ctx) => {
+      /* handle red */
+    },
+  },
+  {
+    id: "blue",
+    label: "🔵 Blue",
+    handler: async (ctx) => {
+      /* handle blue */
+    },
+  },
+]);
+```
+
+### App Configuration
+
+For complex bots with multiple menus:
+
+```typescript
+const config: AppConfig = {
+  name: "My Bot",
+  menus: {
+    "main-menu": {
+      id: "main-menu",
+      title: "Main Menu",
+      actions: [
+        { id: "sub-menu", label: "Go to Sub Menu" },
+        { id: "action-1", label: "Do Something", handler: myHandler },
+      ],
+    },
+  },
+};
+
+initializeAppFromConfig(config);
+```
+
+## Action Handlers
+
+Register handlers for button clicks:
+
+```typescript
+registerAction("my-action", async (ctx: MessageContext) => {
+  // Handle the action
+  await ctx.conversation.send("Action completed!");
+
+  // Optionally show navigation options
+  await showNavigationOptions(ctx, config, "What would you like to do next?");
+});
+```
+
+## Validation Helpers
+
+Built-in validators for common formats:
+
+```typescript
+import { validators } from "./inline-actions";
+
+const result = validators.inboxId("123abc...");
+if (!result.valid) {
+  await ctx.conversation.send(`Error: ${result.error}`);
+}
+```
+
+## Remote Attachments
+
+XMTP agents can handle file attachments through a secure, encrypted system using remote storage. The SDK provides utility functions to simplify attachment processing, encryption, and decryption.
+
+### Setup
+
+First, register the required codecs when creating your agent:
+
+```typescript
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from "@xmtp/content-type-remote-attachment";
+
+const agent = await Agent.createFromEnv({
+  codecs: [new RemoteAttachmentCodec(), new AttachmentCodec()],
+  env: process.env.XMTP_ENV as "local" | "dev" | "production",
+});
+```
+
+### Utility Functions
+
+Import attachment utilities from the shared utilities:
+
+```typescript
+import {
+  createRemoteAttachmentFromData,
+  createRemoteAttachmentFromFile,
+  encryptAttachment,
+  loadRemoteAttachment,
+} from "../../utils/atttachment";
+```
+
+### Core Functions
+
+**Encrypt attachment data:**
+
+```typescript
+const encrypted = await encryptAttachment(
+  new Uint8Array(fileData),
+  "filename.jpg",
+  "image/jpeg",
+);
+// Returns: { encryptedData: Uint8Array, filename: string }
+```
+
+**Create remote attachment from file:**
+
+```typescript
+const remoteAttachment = await createRemoteAttachmentFromFile(
+  "./path/to/file.jpg",
+  "https://ipfs.io/ipfs/hash",
+  "image/jpeg",
+);
+```
+
+**Create remote attachment from data:**
+
+```typescript
+const remoteAttachment = await createRemoteAttachmentFromData(
+  new Uint8Array(fileData),
+  "filename.jpg",
+  "image/jpeg",
+  "https://ipfs.io/ipfs/hash",
+);
+```
+
+**Load and decode received attachment:**
+
+```typescript
+const receivedAttachment = await loadRemoteAttachment(
+  ctx.message.content,
+  agent.client,
+);
+// Returns: { data: Uint8Array, filename: string, mimeType: string }
+```
+
+### Handling Attachments
+
+**Send attachments:**
+
+```typescript
+// For text messages - send default attachment
+agent.on("text", async (ctx) => {
+  const encrypted = await encryptAttachment(
+    new Uint8Array(await readFile("./logo.png")),
+    "logo.png",
+    "image/png",
+  );
+
+  const fileUrl = await uploadToPinata(
+    encrypted.encryptedData,
+    encrypted.filename,
+  );
+
+  const remoteAttachment = await createRemoteAttachmentFromFile(
+    "./logo.png",
+    fileUrl,
+    "image/png",
+  );
+
+  await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
+});
+```
+
+**Receive and process attachments:**
+
+```typescript
+agent.on("attachment", async (ctx) => {
+  // Load and decode the received attachment
+  const receivedAttachment = await loadRemoteAttachment(
+    ctx.message.content,
+    agent.client,
+  );
+
+  const filename = receivedAttachment.filename || "unnamed";
+  const mimeType = receivedAttachment.mimeType || "application/octet-stream";
+
+  console.log(`Processing attachment: ${filename} (${mimeType})`);
+
+  // Send acknowledgment
+  await ctx.conversation.send(
+    `I received your attachment "${filename}"! Processing it now...`,
+  );
+
+  // Re-encrypt and upload (optional)
+  const encrypted = await encryptAttachment(
+    receivedAttachment.data,
+    filename,
+    mimeType,
+  );
+
+  const fileUrl = await uploadToPinata(
+    encrypted.encryptedData,
+    encrypted.filename,
+  );
+
+  // Create and send new remote attachment
+  const reEncodedAttachment = await createRemoteAttachmentFromData(
+    receivedAttachment.data,
+    filename,
+    mimeType,
+    fileUrl,
+  );
+
+  await ctx.conversation.send(reEncodedAttachment, ContentTypeRemoteAttachment);
+});
+```
+
+### Storage Integration
+
+The examples use Pinata for IPFS storage, but you can integrate with any storage service:
+
+```typescript
+// Example upload function (implement based on your storage provider)
+async function uploadToPinata(
+  data: Uint8Array,
+  filename: string,
+): Promise<string> {
+  // Upload to IPFS/storage and return URL
+  return "https://ipfs.io/ipfs/your-hash";
+}
+```

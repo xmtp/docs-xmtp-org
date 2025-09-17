@@ -13,7 +13,7 @@ Want to contribute a deployment guide for another platform? We welcome [pull req
 
 :::tip
 
-The XMTP Node SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
+The XMTP Agent SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
 
 :::
 
@@ -62,9 +62,9 @@ export const getDbPath = (env: string, suffix: string = "xmtp") => {
 Then, specify `dbPath` in your client options:
 
 ```tsx [Node]
-const receiverClient = await Client.create(signer, {
+const agent = await Agent.create(signer, {
     dbEncryptionKey,
-    env: XMTP_ENV as XmtpEnv,
+    env: XMTP_ENV as "dev" | "production",
     dbPath: getDbPath(XMTP_ENV),
   });
 ```

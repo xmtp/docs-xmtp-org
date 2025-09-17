@@ -1,51 +1,57 @@
 # Support onchain transactions with your agent built with XMTP
 
-This package provides an XMTP content type to support sending transactions to a wallet for execution.
+This guide covers two XMTP content types for handling onchain transactions:
 
-For an example of an agent that implements the transaction content type, see the [Transaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+1. **Transaction Requests**: Send transactions to a wallet for execution
+2. **Transaction References**: Share references to completed onchain transactions
 
-:::tip[Open for feedback]
+For an example of an agent that implements both transaction content types, see the [Transaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 
-You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
-
-:::
-
-## Install the package
+## Install the packages
 
 :::code-group
 
 ```bash [npm]
-npm i @xmtp/content-type-wallet-send-calls
+npm i @xmtp/content-type-wallet-send-calls @xmtp/content-type-transaction-reference
 ```
 
 ```bash [yarn]
-yarn add @xmtp/content-type-wallet-send-calls
+yarn add @xmtp/content-type-wallet-send-calls @xmtp/content-type-transaction-reference
 ```
 
 ```bash [pnpm]
-pnpm i @xmtp/content-type-wallet-send-calls
+pnpm add @xmtp/content-type-wallet-send-calls @xmtp/content-type-transaction-reference
 ```
 
 :::
 
-## Configure the content type
+## Configure the content types
 
-After importing the package, you can register the codec.
+After importing the packages, you can register both codecs:
 
 ```js [Node]
 import {
   WalletSendCallsCodec,
 } from "@xmtp/content-type-wallet-send-calls";
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
+import {
+  TransactionReferenceCodec,
+} from "@xmtp/content-type-transaction-reference";
+
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: "dev",
-  codecs: [new WalletSendCallsCodec()],
+  codecs: [
+    new WalletSendCallsCodec(),
+    new TransactionReferenceCodec()
+  ],
 });
 ```
 
-## Create a transaction request
+## Transaction Requests
 
-With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
+Transaction requests allow you to send transactions to a wallet for execution using the `wallet_sendCalls` specification.
+
+### Create a transaction request
 
 ```ts [Node]
 const walletSendCalls: WalletSendCallsParams = {
@@ -82,9 +88,7 @@ const walletSendCalls: WalletSendCallsParams = {
 };
 ```
 
-## Send a transaction request
-
-Once you have a transaction reference, you can send it as part of your conversation:
+### Send a transaction request
 
 ```ts [Node]
 await conversation.messages.send(walletSendCalls, {
@@ -92,19 +96,159 @@ await conversation.messages.send(walletSendCalls, {
 });
 ```
 
-## Receive a transaction request
-
-To receive and process a transaction request:
+### Receive transaction requests
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
-}
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
+// Listen for transaction requests using the agent-sdk
+agent.on("transaction", async (ctx) => {
+  const walletSendCalls: WalletSendCallsParams = ctx.message.content;
+  console.log("Received transaction request:", walletSendCalls);
+  
+  // Process the transaction request here
+  // You might want to show a confirmation dialog or execute the transaction
+});
 ```
+
+## Transaction References
+
+Transaction references allow you to share references to completed onchain transactions, providing a direct link to onchain activities.
+
+### Create a transaction reference
+
+```ts [Node]
+const transactionReference: TransactionReference = {
+  /**
+   * Optional namespace for the networkId
+   */
+  namespace: "eip155",
+  /**
+   * The networkId for the transaction, in decimal or hexadecimal format
+   */
+  networkId: 1,
+  /**
+   * The transaction hash
+   */
+  reference: "0x123...abc",
+  /**
+   * Optional metadata object
+   */
+  metadata: {
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100000, // In integer format, this represents 1 USDC (100000/10^6)
+    decimals: 6, // Specifies that the currency uses 6 decimal places
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  }
+};
+```
+
+### Send a transaction reference
+
+```js [Node]
+await conversation.messages.send(transactionReference, {
+  contentType: ContentTypeTransactionReference,
+});
+```
+
+### Receive transaction references
+
+```ts [Node]
+// Listen for transaction references using the agent-sdk
+agent.on("transaction-reference", async (ctx) => {
+  const transactionRef: TransactionReference = ctx.message.content;
+  console.log("Received transaction reference:", transactionRef);
+  
+  // Process the transaction reference here
+  // You might want to display transaction details or fetch additional onchain data
+});
+```
+
+## Complete Example
+
+Here's a complete example of an agent that handles both transaction requests and references:
+
+```ts [Node]
+import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
+import {
+  WalletSendCallsCodec,
+  ContentTypeWalletSendCalls,
+} from "@xmtp/content-type-wallet-send-calls";
+import {
+  TransactionReferenceCodec,
+  ContentTypeTransactionReference,
+} from "@xmtp/content-type-transaction-reference";
+
+const agent = await Agent.create(signer, {
+  env: "dev",
+  codecs: [
+    new WalletSendCallsCodec(),
+    new TransactionReferenceCodec()
+  ],
+});
+
+// Handle transaction requests
+agent.on("transaction", async (ctx) => {
+  const walletSendCalls = ctx.message.content;
+  
+  // Show confirmation to user
+  await ctx.conversation.send(
+    `Transaction request received: ${walletSendCalls.calls[0].metadata?.description}`
+  );
+  
+  // Process the transaction (this would typically involve wallet interaction)
+  console.log("Processing transaction request:", walletSendCalls);
+});
+
+// Handle transaction references
+agent.on("transaction-reference", async (ctx) => {
+  const transactionRef = ctx.message.content;
+  
+  // Display transaction details
+  await ctx.conversation.send(
+    `Transaction completed: ${transactionRef.metadata?.transactionType} of ${transactionRef.metadata?.amount} ${transactionRef.metadata?.currency}`
+  );
+  
+  // You might want to fetch additional onchain data here
+  console.log("Transaction reference:", transactionRef);
+});
+
+// Handle regular text messages
+agent.on("text", async (ctx) => {
+  if (ctx.message.content.toLowerCase().includes("send")) {
+    // Create a sample transaction request
+    const transactionRequest = {
+      version: "1.0",
+      from: await ctx.getSenderAddress(),
+      chainId: "0x1",
+      calls: [{
+        to: "0x456...def",
+        value: "0x5AF3107A4000",
+        metadata: {
+          description: "Send 0.0001 ETH",
+          transactionType: "transfer",
+          currency: "ETH",
+          amount: 100000000000000,
+          decimals: 18,
+        },
+      }],
+    };
+    
+    await ctx.conversation.send(transactionRequest, {
+      contentType: ContentTypeWalletSendCalls,
+    });
+  }
+});
+
+await agent.start();
+```
+
+## Feedback
+
+:::tip[Open for feedback]
+
+You are welcome to provide feedback on these implementations by commenting on:
+- [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889)
+- [XIP-21: Onchain transaction reference content type](https://community.xmtp.org/t/xip-21-on-chain-transaction-reference-content-type/532)
+
+:::

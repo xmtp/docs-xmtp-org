@@ -32,8 +32,8 @@ After importing the package, you can register the codec.
 
 ```js [Node]
 import { ReplyCodec } from "@xmtp/content-type-reply";
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: "dev",
   codecs: [new ReplyCodec()],
 });

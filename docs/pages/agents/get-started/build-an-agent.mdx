@@ -1,6 +1,6 @@
 # Tutorial: Build an agent that uses XMTP
 
-This tutorial provides a map to building agents with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
+This tutorial provides a map to building agents with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
 
 Building with XMTP gives your agent access to:
 
@@ -16,7 +16,7 @@ Building with XMTP gives your agent access to:
 
 ### Agent examples
 
-From a simple agent that replies "GM" to one that supports onchain transactions, explore and run a dozen [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk).
+From a simple agent that replies "GM" to one that supports onchain transactions, explore and run a dozen [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
 ### Cursor rules
 
@@ -29,34 +29,35 @@ You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-exampl
 These are the steps to initialize the XMTP listener and send messages.
 
 ```tsx [Node]
-// import the xmtp sdk
-import { Client, type XmtpEnv, type Signer } from "@xmtp/node-sdk";
+// import the agent sdk
+import { Agent, createSigner, createUser, getTestUrl } from "@xmtp/agent-sdk";
 
-// encryption key, must be consistent across runs
-const encryptionKey: Uint8Array = ...;
-const signer: Signer = ...;
-const env: XmtpEnv = "dev";
+// 1. Create a local user + signer (you can plug in your own wallet signer)
+const user = createUser();
+const signer = createSigner(user);
 
-// create the client
-const client = await Client.create(signer, {
-  encryptionKey,
-  env,
+// 2. Spin up the agent
+const agent = await Agent.create(signer, {
+  env: "dev", // or 'production'
   appVersion: 'alix-agent/2.x'
 });
 
-// sync the client to get the latest messages
-await client.conversations.sync();
+// 3. Respond to text messages
+agent.on("text", async (ctx) => {
+  const messageContent = ctx.message.content;
+  const senderAddress = await ctx.getSenderAddress();
+  console.log(`Received message: ${messageContent} by ${senderAddress}`);
+  await ctx.conversation.send("gm");
+});
 
-// listen to all messages
-const stream = await client.conversations.streamAllMessages();
-for await (const message of stream) {
-  // ignore messages from the agent
-  if (message?.senderInboxId === client.inboxId) continue;
-  // get the conversation by id
-  const conversation = await client.conversations.getConversationById(message.conversationId);
-  // send a message from the agent
-  await conversation.send("gm");
-}
+// 4. Log when we're ready
+agent.on("start", () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.client.accountIdentifier?.identifier}`);
+  console.log(`🔗${getTestUrl(agent)}`);
+});
+
+await agent.start();
 ```
 
 ### Get the address of a user
@@ -70,10 +71,12 @@ An `inboxId` differs from an address. An `inboxId` is a user identifier, while a
 :::
 
 ```tsx [Node]
-const inboxState = await client.preferences.inboxStateFromInboxIds([
-  message.senderInboxId,
-]);
-const addressFromInboxId = inboxState[0].identifiers[0].identifier;
+// In the agent-sdk, getting sender address is simplified
+agent.on("text", async (ctx) => {
+  const senderAddress = await ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
+  await ctx.conversation.send("Hello!");
+});
 ```
 
 ### Support onchain transactions and transaction references
