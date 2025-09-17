@@ -1,0 +1,67 @@
+# Create an XMTP Agent
+
+Create an XMTP agent that can use the signing capabilities provided by a signer. This signer links the agent to the appropriate EOA or SCW.
+
+
+## Create an agent
+
+### Basic creation
+
+```tsx [Node]
+import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
+import { getRandomValues } from "node:crypto";
+
+// Option 1: Create a local user + signer (for testing)
+const user = createUser();
+const signer = createSigner();
+
+// Option 2: Use your own wallet signer
+// const signer: Signer = { /* ... */ };
+
+const agent = await Agent.create(signer, {
+  env: "dev", // or 'production'
+  dbEncryptionKey: getRandomValues(new Uint8Array(32)),
+});
+```
+
+### Using environment variables
+
+```tsx [Node]
+// Load variables from .env file
+process.loadEnvFile(".env");
+
+// Create agent using environment variables
+const agent = await Agent.createFromEnv();
+```
+
+### Configuration options
+
+```tsx [Node]
+import type { ContentCodec } from "@xmtp/content-type-primitives";
+
+type AgentOptions = {
+  env?: "local" | "dev" | "production"; // Default: "dev"
+  appVersion?: string; // e.g., 'my-agent/1.0'
+  dbPath?: string | null | ((inboxId: string) => string);
+  dbEncryptionKey?: Uint8Array;
+  codecs?: ContentCodec[];
+};
+```
+
+**Key options:**
+
+- `env`: Network environment (`"dev"`, `"production"`, or `"local"`)
+- `dbPath`: Database file path (defaults to current directory)
+- `dbEncryptionKey`: Required for secure local storage
+- `codecs`: Additional content types support
+
+## Environment variables
+
+The Agent SDK supports these environment variables for easier configuration:
+
+| Variable                 | Purpose                   | Example                                  |
+| ------------------------ | ------------------------- | ---------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet    | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | Network environment       | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key   | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+

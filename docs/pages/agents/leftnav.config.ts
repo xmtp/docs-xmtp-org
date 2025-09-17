@@ -6,15 +6,15 @@ export const agentsSidebarConfig = [
     items: [
       {
         text: "Build XMTP Agents",
-        link: "./get-started/intro",
+        link: "../agents/get-started/intro",
       },
       {
         text: "Tutorial: Build an agent 🤖",
-        link: "./get-started/build-an-agent",
+        link: "../agents/get-started/build-an-agent",
       },
       {
         text: "FAQ",
-        link: "./get-started/faq",
+        link: "../agents/get-started/faq",
       },
     ],
   },
@@ -23,36 +23,32 @@ export const agentsSidebarConfig = [
     collapsed: false,
     items: [
       {
-        text: "Create an EOA or SCW signer",
-        link: "./core-messaging/create-a-signer",
-      },
-      {
         text: "Create a client",
-        link: "./core-messaging/create-a-client",
+        link: "../agents/build-agents/create-a-client",
       },
       {
         text: "Stream messages",
-        link: "./core-messaging/stream",
+        link: "../agents/build-agents/stream",
       },
       {
         text: "Create conversations",
-        link: "./core-messaging/create-conversations",
+        link: "../agents/build-agents/create-conversations",
       },
       {
         text: "Manage agent installations",
-        link: "./core-messaging/agent-installations",
+        link: "../agents/build-agents/agent-installations",
       },
       {
         text: "Manage group permissions",
-        link: "./core-messaging/group-permissions",
+        link: "../agents/build-agents/group-permissions",
       },
       {
         text: "Manage group metadata",
-        link: "./core-messaging/group-metadata",
+        link: "../agents/build-agents/group-metadata",
       },
       {
         text: "Observe rate limits",
-        link: "./core-messaging/rate-limits",
+        link: "../agents/build-agents/rate-limits",
       },
     ],
   },
@@ -62,47 +58,52 @@ export const agentsSidebarConfig = [
     items: [
       {
         text: "Understand content types",
-        link: "./content-types/content-types",
+        link: "../agents/content-types/content-types",
       },
       {
         text: "Reactions",
-        link: "./content-types/reactions",
+        link: "../agents/content-types/reactions",
       },
       {
         text: "Replies",
-        link: "./content-types/replies",
+        link: "../agents/content-types/replies",
       },
       {
         text: "Attachments",
-        link: "./content-types/attachments",
+        link: "../agents/content-types/attachments",
       },
       {
         text: "Transactions",
-        link: "./content-types/transactions",
+        link: "../agents/content-types/transactions",
       },
       {
         text: "Markdown",
-        link: "./content-types/markdown",
+        link: "../agents/content-types/markdown",
       },
       {
         text: "Inline actions",
-        link: "./content-types/inline-actions",
+        link: "../agents/content-types/inline-actions",
       },
     ],
   },
   {
     text: "Debug agents",
-    link: "./debug-agents",
+    link: "../agents/debug-agents",
     items: [],
   },
   {
     text: "Deploy agents",
-    link: "./deploy-agent",
+    link: "../agents/deploy-agent",
+    items: [],
+  },  
+  {
+    text: "Examples",
+    link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
     items: [],
   },
   {
     text: "Security",
-    link: "./agent-security",
+    link: "../agents/agent-security",
     items: [],
   },
 ];

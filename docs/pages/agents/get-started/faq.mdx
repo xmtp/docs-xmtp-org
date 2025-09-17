@@ -2,42 +2,133 @@
 
 Get answers to frequently asked questions about building agents with XMTP.
 
-## Supported chains
+## Platform & Compatibility
 
-XMTP agents can work with EOAs and SCWs on Ethereum and Ethereum L2s. Because XMTP messages are stored off-chain, agents are interoperable across EVM chains.
+### What chains does XMTP support?
 
-Supported chains include: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-compatible networks.
+XMTP agents work with EOAs and SCWs on Ethereum and Ethereum L2s. Because messages are stored off-chain, agents are interoperable across EVM chains.
 
-## Build with XMTP
+Supported chains: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-compatible networks.
 
-### Which languages does the XMTP SDK support?
+### What languages and libraries can I use?
 
-XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building).
+- **SDKs**: XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building)
+- **Signing libraries**: The Agent SDK provides simplified abstractions. For custom integrations, use [ethers](https://ethers.org/) or another web3 library with [ethers Signer](https://docs.ethers.io/v5/api/signer/) support
 
-### What signing libraries can I use with agents?
+## Development Setup
 
-The XMTP Agent SDK provides simplified abstractions for common use cases. For custom integrations, you can use [ethers](https://ethers.org/) or another web3 library capable of supplying an [ethers Signer](https://docs.ethers.io/v5/api/signer/).
+### Should I use `dbPath: null` for development?
 
-## Security
+**Not recommended.** Using `dbPath: null` creates a new installation on every restart, quickly hitting the 10-installation limit (within ~30 minutes of development).
 
-### Has XMTP undergone a security audit?
+**Recommended approach:**
+- Use persistent database paths for development
+- Ideal setup: 2 installations (local + production), leaving 8 for testing
+- Only use `dbPath: null` for fire-and-forget or temporary agents
 
-A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024.
+## Database Management
 
-See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
+### What files need to be backed up?
 
-## Storage
+Back up these SQLite files for persistent storage:
+- `{env}-{description}.db3` - Main database
+- `{env}-{description}.db3-shm` - Shared memory  
+- `{env}-{description}.db3-wal` - Write-ahead log
+- `{env}-{description}.db3.sqlcipher_salt` - Encryption salt
 
-### Are there any costs for agent messaging?
+Example for production: `production-xmtp.db3`, `production-xmtp.db3-shm`, etc.
 
-Currently, there are no messaging fees for agents. Messages are stored off-chain on the XMTP network.
+### How much storage should I provision?
 
-## Messages
+Rough estimate: **1GB ≈ 15,000 conversations**. Plan based on your expected volume.
+
+### What data is stored in the database?
+
+- All messages and conversations
+- Conversation state and encryption keys  
+- Group membership and metadata
+
+### Can I clear database data without deleting files?
+
+Not currently possible from SDKs. XMTP is developing database management tools ([XIP-70](https://community.xmtp.org/t/xip-70-local-database-management-tools/1116)).
+
+### What happens when I delete/wipe the database?
+
+**File deletion:**
+- Creates fresh database with new installation
+- Messages continue streaming normally
+- Works unless you've hit the 10-installation limit
+
+**Database wipe (once XIP-70 tools are available):**
+- Agent loses access to existing groups
+- Regains group access when receiving new messages
+- All local message history is lost
+
+## Installation Limits & Troubleshooting
+
+### What is the installation limit?
+
+Each inbox has a **maximum of 10 installations**. Creating a new installation beyond this limit will fail.
+
+### How do I recover from hitting the limit?
+
+Currently:
+- Use a different client/signer to create new agents
+- No built-in method to revoke old installations
+- Automatic revocation tools are planned for future releases
+
+## Messages & Content
 
 ### What content types can agents send?
 
-Agents can send text, reactions, replies, attachments, and transaction requests. See [Content types](/agents/content-types/content-types) for details.
+Text, reactions, replies, attachments, and transaction requests. See [Content types](/agents/content-types/content-types) for details.
 
-### Does XMTP have a maximum message size?
+### Are there message size limits?
 
-Yes. Messages are limited to just short of 1MB. For larger content, use [remote attachments](/agents/content-types/attachments).
+Yes, messages are limited to just under 1MB. For larger content, use [remote attachments](/agents/content-types/attachments).
+
+### Are there any messaging costs?
+
+No messaging fees currently. Messages are stored off-chain on the XMTP network.
+
+## Framework Integration
+
+### Does XMTP work with ElizaOS?
+
+Yes! XMTP has official ElizaOS support through the [`@elizaos/plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) plugin, enabling secure, decentralized, and end-to-end encrypted messaging for ElizaOS agents.
+
+**Installation:**
+```bash
+pnpm add @elizaos/plugin-xmtp
+# or
+elizaos add plugins @elizaos/plugin-xmtp
+```
+
+**Environment variables:**
+- `WALLET_KEY` - Private key of the wallet
+- `XMTP_SIGNER_TYPE` - Signer type (SCW or EOA)
+- `XMTP_SCW_CHAIN_ID` - (Optional) Chain ID for smart contract wallet
+- `XMTP_ENV` - (Optional) XMTP environment (dev, local, production)
+
+**Benefits of XMTP + ElizaOS:**
+- End-to-end encrypted agent communication
+- Decentralized messaging without single points of failure
+- Multi-agent, multi-human confidential group chats
+- Privacy and metadata protection
+
+### Can I contribute to XMTP integrations?
+
+Absolutely! We welcome contributions to improve XMTP agent integrations:
+
+- **ElizaOS Plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
+- **Agent SDK**: Help improve the core [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk)
+- **Documentation**: Submit improvements to agent documentation and examples
+- **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
+
+## Security
+
+### Has XMTP been audited?
+
+Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024.
+
+See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)

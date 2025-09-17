@@ -5,9 +5,42 @@ XMTP agents are autonomous programs that can participate in secure, end-to-end e
 ## Why build agents with XMTP?
 
 - **AI + Money + Secure Chat**: The only platform combining conversational AI, onchain transactions, and end-to-end encryption
-- **Instant Distribution**: Your agents can reach users on Coinbase Wallet, Convos, and other XMTP apps immediately
-- **Web3 Native**: Built-in support for wallet interactions, transactions, and decentralized identity
+- **Open-source & trustless**: Built on top of the MLS protocol, it replaces trust in centralized certificate authorities with cryptographic proofs.
+- **Privacy & metadata protection**: Offers anonymous usage through SDKs and pseudonymous usage with nodes tracking minimum metadata.
+- **Decentralized**: Operates on a peer-to-peer network, eliminating single points of failure and ensuring continued operation even if some nodes go offline.
+- **Multi-agent**: Allows confidential communication between multiple agents and humans through MLS group chats.
+
+## Quick Start
+
+```ts
+import { createUser, createSigner, Agent, getTestUrl } from "@xmtp/agent-sdk";
+
+// 1. Create a local user + signer (you can plug in your own wallet signer)
+const user = createUser();
+const signer = createSigner(user);
+
+// 2. Spin up the agent
+const agent = await Agent.create(signer, {
+  env: "dev", // or 'production'
+});
+
+// 3. Respond to text messages
+agent.on("text", async (ctx) => {
+  await ctx.conversation.send("Hello from my XMTP Agent! 👋");
+});
+
+// 4. Log when we're ready
+agent.on("start", () => {
+  console.log(`We are online: ${getTestUrl(agent)}`);
+});
+
+await agent.start();
+```
 
 ## Get started
 
 Ready to build? See [Tutorial: Build an agent](/agents/get-started/build-an-agent) to create your first XMTP agent.
+
+## Cursor rules
+
+You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) to code agents with AI following XMTP development best practices.
