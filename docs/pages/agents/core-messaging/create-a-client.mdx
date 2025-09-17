@@ -36,31 +36,14 @@ When you call `Agent.create()`, the following steps happen under the hood:
 
 The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
 
-The encryption key is critical to the stability and continuity of an XMTP agent. It encrypts the local SQLite database created when you call `Agent.create()`, and must be provided every time you create or build an agent.
+The encryption key encrypts the local SQLite database and must be provided consistently for each agent startup. Store this key securely.
 
-This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
-
-If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Agent.create()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the agent may be unable to access the database. The agent will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
-
-Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages**.
-
-To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
-
-The `dbEncryptionKey` client option is not used by the Browser SDK for due to technical limitations in web environments. In this case, be aware that the database is not encrypted.
+:::warning
+If the encryption key is lost or incorrect, the agent will create a new installation and **lose access to all previous messages**.
+:::
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
-### View an encrypted database
-
-For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates a [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
-
-To open this database, you need to construct the password by prefixing `0x` (to indicate hexadecimal numbers), then appending the encryption key (64 hex characters, 32 bytes) and the salt (32 hex characters, 16 bytes). For example, if your encryption key is `A` and your salt is `B`, the resulting password would be `0xAB`.
-
-The database also uses a [plaintext header size](https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_plaintext_header_size) of 32 bytes.
-
-If you want to inspect the database visually, you can use [DB Browser for SQLite](https://sqlitebrowser.org/), an open source tool that supports SQLite and SQLCipher. In its **Custom** encryption settings, set the **Plaintext Header Size** to **_32_**, and use the full **Password** as a **Raw key**:
-
-![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
 
 ## Create an agent
 

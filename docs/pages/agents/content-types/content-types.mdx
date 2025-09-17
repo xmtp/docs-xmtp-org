@@ -4,19 +4,7 @@ When you build an agent with XMTP, all messages are encoded with a content type 
 
 In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
 
-At a high level, there are three categories of content types with XMTP:
-
-- Standard
-- Standards-track
-- Custom
-
 ## Standard content types
-
-A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
-
-Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their agent or app.
-
-Here is the current standard content type:
 
 ### Text content type
 
@@ -61,11 +49,9 @@ agent.on("message", async (ctx) => {
 });
 ```
 
-## Standards-track content types
+## Additional content types
 
-A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
-
-Here are standards-track content types that you can review, test, and adopt in your agent today:
+These content types are available for use in your agents:
 
 - [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
 - [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.

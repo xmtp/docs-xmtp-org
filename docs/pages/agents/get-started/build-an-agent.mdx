@@ -24,59 +24,27 @@ You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-exampl
 
 ## Build an agent
 
-### Listen for and send messages
-
-These are the steps to initialize the XMTP listener and send messages.
+### Basic agent setup
 
 ```tsx [Node]
-// import the agent sdk
 import { Agent, createSigner, createUser, getTestUrl } from "@xmtp/agent-sdk";
 
-// 1. Create a local user + signer (you can plug in your own wallet signer)
-const user = createUser();
-const signer = createSigner(user);
+// Create signer (you can plug in your own wallet signer)
+const signer = createSigner(createUser());
 
-// 2. Spin up the agent
+// Create agent
 const agent = await Agent.create(signer, {
-  env: "dev", // or 'production'
-  appVersion: 'alix-agent/2.x'
+  env: "dev",
+  appVersion: 'my-agent/1.0'
 });
 
-// 3. Respond to text messages
+// Respond to messages
 agent.on("text", async (ctx) => {
-  const messageContent = ctx.message.content;
   const senderAddress = await ctx.getSenderAddress();
-  console.log(`Received message: ${messageContent} by ${senderAddress}`);
   await ctx.conversation.send("gm");
 });
 
-// 4. Log when we're ready
-agent.on("start", () => {
-  console.log(`Waiting for messages...`);
-  console.log(`Address: ${agent.client.accountIdentifier?.identifier}`);
-  console.log(`🔗${getTestUrl(agent)}`);
-});
-
 await agent.start();
-```
-
-### Get the address of a user
-
-Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, such as EOAs and SCWs.
-
-:::tip
-
-An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
-
-:::
-
-```tsx [Node]
-// In the agent-sdk, getting sender address is simplified
-agent.on("text", async (ctx) => {
-  const senderAddress = await ctx.getSenderAddress();
-  console.log(`Message from: ${senderAddress}`);
-  await ctx.conversation.send("Hello!");
-});
 ```
 
 ### Support onchain transactions and transaction references
