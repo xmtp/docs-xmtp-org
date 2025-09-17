@@ -8,7 +8,16 @@ Syncing does not refetch existing conversations and messages. It also does not f
 
 This video provides a walkthrough of key concepts required to implement syncing correctly.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
 
 ## Sync a specific conversation
 
@@ -81,15 +90,15 @@ To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stre
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll(["allowed"]);
+await client.conversations.syncAll(['allowed']);
 ```
 
 ```js [Node]
-await client.conversations.syncAll(["allowed"]);
+await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-await client.conversations.syncAllConversations(["allowed"]);
+await client.conversations.syncAllConversations(['allowed']);
 ```
 
 ```kotlin [Kotlin]

@@ -7,15 +7,15 @@ XMTP SDKs support message signing with 2 different types of Ethereum accounts: E
 The EOA signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
 
 ```tsx [Node]
-import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
+import type { Signer, Identifier, IdentifierKind } from '@xmtp/node-sdk';
 
 const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
+  identifier: '0x...', // Ethereum address as the identifier
   identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
-  type: "EOA",
+  type: 'EOA',
   getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -30,14 +30,14 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 Here is a list of supported chain IDs:
 
-- chain_rpc_1     = string
-- chain_rpc_8453  = string
+- chain_rpc_1 = string
+- chain_rpc_8453 = string
 - chain_rpc_42161 = string
-- chain_rpc_10    = string
-- chain_rpc_137   = string
-- chain_rpc_324   = string
+- chain_rpc_10 = string
+- chain_rpc_137 = string
+- chain_rpc_324 = string
 - chain_rpc_59144 = string
-- chain_rpc_480   = string
+- chain_rpc_480 = string
 
 Need support for a different chain ID? Please post your request to the [XMTP Community Forums](https://community.xmtp.org/c/general/ideas/54).
 
@@ -58,15 +58,15 @@ The details of creating an SCW signer are highly dependent on the wallet provide
 The code snippets below are examples only and will need to be adapted based on your specific wallet provider and library.
 
 ```tsx [Node]
-import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
+import type { Signer, Identifier, IdentifierKind } from '@xmtp/node-sdk';
 
 const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
+  identifier: '0x...', // Ethereum address as the identifier
   identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
-  type: "SCW",
+  type: 'SCW',
   getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string

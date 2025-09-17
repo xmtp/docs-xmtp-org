@@ -21,7 +21,6 @@ To enable a user to create an archive:
 1. Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists.
 2. Generate a 32-byte array encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive file, and will persist after your app has been uninstalled. A common place to store this encryption key is the iCloud Keychain.
 3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
-
    - Archive start and end time. If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
 

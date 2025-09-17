@@ -55,19 +55,23 @@ As the app developer, you can provide a UI that enables group participants to ma
 - Update group metadata
 
 <div>
-  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png" width="300px" alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings" />
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png"
+    width="300px"
+    alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings"
+  />
 </div>
 
 You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
 
-| Permission | Allow all | Deny all  | Admin only | Super admin only |
-| --- | --- | --- | --- | --- |
-| Add member | ✅ | ✅ | ✅ | ✅ |
-| Remove member | ✅ | ✅ | ✅ | ✅ |
-| Add admin | ❌ | ✅ | ✅ | ✅ |
-| Remove admin | ❌ | ✅ | ✅ | ✅ |
-| Update group permissions | ❌ | ❌ | ❌ | ✅ |
-| Update group metadata | ✅ | ✅ | ✅ | ✅ |
+| Permission               | Allow all | Deny all | Admin only | Super admin only |
+| ------------------------ | --------- | -------- | ---------- | ---------------- |
+| Add member               | ✅        | ✅       | ✅         | ✅               |
+| Remove member            | ✅        | ✅       | ✅         | ✅               |
+| Add admin                | ❌        | ✅       | ✅         | ✅               |
+| Remove admin             | ❌        | ✅       | ✅         | ✅               |
+| Update group permissions | ❌        | ❌       | ❌         | ✅               |
+| Update group metadata    | ✅        | ✅       | ✅         | ✅               |
 
 If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
 
@@ -358,11 +362,17 @@ try await group.removeMembers(inboxIds: [inboxId])
 :::code-group
 
 ```js [Browser]
-const inboxId = await client.findInboxIdByIdentities([bo.identity, caro.identity]);
+const inboxId = await client.findInboxIdByIdentities([
+  bo.identity,
+  caro.identity,
+]);
 ```
 
 ```js [Node]
-const inboxId = await client.getInboxIdByIdentities([bo.identity, caro.identity]);
+const inboxId = await client.getInboxIdByIdentities([
+  bo.identity,
+  caro.identity,
+]);
 ```
 
 ```tsx [React Native]
