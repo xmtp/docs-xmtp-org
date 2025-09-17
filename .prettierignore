@@ -1,15 +1,2 @@
-# Dependencies
-node_modules/                  # NPM dependencies - should not be formatted
-
-# Package manager lock files
-package-lock.json              # NPM lock file - auto-generated, shouldn't be formatted
-
-# Log files
-*.log                          # All log files - typically auto-generated
-
-# Build output
-docs/dist                       # Vocs build output directory - generated files
-
-# Files with complex CSS-in-JS that break markdown parsing
 # Contains CSS-in-JS template literals that break vocs when formatted
 docs/pages/chat-apps/intro/get-started.mdx
