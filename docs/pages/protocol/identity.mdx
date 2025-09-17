@@ -10,7 +10,7 @@ The identity model also allows XMTP to support any identity type, as long as it 
 
 ## Inbox ID
 
-An **inbox ID** is a user's stable destination for their messages. Their inbox ID remains constant even as they add or remove [identities](#identity) and [installations](#installations).
+An **inbox ID** is a user's stable destination for their messages. Their inbox ID remains constant even as they add or remove [identities](#identity) and [installations](#installation).
 
 The inbox ID is derived from the hash of the first associated wallet address and a nonce and acts as an opaque identifier that apps use for messaging.
 
@@ -35,9 +35,9 @@ An **installation** represents a specific app installation that can access an in
 
 **One inbox ID** → **multiple identities**: Users can receive messages as any of their identities, all flowing to the same inbox
 
-```
+```text
 Inbox ID (stable destination for messages)
-├── Identity 1 (recovery identity, first identity added to an inbox) 
+├── Identity 1 (recovery identity, first identity added to an inbox)
 ├── Identity 2 (EOA wallet)
 ├── Identity 3 (SCW wallet)
 └── Any identity that can produce a verifiable cryptographic signature
@@ -45,11 +45,11 @@ Inbox ID (stable destination for messages)
 
 **One identity** → **multiple installations**: Users can access their messages from different apps on the same or different devices
 
-```
+```text
 Each identity can authenticate new installations:
 ├── Installation A (phone app)
-├── Installation B (web app)  
-├── Installation C (desktop app)  
+├── Installation B (web app)
+├── Installation C (desktop app)
 └── Up to 10 installations
 ```
 
