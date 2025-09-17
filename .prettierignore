@@ -1,0 +1,35 @@
+# Build outputs
+docs/dist/
+node_modules/
+
+# Generated files
+*.generated.*
+*.min.js
+*.min.css
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Cache
+.cache/
+.next/
+.nuxt/
+
+# Config files that might be auto-generated
+.env*
+
+# Files with complex CSS-in-JS that break markdown parsing
+docs/pages/chat-apps/intro/get-started.mdx

@@ -101,15 +101,15 @@ If preferred, you can use the [revoke all other installations](#revoke-all-other
 :::code-group
 
 ```tsx [Browser]
-await client.revokeInstallations([installationId1, installationId2])
+await client.revokeInstallations([installationId1, installationId2]);
 ```
 
 ```tsx [Node]
-await client.revokeInstallations([installationId1, installationId2])
+await client.revokeInstallations([installationId1, installationId2]);
 ```
 
 ```jsx [React Native]
-await client.revokeInstallations(signingKey, [installationIds])
+await client.revokeInstallations(signingKey, [installationIds]);
 ```
 
 ```kotlin [Kotlin]
@@ -145,15 +145,15 @@ If preferred, you can use the [revoke a specific installation](#revoke-a-specifi
 :::code-group
 
 ```tsx [Browser]
-await client.revokeAllOtherInstallations()
+await client.revokeAllOtherInstallations();
 ```
 
 ```tsx [Node]
-await client.revokeAllOtherInstallations()
+await client.revokeAllOtherInstallations();
 ```
 
 ```jsx [React Native]
-await client.revokeAllOtherInstallations(signingKey)
+await client.revokeAllOtherInstallations(signingKey);
 ```
 
 ```kotlin [Kotlin]
@@ -211,7 +211,7 @@ await Client.revokeInstallations(
   signer,
   inboxId,
   toRevokeInstallationBytes,
-  "production", // optional, defaults to "dev"
+  "production" // optional, defaults to "dev"
 );
 ```
 
@@ -230,7 +230,7 @@ await Client.revokeInstallations(
 
 ```kotlin [Kotlin]
         val states = Client.inboxStatesForInboxIds( listOf(inboxId), api)
-  
+
  val toRevokeIds = states.first().installations.map { it.id }
 
  Client.revokeInstallations(
@@ -243,7 +243,7 @@ await Client.revokeInstallations(
 
 ```swift [Swift]
         let states = try await Client.inboxStatesForInboxIds(inboxIds: [inboxId], api)
-  
+
  let toRevokeIds = states.first.installations.map { $0.id }
 
  try await Client.revokeInstallations(
@@ -263,15 +263,15 @@ Find an `inboxId` for an identity:
 :::code-group
 
 ```tsx [Browser]
-const inboxState = await client.preferences.inboxState()
+const inboxState = await client.preferences.inboxState();
 ```
 
 ```tsx [Node]
-const inboxState = await client.preferences.inboxState()
+const inboxState = await client.preferences.inboxState();
 ```
 
 ```jsx [React Native]
-const inboxId = await client.inboxIdFromIdentity(identity)
+const inboxId = await client.inboxIdFromIdentity(identity);
 ```
 
 ```kotlin [Kotlin]
@@ -292,21 +292,21 @@ View the state of any inbox to see the identities, installations, and other info
 
 ```tsx [Browser]
 // the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true);
 ```
 
 ```tsx [Node]
 // the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true)
+const states = await client.preferences.inboxStateFromInboxIds([inboxId, inboxId], true);
 ```
 
 ```jsx [React Native]
-const state = await client.inboxState(true)
-const states = await client.inboxStates(true, [inboxId, inboxId])
+const state = await client.inboxState(true);
+const states = await client.inboxStates(true, [inboxId, inboxId]);
 ```
 
 ```kotlin [Kotlin]
-val state = client.inboxState(true) 
+val state = client.inboxState(true)
 val states = client.inboxStatesForInboxIds(true, listOf(inboxID, inboxID))
 ```
 
@@ -354,15 +354,15 @@ This function is delicate and should be used with caution. Adding an identity to
 :::code-group
 
 ```tsx [Browser]
-await client.unsafe_addAccount(signer, true)
+await client.unsafe_addAccount(signer, true);
 ```
 
 ```tsx [Node]
-await client.unsafe_addAccount(signer, true)
+await client.unsafe_addAccount(signer, true);
 ```
 
 ```jsx [React Native]
-await client.addAccount(identityToAdd)
+await client.addAccount(identityToAdd);
 ```
 
 ```kotlin [Kotlin]
@@ -378,21 +378,21 @@ try await client.addAccount(newAccount: identityToAdd)
 ## Remove an identity from an inbox
 
 :::tip[Note]
- A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
+A recovery identity cannot be removed. For example, if an inbox has only one associated identity, that identity serves as the recovery identity and cannot be removed.
 :::
 
 :::code-group
 
 ```tsx [Browser]
-await client.removeAccount(identifier)
+await client.removeAccount(identifier);
 ```
 
 ```tsx [Node]
-await client.removeAccount(identifier)
+await client.removeAccount(identifier);
 ```
 
 ```jsx [React Native]
-await client.removeAccount(recoveryIdentity, identityToRemove)
+await client.removeAccount(recoveryIdentity, identityToRemove);
 ```
 
 ```kotlin [Kotlin]
@@ -482,7 +482,7 @@ The identity accesses that inbox ID and does not create a new inbox ID.
 For example, let's say that you create a client with an identity with address 0x62EE...309c. Inbox ID 1 is generated from that identity.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1.png" width="150px" alt="Simple diagram showing inbox ID 1 with one identity" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1.png" width="150px" alt="Simple diagram showing inbox ID 1 with one identity" />
 </div>
 
 If you then add an identity with address 0xd0e4...DCe8 to inbox ID 1, the identity is also associated with inbox ID 1.
@@ -492,19 +492,19 @@ If you then log into a new app installation with the identity with address 0xd0e
 Once the identity with address 0xd0e4...DCe8 has been associated with inbox ID 1, it can then be used to log into inbox ID 1 using a new app installation.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2.png" width="350px" alt="Diagram showing inbox ID 1 with two identities after adding a second identity" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2.png" width="350px" alt="Diagram showing inbox ID 1 with two identities after adding a second identity" />
 </div>
 
 The inverse is also true. Let's say an identity with address 0xd0e4...DCe8 was previously used to create and log into inbox ID 2.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-inbox2-id2.png" width="350px" alt="Diagram showing two separate inboxes, each with their own identity, before identity migration" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-inbox2-id2.png" width="350px" alt="Diagram showing two separate inboxes, each with their own identity, before identity migration" />
 </div>
 
 If the identity is then added as an associated identity to inbox ID 1, the identity will no longer be able to log into inbox ID 2.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2-inverse.png" width="350px" alt="Diagram showing the result after moving an identity from inbox 2 to inbox 1, leaving inbox 2 empty" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/inbox1-id1-id2-inverse.png" width="350px" alt="Diagram showing the result after moving an identity from inbox 2 to inbox 1, leaving inbox 2 empty" />
 </div>
 
 To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox ID 2 again, you can use the recovery identity for inbox ID 2 to add a different identity to inbox ID 2 and have the user use that identity access it.

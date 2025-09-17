@@ -54,6 +54,6 @@ await client.conversations.streamAllMessages(
   { consentState: ["allowed"] }
 );
 // Sync all new welcomes, preference updates, conversations,
-// and messages from allowed conversations 
+// and messages from allowed conversations
 await client.conversations.syncAllConversations(["allowed"]);
 ```

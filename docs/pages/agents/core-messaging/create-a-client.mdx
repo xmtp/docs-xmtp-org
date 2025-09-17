@@ -6,16 +6,7 @@ Create an XMTP client that can use the signing capabilities provided by the [sig
 
 This video provides a walkthrough of creating and building a client.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
 ### How it works
 
@@ -71,7 +62,9 @@ import { Client, type Signer } from "@xmtp/node-sdk";
 import { getRandomValues } from "node:crypto";
 
 // create a signer
-const signer: Signer = { /* ... */ };
+const signer: Signer = {
+  /* ... */
+};
 
 /**
  * The database encryption key is optional but strongly recommended for
@@ -89,7 +82,7 @@ const client = await Client.create(
     dbEncryptionKey,
     // Optional: Use a function to dynamically set the database path based on inbox ID
     // dbPath: (inboxId) => `./agent-databases/xmtp-${inboxId}.db3`,
-  },
+  }
 );
 ```
 
@@ -113,11 +106,11 @@ type ClientOptions = {
    * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
    * For example, `appVersion: 'alix/2.x'`
    *
-   * If you have an agent and an app, it's best to distinguish them from each other by 
+   * If you have an agent and an app, it's best to distinguish them from each other by
    * adding `-agent` and `-app` to the names. For example:
    * - Agent: `appVersion: 'alix-agent/2.x'`
    * - App: `appVersion: 'alix-app/3.x'`
-   * 
+   *
    * Setting this value provides telemetry that shows which agents are using the
    * XMTP client SDK. This information can help XMTP core developers provide you with agent
    * support, especially around communicating important SDK updates, including

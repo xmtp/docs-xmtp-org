@@ -70,9 +70,7 @@ An `inboxId` differs from an address. An `inboxId` is a user identifier, while a
 :::
 
 ```tsx [Node]
-const inboxState = await client.preferences.inboxStateFromInboxIds([
-  message.senderInboxId,
-]);
+const inboxState = await client.preferences.inboxStateFromInboxIds([message.senderInboxId]);
 const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 ```
 

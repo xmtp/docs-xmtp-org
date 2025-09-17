@@ -11,7 +11,7 @@ import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
 
 const identifiers: Identifier[] = [
   { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
-  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum },
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -23,10 +23,7 @@ const response = await Client.canMessage(identifiers);
 Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
 
 ```js [Node]
-const group = await client.conversations.newGroup(
-  [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
-);
+const group = await client.conversations.newGroup([bo.inboxId, caro.inboxId], createGroupOptions /* optional */);
 ```
 
 ## Create a new DM
@@ -43,9 +40,7 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById = await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);

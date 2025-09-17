@@ -48,8 +48,7 @@ const signer: Signer = {
 // Example EOA Signer
 export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
   return {
-    getIdentifier: async () =>
-      new PublicIdentity(eoaAccount.address, "ETHEREUM"),
+    getIdentifier: async () => new PublicIdentity(eoaAccount.address, "ETHEREUM"),
     getChainId: () => undefined, // Provide a chain ID if available or return undefined
     getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
     signerType: () => "EOA", // "EOA" indicates an externally owned account
@@ -104,14 +103,14 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 Here is a list of supported chain IDs:
 
-- chain_rpc_1     = string
-- chain_rpc_8453  = string
+- chain_rpc_1 = string
+- chain_rpc_8453 = string
 - chain_rpc_42161 = string
-- chain_rpc_10    = string
-- chain_rpc_137   = string
-- chain_rpc_324   = string
+- chain_rpc_10 = string
+- chain_rpc_137 = string
+- chain_rpc_324 = string
 - chain_rpc_59144 = string
-- chain_rpc_480   = string
+- chain_rpc_480 = string
 
 Need support for a different chain ID? Please post your request to the [XMTP Community Forums](https://community.xmtp.org/c/general/ideas/54).
 
@@ -181,8 +180,7 @@ const signer: Signer = {
 // Example SCW Signer
 export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
   return {
-    getIdentifier: async () =>
-      new PublicIdentity(scwAccount.address, "ETHEREUM"),
+    getIdentifier: async () => new PublicIdentity(scwAccount.address, "ETHEREUM"),
     getChainId: () => 8453, // https://chainlist.org/
     getBlockNumber: () => undefined, // Optional: will be computed at runtime
     signerType: () => "SCW", // "SCW" indicates smart contract wallet account

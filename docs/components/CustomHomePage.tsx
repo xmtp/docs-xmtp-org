@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router";
+import React from 'react';
+import { Link } from 'react-router';
 
 const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="custom-homepage">{children}</div>
@@ -9,13 +9,14 @@ const Headline: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <h1 className="custom-homepage-headline">
       {React.Children.map(children, (child) => {
-        if (React.isValidElement(child) && child.type === "p") {
+        if (React.isValidElement(child) && child.type === 'p') {
           const childElement = child as React.ReactElement<{
             className?: string;
           }>;
           return React.cloneElement(childElement, {
-            className:
-              `custom-homepage-headline-text ${childElement.props.className || ""}`.trim(),
+            className: `custom-homepage-headline-text ${
+              childElement.props.className || ''
+            }`.trim(),
           });
         }
         return <span className="custom-homepage-headline-text">{child}</span>;
@@ -28,13 +29,14 @@ const Subhead: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="custom-homepage-subhead">
       {React.Children.map(children, (child) => {
-        if (React.isValidElement(child) && child.type === "p") {
+        if (React.isValidElement(child) && child.type === 'p') {
           const childElement = child as React.ReactElement<{
             className?: string;
           }>;
           return React.cloneElement(childElement, {
-            className:
-              `custom-homepage-subhead-text ${childElement.props.className || ""}`.trim(),
+            className: `custom-homepage-subhead-text ${
+              childElement.props.className || ''
+            }`.trim(),
           });
         }
         return <span className="custom-homepage-subhead-text">{child}</span>;
@@ -93,11 +95,7 @@ const Tile: React.FC<TileProps> = ({
     </>
   );
 
-  return (
-    <div className="custom-homepage-tile">
-      {content}
-    </div>
-  );
+  return <div className="custom-homepage-tile">{content}</div>;
 };
 
 interface SDKTileProps {
@@ -121,7 +119,7 @@ const SDKTile: React.FC<SDKTileProps> = ({
 }) => {
   if (!src && !(lightSrc && darkSrc)) {
     console.warn(
-      "SDKTile requires either `src` or both `lightSrc` and `darkSrc`.",
+      'SDKTile requires either `src` or both `lightSrc` and `darkSrc`.'
     );
     return null;
   }
@@ -153,7 +151,10 @@ const SectionTitle: React.FC<{ children: React.ReactNode; id?: string }> = ({
   children,
   id,
 }) => (
-  <h2 className="custom-homepage-tile-title custom-homepage-section-title" id={id}>
+  <h2
+    className="custom-homepage-tile-title custom-homepage-section-title"
+    id={id}
+  >
     {children}
   </h2>
 );

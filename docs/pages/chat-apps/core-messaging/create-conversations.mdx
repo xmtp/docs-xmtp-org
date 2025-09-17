@@ -13,7 +13,7 @@ import { Client, type Identifier } from "@xmtp/browser-sdk";
 
 const identifiers: Identifier[] = [
   { identifier: "0xboAddress", identifierKind: "Ethereum" },
-  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+  { identifier: "0xcaroAddress", identifierKind: "Ethereum" },
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -25,7 +25,7 @@ import { Client, IdentifierKind, type Identifier } from "@xmtp/node-sdk";
 
 const identifiers: Identifier[] = [
   { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
-  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum },
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -89,17 +89,11 @@ If you want to provide faster and offline group creation, consider using [optimi
 :::code-group
 
 ```js [Browser]
-const group = await client.conversations.newGroup(
-  [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
-);
+const group = await client.conversations.newGroup([bo.inboxId, caro.inboxId], createGroupOptions /* optional */);
 ```
 
 ```js [Node]
-const group = await client.conversations.newGroup(
-  [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
-);
+const group = await client.conversations.newGroup([bo.inboxId, caro.inboxId], createGroupOptions /* optional */);
 ```
 
 ```tsx [React Native]
@@ -268,9 +262,7 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Browser]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById = await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);
@@ -281,9 +273,7 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById = await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);

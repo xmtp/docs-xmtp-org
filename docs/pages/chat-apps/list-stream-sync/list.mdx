@@ -32,17 +32,15 @@ await alix.conversations.list(["allowed"]);
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
-await alix.conversations.list(
-  {
-    members: false,
-    consentState: false,
-    description: false,
-    creatorInboxId: false,
-    addedByInboxId: false,
-    isActive: false,
-    lastMessage: true,
-  },
-);
+await alix.conversations.list({
+  members: false,
+  consentState: false,
+  description: false,
+  creatorInboxId: false,
+  addedByInboxId: false,
+  isActive: false,
+  lastMessage: true,
+});
 ```
 
 ```kotlin [Kotlin]

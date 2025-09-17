@@ -28,8 +28,7 @@ const urls = [`http://xmtp.chat/dm/${clientsByAddress}`];
 
 const conversations = await client.conversations.list();
 const inboxState = await client.preferences.inboxState();
-const keyPackageStatuses =
-  await client.getKeyPackageStatusesForInstallationIds([installationId]);
+const keyPackageStatuses = await client.getKeyPackageStatusesForInstallationIds([installationId]);
 
 let createdDate = new Date();
 let expiryDate = new Date();

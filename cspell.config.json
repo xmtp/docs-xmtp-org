@@ -1,15 +1,9 @@
 {
   "version": "0.2",
   "language": "en",
-  "files": [
-    "docs/pages/**/*.md",
-    "docs/pages/**/*.mdx"
-  ],
+  "files": ["docs/pages/**/*.md", "docs/pages/**/*.mdx"],
   "dictionaries": ["en_US"],
-  "ignorePaths": [
-    "node_modules",
-    "**/public/**"
-  ],
+  "ignorePaths": ["node_modules", "**/public/**"],
   "overrides": [
     {
       "filename": "*.mdx",
@@ -89,4 +83,4 @@
     "YOURFCMJSON",
     "YOURFCMPROJECTID"
   ]
-} 
+}

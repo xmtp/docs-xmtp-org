@@ -22,15 +22,10 @@ Check the current consent state of a specific conversation:
 import { ConsentEntityType } from "@xmtp/browser-sdk";
 
 // get consent state from the client
-const conversationConsentState = await client.getConsentState(
-  ConsentEntityType.GroupId,
-  groupId
-);
+const conversationConsentState = await client.getConsentState(ConsentEntityType.GroupId, groupId);
 
 // or get consent state directly from a conversation
-const groupConversation = await client.conversations.findConversationById(
-  groupId
-);
+const groupConversation = await client.conversations.findConversationById(groupId);
 const groupConversationConsentState = await groupConversation.consentState();
 ```
 
@@ -38,15 +33,10 @@ const groupConversationConsentState = await groupConversation.consentState();
 import { ConsentEntityType } from "@xmtp/node-sdk";
 
 // get consent state from the client
-const conversationConsentState = await client.getConsentState(
-  ConsentEntityType.GroupId,
-  groupId
-);
+const conversationConsentState = await client.getConsentState(ConsentEntityType.GroupId, groupId);
 
 // or get consent state directly from a conversation
-const groupConversation = await client.conversations.findConversationById(
-  groupId
-);
+const groupConversation = await client.conversations.findConversationById(groupId);
 const groupConversationConsentState = await groupConversation.consentState();
 ```
 
@@ -83,9 +73,7 @@ await client.setConsentStates([
 ]);
 
 // set consent state directly on a conversation
-const groupConversation = await client.conversations.findConversationById(
-  groupId
-);
+const groupConversation = await client.conversations.findConversationById(groupId);
 await groupConversation.updateConsentState(ConsentState.Allowed);
 ```
 
@@ -102,9 +90,7 @@ await client.setConsentStates([
 ]);
 
 // set consent state directly on a conversation
-const groupConversation = await client.conversations.findConversationById(
-  groupId
-);
+const groupConversation = await client.conversations.findConversationById(groupId);
 await groupConversation.updateConsentState(ConsentState.Allowed);
 ```
 
@@ -141,7 +127,7 @@ const stream = await client.preferences.streamConsent({
   },
   onFail: () => {
     console.log("Consent stream failed");
-  }
+  },
 });
 
 // Or use for-await loop
@@ -164,7 +150,7 @@ const stream = await client.preferences.streamConsent({
   },
   onFail: () => {
     console.log("Consent stream failed");
-  }
+  },
 });
 
 // Or use for-await loop
@@ -175,7 +161,7 @@ for await (const updates of stream) {
 ```
 
 ```tsx [React Native]
-await client.preferences.streamConsent()
+await client.preferences.streamConsent();
 ```
 
 ```kotlin [Kotlin]
@@ -228,9 +214,7 @@ await client.setConsentStates([
 ```
 
 ```tsx [React Native]
-await client.preferences.setConsentState(
-  new ConsentRecord(inboxId, 'inbox_id', 'denied')
-)
+await client.preferences.setConsentState(new ConsentRecord(inboxId, "inbox_id", "denied"));
 ```
 
 ```kotlin [Kotlin]
@@ -249,7 +233,7 @@ client.preferences.setConsentState(
 try await client.preferences.setConsentState(
   entries: [
     ConsentRecord(
-      value: inboxID, 
+      value: inboxID,
       entryType: .inbox_id,
       consentType: .denied)
   ])
@@ -270,29 +254,21 @@ You may want to enable users to deny or allow a users on an individual basis. Yo
 ```js [Browser]
 import { ConsentEntityType } from "@xmtp/browser-sdk";
 
-const inboxConsentState = await client.getConsentState(
-  ConsentEntityType.InboxId,
-  inboxId
-);
+const inboxConsentState = await client.getConsentState(ConsentEntityType.InboxId, inboxId);
 ```
 
 ```js [Node]
 import { ConsentEntityType } from "@xmtp/node-sdk";
 
-const inboxConsentState = await client.getConsentState(
-  ConsentEntityType.InboxId,
-  inboxId
-);
+const inboxConsentState = await client.getConsentState(ConsentEntityType.InboxId, inboxId);
 ```
 
 ```tsx [React Native]
 // Get consent directly on the member
-const memberConsentStates = (await group.members()).map(
-  (member) => member.consentState()
-)
+const memberConsentStates = (await group.members()).map((member) => member.consentState());
 
 // Get consent from the inboxId
-const inboxConsentState = await client.preferences.inboxIdConsentState(inboxId)
+const inboxConsentState = await client.preferences.inboxIdConsentState(inboxId);
 ```
 
 ```kotlin [Kotlin]
@@ -318,8 +294,8 @@ let inboxConsentState = try await client.preferences.inboxIdState(inboxId: inbox
 Get the inbox ID of the individual who added you to a group or created the group to check the consent state for it:
 
 ```tsx [React Native]
-group.addedByInboxId
-await group.creatorInboxId()
+group.addedByInboxId;
+await group.creatorInboxId();
 ```
 
 ```kotlin [Kotlin]
@@ -370,7 +346,7 @@ val ethAddresses = identities
 You can then display appropriate messages on a **You might know** tab, for example.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" alt="Screenshot of a mobile chat app showing a 'You might know' tab with filtered conversation requests" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/you-might-know-tab.jpg" width="400" alt="Screenshot of a mobile chat app showing a 'You might know' tab with filtered conversation requests" />
 </div>
 
 ### Identify contacts the user might not know, including spammy or scammy requests
@@ -378,7 +354,7 @@ You can then display appropriate messages on a **You might know** tab, for examp
 To identify contacts the user might not know or not want to know, which might include spam, you can consciously decide to scan messages in an unencrypted state to find messages that might contain spammy or scammy content. You can also look for an absence of onchain interaction data between the addresses, which might indicate that there is no affinity between addresses. You can then filter the appropriate messages to display on a **Hidden requests** tab, for example.
 
 <div>
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" alt="Screenshot of a mobile chat app showing a 'Hidden requests' tab with filtered messages from unknown contacts or potentially spammy content" />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/hidden-requests-tab.jpg" width="400" alt="Screenshot of a mobile chat app showing a 'Hidden requests' tab with filtered messages from unknown contacts or potentially spammy content" />
 </div>
 
 The decision to scan unencrypted messages is yours as the app developer. If you take this approach:

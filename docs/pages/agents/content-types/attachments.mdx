@@ -27,10 +27,7 @@ pnpm add @xmtp/content-type-remote-attachment
 After importing the package, you can register the codec.
 
 ```jsx [Node]
-import {
-  AttachmentCodec,
-  RemoteAttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
+import { AttachmentCodec, RemoteAttachmentCodec } from "@xmtp/content-type-remote-attachment";
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
   env: "dev",
@@ -71,10 +68,7 @@ const attachment = {
 Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 
 ```tsx [Node]
-const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
-  attachment,
-  new AttachmentCodec()
-);
+const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(attachment, new AttachmentCodec());
 ```
 
 Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.

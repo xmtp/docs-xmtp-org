@@ -11,7 +11,7 @@ You can contribute by submitting:
 - A [bug report](https://github.com/xmtp/docs-xmtp-org/issues/new?assignees=jhaaaa&labels=bug%2C+documentation&projects=&template=bug_report.md&title=)
 - A [feature request](https://github.com/xmtp/docs-xmtp-org/issues/new?assignees=jhaaaa&labels=documentation%2C+enhancement&projects=&template=feature_request.md&title=)
 - A [pull request](https://github.com/xmtp/docs-xmtp-org/pulls)
-  
+
 If you submit a pull request (PR), include a link to the bug report or feature request your PR addresses. If a documentation issue doesn't exist, please [open one](https://github.com/xmtp/docs-xmtp-org/issues) before you start contributing.
 
 Have a question about contributing? Post to the [XMTP Community Forums](https://community.xmtp.org/).

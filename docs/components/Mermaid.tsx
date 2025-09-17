@@ -24,7 +24,9 @@ export default function Mermaid({ chart, id = 'mermaid-graph' }: MermaidProps) {
       } catch (error) {
         console.error('Mermaid render error:', error);
         if (container.current) {
-          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
+          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(
+            error
+          )}</pre>`;
         }
       }
     };

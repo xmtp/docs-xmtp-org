@@ -37,7 +37,7 @@ jobs:
           title: Update llms-full.txt
           body: |
             This PR updates the llms-full.txt file with the latest documentation.
-            
+
             Automated PR created by GitHub Actions.
           branch: update-llms-full
           base: main

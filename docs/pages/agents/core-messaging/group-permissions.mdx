@@ -60,14 +60,14 @@ The app's developer can provide a UI that enables group participants to make fur
 
 You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
 
-| Permission | Allow all | Deny all  | Admin only | Super admin only |
-| --- | --- | --- | --- | --- |
-| Add member | ✅ | ✅ | ✅ | ✅ |
-| Remove member | ✅ | ✅ | ✅ | ✅ |
-| Add admin | ❌ | ✅ | ✅ | ✅ |
-| Remove admin | ❌ | ✅ | ✅ | ✅ |
-| Update group permissions | ❌ | ❌ | ❌ | ✅ |
-| Update group metadata | ✅ | ✅ | ✅ | ✅ |
+| Permission               | Allow all | Deny all | Admin only | Super admin only |
+| ------------------------ | --------- | -------- | ---------- | ---------------- |
+| Add member               | ✅        | ✅       | ✅         | ✅               |
+| Remove member            | ✅        | ✅       | ✅         | ✅               |
+| Add admin                | ❌        | ✅       | ✅         | ✅               |
+| Remove admin             | ❌        | ✅       | ✅         | ✅               |
+| Update group permissions | ❌        | ❌       | ❌         | ✅               |
+| Update group metadata    | ✅        | ✅       | ✅         | ✅               |
 
 If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
 
@@ -162,9 +162,7 @@ await group.sync();
 const members = group.members;
 
 // map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
+const inboxIdIdentityMap = new Map(members.map((member) => [member.inboxId, member.accountIdentity]));
 ```
 
 ### Get the inbox ID that added the current member
