@@ -1,2 +1,4 @@
 # Contains CSS-in-JS template literals that break vocs when formatted
 docs/pages/chat-apps/intro/get-started.mdx
+# Contains "/xmtp/mls/1/w-$installationId/proto" which Prettier breaks in multiple lines
+docs/pages/chat-apps/push-notifs/push-notifs.mdx
