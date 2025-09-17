@@ -17,7 +17,7 @@ const signature = client.signWithInstallationKey(signatureText);
 ```
 
 ```jsx [React Native]
-const signature = await client.signWithInstallationKey(signatureText)
+const signature = await client.signWithInstallationKey(signatureText);
 ```
 
 ```kotlin [Kotlin]
@@ -32,16 +32,19 @@ let signature = try client.signWithInstallationKey(message: signatureText)
 
 ## Verify with the same installation that signed
 
- You can also sign with XMTP keys and verify that a payload was sent by the same client.
+You can also sign with XMTP keys and verify that a payload was sent by the same client.
 
 :::code-group
 
 ```js [Node]
-const isValidSignature = client.verifySignedWithInstallationKey(signatureText, signature);
+const isValidSignature = client.verifySignedWithInstallationKey(
+  signatureText,
+  signature
+);
 ```
 
 ```jsx [React Native]
-const isVerified = await client.verifySignature(signatureText, signature)
+const isVerified = await client.verifySignature(signatureText, signature);
 ```
 
 ```kotlin [Kotlin]
@@ -50,7 +53,7 @@ val isVerified = client.verifySignature(signatureText, signature)
 
 ```swift [Swift]
 let isVerified = try client.verifySignature(
-            message: signatureText, 
+            message: signatureText,
             signature: signature
         )
 
@@ -65,13 +68,17 @@ You can use an XMTP key's `installationId` to create a signature, then pass both
 :::code-group
 
 ```js [Node]
-const isValidSignature = client.verifySignedWithPrivateKey(signatureText, signature, installationId);
+const isValidSignature = client.verifySignedWithPrivateKey(
+  signatureText,
+  signature,
+  installationId
+);
 ```
 
 ```kotlin [Kotlin]
 val isVerified = client.verifySignatureWithInstallationId(
-            signatureText, 
-            signature, 
+            signatureText,
+            signature,
             installationId
       )
 ```
