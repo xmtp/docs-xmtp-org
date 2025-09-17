@@ -8,21 +8,21 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 const stream = await client.conversations.stream({
   onValue: (conversation) => {
     // Received a conversation
-    console.log("New conversation:", conversation);
+    console.log('New conversation:', conversation);
   },
   onError: (error) => {
     // Log any stream errors
     console.error(error);
   },
   onFail: () => {
-    console.log("Stream failed");
+    console.log('Stream failed');
   },
 });
 
 // Or use for-await loop
 for await (const conversation of stream) {
   // Received a conversation
-  console.log("New conversation:", conversation);
+  console.log('New conversation:', conversation);
 }
 ```
 
@@ -43,35 +43,35 @@ The stream is infinite. Therefore, any looping construct used with the stream wo
 const stream = await client.conversations.streamAllMessages({
   onValue: (message) => {
     // Received a message
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
   onError: (error) => {
     // Log any stream errors
     console.error(error);
   },
   onFail: () => {
-    console.log("Stream failed");
+    console.log('Stream failed');
   },
 });
 
 // stream only group messages
 const groupMessageStream = await client.conversations.streamAllGroupMessages({
   onValue: (message) => {
-    console.log("New group message:", message);
+    console.log('New group message:', message);
   },
 });
 
 // stream only dm messages
 const dmMessageStream = await client.conversations.streamAllDmMessages({
   onValue: (message) => {
-    console.log("New DM message:", message);
+    console.log('New DM message:', message);
   },
 });
 
 // Or use for-await loop
 for await (const message of stream) {
   // Received a message
-  console.log("New message:", message);
+  console.log('New message:', message);
 }
 ```
 
@@ -87,7 +87,7 @@ Streams will automatically attempt to reconnect if they fail. By default, a stre
 const stream = await client.conversations.streamAllMessages({
   retryOnFail: false,
   onValue: (message) => {
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
 });
 
@@ -96,16 +96,16 @@ const stream = await client.conversations.streamAllMessages({
   retryAttempts: 10,
   retryDelay: 20000, // 20 seconds
   onValue: (message) => {
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
   onError: (error) => {
-    console.error("Stream error:", error);
+    console.error('Stream error:', error);
   },
   onFail: () => {
-    console.log("Stream failed after retries");
+    console.log('Stream failed after retries');
   },
   onRestart: () => {
-    console.log("Stream restarted");
+    console.log('Stream restarted');
   },
   onRetry: (attempt, maxAttempts) => {
     console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);

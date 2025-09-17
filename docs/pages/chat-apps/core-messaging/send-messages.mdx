@@ -6,28 +6,31 @@ Once you have the group chat or DM conversation, you can send messages in the co
 
 ```tsx [Browser]
 // For a DM conversation
-await dm.send("Hello world");
+await dm.send('Hello world');
 
 // OR for a group chat
-await group.send("Hello everyone");
+await group.send('Hello everyone');
 ```
 
 ```tsx [Node]
 // For a DM conversation
-await dm.send("Hello world");
+await dm.send('Hello world');
 
 // OR for a group chat
-await group.send("Hello everyone");
+await group.send('Hello everyone');
 ```
 
 ```tsx [React Native]
 // For a DM conversation
 const dm = await client.conversations.findOrCreateDm(recipientInboxId);
-await dm.send("Hello world");
+await dm.send('Hello world');
 
 // OR for a group chat
-const group = await client.conversations.newGroup([recipientInboxId1, recipientInboxId2]);
-await group.send("Hello everyone");
+const group = await client.conversations.newGroup([
+  recipientInboxId1,
+  recipientInboxId2,
+]);
+await group.send('Hello everyone');
 ```
 
 ```kotlin [Kotlin]
@@ -87,33 +90,43 @@ Send the message to the local database. This ensures that the message will be th
 
 ```tsx [Browser]
 // Optimistically send the message to the local database
-conversation.sendOptimistic("Hello world");
+conversation.sendOptimistic('Hello world');
 
 // For custom content types, specify the content type
-const customContent = { foo: "bar" };
-const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+const customContent = { foo: 'bar' };
+const contentType = {
+  authorityId: 'example',
+  typeId: 'test',
+  versionMajor: 1,
+  versionMinor: 0,
+};
 conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [Node]
 // Optimistically send the message to the local database
-conversation.sendOptimistic("Hello world");
+conversation.sendOptimistic('Hello world');
 
 // For custom content types, specify the content type
-const customContent = { foo: "bar" };
-const contentType = { authorityId: "example", typeId: "test", versionMajor: 1, versionMinor: 0 };
+const customContent = { foo: 'bar' };
+const contentType = {
+  authorityId: 'example',
+  typeId: 'test',
+  versionMajor: 1,
+  versionMinor: 0,
+};
 conversation.sendOptimistic(customContent, contentType);
 ```
 
 ```tsx [React Native]
 // Optimistically send the message to the local database
-await conversation.prepareMessage("Hello world");
+await conversation.prepareMessage('Hello world');
 
 // For custom content types, specify the content type
-const customContent = { foo: "bar" };
+const customContent = { foo: 'bar' };
 const contentType = new ContentTypeId({
-  authorityId: "example",
-  typeId: "test",
+  authorityId: 'example',
+  typeId: 'test',
   versionMajor: 1,
   versionMinor: 0,
 });
@@ -170,7 +183,7 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
     await conversation.publishMessages();
     return true;
   } catch (error) {
-    console.error("Failed to send message:", error);
+    console.error('Failed to send message:', error);
     return false;
   }
 }
@@ -188,7 +201,7 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
     await conversation.publishMessages();
     return true;
   } catch (error) {
-    console.error("Failed to send message:", error);
+    console.error('Failed to send message:', error);
     return false;
   }
 }
@@ -197,7 +210,10 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 ```tsx [React Native]
 // Publish all pending optimistically sent messages to the network
 // Call this only after using prepareMessage to send a message locally
-async function sendMessageWithOptimisticUI(conversation: Conversation, messageText: string): Promise<boolean> {
+async function sendMessageWithOptimisticUI(
+  conversation: Conversation,
+  messageText: string
+): Promise<boolean> {
   try {
     // Add message to UI immediately
     await conversation.prepareMessage(messageText);
@@ -206,7 +222,7 @@ async function sendMessageWithOptimisticUI(conversation: Conversation, messageTe
     await conversation.publishMessages();
     return true;
   } catch (error) {
-    console.error("Failed to send message:", error);
+    console.error('Failed to send message:', error);
     return false;
   }
 }
@@ -473,7 +489,10 @@ For example:
 
 ```tsx [Browser]
 // Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(1738620126404999936n, 1800000000000000n);
+await conversation.updateMessageDisappearingSettings(
+  1738620126404999936n,
+  1800000000000000n
+);
 
 // Clear disappearing message settings
 await conversation.removeMessageDisappearingSettings();
@@ -481,7 +500,10 @@ await conversation.removeMessageDisappearingSettings();
 
 ```tsx [Node]
 // Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(1738620126404999936, 1800000000000000);
+await conversation.updateMessageDisappearingSettings(
+  1738620126404999936,
+  1800000000000000
+);
 
 // Clear disappearing message settings
 await conversation.removeMessageDisappearingSettings();

@@ -13,7 +13,11 @@ Each XMTP node contains:
 - A **group messages database**: Keeps a ledger of all messages in the groups an inbox ID is a part of.
 
 <div>
-  <img alt="databases in each xmtpd node" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/xmtpd-dbs.png" width="300px" />
+  <img
+    alt="databases in each xmtpd node"
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/xmtpd-dbs.png"
+    width="300px"
+  />
 </div>
 
 In the welcomes database, the groups are of these types:
@@ -37,7 +41,11 @@ One-to-one chat, group chat, and preferences groups in the welcome database are 
   - `syncAll`
 
 <div>
-  <img alt="groups in the welcome database" src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/welcomes-db-3.png" width="500px" />
+  <img
+    alt="groups in the welcome database"
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/welcomes-db-3.png"
+    width="500px"
+  />
 </div>
 
 ## Preferences group
@@ -49,19 +57,31 @@ To describe preference sync, let's first focus on how the preferences group work
 2. Let's say Inbox ID Alix has an Installation A of App A on their phone. At this time, Inbox ID Alix has a preferences group that looks like this:
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-1.png" width="300px" alt="Diagram showing preferences group with one member (Inbox ID Alix) and Installation A of App A" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-1.png"
+       width="300px"
+       alt="Diagram showing preferences group with one member (Inbox ID Alix) and Installation A of App A"
+     />
    </div>
 
 3. Inbox ID Alix then logs in to an Installation B of App B on their phone. The next time Installation A runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-2.png" width="300px" alt="Diagram showing preferences group updated to include Installation B of App B after Alix logs in to a second app" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-2.png"
+       width="300px"
+       alt="Diagram showing preferences group updated to include Installation B of App B after Alix logs in to a second app"
+     />
    </div>
 
 4. Then let's say Inbox ID Alix logs in to an Installation C of App A on their tablet. The next time Installation A or B runs `preferences.sync` or `syncAll`, it updates the preferences group as follows:
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png" width="300px" alt="Diagram showing preferences group updated to include Installation C of App A on tablet after Alix logs in to a third installation" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pg-3.png"
+       width="300px"
+       alt="Diagram showing preferences group updated to include Installation C of App A on tablet after Alix logs in to a third installation"
+     />
    </div>
 
 ## Preferences sync worker
@@ -71,25 +91,41 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 1. Let's say Inbox ID Alix uses Installation A to block Inbox ID Bo.
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/a-block-bo.png" width="200px" alt="Diagram showing Installation A blocking Inbox ID Bo" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/a-block-bo.png"
+       width="200px"
+       alt="Diagram showing Installation A blocking Inbox ID Bo"
+     />
    </div>
 
 2. This sends a message to the preferences group in the group message database. This is not an actual chat message, but a serialized proto message that is not shown to app users.
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png" width="300px" alt="Diagram showing serialized proto message sent to preferences group in the group message database" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/gm-pg.png"
+       width="300px"
+       alt="Diagram showing serialized proto message sent to preferences group in the group message database"
+     />
    </div>
 
 3. When Installation B calls `preferences.sync` or `syncAll`, it gets the message from the preferences group. The sync worker listens for these preferences group messages and processes the message to block Inbox ID Bo in Installation B.
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png" width="200px" alt="Diagram showing Installation B processing the sync message to block Inbox ID Bo" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/b-block-bo.png"
+       width="200px"
+       alt="Diagram showing Installation B processing the sync message to block Inbox ID Bo"
+     />
    </div>
 
 4. Likewise, when Installation C calls `preferences.sync` or `syncAll`, it gets the message from the preferences group, and the sync worker ensures Inbox ID Bo is blocked there as well.
 
    <div>
-     <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png" width="200px" alt="Diagram showing Installation C processing the sync message to block Inbox ID Bo" />
+     <img
+       src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/c-block-bo.png"
+       width="200px"
+       alt="Diagram showing Installation C processing the sync message to block Inbox ID Bo"
+     />
    </div>
 
 Preferences sync handles HMAC keys in the same way.

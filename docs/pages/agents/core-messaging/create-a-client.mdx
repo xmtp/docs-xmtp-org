@@ -6,7 +6,16 @@ Create an XMTP client that can use the signing capabilities provided by the [sig
 
 This video provides a walkthrough of creating and building a client.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
 
 ### How it works
 
@@ -58,8 +67,8 @@ If you want to inspect the database visually, you can use [DB Browser for SQLite
 To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
 
 ```tsx [Node]
-import { Client, type Signer } from "@xmtp/node-sdk";
-import { getRandomValues } from "node:crypto";
+import { Client, type Signer } from '@xmtp/node-sdk';
+import { getRandomValues } from 'node:crypto';
 
 // create a signer
 const signer: Signer = {
@@ -91,14 +100,14 @@ const client = await Client.create(
 You can configure an XMTP client with these options passed to `Client.create`:
 
 ```tsx [Node]
-import type { ContentCodec } from "@xmtp/content-type-primitives";
-import type { LogLevel } from "@xmtp/node-bindings";
+import type { ContentCodec } from '@xmtp/content-type-primitives';
+import type { LogLevel } from '@xmtp/node-bindings';
 
 type ClientOptions = {
   /**
    * Specify which XMTP environment to connect to. (default: `dev`)
    */
-  env?: "local" | "dev" | "production";
+  env?: 'local' | 'dev' | 'production';
   /**
    * Add a client app version identifier that's included with API requests.
    * Production apps are strongly encouraged to set this value.

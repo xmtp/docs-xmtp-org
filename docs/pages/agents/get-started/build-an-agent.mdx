@@ -12,7 +12,16 @@ Building with XMTP gives your agent access to:
 
 ### Quickstart video guide
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
 
 ### Agent examples
 
@@ -70,7 +79,9 @@ An `inboxId` differs from an address. An `inboxId` is a user identifier, while a
 :::
 
 ```tsx [Node]
-const inboxState = await client.preferences.inboxStateFromInboxIds([message.senderInboxId]);
+const inboxState = await client.preferences.inboxStateFromInboxIds([
+  message.senderInboxId,
+]);
 const addressFromInboxId = inboxState[0].identifiers[0].identifier;
 ```
 

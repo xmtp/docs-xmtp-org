@@ -37,7 +37,10 @@ You can also sign with XMTP keys and verify that a payload was sent by the same 
 :::code-group
 
 ```js [Node]
-const isValidSignature = client.verifySignedWithInstallationKey(signatureText, signature);
+const isValidSignature = client.verifySignedWithInstallationKey(
+  signatureText,
+  signature
+);
 ```
 
 ```jsx [React Native]
@@ -65,7 +68,11 @@ You can use an XMTP key's `installationId` to create a signature, then pass both
 :::code-group
 
 ```js [Node]
-const isValidSignature = client.verifySignedWithPrivateKey(signatureText, signature, installationId);
+const isValidSignature = client.verifySignedWithPrivateKey(
+  signatureText,
+  signature,
+  installationId
+);
 ```
 
 ```kotlin [Kotlin]

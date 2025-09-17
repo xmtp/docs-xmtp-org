@@ -1,5 +1,5 @@
 ---
-description: "We are pleased to license much of the documentation on this site under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit."
+description: 'We are pleased to license much of the documentation on this site under terms that explicitly encourage people to take, modify, reuse, re-purpose, and remix this content as they see fit.'
 ---
 
 # Terms of service

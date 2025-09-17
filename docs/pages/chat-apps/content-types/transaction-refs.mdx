@@ -37,10 +37,13 @@ After importing the package, you can register the codec.
 :::code-group
 
 ```js [Browser]
-import { ContentTypeTransactionReference, TransactionReferenceCodec } from "@xmtp/content-type-transaction-reference";
+import {
+  ContentTypeTransactionReference,
+  TransactionReferenceCodec,
+} from '@xmtp/content-type-transaction-reference';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new TransactionReferenceCodec()],
 });
 ```

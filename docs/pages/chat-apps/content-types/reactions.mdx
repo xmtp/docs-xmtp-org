@@ -37,17 +37,17 @@ After importing the package, you can register the codec.
 :::code-group
 
 ```jsx [Browser]
-import { ReactionCodec } from "@xmtp/content-type-reaction";
+import { ReactionCodec } from '@xmtp/content-type-reaction';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new ReactionCodec()],
 });
 ```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
-  env: "production",
+  env: 'production',
   codecs: [new ReactionCodec()],
 });
 ```
@@ -81,8 +81,8 @@ With XMTP, reactions are represented as objects with the following keys:
 ```tsx [Browser]
 const reaction = {
   reference: someMessageID,
-  action: "added",
-  content: "smile",
+  action: 'added',
+  content: 'smile',
 };
 
 await conversation.send(reaction, {
@@ -95,9 +95,9 @@ await conversation.send(reaction, {
 const reactionContent = {
   reaction: {
     reference: messageId, // ID of the message you're reacting to
-    action: "added", // Action can be 'added' or 'removed'
-    schema: "unicode", // Schema can be 'unicode', 'shortcode', or 'custom'
-    content: "👍", // Content of the reaction
+    action: 'added', // Action can be 'added' or 'removed'
+    schema: 'unicode', // Schema can be 'unicode', 'shortcode', or 'custom'
+    content: '👍', // Content of the reaction
   },
 };
 
@@ -154,7 +154,7 @@ if (message.contentType.sameAs(ContentTypeReaction)) {
 ```
 
 ```jsx [React Native]
-if (message.contentTypeId === "xmtp.org/reaction:1.0") {
+if (message.contentTypeId === 'xmtp.org/reaction:1.0') {
   const reaction = message.content();
   return reaction;
   //reaction.reference = id of the message being reacted to,

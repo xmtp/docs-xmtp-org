@@ -4,7 +4,7 @@ layout: landing
 showLogo: false
 ---
 
-import { CustomHomePage } from "../components/CustomHomePage";
+import { CustomHomePage } from '../components/CustomHomePage';
 
 <CustomHomePage.Root>
 
@@ -21,27 +21,51 @@ The largest and most secure decentralized messaging network
 </CustomHomePage.Subhead>
 
 <div className="custom-homepage-cta-container">
-  <a href="/agents/get-started/build-an-agent" className="custom-homepage-cta-button custom-homepage-cta-button--primary">
+  <a
+    href="/agents/get-started/build-an-agent"
+    className="custom-homepage-cta-button custom-homepage-cta-button--primary"
+  >
     Build an agent
   </a>
-  <a href="/chat-apps/intro/get-started" className="custom-homepage-cta-button custom-homepage-cta-button--secondary">
+  <a
+    href="/chat-apps/intro/get-started"
+    className="custom-homepage-cta-button custom-homepage-cta-button--secondary"
+  >
     Build a chat app
   </a>
 </div>
 
 <CustomHomePage.TileGrid>
 
-<CustomHomePage.Tile title="Quantum-resistant" description="Protection against 'harvest now, decrypt later' attacks through post-quantum cryptography" />
+<CustomHomePage.Tile
+  title="Quantum-resistant"
+  description="Protection against 'harvest now, decrypt later' attacks through post-quantum cryptography"
+/>
 
-<CustomHomePage.Tile title="End-to-end encrypted" description="Messages encrypted client-side and only recipients can decrypt them" />
+<CustomHomePage.Tile
+  title="End-to-end encrypted"
+  description="Messages encrypted client-side and only recipients can decrypt them"
+/>
 
-<CustomHomePage.Tile title="Decentralized" description="Messages are distributed across a censorship-resistant network of nodes" />
+<CustomHomePage.Tile
+  title="Decentralized"
+  description="Messages are distributed across a censorship-resistant network of nodes"
+/>
 
-<CustomHomePage.Tile title="Flexible identities" description="Use any public DiD, like @ensdomains or @bluesky, or just a single device-bound passkey" />
+<CustomHomePage.Tile
+  title="Flexible identities"
+  description="Use any public DiD, like @ensdomains or @bluesky, or just a single device-bound passkey"
+/>
 
-<CustomHomePage.Tile title="Built-in consent" description="Chats are spam-free spaces for a user's chosen contacts only" />
+<CustomHomePage.Tile
+  title="Built-in consent"
+  description="Chats are spam-free spaces for a user's chosen contacts only"
+/>
 
-<CustomHomePage.Tile title="Rich content types" description="Send text, attachments, reactions, read receipts, onchain transactions, and more" />
+<CustomHomePage.Tile
+  title="Rich content types"
+  description="Send text, attachments, reactions, read receipts, onchain transactions, and more"
+/>
 
 </CustomHomePage.TileGrid>
 
@@ -53,15 +77,45 @@ Start building today
 
 <CustomHomePage.SDKGrid>
 
-<CustomHomePage.SDKTile href="chat-apps/sdks/browser" lightSrc="/ts-logo-128.svg" darkSrc="/ts-logo-128.svg" alt="TypeScript" name="Browser SDK" />
+<CustomHomePage.SDKTile
+  href="chat-apps/sdks/browser"
+  lightSrc="/ts-logo-128.svg"
+  darkSrc="/ts-logo-128.svg"
+  alt="TypeScript"
+  name="Browser SDK"
+/>
 
-<CustomHomePage.SDKTile href="chat-apps/sdks/node" lightSrc="/nodejsStackedDark.svg" darkSrc="/nodejsStackedLight.svg" alt="Node.js" name="Node SDK" />
+<CustomHomePage.SDKTile
+  href="chat-apps/sdks/node"
+  lightSrc="/nodejsStackedDark.svg"
+  darkSrc="/nodejsStackedLight.svg"
+  alt="Node.js"
+  name="Node SDK"
+/>
 
-<CustomHomePage.SDKTile href="chat-apps/sdks/react-native" lightSrc="/rn-header_logo.svg" darkSrc="/rn-header_logo.svg" alt="React Native" name="React Native SDK" />
+<CustomHomePage.SDKTile
+  href="chat-apps/sdks/react-native"
+  lightSrc="/rn-header_logo.svg"
+  darkSrc="/rn-header_logo.svg"
+  alt="React Native"
+  name="React Native SDK"
+/>
 
-<CustomHomePage.SDKTile href="chat-apps/sdks/android" lightSrc="/Kotlin_Icon.svg" darkSrc="/Kotlin_Icon.svg" alt="Android/Kotlin" name="Android SDK" />
+<CustomHomePage.SDKTile
+  href="chat-apps/sdks/android"
+  lightSrc="/Kotlin_Icon.svg"
+  darkSrc="/Kotlin_Icon.svg"
+  alt="Android/Kotlin"
+  name="Android SDK"
+/>
 
-<CustomHomePage.SDKTile href="chat-apps/sdks/ios" lightSrc="/swift_logo_color.svg" darkSrc="/swift_logo_color.svg" alt="iOS/Swift" name="iOS SDK" />
+<CustomHomePage.SDKTile
+  href="chat-apps/sdks/ios"
+  lightSrc="/swift_logo_color.svg"
+  darkSrc="/swift_logo_color.svg"
+  alt="iOS/Swift"
+  name="iOS SDK"
+/>
 
 </CustomHomePage.SDKGrid>
 

@@ -31,10 +31,10 @@ pnpm add @xmtp/content-type-reaction
 After importing the package, you can register the codec.
 
 ```jsx [Node]
-import { ReactionCodec } from "@xmtp/content-type-reaction";
+import { ReactionCodec } from '@xmtp/content-type-reaction';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new ReactionCodec()],
 });
 ```
@@ -54,8 +54,8 @@ With XMTP, reactions are represented as objects with the following keys:
 ```tsx [Node]
 const reaction = {
   reference: someMessageID,
-  action: "added",
-  content: "smile",
+  action: 'added',
+  content: 'smile',
 };
 
 await conversation.send(reaction, {

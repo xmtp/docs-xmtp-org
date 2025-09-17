@@ -10,25 +10,27 @@ You can use this code to get your agent's client information, which provides use
 const clientsByAddress = client.accountIdentifier?.identifier;
 // Get XMTP SDK version from package.json
 const require = createRequire(import.meta.url);
-const packageJson = require("../package.json") as {
+const packageJson = require('../package.json') as {
   dependencies: Record<string, string>;
 };
-const xmtpSdkVersion = packageJson.dependencies["@xmtp/node-sdk"];
+const xmtpSdkVersion = packageJson.dependencies['@xmtp/node-sdk'];
 const bindingVersion = (
-  require("../node_modules/@xmtp/node-bindings/package.json") as {
+  require('../node_modules/@xmtp/node-bindings/package.json') as {
     version: string;
   }
 ).version;
 
 const inboxId = client.inboxId;
 const installationId = client.installationId;
-const environments = client.options?.env ?? "dev";
+const environments = client.options?.env ?? 'dev';
 
 const urls = [`http://xmtp.chat/dm/${clientsByAddress}`];
 
 const conversations = await client.conversations.list();
 const inboxState = await client.preferences.inboxState();
-const keyPackageStatuses = await client.getKeyPackageStatusesForInstallationIds([installationId]);
+const keyPackageStatuses = await client.getKeyPackageStatusesForInstallationIds(
+  [installationId]
+);
 
 let createdDate = new Date();
 let expiryDate = new Date();
@@ -52,5 +54,5 @@ console.log(`
   • Key Package created: ${createdDate.toLocaleString()}
   • Key Package valid until: ${expiryDate.toLocaleString()}
   • Networks: ${environments}
-  ${urls.map((url) => `• URL: ${url}`).join("\n")}`);
+  ${urls.map((url) => `• URL: ${url}`).join('\n')}`);
 ```

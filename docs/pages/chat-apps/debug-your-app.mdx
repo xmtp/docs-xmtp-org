@@ -32,23 +32,23 @@ The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork det
 // Get detailed debug information for a conversation
 const debugInfo = await conversation?.debugInfo();
 
-console.log("Epoch:", debugInfo.epoch);
-console.log("Cursor:", debugInfo.cursor);
-console.log("Fork Status:", debugInfo.isCommitLogForked); // true, false, or undefined
-console.log("Local Commit Log:", debugInfo.localCommitLog);
-console.log("Remote Commit Log:", debugInfo.remoteCommitLog);
-console.log("Fork Details:", debugInfo.forkDetails);
+console.log('Epoch:', debugInfo.epoch);
+console.log('Cursor:', debugInfo.cursor);
+console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
 ```
 
 ```typescript [React Native, Kotlin, Swift]
 // Get detailed debug information for a conversation
 const debugInfo = await conversation?.getDebugInformation();
 
-console.log("Epoch:", debugInfo.epoch);
-console.log("Fork Status:", debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
-console.log("Local Commit Log:", debugInfo.localCommitLog);
-console.log("Remote Commit Log:", debugInfo.remoteCommitLog);
-console.log("Fork Details:", debugInfo.forkDetails);
+console.log('Epoch:', debugInfo.epoch);
+console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
 ```
 
 :::
@@ -73,7 +73,7 @@ conversations.forEach((conversation) => {
 const conversations = await client.conversations.list();
 
 conversations.forEach((conversation) => {
-  if (conversation.commitLogForkStatus === "forked") {
+  if (conversation.commitLogForkStatus === 'forked') {
     console.log(`Conversation ${conversation.id} is forked`);
   }
 });
@@ -171,7 +171,9 @@ With the Browser and Node SDKs, you can upload an archive of collected network s
 const result1 = await client.debugInformation.uploadDebugArchive();
 
 // Upload to custom server (serverUrl provided)
-const result2 = await client.debugInformation.uploadDebugArchive("https://my-debug-server.com/api/upload");
+const result2 = await client.debugInformation.uploadDebugArchive(
+  'https://my-debug-server.com/api/upload'
+);
 ```
 
 ### Statistic descriptions

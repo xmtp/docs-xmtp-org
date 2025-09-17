@@ -27,10 +27,13 @@ pnpm add @xmtp/content-type-remote-attachment
 After importing the package, you can register the codec.
 
 ```jsx [Node]
-import { AttachmentCodec, RemoteAttachmentCodec } from "@xmtp/content-type-remote-attachment";
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
 });
 ```
@@ -47,7 +50,7 @@ const data = await new Promise((resolve, reject) => {
     if (reader.result instanceof ArrayBuffer) {
       resolve(reader.result);
     } else {
-      reject(new Error("Not an ArrayBuffer"));
+      reject(new Error('Not an ArrayBuffer'));
     }
   };
   reader.readAsArrayBuffer(image);
@@ -68,7 +71,10 @@ const attachment = {
 Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 
 ```tsx [Node]
-const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(attachment, new AttachmentCodec());
+const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
+  attachment,
+  new AttachmentCodec()
+);
 ```
 
 Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
@@ -82,7 +88,7 @@ const remoteAttachment = {
   salt: encryptedEncoded.salt,
   nonce: encryptedEncoded.nonce,
   secret: encryptedEncoded.secret,
-  scheme: "https://",
+  scheme: 'https://',
   filename: attachment.filename,
   contentLength: attachment.data.byteLength,
 };
@@ -101,7 +107,7 @@ await conversation.send(remoteAttachment, {
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```tsx [Node]
-import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
 
 if (message.contentType.sameAs(RemoteAttachmentContentType)) {
   const attachment = await RemoteAttachmentCodec.load(message.content, client);
@@ -125,7 +131,7 @@ const objectURL = URL.createObjectURL(
   })
 );
 
-const img = document.createElement("img");
+const img = document.createElement('img');
 img.src = objectURL;
 img.title = attachment.filename;
 ```

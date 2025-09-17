@@ -1,35 +1,15 @@
-# Build outputs
-docs/dist/
-node_modules/
+# Dependencies
+node_modules/                  # NPM dependencies - should not be formatted
 
-# Generated files
-*.generated.*
-*.min.js
-*.min.css
+# Package manager lock files
+package-lock.json              # NPM lock file - auto-generated, shouldn't be formatted
 
-# Package files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# Log files
+*.log                          # All log files - typically auto-generated
 
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Cache
-.cache/
-.next/
-.nuxt/
-
-# Config files that might be auto-generated
-.env*
+# Build output
+docs/dist                       # Vocs build output directory - generated files
 
 # Files with complex CSS-in-JS that break markdown parsing
+# Contains CSS-in-JS template literals that break vocs when formatted
 docs/pages/chat-apps/intro/get-started.mdx
