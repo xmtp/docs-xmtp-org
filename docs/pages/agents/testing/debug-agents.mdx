@@ -4,6 +4,30 @@ You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat),
 
 Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
 
+
+## Run a local XMTP network
+
+`dev` and `production` networks are hosted by XMTP, while you can run your own `local` network.
+
+1. Install Docker
+
+2. Start the XMTP service and database
+
+   ```bash
+   ./dev/up
+   ```
+
+3. Change the `.env` file to use the `local` network
+
+   ```bash
+   XMTP_ENV = local
+   ```
+
+4. Try out the example agents using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+   ![](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/examples/xmtp-gm/screenshot.png)
+
+
 ## Enable Debug Logging
 
 To activate detailed debugging logs, set the `XMTP_FORCE_DEBUG` environment variable in your `.env` file:

@@ -125,10 +125,28 @@ Absolutely! We welcome contributions to improve XMTP agent integrations:
 - **Documentation**: Submit improvements to agent documentation and examples
 - **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
 
+## Identity & Profile Management
+
+### How do I create separate XMTP inboxes for multiple Lens profiles owned by the same address?
+
+Each Lens profile needs its own XMTP identity to have a separate inbox. XMTP doesn't support linking multiple identities to a single owner address.
+
+**The challenge:**
+- One wallet address can own multiple Lens profiles
+- XMTP identity creation uses the profile owner's address
+- You want each Lens profile to have its own unique inbox
+
+**The solution:**
+- Each Lens profile must have its own XMTP identity
+- This means each profile needs its own private key/wallet
+- You cannot have multiple XMTP identities linked to one owner address
+
+**Example use case:**
+If you have 3 Lens profiles on one address and want separate inboxes for each, you'll need 3 different XMTP identities (each with their own private key), not 3 profiles sharing one XMTP identity.
+
 ## Security
 
 ### Has XMTP been audited?
 
-Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024.
+Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024. See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)
 
-See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)

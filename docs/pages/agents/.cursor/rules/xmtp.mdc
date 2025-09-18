@@ -39,7 +39,9 @@ agent.on("text", async (ctx) => {
 
 // 4. Log when we're ready
 agent.on("start", () => {
-  console.log(`We are online: ${getTestUrl(agent)}`);
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${csx.client.accountIdentifier?.identifier}`);
+  console.log(`🔗${getTestUrl(csx)}`);
 });
 
 await agent.start();
@@ -314,9 +316,9 @@ agent.on("dm", (ctx) => {
 });
 
 agent.on("start", () => {
-  console.log(`Multiplication Agent is running...`);
-  console.log(`Address: ${agent.client.accountIdentifier?.identifier}`);
-  console.log(`🔗${getTestUrl(agent)}`);
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${csx.client.accountIdentifier?.identifier}`);
+  console.log(`🔗${getTestUrl(csx)}`);
   console.log(`Send a number to multiply!`);
 });
 

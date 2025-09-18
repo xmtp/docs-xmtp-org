@@ -5,11 +5,11 @@ export const agentsSidebarConfig = [
     collapsed: false,
     items: [
       {
-        text: "Build XMTP Agents",
+        text: "Introduction",
         link: "../agents/get-started/intro",
       },
       {
-        text: "Tutorial: Build an agent 🤖",
+        text: "Quickstart",
         link: "../agents/get-started/build-an-agent",
       },
       {
@@ -19,7 +19,7 @@ export const agentsSidebarConfig = [
     ],
   },
   {
-    text: "Build core messaging",
+    text: "Build agents",
     collapsed: false,
     items: [
       {
@@ -35,29 +35,47 @@ export const agentsSidebarConfig = [
         link: "../agents/build-agents/create-conversations",
       },
       {
-        text: "Manage agent installations",
+        text: "Manage installations",
         link: "../agents/build-agents/agent-installations",
       },
       {
-        text: "Manage group permissions",
-        link: "../agents/build-agents/group-permissions",
+        text: "Group chat",
+        link: "../agents/build-agents/group-chat",
       },
       {
-        text: "Manage group metadata",
-        link: "../agents/build-agents/group-metadata",
-      },
-      {
-        text: "Observe rate limits",
+        text: "Rate limits",
         link: "../agents/build-agents/rate-limits",
       },
     ],
   },
   {
-    text: "Support rich content types",
+    text: "Core concepts",
     collapsed: false,
     items: [
       {
-        text: "Understand content types",
+        text: "Event-driven architecture",
+        link: "../agents/concepts/event-driven",
+      },
+      {
+        text: "Middleware & routing",
+        link: "../agents/concepts/middleware",
+      },
+      {
+        text: "Message filters",
+        link: "../agents/concepts/filters",
+      },
+      {
+        text: "Context & helpers",
+        link: "../agents/concepts/context",
+      },
+    ],
+  },
+  {
+    text: "Content types",
+    collapsed: false,
+    items: [
+      {
+        text: "Overview",
         link: "../agents/content-types/content-types",
       },
       {
@@ -87,23 +105,31 @@ export const agentsSidebarConfig = [
     ],
   },
   {
-    text: "Debug agents",
-    link: "../agents/debug-agents",
-    items: [],
-  },
-  {
-    text: "Deploy agents",
-    link: "../agents/deploy-agent",
-    items: [],
-  },  
-  {
-    text: "Examples",
-    link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
-    items: [],
+    text: "Testing & deployment",
+    collapsed: false,
+    items: [
+      {
+        text: "Debug agents",
+        link: "../agents/testing/debug-agents",
+      },
+      {
+        text: "Deploy agents",
+        link: "../agents/deploy/deploy-agent",
+      },
+      {
+        text: "Best practices",
+        link: "../agents/deploy/best-practices",
+      },
+    ],
   },
   {
     text: "Security",
     link: "../agents/agent-security",
+    items: [],
+  },
+  {
+    text: "Examples",
+    link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
     items: [],
   },
 ];

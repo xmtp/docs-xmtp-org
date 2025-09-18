@@ -1,81 +1,60 @@
-# Tutorial: Build an agent that uses XMTP
+# Quickstart
 
 This tutorial provides a map to building agents with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
-
-Building with XMTP gives your agent access to:
-
-- The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
-- The building blocks of AI + money + secure chat
-- Users on apps built with XMTP, including Coinbase Wallet, Convos, and more
-
-## Resources to get started
 
 ### Quickstart video guide
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
 
-### Agent examples
+### Prerequisites
 
-From a simple agent that replies "GM" to one that supports onchain transactions, explore and run a dozen [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
+- Node.js v20 or higher
+- Yarn v4 or higher
+- Docker (to run a local XMTP network, optional)
 
 ### Cursor rules
 
-You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
+See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
 
-## Build an agent
-
-### Basic agent setup
-
-```tsx [Node]
-import { Agent, createSigner, createUser, getTestUrl } from "@xmtp/agent-sdk";
-
-// Create signer (you can plug in your own wallet signer)
-const signer = createSigner(createUser());
-
-// Create agent
-const agent = await Agent.create(signer, {
-  env: "dev",
-  appVersion: 'my-agent/1.0'
-});
-
-// Respond to messages
-agent.on("text", async (ctx) => {
-  const senderAddress = await ctx.getSenderAddress();
-  await ctx.conversation.send("gm");
-});
-
-await agent.start();
+```bash
+Prompt: Create an example that gets a number and returns its 2x multiple (use claude max)
 ```
 
-### Support onchain transactions and transaction references
+### Set environment variables
 
-To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent, as well as the [Support onchain transactions](/agents/content-types/transactions) and [Support onchain transaction references](/agents/content-types/transaction-refs) (receipts) documentation.
+To run an example XMTP agent, you must create a `.env` file with the following variables:
 
-### Support attachments
+```bash
+XMTP_WALLET_KEY= # the private key of the wallet
+XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
+XMTP_ENV=dev # local, dev, production
+```
 
-To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent and [Support attachments](/agents/content-types/attachments) documentation.
+You can generate random XMTP keys by running:
 
-### Support replies
+```bash
+yarn gen:keys
+```
 
-To learn more, see [Support replies](/agents/content-types/replies) documentation.
 
-### Support reactions
+> Running the `gen:keys` command will append keys to your existing `.env` file.
 
-To learn more, see [Support reactions](/agents/content-types/reactions) documentation.
 
-### Observe rate limits
+### Run an example agent
 
-XMTP enforces separate rate limits for read and write operations per client.
+```bash
+# git clone repo
+git clone https://github.com/ephemeraHQ/xmtp-agent-examples.git
+# go to the folder
+cd xmtp-agent-examples
+# install packages
+yarn
+# generate random xmtp keys (optional)
+yarn gen:keys
+# run the example
+yarn dev
+```
 
-To learn more, see [Observe rate limits](/agents/core-messaging/rate-limits)
-
-### Follow security best practices
-
-To learn more, see [Follow agent security best practices](/agents/agent-security)
-
-## Manage agent installations
-
-To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
 
 ## Debug an agent
 
@@ -84,6 +63,7 @@ To learn more, see [Debug an agent](/agents/debug-agents)
 ## Deploy an agent
 
 To learn more, see [Deploy an agent](/agents/deploy-agent).
+
 
 ## Get featured
 

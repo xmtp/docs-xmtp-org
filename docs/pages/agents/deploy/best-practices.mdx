@@ -1,0 +1,625 @@
+# Best practices
+
+This guide covers best practices for building, testing, and deploying production-ready XMTP agents. Following these practices will help you create robust, secure, and maintainable agents.
+
+## Development best practices
+
+### Code organization
+
+**Use TypeScript for better developer experience:**
+
+```typescript
+// Define clear interfaces for your agent's data
+interface UserPreferences {
+  notifications: boolean;
+  timezone: string;
+  language: string;
+}
+
+interface AgentConfig {
+  rateLimits: {
+    messagesPerMinute: number;
+    commandsPerHour: number;
+  };
+  features: {
+    aiResponses: boolean;
+    transactionHandling: boolean;
+  };
+}
+```
+
+**Organize your code with clear separation of concerns:**
+
+```
+src/
+├── agents/
+│   ├── main-agent.ts
+│   └── specialized-agents/
+├── middleware/
+│   ├── auth.ts
+│   ├── rate-limit.ts
+│   └── logging.ts
+├── handlers/
+│   ├── commands.ts
+│   ├── ai-responses.ts
+│   └── transactions.ts
+├── utils/
+│   ├── filters.ts
+│   ├── validators.ts
+│   └── helpers.ts
+└── config/
+    ├── environment.ts
+    └── constants.ts
+```
+
+### Error handling
+
+**Implement comprehensive error handling:**
+
+```typescript
+// Use specific error types
+class ValidationError extends Error {
+  constructor(message: string, public field: string) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
+class RateLimitError extends Error {
+  constructor(message: string, public retryAfter: number) {
+    super(message);
+    this.name = "RateLimitError";
+  }
+}
+
+// Graceful error handling in event handlers
+agent.on("text", async (ctx) => {
+  try {
+    await processMessage(ctx);
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      await ctx.sendTextReply(`Invalid input: ${error.message}`);
+    } else if (error instanceof RateLimitError) {
+      await ctx.sendTextReply("Too many requests. Please try again later.");
+    } else {
+      console.error("Unexpected error:", error);
+      await ctx.sendTextReply("Something went wrong. Please try again.");
+    }
+  }
+});
+```
+
+**Use error middleware for centralized handling:**
+
+```typescript
+agent.errors.use(async (error, ctx, next) => {
+  // Log all errors
+  console.error("Agent error:", {
+    error: error.message,
+    messageId: ctx.message?.id,
+    conversationId: ctx.conversation?.id,
+    timestamp: new Date().toISOString()
+  });
+  
+  // Report to monitoring service
+  await reportError(error, ctx);
+  
+  await next(); // Continue to default error handler
+});
+```
+
+### Input validation
+
+**Validate all user inputs:**
+
+```typescript
+import { z } from "zod";
+
+const commandSchema = z.object({
+  action: z.enum(["transfer", "balance", "history"]),
+  amount: z.number().positive().optional(),
+  recipient: z.string().regex(/^0x[a-fA-F0-9]{40}$/).optional(),
+});
+
+agent.on("text", async (ctx) => {
+  try {
+    const command = parseCommand(ctx.message.content);
+    const validatedCommand = commandSchema.parse(command);
+    
+    await executeCommand(ctx, validatedCommand);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      await ctx.sendTextReply("Invalid command format. Type /help for usage.");
+    }
+  }
+});
+```
+
+## Performance optimization
+
+### Database optimization
+
+**Use connection pooling and efficient queries:**
+
+```typescript
+import { Pool } from "pg";
+
+// Database connection pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 20, // Maximum number of connections
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+// Efficient user state management
+class UserStateManager {
+  private cache = new Map<string, UserState>();
+  
+  async getUserState(userId: string): Promise<UserState> {
+    // Check cache first
+    if (this.cache.has(userId)) {
+      return this.cache.get(userId)!;
+    }
+    
+    // Fetch from database if not cached
+    const result = await pool.query(
+      "SELECT * FROM user_states WHERE user_id = $1",
+      [userId]
+    );
+    
+    const state = result.rows[0] || { userId, state: "idle" };
+    this.cache.set(userId, state);
+    return state;
+  }
+}
+```
+
+### Memory management
+
+**Implement proper cleanup and resource management:**
+
+```typescript
+// Clean up resources in middleware
+const resourceMiddleware: AgentMiddleware = async (ctx, next) => {
+  const resources: any[] = [];
+  
+  try {
+    // Add cleanup method to context
+    (ctx as any).addResource = (resource: any) => {
+      resources.push(resource);
+    };
+    
+    await next();
+  } finally {
+    // Clean up all resources
+    for (const resource of resources) {
+      if (resource.close) await resource.close();
+      if (resource.destroy) await resource.destroy();
+    }
+  }
+};
+
+// Use weak references for caches to prevent memory leaks
+class MessageCache {
+  private cache = new WeakMap<object, ProcessedMessage>();
+  
+  get(message: object): ProcessedMessage | undefined {
+    return this.cache.get(message);
+  }
+  
+  set(message: object, processed: ProcessedMessage): void {
+    this.cache.set(message, processed);
+  }
+}
+```
+
+## Security best practices
+
+### Environment variables
+
+**Never expose sensitive data:**
+
+```typescript
+// ❌ Don't do this
+const config = {
+  privateKey: "0x1234567890abcdef...", // Hardcoded
+  apiKey: "sk-1234567890abcdef...",   // Exposed
+};
+
+// ✅ Do this instead
+const config = {
+  privateKey: process.env.XMTP_WALLET_KEY!,
+  apiKey: process.env.OPENAI_API_KEY!,
+  dbEncryptionKey: process.env.XMTP_DB_ENCRYPTION_KEY!,
+};
+
+// Validate required environment variables
+const requiredEnvVars = [
+  "XMTP_WALLET_KEY",
+  "XMTP_DB_ENCRYPTION_KEY", 
+  "XMTP_ENV"
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+```
+
+### Access control
+
+**Implement proper authorization:**
+
+```typescript
+// Role-based access control
+enum UserRole {
+  USER = "user",
+  MODERATOR = "moderator", 
+  ADMIN = "admin"
+}
+
+const authorizedUsers = new Map<string, UserRole>();
+
+const requireRole = (requiredRole: UserRole): AgentMiddleware => {
+  return async (ctx, next) => {
+    const senderAddress = ctx.getSenderAddress();
+    const userRole = authorizedUsers.get(senderAddress);
+    
+    if (!userRole) {
+      await ctx.sendTextReply("Access denied: Not authorized");
+      return;
+    }
+    
+    const roleHierarchy = [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN];
+    const userLevel = roleHierarchy.indexOf(userRole);
+    const requiredLevel = roleHierarchy.indexOf(requiredRole);
+    
+    if (userLevel < requiredLevel) {
+      await ctx.sendTextReply(`Access denied: ${requiredRole} role required`);
+      return;
+    }
+    
+    await next();
+  };
+};
+
+// Usage
+agent.use("/admin", requireRole(UserRole.ADMIN));
+```
+
+### Input sanitization
+
+**Sanitize and validate all inputs:**
+
+```typescript
+import DOMPurify from "isomorphic-dompurify";
+
+const sanitizeInput = (input: string): string => {
+  // Remove potentially dangerous content
+  const cleaned = DOMPurify.sanitize(input, { 
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: []
+  });
+  
+  // Additional validation
+  if (cleaned.length > 1000) {
+    throw new Error("Input too long");
+  }
+  
+  return cleaned.trim();
+};
+
+agent.on("text", async (ctx) => {
+  try {
+    const sanitizedContent = sanitizeInput(ctx.message.content);
+    await processMessage(ctx, sanitizedContent);
+  } catch (error) {
+    await ctx.sendTextReply("Invalid input format");
+  }
+});
+```
+
+## Production deployment
+
+### Environment configuration
+
+**Use different configurations for different environments:**
+
+```typescript
+interface EnvironmentConfig {
+  env: "local" | "dev" | "production";
+  logLevel: "debug" | "info" | "warn" | "error";
+  rateLimits: {
+    messagesPerMinute: number;
+    burstLimit: number;
+  };
+  features: {
+    debugMode: boolean;
+    analyticsEnabled: boolean;
+  };
+}
+
+const getConfig = (): EnvironmentConfig => {
+  const env = process.env.XMTP_ENV as "local" | "dev" | "production";
+  
+  const configs: Record<string, EnvironmentConfig> = {
+    local: {
+      env: "local",
+      logLevel: "debug",
+      rateLimits: { messagesPerMinute: 100, burstLimit: 10 },
+      features: { debugMode: true, analyticsEnabled: false }
+    },
+    dev: {
+      env: "dev", 
+      logLevel: "info",
+      rateLimits: { messagesPerMinute: 60, burstLimit: 5 },
+      features: { debugMode: true, analyticsEnabled: true }
+    },
+    production: {
+      env: "production",
+      logLevel: "warn", 
+      rateLimits: { messagesPerMinute: 30, burstLimit: 3 },
+      features: { debugMode: false, analyticsEnabled: true }
+    }
+  };
+  
+  return configs[env] || configs.production;
+};
+```
+
+### Monitoring and observability
+
+**Implement comprehensive monitoring:**
+
+```typescript
+import winston from "winston";
+
+// Structured logging
+const logger = winston.createLogger({
+  level: config.logLevel,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "agent.log" })
+  ]
+});
+
+// Metrics collection
+class MetricsCollector {
+  private static instance: MetricsCollector;
+  private metrics = new Map<string, number>();
+  
+  static getInstance(): MetricsCollector {
+    if (!this.instance) {
+      this.instance = new MetricsCollector();
+    }
+    return this.instance;
+  }
+  
+  increment(metric: string, value = 1): void {
+    const current = this.metrics.get(metric) || 0;
+    this.metrics.set(metric, current + value);
+  }
+  
+  getMetrics(): Record<string, number> {
+    return Object.fromEntries(this.metrics);
+  }
+}
+
+// Usage in middleware
+const metricsMiddleware: AgentMiddleware = async (ctx, next) => {
+  const metrics = MetricsCollector.getInstance();
+  const start = Date.now();
+  
+  try {
+    metrics.increment("messages.received");
+    await next();
+    metrics.increment("messages.processed");
+  } catch (error) {
+    metrics.increment("messages.errors");
+    throw error;
+  } finally {
+    const duration = Date.now() - start;
+    logger.info("Message processed", {
+      duration,
+      messageId: ctx.message.id,
+      conversationId: ctx.conversation.id
+    });
+  }
+};
+```
+
+### Health checks
+
+**Implement health check endpoints:**
+
+```typescript
+import express from "express";
+
+const healthCheckApp = express();
+
+healthCheckApp.get("/health", (req, res) => {
+  const health = {
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    metrics: MetricsCollector.getInstance().getMetrics()
+  };
+  
+  res.json(health);
+});
+
+healthCheckApp.get("/ready", (req, res) => {
+  // Check if agent is ready to handle messages
+  if (agent.isReady) {
+    res.status(200).json({ status: "ready" });
+  } else {
+    res.status(503).json({ status: "not ready" });
+  }
+});
+
+healthCheckApp.listen(3000, () => {
+  console.log("Health check server running on port 3000");
+});
+```
+
+## Testing strategies
+
+### Unit testing
+
+**Test individual components:**
+
+```typescript
+import { describe, it, expect, jest } from "@jest/globals";
+
+describe("Message filters", () => {
+  it("should filter text messages correctly", () => {
+    const textMessage = { content: "Hello", contentType: "text" };
+    const reactionMessage = { content: "👍", contentType: "reaction" };
+    
+    expect(filter.isText(textMessage)).toBe(true);
+    expect(filter.isText(reactionMessage)).toBe(false);
+  });
+  
+  it("should detect messages from self", () => {
+    const message = { senderInboxId: "agent-inbox-id" };
+    const client = { inboxId: "agent-inbox-id" };
+    
+    expect(filter.fromSelf(message, client)).toBe(true);
+  });
+});
+```
+
+### Integration testing
+
+**Test agent behavior end-to-end:**
+
+```typescript
+describe("Agent integration", () => {
+  let testAgent: Agent;
+  let mockConversation: any;
+  
+  beforeEach(async () => {
+    testAgent = await Agent.create(testSigner, { env: "local" });
+    mockConversation = createMockConversation();
+  });
+  
+  it("should respond to text messages", async () => {
+    const responses: string[] = [];
+    mockConversation.send = jest.fn((text: string) => {
+      responses.push(text);
+    });
+    
+    await testAgent.handleMessage({
+      message: { content: "Hello", contentType: "text" },
+      conversation: mockConversation,
+      client: testAgent.client
+    });
+    
+    expect(responses).toContain("Hello! How can I help you?");
+  });
+});
+```
+
+## Scaling considerations
+
+### Horizontal scaling
+
+**Design for multiple instances:**
+
+```typescript
+// Use external storage for shared state
+import Redis from "ioredis";
+
+const redis = new Redis(process.env.REDIS_URL);
+
+class DistributedUserState {
+  async getUserState(userId: string): Promise<UserState> {
+    const cached = await redis.get(`user:${userId}`);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+    
+    // Fallback to database
+    return await this.loadFromDatabase(userId);
+  }
+  
+  async setUserState(userId: string, state: UserState): Promise<void> {
+    await redis.setex(`user:${userId}`, 3600, JSON.stringify(state));
+    await this.saveToDatabase(userId, state);
+  }
+}
+```
+
+### Load balancing
+
+**Handle conversation routing:**
+
+```typescript
+// Route conversations to specific agent instances
+const getAgentInstance = (conversationId: string): string => {
+  const instances = ["agent-1", "agent-2", "agent-3"];
+  const hash = conversationId.split("").reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  return instances[Math.abs(hash) % instances.length];
+};
+```
+
+## Maintenance and updates
+
+### Graceful shutdowns
+
+**Handle shutdowns properly:**
+
+```typescript
+process.on("SIGTERM", async () => {
+  console.log("Received SIGTERM, shutting down gracefully");
+  
+  // Stop accepting new messages
+  await agent.stop();
+  
+  // Wait for ongoing operations to complete
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  
+  // Close database connections
+  await pool.end();
+  
+  console.log("Shutdown complete");
+  process.exit(0);
+});
+```
+
+### Version management
+
+**Implement version-aware deployments:**
+
+```typescript
+const AGENT_VERSION = process.env.AGENT_VERSION || "1.0.0";
+
+agent.on("start", () => {
+  console.log(`Agent v${AGENT_VERSION} started`);
+  
+  // Register version with service discovery
+  registerAgent({
+    version: AGENT_VERSION,
+    capabilities: ["text", "reactions", "transactions"],
+    healthEndpoint: "/health"
+  });
+});
+```
+
+## Next steps
+
+- See [Deploy agents](./deploy-agent) for deployment instructions
+- Review [Debug agents](../testing/debug-agents) for troubleshooting
+- Check [Security](../agent-security) for additional security considerations
+- Explore [Examples](https://github.com/ephemeraHQ/xmtp-agent-examples) for reference implementations

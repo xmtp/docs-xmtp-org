@@ -1,0 +1,300 @@
+# Message filters
+
+Instead of manually checking every incoming message, XMTP agents provide built-in filters that help you process messages selectively and efficiently. Filters are lightweight utility functions that return boolean values based on message properties.
+
+## Why use filters?
+
+Filters help you:
+
+- **Avoid repetitive checks** – No need to manually validate message properties
+- **Write cleaner code** – Express intentions clearly with descriptive filter names
+- **Improve performance** – Quick boolean checks before expensive operations
+- **Compose logic** – Combine multiple filters for complex conditions
+
+## Basic filter usage
+
+Import filters from the agent SDK:
+
+```typescript
+import { filter, f } from "@xmtp/agent-sdk";
+
+// Both names work identically
+agent.on("text", async (ctx) => {
+  if (filter.isText(ctx.message)) {
+    await ctx.conversation.send("You sent a text message!");
+  }
+});
+
+// Shorter alias
+agent.on("text", async (ctx) => {
+  if (f.isText(ctx.message)) {
+    await ctx.conversation.send("You sent a text message!");
+  }
+});
+```
+
+## Common built-in filters
+
+### Message type filters
+
+```typescript
+import { filter } from "@xmtp/agent-sdk";
+
+agent.on("text", async (ctx) => {
+  if (filter.isText(ctx.message)) {
+    // Handle text messages
+  }
+  
+  if (filter.isReaction(ctx.message)) {
+    // Handle reactions
+  }
+  
+  if (filter.isReply(ctx.message)) {
+    // Handle replies
+  }
+  
+  if (filter.isAttachment(ctx.message)) {
+    // Handle attachments
+  }
+});
+```
+
+### Content validation filters
+
+```typescript
+agent.on("text", async (ctx) => {
+  // Check if message has content
+  if (filter.hasDefinedContent(ctx.message)) {
+    console.log("Message has content");
+  }
+  
+  // Check if message is not empty
+  if (filter.isNotEmpty(ctx.message)) {
+    console.log("Message is not empty");
+  }
+});
+```
+
+### Sender filters
+
+```typescript
+agent.on("text", async (ctx) => {
+  // Ignore messages from the agent itself
+  if (!filter.fromSelf(ctx.message, ctx.client)) {
+    await ctx.conversation.send("Thanks for your message!");
+  }
+  
+  // Only respond to specific senders
+  if (filter.fromAddress(ctx.message, "0x1234...")) {
+    await ctx.conversation.send("Hello, authorized user!");
+  }
+});
+```
+
+## Combining filters
+
+Combine multiple filters using logical operators:
+
+```typescript
+agent.on("text", async (ctx) => {
+  // Process valid text messages from others
+  if (
+    filter.hasDefinedContent(ctx.message) &&
+    !filter.fromSelf(ctx.message, ctx.client) &&
+    filter.isText(ctx.message)
+  ) {
+    await ctx.conversation.send("Valid text message received ✅");
+  }
+});
+```
+
+### Complex filter combinations
+
+```typescript
+agent.on("text", async (ctx) => {
+  const message = ctx.message;
+  
+  // Handle commands from authorized users
+  if (
+    filter.isText(message) &&
+    filter.hasDefinedContent(message) &&
+    !filter.fromSelf(message, ctx.client) &&
+    (filter.fromAddress(message, "0x1234...") || filter.fromAddress(message, "0x5678...")) &&
+    message.content.startsWith("/")
+  ) {
+    await handleCommand(ctx);
+  }
+});
+```
+
+## Custom filters
+
+Create your own filters for specific use cases:
+
+### Text content filters
+
+```typescript
+// Check if message contains specific keywords
+const containsKeyword = (message: any, keyword: string): boolean => {
+  return filter.isText(message) && 
+         message.content.toLowerCase().includes(keyword.toLowerCase());
+};
+
+// Check if message matches a pattern
+const isCommand = (message: any): boolean => {
+  return filter.isText(message) && 
+         message.content.trim().startsWith("/");
+};
+
+// Usage
+agent.on("text", async (ctx) => {
+  if (containsKeyword(ctx.message, "help")) {
+    await ctx.conversation.send("How can I help you?");
+  }
+  
+  if (isCommand(ctx.message)) {
+    await handleCommand(ctx);
+  }
+});
+```
+
+### Conversation type filters
+
+```typescript
+// Check if conversation is a DM
+const isDM = (conversation: any): boolean => {
+  return conversation.type === "dm" || conversation.peerInboxId !== undefined;
+};
+
+// Check if conversation is a group
+const isGroup = (conversation: any): boolean => {
+  return conversation.type === "group" || conversation.name !== undefined;
+};
+
+agent.on("text", async (ctx) => {
+  if (isDM(ctx.conversation)) {
+    await ctx.conversation.send("Thanks for the DM!");
+  }
+  
+  if (isGroup(ctx.conversation)) {
+    await ctx.conversation.send("Hello group!");
+  }
+});
+```
+
+### Time-based filters
+
+```typescript
+// Check if message is recent
+const isRecent = (message: any, minutesAgo: number = 5): boolean => {
+  const messageTime = new Date(message.sentAt);
+  const cutoff = new Date(Date.now() - (minutesAgo * 60 * 1000));
+  return messageTime > cutoff;
+};
+
+// Check if message is during business hours
+const isDuringBusinessHours = (message: any): boolean => {
+  const hour = new Date(message.sentAt).getHours();
+  return hour >= 9 && hour <= 17; // 9 AM to 5 PM
+};
+
+agent.on("text", async (ctx) => {
+  if (isRecent(ctx.message, 1)) {
+    await ctx.conversation.send("Thanks for the fresh message!");
+  }
+  
+  if (!isDuringBusinessHours(ctx.message)) {
+    await ctx.conversation.send("Thanks for your message! I'll respond during business hours.");
+  }
+});
+```
+
+## Filter composition utilities
+
+Create reusable filter combinations:
+
+```typescript
+// Combine multiple filters with AND logic
+const allOf = (...filters: ((msg: any, ...args: any[]) => boolean)[]): 
+  ((msg: any, ...args: any[]) => boolean) => {
+  return (msg, ...args) => filters.every(f => f(msg, ...args));
+};
+
+// Combine multiple filters with OR logic  
+const anyOf = (...filters: ((msg: any, ...args: any[]) => boolean)[]): 
+  ((msg: any, ...args: any[]) => boolean) => {
+  return (msg, ...args) => filters.some(f => f(msg, ...args));
+};
+
+// Usage
+const validUserMessage = allOf(
+  filter.isText,
+  filter.hasDefinedContent,
+  (msg, client) => !filter.fromSelf(msg, client)
+);
+
+const isAdminCommand = allOf(
+  filter.isText,
+  isCommand,
+  (msg) => filter.fromAddress(msg, "0x1234...") // admin address
+);
+
+agent.on("text", async (ctx) => {
+  if (validUserMessage(ctx.message, ctx.client)) {
+    await processUserMessage(ctx);
+  }
+  
+  if (isAdminCommand(ctx.message)) {
+    await processAdminCommand(ctx);
+  }
+});
+```
+
+## Performance considerations
+
+- **Filters are fast** – They perform simple property checks
+- **Order matters** – Place cheaper filters first in combinations
+- **Cache results** – Store filter results if used multiple times
+
+```typescript
+agent.on("text", async (ctx) => {
+  // Cache filter results for complex conditions
+  const isValidText = filter.isText(ctx.message) && 
+                     filter.hasDefinedContent(ctx.message);
+  const isFromUser = !filter.fromSelf(ctx.message, ctx.client);
+  
+  if (isValidText && isFromUser) {
+    // Use cached results
+    await handleUserMessage(ctx);
+  }
+});
+```
+
+## Available built-in filters
+
+You can find all available prebuilt filters in the [XMTP Agent SDK source code](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
+
+Common filters include:
+
+- `isText(message)` – Text content
+- `isReaction(message)` – Reaction content  
+- `isReply(message)` – Reply content
+- `isAttachment(message)` – Attachment content
+- `hasDefinedContent(message)` – Message has content
+- `fromSelf(message, client)` – Message from agent itself
+- `fromAddress(message, address)` – Message from specific address
+
+## Best practices
+
+1. **Start with built-in filters** – Use provided filters before creating custom ones
+2. **Combine effectively** – Use logical operators to create complex conditions
+3. **Name filters clearly** – Make filter purpose obvious from the name
+4. **Test edge cases** – Consider null, undefined, and empty values
+5. **Keep filters pure** – Don't modify message or context in filter functions
+6. **Document custom filters** – Explain complex filter logic with comments
+
+## Next steps
+
+- Learn about [context and helpers](./context) for rich message handling
+- Explore [middleware and routing](./middleware) for request flow control
+- See [event-driven architecture](./event-driven) for overall patterns

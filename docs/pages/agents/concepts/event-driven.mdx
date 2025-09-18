@@ -1,0 +1,129 @@
+# Event-driven architecture
+
+XMTP agents are built on an event-driven architecture that makes them responsive, scalable, and easy to extend. This architecture is based on familiar Node.js patterns using the `EventEmitter` interface, making it intuitive for JavaScript and TypeScript developers.
+
+## Core principle
+
+Agents respond to events rather than polling for changes. When something happens in the XMTP network (like receiving a message or joining a conversation), your agent automatically receives an event and can respond accordingly.
+
+## Event types
+
+XMTP agents can listen for several types of events:
+
+### Message events
+
+These events fire when your agent receives different types of messages:
+
+- **`text`** – A new incoming text message
+- **`reaction`** – A new incoming reaction message  
+- **`reply`** – A new incoming reply message
+- **`attachment`** – A new incoming remote attachment message
+- **`unknownMessage`** – A message that doesn't match any specific type
+
+### Conversation events  
+
+These events fire when new conversations are created:
+
+- **`dm`** – A new direct message conversation
+- **`group`** – A new group conversation
+
+### Lifecycle events
+
+These events help you manage your agent's lifecycle:
+
+- **`start`** – Agent has started and is ready to receive messages
+- **`stop`** – Agent is shutting down
+- **`unhandledError`** – An unhandled error occurred
+
+## Basic event handling
+
+Subscribe to events using the familiar `.on()` method:
+
+```typescript
+import { Agent } from "@xmtp/agent-sdk";
+
+const agent = await Agent.createFromEnv();
+
+// Handle text messages
+agent.on("text", async (ctx) => {
+  console.log(`Received: ${ctx.message.content}`);
+  await ctx.conversation.send("Thanks for your message!");
+});
+
+// Handle new DM conversations
+agent.on("dm", async (ctx) => {
+  await ctx.conversation.send("Welcome to our DM! How can I help?");
+});
+
+// Handle agent startup
+agent.on("start", () => {
+  console.log("Agent is ready and listening for messages");
+});
+
+await agent.start();
+```
+
+## Event context
+
+Every event handler receives a `MessageContext` object that contains:
+
+- **`message`** – The decoded message object
+- **`conversation`** – The active conversation 
+- **`client`** – The underlying XMTP client
+- **Helper methods** like `sendTextReply()`, `sendReaction()`, etc.
+
+```typescript
+agent.on("text", async (ctx) => {
+  // Access message content
+  const content = ctx.message.content;
+  
+  // Get sender information
+  const senderAddress = ctx.getSenderAddress();
+  
+  // Use helper methods
+  await ctx.sendTextReply("Reply using helper method");
+  await ctx.sendReaction("👍");
+});
+```
+
+## Selective event handling
+
+You can subscribe to only the events you need. There's no performance penalty for unused events:
+
+```typescript
+// Only handle reactions and replies
+agent.on("reaction", async (ctx) => {
+  console.log(`Got reaction: ${ctx.message.content}`);
+});
+
+agent.on("reply", async (ctx) => {
+  console.log(`Got reply to: ${ctx.message.content.reference}`);
+});
+
+// Text messages will be ignored since no handler is registered
+```
+
+## Error handling
+
+Use the `unhandledError` event to catch and handle any errors:
+
+```typescript
+agent.on("unhandledError", (error) => {
+  console.error("Agent error:", error);
+  // Log to monitoring service, restart agent, etc.
+});
+```
+
+## Benefits of event-driven architecture
+
+- **Reactive**: Your agent responds instantly to network activity
+- **Efficient**: No polling or unnecessary resource usage
+- **Scalable**: Handle multiple conversations and message types simultaneously  
+- **Modular**: Each event type can have focused, specific handling logic
+- **Familiar**: Uses standard Node.js EventEmitter patterns
+
+## Next steps
+
+- Learn about [middleware and routing](./middleware) to add cross-cutting behavior
+- Explore [message filters](./filters) to process messages selectively
+- Understand [context and helpers](./context) for rich message handling

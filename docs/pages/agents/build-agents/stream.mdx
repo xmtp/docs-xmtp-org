@@ -1,24 +1,7 @@
 # Stream conversations and messages
 
-## Stream new group chat and DM conversations
 
-With the agent-sdk, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
-
-```js [Node]
-// Listen for new DM conversations
-agent.on("dm", async (ctx) => {
-  console.log("New DM conversation:", ctx.conversation.id);
-  await ctx.conversation.send("Welcome to our DM!");
-});
-
-// Listen for new group conversations
-agent.on("group", async (ctx) => {
-  console.log("New group conversation:", ctx.conversation.id);
-  await ctx.conversation.send("Hello group!");
-});
-```
-
-## Stream new group chat and DM messages
+## Stream messages
 
 With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
 
@@ -38,12 +21,26 @@ agent.on("reaction", async (ctx) => {
 agent.on("reply", async (ctx) => {
   console.log("New reply:", ctx.message.content);
 });
+```
 
-// Handle uncaught errors
-agent.on("unhandledError", (error) => {
-  console.error("Agent error", error);
+## Stream new group chat and DM conversations
+
+With the agent-sdk, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+
+```js [Node]
+// Listen for new DM conversations
+agent.on("dm", async (ctx) => {
+  console.log("New DM conversation:", ctx.conversation.id);
+  await ctx.conversation.send("Welcome to our DM!");
+});
+
+// Listen for new group conversations
+agent.on("group", async (ctx) => {
+  console.log("New group conversation:", ctx.conversation.id);
+  await ctx.conversation.send("Hello group!");
 });
 ```
+
 
 ## Handle errors and failures
 
@@ -58,6 +55,8 @@ agent.on("unhandledError", (error) => {
 
 // Log when the agent starts
 agent.on("start", () => {
-  console.log("Agent is running and ready to receive messages");
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${csx.client.accountIdentifier?.identifier}`);
+  console.log(`🔗${getTestUrl(csx)}`);
 });
 ```

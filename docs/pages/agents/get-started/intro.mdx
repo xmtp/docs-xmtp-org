@@ -2,6 +2,18 @@
 
 XMTP agents are autonomous programs that can participate in secure, end-to-end encrypted conversations on the XMTP network. Build agents that interact with humans and other agents across any XMTP-powered app.
 
+## Why agents?
+
+Messaging is the largest use-case in the world, but it's more than just conversations—it's a secure, programmable channel for financial and social innovation. When combined with the onchain capabilities of Base App, builders have a new surface area to build 10X better messaging experiences not currently possible on legacy platforms like WhatsApp or Messenger.
+
+Real Examples:
+
+- **Smart Payment Assistant**: Text "split dinner \$200 4 ways" and everyone gets paid instantly with sub-cent fees, no app switching or Venmo delays.
+- **AI Trading Companion**: Message "buy $100 ETH when it hits $3,000" and your agent executes trades 24/7 while you sleep.
+- **Travel Planning Agent**: "Book flight LAX to NYC under \$300" and get instant booking with crypto payments, all in your group chat
+- **Base App & XMTP are combining AI, crypto, and mini apps with secure messaging** – to unlock use-cases never before possible. Secure group chats & DMs are the new surface area for developers.
+
+
 ## Why build agents with XMTP?
 
 - **AI + Money + Secure Chat**: The only platform combining conversational AI, onchain transactions, and end-to-end encryption
@@ -10,36 +22,10 @@ XMTP agents are autonomous programs that can participate in secure, end-to-end e
 - **Decentralized**: Operates on a peer-to-peer network, eliminating single points of failure and ensuring continued operation even if some nodes go offline.
 - **Multi-agent**: Allows confidential communication between multiple agents and humans through MLS group chats.
 
-## Quick Start
-
-```ts
-import { createUser, createSigner, Agent, getTestUrl } from "@xmtp/agent-sdk";
-
-// 1. Create a local user + signer (you can plug in your own wallet signer)
-const user = createUser();
-const signer = createSigner(user);
-
-// 2. Spin up the agent
-const agent = await Agent.create(signer, {
-  env: "dev", // or 'production'
-});
-
-// 3. Respond to text messages
-agent.on("text", async (ctx) => {
-  await ctx.conversation.send("Hello from my XMTP Agent! 👋");
-});
-
-// 4. Log when we're ready
-agent.on("start", () => {
-  console.log(`We are online: ${getTestUrl(agent)}`);
-});
-
-await agent.start();
-```
 
 ## Get started
 
-Ready to build? See [Tutorial: Build an agent](/agents/get-started/build-an-agent) to create your first XMTP agent.
+Ready to build? See [Quickstart](./build-an-agent) to create your first XMTP agent.
 
 ## Cursor rules
 
