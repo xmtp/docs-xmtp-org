@@ -1,23 +1,48 @@
-# Quickstart
+# Build XMTP Agents
 
-This tutorial provides a map to building agents with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
-
-### Quickstart video guide
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+This documentation provides examples of agents that use the XMTP network. These agents are built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
 ### Prerequisites
 
 - Node.js v20 or higher
-- Yarn v4 or higher
-- Docker (to run a local XMTP network, optional)
+- Any package manager
 
-### Cursor rules
+## Installation
 
-See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+Choose your package manager to install the XMTP Agent SDK:
 
 ```bash
-Prompt: Create an example that gets a number and returns its 2x multiple (use claude max)
+npm install @xmtp/agent-sdk
+# or
+pnpm add @xmtp/agent-sdk
+# or
+yarn add @xmtp/agent-sdk
+```
+
+## Quick Start
+
+This example shows how to create an agent that sends a message when it receives a text message.
+
+```ts
+import { createUser, createSigner, Agent, getTestUrl } from "@xmtp/agent-sdk";
+
+// 2. Spin up the agent
+const agent = await Agent.createFromEnv({
+  env: "dev", // or 'production'
+  dbPath: "./xmtp.db3",
+});
+
+// 3. Respond to text messages
+agent.on("text", async (ctx) => {
+  await ctx.conversation.send("Hello from my XMTP Agent! 👋");
+});
+
+// 4. Log when we're ready
+agent.on("start", () => {
+  console.log(`We are online: ${getTestUrl(agent)}`);
+});
+
+await agent.start();
 ```
 
 ### Set environment variables
@@ -30,47 +55,26 @@ XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
 XMTP_ENV=dev # local, dev, production
 ```
 
-You can generate random XMTP keys by running:
+## Talk to your agent
 
-```bash
-yarn gen:keys
-```
+Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
 
-
-> Running the `gen:keys` command will append keys to your existing `.env` file.
-
-
-### Run an example agent
-
-```bash
-# git clone repo
-git clone https://github.com/ephemeraHQ/xmtp-agent-examples.git
-# go to the folder
-cd xmtp-agent-examples
-# install packages
-yarn
-# generate random xmtp keys (optional)
-yarn gen:keys
-# run the example
-yarn dev
-```
-
+![](./screenshot.png)
 
 ## Debug an agent
 
-To learn more, see [Debug an agent](/agents/debug-agents)
+To learn more, see [Debug an agent](/agents/deploy/debug-agents)
 
 ## Deploy an agent
 
-To learn more, see [Deploy an agent](/agents/deploy-agent).
+To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 
+## Agent examples
+
+See the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) for more agent examples.
 
 ## Get featured
 
-:::tip
-
-**Want your agent or mini-app featured on TBA?**
 
 [Complete this form](https://docs.google.com/forms/d/e/1FAIpQLSfZ7JgOt4tw36dGLL9cEmw_y09VoE5_Knk7X6EnJd1IJ3CLEg/viewform) to tell the team about your project, get feedback, and collaborate on possibly getting it featured.
 
-:::

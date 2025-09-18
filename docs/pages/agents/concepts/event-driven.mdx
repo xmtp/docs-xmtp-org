@@ -42,8 +42,6 @@ Subscribe to events using the familiar `.on()` method:
 ```typescript
 import { Agent } from "@xmtp/agent-sdk";
 
-const agent = await Agent.createFromEnv();
-
 // Handle text messages
 agent.on("text", async (ctx) => {
   console.log(`Received: ${ctx.message.content}`);

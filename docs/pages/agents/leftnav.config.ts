@@ -42,10 +42,6 @@ export const agentsSidebarConfig = [
         text: "Group chat",
         link: "../agents/build-agents/group-chat",
       },
-      {
-        text: "Rate limits",
-        link: "../agents/build-agents/rate-limits",
-      },
     ],
   },
   {
@@ -105,12 +101,17 @@ export const agentsSidebarConfig = [
     ],
   },
   {
-    text: "Testing & deployment",
+    text: "Examples",
+    link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
+    items: [],
+  },
+  {
+    text: "Deployment",
     collapsed: false,
     items: [
       {
         text: "Debug agents",
-        link: "../agents/testing/debug-agents",
+        link: "../agents/deploy/debug-agents",
       },
       {
         text: "Deploy agents",
@@ -120,16 +121,14 @@ export const agentsSidebarConfig = [
         text: "Best practices",
         link: "../agents/deploy/best-practices",
       },
+      {
+        text: "Security",
+        link: "../agents/deploy/agent-security",
+      },
+      {
+        text: "Rate limits",
+        link: "../agents/deploy/rate-limits",
+      },
     ],
-  },
-  {
-    text: "Security",
-    link: "../agents/agent-security",
-    items: [],
-  },
-  {
-    text: "Examples",
-    link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
-    items: [],
   },
 ];
