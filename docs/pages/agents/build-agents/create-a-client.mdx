@@ -20,7 +20,7 @@ const signer = createSigner();
 
 const agent = await Agent.create(signer, {
   env: "dev", // or 'production'
-  dbEncryptionKey: getRandomValues(new Uint8Array(32)),
+  dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later
 });
 ```
 

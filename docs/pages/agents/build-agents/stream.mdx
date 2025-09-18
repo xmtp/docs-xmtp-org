@@ -23,6 +23,26 @@ agent.on("reply", async (ctx) => {
 });
 ```
 
+## Stream all messages
+
+```js [Node]
+import { filter } from "@xmtp/agent-sdk";
+
+agent.on("message", async (ctx) => {
+  // Filter for specific message types
+  if (filter.isText(ctx.message)) {
+    await ctx.conversation.send(`Echo: ${ctx.message.content}`);
+  }
+});
+
+// Listen for unknown messages
+agent.on("unknownMessage", (ctx) => {
+  console.error("Message type is unknown", ctx);
+});
+```
+
+⚠️ Important: The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
 ## Stream new group chat and DM conversations
 
 With the agent-sdk, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
@@ -51,12 +71,5 @@ The agent-sdk automatically handles connection failures and reconnections. You c
 agent.on("unhandledError", (error) => {
   console.error("Agent error:", error);
   // Handle the error appropriately
-});
-
-// Log when the agent starts
-agent.on("start", () => {
-  console.log(`Waiting for messages...`);
-  console.log(`Address: ${csx.client.accountIdentifier?.identifier}`);
-  console.log(`🔗${getTestUrl(csx)}`);
 });
 ```
