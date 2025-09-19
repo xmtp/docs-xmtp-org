@@ -1,41 +1,28 @@
-# Middleware & routing
+# Middleware support
 
-Middleware in XMTP agents allows you to extend your agent with custom business logic and compose cross-cutting behavior like routing, telemetry, rate limiting, analytics, and feature flags. The middleware system is inspired by popular Node.js frameworks like Express.
+Extend your agent with custom business logic using middlewares. Compose cross-cutting behavior like routing, telemetry, rate limiting, analytics, and feature flags, or plug in your own.
 
-## How middleware works
+#### Standard Middleware
 
-Middleware functions are executed in sequence before your event handlers. Each middleware receives a `context` object and a `next` function, allowing you to:
+Middlewares can be registered with `agent.use` either one at a time or as an array. They are executed in the order they were added.
 
-1. **Continue the chain** – Call `next()` to pass control to the next middleware
-2. **Stop the chain** – Use `return` to prevent further processing  
-3. **Trigger error handling** – Use `throw` to invoke error middleware
+Middleware functions receive a `ctx` (context) object and a `next` function. Normally, a middleware calls `next()` to hand off control to the next one in the chain. However, a middleware can also alter the flow in the following ways:
 
-## Standard middleware
+1. Use `next()` to continue the chain and pass control to the next middleware
+2. Use `return` to stop the chain and prevent events from firing
+3. Use `throw` to trigger the error-handling middleware chain
 
-### Registering middleware
+**Example**
 
-Register middleware using `agent.use()` either individually or as an array:
+```ts
+import { Agent, AgentMiddleware, filter } from "@xmtp/agent-sdk";
 
-```typescript
-import { Agent, AgentMiddleware } from "@xmtp/agent-sdk";
-
-// Individual middleware
-agent.use(authMiddleware);
-agent.use(loggingMiddleware);
-
-// Array of middleware
-agent.use([authMiddleware, loggingMiddleware, rateLimitMiddleware]);
-```
-
-### Basic middleware example
-
-```typescript
 const onlyText: AgentMiddleware = async (ctx, next) => {
-  if (typeof ctx.message.content === "string") {
+  if (filter.isText(ctx.message)) {
     // Continue to next middleware
     await next();
   }
-  // Break middleware chain for non-text messages
+  // Break middleware chain
   return;
 };
 
@@ -43,242 +30,19 @@ const agent = await Agent.createFromEnv();
 agent.use(onlyText);
 ```
 
-### Execution order
+#### Error-Handling Middleware
 
-Middleware executes in the order it was registered:
+Error middleware can be registered with `agent.errors.use` either one at a time or as an array. They are executed in the order they were added.
 
-```typescript
-const firstMiddleware: AgentMiddleware = async (ctx, next) => {
-  console.log("First middleware");
-  await next();
-  console.log("First middleware cleanup");
-};
+Error middleware receives the `error`, `ctx`, and a `next` function. Just like regular middleware, the flow in error middleware depends on how to use `next`:
 
-const secondMiddleware: AgentMiddleware = async (ctx, next) => {
-  console.log("Second middleware");  
-  await next();
-  console.log("Second middleware cleanup");
-};
+1. Use `next()` to mark the error as handled and continue with the main middleware chain
+2. Use `next(error)` to forward the original (or transformed) error to the next error handler
+3. Use `return` to end error handling and stop the middleware chain
+4. Use `throw` to raise a new error to be caught by the error chain
 
-agent.use([firstMiddleware, secondMiddleware]);
-
-// Output when message received:
-// First middleware
-// Second middleware  
-// [Event handler executes]
-// Second middleware cleanup
-// First middleware cleanup
-```
-
-## Common middleware patterns
-
-### Authentication middleware
-
-```typescript
-const requireAuth: AgentMiddleware = async (ctx, next) => {
-  const senderAddress = ctx.getSenderAddress();
-  
-  if (!isAuthorizedUser(senderAddress)) {
-    await ctx.sendText("Access denied");
-    return; // Stop processing
-  }
-  
-  await next(); // Continue to next middleware/handler
-};
-```
-
-### Logging middleware
-
-```typescript
-const loggingMiddleware: AgentMiddleware = async (ctx, next) => {
-  const start = Date.now();
-  const sender = ctx.getSenderAddress();
-  
-  console.log(`[${new Date().toISOString()}] Message from ${sender}`);
-  
-  try {
-    await next();
-    const duration = Date.now() - start;
-    console.log(`[${new Date().toISOString()}] Processed in ${duration}ms`);
-  } catch (error) {
-    console.error(`[${new Date().toISOString()}] Error:`, error);
-    throw error; // Re-throw to trigger error middleware
-  }
-};
-```
-
-### Rate limiting middleware
-
-```typescript
-const rateLimitMiddleware: AgentMiddleware = async (ctx, next) => {
-  const senderAddress = ctx.getSenderAddress();
-  
-  if (isRateLimited(senderAddress)) {
-    await ctx.sendText("Rate limit exceeded. Please slow down.");
-    return;
-  }
-  
-  updateRateLimit(senderAddress);
-  await next();
-};
-```
-
-### Command routing middleware
-
-```typescript
-const commandRouter: AgentMiddleware = async (ctx, next) => {
-  if (typeof ctx.message.content !== "string") {
-    await next();
-    return;
-  }
-  
-  const message = ctx.message.content.trim().toLowerCase();
-  
-  if (message.startsWith("/help")) {
-    await ctx.sendText("Available commands: /help, /status, /ping");
-    return; // Don't continue to other handlers
-  }
-  
-  if (message.startsWith("/status")) {
-    await ctx.sendText("Agent is running normally");
-    return;
-  }
-  
-  // Continue to other middleware/handlers for non-commands
-  await next();
-};
-```
-
-## Error-handling middleware
-
-Error middleware handles exceptions thrown by regular middleware or event handlers.
-
-### Registering error middleware
-
-```typescript
-agent.errors.use(errorHandler);
-agent.errors.use([errorHandler1, errorHandler2]);
-```
-
-### Error middleware flow
-
-Error middleware receives `error`, `ctx`, and `next` parameters:
-
-1. **`next()`** – Mark error as handled and continue with main middleware chain
-2. **`next(error)`** – Forward the error to the next error handler  
-3. **`return`** – End error handling and stop the middleware chain
-4. **`throw`** – Raise a new error to be caught by the error chain
-
-### Error middleware examples
-
-```typescript
-const validationErrorHandler: AgentErrorMiddleware = async (error, ctx, next) => {
-  if (error instanceof ValidationError) {
-    await ctx.conversation.send(`Validation failed: ${error.message}`);
-    return; // Error handled, stop error chain
-  }
-  
-  // Let other error handlers deal with it
-  await next(error);
-};
-
-const generalErrorHandler: AgentErrorMiddleware = async (error, ctx, next) => {
-  console.error("Unhandled error:", error);
-  await ctx.sendText("Sorry, something went wrong. Please try again.");
-  // Mark as handled
-  await next();
-};
-
-agent.errors.use([validationErrorHandler, generalErrorHandler]);
-```
-
-### Transforming errors
-
-```typescript
-const errorTransformer: AgentErrorMiddleware = async (error, ctx, next) => {
-  if (error instanceof DatabaseError) {
-    // Transform database error into user-friendly message
-    const friendlyError = new Error("Data temporarily unavailable");
-    await next(friendlyError);
-  } else {
-    await next(error);
-  }
-};
-```
-
-## Default error handler
-
-Any errors not handled by custom error middleware are caught by the default error handler and published to the `unhandledError` event:
-
-```typescript
-agent.on("unhandledError", (error) => {
-  console.error("Unhandled error:", error);
-  // Report to monitoring service
-  reportError(error);
-});
-```
-
-## Advanced patterns
-
-### Conditional middleware
-
-```typescript
-const conditionalMiddleware: AgentMiddleware = async (ctx, next) => {
-  if (ctx.conversation.id.startsWith("dm-")) {
-    // Only apply to DM conversations
-    await dmSpecificLogic(ctx);
-  }
-  
-  await next();
-};
-```
-
-### Middleware with configuration
-
-```typescript
-function createRateLimitMiddleware(maxPerMinute: number): AgentMiddleware {
-  return async (ctx, next) => {
-    const senderAddress = ctx.getSenderAddress();
-    
-    if (getMessageCount(senderAddress) > maxPerMinute) {
-      await ctx.sendText("Rate limit exceeded");
-      return;
-    }
-    
-    await next();
-  };
-}
-
-agent.use(createRateLimitMiddleware(10)); // 10 messages per minute
-```
-
-### Async middleware composition
-
-```typescript
-const databaseMiddleware: AgentMiddleware = async (ctx, next) => {
-  // Add database connection to context
-  ctx.db = await getDbConnection();
-  
-  try {
-    await next();
-  } finally {
-    // Clean up resources
-    await ctx.db.close();
-  }
-};
-```
-
-## Best practices
-
-1. **Keep middleware focused** – Each middleware should have a single responsibility
-2. **Order matters** – Place authentication before business logic
-3. **Handle errors gracefully** – Always consider what happens when middleware fails
-4. **Use return vs next()** – Be explicit about whether processing should continue
-5. **Clean up resources** – Use try/finally blocks for resource management
-6. **Make middleware reusable** – Use factory functions for configurable middleware
 
 ## Next steps
 
-- Learn about [message filters](./filters) for selective message processing
-- Explore [context and helpers](./context) for rich message handling
-- See [rate limits](../deploy/rate-limits) for implementation details
+- Explore [message filters](./filters) to process messages selectively
+- Understand [context and helpers](./context) for rich message handling
