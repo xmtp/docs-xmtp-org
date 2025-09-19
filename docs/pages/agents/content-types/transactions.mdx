@@ -2,13 +2,13 @@
 
 This package provides an XMTP content type to support sending transactions to a wallet for execution.
 
-:::tip[Quickstart]
-To learn more, see the [Reaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
-:::
+::::tip[Quickstart]
+To learn more, see the [Transactions example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+::::
 
 ## Install the package
 
-:::code-group
+::::code-group
 
 ```bash [npm]
 npm i @xmtp/content-type-wallet-send-calls
@@ -22,7 +22,7 @@ yarn add @xmtp/content-type-wallet-send-calls
 pnpm i @xmtp/content-type-wallet-send-calls
 ```
 
-:::
+::::
 
 ## Configure the content type
 
@@ -30,8 +30,8 @@ After importing the package, you can register the codec.
 
 ```js [Node]
 import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
-// Create the XMTP client
-const xmtp = await Agent.create(signer, {
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: 'dev',
   codecs: [new WalletSendCallsCodec()],
 });
@@ -81,7 +81,7 @@ const walletSendCalls: WalletSendCallsParams = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```ts [Node]
-await conversation.messages.send(walletSendCalls, {
+await conversation.send(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
 ```

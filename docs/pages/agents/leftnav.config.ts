@@ -6,15 +6,15 @@ export const agentsSidebarConfig = [
     items: [
       {
         text: "Introduction",
-        link: "../agents/get-started/intro",
+        link: "/agents/get-started/intro",
       },
       {
         text: "Quickstart",
-        link: "../agents/get-started/build-an-agent",
+        link: "/agents/get-started/build-an-agent",
       },
       {
         text: "FAQ",
-        link: "../agents/get-started/faq",
+        link: "/agents/get-started/faq",
       },
     ],
   },
@@ -24,23 +24,23 @@ export const agentsSidebarConfig = [
     items: [
       {
         text: "Create a client",
-        link: "../agents/build-agents/create-a-client",
+        link: "/agents/build-agents/create-a-client",
       },
       {
         text: "Stream messages",
-        link: "../agents/build-agents/stream",
+        link: "/agents/build-agents/stream",
       },
       {
         text: "Create conversations",
-        link: "../agents/build-agents/create-conversations",
+        link: "/agents/build-agents/create-conversations",
       },
       {
         text: "Group metadata",
-        link: "../agents/build-agents/group-metadata",
+        link: "/agents/build-agents/group-metadata",
       },
       {
         text: "Group permissions",
-        link: "../agents/build-agents/group-permissions",
+        link: "/agents/build-agents/group-permissions",
       },
     ],
   },
@@ -50,27 +50,27 @@ export const agentsSidebarConfig = [
     items: [
       {
         text: "Identity",
-        link: "../agents/concepts/identity",
+        link: "/agents/concepts/identity",
       },
       {
         text: "Manage installations",
-        link: "../agents/concepts/installations",
+        link: "/agents/concepts/installations",
       },
       {
         text: "Event-driven architecture",
-        link: "../agents/concepts/event-driven",
+        link: "/agents/concepts/event-driven",
       },
       {
         text: "Middleware",
-        link: "../agents/concepts/middleware",
+        link: "/agents/concepts/middleware",
       },
       {
         text: "Message filters",
-        link: "../agents/concepts/filters",
+        link: "/agents/concepts/filters",
       },
       {
         text: "Context & helpers",
-        link: "../agents/concepts/context",
+        link: "/agents/concepts/context",
       },
     ],
   },
@@ -115,19 +115,19 @@ export const agentsSidebarConfig = [
     items: [
       {
         text: "Debug agents",
-        link: "../agents/deploy/debug-agents",
+        link: "/agents/deploy/debug-agents",
       },
       {
         text: "Deploy agents",
-        link: "../agents/deploy/deploy-agent",
+        link: "/agents/deploy/deploy-agent",
       },
       {
         text: "Security",
-        link: "../agents/deploy/agent-security",
+        link: "/agents/deploy/agent-security",
       },
       {
         text: "Rate limits",
-        link: "../agents/deploy/rate-limits",
+        link: "/agents/deploy/rate-limits",
       },
     ],
   },

@@ -35,7 +35,7 @@ Once you have the verified identity, get its inbox ID and create a new DM:
 
 ```js [Node]
 // by Ethereum address
-const dm = await agent!.client.conversations.newDmWithIdentifier({
+const dm = await agent.client.conversations.newDmWithIdentifier({
   identifier: bo.accountAddress,
   identifierKind: IdentifierKind.Ethereum,
 });

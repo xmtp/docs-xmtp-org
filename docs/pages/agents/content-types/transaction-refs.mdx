@@ -3,7 +3,7 @@
 This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
 
 :::tip[Quickstart]
-To learn more, see the [Transaction reference example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agents-examples repo.
+To learn more, see the [Transaction reference example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 :::
 
 
@@ -34,8 +34,8 @@ import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
 } from '@xmtp/content-type-transaction-reference';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: 'dev',
   codecs: [new TransactionReferenceCodec()],
 });
@@ -54,11 +54,11 @@ const transactionReference: TransactionReference = {
   /**
    * The networkId for the transaction, in decimal or hexadecimal format
    */
-  networkId: 1;
+  networkId: 1,
   /**
    * The transaction hash
    */
-  reference: "0x123...abc";
+  reference: "0x123...abc",
   /**
    * Optional metadata object
    */
@@ -69,14 +69,14 @@ const transactionReference: TransactionReference = {
     decimals: 6, // Specifies that the currency uses 6 decimal places
     fromAddress: "0x456...def",
     toAddress: "0x789...ghi"
-  };
+  }
 };
 ```
 
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-await conversation.messages.send(transactionReference, {
+await conversation.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
 ```

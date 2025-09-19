@@ -132,8 +132,8 @@ agent.on("text", async (ctx) => {
   const conversations = client.conversations;
   
   // Create new conversations
-  const newDM = await ctx.conversations.newDm("target-inbox-id");
-  const newGroup = await ctx.conversations.newGroup(["inbox1", "inbox2"], {
+  const newDM = await client.conversations.newDm("target-inbox-id");
+  const newGroup = await client.conversations.newGroup(["inbox1", "inbox2"], {
     groupName: "New Group"
   });
 });

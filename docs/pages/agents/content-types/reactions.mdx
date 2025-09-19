@@ -68,7 +68,7 @@ await ctx.conversation.send(reaction, {
 ## Receive a reaction
 
 ```tsx [Node]
-on("reaction", async (ctx) => {
+agent.on("reaction", async (ctx) => {
   console.log("New reaction:", ctx.message.content);
 });
 ```
