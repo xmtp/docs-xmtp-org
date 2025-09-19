@@ -28,7 +28,7 @@ Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` fi
    ![](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/examples/xmtp-gm/screenshot.png)
 
 
-## Enable Debug Logging
+## Enable debug logging
 
 To activate detailed debugging logs, set the `XMTP_FORCE_DEBUG` environment variable in your `.env` file:
 
@@ -38,7 +38,7 @@ XMTP_FORCE_DEBUG=true
 
 This will enable verbose logging throughout the XMTP Agent SDK, helping you troubleshoot issues and understand the internal flow of messages and events.
 
-## Get Agent Information
+## Debug agent information
 
 You can use this code to get your agent's client information, which provides useful values for debugging:
 
@@ -51,14 +51,6 @@ agent.on("start", (): void => {
 Example output:
 
 ```bash
-██╗  ██╗███╗   ███╗████████╗██████╗ 
-╚██╗██╔╝████╗ ████║╚══██╔══╝██╔══██╗
-╚███╔╝ ██╔████╔██║   ██║   ██████╔╝
-██╔██╗ ██║╚██╔╝██║   ██║   ██╔═══╝ 
-██╔╝ ██╗██║ ╚═╝ ██║   ██║   ██║     
-╚═╝  ╚═╝╚═╝     ╚═╝   ╚═╝   ╚═╝     
-
-
 ✓ XMTP Client:
 • InboxId: 21313b5f4f2dd2dc063762eb939d3596229c30de1128826727154da5b28be0a5
 • Version: HEAD@a9d19aa (2025-08-25 21:45:01 +0000)

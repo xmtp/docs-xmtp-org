@@ -32,7 +32,7 @@ import {
   RemoteAttachmentCodec,
 } from '@xmtp/content-type-remote-attachment';
 // Create the XMTP client
-const xmtp = await Client.create(signer, {
+const xmtp = await Agent.create(signer, {
   env: 'dev',
   codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
 });

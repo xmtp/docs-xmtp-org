@@ -35,10 +35,6 @@ export const agentsSidebarConfig = [
         link: "../agents/build-agents/create-conversations",
       },
       {
-        text: "Manage installations",
-        link: "../agents/build-agents/agent-installations",
-      },
-      {
         text: "Group chat",
         link: "../agents/build-agents/group-chat",
       },
@@ -53,7 +49,7 @@ export const agentsSidebarConfig = [
         link: "../agents/concepts/identity",
       },
       {
-        text: "Installations",
+        text: "Manage installations",
         link: "../agents/concepts/installations",
       },
       {
@@ -61,7 +57,7 @@ export const agentsSidebarConfig = [
         link: "../agents/concepts/event-driven",
       },
       {
-        text: "Middleware & routing",
+        text: "Middleware",
         link: "../agents/concepts/middleware",
       },
       {
@@ -120,10 +116,6 @@ export const agentsSidebarConfig = [
       {
         text: "Deploy agents",
         link: "../agents/deploy/deploy-agent",
-      },
-      {
-        text: "Best practices",
-        link: "../agents/deploy/best-practices",
       },
       {
         text: "Security",

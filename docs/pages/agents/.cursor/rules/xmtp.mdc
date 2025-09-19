@@ -697,7 +697,7 @@ function getDbPath(description: string = "xmtp") {
 }
 
 // Create a client with db path
-const client = await Client.create(signer, {
+const client = await Agent.create(signer, {
   env: XMTP_ENV as XmtpEnv,
   dbPath: getDbPath(),
 });

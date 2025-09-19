@@ -35,7 +35,7 @@ After importing the package, you can register the codec.
 ```js [Node]
 import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
 // Create the XMTP client
-const xmtp = await Client.create(signer, {
+const xmtp = await Agent.create(signer, {
   env: 'dev',
   codecs: [new WalletSendCallsCodec()],
 });

@@ -19,7 +19,7 @@ This video provides a walkthrough of creating and building a client.
 
 ### How it works
 
-When you call `Client.create()`, the following steps happen under the hood:
+When you call `Agent.create()`, the following steps happen under the hood:
 
 1. Extracts the `signer` and retrieves the wallet address from it.
 2. Checks the XMTP identity ledger to find an inbox ID associated with the signer address. The inbox ID serves as the user's identity on the XMTP network.
@@ -40,7 +40,7 @@ The encryption key is critical to the stability and continuity of an XMTP client
 
 This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
 
-If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Agent.create()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
 
 Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages**.
 

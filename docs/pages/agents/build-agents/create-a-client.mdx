@@ -74,79 +74,74 @@ const agent = await Agent.createFromEnv();
 
 ### Configure an XMTP client
 
-You can configure an XMTP client with these options passed to `Client.create`:
+You can configure an XMTP client with these options passed to `Agent.create`:
 
 ```tsx [Node]
-import type { ContentCodec } from '@xmtp/content-type-primitives';
-import type { LogLevel } from '@xmtp/node-bindings';
-
-type ClientOptions = {
-  /**
-   * Specify which XMTP environment to connect to. (default: `dev`)
-   */
-  env?: 'local' | 'dev' | 'production';
-  /**
-   * Add a client app version identifier that's included with API requests.
-   * Production apps are strongly encouraged to set this value.
-   *
-   * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
-   * For example, `appVersion: 'alix/2.x'`
-   *
-   * If you have an agent and an app, it's best to distinguish them from each other by
-   * adding `-agent` and `-app` to the names. For example:
-   * - Agent: `appVersion: 'alix-agent/2.x'`
-   * - App: `appVersion: 'alix-app/3.x'`
-   *
-   * Setting this value provides telemetry that shows which agents are using the
-   * XMTP client SDK. This information can help XMTP core developers provide you with agent
-   * support, especially around communicating important SDK updates, including
-   * deprecations and required upgrades.
-   */
-  appVersion?: string;
-  /**
-   * apiUrl can be used to override the `env` flag and connect to a
-   * specific endpoint
-   */
-  apiUrl?: string;
-  /**
-   * Path to the local DB
-   *
-   * There are 4 value types that can be used to specify the database path:
-   *
-   * - `undefined` (or excluded from the client options)
-   *    The database will be created in the current working directory and is based on
-   *    the XMTP environment and client inbox ID.
-   *    Example: `xmtp-dev-<inbox-id>.db3`
-   *
-   * - `null`
-   *    No database will be created and all data will be lost once the client disconnects.
-   *
-   * - `string`
-   *    The given path will be used to create the database.
-   *    Example: `./my-db.db3`
-   *
-   * - `function`
-   *    A callback function that receives the inbox ID and returns a string path.
-   *    Example: `(inboxId) => string`
-   */
-  dbPath?: string | null | ((inboxId: string) => string);
-  /**
-   * Encryption key for the local DB
-   */
-  dbEncryptionKey?: Uint8Array;
-  /**
-   * Allow configuring codecs for additional content types
-   */
-  codecs?: ContentCodec[];
-  /**
-   * Enable structured JSON logging
-   */
-  structuredLogging?: boolean;
-  /**
-   * Logging level
-   */
-  loggingLevel?: LogLevel;
-};
+/**
+ * Specify which XMTP environment to connect to. (default: `dev`)
+ */
+env?: 'local' | 'dev' | 'production';
+/**
+ * Add a client app version identifier that's included with API requests.
+ * Production apps are strongly encouraged to set this value.
+ *
+ * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
+ * For example, `appVersion: 'alix/2.x'`
+ *
+ * If you have an agent and an app, it's best to distinguish them from each other by
+ * adding `-agent` and `-app` to the names. For example:
+ * - Agent: `appVersion: 'alix-agent/2.x'`
+ * - App: `appVersion: 'alix-app/3.x'`
+ *
+ * Setting this value provides telemetry that shows which agents are using the
+ * XMTP client SDK. This information can help XMTP core developers provide you with agent
+ * support, especially around communicating important SDK updates, including
+ * deprecations and required upgrades.
+ */
+appVersion?: string;
+/**
+ * apiUrl can be used to override the `env` flag and connect to a
+ * specific endpoint
+ */
+apiUrl?: string;
+/**
+ * Path to the local DB
+ *
+ * There are 4 value types that can be used to specify the database path:
+ *
+ * - `undefined` (or excluded from the client options)
+ *    The database will be created in the current working directory and is based on
+ *    the XMTP environment and client inbox ID.
+ *    Example: `xmtp-dev-<inbox-id>.db3`
+ *
+ * - `null`
+ *    No database will be created and all data will be lost once the client disconnects.
+ *
+ * - `string`
+ *    The given path will be used to create the database.
+ *    Example: `./my-db.db3`
+ *
+ * - `function`
+ *    A callback function that receives the inbox ID and returns a string path.
+ *    Example: `(inboxId) => string`
+ */
+dbPath?: string | null | ((inboxId: string) => string);
+/**
+ * Encryption key for the local DB
+ */
+dbEncryptionKey?: Uint8Array;
+/**
+ * Allow configuring codecs for additional content types
+ */
+codecs?: ContentCodec[];
+/**
+ * Enable structured JSON logging
+ */
+structuredLogging?: boolean;
+/**
+ * Logging level
+ */
+loggingLevel?: LogLevel;
 ```
 
 ## Smart Contract Wallets (SCW)
