@@ -10,21 +10,21 @@ Listens to the network for new group chats and DMs. Whenever a new conversation 
 const stream = await client.conversations.stream({
   onValue: (conversation) => {
     // Received a conversation
-    console.log("New conversation:", conversation);
+    console.log('New conversation:', conversation);
   },
   onError: (error) => {
     // Log any stream errors
     console.error(error);
   },
   onFail: () => {
-    console.log("Stream failed");
-  }
+    console.log('Stream failed');
+  },
 });
 
 // Or use for-await loop
 for await (const conversation of stream) {
   // Received a conversation
-  console.log("New conversation:", conversation);
+  console.log('New conversation:', conversation);
 }
 ```
 
@@ -32,35 +32,35 @@ for await (const conversation of stream) {
 const stream = await client.conversations.stream({
   onValue: (conversation) => {
     // Received a conversation
-    console.log("New conversation:", conversation);
+    console.log('New conversation:', conversation);
   },
   onError: (error) => {
     // Log any stream errors
     console.error(error);
   },
   onFail: () => {
-    console.log("Stream failed");
-  }
+    console.log('Stream failed');
+  },
 });
 
 // To stream only groups
 const groupStream = await client.conversations.streamGroups({
   onValue: (conversation) => {
-    console.log("New group:", conversation);
-  }
+    console.log('New group:', conversation);
+  },
 });
 
 // To stream only DMs
 const dmStream = await client.conversations.streamDms({
   onValue: (conversation) => {
-    console.log("New DM:", conversation);
-  }
+    console.log('New DM:', conversation);
+  },
 });
 
 // Or use for-await loop
 for await (const conversation of stream) {
   // Received a conversation
-  console.log("New conversation:", conversation);
+  console.log('New conversation:', conversation);
 }
 ```
 
@@ -110,21 +110,21 @@ const stream = await client.conversations.streamAllMessages({
   consentStates: [ConsentState.Allowed],
   onValue: (message) => {
     // Received a message
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
   onError: (error) => {
     // Log any stream errors
     console.error(error);
   },
   onFail: () => {
-    console.log("Stream failed");
-  }
+    console.log('Stream failed');
+  },
 });
- 
+
 // Or use for-await loop
 for await (const message of stream) {
   // Received a message
-  console.log("New message:", message);
+  console.log('New message:', message);
 }
 ```
 
@@ -134,37 +134,37 @@ const stream = await client.conversations.streamAllMessages({
   consentStates: [ConsentState.Allowed],
   onValue: (message) => {
     // Received a message
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
   onError: (error) => {
     // Log any stream errors
     console.error(error);
   },
   onFail: () => {
-    console.log("Stream failed");
-  }
+    console.log('Stream failed');
+  },
 });
- 
+
 // stream only group messages
 const groupMessageStream = await client.conversations.streamAllGroupMessages({
   consentStates: [ConsentState.Allowed],
   onValue: (message) => {
-    console.log("New group message:", message);
-  }
+    console.log('New group message:', message);
+  },
 });
- 
+
 // stream only dm messages
 const dmMessageStream = await client.conversations.streamAllDmMessages({
   consentStates: [ConsentState.Allowed],
   onValue: (message) => {
-    console.log("New DM message:", message);
-  }
+    console.log('New DM message:', message);
+  },
 });
- 
+
 // Or use for-await loop
 for await (const message of stream) {
   // Received a message
-  console.log("New message:", message);
+  console.log('New message:', message);
 }
 ```
 
@@ -173,7 +173,7 @@ await alix.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
-  { consentState: ["allowed"] }
+  { consentState: ['allowed'] }
 );
 ```
 
@@ -206,8 +206,8 @@ Streams will automatically attempt to reconnect if they fail. By default, a stre
 const stream = await client.conversations.streamAllMessages({
   retryOnFail: false,
   onValue: (message) => {
-    console.log("New message:", message);
-  }
+    console.log('New message:', message);
+  },
 });
 
 // use stream options with retry configuration
@@ -216,16 +216,16 @@ const stream = await client.conversations.streamAllMessages({
   retryAttempts: 10,
   retryDelay: 20000, // 20 seconds
   onValue: (message) => {
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
   onError: (error) => {
-    console.error("Stream error:", error);
+    console.error('Stream error:', error);
   },
   onFail: () => {
-    console.log("Stream failed after retries");
+    console.log('Stream failed after retries');
   },
   onRestart: () => {
-    console.log("Stream restarted");
+    console.log('Stream restarted');
   },
   onRetry: (attempt, maxAttempts) => {
     console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
@@ -240,16 +240,16 @@ const stream = await client.conversations.streamAllMessages({
   retryAttempts: 5,
   retryDelay: 15000, // 15 seconds
   onValue: (message) => {
-    console.log("New message:", message);
+    console.log('New message:', message);
   },
   onError: (error) => {
-    console.error("Stream error:", error);
+    console.error('Stream error:', error);
   },
   onFail: () => {
-    console.log("Stream failed after retries");
+    console.log('Stream failed after retries');
   },
   onRestart: () => {
-    console.log("Stream restarted");
+    console.log('Stream restarted');
   },
   onRetry: (attempt, maxAttempts) => {
     console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
@@ -258,25 +258,25 @@ const stream = await client.conversations.streamAllMessages({
 ```
 
 ```tsx [React Native]
-const [messages, setMessages] = useState<DecodedMessage[]>([]); 
- 
-  const messageCallback = async (message: DecodedMessage<any>) => { 
-    setMessages(prev => [...prev, message]); 
-  }
-  const conversationFilterType: ConversationFilterType = 'all'
-  const consentStates: ConsentState[] = ['allowed']
-  const onCloseCallback = () => {
-    console.log("Message stream closed, handle retries here")
-  }
+const [messages, setMessages] = useState<DecodedMessage[]>([]);
 
-  const startMessageStream = async () => { 
-    await alix.conversations.streamAllMessages( 
-      messageCallback, 
-      conversationFilterType, 
-      consentStates, 
-      onCloseCallback 
-    ); 
-  };
+const messageCallback = async (message: DecodedMessage<any>) => {
+  setMessages((prev) => [...prev, message]);
+};
+const conversationFilterType: ConversationFilterType = 'all';
+const consentStates: ConsentState[] = ['allowed'];
+const onCloseCallback = () => {
+  console.log('Message stream closed, handle retries here');
+};
+
+const startMessageStream = async () => {
+  await alix.conversations.streamAllMessages(
+    messageCallback,
+    conversationFilterType,
+    consentStates,
+    onCloseCallback
+  );
+};
 ```
 
 ```kotlin [Kotlin]

@@ -43,9 +43,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await client.conversations.getMessageById(messageId);

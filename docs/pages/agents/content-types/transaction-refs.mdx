@@ -36,10 +36,10 @@ After importing the package, you can register the codec.
 import {
   ContentTypeTransactionReference,
   TransactionReferenceCodec,
-} from "@xmtp/content-type-transaction-reference";
+} from '@xmtp/content-type-transaction-reference';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new TransactionReferenceCodec()],
 });
 ```

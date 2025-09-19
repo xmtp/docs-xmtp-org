@@ -37,17 +37,17 @@ After importing the package, you can register the codec.
 :::code-group
 
 ```js [Browser]
-import { ReplyCodec } from "@xmtp/content-type-reply";
+import { ReplyCodec } from '@xmtp/content-type-reply';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new ReplyCodec()],
 });
 ```
 
 ```js [React Native]
 const client = await Client.create(signer, {
-  env: "production",
+  env: 'production',
   codecs: [new ReplyCodec()],
 });
 ```
@@ -75,14 +75,14 @@ Once you've created a reply, you can send it. Replies are represented as objects
 :::code-group
 
 ```ts [Browser]
-import { ContentTypeText } from "@xmtp/content-type-text";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-import type { Reply } from "@xmtp/content-type-reply";
+import { ContentTypeText } from '@xmtp/content-type-text';
+import { ContentTypeReply } from '@xmtp/content-type-reply';
+import type { Reply } from '@xmtp/content-type-reply';
 
 const reply: Reply = {
   reference: someMessageID,
   contentType: ContentTypeText,
-  content: "I concur",
+  content: 'I concur',
 };
 
 await conversation.send(reply, {
@@ -96,7 +96,7 @@ const replyContent = {
   reply: {
     reference: messageId, // ID of the message you're replying to
     content: {
-      text: "This is a reply", // Content of the reply
+      text: 'This is a reply', // Content of the reply
     },
   },
 };
