@@ -4,14 +4,26 @@ When you build an agent with XMTP, all messages are encoded with a content type 
 
 In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
 
+At a high level, there are three categories of content types with XMTP:
+
+- Standard
+- Standards-track
+- Custom
+
 ## Standard content types
+
+A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
+
+Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their agent or app.
+
+Here is the current standard content type:
 
 ### Text content type
 
 An agent built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
 
 ```jsx [Node]
-await ctx.conversation.send("gm");
+await conversation.send('gm');
 ```
 
 ## Receiving content types
@@ -49,13 +61,15 @@ agent.on("message", async (ctx) => {
 });
 ```
 
-## Additional content types
 
-These content types are available for use in your agents:
+## Standards-track content types
+
+A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
+
+Here are standards-track content types that you can review, test, and adopt in your agent today:
 
 - [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
 - [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
 - [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
-- [Transactions content type](/agents/content-types/transactions): Use to send transaction requests to wallets and share references to completed onchain transactions.
-- [Markdown content type](/agents/content-types/markdown): Use to send rich text messages with formatting, links, and structured content.
-- [Inline actions content type](/agents/content-types/inline-actions): Use to send interactive button-based UI following the XIP-67 specification.
+- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
+- [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.

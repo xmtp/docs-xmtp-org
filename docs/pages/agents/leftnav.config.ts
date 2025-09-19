@@ -75,36 +75,32 @@ export const agentsSidebarConfig = [
     ],
   },
   {
-    text: "Content types",
+    text: "Support rich content types",
     collapsed: false,
     items: [
       {
-        text: "Overview",
-        link: "../agents/content-types/content-types",
-      },
-      {
-        text: "Reactions",
-        link: "../agents/content-types/reactions",
-      },
-      {
-        text: "Replies",
-        link: "../agents/content-types/replies",
+        text: "Understand content types",
+        link: "/agents/content-types/content-types",
       },
       {
         text: "Attachments",
-        link: "../agents/content-types/attachments",
+        link: "/agents/content-types/attachments",
       },
       {
-        text: "Transactions",
-        link: "../agents/content-types/transactions",
+        text: "Onchain transactions",
+        link: "/agents/content-types/transactions",
       },
       {
-        text: "Markdown",
-        link: "../agents/content-types/markdown",
+        text: "Onchain transaction references",
+        link: "/agents/content-types/transaction-refs",
       },
       {
-        text: "Inline actions",
-        link: "../agents/content-types/inline-actions",
+        text: "Reactions",
+        link: "/agents/content-types/reactions",
+      },
+      {
+        text: "Replies",
+        link: "/agents/content-types/replies",
       },
     ],
   },

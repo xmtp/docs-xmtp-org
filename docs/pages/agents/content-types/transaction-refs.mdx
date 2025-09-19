@@ -1,0 +1,106 @@
+# Support onchain transaction references with your agent built with XMTP
+
+This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
+
+For an example of an agent that implements the transaction reference content type, see the [Transaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+
+:::tip[Open for feedback]
+
+You're welcome to provide feedback by commenting on [XIP-21: Onchain transaction reference content type](https://community.xmtp.org/t/xip-21-on-chain-transaction-reference-content-type/532).
+
+:::
+
+## Install the package
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-transaction-reference
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-transaction-reference
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-transaction-reference
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Node]
+import {
+  ContentTypeTransactionReference,
+  TransactionReferenceCodec,
+} from '@xmtp/content-type-transaction-reference';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new TransactionReferenceCodec()],
+});
+```
+
+## Send a transaction reference
+
+With XMTP, a transaction reference is represented as an object with the following keys:
+
+```ts [Node]
+const transactionReference: TransactionReference = {
+  /**
+   * Optional namespace for the networkId
+   */
+  namespace: "eip155",
+  /**
+   * The networkId for the transaction, in decimal or hexadecimal format
+   */
+  networkId: 1;
+  /**
+   * The transaction hash
+   */
+  reference: "0x123...abc";
+  /**
+   * Optional metadata object
+   */
+  metadata: {
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100000, // In integer format, this represents 1 USDC (100000/10^6)
+    decimals: 6, // Specifies that the currency uses 6 decimal places
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  };
+};
+```
+
+Once you have a transaction reference, you can send it as part of your conversation:
+
+```js [Node]
+await conversation.messages.send(transactionReference, {
+  contentType: ContentTypeTransactionReference,
+});
+```
+
+## Receive a transaction reference
+
+To receive and process a transaction reference, you can use the following code samples.
+
+```ts [Node]
+// Assume `loadLastMessage` is a thing you have
+const message: DecodedMessage = await loadLastMessage();
+
+if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
+  // Handle non-transaction reference message
+  return;
+}
+
+const transactionRef: TransactionReference = message.content;
+// Process the transaction reference here
+```
+
+## Display the transaction reference
+
+Displaying a transaction reference typically involves rendering details such as the transaction hash, network ID, and any relevant metadata. Because the exact UI representation can vary based on an app's design, you might want to fetch onchain data before showing it to the user.

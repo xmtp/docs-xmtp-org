@@ -64,6 +64,14 @@ await ctx.conversation.send(reaction, {
 
 ## Receive a reaction
 
+```tsx [Node]
+on("reaction", async (ctx) => {
+  console.log("New reaction:", ctx.message.content);
+});
+```
+  
+## Filter a reaction
+
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]

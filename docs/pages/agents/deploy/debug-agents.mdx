@@ -43,14 +43,31 @@ This will enable verbose logging throughout the XMTP Agent SDK, helping you trou
 You can use this code to get your agent's client information, which provides useful values for debugging:
 
 ```tsx [Node]
-// With the agent-sdk, debugging is simplified
-agent.on("start", () => {
-  console.log(`✓ XMTP Agent:
-  • Address: ${agent.client.accountIdentifier?.identifier}
-  • InboxId: ${agent.client.inboxId}
-  • InstallationId: ${agent.client.installationId}
-  • Environment: ${agent.client.options?.env ?? "dev"}
-  • Test URL: ${getTestUrl(agent)}
-  • Ready to receive messages!`);
+// Log when we're ready
+agent.on("start", (): void => {
+  logDetails(agent.client)
 });
+```
+Example output:
+
+```bash
+██╗  ██╗███╗   ███╗████████╗██████╗ 
+╚██╗██╔╝████╗ ████║╚══██╔══╝██╔══██╗
+╚███╔╝ ██╔████╔██║   ██║   ██████╔╝
+██╔██╗ ██║╚██╔╝██║   ██║   ██╔═══╝ 
+██╔╝ ██╗██║ ╚═╝ ██║   ██║   ██║     
+╚═╝  ╚═╝╚═╝     ╚═╝   ╚═╝   ╚═╝     
+
+
+✓ XMTP Client:
+• InboxId: 21313b5f4f2dd2dc063762eb939d3596229c30de1128826727154da5b28be0a5
+• Version: HEAD@a9d19aa (2025-08-25 21:45:01 +0000)
+• Address: 0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+• Conversations: 0
+• Installations: 5
+• InstallationId: 3c072cd74f2f95185c068cf7ea9ee5a22bef5b42a1630749d9e0be8b7a27fe22
+• Key Package created: 9/19/2025, 7:07:30 PM
+• Key Package valid until: 12/12/2025, 8:07:30 PM
+• Networks: production
+• URL: http://xmtp.chat/dm/0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
 ```

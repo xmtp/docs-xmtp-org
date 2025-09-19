@@ -60,11 +60,23 @@ await ctx.conversation.send(reply, {
 });
 ```
 
-## Receive the content type
 
-```ts [Node]
+## Receive a reply
+
+```tsx [Node]
+on("reply", async (ctx) => {
+  console.log("New reply:", ctx.message.content);
+});
+```
+  
+## Filter a reply
+
+Now that you can send a reply, you need a way to receive a reply. For example:
+
+```tsx [Node]
 if (message.contentType.sameAs(ContentTypeReply)) {
   // We've got a reply.
   const reply: Reply = message.content;
 }
 ```
+
