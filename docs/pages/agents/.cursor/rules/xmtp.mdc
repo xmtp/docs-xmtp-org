@@ -34,7 +34,7 @@ const agent = await Agent.create(signer, {
 
 // 3. Respond to text messages
 agent.on("text", async (ctx) => {
-  await ctx.conversation.send("Hello from my XMTP Agent! 👋");
+  await ctx.sendText("Hello from my XMTP Agent! 👋");
 });
 
 // 4. Log when we're ready
@@ -117,11 +117,11 @@ agent.on("reply", async (ctx) => {
 
 // Handle new conversations
 agent.on("dm", async (ctx) => {
-  await ctx.conversation.send("Welcome to our DM!");
+  await ctx.sendText("Welcome to our DM!");
 });
 
 agent.on("group", async (ctx) => {
-  await ctx.conversation.send("Hello group!");
+  await ctx.sendText("Hello group!");
 });
 
 // Handle uncaught errors
@@ -216,7 +216,7 @@ import { filter } from "@xmtp/agent-sdk";
 // Using filter in message handler
 agent.on("text", async (ctx) => {
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send("You sent a text message!");
+    await ctx.sendText("You sent a text message!");
   }
 });
 
@@ -227,7 +227,7 @@ agent.on("text", async (ctx) => {
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
-    await ctx.conversation.send("Valid text message received ✅");
+    await ctx.sendText("Valid text message received ✅");
   }
 });
 ```
@@ -721,7 +721,7 @@ agent.use(inlineActionsMiddleware);
 
 // 2. Register action handlers
 registerAction("my-action", async (ctx) => {
-  await ctx.conversation.send("Action executed!");
+  await ctx.sendText("Action executed!");
 });
 
 // 3. Send interactive buttons
@@ -752,8 +752,8 @@ await ActionBuilder.create("menu-id", "Description")
 await sendConfirmation(
   ctx,
   "Delete this item?",
-  async (ctx) => await ctx.conversation.send("Deleted!"),
-  async (ctx) => await ctx.conversation.send("Cancelled"),
+  async (ctx) => await ctx.sendText("Deleted!"),
+  async (ctx) => await ctx.sendText("Cancelled"),
 );
 ```
 
@@ -807,7 +807,7 @@ Register handlers for button clicks:
 ```typescript
 registerAction("my-action", async (ctx: MessageContext) => {
   // Handle the action
-  await ctx.conversation.send("Action completed!");
+  await ctx.sendText("Action completed!");
 
   // Optionally show navigation options
   await showNavigationOptions(ctx, config, "What would you like to do next?");

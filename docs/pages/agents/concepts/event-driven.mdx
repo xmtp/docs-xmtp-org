@@ -45,12 +45,12 @@ import { Agent } from "@xmtp/agent-sdk";
 // Handle text messages
 agent.on("text", async (ctx) => {
   console.log(`Received: ${ctx.message.content}`);
-  await ctx.conversation.send("Thanks for your message!");
+  await ctx.sendText("Thanks for your message!");
 });
 
 // Handle new DM conversations
 agent.on("dm", async (ctx) => {
-  await ctx.conversation.send("Welcome to our DM! How can I help?");
+  await ctx.sendText("Welcome to our DM! How can I help?");
 });
 
 // Handle agent startup

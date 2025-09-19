@@ -79,7 +79,7 @@ agent.on("markdown", async (ctx) => {
   console.log("Received markdown:", markdownContent);
   
   // Process the markdown content
-  await ctx.conversation.send("Thanks for the markdown message!");
+  await ctx.sendText("Thanks for the markdown message!");
 });
 
 // You can also check for markdown in the general message handler

@@ -120,7 +120,7 @@ if (ctx.message.content.startsWith("/name ") && ctx.conversation.isAdmin(ctx.get
 if (ctx.message.content.startsWith("/desc ") && ctx.conversation.isAdmin(ctx.getSenderAddress())) {
   const newDesc = ctx.message.content.substring(6);
   await ctx.conversation.updateDescription(newDesc);
-  await ctx.conversation.send("Group description updated!");
+  await ctx.sendText("Group description updated!");
 }
 
 // Update group image
@@ -157,6 +157,6 @@ try {
   await ctx.conversation.addMembers([newMemberAddress]);
   await ctx.conversation.send(`Added ${newMemberAddress} to the group!`);
 } catch (error) {
-  await ctx.conversation.send("Failed to add member. Check permissions and address format.");
+  await ctx.sendText("Failed to add member. Check permissions and address format.");
 }
 ```

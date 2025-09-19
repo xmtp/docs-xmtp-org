@@ -49,6 +49,14 @@ export const agentsSidebarConfig = [
     collapsed: false,
     items: [
       {
+        text: "Identity",
+        link: "../agents/concepts/identity",
+      },
+      {
+        text: "Installations",
+        link: "../agents/concepts/installations",
+      },
+      {
         text: "Event-driven architecture",
         link: "../agents/concepts/event-driven",
       },

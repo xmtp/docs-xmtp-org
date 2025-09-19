@@ -1,6 +1,5 @@
 # Stream conversations and messages
 
-
 ## Stream messages
 
 With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
@@ -9,7 +8,7 @@ With the agent-sdk, you can listen for different types of messages using event h
 // Listen for text messages
 agent.on("text", async (ctx) => {
   console.log("New text message:", ctx.message.content);
-  await ctx.conversation.send("Got your message!");
+  await ctx.sendText("Got your message!");
 });
 
 // Listen for reactions
@@ -51,13 +50,13 @@ With the agent-sdk, you can listen for new conversations using event handlers. T
 // Listen for new DM conversations
 agent.on("dm", async (ctx) => {
   console.log("New DM conversation:", ctx.conversation.id);
-  await ctx.conversation.send("Welcome to our DM!");
+  await ctx.sendText("Welcome to our DM!");
 });
 
 // Listen for new group conversations
 agent.on("group", async (ctx) => {
   console.log("New group conversation:", ctx.conversation.id);
-  await ctx.conversation.send("Hello group!");
+  await ctx.sendText("Hello group!");
 });
 ```
 

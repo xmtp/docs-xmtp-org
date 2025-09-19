@@ -21,14 +21,14 @@ import { filter, f } from "@xmtp/agent-sdk";
 // Both names work identically
 agent.on("text", async (ctx) => {
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send("You sent a text message!");
+    await ctx.sendText("You sent a text message!");
   }
 });
 
 // Shorter alias
 agent.on("text", async (ctx) => {
   if (f.isText(ctx.message)) {
-    await ctx.conversation.send("You sent a text message!");
+    await ctx.sendText("You sent a text message!");
   }
 });
 ```
@@ -81,12 +81,12 @@ agent.on("text", async (ctx) => {
 agent.on("text", async (ctx) => {
   // Ignore messages from the agent itself
   if (!filter.fromSelf(ctx.message, ctx.client)) {
-    await ctx.conversation.send("Thanks for your message!");
+    await ctx.sendText("Thanks for your message!");
   }
   
   // Only respond to specific senders
   if (filter.fromAddress(ctx.message, "0x1234...")) {
-    await ctx.conversation.send("Hello, authorized user!");
+    await ctx.sendText("Hello, authorized user!");
   }
 });
 ```
@@ -103,7 +103,7 @@ agent.on("text", async (ctx) => {
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
-    await ctx.conversation.send("Valid text message received ✅");
+    await ctx.sendText("Valid text message received ✅");
   }
 });
 ```
@@ -149,7 +149,7 @@ const isCommand = (message: any): boolean => {
 // Usage
 agent.on("text", async (ctx) => {
   if (containsKeyword(ctx.message, "help")) {
-    await ctx.conversation.send("How can I help you?");
+    await ctx.sendText("How can I help you?");
   }
   
   if (isCommand(ctx.message)) {
@@ -173,11 +173,11 @@ const isGroup = (conversation: any): boolean => {
 
 agent.on("text", async (ctx) => {
   if (isDM(ctx.conversation)) {
-    await ctx.conversation.send("Thanks for the DM!");
+    await ctx.sendText("Thanks for the DM!");
   }
   
   if (isGroup(ctx.conversation)) {
-    await ctx.conversation.send("Hello group!");
+    await ctx.sendText("Hello group!");
   }
 });
 ```
@@ -200,11 +200,11 @@ const isDuringBusinessHours = (message: any): boolean => {
 
 agent.on("text", async (ctx) => {
   if (isRecent(ctx.message, 1)) {
-    await ctx.conversation.send("Thanks for the fresh message!");
+    await ctx.sendText("Thanks for the fresh message!");
   }
   
   if (!isDuringBusinessHours(ctx.message)) {
-    await ctx.conversation.send("Thanks for your message! I'll respond during business hours.");
+    await ctx.sendText("Thanks for your message! I'll respond during business hours.");
   }
 });
 ```

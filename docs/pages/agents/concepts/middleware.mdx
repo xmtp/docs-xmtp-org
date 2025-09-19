@@ -79,7 +79,7 @@ const requireAuth: AgentMiddleware = async (ctx, next) => {
   const senderAddress = ctx.getSenderAddress();
   
   if (!isAuthorizedUser(senderAddress)) {
-    await ctx.conversation.send("Access denied");
+    await ctx.sendText("Access denied");
     return; // Stop processing
   }
   
@@ -114,7 +114,7 @@ const rateLimitMiddleware: AgentMiddleware = async (ctx, next) => {
   const senderAddress = ctx.getSenderAddress();
   
   if (isRateLimited(senderAddress)) {
-    await ctx.conversation.send("Rate limit exceeded. Please slow down.");
+    await ctx.sendText("Rate limit exceeded. Please slow down.");
     return;
   }
   
@@ -135,12 +135,12 @@ const commandRouter: AgentMiddleware = async (ctx, next) => {
   const message = ctx.message.content.trim().toLowerCase();
   
   if (message.startsWith("/help")) {
-    await ctx.conversation.send("Available commands: /help, /status, /ping");
+    await ctx.sendText("Available commands: /help, /status, /ping");
     return; // Don't continue to other handlers
   }
   
   if (message.startsWith("/status")) {
-    await ctx.conversation.send("Agent is running normally");
+    await ctx.sendText("Agent is running normally");
     return;
   }
   
@@ -184,7 +184,7 @@ const validationErrorHandler: AgentErrorMiddleware = async (error, ctx, next) =>
 
 const generalErrorHandler: AgentErrorMiddleware = async (error, ctx, next) => {
   console.error("Unhandled error:", error);
-  await ctx.conversation.send("Sorry, something went wrong. Please try again.");
+  await ctx.sendText("Sorry, something went wrong. Please try again.");
   // Mark as handled
   await next();
 };
@@ -241,7 +241,7 @@ function createRateLimitMiddleware(maxPerMinute: number): AgentMiddleware {
     const senderAddress = ctx.getSenderAddress();
     
     if (getMessageCount(senderAddress) > maxPerMinute) {
-      await ctx.conversation.send("Rate limit exceeded");
+      await ctx.sendText("Rate limit exceeded");
       return;
     }
     
@@ -281,4 +281,4 @@ const databaseMiddleware: AgentMiddleware = async (ctx, next) => {
 
 - Learn about [message filters](./filters) for selective message processing
 - Explore [context and helpers](./context) for rich message handling
-- See [rate limits](../build-agents/rate-limits) for implementation details
+- See [rate limits](../deploy/rate-limits) for implementation details

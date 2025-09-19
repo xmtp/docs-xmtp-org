@@ -48,7 +48,7 @@ agent.use(inlineActionsMiddleware);
 
 // 2. Register action handlers
 registerAction("my-action", async (ctx) => {
-  await ctx.conversation.send("Action executed!");
+  await ctx.sendText("Action executed!");
 });
 
 // 3. Send interactive buttons
@@ -79,8 +79,8 @@ await ActionBuilder.create("menu-id", "Description")
 await sendConfirmation(
   ctx,
   "Delete this item?",
-  async (ctx) => await ctx.conversation.send("Deleted!"),
-  async (ctx) => await ctx.conversation.send("Cancelled"),
+  async (ctx) => await ctx.sendText("Deleted!"),
+  async (ctx) => await ctx.sendText("Cancelled"),
 );
 ```
 
@@ -137,7 +137,7 @@ registerAction("show-menu", async (ctx) => {
 });
 
 registerAction("get-info", async (ctx) => {
-  await ctx.conversation.send("Here's some information about the agent...");
+  await ctx.sendText("Here's some information about the agent...");
   
   // Show options after providing info
   await ActionBuilder.create("info-menu", "What's next?")
@@ -152,14 +152,14 @@ registerAction("change-settings", async (ctx) => {
       id: "theme",
       label: "🎨 Theme",
       handler: async (ctx) => {
-        await ctx.conversation.send("Theme settings would go here...");
+        await ctx.sendText("Theme settings would go here...");
       },
     },
     {
       id: "notifications",
       label: "🔔 Notifications",
       handler: async (ctx) => {
-        await ctx.conversation.send("Notification settings would go here...");
+        await ctx.sendText("Notification settings would go here...");
       },
     },
   ]);
@@ -184,14 +184,14 @@ registerAction("delete-item", async (ctx) => {
     ctx,
     "Are you sure you want to delete this item?",
     async (ctx) => {
-      await ctx.conversation.send("Item deleted successfully!");
+      await ctx.sendText("Item deleted successfully!");
       await ActionBuilder.create("after-delete", "Item deleted. What's next?")
         .add("show-menu", "Main Menu")
         .add("help", "Help")
         .send(ctx);
     },
     async (ctx) => {
-      await ctx.conversation.send("Delete cancelled.");
+      await ctx.sendText("Delete cancelled.");
       await ActionBuilder.create("delete-cancelled", "Delete cancelled. What would you like to do?")
         .add("show-menu", "Main Menu")
         .add("help", "Help")
@@ -216,7 +216,7 @@ agent.on("text", async (ctx) => {
       .send(ctx);
   } else {
     // Default response with menu
-    await ctx.conversation.send("I received your message! Here are some options:");
+    await ctx.sendText("I received your message! Here are some options:");
     await ActionBuilder.create("response-menu", "Choose an action:")
       .add("show-menu", "Main Menu")
       .add("help", "Help")
@@ -264,7 +264,7 @@ Register handlers for button clicks:
 ```typescript
 registerAction("my-action", async (ctx: MessageContext) => {
   // Handle the action
-  await ctx.conversation.send("Action completed!");
+  await ctx.sendText("Action completed!");
 
   // Optionally show navigation options
   await showNavigationOptions(ctx, config, "What would you like to do next?");
