@@ -45,10 +45,10 @@ Each `sync()` function corresponds to a different type of cursor:
 
 For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
 
-  <div style={{ backgroundColor: '#ffffff', padding: '20px', borderRadius: '8px' }}>
+<div className="diagram-white-bg">
     <Mermaid
-      id="cursors"
-      chart={`
+        id="cursors"
+        chart={`
         sequenceDiagram
             participant Client as Client <br> (Stores cursor)
             participant Network as Network <br> (Stores group topic)
@@ -67,6 +67,6 @@ For example, here is a sequence diagram illustrating how cursors operate with `c
             Client ->> Client: Cursor points after Msg6
         `}
     />
-  </div>
+</div>
 
 By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.

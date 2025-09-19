@@ -7,18 +7,13 @@ import mermaid from 'mermaid';
 type MermaidProps = {
   chart: string;
   id?: string;
-  config?: any;
 };
 
-export default function Mermaid({ chart, id = 'mermaid-graph', config }: MermaidProps) {
+export default function Mermaid({ chart, id = 'mermaid-graph' }: MermaidProps) {
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const mermaidConfig = {
-      startOnLoad: false,
-      ...config
-    };
-    mermaid.initialize(mermaidConfig);
+    mermaid.initialize({ startOnLoad: false });
 
     const renderChart = async () => {
       try {
@@ -35,7 +30,7 @@ export default function Mermaid({ chart, id = 'mermaid-graph', config }: Mermaid
     };
 
     renderChart();
-  }, [chart, id, config]);
+  }, [chart, id]);
 
   return <div ref={container} />;
 }
