@@ -35,8 +35,12 @@ export const agentsSidebarConfig = [
         link: "../agents/build-agents/create-conversations",
       },
       {
-        text: "Group chat",
-        link: "../agents/build-agents/group-chat",
+        text: "Group metadata",
+        link: "../agents/build-agents/group-metadata",
+      },
+      {
+        text: "Group permissions",
+        link: "../agents/build-agents/group-permissions",
       },
     ],
   },

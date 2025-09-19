@@ -2,12 +2,8 @@
 
 This package provides an XMTP content type to support sending transactions to a wallet for execution.
 
-For an example of an agent that implements the transaction content type, see the [Transaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
-
-:::tip[Open for feedback]
-
-You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
-
+:::tip[Quickstart]
+To learn more, see the [Reaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
 :::
 
 ## Install the package
@@ -106,3 +102,5 @@ if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
 const walletSendCalls: WalletSendCallsParams = message.content;
 // Process the transaction request here
 ```
+
+> You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).

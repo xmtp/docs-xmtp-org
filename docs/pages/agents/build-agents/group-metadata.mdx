@@ -1,0 +1,47 @@
+# Manage group chat metadata
+
+Group chats can have metadata, like names, descriptions, and images. Metadata can help users more easily identify their group chats. You can set group chat metadata when [creating a group chat](/agents/core-messaging/create-conversations), and get and update metadata using these methods.
+
+## Updatable group chat metadata
+
+The following group chat metadata can be updated:
+
+- `group_name`: The name of the group chat
+- `description`: A description of the group chat
+- `image_url`: A URL pointing to an image for the group chat
+
+## Get a group chat name
+
+```js [Node]
+const groupName = group.name;
+```
+
+## Update a group chat name
+
+```js [Node]
+await group.updateName('New Group Name');
+```
+
+## Get a group chat description
+
+```js [Node]
+const groupDescription = group.description;
+```
+
+## Update a group chat description
+
+```js [Node]
+await group.updateDescription('New Group Description');
+```
+
+## Get a group chat image URL
+
+```js [Node]
+const groupImageUrl = group.imageUrl;
+```
+
+## Update a group chat image URL
+
+```js [Node]
+await group.updateImageUrl('newurl.com');
+```
