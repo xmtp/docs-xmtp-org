@@ -2,7 +2,7 @@
 
 Create an XMTP agent that can use the signing capabilities provided by a signer. This signer links the agent to the appropriate EOA or SCW.
 
-## Create an Externally Owned Account signer
+## Create an EOA signer
 
 ```tsx [Node]
 import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
@@ -24,7 +24,7 @@ const agent = await Agent.create(signer, {
 
 ## Environment Variables
 
-The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code. Simply set the following variables and call `Agent.createFromEnv()`:
+The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code. 
 
 **Available Variables:**
 
@@ -36,6 +36,26 @@ The XMTP Agent SDK allows you to use environment variables (`process.env`) for e
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
+### Generate random keys
+
+```tsx [Node]
+import { generatePrivateKey } from "viem";
+import { getRandomValues } from "node:crypto";
+
+const walletKey = generatePrivateKey();
+const encryptionKeyHex = getRandomValues(new Uint8Array(32));
+
+console.log("Wallet key:", walletKey);
+console.log("Encryption key:", encryptionKeyHex);
+```
+
+Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
+
+```bash
+yarn gen:keys
+```
+
+> Running the gen:keys command will append keys to your existing .env file.
 
 ### Using environment variables
 
@@ -144,9 +164,5 @@ const signer = createSigner(user);
 // Create agent with SCW signer
 const agent = await Agent.create(signer);
 
-agent.on("text", async (ctx) => {
-  await ctx.sendText("Hello from SCW agent!");
-});
-
-await agent.start();
+/* Add your own business logic here */
 ```

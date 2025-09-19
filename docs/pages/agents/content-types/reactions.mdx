@@ -54,10 +54,10 @@ With XMTP, reactions are represented as objects with the following keys:
 const reaction = {
   reference: someMessageID,
   action: "added",
-  content: "smile",
+  content: "❤️",
 };
 
-await conversation.send(reaction, {
+await ctx.conversation.send(reaction, {
   contentType: ContentTypeReaction,
 });
 ```

@@ -11,7 +11,7 @@ In addition, message payloads are transported as a set of bytes. This means that
 An agent built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
 
 ```jsx [Node]
-await conversation.send("gm");
+await ctx.conversation.send("gm");
 ```
 
 ## Receiving content types

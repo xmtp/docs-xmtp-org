@@ -91,7 +91,7 @@ const walletSendCalls: WalletSendCallsParams = {
 ### Send a transaction request
 
 ```ts [Node]
-await conversation.messages.send(walletSendCalls, {
+await ctx.conversation.messages.send(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
 ```
@@ -146,7 +146,7 @@ const transactionReference: TransactionReference = {
 ### Send a transaction reference
 
 ```js [Node]
-await conversation.messages.send(transactionReference, {
+await ctx.conversation.messages.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
 ```

@@ -41,7 +41,7 @@ agent.on("unknownMessage", (ctx) => {
 ```
 
 ⚠️ Important: The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
-
+{/* 
 ## Stream new group chat and DM conversations
 
 With the agent-sdk, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
@@ -58,7 +58,7 @@ agent.on("group", async (ctx) => {
   console.log("New group conversation:", ctx.conversation.id);
   await ctx.sendText("Hello group!");
 });
-```
+``` */}
 
 
 ## Handle errors and failures

@@ -369,7 +369,7 @@ All conversations, both Groups and DMs, have a members() method that returns an 
 
 ```typescript
 // Get members from any conversation type (DM or Group)
-const members = await conversation.members();
+const members = await ctx.conversation.members();
 
 // Find a specific member
 const member = members.find(
@@ -463,7 +463,7 @@ Retrieve all messages at once from the local database:
 await client.conversations.sync();
 
 // Then get all messages as an array
-const messages = await conversation.messages();
+const messages = await ctx.conversation.messages();
 ```
 
 ## Key Type References

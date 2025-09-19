@@ -72,10 +72,10 @@ agent.on("text", async (ctx) => {
   console.log("Conversation ID:", conversation.id);
   
   // Send a message
-  await conversation.send("Hello from the conversation!");
+  await ctx.conversation.send("Hello from the conversation!");
   
   // Get conversation members
-  const members = await conversation.members();
+  const members = await ctx.conversation.members();
   console.log("Member count:", members.length);
   
   // Check conversation type
@@ -132,8 +132,8 @@ agent.on("text", async (ctx) => {
   const conversations = client.conversations;
   
   // Create new conversations
-  const newDM = await conversations.newDm("target-inbox-id");
-  const newGroup = await conversations.newGroup(["inbox1", "inbox2"], {
+  const newDM = await ctx.conversations.newDm("target-inbox-id");
+  const newGroup = await ctx.conversations.newGroup(["inbox1", "inbox2"], {
     groupName: "New Group"
   });
 });
