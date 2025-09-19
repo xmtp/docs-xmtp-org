@@ -2,7 +2,12 @@
 
 Robust group chat permissions are key to providing users with a friendly and safe group chat experience.
 
+:::tip[Quickstart]
+To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
+:::
+
 ## Understand the group permissions system
+
 
 ### Member statuses
 
@@ -30,7 +35,7 @@ Permissions are the actions a group chat participant can be allowed to take. The
 - Remove admin status from a member
 - Add a member to the group
 - Remove a member from the group
-- Update [group metadata](/agents/core-messaging/group-metadata), such as group name, description, and image
+- Update [group metadata](/agents/build-agents/group-metadata), such as group name, description, and image
 - Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
 
 The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
