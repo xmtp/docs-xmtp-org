@@ -1,0 +1,60 @@
+# Identity model with XMTP
+
+XMTP's identity model includes an inbox ID and its associated identities and installations.
+
+With an inbox ID at its core, instead of a specific wallet address or other identity value, the model is designed for extensibility. A user can associate any number of identity types to their inbox ID and use them to send and receive messages. This gives the user the freedom to add and remove identity types as they naturally change over time, while maintaining the same stable inbox destination for their messages.
+
+![Diagram showing a core inbox ID associated with multiple identities, with access to multiple apps](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/multi-id.png)
+
+The identity model also allows XMTP to support any identity type, as long as it can produce a verifiable cryptographic signature. Currently supported identity types include Ethereum EOAs, Ethereum smart contract wallets, and passkeys.
+
+## Inbox ID
+
+An **inbox ID** is a user's stable destination for their messages. Their inbox ID remains constant even as they add or remove [identities](#identity) and [installations](#installation).
+
+The inbox ID is derived from the hash of the first associated wallet address and a nonce and acts as an opaque identifier that apps use for messaging.
+
+## Identity
+
+An **identity** is an addressable account that can be associated with an inbox ID. Each identity has a type (like EOA, smart contract wallet, or passkey) and an identifier (like an Ethereum address).
+
+- Multiple identities can be linked to a single inbox ID
+- The first identity becomes the **recovery identity** with special privileges
+- All messages sent to any associated identity are delivered to the same inbox
+- Any identity that can produce a verifiable cryptographic signature can be supported by XMTP
+
+## Installation
+
+An **installation** represents a specific app installation that can access an inbox. Each installation has its own cryptographic keys for signing messages and participating in conversations.
+
+- Generated automatically when `Client.create()` is called for the first time with an identity that hasn't been used with XMTP before
+- Multiple installations can access the same inbox (up to 10)
+- Installations can be revoked by the recovery identity
+
+## Relationships
+
+**One inbox ID** → **multiple identities**: Users can receive messages as any of their identities, all flowing to the same inbox
+
+```text
+Inbox ID (stable destination for messages)
+├── Identity 1 (recovery identity, first identity added to an inbox)
+├── Identity 2 (EOA wallet)
+├── Identity 3 (SCW wallet)
+└── Any identity that can produce a verifiable cryptographic signature
+```
+
+**One identity** → **multiple installations**: Users can access their messages from different apps on the same or different devices
+
+```text
+Each identity can authenticate new installations:
+├── Installation A (phone app)
+├── Installation B (web app)
+├── Installation C (desktop app)
+└── Up to 10 installations
+```
+
+## Identity actions
+
+To learn how to build agents with identity actions, see [Manage XMTP inboxes, identities, and installations](/agents/core-messaging/agent-installations).
+
+To learn how to build chat apps with identity actions, see [Manage XMTP inboxes, identities, and installations](/chat-apps/core-messaging/manage-inboxes).

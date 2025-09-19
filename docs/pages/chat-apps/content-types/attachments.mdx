@@ -1,6 +1,7 @@
 ---
 description: Learn how to use the remote attachment, multiple remote attachment, or attachment content types to support attachments in your app built with XMTP
 ---
+
 # Support attachments in your app built with XMTP
 
 Use the remote attachment, multiple remote attachments, or attachment content type to support attachments in your app.
@@ -47,17 +48,17 @@ After importing the package, you can register the codec.
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
+} from '@xmtp/content-type-remote-attachment';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
 });
 ```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
-  env: "production",
+  env: 'production',
   codecs: [new RemoteAttachmentCodec(), new StaticAttachmentCodec()],
 });
 ```
@@ -93,7 +94,7 @@ const data = await new Promise((resolve, reject) => {
     if (reader.result instanceof ArrayBuffer) {
       resolve(reader.result);
     } else {
-      reject(new Error("Not an ArrayBuffer"));
+      reject(new Error('Not an ArrayBuffer'));
     }
   };
   reader.readAsArrayBuffer(image);
@@ -131,7 +132,7 @@ const remoteAttachment = {
   salt: encryptedEncoded.salt,
   nonce: encryptedEncoded.nonce,
   secret: encryptedEncoded.secret,
-  scheme: "https://",
+  scheme: 'https://',
   filename: attachment.filename,
   contentLength: attachment.data.byteLength,
 };
@@ -154,7 +155,7 @@ This method takes a `DecryptedLocalAttachment` object as an argument:
 ```jsx
 const { encryptedLocalFileUri, metadata } = await alice.encryptAttachment({
   fileUri: `file://${file}`,
-  mimeType: "text/plain",
+  mimeType: 'text/plain',
 });
 ```
 
@@ -170,7 +171,7 @@ Send a remote attachment message:
 await convo.send({
   remoteAttachment: {
     ...metadata,
-    scheme: "https://",
+    scheme: 'https://',
     url,
   },
 });
@@ -297,7 +298,7 @@ Now that you can send a remote attachment, you need a way to receive it. For exa
 <div data-title="Browser">
 
 ```tsx
-import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
 
 if (message.contentType.sameAs(RemoteAttachmentContentType)) {
   const attachment = await RemoteAttachmentCodec.load(message.content, client);
@@ -321,7 +322,7 @@ const objectURL = URL.createObjectURL(
   })
 );
 
-const img = document.createElement("img");
+const img = document.createElement('img');
 img.src = objectURL;
 img.title = attachment.filename;
 ```
@@ -394,7 +395,7 @@ struct ContentView: View {
 
 :::
 
-To handle unsupported content types, refer to the [fallback]() section.
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
 
 ## Support multiple remote attachments of any size
 
@@ -420,7 +421,7 @@ Client.register(codec = MultiRemoteAttachmentCodec())
 
 ```swift [Swift]
 Client.register(codec: AttachmentCodec())
-Client.register(codec: RemoteAttachmentCodec()) 
+Client.register(codec: RemoteAttachmentCodec())
 Client.register(codec: MultiRemoteAttachmentCodec())
 ```
 
@@ -434,16 +435,16 @@ Each attachment in the attachments array contains a URL that points to an encryp
 
 ```ts [React Native]
 const attachment1: DecryptedLocalAttachment = {
-  fileUri: "content://media/external/images/media/image-1.png",
-  mimeType: "image/png",
-  filename: "image-1.png"
-}
+  fileUri: 'content://media/external/images/media/image-1.png',
+  mimeType: 'image/png',
+  filename: 'image-1.png',
+};
 
 const attachment2: DecryptedLocalAttachment = {
-  fileUri: "content://media/external/images/media/image-2.png",
-  mimeType: "image/png",
-  filename: "image-2.png"
-}
+  fileUri: 'content://media/external/images/media/image-2.png',
+  mimeType: 'image/png',
+  filename: 'image-2.png',
+};
 ```
 
 ```kotlin [Kotlin]
@@ -463,7 +464,7 @@ val attachment2 = Attachment(
 ```swift [Swift]
 let attachment1 = Attachment(
     filename: "test1.txt",
-    mimeType: "text/plain", 
+    mimeType: "text/plain",
     data: Data("hello world".utf8)
 )
 
@@ -481,20 +482,21 @@ let attachment2 = Attachment(
 :::code-group
 
 ```ts [React Native]
-const remoteAttachments: RemoteAttachmentInfo[] = []
-  for (const attachment of [attachment1, attachment2]) {
-    // Encrypt the attachment and receive the local URI of the encrypted file
-    const { encryptedLocalFileUri, metadata } = await alix.encryptAttachment(attachment)
+const remoteAttachments: RemoteAttachmentInfo[] = [];
+for (const attachment of [attachment1, attachment2]) {
+  // Encrypt the attachment and receive the local URI of the encrypted file
+  const { encryptedLocalFileUri, metadata } =
+    await alix.encryptAttachment(attachment);
 
-    // Upload the attachment to a remote server and receive the URL
-    // (Integrator must supply upload from local uri and return url functionality!)
-    const url = uploadAttachmentForUrl(encryptedLocalFileUri)
+  // Upload the attachment to a remote server and receive the URL
+  // (Integrator must supply upload from local uri and return url functionality!)
+  const url = uploadAttachmentForUrl(encryptedLocalFileUri);
 
-    // Build the remote attachment info
-    const remoteAttachmentInfo =
-      MultiRemoteAttachmentCodec.buildMultiRemoteAttachmentInfo(url, metadata)
-    remoteAttachments.push(remoteAttachmentInfo)
-  }
+  // Build the remote attachment info
+  const remoteAttachmentInfo =
+    MultiRemoteAttachmentCodec.buildMultiRemoteAttachmentInfo(url, metadata);
+  remoteAttachments.push(remoteAttachmentInfo);
+}
 ```
 
 ```kotlin [Kotlin]
@@ -543,10 +545,10 @@ for att in [attachment1, attachment2] {
 
 ```ts [React Native]
 await convo.send({
-    multiRemoteAttachment: {
-      attachments: remoteAttachments,
-    },
-  })
+  multiRemoteAttachment: {
+    attachments: remoteAttachments,
+  },
+});
 ```
 
 ```kotlin [Kotlin]
@@ -573,12 +575,15 @@ try await alixConversation.send(encodedContent: encodedContent)
 :::code-group
 
 ```ts [React Native]
-const messages = await conversation.messages()
-if (messages.size > 0 && messages[0].contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0') {
+const messages = await conversation.messages();
+if (
+  messages.size > 0 &&
+  messages[0].contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0'
+) {
   // Decode the raw content back into a MultiRemoteAttachment
-    const multiRemoteAttachment: MultiRemoteAttachment = messages[0].content()
+  const multiRemoteAttachment: MultiRemoteAttachment = messages[0].content();
 
-    // See next section for download, and decrypt the attachments
+  // See next section for download, and decrypt the attachments
 }
 ```
 
@@ -609,27 +614,27 @@ if messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMul
 :::code-group
 
 ```ts [React Native]
-const decryptedAttachments: DecryptedLocalAttachment[] = []
+const decryptedAttachments: DecryptedLocalAttachment[] = [];
 
 for (const attachment of multiRemoteAttachment.attachments) {
-    // Downloading the encrypted payload from the attachment URL and save the local file
-    // (Integrator must supply download from url and save to local Uri functionality!)
-    const encryptedFileLocalURIAfterDownload: string = downloadFromUrl(
-      attachment.url
-    )
-    // Decrypt the local file
-    const decryptedLocalAttachment = await alix.decryptAttachment({
-      encryptedLocalFileUri: encryptedFileLocalURIAfterDownload,
-      metadata: {
-        secret: attachment.secret,
-        salt: attachment.salt,
-        nonce: attachment.nonce,
-        contentDigest: attachment.contentDigest,
-        filename: attachment.filename,
-      } as RemoteAttachmentContent,
-    })
-    decryptedAttachments.push(decryptedLocalAttachment)
-  }
+  // Downloading the encrypted payload from the attachment URL and save the local file
+  // (Integrator must supply download from url and save to local Uri functionality!)
+  const encryptedFileLocalURIAfterDownload: string = downloadFromUrl(
+    attachment.url
+  );
+  // Decrypt the local file
+  const decryptedLocalAttachment = await alix.decryptAttachment({
+    encryptedLocalFileUri: encryptedFileLocalURIAfterDownload,
+    metadata: {
+      secret: attachment.secret,
+      salt: attachment.salt,
+      nonce: attachment.nonce,
+      contentDigest: attachment.contentDigest,
+      filename: attachment.filename,
+    } as RemoteAttachmentContent,
+  });
+  decryptedAttachments.push(decryptedLocalAttachment);
+}
 ```
 
 ```kotlin [Kotlin]
@@ -653,10 +658,10 @@ for (remoteAttachmentInfo: FfiRemoteAttachmentInfo in multiRemoteAttachment.atta
 
   // Combine encrypted payload with RemoteAttachment to create an EncryptedEncodedContent Object
   val encryptedAttachment: EncryptedEncodedContent = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(remoteAttachment, encryptedPayload)
-  
+
   // Decrypt payload
   val encodedContent: EncodedContent = MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
-  
+
   // Convert EncodedContent to Attachment
   val attachment = attachmentCodec.decode(encodedContent)
   decryptedAttachments.add(attachment)
@@ -763,19 +768,17 @@ pnpm add @xmtp/content-type-remote-attachment
 :::code-group
 
 ```jsx [Browser]
-import {
-  AttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
+import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
 // Create the XMTP client
 const xmtp = await Client.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new AttachmentCodec()],
 });
 ```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
-  env: "production",
+  env: 'production',
   codecs: [new StaticAttachmentCodec()],
 });
 ```
@@ -798,9 +801,9 @@ Client.register(AttachmentCodec());
 
 ```tsx
 // Read local file and extract its details
-const file = fs.readFileSync("xmtp.png");
-const filename = path.basename("xmtp.png");
-const extname = path.extname("xmtp.png");
+const file = fs.readFileSync('xmtp.png');
+const filename = path.basename('xmtp.png');
+const extname = path.extname('xmtp.png');
 console.log(`Filename: ${filename}`);
 console.log(`File Type: ${extname}`);
 ```
@@ -818,7 +821,7 @@ const attachment = {
   data: imgArray,
 };
 
-console.log("Attachment created", attachment);
+console.log('Attachment created', attachment);
 await conversation.send(attachment, { contentType: ContentTypeAttachment });
 ```
 

@@ -4,12 +4,18 @@ This section covers how to deploy an agent using Railway—a platform many devel
 
 Alternative platforms include:
 
-- Heroku
-- Fly.io
-- Render
-- Vercel
+- [Fly.io](https://fly.io/)
+- [Heroku](https://www.heroku.com/)
+- [Render](https://render.com/)
+- [Vercel](https://vercel.com)
 
 Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
+
+:::tip
+
+The XMTP Node SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
+
+:::
 
 ## 1. Create a Railway account
 
@@ -40,9 +46,9 @@ Your XMTP agent will need persistent storage. Add a volume to your container:
 Use this code in your agent to properly connect to the Railway volume:
 
 ```tsx [Node]
-export const getDbPath = (env: string, suffix: string = "xmtp") => {
+export const getDbPath = (env: string, suffix: string = 'xmtp') => {
   //Checks if the environment is a Railway deployment
-  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
+  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.data/xmtp';
   // Create database directory if it doesn't exist
   if (!fs.existsSync(volumePath)) {
     fs.mkdirSync(volumePath, { recursive: true });
@@ -57,10 +63,10 @@ Then, specify `dbPath` in your client options:
 
 ```tsx [Node]
 const receiverClient = await Client.create(signer, {
-    dbEncryptionKey,
-    env: XMTP_ENV as XmtpEnv,
-    dbPath: getDbPath(XMTP_ENV),
-  });
+  dbEncryptionKey,
+  env: XMTP_ENV as XmtpEnv,
+  dbPath: getDbPath(XMTP_ENV),
+});
 ```
 
 ## 5. Configure environment variables

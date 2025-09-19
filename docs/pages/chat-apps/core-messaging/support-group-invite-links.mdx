@@ -7,9 +7,9 @@ This document provides suggested paths you might take to provide XMTP group chat
 1. A group member with permission to add group members [creates an invite link](#create-a-group-invite-link).
 2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page).
 3. The non-member is granted access to the group in one of the following ways:
-    - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
-    - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
-    - [Manual join via push notification to the link creator](#manual-join-via-push-notification-to-link-creator)
+   - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
+   - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
+   - [Manual join via push notification to the link creator](#manual-join-via-push-notification-to-link-creator)
 4. [Add the invitee to the group](#add-the-member-to-the-group)
 5. [Check and manage the invite status](#check-the-invite-status)
 
@@ -19,15 +19,24 @@ These diagrams help illustrate the sequence of interactions between users and pa
 
 #### Option 1: Automatic join via silent push notification to the link creator
 
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png" alt="Sequence diagram for Automatic join via silent push notification to the link creator" />
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png"
+  alt="Sequence diagram for Automatic join via silent push notification to the link creator"
+/>
 
 #### Option 2: Automatic join via silent push notification to all group members
 
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png" alt="Sequence diagram for Automatic join via silent push notification to all group members" />
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png"
+  alt="Sequence diagram for Automatic join via silent push notification to all group members"
+/>
 
 #### Option 3: Manual join via push notification to the link creator
 
-<img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png" alt="Sequence diagram for Manual join via push notification to the link creator" />
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png"
+  alt="Sequence diagram for Manual join via push notification to the link creator"
+/>
 
 ## Create a group invite link
 
@@ -37,18 +46,18 @@ Create the group invite by making a `POST` to a `/groupInvite` endpoint with any
 
 ### `POST /groupInvite`
 
-**Example request**
+#### Example request
 
 ```json
 {
- groupName: "XMTP Builders",
- groupImage: "https://...",
-// Inviter can be inferred from the request auth token.
-// Backend doesn't need the actual group ID, since the client can keep track in their DB
+  "groupName": "XMTP Builders",
+  "groupImage": "https://..."
+  // Inviter can be inferred from the request auth token.
+  // Backend doesn't need the actual group ID, since the client can keep track in their DB
 }
 ```
 
-**Example response**
+#### Example response
 
 The backend returns a new invite link with a unique URL.
 
@@ -56,8 +65,8 @@ Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`
 
 ```json
 {
- id: "abcdefg",
- linkUrl: "https://converse.xyz/invite/abcdefg"
+  "id": "abcdefg",
+  "linkUrl": "https://converse.xyz/invite/abcdefg"
 }
 ```
 
@@ -76,13 +85,13 @@ When a user clicks the Join button on the invite landing page:
 
 ### `GET /groupInvite/:id`
 
-**Example request**
+#### Example request
 
 ```html
 GET /groupInvite/abcdefg
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -98,20 +107,20 @@ GET /groupInvite/abcdefg
 
 Can be used by the invitee to request to join the group.
 
-**Example request**
+#### Example request
 
 ```json
 {
- inviteId: "abcdefg", // User info implied from auth token
+  "inviteId": "abcdefg" // User info implied from auth token
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
- id: "hijklmn", // The id of the join request
- status: "pending"
+  "id": "hijklmn", // The id of the join request
+  "status": "pending"
 }
 ```
 
@@ -123,7 +132,7 @@ When the invitee clicks the invite link to request to join the group, consider g
 
 As soon as the link creator is detected as being online, they can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -135,7 +144,7 @@ As soon as the link creator is detected as being online, they can receive a sile
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -153,7 +162,7 @@ The first member detected as being online can receive a silent push notification
 
 This setup can take the dependency off the sole link creator being online and spreads it across the group, which can allow the group join to happen faster.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -166,7 +175,7 @@ This setup can take the dependency off the sole link creator being online and sp
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -183,7 +192,7 @@ Consider having the link creator receive a push notification about a specific in
 
 For example, you can send a push notification to the invite link creator saying, "User X has requested to join Group Y through your invite link." Give the link creator a way to approve or reject the request.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -197,7 +206,7 @@ For example, you can send a push notification to the invite link creator saying,
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -213,7 +222,7 @@ To handle cases where the push notification fails to deliver (maybe the user is 
 
 Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/issues) in the LibXMTP repo to request it.
 
-**Example request**
+#### Example request
 
 ```json
 {
@@ -222,7 +231,7 @@ Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/iss
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -243,15 +252,15 @@ Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/iss
 
 If the invite link creator approves the request, in the background, you can call LibXMTP to load the group and add the member.
 
-**Example request**
+### Example request
 
 ```json
 {
- inviteId: "abcdefg", // User info implied from auth token
+  "inviteId": "abcdefg" // User info implied from auth token
 }
 ```
 
-**Example response**
+### Example response
 
 ```json
 {
@@ -270,13 +279,13 @@ You can poll a `/groups/joinFromInvite` endpoint to check the invite status and 
 
 You can provide this endpoint as a way for an invitee to check the status of their request to join a group.
 
-**Example request**
+#### Example request
 
 ```html
 GET /groupJoinRequest/hijklmn
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
@@ -292,22 +301,22 @@ Once the invite link creator has approved or rejected the request, you can make 
 
 ### `PUT /groupJoinRequest/:id`
 
-**Example request**
+#### Example request
 
 You can have the invite link creator mark an invite as approved or rejected. For basic invite links, approval can happen as soon as the push notification has been received.
 
 ```json
 {
- status: "approved"
+  "status": "approved"
 }
 ```
 
-**Example response**
+#### Example response
 
 ```json
 {
- id: "hijklmn",
- status: "approved",
- reason: null // Allow the system to pass a reason back to the client
+  "id": "hijklmn",
+  "status": "approved",
+  "reason": null // Allow the system to pass a reason back to the client
 }
 ```

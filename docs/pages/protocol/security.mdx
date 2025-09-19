@@ -12,7 +12,16 @@ Specifically, XMTP messaging provides the comprehensive security properties cove
 
 This video provides a walkthrough of XMTP's implementation of MLS.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/g6I9qXOkDMo?si=o5pD2xwa_yynoP5s" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/g6I9qXOkDMo?si=o5pD2xwa_yynoP5s"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
 
 To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/xmtp_mls).
 
@@ -82,20 +91,50 @@ Here is a summary of individual cryptographic tools used to collectively ensure 
 
 - [HPKE](https://www.rfc-editor.org/rfc/rfc9180.html)
 
-    Used to encrypt Welcome messages, protect the identities of group invitees, and maintain the confidentiality of group membership. We use the ciphersuite HPKEX25519.
+  Used to encrypt Welcome messages, protect the identities of group invitees, and maintain the confidentiality of group membership. We use the ciphersuite HPKEX25519.
 
 - [AEAD](https://developers.google.com/tink/aead)
 
-    Used to ensure both confidentiality and integrity of messages. In particular, we use the ciphersuite CHACHA20POLY1305.
+  Used to ensure both confidentiality and integrity of messages. In particular, we use the ciphersuite CHACHA20POLY1305.
 
 - [SHA3_256 and SHA2_256](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf)
 
-    XMTP uses two cryptographic hash functions to ensure data integrity and provide strong cryptographic binding. SHA3_256 is used in the multi-wallet identity structure. SHA2_256 is used in MLS. The ciphersuite is SHA256.
+  XMTP uses two cryptographic hash functions to ensure data integrity and provide strong cryptographic binding. SHA3_256 is used in the multi-wallet identity structure. SHA2_256 is used in MLS. The ciphersuite is SHA256.
 
 - [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
 
-    Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
+  Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
 
 - [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
 
-    Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
+  Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
+
+## FAQ about messaging security
+
+1. **Can XMTP read user messages?**
+
+   No, messages are encrypted end-to-end. Only participants in a conversation have the keys to decrypt the messages in it. Your app cannot decrypt messages either.
+
+2. **How does XMTP's encryption compare to Signal or WhatsApp?**
+
+   XMTP provides the same security properties (forward secrecy and post-compromise security) as Signal and WhatsApp, using the newer, more efficient MLS protocol.
+
+3. **Can others see who users are messaging with?**
+
+   No. Message recipients are encrypted, so even network nodes cannot see who is messaging whom. Nodes can only see timing and size of encrypted messages.
+
+4. **What happens if a user loses access to their wallet?**
+
+   They'll need to start new conversations from their new wallet. Messages sent to their old wallet address can't be decrypted without access to that wallet.
+
+5. **Are group messages as secure as direct messages?**
+
+   Yes, MLS provides the same security properties for both group and direct messages. In fact, MLS is particularly efficient for group messaging.
+
+6. **What if a user suspects their wallet is compromised?**
+
+   Due to forward secrecy, even if someone gains access to their wallet, they can't read their past messages. They should start using a new wallet immediately - this ensures attackers won't be able to read future messages either.
+
+7. **How does encryption work across different XMTP apps?**
+
+   All XMTP apps use the same MLS protocol, ensuring consistent encryption across the ecosystem regardless of which app users choose.

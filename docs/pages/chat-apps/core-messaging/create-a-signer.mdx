@@ -9,15 +9,15 @@ The EOA signer must have 3 properties: the account type, a function that returns
 :::code-group
 
 ```tsx [Browser]
-import type { Signer, Identifier } from "@xmtp/browser-sdk";
+import type { Signer, Identifier } from '@xmtp/browser-sdk';
 
 const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
-  identifierKind: "Ethereum", // Specifies the identity type
+  identifier: '0x...', // Ethereum address as the identifier
+  identifierKind: 'Ethereum', // Specifies the identity type
 };
 
 const signer: Signer = {
-  type: "EOA",
+  type: 'EOA',
   getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -27,15 +27,15 @@ const signer: Signer = {
 ```
 
 ```tsx [Node]
-import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
+import type { Signer, Identifier, IdentifierKind } from '@xmtp/node-sdk';
 
 const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
+  identifier: '0x...', // Ethereum address as the identifier
   identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
-  type: "EOA",
+  type: 'EOA',
   getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -49,10 +49,10 @@ const signer: Signer = {
 export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
   return {
     getIdentifier: async () =>
-      new PublicIdentity(eoaAccount.address, "ETHEREUM"),
+      new PublicIdentity(eoaAccount.address, 'ETHEREUM'),
     getChainId: () => undefined, // Provide a chain ID if available or return undefined
     getBlockNumber: () => undefined, // Block number is typically not available in Wallet, return undefined
-    signerType: () => "EOA", // "EOA" indicates an externally owned account
+    signerType: () => 'EOA', // "EOA" indicates an externally owned account
     signMessage: async (message: string) => {
       const signature = await eoaAccount.signMessage(message);
 
@@ -104,14 +104,14 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 Here is a list of supported chain IDs:
 
-- chain_rpc_1     = string
-- chain_rpc_8453  = string
+- chain_rpc_1 = string
+- chain_rpc_8453 = string
 - chain_rpc_42161 = string
-- chain_rpc_10    = string
-- chain_rpc_137   = string
-- chain_rpc_324   = string
+- chain_rpc_10 = string
+- chain_rpc_137 = string
+- chain_rpc_324 = string
 - chain_rpc_59144 = string
-- chain_rpc_480   = string
+- chain_rpc_480 = string
 
 Need support for a different chain ID? Please post your request to the [XMTP Community Forums](https://community.xmtp.org/c/general/ideas/54).
 
@@ -159,15 +159,15 @@ export const createSCWSigner = (
 ```
 
 ```tsx [Node]
-import type { Signer, Identifier, IdentifierKind } from "@xmtp/node-sdk";
+import type { Signer, Identifier, IdentifierKind } from '@xmtp/node-sdk';
 
 const accountIdentifier: Identifier = {
-  identifier: "0x...", // Ethereum address as the identifier
+  identifier: '0x...', // Ethereum address as the identifier
   identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
-  type: "SCW",
+  type: 'SCW',
   getIdentifier: () => accountIdentifier,
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -182,10 +182,10 @@ const signer: Signer = {
 export function convertSCWToSigner(scwAccount: SCWAccount): Signer {
   return {
     getIdentifier: async () =>
-      new PublicIdentity(scwAccount.address, "ETHEREUM"),
+      new PublicIdentity(scwAccount.address, 'ETHEREUM'),
     getChainId: () => 8453, // https://chainlist.org/
     getBlockNumber: () => undefined, // Optional: will be computed at runtime
-    signerType: () => "SCW", // "SCW" indicates smart contract wallet account
+    signerType: () => 'SCW', // "SCW" indicates smart contract wallet account
     signMessage: async (message: string) => {
       const byteArray = await scwAccount.signMessage(message);
       const signature = ethers.utils.hexlify(byteArray); // Convert to hex string
