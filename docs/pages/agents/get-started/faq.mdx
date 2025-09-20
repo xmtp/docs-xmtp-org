@@ -1,190 +1,152 @@
-# FAQ about XMTP
+# FAQ about XMTP Agents
 
-Get answers to the most frequently asked questions about XMTP.
+Get answers to frequently asked questions about building agents with XMTP.
 
-## What works with XMTP?
+## Platform & Compatibility
 
-In the spirit of web3 composability, here are **just a few** of the building blocks that work well with XMTP. Building your app with these tools can help you deliver and distribute an app—faster and with quality.
+### What chains does XMTP support?
 
-:::tip
-This list is not exhaustive and is just a starting point. A highly extensible protocol like XMTP can work with more tools than those listed in each section.
-:::
+XMTP agents work with EOAs and SCWs on Ethereum and Ethereum L2s. Because messages are stored off-chain, agents are interoperable across EVM chains.
 
-### Wallet connectors
+Supported chains: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-compatible networks.
 
-Here are some options for connecting wallets to your app built with XMTP:
+### What languages and libraries can I use?
 
-- [RainbowKit](https://www.rainbowkit.com/)  
-  Support for WalletConnect v2 is now standard in RainbowKit. To learn how to upgrade, see [Migrating to WalletConnect v2](https://www.rainbowkit.com/guides/walletconnect-v2).
-- [Thirdweb](https://thirdweb.com/)
-- [wagmi](https://wagmi.sh/)
+- **SDKs**: XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building)
+- **Signing libraries**: The Agent SDK provides simplified abstractions. For custom integrations, use [ethers](https://ethers.org/) or another web3 library with [ethers Signer](https://docs.ethers.io/v5/api/signer/) support
 
-### Message payload storage
+## Development Setup
 
-Here are some options for storing encrypted message payload content:
+### Should I use `dbPath: null` for development?
 
-- [IPFS](https://ipfs.io/)
-- [ThirdwebStorage](https://portal.thirdweb.com/infrastructure/storage/how-storage-works)
-- [web3.storage](https://web3.storage/)
+**Not recommended.** Using `dbPath: null` creates a new installation on every restart, quickly hitting the 10-installation limit (within ~30 minutes of development).
 
-### Wallet apps
+**Recommended approach:**
+- Use persistent database paths for development
+- Ideal setup: 2 installations (local + production), leaving 8 for testing
+- Only use `dbPath: null` for fire-and-forget or temporary agents
 
-XMTP can be used with EVM-compatible wallet apps that support ECDSA signing on the secp256k1 elliptic curve. These include common wallet apps such as:
+## Database Management
 
-- [Coinbase Wallet](https://www.coinbase.com/wallet)
-- [MetaMask](https://metamask.io/)
-- [Rainbow Wallet](https://rainbow.me/)
-- Most wallets in the [WalletConnect network](https://explorer.walletconnect.com/?type=wallet)
+### What files need to be backed up?
 
-The XMTP SDK **does not** include a wallet app abstraction, as XMTP assumes that developers have a way to obtain a wallet app connection.
+Back up these SQLite files for persistent storage:
+- `{env}-{description}.db3` - Main database
+- `{env}-{description}.db3-shm` - Shared memory  
+- `{env}-{description}.db3-wal` - Write-ahead log
+- `{env}-{description}.db3.sqlcipher_salt` - Encryption salt
 
-### Chains
+Example for production: `production-xmtp.db3`, `production-xmtp.db3-shm`, etc.
 
-XMTP can work with signatures from any private public key pair and currently supports EOAs and SCWs on Ethereum and Ethereum side-chains and L2s.
+### How much storage should I provision?
 
-Because all Ethereum Virtual Machine (EVM) chains share the same Ethereum wallet and address format and XMTP messages are stored off-chain, XMTP is interoperable across EVM chains, including testnets. (XMTP itself does not use EVMs.)
+Rough estimate: **1GB ≈ 15,000 conversations**. Plan based on your expected volume.
 
-For example, whether a user has their wallet app connected to Ethereum or an Ethereum side-chain or L2, their private key can generate and retrieve their XMTP key pair to give them access to XMTP.
+### What data is stored in the database?
 
-XMTP is also chain-agnostic, so multi-chain support is possible.
+- All messages and conversations
+- Conversation state and encryption keys  
+- Group membership and metadata
 
-Here are just a few chains that work with XMTP:
+### Can I clear database data without deleting files?
 
-- [Arbitrum](https://arbitrum.foundation/)
-- [Avalanche](https://www.avax.network/)
-- [Base](https://base.org/)
-- [(BNB) Chain](https://www.bnbchain.org/)
-- [Ethereum](https://ethereum.org/)
-- [zk-EVM](https://linea.build/)
-- [Optimism](https://www.optimism.io/)
-- [Polygon](https://polygon.technology/)
-- [Scroll](https://www.scroll.io/)
+Not currently possible from SDKs. XMTP is developing database management tools ([XIP-70](https://community.xmtp.org/t/xip-70-local-database-management-tools/1116)).
 
-## Build with XMTP
+### What happens when I delete/wipe the database?
 
-### Which languages does the XMTP SDK support?
+**File deletion:**
+- Creates fresh database with new installation
+- Messages continue streaming normally
+- Works unless you've hit the 10-installation limit
 
-XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building).
+**Database wipe (once XIP-70 tools are available):**
+- Agent loses access to existing groups
+- Regains group access when receiving new messages
+- All local message history is lost
 
-### Which web3 libraries does the XMTP SDK require?
+## Installation Limits & Troubleshooting
 
-The XMTP SDK currently requires you to use [ethers](https://ethers.org/) or another web3 library capable of supplying an [ethers Signer](https://docs.ethers.io/v5/api/signer/), such as [wagmi](https://wagmi.sh/).
+### What is the installation limit?
 
-### What is the invalid key package error?
+Each inbox has a **maximum of 10 installations**. Creating a new installation beyond this limit will fail.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/hNlby-SfPzw?si=V7LqaBxk-i4xhbNC"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
+### How do I recover from hitting the limit?
 
-### Where can I get official XMTP brand assets?
+Currently:
+- Use a different client/signer to create new agents
+- No built-in method to revoke old installations
+- Automatic revocation tools are planned for future releases
 
-See the [XMTP brand guidelines](https://github.com/xmtp/brand) GitHub repo.
+## Messages & Content
 
-## Network
+### What content types can agents send?
 
-See [Network FAQ](/network/run-a-node/#faq-about-the-xmtp-network).
+Text, reactions, replies, attachments, and transaction requests. See [Content types](/agents/content-types/content-types) for details.
 
-## Fees
+### Are there message size limits?
 
-### Does XMTP have fees?
+Yes, messages are limited to just under 1MB. For larger content, use [remote attachments](/agents/content-types/attachments).
 
-XMTP core developers and researchers are working on a specific fee model for XMTP, with the following guiding principles in mind:
+### Are there any messaging costs?
 
-- Fees will be dynamic to protect the network from Denial of Service (DoS) attacks.
-- Infrastructure costs for the network must remain low even when decentralized, and comparable to the costs for an equivalent centralized messaging service.
-- There must be a low "take rate": the biggest driver of cost must be infrastructure costs, with any remaining cost returned to the network.
+No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
-Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging fee collection](https://community.xmtp.org/t/xip-57-messaging-fee-collection/876) in the XMTP Community Forums.
+## Framework Integration
+
+### Does XMTP work with ElizaOS?
+
+Yes! XMTP has official ElizaOS support through the [`@elizaos/plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) plugin, enabling secure, decentralized, and end-to-end encrypted messaging for ElizaOS agents.
+
+**Installation:**
+```bash
+pnpm add @elizaos/plugin-xmtp
+# or
+elizaos add plugins @elizaos/plugin-xmtp
+```
+
+**Environment variables:**
+- `WALLET_KEY` - Private key of the wallet
+- `XMTP_SIGNER_TYPE` - Signer type (SCW or EOA)
+- `XMTP_SCW_CHAIN_ID` - (Optional) Chain ID for smart contract wallet
+- `XMTP_ENV` - (Optional) XMTP environment (dev, local, production)
+
+**Benefits of XMTP + ElizaOS:**
+- End-to-end encrypted agent communication
+- Decentralized messaging without single points of failure
+- Multi-agent, multi-human confidential group chats
+- Privacy and metadata protection
+
+### Can I contribute to XMTP integrations?
+
+Absolutely! We welcome contributions to improve XMTP agent integrations:
+
+- **ElizaOS Plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
+- **Agent SDK**: Help improve the core [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk)
+- **Documentation**: Submit improvements to agent documentation and examples
+- **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
+
+## Identity & Profile Management
+
+### How do I create separate XMTP inboxes for multiple Lens profiles owned by the same address?
+
+Each Lens profile needs its own XMTP identity to have a separate inbox. XMTP doesn't support linking multiple identities to a single owner address.
+
+**The challenge:**
+- One wallet address can own multiple Lens profiles
+- XMTP identity creation uses the profile owner's address
+- You want each Lens profile to have its own unique inbox
+
+**The solution:**
+- Each Lens profile must have its own XMTP identity
+- This means each profile needs its own private key/wallet
+- You cannot have multiple XMTP identities linked to one owner address
+
+**Example use case:**
+If you have 3 Lens profiles on one address and want separate inboxes for each, you'll need 3 different XMTP identities (each with their own private key), not 3 profiles sharing one XMTP identity.
 
 ## Security
 
-### Has XMTP undergone a security audit?
+### Has XMTP been audited?
 
-A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by [NCC Group](https://www.nccgroup.com/) in Dec 2024.
+Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024. See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)
 
-See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
-
-## Storage
-
-### Where are XMTP messages stored?
-
-XMTP stores messages in the XMTP network before and after retrieval. App-specific message storage policies may vary.
-
-### What are the XMTP message retention policies?
-
-#### For XMTP's blockchain and node databases
-
-Currently, encrypted payloads are stored indefinitely.
-
-In the coming year, a retention policy will be added.
-
-This retention policy would represent a minimum retention period, not a maximum.
-
-For example, a retention policy may look something like the following, though specifics are subject to change:
-
-- One year for messages
-- Indefinite storage for account information and personal preferences
-
-The team is researching a way to provide this indefinite storage and have it scale forever.
-
-- If research shows that it's possible, we'll share a plan for how it will be achieved.
-- If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
-
-Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
-
-#### For the on-device database managed by the XMTP SDK
-
-Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
-
-### What are XMTP message storage and retrieval costs?
-
-Messages are stored off-chain on the XMTP network, with all nodes currently hosted by Ephemera. Ephemera currently absorbs all message storage and retrieval costs.
-
-Today, there are no message storage and retrieval-related fees incurred by developers for building with the XMTP SDK.
-
-## Messages
-
-### Which message formats does XMTP support?
-
-XMTP transports a message payload as a set of bytes that can represent any format that a developer wants to support, such as plain text, JSON, or non-text binary or media content.
-
-With XMTP, these message formats are called content types. Currently, there are two basic content types available. These content types aim to establish broad compatibility among apps built with XMTP.
-
-The XMTP community can propose and adopt standards for other content types, either informally or through a governance process.
-
-To learn more about content types, see [Content types](/agents/content-types/content-types).
-
-To learn more about the XMTP improvement proposals governance process, see [What is an XIP?](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md)
-
-### Does XMTP have a maximum message size?
-
-Yes. Messages sent on the XMTP network are limited to just short of 1MB (1048214 bytes).
-
-For this reason, XMTP supports [remote attachments](/agents/content-types/attachments).
-
-### Does XMTP support message deletion and editing?
-
-Not currently. However, Ephemera is exploring ways to support message deletion and editing.
-
-Have ideas about message deletion and editing? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
-
-### Is XMTP more like email or chat?
-
-XMTP enables developers to implement messaging features and UX paradigms that best fit their needs. As a result, messages sent using apps built with XMTP might resemble many typical forms of communication, such as email, direct and group messaging, broadcasts, text messaging, push notifications, and more.
-
-## What is Ephemera?
-
-Ephemera is a web3 software company that contributes to XMTP, an open network, protocol, and standards for secure messaging between blockchain accounts.
-
-Ephemera employees work alongside other XMTP community members to build with and extend XMTP. Community [contributions and participation](https://community.xmtp.org/) are critical to the development and adoption of XMTP.
-
-Ephemera focuses on serving developers. We build [SDKs](https://docs.xmtp.org/#start-building), developer tools, and example apps that help developers build great experiences with XMTP.
-
-Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024. Converse is now [Convos](https://github.com/ephemeraHQ/convos-app), open-sourced for the entire XMTP network.

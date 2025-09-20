@@ -2,17 +2,13 @@
 
 This package provides an XMTP content type to support sending transactions to a wallet for execution.
 
-For an example of an agent that implements the transaction content type, see the [Transaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
-
-:::tip[Open for feedback]
-
-You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
-
-:::
+::::tip[Quickstart]
+To learn more, see the [Transactions example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+::::
 
 ## Install the package
 
-:::code-group
+::::code-group
 
 ```bash [npm]
 npm i @xmtp/content-type-wallet-send-calls
@@ -26,7 +22,7 @@ yarn add @xmtp/content-type-wallet-send-calls
 pnpm i @xmtp/content-type-wallet-send-calls
 ```
 
-:::
+::::
 
 ## Configure the content type
 
@@ -34,8 +30,8 @@ After importing the package, you can register the codec.
 
 ```js [Node]
 import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: 'dev',
   codecs: [new WalletSendCallsCodec()],
 });
@@ -85,7 +81,7 @@ const walletSendCalls: WalletSendCallsParams = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```ts [Node]
-await conversation.messages.send(walletSendCalls, {
+await conversation.send(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
 ```
@@ -106,3 +102,5 @@ if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
 const walletSendCalls: WalletSendCallsParams = message.content;
 // Process the transaction request here
 ```
+
+> You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).

@@ -15,15 +15,11 @@ Your agent can have **up to 10 active installations** before you need to revoke 
 For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
 
 - Local development: `local` network
-- Railway: `dev` network
+- Railway: `dev` network  
 - Production server: `production` network
 
 <div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png"
-    width="500px"
-    alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each"
-  />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png" width="500px" alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each" />
 </div>
 
 If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
@@ -33,11 +29,7 @@ If you deploy your agent to this same network environment, you have 1 inbox with
 - Production server: `production` network
 
 <div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png"
-    width="500px"
-    alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations"
-  />
+  <img src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png" width="500px" alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations" />
 </div>
 
 Here are some best practices for agent installation management:
@@ -45,7 +37,7 @@ Here are some best practices for agent installation management:
 - Configure your deployments to preserve the agent's database
 - Consider how many platforms you'll need before hitting the 10 installation limit
 - Keep track of which installation corresponds to which platform
-- Regularly [check how many installations your agent has](/agents/debug-agents)
+- Regularly [check how many installations your agent has](/agents/deploy/debug-agents)
 - [Revoke installations](#revoke-agent-installations) from platforms you no longer use
 
 ## Common agent installation scenarios
@@ -80,7 +72,5 @@ Your agent can still run from any active installations on other deployment platf
 To revoke an agent installation, use [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo. For example:
 
 ```bash
-
 yarn revoke <inbox-id> <installations-to-exclude>
-
 ```

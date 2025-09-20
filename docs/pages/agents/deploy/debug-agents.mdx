@@ -1,0 +1,65 @@
+# Debug an agent
+
+You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web chat app for developers.
+
+Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+
+## Run a local XMTP network
+
+`dev` and `production` networks are hosted by XMTP, while you can run your own `local` network.
+
+1. Install Docker
+
+2. Start the XMTP service and database
+
+   ```bash
+   ./dev/up
+   ```
+
+3. Change the `.env` file to use the `local` network
+
+   ```bash
+   XMTP_ENV = local
+   ```
+
+4. Try out the example agents using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+   ![](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/examples/xmtp-gm/screenshot.png)
+
+
+## Enable debug logging
+
+To activate detailed debugging logs, set the `XMTP_FORCE_DEBUG` environment variable in your `.env` file:
+
+```bash
+XMTP_FORCE_DEBUG=true
+```
+
+This will enable verbose logging throughout the XMTP Agent SDK, helping you troubleshoot issues and understand the internal flow of messages and events.
+
+## Debug agent information
+
+You can use this code to get your agent's client information, which provides useful values for debugging:
+
+```tsx [Node]
+// Log when we're ready
+agent.on("start", (): void => {
+  logDetails(agent.client)
+});
+```
+Example output:
+
+```bash
+✓ XMTP Client:
+• InboxId: 21313b5f4f2dd2dc063762eb939d3596229c30de1128826727154da5b28be0a5
+• Version: HEAD@a9d19aa (2025-08-25 21:45:01 +0000)
+• Address: 0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+• Conversations: 0
+• Installations: 5
+• InstallationId: 3c072cd74f2f95185c068cf7ea9ee5a22bef5b42a1630749d9e0be8b7a27fe22
+• Key Package created: 9/19/2025, 7:07:30 PM
+• Key Package valid until: 12/12/2025, 8:07:30 PM
+• Networks: production
+• URL: http://xmtp.chat/dm/0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+```

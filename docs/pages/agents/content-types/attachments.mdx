@@ -2,11 +2,15 @@
 
 Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
 
+::::tip[Quickstart]
+To learn more, see the [Attachment example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
+::::
+
 ## Install the package
 
 In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
 
-:::code-group
+::::code-group
 
 ```bash [npm]
 npm i @xmtp/content-type-remote-attachment
@@ -20,19 +24,19 @@ yarn add @xmtp/content-type-remote-attachment
 pnpm add @xmtp/content-type-remote-attachment
 ```
 
-:::
+::::
 
 ## Configure the content type
 
 After importing the package, you can register the codec.
 
-```jsx [Node]
+```tsx [Node]
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from '@xmtp/content-type-remote-attachment';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
   env: 'dev',
   codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
 });
@@ -42,7 +46,7 @@ const xmtp = await Client.create(signer, {
 
 Load the file. This example uses a web browser to load the file:
 
-```jsx [Node]
+```tsx [Node]
 //image is the uploaded event.target.files[0];
 const data = await new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -81,7 +85,7 @@ Upload an encrypted attachment to a location where it will be accessible via an 
 
 Now that you have a `url`, you can create a `RemoteAttachment`:
 
-```jsx [Node]
+```tsx [Node]
 const remoteAttachment = {
   url: url,
   contentDigest: encryptedEncoded.digest,
@@ -96,7 +100,7 @@ const remoteAttachment = {
 
 Now that you have a remote attachment, you can send it:
 
-```jsx [Node]
+```tsx [Node]
 await conversation.send(remoteAttachment, {
   contentType: ContentTypeRemoteAttachment,
 });
@@ -106,17 +110,17 @@ await conversation.send(remoteAttachment, {
 
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
-```tsx [Node]
+```ts [Node]
 import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
 
-if (message.contentType.sameAs(RemoteAttachmentContentType)) {
+if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
   const attachment = await RemoteAttachmentCodec.load(message.content, client);
 }
 ```
 
 You now have the original attachment:
 
-```bash [Bash]
+```
 attachment.filename // => "screenshot.png"
 attachment.mimeType // => "image/png",
 attachment.data // => [the PNG data]

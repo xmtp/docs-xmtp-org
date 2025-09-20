@@ -26,6 +26,42 @@ An agent built with XMTP uses the `TextCodec` (plain text) standard content type
 await conversation.send('gm');
 ```
 
+## Receiving content types
+
+When your agent receives messages with different content types, use event handlers to handle them appropriately:
+
+```jsx [Node]
+// Listen for specific content types
+agent.on("attachment", async (ctx) => {
+  console.log("Received attachment:", ctx.message.content);
+  // Handle attachment logic
+});
+
+agent.on("reaction", async (ctx) => {
+  console.log("Received reaction:", ctx.message.content);
+  // Handle reaction logic
+});
+
+agent.on("reply", async (ctx) => {
+  console.log("Received reply:", ctx.message.content);
+  // Handle reply logic
+});
+
+agent.on("transaction", async (ctx) => {
+  console.log("Received transaction:", ctx.message.content);
+  // Handle transaction logic
+});
+
+// For custom content types, you can access the content type directly
+agent.on("message", async (ctx) => {
+  const contentType = ctx.message.contentType;
+  if (contentType?.typeId === "my-custom-type") {
+    console.log("Received custom content:", ctx.message.content);
+  }
+});
+```
+
+
 ## Standards-track content types
 
 A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
