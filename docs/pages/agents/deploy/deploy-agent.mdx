@@ -42,28 +42,13 @@ Your XMTP agent will need persistent storage. Add a volume to your container:
 
 Use this code in your agent to properly connect to the Railway volume:
 
-```tsx [Node]
-export const getDbPath = (env: string, suffix: string = "xmtp") => {
-  //Checks if the environment is a Railway deployment
-  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? ".data/xmtp";
-  // Create database directory if it doesn't exist
-  if (!fs.existsSync(volumePath)) {
-    fs.mkdirSync(volumePath, { recursive: true });
-  }
-  const dbPath = `${volumePath}/${env}-${suffix}.db3`;
-
-  return dbPath;
-};
-```
-
-Then, specify `dbPath` in your client options:
 
 ```tsx [Node]
-const agent = await Agent.create(signer, {
-    dbEncryptionKey,
-    env: XMTP_ENV as "dev" | "production",
-    dbPath: getDbPath(XMTP_ENV),
-  });
+const customDbPath = (inboxId) =>(process.env.RAILWAY_VOLUME_MOUNT_PATH ?? "." )+ `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`
+
+const agent = await Agent.createFromEnv({
+    dbPath: customDbPath,
+});
 ```
 
 ## 5. Configure environment variables
