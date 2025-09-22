@@ -1,27 +1,27 @@
-#  Built‑in Filters
+# Built‑in filters
 
 Instead of manually checking every incoming message, you can use the provided filters.
 
-**Example**
+## Example
 
 ```ts
-import { filter } from "@xmtp/agent-sdk";
+import { filter } from '@xmtp/agent-sdk';
 
 // Using filter in message handler
-agent.on("text", async (ctx) => {
+agent.on('text', async (ctx) => {
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send("You sent a text message!");
+    await ctx.conversation.send('You sent a text message!');
   }
 });
 
 // Combine multiple conditions
-agent.on("text", async (ctx) => {
+agent.on('text', async (ctx) => {
   if (
     filter.hasDefinedContent(ctx.message) &&
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
-    await ctx.conversation.send("Valid text message received ✅");
+    await ctx.conversation.send('Valid text message received ✅');
   }
 });
 ```
@@ -30,7 +30,7 @@ For convenience, the `filter` object can also be imported as `f`:
 
 ```ts
 // You can import either name:
-import { filter, f } from "@xmtp/agent-sdk";
+import { filter, f } from '@xmtp/agent-sdk';
 
 // Both work the same way:
 if (f.isText(ctx.message)) {
@@ -38,34 +38,34 @@ if (f.isText(ctx.message)) {
 }
 ```
 
-**Available Filters:**
+## Available filters
 
-You can find all available prebuilt filters [here](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
+- `fromSelf`
+- `hasContent`
+- `isDM`
+- `isGroup`
+- `isGroupAdmin`
+- `isGroupSuperAdmin`
+- `isReaction`
+- `isReply`
+- `isRemoteAttachment`
+- `isText`
+- `isTextReply`
 
-- fromSelf
-- hasContent
-- isDM
-- isGroup
-- isGroupAdmin
-- isGroupSuperAdmin
-- isReaction
-- isReply
-- isRemoteAttachment
-- isText
-- isTextReply
+To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
 
 ```ts [Node]
-import { filter } from "@xmtp/agent-sdk";
+import { filter } from '@xmtp/agent-sdk';
 
 const fromSelf = <ContentTypes>(
   message: DecodedMessage<ContentTypes>,
-  client: Client<ContentTypes>,
+  client: Client<ContentTypes>
 ) => {
   return message.senderInboxId === client.inboxId;
 };
 
 const hasContent = <ContentTypes>(
-  message: DecodedMessage<ContentTypes>,
+  message: DecodedMessage<ContentTypes>
 ): message is DecodedMessage<ContentTypes> & {
   content: NonNullable<ContentTypes>;
 } => {
@@ -89,7 +89,7 @@ const isGroupAdmin = (conversation: Conversation, message: DecodedMessage) => {
 
 const isGroupSuperAdmin = (
   conversation: Conversation,
-  message: DecodedMessage,
+  message: DecodedMessage
 ) => {
   if (isGroup(conversation)) {
     return conversation.isSuperAdmin(message.senderInboxId);
@@ -98,30 +98,30 @@ const isGroupSuperAdmin = (
 };
 
 const isReaction = (
-  message: DecodedMessage,
+  message: DecodedMessage
 ): message is DecodedMessage & { content: Reaction } => {
   return !!message.contentType?.sameAs(ContentTypeReaction);
 };
 
 const isReply = (
-  message: DecodedMessage,
+  message: DecodedMessage
 ): message is DecodedMessage & { content: Reply } => {
   return !!message.contentType?.sameAs(ContentTypeReply);
 };
 
 const isRemoteAttachment = (
-  message: DecodedMessage,
+  message: DecodedMessage
 ): message is DecodedMessage & { content: RemoteAttachment } => {
   return !!message.contentType?.sameAs(ContentTypeRemoteAttachment);
 };
 
 const isText = (
-  message: DecodedMessage,
+  message: DecodedMessage
 ): message is DecodedMessage & { content: string } => {
   return !!message.contentType?.sameAs(ContentTypeText);
 };
 
 const isTextReply = (message: DecodedMessage) => {
-  return isReply(message) && typeof message.content.content === "string";
+  return isReply(message) && typeof message.content.content === 'string';
 };
 ```

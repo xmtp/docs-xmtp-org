@@ -1,14 +1,14 @@
-# Create an XMTP Agent
+# Create an XMTP agent
 
 Create an XMTP agent that can use the signing capabilities provided by a signer. This signer links the agent to the appropriate EOA or SCW.
 
 ## Create an EOA signer
 
 ```tsx [Node]
-import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
-import { getRandomValues } from "node:crypto";
+import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
+import { getRandomValues } from 'node:crypto';
 
-// Option 1: Create a local user + signer 
+// Option 1: Create a local user + signer
 const user = createUser(privateKey);
 const signer = createSigner();
 
@@ -16,37 +16,36 @@ const signer = createSigner();
 // const signer: Signer = { /* ... */ };
 
 const agent = await Agent.create(signer, {
-  env: "dev", // or 'production'
+  env: 'dev', // or 'production'
   dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later
 });
 ```
 
+## Environment variables
 
-## Environment Variables
+The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code.
 
-The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code. 
+**Available variables:**
 
-**Available Variables:**
-
-| Variable                 | Purpose                                                                                                                      | Example                                 |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | Private key for wallet                                                                                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)                                                                     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex)                                                                | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| Variable                 | Purpose                                                        | Example                                 |
+| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
 ### Generate random keys
 
 ```tsx [Node]
-import { generatePrivateKey } from "viem";
-import { getRandomValues } from "node:crypto";
+import { generatePrivateKey } from 'viem';
+import { getRandomValues } from 'node:crypto';
 
 const walletKey = generatePrivateKey();
 const encryptionKeyHex = getRandomValues(new Uint8Array(32));
 
-console.log("Wallet key:", walletKey);
-console.log("Encryption key:", encryptionKeyHex);
+console.log('Wallet key:', walletKey);
+console.log('Encryption key:', encryptionKeyHex);
 ```
 
 Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
@@ -57,20 +56,17 @@ yarn gen:keys
 
 > Running the gen:keys command will append keys to your existing .env file.
 
-### Using environment variables
+### Use environment variables
 
 ```tsx [Node]
 // Load variables from .env file
-process.loadEnvFile(".env");
+process.loadEnvFile('.env');
 
 // Create agent using environment variables
 const agent = await Agent.createFromEnv();
 ```
 
-
-
-### Configuration options
-
+## Configuration options
 
 ### Configure an XMTP client
 
@@ -144,14 +140,14 @@ structuredLogging?: boolean;
 loggingLevel?: LogLevel;
 ```
 
-## Smart Contract Wallets (SCW)
+## Create a smart contract wallet (SCW) signer
 
-When working with Smart Contract Wallets, you can create an XMTP agent using the wallet's seed or private key:
+When working with smart contract wallets, you can create an XMTP agent using the wallet's seed or private key:
 
 ```tsx [Node]
-import { Agent, createSigner, createUser } from "@xmtp/agent-sdk";
+import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
 
-const walletData = await initializeWallet("wallet.json");
+const walletData = await initializeWallet('wallet.json');
 /* Create the signer using viem and parse the encryption key for the local db */
 const user = createUser(walletData.seed as `0x${string}`);
 const signer = createSigner(user);

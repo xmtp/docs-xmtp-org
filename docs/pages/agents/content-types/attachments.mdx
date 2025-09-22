@@ -120,10 +120,10 @@ if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
 
 You now have the original attachment:
 
-```
-attachment.filename // => "screenshot.png"
-attachment.mimeType // => "image/png",
-attachment.data // => [the PNG data]
+```ts [Node]
+attachment.filename; // => "screenshot.png"
+attachment.mimeType; // => "image/png",
+attachment.data; // => [the PNG data]
 ```
 
 Once you've created the attachment object, you can create a preview to show in the message input field before sending:

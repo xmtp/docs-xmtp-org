@@ -6,28 +6,28 @@ With the agent-sdk, you can listen for different types of messages using event h
 
 ```js [Node]
 // Listen for text messages
-agent.on("text", async (ctx) => {
-  console.log("New text message:", ctx.message.content);
-  await ctx.sendText("Got your message!");
+agent.on('text', async (ctx) => {
+  console.log('New text message:', ctx.message.content);
+  await ctx.sendText('Got your message!');
 });
 
 // Listen for reactions
-agent.on("reaction", async (ctx) => {
-  console.log("New reaction:", ctx.message.content);
+agent.on('reaction', async (ctx) => {
+  console.log('New reaction:', ctx.message.content);
 });
 
 // Listen for replies
-agent.on("reply", async (ctx) => {
-  console.log("New reply:", ctx.message.content);
+agent.on('reply', async (ctx) => {
+  console.log('New reply:', ctx.message.content);
 });
 ```
 
 ## Stream all messages
 
 ```js [Node]
-import { filter } from "@xmtp/agent-sdk";
+import { filter } from '@xmtp/agent-sdk';
 
-agent.on("message", async (ctx) => {
+agent.on('message', async (ctx) => {
   // Filter for specific message types
   if (filter.isText(ctx.message)) {
     await ctx.conversation.send(`Echo: ${ctx.message.content}`);
@@ -35,13 +35,19 @@ agent.on("message", async (ctx) => {
 });
 
 // Listen for unknown messages
-agent.on("unknownMessage", (ctx) => {
-  console.error("Message type is unknown", ctx);
+agent.on('unknownMessage', (ctx) => {
+  console.error('Message type is unknown', ctx);
 });
 ```
 
-⚠️ Important: The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
-{/* 
+:::warning
+
+The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
+:::
+
+{/*
+
 ## Stream new group chat and DM conversations
 
 With the agent-sdk, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
@@ -59,7 +65,6 @@ agent.on("group", async (ctx) => {
   await ctx.sendText("Hello group!");
 });
 ``` */}
-
 
 ## Handle errors and failures
 

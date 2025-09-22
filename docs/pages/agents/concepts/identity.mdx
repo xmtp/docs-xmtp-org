@@ -17,7 +17,7 @@ This video provides a walkthrough of creating and building a client.
   allowFullScreen
 ></iframe>
 
-### How it works
+## How it works
 
 When you call `Agent.create()`, the following steps happen under the hood:
 
@@ -32,7 +32,7 @@ When you call `Agent.create()`, the following steps happen under the hood:
       - **For the Browser SDK**: A `dbEncryptionKey` is not used for encryption due to technical limitations in web environments. Be aware that the database is not encrypted.
 4. Returns the XMTP client, ready to send and receive messages.
 
-### Keep the database encryption key safe
+## Keep the database encryption key safe
 
 The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
 
@@ -50,7 +50,7 @@ The `dbEncryptionKey` client option is not used by the Browser SDK for due to te
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
-### View an encrypted database
+## View an encrypted database
 
 For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates a [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
 

@@ -2,8 +2,7 @@
 
 Use the reply content type to support quote replies with your agent. A reply is a method to directly respond to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 
-
-### Install the package
+## Install the package
 
 In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
 
@@ -28,10 +27,10 @@ pnpm add @xmtp/content-type-reply
 After importing the package, you can register the codec.
 
 ```js [Node]
-import { ReplyCodec } from "@xmtp/content-type-reply";
+import { ReplyCodec } from '@xmtp/content-type-reply';
 // Create the XMTP agent
 const agent = await Agent.create(signer, {
-  env: "dev",
+  env: 'dev',
   codecs: [new ReplyCodec()],
 });
 ```
@@ -45,14 +44,14 @@ Once you've created a reply, you can send it. Replies are represented as objects
 - `content`: String representation of the reply
 
 ```ts [Node]
-import { ContentTypeText } from "@xmtp/content-type-text";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-import type { Reply } from "@xmtp/content-type-reply";
+import { ContentTypeText } from '@xmtp/content-type-text';
+import { ContentTypeReply } from '@xmtp/content-type-reply';
+import type { Reply } from '@xmtp/content-type-reply';
 
 const reply: Reply = {
   reference: someMessageID,
   contentType: ContentTypeText,
-  content: "I concur",
+  content: 'I concur',
 };
 
 await ctx.conversation.send(reply, {
@@ -60,15 +59,14 @@ await ctx.conversation.send(reply, {
 });
 ```
 
-
 ## Receive a reply
 
 ```tsx [Node]
-agent.on("reply", async (ctx) => {
-  console.log("New reply:", ctx.message.content);
+agent.on('reply', async (ctx) => {
+  console.log('New reply:', ctx.message.content);
 });
 ```
-  
+
 ## Filter a reply
 
 Now that you can send a reply, you need a way to receive a reply. For example:
@@ -79,4 +77,3 @@ if (message.contentType.sameAs(ContentTypeReply)) {
   const reply: Reply = message.content;
 }
 ```
-

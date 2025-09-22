@@ -2,9 +2,9 @@
 
 This section covers how to deploy an agent using [Railway](https://railway.app/)—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
 
-Alternative platforms include (Ubuntu-based): 
+Alternative platforms include (Ubuntu-based):
 
-- [Fly.io](https://fly.io/), [Heroku](https://www.heroku.com/), [Render](https://render.com/)  
+- [Fly.io](https://fly.io/), [Heroku](https://www.heroku.com/), [Render](https://render.com/)
 
 Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
 
@@ -42,12 +42,13 @@ Your XMTP agent will need persistent storage. Add a volume to your container:
 
 Use this code in your agent to properly connect to the Railway volume:
 
-
 ```tsx [Node]
-const customDbPath = (inboxId) =>(process.env.RAILWAY_VOLUME_MOUNT_PATH ?? "." )+ `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`
+const customDbPath = (inboxId) =>
+  (process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.') +
+  `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`;
 
 const agent = await Agent.createFromEnv({
-    dbPath: customDbPath,
+  dbPath: customDbPath,
 });
 ```
 

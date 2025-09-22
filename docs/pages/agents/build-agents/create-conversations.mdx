@@ -52,13 +52,13 @@ Use these helper methods to quickly locate and access specific conversations—w
 
 ```js [Node]
 // get a conversation by its ID
-const conversationById = await agent.client.conversations.getConversationById(
-  conversationId
-);
+const conversationById =
+  await agent.client.conversations.getConversationById(conversationId);
 
 // get a message by its ID
 const messageById = await agent.client.conversations.getMessageById(messageId);
 
 // get a 1:1 conversation by a peer's inbox ID
-const dmByInboxId = await agent.client.conversations.getDmByInboxId(peerInboxId);
+const dmByInboxId =
+  await agent.client.conversations.getDmByInboxId(peerInboxId);
 ```

@@ -1,8 +1,8 @@
-# FAQ about XMTP Agents
+# FAQ about XMTP agents
 
 Get answers to frequently asked questions about building agents with XMTP.
 
-## Platform & Compatibility
+## Platform and compatibility
 
 ### What chains does XMTP support?
 
@@ -15,24 +15,26 @@ Supported chains: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-com
 - **SDKs**: XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building)
 - **Signing libraries**: The Agent SDK provides simplified abstractions. For custom integrations, use [ethers](https://ethers.org/) or another web3 library with [ethers Signer](https://docs.ethers.io/v5/api/signer/) support
 
-## Development Setup
+## Development setup
 
 ### Should I use `dbPath: null` for development?
 
 **Not recommended.** Using `dbPath: null` creates a new installation on every restart, quickly hitting the 10-installation limit (within ~30 minutes of development).
 
 **Recommended approach:**
+
 - Use persistent database paths for development
 - Ideal setup: 2 installations (local + production), leaving 8 for testing
 - Only use `dbPath: null` for fire-and-forget or temporary agents
 
-## Database Management
+## Database management
 
 ### What files need to be backed up?
 
 Back up these SQLite files for persistent storage:
+
 - `{env}-{description}.db3` - Main database
-- `{env}-{description}.db3-shm` - Shared memory  
+- `{env}-{description}.db3-shm` - Shared memory
 - `{env}-{description}.db3-wal` - Write-ahead log
 - `{env}-{description}.db3.sqlcipher_salt` - Encryption salt
 
@@ -45,7 +47,7 @@ Rough estimate: **1GB ≈ 15,000 conversations**. Plan based on your expected vo
 ### What data is stored in the database?
 
 - All messages and conversations
-- Conversation state and encryption keys  
+- Conversation state and encryption keys
 - Group membership and metadata
 
 ### Can I clear database data without deleting files?
@@ -55,16 +57,18 @@ Not currently possible from SDKs. XMTP is developing database management tools (
 ### What happens when I delete/wipe the database?
 
 **File deletion:**
+
 - Creates fresh database with new installation
 - Messages continue streaming normally
 - Works unless you've hit the 10-installation limit
 
 **Database wipe (once XIP-70 tools are available):**
+
 - Agent loses access to existing groups
 - Regains group access when receiving new messages
 - All local message history is lost
 
-## Installation Limits & Troubleshooting
+## Installation limits and troubleshooting
 
 ### What is the installation limit?
 
@@ -73,11 +77,12 @@ Each inbox has a **maximum of 10 installations**. Creating a new installation be
 ### How do I recover from hitting the limit?
 
 Currently:
+
 - Use a different client/signer to create new agents
 - No built-in method to revoke old installations
 - Automatic revocation tools are planned for future releases
 
-## Messages & Content
+## Messages and content
 
 ### What content types can agents send?
 
@@ -91,26 +96,29 @@ Yes, messages are limited to just under 1MB. For larger content, use [remote att
 
 No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
-## Framework Integration
+## Framework integration
 
 ### Does XMTP work with ElizaOS?
 
 Yes! XMTP has official ElizaOS support through the [`@elizaos/plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) plugin, enabling secure, decentralized, and end-to-end encrypted messaging for ElizaOS agents.
 
-**Installation:**
+#### Installation
+
 ```bash
 pnpm add @elizaos/plugin-xmtp
 # or
 elizaos add plugins @elizaos/plugin-xmtp
 ```
 
-**Environment variables:**
+#### Environment variables
+
 - `WALLET_KEY` - Private key of the wallet
 - `XMTP_SIGNER_TYPE` - Signer type (SCW or EOA)
 - `XMTP_SCW_CHAIN_ID` - (Optional) Chain ID for smart contract wallet
 - `XMTP_ENV` - (Optional) XMTP environment (dev, local, production)
 
-**Benefits of XMTP + ElizaOS:**
+#### Benefits of XMTP + ElizaOS
+
 - End-to-end encrypted agent communication
 - Decentralized messaging without single points of failure
 - Multi-agent, multi-human confidential group chats
@@ -120,28 +128,31 @@ elizaos add plugins @elizaos/plugin-xmtp
 
 Absolutely! We welcome contributions to improve XMTP agent integrations:
 
-- **ElizaOS Plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
+- **ElizaOS plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
 - **Agent SDK**: Help improve the core [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk)
 - **Documentation**: Submit improvements to agent documentation and examples
 - **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
 
-## Identity & Profile Management
+## Identity and profile management
 
 ### How do I create separate XMTP inboxes for multiple Lens profiles owned by the same address?
 
 Each Lens profile needs its own XMTP identity to have a separate inbox. XMTP doesn't support linking multiple identities to a single owner address.
 
-**The challenge:**
+#### The challenge
+
 - One wallet address can own multiple Lens profiles
 - XMTP identity creation uses the profile owner's address
 - You want each Lens profile to have its own unique inbox
 
-**The solution:**
+#### The solution
+
 - Each Lens profile must have its own XMTP identity
 - This means each profile needs its own private key/wallet
 - You cannot have multiple XMTP identities linked to one owner address
 
-**Example use case:**
+#### Example use case
+
 If you have 3 Lens profiles on one address and want separate inboxes for each, you'll need 3 different XMTP identities (each with their own private key), not 3 profiles sharing one XMTP identity.
 
 ## Security
@@ -149,4 +160,3 @@ If you have 3 Lens profiles on one address and want separate inboxes for each, y
 ### Has XMTP been audited?
 
 Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024. See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)
-

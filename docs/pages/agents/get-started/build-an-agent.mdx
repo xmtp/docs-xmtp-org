@@ -1,4 +1,4 @@
-# Build XMTP Agents
+# Build XMTP agents
 
 This documentation provides examples of agents that use the XMTP network. These agents are built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
@@ -24,21 +24,21 @@ yarn add @xmtp/agent-sdk
 This example shows how to create an agent that sends a message when it receives a text message.
 
 ```ts
-import { Agent, getTestUrl } from "@xmtp/agent-sdk";
+import { Agent, getTestUrl } from '@xmtp/agent-sdk';
 
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({
-  env: "dev", // or 'production'
-  dbPath: "./xmtp.db3",
+  env: 'dev', // or 'production'
+  dbPath: './xmtp.db3',
 });
 
 // 3. Respond to text messages
-agent.on("text", async (ctx) => {
-  await ctx.sendText("Hello from my XMTP Agent! 👋");
+agent.on('text', async (ctx) => {
+  await ctx.sendText('Hello from my XMTP Agent! 👋');
 });
 
 // 4. Log when we're ready
-agent.on("start", () => {
+agent.on('start', () => {
   console.log(`We are online: ${getTestUrl(agent)}`);
 });
 
@@ -67,7 +67,7 @@ Prompt: lets create an example that gets a number and returns its 2x multiple (u
 
 Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
 
-![](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
+![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
 
 ## Debug an agent
 
@@ -80,4 +80,3 @@ To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 ## Agent examples
 
 See the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) for more agent examples.
-
