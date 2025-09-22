@@ -2,5 +2,3 @@
 docs/pages/chat-apps/intro/get-started.mdx
 # Contains "/xmtp/mls/1/w-$installationId/proto" which Prettier breaks in multiple lines
 docs/pages/chat-apps/push-notifs/push-notifs.mdx
-# Contains "{/*" which Prettier changes to "{/\*" which breaks display
-docs/pages/agents/build-agents/stream.mdx
