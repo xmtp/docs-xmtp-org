@@ -87,35 +87,6 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-### DM-specific properties
-
-```typescript
-agent.on('dm', async (ctx) => {
-  const dm = ctx.conversation;
-
-  // Get the peer's inbox ID
-  const peerInboxId = dm.peerInboxId;
-  console.log('DM with:', peerInboxId);
-});
-```
-
-### Group-specific properties
-
-```typescript
-agent.on('group', async (ctx) => {
-  const group = ctx.conversation;
-
-  console.log('Group name:', group.name);
-  console.log('Group description:', group.description);
-  console.log('Admins:', group.admins);
-  console.log('Super admins:', group.superAdmins);
-
-  // Check member permissions
-  const memberInboxId = 'some-member-inbox-id';
-  console.log('Is admin:', group.isAdmin(memberInboxId));
-  console.log('Is super admin:', group.isSuperAdmin(memberInboxId));
-});
-```
 
 ## Client object
 
