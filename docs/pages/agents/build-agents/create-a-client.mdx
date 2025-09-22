@@ -5,7 +5,8 @@ Create an XMTP agent that can use the signing capabilities provided by a signer.
 ## Create an EOA signer
 
 ```tsx [Node]
-import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
+import { Agent } from "@xmtp/agent-sdk";
+import { createSigner, createUser } from "@xmtp/agent-sdk/user";
 import { getRandomValues } from 'node:crypto';
 
 // Option 1: Create a local user + signer
@@ -145,7 +146,8 @@ loggingLevel?: LogLevel;
 When working with smart contract wallets, you can create an XMTP agent using the wallet's seed or private key:
 
 ```tsx [Node]
-import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
+import { Agent } from '@xmtp/agent-sdk';
+import { createSigner, createUser } from "@xmtp/agent-sdk/user";
 
 const walletData = await initializeWallet('wallet.json');
 /* Create the signer using viem and parse the encryption key for the local db */
