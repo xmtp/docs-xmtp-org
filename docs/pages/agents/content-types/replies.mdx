@@ -54,9 +54,7 @@ const reply: Reply = {
   content: 'I concur',
 };
 
-await ctx.conversation.send(reply, {
-  contentType: ContentTypeReply,
-});
+await ctx.sendTextReply(reply)
 ```
 
 ## Receive a reply

@@ -13,9 +13,6 @@ import { getRandomValues } from 'node:crypto';
 const user = createUser(privateKey);
 const signer = createSigner();
 
-// Option 2: Use your own wallet signer
-// const signer: Signer = { /* ... */ };
-
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
   dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later

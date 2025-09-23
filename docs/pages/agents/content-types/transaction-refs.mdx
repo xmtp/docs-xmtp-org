@@ -75,7 +75,7 @@ const transactionReference: TransactionReference = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-await conversation.send(transactionReference, {
+await ctx.conversation.send(transactionReference, {
   contentType: ContentTypeTransactionReference,
 });
 ```

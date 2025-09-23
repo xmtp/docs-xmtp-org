@@ -10,7 +10,7 @@ import { filter } from '@xmtp/agent-sdk';
 // Using filter in message handler
 agent.on('text', async (ctx) => {
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send('You sent a text message!');
+    await ctx.sendText('You sent a text message!');
   }
 });
 
@@ -21,7 +21,7 @@ agent.on('text', async (ctx) => {
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
-    await ctx.conversation.send('Valid text message received ✅');
+    await ctx.sendText('Valid text message received ✅');
   }
 });
 ```

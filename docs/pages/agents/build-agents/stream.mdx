@@ -22,6 +22,7 @@ agent.on('reply', async (ctx) => {
 });
 ```
 
+
 ## Stream all messages
 
 ```js [Node]
@@ -30,7 +31,7 @@ import { filter } from '@xmtp/agent-sdk';
 agent.on('message', async (ctx) => {
   // Filter for specific message types
   if (filter.isText(ctx.message)) {
-    await ctx.conversation.send(`Echo: ${ctx.message.content}`);
+    await ctx.sendText(`Echo: ${ctx.message.content}`);
   }
 });
 

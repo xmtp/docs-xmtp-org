@@ -101,7 +101,7 @@ const remoteAttachment = {
 Now that you have a remote attachment, you can send it:
 
 ```tsx [Node]
-await conversation.send(remoteAttachment, {
+await ctx.conversation.send(remoteAttachment, {
   contentType: ContentTypeRemoteAttachment,
 });
 ```

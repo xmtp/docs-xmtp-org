@@ -81,7 +81,7 @@ const walletSendCalls: WalletSendCallsParams = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```ts [Node]
-await conversation.send(walletSendCalls, {
+await sendText(walletSendCalls, {
   contentType: ContentTypeWalletSendCalls,
 });
 ```

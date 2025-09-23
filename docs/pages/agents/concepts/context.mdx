@@ -72,7 +72,7 @@ agent.on('text', async (ctx) => {
   console.log('Conversation ID:', conversation.id);
 
   // Send a message
-  await ctx.conversation.send('Hello from the conversation!');
+  await ctx.sendText('Hello from the conversation!');
 
   // Get conversation members
   const members = await ctx.conversation.members();
