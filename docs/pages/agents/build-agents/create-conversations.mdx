@@ -7,11 +7,12 @@ With your agent, you can create a new conversation, whether it's a group chat or
 Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
 
 ```js [Node]
-const group = await agent.client.conversations.newGroup(
-  [bo.inboxId, caro.inboxId],
+const group = await agent.createGroupWithAddresses(
+  [bo.address, caro.address],
   createGroupOptions /* optional */
 );
 ```
+
 
 ## Create a new DM
 
@@ -19,15 +20,22 @@ Once you have the verified identity, get its inbox ID and create a new DM:
 
 ```js [Node]
 // by Ethereum address
-const dm = await agent.client.conversations.newDmWithIdentifier({
+const dm = await agent.createDmWithAddress({
   identifier: bo.accountAddress,
   identifierKind: IdentifierKind.Ethereum,
 });
 ```
 
-```js [Node]
-// by inbox ID
-const dm = await agent.client.conversations.newDm(bo.inboxId);
+
+### Get the address of the sender
+
+```ts [Node]
+import { getTestUrl } from "@xmtp/agent-sdk/debug";
+
+agent.on('text', async (ctx) => {
+  const senderAddress = ctx.getSenderAddress();
+  console.log('Message from:', senderAddress);
+});
 ```
 
 ## Conversation helper methods

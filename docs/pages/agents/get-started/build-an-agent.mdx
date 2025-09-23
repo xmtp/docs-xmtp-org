@@ -58,25 +58,6 @@ XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
 XMTP_ENV=dev # local, dev, production
 ```
 
-### Get the address of the agent
-
-```ts [Node]
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
-
-console.log(`Address: ${agent.address}`);
-```
-
-### Get the address of the sender
-
-```ts [Node]
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
-
-agent.on('text', async (ctx) => {
-  const senderAddress = ctx.getSenderAddress();
-  console.log('Message from:', senderAddress);
-});
-```
-
 ## Vibe coding
 
 See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
