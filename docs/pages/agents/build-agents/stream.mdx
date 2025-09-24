@@ -1,0 +1,60 @@
+# Stream conversations and messages
+
+## Stream messages
+
+With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+
+```js [Node]
+// Listen for text messages
+agent.on('text', async (ctx) => {
+  console.log('New text message:', ctx.message.content);
+  await ctx.sendText('Got your message!');
+});
+
+// Listen for reactions
+agent.on('reaction', async (ctx) => {
+  console.log('New reaction:', ctx.message.content);
+});
+
+// Listen for replies
+agent.on('reply', async (ctx) => {
+  console.log('New reply:', ctx.message.content);
+});
+```
+
+
+## Stream all messages
+
+```js [Node]
+import { filter } from '@xmtp/agent-sdk';
+
+agent.on('message', async (ctx) => {
+  // Filter for specific message types
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText(`Echo: ${ctx.message.content}`);
+  }
+});
+
+// Listen for unknown messages
+agent.on('unknownMessage', (ctx) => {
+  console.error('Message type is unknown', ctx);
+});
+```
+
+:::warning
+
+The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
+:::
+
+## Handle errors and failures
+
+The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
+
+```js [Node]
+// Handle uncaught errors
+agent.on("unhandledError", (error) => {
+  console.error("Agent error:", error);
+  // Handle the error appropriately
+});
+```

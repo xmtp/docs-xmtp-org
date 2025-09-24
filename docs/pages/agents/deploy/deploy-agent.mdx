@@ -1,19 +1,16 @@
 # Deploy an agent
 
-This section covers how to deploy an agent using Railway—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+This section covers how to deploy an agent using [Railway](https://railway.app/)—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
 
-Alternative platforms include:
+Alternative platforms include (Ubuntu-based):
 
-- [Fly.io](https://fly.io/)
-- [Heroku](https://www.heroku.com/)
-- [Render](https://render.com/)
-- [Vercel](https://vercel.com)
+- [Fly.io](https://fly.io/), [Heroku](https://www.heroku.com/), [Render](https://render.com/)
 
 Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
 
 :::tip
 
-The XMTP Node SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
+The XMTP Agent SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
 
 :::
 
@@ -46,26 +43,12 @@ Your XMTP agent will need persistent storage. Add a volume to your container:
 Use this code in your agent to properly connect to the Railway volume:
 
 ```tsx [Node]
-export const getDbPath = (env: string, suffix: string = 'xmtp') => {
-  //Checks if the environment is a Railway deployment
-  const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.data/xmtp';
-  // Create database directory if it doesn't exist
-  if (!fs.existsSync(volumePath)) {
-    fs.mkdirSync(volumePath, { recursive: true });
-  }
-  const dbPath = `${volumePath}/${env}-${suffix}.db3`;
+const customDbPath = (inboxId) =>
+  (process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.') +
+  `/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`;
 
-  return dbPath;
-};
-```
-
-Then, specify `dbPath` in your client options:
-
-```tsx [Node]
-const receiverClient = await Client.create(signer, {
-  dbEncryptionKey,
-  env: XMTP_ENV as XmtpEnv,
-  dbPath: getDbPath(XMTP_ENV),
+const agent = await Agent.createFromEnv({
+  dbPath: customDbPath,
 });
 ```
 

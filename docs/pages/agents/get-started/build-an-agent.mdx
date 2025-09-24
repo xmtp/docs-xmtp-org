@@ -1,134 +1,85 @@
-# Tutorial: Build an agent that uses XMTP
+# Build XMTP agents
 
-This tutorial provides a map to building agents with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk). These agents can communicate with humans and other agents in chats built with XMTP.
+This documentation provides examples of agents that use the XMTP network. These agents are built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
-Building with XMTP gives your agent access to:
+## Prerequisites
 
-- The [most secure](/protocol/security), [decentralized](/network/network-nodes) messaging network
-- The building blocks of AI + money + secure chat
-- Users on apps built with XMTP, including Coinbase Wallet, Convos, and more
+- Node.js v20 or higher
+- Any package manager
 
-## Resources to get started
+## Installation
 
-### Quickstart video guide
+Choose your package manager to install the XMTP Agent SDK:
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
+```bash
+npm install @xmtp/agent-sdk
+# or
+pnpm add @xmtp/agent-sdk
+# or
+yarn add @xmtp/agent-sdk
+```
 
-### Agent examples
+## Quickstart
 
-From a simple agent that replies "GM" to one that supports onchain transactions, explore and run a dozen [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) built with the [XMTP Node SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk).
+This example shows how to create an agent that sends a message when it receives a text message.
 
-### Cursor rules
+```ts [Node]
+import { Agent,  } from '@xmtp/agent-sdk';
+import { getTestUrl } from "@xmtp/agent-sdk/debug";
 
-You can use these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/README.md) to code agents with AI following XMTP development best practices.
-
-## Build an agent
-
-### Listen for and send messages
-
-These are the steps to initialize the XMTP listener and send messages.
-
-```tsx [Node]
-// import the xmtp sdk
-import { Client, type XmtpEnv, type Signer } from "@xmtp/node-sdk";
-
-// encryption key, must be consistent across runs
-const encryptionKey: Uint8Array = ...;
-const signer: Signer = ...;
-const env: XmtpEnv = "dev";
-
-// create the client
-const client = await Client.create(signer, {
-  encryptionKey,
-  env,
-  appVersion: 'alix-agent/2.x'
+// 2. Spin up the agent
+const agent = await Agent.createFromEnv({
+  env: 'dev', // or 'production'
+  dbPath: './xmtp.db3',
 });
 
-// sync the client to get the latest messages
-await client.conversations.sync();
+// 3. Respond to text messages
+agent.on('text', async (ctx) => {
+  await ctx.sendText('Hello from my XMTP Agent! 👋');
+});
 
-// listen to all messages
-const stream = await client.conversations.streamAllMessages();
-for await (const message of stream) {
-  // ignore messages from the agent
-  if (message?.senderInboxId === client.inboxId) continue;
-  // get the conversation by id
-  const conversation = await client.conversations.getConversationById(message.conversationId);
-  // send a message from the agent
-  await conversation.send("gm");
-}
+// 4. Log when we're ready
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+});
+
+await agent.start();
 ```
 
-### Get the address of a user
+### Set environment variables
 
-Each user has a unique `inboxId` used to retrieve their associated addresses (identities). One `inboxId` can have multiple identities, such as EOAs and SCWs.
+To run an example XMTP agent, you must create a `.env` file with the following variables:
 
-:::tip
-
-An `inboxId` differs from an address. An `inboxId` is a user identifier, while an address identifies a user's wallet. Not all users have associated addresses. To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
-
-:::
-
-```tsx [Node]
-const inboxState = await client.preferences.inboxStateFromInboxIds([
-  message.senderInboxId,
-]);
-const addressFromInboxId = inboxState[0].identifiers[0].identifier;
+```bash
+XMTP_WALLET_KEY= # the private key of the wallet
+XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
+XMTP_ENV=dev # local, dev, production
 ```
 
-### Support onchain transactions and transaction references
+## Vibe coding
 
-To learn more, see the example [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) agent, as well as the [Support onchain transactions](/agents/content-types/transactions) and [Support onchain transaction references](/agents/content-types/transaction-refs) (receipts) documentation.
+See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
 
-### Support attachments
+```bash
+Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
+```
 
-To learn more, see the example [xmtp-attachments](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) agent and [Support attachments](/agents/content-types/attachments) documentation.
+## Talk to your agent
 
-### Support replies
+Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
 
-To learn more, see [Support replies](/agents/content-types/replies) documentation.
-
-### Support reactions
-
-To learn more, see [Support reactions](/agents/content-types/reactions) documentation.
-
-### Observe rate limits
-
-XMTP enforces separate rate limits for read and write operations per client.
-
-To learn more, see [Observe rate limits](/agents/core-messaging/rate-limits)
-
-### Follow security best practices
-
-To learn more, see [Follow agent security best practices](/agents/agent-security)
-
-## Manage agent installations
-
-To learn more, see [Manage agent installations](/agents/core-messaging/agent-installations).
+![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
 
 ## Debug an agent
 
-To learn more, see [Debug an agent](/agents/debug-agents)
+To learn more, see [Debug an agent](/agents/deploy/debug-agents)
 
 ## Deploy an agent
 
-To learn more, see [Deploy an agent](/agents/deploy-agent).
+To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 
-## Get featured
+## Agent examples
 
-:::tip
-
-**Want your agent or mini-app featured on TBA?**
-
-[Complete this form](https://docs.google.com/forms/d/e/1FAIpQLSfZ7JgOt4tw36dGLL9cEmw_y09VoE5_Knk7X6EnJd1IJ3CLEg/viewform) to tell the team about your project, get feedback, and collaborate on possibly getting it featured.
-
-:::
+See the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) for more agent examples.
