@@ -15,7 +15,7 @@ const group = await agent.createGroupWithAddresses(
 );
 ```
 
-** By inbox ID**
+**By inbox ID**
 
 ```js [Node]
 const group = await agent.client.conversations.newGroup(
@@ -28,7 +28,7 @@ const group = await agent.client.conversations.newGroup(
 
 Once you have the verified identity, get its inbox ID and create a new DM:
 
-** By Ethereum address**
+**By Ethereum address**
 
 ```js [Node]
 // by Ethereum address
@@ -38,12 +38,11 @@ const dm = await agent.createDmWithAddress({
 });
 ```
 
-** By inbox ID**
+**By inbox ID**
 
 ```js [Node]
 const dm = await agent.client.conversations.newDm(bo.inboxId);
 ```
-
 
 ### Get the address of the sender
 
@@ -72,7 +71,6 @@ const messageById = await agent.client.conversations.getMessageById(messageId);
 const dmByInboxId =
   await agent.client.conversations.getDmByInboxId(peerInboxId);
 ```
-
 
 
 ## Check if an identity is reachable
