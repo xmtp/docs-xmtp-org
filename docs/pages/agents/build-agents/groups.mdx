@@ -1,0 +1,77 @@
+# Manage group chats
+
+Group chats can have metadata like names, descriptions, and images to help users identify them. You can set metadata when [creating a group chat](/agents/build-agents/create-conversations) or update it later.
+
+:::tip[Quickstart]
+To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
+:::
+
+
+## Available metadata fields
+
+- `group_name`: The name of the group chat
+- `description`: A description of the group chat  
+- `image_url`: A URL pointing to an image for the group chat
+
+## Get and update metadata
+
+```js [Node]
+// Get metadata
+const groupName = group.name;
+const groupDescription = group.description;
+const groupImageUrl = group.imageUrl;
+
+// Update metadata
+await group.updateName('New Group Name');
+await group.updateDescription('New Group Description');
+await group.updateImageUrl('newurl.com');
+```
+
+
+## Manage group chat membership
+
+:::tip[Quickstart]
+To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
+:::
+
+The maximum group chat size is 250 members.
+
+```js [Node]
+// Get inbox IDs for identities
+const inboxId = await client.getInboxIdByIdentities([
+  bo.identity,
+  caro.identity,
+]);
+
+// Add/remove members
+await group.addMembers([inboxId]);
+await group.removeMembers([inboxId]);
+
+// Get member information
+await group.sync();
+const members = group.members;
+const addedByInboxId = group.addedByInboxId;
+
+// Map inbox ID to account identity
+const inboxIdIdentityMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentity])
+);
+```
+
+## Manage group chat admins
+
+```js [Node]
+// Check admin status
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// List admins
+const admins = group.admins;
+const superAdmins = group.superAdmins;
+
+// Add/remove admin status
+await group.addAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
+```
