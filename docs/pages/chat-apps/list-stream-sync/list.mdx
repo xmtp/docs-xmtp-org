@@ -103,6 +103,18 @@ By default, the conversation will be sorted by last activity (either when the la
 
 :::code-group
 
+```ts [Browser]
+
+```
+
+```ts [Node]
+
+```
+
+```ts [React Native]
+
+```
+
 ```kotlin [Kotlin]
 val firstPage = try client.conversations.list(limit = 10)
 val secondPage = try client.conversations.list(
@@ -129,6 +141,18 @@ To paginate against a stably sorted list you should use the `createdAtBeforeNs` 
 :::
 
 :::code-group
+
+```ts [Browser]
+
+```
+
+```ts [Node]
+
+```
+
+```ts [React Native]
+
+```
 
 ```kotlin [Kotlin]
 val firstPage = try client.conversations.list(limit = 10, orderBy = Conversations.ListConversationsOrderBy.CREATED_AT)
