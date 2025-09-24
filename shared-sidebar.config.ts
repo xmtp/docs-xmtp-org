@@ -38,8 +38,8 @@ export const sidebarConfig = {
           link: "/agents/build-agents/create-conversations",
         },
         {
-          text: "Group metadata",
-          link: "/agents/build-agents/group-metadata",
+          text: "Group chats",
+          link: "/agents/build-agents/groups",
         },
         {
           text: "Group permissions",
