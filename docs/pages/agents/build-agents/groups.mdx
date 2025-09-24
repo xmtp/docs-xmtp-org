@@ -79,11 +79,11 @@ await group.removeSuperAdmin(inboxId);
 
 ## Member information
 
-Get detailed information about conversation members:
+Get detailed information about group members:
 
 ```typescript
 agent.on('text', async (ctx) => {
-  const members = await ctx.conversation.members();
+  const members = await group.members();
 
   for (const member of members) {
     console.log('Member inbox ID:', member.inboxId);
