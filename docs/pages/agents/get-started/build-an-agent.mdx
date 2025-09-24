@@ -2,24 +2,33 @@
 
 This documentation provides examples of agents that use the XMTP network. These agents are built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
-## Prerequisites
-
-- Node.js v20 or higher
-- Any package manager
 
 ## Installation
 
-Choose your package manager to install the XMTP Agent SDK:
 
-```bash
-npm install @xmtp/agent-sdk
-# or
-pnpm add @xmtp/agent-sdk
-# or
+First, we will install `@xmtp/agent-sdk` as a dependency in our project.
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/agent-sdk
+```
+
+```bash [pnpm]
+pnpm i @xmtp/agent-sdk
+```
+
+```bash [yarn]
 yarn add @xmtp/agent-sdk
 ```
 
-## Quickstart
+```bash [bun]
+bun i @xmtp/agent-sdk
+```
+
+:::
+
+## Usage
 
 This example shows how to create an agent that sends a message when it receives a text message.
 
@@ -30,7 +39,6 @@ import { getTestUrl } from '@xmtp/agent-sdk/debug';
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({
   env: 'dev', // or 'production'
-  dbPath: './xmtp.db3',
 });
 
 // 3. Respond to text messages
