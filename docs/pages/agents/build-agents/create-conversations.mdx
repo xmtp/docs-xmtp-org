@@ -6,7 +6,7 @@ With your agent, you can create a new conversation, whether it's a group chat or
 
 Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
 
-**By Ethereum address**
+### By Ethereum address
 
 ```js [Node]
 const group = await agent.createGroupWithAddresses(
@@ -15,7 +15,7 @@ const group = await agent.createGroupWithAddresses(
 );
 ```
 
-**By inbox ID**
+### By inbox ID
 
 ```js [Node]
 const group = await agent.client.conversations.newGroup(
@@ -28,7 +28,7 @@ const group = await agent.client.conversations.newGroup(
 
 Once you have the verified identity, get its inbox ID and create a new DM:
 
-**By Ethereum address**
+### By Ethereum address
 
 ```js [Node]
 // by Ethereum address
@@ -38,7 +38,7 @@ const dm = await agent.createDmWithAddress({
 });
 ```
 
-**By inbox ID**
+### By inbox ID
 
 ```js [Node]
 const dm = await agent.client.conversations.newDm(bo.inboxId);
@@ -47,7 +47,7 @@ const dm = await agent.client.conversations.newDm(bo.inboxId);
 ### Get the address of the sender
 
 ```ts [Node]
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
 
 agent.on('text', async (ctx) => {
   const senderAddress = ctx.getSenderAddress();
@@ -72,13 +72,15 @@ const dmByInboxId =
   await agent.client.conversations.getDmByInboxId(peerInboxId);
 ```
 
-
 ## Check if an identity is reachable
 
 The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
 
 ```js [Node]
-import { Agent, IdentifierKind } from "@xmtp/agent-sdk";
+import { Agent, IdentifierKind } from '@xmtp/agent-sdk';
 // response is a Map of string (identifier) => boolean (is reachable)
-const response = await Agent.canMessage( { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum });
+const response = await Agent.canMessage({
+  identifier: '0xcaroAddress',
+  identifierKind: IdentifierKind.Ethereum,
+});
 ```

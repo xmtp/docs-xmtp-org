@@ -6,11 +6,10 @@ Group chats can have metadata like names, descriptions, and images to help users
 To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
 :::
 
-
 ## Available metadata fields
 
 - `group_name`: The name of the group chat
-- `description`: A description of the group chat  
+- `description`: A description of the group chat
 - `image_url`: A URL pointing to an image for the group chat
 
 ## Get and update metadata
@@ -26,7 +25,6 @@ await group.updateName('New Group Name');
 await group.updateDescription('New Group Description');
 await group.updateImageUrl('newurl.com');
 ```
-
 
 ## Manage group chat membership
 
@@ -75,7 +73,6 @@ await group.addSuperAdmin(inboxId);
 await group.removeAdmin(inboxId);
 await group.removeSuperAdmin(inboxId);
 ```
-
 
 ## Member information
 

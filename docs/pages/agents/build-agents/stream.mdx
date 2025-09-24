@@ -22,7 +22,6 @@ agent.on('reply', async (ctx) => {
 });
 ```
 
-
 ## Stream all messages
 
 ```js [Node]
@@ -53,8 +52,8 @@ The agent-sdk automatically handles connection failures and reconnections. You c
 
 ```js [Node]
 // Handle uncaught errors
-agent.on("unhandledError", (error) => {
-  console.error("Agent error:", error);
+agent.on('unhandledError', (error) => {
+  console.error('Agent error:', error);
   // Handle the error appropriately
 });
 ```

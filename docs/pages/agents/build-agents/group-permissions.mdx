@@ -1,6 +1,6 @@
 # Understand the group permissions system
 
-### Member statuses
+## Member statuses
 
 Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
 
@@ -9,7 +9,7 @@ Member statuses are the roles that can be assigned to each participant (inbox ID
 - Admin
 - Super admin
 
-### Options
+## Options
 
 Use options to assign a role to a permission. These are the available options:
 
@@ -18,7 +18,7 @@ Use options to assign a role to a permission. These are the available options:
   - Includes super admins
 - Super admin only
 
-### Permissions
+## Permissions
 
 Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
 
@@ -27,7 +27,7 @@ Permissions are the actions a group chat participant can be allowed to take. The
 - Add a member to the group
 - Remove a member from the group
 - Update group metadata, such as group name, description, and image
-- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission`. To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
 
 The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
 
@@ -79,4 +79,3 @@ If you aren't opinionated and don't set any permissions and options, groups will
 - Update group metadata - All members
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
-
