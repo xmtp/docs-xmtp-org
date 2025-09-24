@@ -24,8 +24,8 @@ yarn add @xmtp/agent-sdk
 This example shows how to create an agent that sends a message when it receives a text message.
 
 ```ts [Node]
-import { Agent,  } from '@xmtp/agent-sdk';
-import { getTestUrl } from "@xmtp/agent-sdk/debug";
+import { Agent } from '@xmtp/agent-sdk';
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
 
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({
