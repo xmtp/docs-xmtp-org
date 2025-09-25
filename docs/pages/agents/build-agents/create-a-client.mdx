@@ -10,8 +10,8 @@ import { createSigner, createUser } from '@xmtp/agent-sdk/user';
 import { getRandomValues } from 'node:crypto';
 
 // Option 1: Create a local user + signer
-const user = createUser(privateKey);
-const signer = createSigner();
+const user = createUser('0xprivateKey');
+const signer = createSigner(user);
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'

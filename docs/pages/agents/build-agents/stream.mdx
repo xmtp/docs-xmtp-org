@@ -27,6 +27,8 @@ agent.on('reply', async (ctx) => {
 ```js [Node]
 import { filter } from '@xmtp/agent-sdk';
 
+const agent = await Agent.createFromEnv();
+
 agent.on('message', async (ctx) => {
   // Filter for specific message types
   if (filter.isText(ctx.message)) {
