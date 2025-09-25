@@ -4,7 +4,7 @@
 Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type via XMTP's `streamAllMessages()`.
 
 
-## Stream Group Updates
+## Stream group updates
 
 ```typescript
 // Start streaming all messages
@@ -18,7 +18,7 @@ for await (const message of stream) {
 }
 ```
 
-## Group Update Message Structure
+## Group update message structure
 
 ```typescript
 {
@@ -38,9 +38,9 @@ for await (const message of stream) {
 }
 ```
 
-## Usage Examples
+## Usage examples
 
-### Monitor Group Name Changes
+### Monitor group name changes
 
 ```typescript
 const stream = await client.conversations.streamAllMessages();
@@ -62,7 +62,7 @@ for await (const message of stream) {
 }
 ```
 
-### Track Member Additions
+### Track member additions
 
 ```typescript
 const stream = await client.conversations.streamAllMessages();
@@ -78,7 +78,7 @@ for await (const message of stream) {
 }
 ```
 
-### Track Member Removals
+### Track member removals
 
 ```typescript
 const stream = await client.conversations.streamAllMessages();
@@ -94,7 +94,7 @@ for await (const message of stream) {
 }
 ```
 
-### Filter by Specific Group
+### Filter by specific group
 
 ```typescript
 const targetGroupId = "your-group-conversation-id";
