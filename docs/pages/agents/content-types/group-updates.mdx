@@ -1,8 +1,7 @@
 # Streaming Group Changes with XMTP
 
-## Overview
 
-Stream group metadata changes (name, description, members) in real-time using the `group_updated` content type via XMTP's `streamAllMessages()`.
+Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type via XMTP's `streamAllMessages()`.
 
 
 ## Stream Group Updates
@@ -111,10 +110,3 @@ for await (const message of stream) {
 }
 ```
 
-## Key Points
-
-- Use `streamAllMessages()` to receive all message types including group updates
-- Filter by `contentType.typeId === "group_updated"` to get only group changes
-- Group updates contain metadata changes and member additions
-- Stream runs continuously until explicitly stopped
-- Filter by `conversationId` to monitor specific groups
