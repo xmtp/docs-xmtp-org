@@ -5,7 +5,9 @@ Instead of manually checking every incoming message, you can use the provided fi
 ## Example
 
 ```ts
-import { filter } from '@xmtp/agent-sdk';
+import { Agent, filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
 
 // Using filter in message handler
 agent.on('text', async (ctx) => {
@@ -17,7 +19,7 @@ agent.on('text', async (ctx) => {
 // Combine multiple conditions
 agent.on('text', async (ctx) => {
   if (
-    filter.hasDefinedContent(ctx.message) &&
+    filter.hasContent(ctx.message) &&
     !filter.fromSelf(ctx.message, ctx.client) &&
     filter.isText(ctx.message)
   ) {
