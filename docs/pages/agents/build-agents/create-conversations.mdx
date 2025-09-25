@@ -78,9 +78,14 @@ The first step to creating a conversation is to verify that participants' identi
 
 ```js [Node]
 import { Agent, IdentifierKind } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
 // response is a Map of string (identifier) => boolean (is reachable)
-const response = await Agent.canMessage({
-  identifier: '0xcaroAddress',
-  identifierKind: IdentifierKind.Ethereum,
-});
+const response = await agent.client.canMessage([
+  {
+    identifier: '0xcaroAddress',
+    identifierKind: IdentifierKind.Ethereum,
+  },
+]);
 ```
