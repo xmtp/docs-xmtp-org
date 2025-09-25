@@ -7,15 +7,12 @@ Stream group metadata changes (name, description, members) in real-time using th
 ## Stream group updates
 
 ```typescript
-// Start streaming all messages
-const stream = await client.conversations.streamAllMessages();
-
-for await (const message of stream) {
+on("message", async (ctx) => {
   // Check if message is a group update
-  if (message.contentType?.typeId === "group_updated") {
-    console.log("Group updated:", message.content);
+  if (ctx.message.contentType?.typeId === "group_updated") {
+    console.log("Group updated:", ctx.message.content);
   }
-}
+});
 ```
 
 ## Group update message structure
@@ -42,12 +39,10 @@ for await (const message of stream) {
 
 ### Monitor group name changes
 
-```typescript
-const stream = await client.conversations.streamAllMessages();
-
-for await (const message of stream) {
-  if (message.contentType?.typeId === "group_updated") {
-    const content = message.content as any;
+```tsx
+on("message", async (ctx) => {
+  if (ctx.message.contentType?.typeId === "group_updated") {
+    const content = ctx.message.content as any;
 
     const nameChange = content.metadataFieldChanges?.find(
       (change) => change.fieldName === "group_name",
@@ -59,54 +54,49 @@ for await (const message of stream) {
       );
     }
   }
-}
+});
 ```
 
 ### Track member additions
 
 ```typescript
-const stream = await client.conversations.streamAllMessages();
-
-for await (const message of stream) {
-  if (message.contentType?.typeId === "group_updated") {
-    const content = message.content as any;
+on("message", async (ctx) => {
+  if (ctx.message.contentType?.typeId === "group_updated") {
+    const content = ctx.message.content as any;
 
     if (content.addedInboxes?.length > 0) {
       console.log(`New members added:`, content.addedInboxes);
     }
   }
-}
+});
 ```
 
 ### Track member removals
 
 ```typescript
-const stream = await client.conversations.streamAllMessages();
-
-for await (const message of stream) {
-  if (message.contentType?.typeId === "group_updated") {
-    const content = message.content as any;
+on("message", async (ctx) => {
+  if (ctx.message.contentType?.typeId === "group_updated") {
+    const content = ctx.message.content as any;
 
     if (content.removedInboxes?.length > 0) {
       console.log(`Members removed:`, content.removedInboxes);
     }
   }
-}
+});
 ```
 
 ### Filter by specific group
 
 ```typescript
 const targetGroupId = "your-group-conversation-id";
-const stream = await client.conversations.streamAllMessages();
 
-for await (const message of stream) {
+on("message", async (ctx) => {
   if (
-    message.contentType?.typeId === "group_updated" &&
-    message.conversationId === targetGroupId
+    ctx.message.contentType?.typeId === "group_updated" &&
+    ctx.message.conversationId === targetGroupId
   ) {
-    console.log("Target group updated:", message.content);
+    console.log("Target group updated:", ctx.message.content);
   }
-}
+}); 
 ```
 
