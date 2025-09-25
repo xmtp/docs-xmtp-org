@@ -1,0 +1,120 @@
+# Streaming Group Changes with XMTP
+
+## Overview
+
+Stream group metadata changes (name, description, members) in real-time using the `group_updated` content type via XMTP's `streamAllMessages()`.
+
+
+## Stream Group Updates
+
+```typescript
+// Start streaming all messages
+const stream = await client.conversations.streamAllMessages();
+
+for await (const message of stream) {
+  // Check if message is a group update
+  if (message.contentType?.typeId === "group_updated") {
+    console.log("Group updated:", message.content);
+  }
+}
+```
+
+## Group Update Message Structure
+
+```typescript
+{
+  conversationId: string,
+  contentType: { typeId: "group_updated" },
+  content: {
+    metadataFieldChanges?: Array<{
+      fieldName: string,        // "group_name", "group_description", etc.
+      oldValue: string,
+      newValue: string
+    }>,
+    addedInboxes?: Array<{     // New members added
+      inboxId: string
+    }>,
+    initiatedByInboxId?: string // Who triggered the update
+  }
+}
+```
+
+## Usage Examples
+
+### Monitor Group Name Changes
+
+```typescript
+const stream = await client.conversations.streamAllMessages();
+
+for await (const message of stream) {
+  if (message.contentType?.typeId === "group_updated") {
+    const content = message.content as any;
+
+    const nameChange = content.metadataFieldChanges?.find(
+      (change) => change.fieldName === "group_name",
+    );
+
+    if (nameChange) {
+      console.log(
+        `Group renamed: ${nameChange.oldValue} → ${nameChange.newValue}`,
+      );
+    }
+  }
+}
+```
+
+### Track Member Additions
+
+```typescript
+const stream = await client.conversations.streamAllMessages();
+
+for await (const message of stream) {
+  if (message.contentType?.typeId === "group_updated") {
+    const content = message.content as any;
+
+    if (content.addedInboxes?.length > 0) {
+      console.log(`New members added:`, content.addedInboxes);
+    }
+  }
+}
+```
+
+### Track Member Removals
+
+```typescript
+const stream = await client.conversations.streamAllMessages();
+
+for await (const message of stream) {
+  if (message.contentType?.typeId === "group_updated") {
+    const content = message.content as any;
+
+    if (content.removedInboxes?.length > 0) {
+      console.log(`Members removed:`, content.removedInboxes);
+    }
+  }
+}
+```
+
+### Filter by Specific Group
+
+```typescript
+const targetGroupId = "your-group-conversation-id";
+const stream = await client.conversations.streamAllMessages();
+
+for await (const message of stream) {
+  if (
+    message.contentType?.typeId === "group_updated" &&
+    message.conversationId === targetGroupId
+  ) {
+    console.log("Target group updated:", message.content);
+  }
+}
+```
+
+## Key Points
+
+- Use `streamAllMessages()` to receive all message types including group updates
+- Filter by `contentType.typeId === "group_updated"` to get only group changes
+- Group updates contain metadata changes and member additions
+- Stream runs continuously until explicitly stopped
+- Filter by `conversationId` to monitor specific groups
