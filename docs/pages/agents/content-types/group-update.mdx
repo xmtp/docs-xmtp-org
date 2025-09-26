@@ -12,6 +12,12 @@ on("group-update", async (ctx) => {
 });
 ```
 
+Conversation type will show as `group_updated`.
+
+```tsx
+const type = ctx.message.contentType;
+```
+
 ## Group update message structure
 
 ```typescript
