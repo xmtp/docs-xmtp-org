@@ -51,6 +51,8 @@ The `"message"` event fires for **every** incoming message, regardless of type. 
 ```ts
 import { filter } from '@xmtp/agent-sdk';
 
+const agent = await Agent.createFromEnv();
+
 agent.on('message', async (ctx) => {
   // Filter for specific message types
   if (filter.isText(ctx.message)) {
