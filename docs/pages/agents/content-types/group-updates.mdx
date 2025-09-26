@@ -1,4 +1,4 @@
-# Streaming Group Changes with XMTP
+# Streaming group updates with XMTP
 
 
 Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type.
@@ -7,11 +7,8 @@ Stream group metadata changes (name, description, members) in real-time using th
 ## Stream group updates
 
 ```typescript
-on("message", async (ctx) => {
-  // Check if message is a group update
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on("group-update", async (ctx) => {
     console.log("Group updated:", ctx.message.content);
-  }
 });
 ```
 
@@ -40,8 +37,7 @@ on("message", async (ctx) => {
 ### Monitor group name changes
 
 ```tsx
-on("message", async (ctx) => {
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on("group-update", async (ctx) => {
     const content = ctx.message.content as any;
 
     const nameChange = content.metadataFieldChanges?.find(
@@ -53,35 +49,30 @@ on("message", async (ctx) => {
         `Group renamed: ${nameChange.oldValue} → ${nameChange.newValue}`,
       );
     }
-  }
 });
 ```
 
 ### Track member additions
 
 ```typescript
-on("message", async (ctx) => {
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on("group-update", async (ctx) => {
     const content = ctx.message.content as any;
 
     if (content.addedInboxes?.length > 0) {
       console.log(`New members added:`, content.addedInboxes);
     }
-  }
 });
 ```
 
 ### Track member removals
 
 ```typescript
-on("message", async (ctx) => {
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on("group-update", async (ctx) => {
     const content = ctx.message.content as any;
 
     if (content.removedInboxes?.length > 0) {
       console.log(`Members removed:`, content.removedInboxes);
     }
-  }
 });
 ```
 
@@ -90,9 +81,8 @@ on("message", async (ctx) => {
 ```typescript
 const targetGroupId = "your-group-conversation-id";
 
-on("message", async (ctx) => {
+on("group-update", async (ctx) => {
   if (
-    ctx.message.contentType?.typeId === "group_updated" &&
     ctx.message.conversationId === targetGroupId
   ) {
     console.log("Target group updated:", ctx.message.content);
