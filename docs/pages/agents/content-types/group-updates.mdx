@@ -1,16 +1,14 @@
-# Streaming Group Changes with XMTP
-
+# Stream group changes with XMTP
 
 Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type.
-
 
 ## Stream group updates
 
 ```typescript
-on("message", async (ctx) => {
+on('message', async (ctx) => {
   // Check if message is a group update
-  if (ctx.message.contentType?.typeId === "group_updated") {
-    console.log("Group updated:", ctx.message.content);
+  if (ctx.message.contentType?.typeId === 'group_updated') {
+    console.log('Group updated:', ctx.message.content);
   }
 });
 ```
@@ -40,17 +38,17 @@ on("message", async (ctx) => {
 ### Monitor group name changes
 
 ```tsx
-on("message", async (ctx) => {
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on('message', async (ctx) => {
+  if (ctx.message.contentType?.typeId === 'group_updated') {
     const content = ctx.message.content as any;
 
     const nameChange = content.metadataFieldChanges?.find(
-      (change) => change.fieldName === "group_name",
+      (change) => change.fieldName === 'group_name'
     );
 
     if (nameChange) {
       console.log(
-        `Group renamed: ${nameChange.oldValue} → ${nameChange.newValue}`,
+        `Group renamed: ${nameChange.oldValue} → ${nameChange.newValue}`
       );
     }
   }
@@ -60,8 +58,8 @@ on("message", async (ctx) => {
 ### Track member additions
 
 ```typescript
-on("message", async (ctx) => {
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on('message', async (ctx) => {
+  if (ctx.message.contentType?.typeId === 'group_updated') {
     const content = ctx.message.content as any;
 
     if (content.addedInboxes?.length > 0) {
@@ -74,8 +72,8 @@ on("message", async (ctx) => {
 ### Track member removals
 
 ```typescript
-on("message", async (ctx) => {
-  if (ctx.message.contentType?.typeId === "group_updated") {
+on('message', async (ctx) => {
+  if (ctx.message.contentType?.typeId === 'group_updated') {
     const content = ctx.message.content as any;
 
     if (content.removedInboxes?.length > 0) {
@@ -88,15 +86,14 @@ on("message", async (ctx) => {
 ### Filter by specific group
 
 ```typescript
-const targetGroupId = "your-group-conversation-id";
+const targetGroupId = 'your-group-conversation-id';
 
-on("message", async (ctx) => {
+on('message', async (ctx) => {
   if (
-    ctx.message.contentType?.typeId === "group_updated" &&
+    ctx.message.contentType?.typeId === 'group_updated' &&
     ctx.message.conversationId === targetGroupId
   ) {
-    console.log("Target group updated:", ctx.message.content);
+    console.log('Target group updated:', ctx.message.content);
   }
-}); 
+});
 ```
-
