@@ -87,7 +87,7 @@ export const sidebarConfig = {
         },
         {
           text: "Group updates",
-          link: "/agents/content-types/group-updates",
+          link: "/agents/content-types/group-update",
         },
         {
           text: "Attachments",
