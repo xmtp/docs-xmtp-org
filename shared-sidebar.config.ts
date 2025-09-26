@@ -2,18 +2,18 @@
 // This eliminates duplication between vocs.config.tsx and AutoBreadcrumb.tsx
 
 export const sidebarConfig = {
-  '/agents/': [
+  '/agents/':  [
     {
       text: "Get started",
       collapsed: false,
       items: [
         {
-          text: "Tutorial: Build an agent 🤖",
-          link: "/agents/get-started/build-an-agent",
+          text: "Introduction",
+          link: "/agents/get-started/intro",
         },
         {
-          text: "What is XMTP?",
-          link: "/agents/get-started/intro",
+          text: "Quickstart",
+          link: "/agents/get-started/build-an-agent",
         },
         {
           text: "FAQ",
@@ -22,44 +22,58 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Build core messaging",
+      text: "Build agents",
       collapsed: false,
       items: [
         {
-          text: "Create an EOA or SCW signer",
-          link: "/agents/core-messaging/create-a-signer",
-        },
-        {
           text: "Create a client",
-          link: "/agents/core-messaging/create-a-client",
-        },
-        {
-          text: "Send messages",
-          link: "/agents/core-messaging/send-messages",
+          link: "/agents/build-agents/create-a-client",
         },
         {
           text: "Stream messages",
-          link: "/agents/core-messaging/stream",
+          link: "/agents/build-agents/stream",
         },
         {
           text: "Create conversations",
-          link: "/agents/core-messaging/create-conversations",
+          link: "/agents/build-agents/create-conversations",
         },
         {
-          text: "Manage agent installations",
-          link: "/agents/core-messaging/agent-installations",
+          text: "Groups",
+          link: "/agents/build-agents/groups",
         },
         {
-          text: "Manage group permissions",
-          link: "/agents/core-messaging/group-permissions",
+          text: "Group permissions",
+          link: "/agents/build-agents/group-permissions",
+        },
+      ],
+    },
+    {
+      text: "Core concepts",
+      collapsed: false,
+      items: [
+        {
+          text: "Identity",
+          link: "/agents/concepts/identity",
         },
         {
-          text: "Manage group metadata",
-          link: "/agents/core-messaging/group-metadata",
+          text: "Manage installations",
+          link: "/agents/concepts/installations",
         },
         {
-          text: "Observe rate limits",
-          link: "/agents/core-messaging/rate-limits",
+          text: "Event-driven architecture",
+          link: "/agents/concepts/event-driven",
+        },
+        {
+          text: "Middleware",
+          link: "/agents/concepts/middleware",
+        },
+        {
+          text: "Message filters",
+          link: "/agents/concepts/filters",
+        },
+        {
+          text: "Context & helpers",
+          link: "/agents/concepts/context",
         },
       ],
     },
@@ -94,21 +108,33 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Debug agents",
-      link: "/agents/debug-agents",
+      text: "Examples",
+      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
       items: [],
     },
     {
-      text: "Deploy agents",
-      link: "/agents/deploy-agent",
-      items: [],
+      text: "Deployment",
+      collapsed: false,
+      items: [
+        {
+          text: "Debug agents",
+          link: "/agents/deploy/debug-agents",
+        },
+        {
+          text: "Deploy agents",
+          link: "/agents/deploy/deploy-agent",
+        },
+        {
+          text: "Security",
+          link: "/agents/deploy/agent-security",
+        },
+        {
+          text: "Rate limits",
+          link: "/agents/deploy/rate-limits",
+        },
+      ],
     },
-    {
-      text: "Security",
-      link: "/agents/agent-security",
-      items: [],
-    },
-  ],
+  ],  
   '/network/': [
     {
       text: "Run a network node",

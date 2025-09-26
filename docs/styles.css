@@ -433,9 +433,9 @@ li ol ~ p {
   margin-top: 0.5rem !important;
 }
 
-/* Code groups */
-.vocs_CodeBlock {
-  margin: 0.5rem 0;
+/* Remove padding from tab content panels */
+.vocs_Tabs_content {
+  padding: 0 !important;
 }
 
 /* ====== SIDEBAR SPACING REDUCTION ====== */

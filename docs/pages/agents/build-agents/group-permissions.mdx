@@ -1,10 +1,6 @@
-# Manage group permissions
+# Understand the group permissions system
 
-Robust group chat permissions are key to providing users with a friendly and safe group chat experience.
-
-## Understand the group permissions system
-
-### Member statuses
+## Member statuses
 
 Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
 
@@ -13,7 +9,7 @@ Member statuses are the roles that can be assigned to each participant (inbox ID
 - Admin
 - Super admin
 
-### Options
+## Options
 
 Use options to assign a role to a permission. These are the available options:
 
@@ -22,7 +18,7 @@ Use options to assign a role to a permission. These are the available options:
   - Includes super admins
 - Super admin only
 
-### Permissions
+## Permissions
 
 Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
 
@@ -30,8 +26,8 @@ Permissions are the actions a group chat participant can be allowed to take. The
 - Remove admin status from a member
 - Add a member to the group
 - Remove a member from the group
-- Update [group metadata](/agents/core-messaging/group-metadata), such as group name, description, and image
-- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+- Update group metadata, such as group name, description, and image
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission`. To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
 
 The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
 
@@ -83,99 +79,3 @@ If you aren't opinionated and don't set any permissions and options, groups will
 - Update group metadata - All members
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
-
-## Manage group chat admins
-
-### Check if inbox ID is an admin
-
-```js [Node]
-const isAdmin = group.isAdmin(inboxId);
-```
-
-### Check if inbox ID is a super admin
-
-```js [Node]
-const isSuperAdmin = group.isSuperAdmin(inboxId);
-```
-
-### List admins
-
-```js [Node]
-const admins = group.admins;
-```
-
-### List super admins
-
-```js [Node]
-const superAdmins = group.superAdmins;
-```
-
-### Add admin status to inbox ID
-
-```js [Node]
-await group.addAdmin(inboxId);
-```
-
-### Add super admin status to inbox ID
-
-```js [Node]
-await group.addSuperAdmin(inboxId);
-```
-
-### Remove admin status from inbox ID
-
-```js [Node]
-await group.removeAdmin(inboxId);
-```
-
-### Remove super admin status from inbox ID
-
-```js [Node]
-await group.removeSuperAdmin(inboxId);
-```
-
-## Manage group chat membership
-
-### Add members by inbox ID
-
-The maximum group chat size is 250 members.
-
-```js [Node]
-await group.addMembers([inboxId]);
-```
-
-### Remove member by inbox ID
-
-```js [Node]
-await group.removeMembers([inboxId]);
-```
-
-### Get inbox IDs for members
-
-```js [Node]
-const inboxId = await client.getInboxIdByIdentities([
-  bo.identity,
-  caro.identity,
-]);
-```
-
-### Get identities for members
-
-```js [Node]
-// sync group first
-await group.sync();
-
-// get group members
-const members = group.members;
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
-```
-
-### Get the inbox ID that added the current member
-
-```js [Node]
-const addedByInboxId = group.addedByInboxId;
-```
