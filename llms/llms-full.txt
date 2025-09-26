@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:37 PM UTC / September 25, 2025
+Generated at 08:29 PM UTC / September 26, 2025
 
 ## Instructions for AI Tools
 
@@ -10399,9 +10399,7 @@ Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [
 
 This documentation provides examples of agents that use the XMTP network. These agents are built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
 
-
 ## Installation
-
 
 First, we will install `@xmtp/agent-sdk` as a dependency in our project.
 
@@ -11765,6 +11763,102 @@ const walletSendCalls: WalletSendCallsParams = message.content;
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
 
 
+## pages/agents/content-types/group-update.mdx
+# Stream group updates with XMTP
+
+Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type.
+
+## Stream group updates
+
+```typescript
+on('group-update', async (ctx) => {
+  console.log('Group updated:', ctx.message.content);
+});
+```
+
+Conversation type will show as `group_updated`.
+
+```tsx
+const type = ctx.message.contentType;
+```
+
+## Group update message structure
+
+```typescript
+{
+  conversationId: string,
+  contentType: { typeId: "group_updated" },
+  content: {
+    metadataFieldChanges?: Array<{
+      fieldName: string,        // "group_name", "group_description", etc.
+      oldValue: string,
+      newValue: string
+    }>,
+    addedInboxes?: Array<{     // New members added
+      inboxId: string
+    }>,
+    initiatedByInboxId?: string // Who triggered the update
+  }
+}
+```
+
+## Usage examples
+
+### Monitor group name changes
+
+```tsx
+on('group-update', async (ctx) => {
+  const content = ctx.message.content as any;
+
+  const nameChange = content.metadataFieldChanges?.find(
+    (change) => change.fieldName === 'group_name'
+  );
+
+  if (nameChange) {
+    console.log(
+      `Group renamed: ${nameChange.oldValue} → ${nameChange.newValue}`
+    );
+  }
+});
+```
+
+### Monitor member additions
+
+```typescript
+on('group-update', async (ctx) => {
+  const content = ctx.message.content as any;
+
+  if (content.addedInboxes?.length > 0) {
+    console.log(`New members added:`, content.addedInboxes);
+  }
+});
+```
+
+### Monitor member removals
+
+```typescript
+on('group-update', async (ctx) => {
+  const content = ctx.message.content as any;
+
+  if (content.removedInboxes?.length > 0) {
+    console.log(`Members removed:`, content.removedInboxes);
+  }
+});
+```
+
+### Filter by specific group
+
+```typescript
+const targetGroupId = 'your-group-conversation-id';
+
+on('group-update', async (ctx) => {
+  if (ctx.message.conversationId === targetGroupId) {
+    console.log('Target group updated:', ctx.message.content);
+  }
+});
+```
+
+
 ## pages/agents/content-types/content-types.mdx
 # Understand content types with XMTP
 
@@ -11835,6 +11929,7 @@ A standards-track content type is one that's being actively reviewed for adoptio
 
 Here are standards-track content types that you can review, test, and adopt in your agent today:
 
+- [Group updates content type](/agents/content-types/group-update): Use to send group updates, such as name, description, and members.
 - [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
 - [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
 - [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
@@ -12002,4 +12097,4 @@ if (message.contentType.sameAs(ContentTypeReaction)) {
 
 # Summary
 
-This documentation contains 82 files.
+This documentation contains 83 files.
