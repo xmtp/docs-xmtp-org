@@ -141,22 +141,20 @@ agent.on('text', async (ctx) => {
 
 ```typescript
 agent.on('text', async (ctx) => {
-  if (ctx.isGroup()) {
-    const members = await ctx.conversation.members();
-
-    for (const member of members) {
-      console.log('Member inbox ID:', member.inboxId);
-      console.log('Permission level:', member.permissionLevel);
-      console.log('Consent state:', member.consentState);
-      
-      // Get Ethereum address
-      const ethIdentifier = member.accountIdentifiers.find(
-        (id) => id.identifierKind === IdentifierKind.Ethereum
-      );
-      
-      if (ethIdentifier) {
-        console.log('Ethereum address:', ethIdentifier.identifier);
-      }
+  const members = await ctx.conversation.members();
+  
+  for (const member of members) {
+    console.log('Member inbox ID:', member.inboxId);
+    console.log('Permission level:', member.permissionLevel);
+    console.log('Consent state:', member.consentState);
+    
+    // Get Ethereum address
+    const ethIdentifier = member.accountIdentifiers.find(
+      (id) => id.identifierKind === IdentifierKind.Ethereum
+    );
+    
+    if (ethIdentifier) {
+      console.log('Ethereum address:', ethIdentifier.identifier);
     }
   }
 });
