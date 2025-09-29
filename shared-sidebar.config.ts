@@ -86,16 +86,16 @@ export const sidebarConfig = {
           link: "/agents/content-types/content-types",
         },
         {
-          text: "Group update",
-          link: "/agents/content-types/group-update",
-        },
-        {
           text: "Reactions",
           link: "/agents/content-types/reactions",
         },
         {
           text: "Replies",
           link: "/agents/content-types/replies",
+        },
+        {
+          text: "Group update",
+          link: "/agents/content-types/group-update",
         },
         {
           text: "Attachments",
