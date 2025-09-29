@@ -2,7 +2,7 @@
 
 Every XMTP agent event handler receives a rich `MessageContext` object that provides access to the message, conversation, client, and powerful helper methods. This context makes it easy to build responsive agents without repetitive boilerplate code.
 
-## Message handling
+## Message context
 
 ### Type-safe content access
 
@@ -42,8 +42,6 @@ agent.on('message', async (ctx) => {
   console.log('Content type:', message.contentType);
 });
 ```
-
-## Helper methods
 
 ### sendText() and sendTextReply()
 
@@ -102,7 +100,7 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-## Conversation and client access
+## Conversation context
 
 ### Conversation operations
 
@@ -123,27 +121,6 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-### Client operations
-
-```typescript
-agent.on('text', async (ctx) => {
-  const client = ctx.client;
-  
-  // Get client address
-  const clientAddress = ctx.getClientAddress();
-  console.log('Agent address:', clientAddress);
-  
-  // Access conversations manager
-  const conversations = client.conversations;
-  
-  // Create new conversations
-  const newDM = await client.conversations.newDm('target-inbox-id');
-  const newGroup = await client.conversations.newGroup(['inbox1', 'inbox2'], {
-    groupName: 'New Group',
-  });
-});
-```
-
 ### Consent state
 
 Check conversation consent states:
@@ -159,8 +136,6 @@ agent.on('text', async (ctx) => {
   }
 });
 ```
-
-## Advanced usage
 
 ### Member information
 
@@ -202,79 +177,14 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-### Custom context extensions
-
-Extend the context in middleware:
-
-```typescript
-const databaseMiddleware: AgentMiddleware = async (ctx, next) => {
-  // Add database connection to context
-  (ctx as any).db = await getDatabaseConnection();
-  
-  try {
-    await next();
-  } finally {
-    await (ctx as any).db.close();
-  }
-};
-
-agent.use(databaseMiddleware);
-
-agent.on('text', async (ctx: any) => {
-  // Use the extended context
-  const user = await ctx.db.findUser(await ctx.getSenderAddress());
-  await ctx.sendTextReply(`Hello ${user.name}!`);
-});
-```
-
-## Error handling
-
-Use context information for better error handling:
+### Client context
 
 ```typescript
 agent.on('text', async (ctx) => {
-  try {
-    await processMessage(ctx);
-  } catch (error) {
-    console.error('Error processing message:', {
-      messageId: ctx.message.id,
-      conversationId: ctx.conversation.id,
-      sender: await ctx.getSenderAddress(),
-      error: error.message,
-    });
-    
-    await ctx.sendTextReply(
-      'Sorry, I encountered an error processing your message.'
-    );
-  }
-});
-```
-
-## Event-specific context
-
-### New conversation events
-
-```typescript
-agent.on('dm', async (ctx) => {
-  console.log('New DM started');
-  console.log('Peer:', ctx.conversation.peerInboxId);
-  await ctx.sendTextReply('Welcome to our DM! How can I help?');
-});
-
-agent.on('group', async (ctx) => {
-  console.log('Added to group:', ctx.conversation.name);
-  const members = await ctx.conversation.members();
-  await ctx.sendTextReply(
-    `Hello everyone! I see there are ${members.length} members here.`
-  );
-});
-```
-
-### Unknown message handling
-
-```typescript
-agent.on('unknownMessage', async (ctx) => {
-  console.log('Unknown content type:', ctx.message.contentType);
-  await ctx.sendTextReply("I received a message type I don't understand yet.");
+  const client = ctx.client;
+  
+  // Get client address
+  const clientAddress = ctx.getClientAddress();
+  console.log('Agent address:', clientAddress);
 });
 ```
