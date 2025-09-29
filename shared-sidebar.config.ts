@@ -106,7 +106,7 @@ export const sidebarConfig = {
           link: "/agents/content-types/transactions",
         },
         {
-          text: "Onchain transaction references",
+          text: "Transaction reference",
           link: "/agents/content-types/transaction-refs",
         },
       ],
