@@ -120,6 +120,8 @@ agent.on('text', async (ctx) => {
 ### Member information
 
 ```typescript
+import { IdentifierKind } from '@xmtp/agent-sdk';
+
 agent.on('text', async (ctx) => {
   const members = await ctx.conversation.members();
   
@@ -152,7 +154,7 @@ agent.on('text', async (ctx) => {
   const recentMessages = messages.slice(-10);
   
   for (const msg of recentMessages) {
-    console.log(`${msg.senderInboxId}: ${msg.content}`);
+    console.log(`${msg.senderInboxId}: ${JSON.stringify(msg.content)}`);
   }
 });
 ```
