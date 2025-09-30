@@ -63,7 +63,17 @@ agent.on("group", async (ctx) => {
 });
 ``` 
 
-## Handle errors and failures
+##  Handle unhandled messages
+
+The `unhandledMessage` event is triggered for messages that don't match any of the support content types.
+
+```js [Node]
+agent.on('unhandledMessage', (ctx) => {
+  console.error('Unhandled message:', ctx);
+});
+```
+
+## Handle errors 
 
 The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
 
