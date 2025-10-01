@@ -56,11 +56,11 @@ export const sidebarConfig = {
           link: "/agents/concepts/identity",
         },
         {
-          text: "Manage installations",
+          text: "Installations",
           link: "/agents/concepts/installations",
         },
         {
-          text: "Event-driven architecture",
+          text: "Events",
           link: "/agents/concepts/event-driven",
         },
         {
@@ -68,11 +68,11 @@ export const sidebarConfig = {
           link: "/agents/concepts/middleware",
         },
         {
-          text: "Message filters",
+          text: "Filters",
           link: "/agents/concepts/filters",
         },
         {
-          text: "Context & helpers",
+          text: "Context",
           link: "/agents/concepts/context",
         },
       ],
@@ -84,6 +84,14 @@ export const sidebarConfig = {
         {
           text: "Understand content types",
           link: "/agents/content-types/content-types",
+        },
+        {
+          text: "Reactions",
+          link: "/agents/content-types/reactions",
+        },
+        {
+          text: "Replies",
+          link: "/agents/content-types/replies",
         },
         {
           text: "Group update",
@@ -98,16 +106,8 @@ export const sidebarConfig = {
           link: "/agents/content-types/transactions",
         },
         {
-          text: "Onchain transaction references",
+          text: "Transaction references",
           link: "/agents/content-types/transaction-refs",
-        },
-        {
-          text: "Reactions",
-          link: "/agents/content-types/reactions",
-        },
-        {
-          text: "Replies",
-          link: "/agents/content-types/replies",
         },
       ],
     },
