@@ -52,7 +52,7 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 With the Agent SDK, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
 
-```tsx
+```ts
 // Listen for new DM conversations
 agent.on("dm", async (ctx) => {
   console.log("New DM conversation:", ctx.conversation.id);
