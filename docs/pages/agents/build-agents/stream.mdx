@@ -65,7 +65,7 @@ agent.on("group", async (ctx) => {
 
 ##  Handle unhandled messages
 
-The `unhandledMessage` event is triggered for messages that don't match any of the support content types.
+The `unhandledMessage` event is triggered for messages that don't match any of the [default content types](https://docs.xmtp.org/agents/content-types/content-types#standards-track-content-types).
 
 ```js [Node]
 agent.on('unhandledMessage', (ctx) => {
