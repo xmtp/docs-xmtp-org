@@ -114,7 +114,7 @@ agent.on('text', async (ctx) => {
   
   // Check conversation type
   if (ctx.isDm()) {
-    console.log('DM with:', conversation.peerInboxId);
+    console.log(`DM with: ${conversation.peerInboxId}`);
   } else if (ctx.isGroup()) {
     console.log('Group conversation:', conversation.name);
   }
