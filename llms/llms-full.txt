@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 08:29 PM UTC / September 26, 2025
+Generated at 02:19 PM UTC / October 01, 2025
 
 ## Instructions for AI Tools
 
@@ -10039,7 +10039,7 @@ Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples)
 yarn gen:keys
 ```
 
-> Running the gen:keys command will append keys to your existing .env file.
+> Running the command will append keys to your existing .env file.
 
 ### Use environment variables
 
@@ -10397,11 +10397,11 @@ Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [
 ## pages/agents/get-started/build-an-agent.mdx
 # Build XMTP agents
 
-This documentation provides examples of agents that use the XMTP network. These agents are built with the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk).
+Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
 
 ## Installation
 
-First, we will install `@xmtp/agent-sdk` as a dependency in our project.
+Install `@xmtp/agent-sdk` as a dependency in your project.
 
 :::code-group
 
@@ -10485,7 +10485,7 @@ To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 
 ## Agent examples
 
-See the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) for more agent examples.
+Visit the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repository for more agent examples.
 
 
 ## pages/agents/get-started/intro.mdx
