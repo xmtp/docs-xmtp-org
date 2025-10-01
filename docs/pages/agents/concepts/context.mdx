@@ -96,7 +96,7 @@ Get the Ethereum address of your agent:
 ```typescript
 agent.on('text', async (ctx) => {
   const agentAddress = ctx.getClientAddress();
-  console.log('Agent address:', agentAddress);
+  console.log(`Agent address: ${agentAddress}`);
 });
 ```
 
