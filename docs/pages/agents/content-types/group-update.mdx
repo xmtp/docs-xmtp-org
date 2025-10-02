@@ -6,7 +6,7 @@ Stream group metadata changes (name, description, members) in real-time using th
 
 ```typescript
 on('group-update', async (ctx) => {
-  console.log('Group updated:', ctx.message.content);
+  console.log(`Group updated: ${JSON.stringify(ctx.message.content)}`);
 });
 ```
 
@@ -63,7 +63,7 @@ on('group-update', async (ctx) => {
   const content = ctx.message.content as any;
 
   if (content.addedInboxes?.length > 0) {
-    console.log(`New members added:`, content.addedInboxes);
+    console.log(`New members added: ${JSON.stringify(content.addedInboxes)}`);
   }
 });
 ```
@@ -75,7 +75,7 @@ on('group-update', async (ctx) => {
   const content = ctx.message.content as any;
 
   if (content.removedInboxes?.length > 0) {
-    console.log(`Members removed:`, content.removedInboxes);
+    console.log(`Members removed: ${JSON.stringify(content.removedInboxes)}`);
   }
 });
 ```
@@ -87,7 +87,7 @@ const targetGroupId = 'your-group-conversation-id';
 
 on('group-update', async (ctx) => {
   if (ctx.message.conversationId === targetGroupId) {
-    console.log('Target group updated:', ctx.message.content);
+    console.log(`Target group updated: ${JSON.stringify(ctx.message.content)}`);
   }
 });
 ```

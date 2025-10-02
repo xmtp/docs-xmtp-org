@@ -33,22 +33,22 @@ When your agent receives messages with different content types, use event handle
 ```jsx [Node]
 // Listen for specific content types
 agent.on('attachment', async (ctx) => {
-  console.log('Received attachment:', ctx.message.content);
+  console.log(`Received attachment: ${JSON.stringify(ctx.message.content)}`);
   // Handle attachment logic
 });
 
 agent.on('reaction', async (ctx) => {
-  console.log('Received reaction:', ctx.message.content);
+  console.log(`Received reaction: ${JSON.stringify(ctx.message.content)}`);
   // Handle reaction logic
 });
 
 agent.on('reply', async (ctx) => {
-  console.log('Received reply:', ctx.message.content);
+  console.log(`Received reply: ${JSON.stringify(ctx.message.content)}`);
   // Handle reply logic
 });
 
 agent.on('transaction', async (ctx) => {
-  console.log('Received transaction:', ctx.message.content);
+  console.log(`Received transaction: ${JSON.stringify(ctx.message.content)}`);
   // Handle transaction logic
 });
 
@@ -56,7 +56,7 @@ agent.on('transaction', async (ctx) => {
 agent.on('message', async (ctx) => {
   const contentType = ctx.message.contentType;
   if (contentType?.typeId === 'my-custom-type') {
-    console.log('Received custom content:', ctx.message.content);
+    console.log(`Received custom content: ${JSON.stringify(ctx.message.content)}`);
   }
 });
 ```

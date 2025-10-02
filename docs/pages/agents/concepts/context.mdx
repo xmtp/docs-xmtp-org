@@ -12,18 +12,18 @@ Use type guards to safely access different content types:
 agent.on('message', async (ctx) => {
   if (ctx.isText()) {
     // ctx.message.content is now typed as string
-    console.log('Text message:', ctx.message.content);
+    console.log(`Text message: ${ctx.message.content}`);
   } else if (ctx.isReply()) {
     // ctx.message.content is now typed as Reply
-    console.log('Reply to:', ctx.message.content.reference);
-    console.log('Reply content:', ctx.message.content.content);
+    console.log(`Reply to: ${ctx.message.content.reference}`);
+    console.log(`Reply content: ${ctx.message.content.content}`);
   } else if (ctx.isReaction()) {
     // ctx.message.content is now typed as Reaction
-    console.log('Reaction:', ctx.message.content.content);
-    console.log('Reference:', ctx.message.content.reference);
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Reference: ${ctx.message.content.reference}`);
   } else if (ctx.isRemoteAttachment()) {
     // ctx.message.content is now typed as RemoteAttachment
-    console.log('Attachment:', ctx.message.content.filename);
+    console.log(`Attachment: ${ctx.message.content.filename}`);
   }
 });
 ```
@@ -36,10 +36,10 @@ Access message properties directly:
 agent.on('message', async (ctx) => {
   const message = ctx.message;
   
-  console.log('Message ID:', message.id);
-  console.log('Sender inbox ID:', message.senderInboxId);
-  console.log('Sent at:', message.sentAt);
-  console.log('Content type:', message.contentType);
+  console.log(`Message ID: ${message.id}`);
+  console.log(`Sender inbox ID: ${message.senderInboxId}`);
+  console.log(`Sent at: ${message.sentAt}`);
+  console.log(`Content type: ${message.contentType}`);
 });
 ```
 
@@ -80,7 +80,7 @@ Get the Ethereum address of the message sender:
 ```typescript
 agent.on('text', async (ctx) => {
   const senderAddress = await ctx.getSenderAddress();
-  console.log('Message from:', senderAddress);
+  console.log(`Message from: ${senderAddress}`);
   
   // Use for authorization
   if (senderAddress === '0x1234...') {
@@ -110,13 +110,13 @@ agent.on('text', async (ctx) => {
   
   // Get conversation members
   const members = await conversation.members();
-  console.log('Member count:', members.length);
+  console.log(`Member count: ${members.length}`);
   
   // Check conversation type
   if (ctx.isDm()) {
     console.log(`DM with: ${conversation.peerInboxId}`);
   } else if (ctx.isGroup()) {
-    console.log('Group conversation:', conversation.name);
+    console.log(`Group conversation: ${conversation.name}`);
   }
 });
 ```
@@ -128,11 +128,11 @@ Check conversation consent states:
 ```typescript
 agent.on('text', async (ctx) => {
   if (ctx.isAllowed) {
-    console.log('Messages allowed in this conversation');
+    console.log(`Messages allowed in this conversation`);
   } else if (ctx.isDenied) {
-    console.log('Messages denied in this conversation');
+    console.log(`Messages denied in this conversation`);
   } else if (ctx.isUnknown) {
-    console.log('Consent state unknown');
+    console.log(`Consent state unknown`);
   }
 });
 ```
@@ -144,9 +144,9 @@ agent.on('text', async (ctx) => {
   const members = await ctx.conversation.members();
   
   for (const member of members) {
-    console.log('Member inbox ID:', member.inboxId);
-    console.log('Permission level:', member.permissionLevel);
-    console.log('Consent state:', member.consentState);
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
     
     // Get Ethereum address
     const ethIdentifier = member.accountIdentifiers.find(
@@ -154,7 +154,7 @@ agent.on('text', async (ctx) => {
     );
     
     if (ethIdentifier) {
-      console.log('Ethereum address:', ethIdentifier.identifier);
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
     }
   }
 });
@@ -166,7 +166,7 @@ agent.on('text', async (ctx) => {
 agent.on('text', async (ctx) => {
   // Get all messages
   const messages = await ctx.conversation.messages();
-  console.log('Total messages:', messages.length);
+  console.log(`Total messages: ${messages.length}`);
   
   // Get recent messages
   const recentMessages = messages.slice(-10);

@@ -61,7 +61,7 @@ await ctx.sendTextReply(reply);
 
 ```tsx [Node]
 agent.on('reply', async (ctx) => {
-  console.log('New reply:', ctx.message.content);
+  console.log(`New reply: ${JSON.stringify(ctx.message.content)}`);
 });
 ```
 

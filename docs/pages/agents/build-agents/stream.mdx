@@ -7,18 +7,18 @@ With the agent-sdk, you can listen for different types of messages using event h
 ```js [Node]
 // Listen for text messages
 agent.on('text', async (ctx) => {
-  console.log('New text message:', ctx.message.content);
+  console.log(`New text message: ${ctx.message.content}`);
   await ctx.sendText('Got your message!');
 });
 
 // Listen for reactions
 agent.on('reaction', async (ctx) => {
-  console.log('New reaction:', ctx.message.content);
+  console.log(`New reaction: ${ctx.message.content}`);
 });
 
 // Listen for replies
 agent.on('reply', async (ctx) => {
-  console.log('New reply:', ctx.message.content);
+  console.log(`New reply: ${ctx.message.content}`);
 });
 ```
 
@@ -38,7 +38,7 @@ agent.on('message', async (ctx) => {
 
 // Listen for unknown messages
 agent.on('unknownMessage', (ctx) => {
-  console.error('Message type is unknown', ctx);
+  console.error(`Message type is unknown: ${JSON.stringify(ctx)}`);
 });
 ```
 
@@ -55,7 +55,7 @@ The agent-sdk automatically handles connection failures and reconnections. You c
 ```js [Node]
 // Handle uncaught errors
 agent.on('unhandledError', (error) => {
-  console.error('Agent error:', error);
+  console.error(`Agent error: ${error}`);
   // Handle the error appropriately
 });
 ```
