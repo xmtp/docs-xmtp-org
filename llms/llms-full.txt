@@ -11763,7 +11763,7 @@ const walletSendCalls: WalletSendCallsParams = message.content;
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
 
 
-## pages/agents/content-types/group-update.mdx
+## pages/agents/content-types/group-updates.mdx
 # Stream group updates with XMTP
 
 Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type.
