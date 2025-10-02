@@ -83,9 +83,9 @@ agent.on('text', async (ctx) => {
   const members = await group.members();
 
   for (const member of members) {
-    console.log('Member inbox ID:', member.inboxId);
-    console.log('Permission level:', member.permissionLevel);
-    console.log('Consent state:', member.consentState);
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
 
     // Get Ethereum address
     const ethIdentifier = member.accountIdentifiers.find(
@@ -93,7 +93,7 @@ agent.on('text', async (ctx) => {
     );
 
     if (ethIdentifier) {
-      console.log('Ethereum address:', ethIdentifier.identifier);
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
     }
   }
 });
