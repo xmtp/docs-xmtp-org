@@ -6,6 +6,7 @@ Stream group metadata changes (name, description, members) in real-time using th
 
 ```typescript
 on('group-update', async (ctx) => {
+  // handle the group update
   console.log(`Group updated: ${JSON.stringify(ctx.message.content)}`);
 });
 ```

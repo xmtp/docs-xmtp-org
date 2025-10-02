@@ -59,7 +59,9 @@ await ctx.sendReaction('❤️');
 
 ```tsx [Node]
 agent.on('reaction', async (ctx) => {
-  console.log(`New reaction: ${JSON.stringify(ctx.message.content)}`);
+  const message = ctx.message;
+  const reactionContent = message.content;
+  console.log(`New reaction: ${reactionContent.content}`);
 });
 ```
 
