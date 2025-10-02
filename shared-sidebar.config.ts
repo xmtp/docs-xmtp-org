@@ -94,8 +94,8 @@ export const sidebarConfig = {
           link: "/agents/content-types/replies",
         },
         {
-          text: "Group update",
-          link: "/agents/content-types/group-update",
+          text: "Group updates",
+          link: "/agents/content-types/group-updates",
         },
         {
           text: "Attachments",
@@ -107,7 +107,7 @@ export const sidebarConfig = {
         },
         {
           text: "Transaction references",
-          link: "/agents/content-types/transaction-refs",
+          link: "/agents/content-types/transaction-references",
         },
       ],
     },
