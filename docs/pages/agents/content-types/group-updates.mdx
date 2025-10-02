@@ -1,8 +1,12 @@
 # Stream group updates with XMTP
 
-Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type.
+Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type. Group updates allow you to monitor changes to group conversations including member additions/removals, name changes, and description updates.
 
-## Stream group updates
+:::tip[Quickstart]
+The `group_updated` content type is a native XMTP content type, so no additional packages need to be installed. Simply listen for the `group-update` event to receive real-time updates.
+:::
+
+## Listen for group updates
 
 ```typescript
 on('group-update', async (ctx) => {
@@ -11,11 +15,6 @@ on('group-update', async (ctx) => {
 });
 ```
 
-Conversation type will show as `group_updated`.
-
-```tsx
-const type = ctx.message.contentType;
-```
 
 ## Group update message structure
 
