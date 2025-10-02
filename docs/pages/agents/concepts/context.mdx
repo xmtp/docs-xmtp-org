@@ -2,7 +2,7 @@
 
 Every XMTP agent event handler receives a rich `MessageContext` object that provides access to the message, conversation, client, and powerful helper methods. This context makes it easy to build responsive agents without repetitive boilerplate code.
 
-## Message handling
+## Message context
 
 ### Type-safe content access
 
@@ -21,6 +21,9 @@ agent.on('message', async (ctx) => {
     // ctx.message.content is now typed as Reaction
     console.log('Reaction:', ctx.message.content.content);
     console.log('Reference:', ctx.message.content.reference);
+  } else if (ctx.isRemoteAttachment()) {
+    // ctx.message.content is now typed as RemoteAttachment
+    console.log('Attachment:', ctx.message.content.filename);
   }
 });
 ```
@@ -39,8 +42,6 @@ agent.on('message', async (ctx) => {
   console.log('Content type:', message.contentType);
 });
 ```
-
-## Helper methods
 
 ### sendText() and sendTextReply()
 
@@ -88,7 +89,18 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-## Conversation and client access
+### getClientAddress()
+
+Get the Ethereum address of your agent:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const agentAddress = ctx.getClientAddress();
+  console.log(`Agent address: ${agentAddress}`);
+});
+```
+
+## Conversation context
 
 ### Conversation operations
 
@@ -101,36 +113,29 @@ agent.on('text', async (ctx) => {
   console.log('Member count:', members.length);
   
   // Check conversation type
-  if (conversation.peerInboxId) {
-    console.log('DM with:', conversation.peerInboxId);
-  } else {
-    console.log('Group conversation');
+  if (ctx.isDm()) {
+    console.log(`DM with: ${conversation.peerInboxId}`);
+  } else if (ctx.isGroup()) {
+    console.log('Group conversation:', conversation.name);
   }
 });
 ```
 
-### Client operations
+### Consent state
+
+Check conversation consent states:
 
 ```typescript
 agent.on('text', async (ctx) => {
-  const client = ctx.client;
-  
-  // Get client address
-  const clientAddress = ctx.getClientAddress();
-  console.log('Agent address:', clientAddress);
-  
-  // Access conversations manager
-  const conversations = client.conversations;
-  
-  // Create new conversations
-  const newDM = await client.conversations.newDm('target-inbox-id');
-  const newGroup = await client.conversations.newGroup(['inbox1', 'inbox2'], {
-    groupName: 'New Group',
-  });
+  if (ctx.isAllowed) {
+    console.log('Messages allowed in this conversation');
+  } else if (ctx.isDenied) {
+    console.log('Messages denied in this conversation');
+  } else if (ctx.isUnknown) {
+    console.log('Consent state unknown');
+  }
 });
 ```
-
-## Advanced usage
 
 ### Member information
 
@@ -172,79 +177,14 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-### Custom context extensions
+## Client context
 
-Extend the context in middleware:
-
-```typescript
-const databaseMiddleware: AgentMiddleware = async (ctx, next) => {
-  // Add database connection to context
-  (ctx as any).db = await getDatabaseConnection();
-  
-  try {
-    await next();
-  } finally {
-    await (ctx as any).db.close();
-  }
-};
-
-agent.use(databaseMiddleware);
-
-agent.on('text', async (ctx: any) => {
-  // Use the extended context
-  const user = await ctx.db.findUser(await ctx.getSenderAddress());
-  await ctx.sendTextReply(`Hello ${user.name}!`);
-});
-```
-
-## Error handling
-
-Use context information for better error handling:
+### address
 
 ```typescript
-agent.on('text', async (ctx) => {
-  try {
-    await processMessage(ctx);
-  } catch (error) {
-    console.error('Error processing message:', {
-      messageId: ctx.message.id,
-      conversationId: ctx.conversation.id,
-      sender: await ctx.getSenderAddress(),
-      error: error.message,
-    });
-    
-    await ctx.sendTextReply(
-      'Sorry, I encountered an error processing your message.'
-    );
-  }
-});
-```
-
-## Event-specific context
-
-### New conversation events
-
-```typescript
-agent.on('dm', async (ctx) => {
-  console.log('New DM started');
-  console.log('Peer:', ctx.conversation.peerInboxId);
-  await ctx.sendTextReply('Welcome to our DM! How can I help?');
-});
-
-agent.on('group', async (ctx) => {
-  console.log('Added to group:', ctx.conversation.name);
-  const members = await ctx.conversation.members();
-  await ctx.sendTextReply(
-    `Hello everyone! I see there are ${members.length} members here.`
-  );
-});
-```
-
-### Unknown message handling
-
-```typescript
-agent.on('unknownMessage', async (ctx) => {
-  console.log('Unknown content type:', ctx.message.contentType);
-  await ctx.sendTextReply("I received a message type I don't understand yet.");
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
 });
 ```
