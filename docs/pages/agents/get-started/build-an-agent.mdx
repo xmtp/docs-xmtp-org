@@ -58,9 +58,7 @@ await agent.start();
 
 :::danger
 
-XMTP creates local database files that must persist between deployments. Without persistent volumes, each deployment creates a new installation.
-
-**You're limited to 10 installations per inbox.** Use persistent volumes (Railway volumes, Render disks, etc.) to avoid hitting this limit.
+XMTP creates local database files that must persist between deployments - without persistent volumes, each deployment creates a new installation and you're limited **to 10 installations per inbox**.
 
 :::
 
