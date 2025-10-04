@@ -2,6 +2,26 @@
 
 Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
 
+
+
+:::warning
+
+## Understanding local database files
+
+XMTP creates local database files in the `.data/xmtp/` directory. These files store your installation identity and message history.
+
+**Keep these files between deployments:**
+- Deleting them creates a new installation each time
+- Reusing them maintains the same installation
+- Each wallet can have up to 10 installations
+
+**For production deployments:**
+- Use persistent volumes (Railway volumes, Render disks, etc.)
+- The database needs to persist across restarts
+- Add `.data/` to `.gitignore` to keep it out of version control
+
+**Note:** If you hit the 10 installation limit, you can revoke unused installations. See the installation management guide for details.
+
 ## Installation
 
 Install `@xmtp/agent-sdk` as a dependency in your project.
