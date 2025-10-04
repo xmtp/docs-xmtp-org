@@ -8,7 +8,7 @@ Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sd
 
 ## Understanding local database files
 
-XMTP creates local database files in the `.data/xmtp/` directory. These files store your installation identity and message history.
+XMTP creates local database files in the `dbPath` (default is '/') directory. These files store your device identity and message history.
 
 **Keep these files between deployments:**
 - Deleting them creates a new installation each time
@@ -18,9 +18,8 @@ XMTP creates local database files in the `.data/xmtp/` directory. These files st
 **For production deployments:**
 - Use persistent volumes (Railway volumes, Render disks, etc.)
 - The database needs to persist across restarts
-- Add `.data/` to `.gitignore` to keep it out of version control
 
-**Note:** If you hit the 10 installation limit, you can revoke unused installations. See the installation management guide for details.
+**Note:** If you hit the 10 installation limit, you can revoke unused installations. See the revoke installations section in the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples?tab=readme-ov-file#revoke-installations) for details.
 
 ## Installation
 
