@@ -48,7 +48,32 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 :::
 
-## Handle errors and failures
+## Stream new group chat and DM conversations
+
+With the Agent SDK, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+
+```ts
+// Listen for new DM conversations
+agent.on("dm", async (ctx) => {
+  console.log("New DM conversation:", ctx.conversation.id);
+});
+// Listen for new group conversations
+agent.on("group", async (ctx) => {
+  console.log("New group conversation:", ctx.conversation.id);
+});
+``` 
+
+##  Handle unhandled messages
+
+The `unhandledMessage` event is triggered for messages that don't match any of the [default content types](https://docs.xmtp.org/agents/content-types/content-types#standards-track-content-types).
+
+```js [Node]
+agent.on('unhandledMessage', (ctx) => {
+  console.error('Unhandled message:', ctx);
+});
+```
+
+## Handle errors 
 
 The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
 
