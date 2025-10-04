@@ -58,7 +58,7 @@ await agent.start();
 
 :::danger
 
-XMTP creates local database files that must persist between deployments - without persistent volumes, each deployment creates a new installation and you're **limited to 10 installations per inbox**.
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments** - without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
 
 :::
 
