@@ -5,7 +5,7 @@
 XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
 
 **Database file naming:**
-Database files follow this pattern: `xmtp-{environment}-{wallet-address-hash}.db3`
+Database files follow this pattern: `xmtp-{environment}-{inbox-id}.db3`
 
 Example: `xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688.db3`
 - `xmtp-production`: Environment prefix
@@ -15,7 +15,7 @@ Example: `xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792
 **Keep these files between deployments:**
 - Deleting them creates a new installation each time
 - Reusing them maintains the same installation
-- Each wallet can have up to 10 installations
+- Each inbox can have up to 10 installations
 
 **For production deployments:**
 - Use persistent volumes (Railway volumes, Render disks, etc.)
