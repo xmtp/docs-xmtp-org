@@ -2,7 +2,7 @@
 
 ## Stream messages
 
-With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+You can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
 
 ```js [Node]
 // Listen for text messages
@@ -50,22 +50,22 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 ## Stream new group chat and DM conversations
 
-With the Agent SDK, you can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+You can listen for new conversations using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
 
 ```ts
 // Listen for new DM conversations
-agent.on("dm", async (ctx) => {
-  console.log("New DM conversation:", ctx.conversation.id);
+agent.on('dm', async (ctx) => {
+  console.log('New DM conversation:', ctx.conversation.id);
 });
 // Listen for new group conversations
-agent.on("group", async (ctx) => {
-  console.log("New group conversation:", ctx.conversation.id);
+agent.on('group', async (ctx) => {
+  console.log('New group conversation:', ctx.conversation.id);
 });
-``` 
+```
 
-##  Handle unhandled messages
+## Handle unhandled messages
 
-The `unhandledMessage` event is triggered for messages that don't match any of the [default content types](https://docs.xmtp.org/agents/content-types/content-types#standards-track-content-types).
+The `unhandledMessage` event is triggered for messages that don't match any of the [default content types](/agents/content-types/content-types#standards-track-content-types).
 
 ```js [Node]
 agent.on('unhandledMessage', (ctx) => {
@@ -73,9 +73,9 @@ agent.on('unhandledMessage', (ctx) => {
 });
 ```
 
-## Handle errors 
+## Handle errors
 
-The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
+The XMTP Agent SDK automatically handles connection failures and reconnections. You can listen for errors using the error handler:
 
 ```js [Node]
 // Handle uncaught errors
