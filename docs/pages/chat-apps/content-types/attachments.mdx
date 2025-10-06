@@ -1,0 +1,837 @@
+---
+description: Learn how to use the remote attachment, multiple remote attachment, or attachment content types to support attachments in your app built with XMTP
+---
+
+# Support attachments in your app built with XMTP
+
+Use the remote attachment, multiple remote attachments, or attachment content type to support attachments in your app.
+
+- Use the [remote attachment content type](#support-remote-attachments-of-any-size) to send one remote attachment of any size.
+
+- Use the [multiple remote attachments content type](#support-multiple-remote-attachments-of-any-size) to send multiple remote attachments of any size.
+
+- Use the [attachment content type](#support-attachments-smaller-than-1mb) to send attachments smaller than 1MB.
+
+## Support remote attachments of any size
+
+One remote attachment of any size can be sent in a message using the `RemoteAttachmentCodec` and a storage provider.
+
+To send multiple remote attachments of any size in a single message, see [Support multiple remote attachments of any size](#support-multiple-remote-attachments-of-any-size).
+
+### Install the package
+
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-remote-attachment
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+:::
+
+### Configure the content type
+
+After importing the package, you can register the codec.
+
+:::code-group
+
+```jsx [Browser]
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+});
+```
+
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  codecs: [new RemoteAttachmentCodec(), new StaticAttachmentCodec()],
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.Attachment
+import org.xmtp.android.library.codecs.AttachmentCodec
+import org.xmtp.android.library.codecs.ContentTypeAttachment
+
+Client.register(codec = AttachmentCodec())
+Client.register(codec = RemoteAttachmentCodec())
+```
+
+```swift [Swift]
+Client.register(AttachmentCodec());
+Client.register(RemoteAttachmentCodec());
+```
+
+:::
+
+### Send a remote attachment
+
+:::code-group
+
+<div data-title="Browser">
+Load the file. This example uses a web browser to load the file:
+
+```jsx
+//image is the uploaded event.target.files[0];
+const data = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    if (reader.result instanceof ArrayBuffer) {
+      resolve(reader.result);
+    } else {
+      reject(new Error('Not an ArrayBuffer'));
+    }
+  };
+  reader.readAsArrayBuffer(image);
+});
+```
+
+Create an attachment object:
+
+```tsx
+// Local file details
+const attachment = {
+  filename: image?.name,
+  mimeType: image?.type,
+  data: new Uint8Array(data),
+};
+```
+
+Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+
+```tsx
+const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
+  attachment,
+  new AttachmentCodec()
+);
+```
+
+Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
+
+<p>Now that you have a `url`, you can create a `RemoteAttachment`:</p>
+
+```jsx
+const remoteAttachment = {
+  url: url,
+  contentDigest: encryptedEncoded.digest,
+  salt: encryptedEncoded.salt,
+  nonce: encryptedEncoded.nonce,
+  secret: encryptedEncoded.secret,
+  scheme: 'https://',
+  filename: attachment.filename,
+  contentLength: attachment.data.byteLength,
+};
+```
+
+Now that you have a remote attachment, you can send it:
+
+```tsx
+await conversation.send(remoteAttachment, {
+  contentType: ContentTypeRemoteAttachment,
+});
+```
+
+</div>
+
+<div data-title="React Native">
+
+This method takes a `DecryptedLocalAttachment` object as an argument:
+
+```jsx
+const { encryptedLocalFileUri, metadata } = await alice.encryptAttachment({
+  fileUri: `file://${file}`,
+  mimeType: 'text/plain',
+});
+```
+
+Upload an encrypted file to a remote server:
+
+```jsx
+let url = await uploadFile(encryptedLocalFileUri);
+```
+
+Send a remote attachment message:
+
+```jsx
+await convo.send({
+  remoteAttachment: {
+    ...metadata,
+    scheme: 'https://',
+    url,
+  },
+});
+```
+
+</div>
+
+<div data-title="Kotlin">
+
+Create an attachment object:
+
+```kotlin [Kotlin]
+val attachment = Attachment(
+filename = "test.txt",
+mimeType = "text/plain",
+data = "hello world".toByteStringUtf8(),
+)
+```
+
+Encode and encrypt an attachment for transport:
+
+```kotlin [Kotlin]
+val encodedEncryptedContent = RemoteAttachment.encodeEncrypted(
+content = attachment,
+codec = AttachmentCodec(),
+)
+```
+
+Create a remote attachment from an attachment:
+
+```kotlin [Kotlin]
+val remoteAttachment = RemoteAttachment.from(
+    encryptedEncodedContent = encodedEncryptedContent
+)
+remoteAttachment.contentLength = attachment.data.size()
+remoteAttachment.filename = attachment.filename
+```
+
+Send a remote attachment and set the `contentType`:
+
+```kotlin [Kotlin]
+val newConversation = client.conversations.newConversation(inboxId)
+
+newConversation.send(
+content = remoteAttachment,
+options = SendOptions(contentType = ContentTypeRemoteAttachment),
+)
+```
+
+</div>
+
+<div data-title="Swift">
+
+Create an attachment object:
+
+```swift [Swift]
+let attachment = Attachment(
+  filename: "screenshot.png",
+  mimeType: "image/png",
+  data: Data(somePNGData)
+)
+```
+
+Encode and encrypt an attachment for transport:
+
+```swift [Swift]
+// Encode an attachment and encrypt the encoded content
+const encryptedAttachment = try RemoteAttachment.encodeEncrypted(
+ content: attachment,
+ codec: AttachmentCodec()
+)
+```
+
+Upload an encrypted attachment anywhere where it will be accessible via an HTTPS GET request. For example, you can use web3.storage:
+
+```swift [Swift]
+func upload(data: Data, token: String): String {
+  let url = URL(string: "https://api.web3.storage/upload")!
+  var request = URLRequest(url: url)
+  request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+  request.addValue("XMTP", forHTTPHeaderField: "X-NAME")
+  request.httpMethod = "POST"
+
+  let responseData = try await URLSession.shared.upload(for: request, from: data).0
+  let response = try JSONDecoder().decode(Web3Storage.Response.self, from: responseData)
+
+  return "https://\(response.cid).ipfs.w3s.link"
+}
+
+let url = upload(data: encryptedAttachment.payload, token: YOUR_WEB3_STORAGE_TOKEN)
+```
+
+Create a remote attachment from an attachment:
+
+```swift [Swift]
+let remoteAttachment = try RemoteAttachment(
+  url: url,
+  encryptedEncodedContent: encryptedEncodedContent
+)
+```
+
+Send a remote attachment and set the `contentType`:
+
+```swift [Swift]
+try await conversation.send(
+ content: remoteAttachment,
+ options: .init(
+  contentType: ContentTypeRemoteAttachment,
+  fallback: "a description of the image"
+ )
+)
+```
+
+</div>
+
+:::
+
+### Receive, decode, and decrypt a remote attachment
+
+Now that you can send a remote attachment, you need a way to receive it. For example:
+
+:::code-group
+
+<div data-title="Browser">
+
+```tsx
+import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
+
+if (message.contentType.sameAs(RemoteAttachmentContentType)) {
+  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+}
+```
+
+You now have the original attachment:
+
+```bash [Bash]
+attachment.filename // => "screenshot.png"
+attachment.mimeType // => "image/png",
+attachment.data // => [the PNG data]
+```
+
+Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+
+```tsx
+const objectURL = URL.createObjectURL(
+  new Blob([Buffer.from(attachment.data)], {
+    type: attachment.mimeType,
+  })
+);
+
+const img = document.createElement('img');
+img.src = objectURL;
+img.title = attachment.filename;
+```
+
+</div>
+
+<div data-title="React Native">
+
+On the receiving end, you can use the `decryptAttachment` method to decrypt the downloaded file. This method takes an `EncryptedLocalAttachment` object as an argument and returns a `DecryptedLocalAttachment` object.
+
+```jsx
+if (message.contentTypeId === "xmtp.org/remoteStaticAttachment:1.0") {
+  // Now we can decrypt the downloaded file using the message metadata.
+  const attached = await xmtp_client.decryptAttachment({
+    encryptedLocalFileUri: downloadedFileUri,
+    metadata: message.content() as RemoteAttachmentContent,
+  })
+
+  //attached.filename
+  //attached.mimeType
+  //attached.fileUri
+}
+```
+
+Display the attachment:
+
+```jsx
+<Image source={{ uri: attached.fileUri }} />
+```
+
+</div>
+
+```kotlin [Kotlin]
+val message = newConversation.messages().first()
+val loadedRemoteAttachment: RemoteAttachment = messages.content()
+loadedRemoteAttachment.fetcher = Fetcher()
+runBlocking {
+  val attachment: Attachment = loadedRemoteAttachment.load()
+}
+```
+
+<div data-title="Swift">
+
+```swift [Swift]
+let attachment: Attachment = try await remoteAttachment.content()
+```
+
+You now have the original attachment:
+
+```swift [Swift]
+attachment.filename // => "screenshot.png"
+attachment.mimeType // => "image/png",
+attachment.data // => [the PNG data]
+```
+
+Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+
+```swift [Swift]
+import UIKIt
+import SwiftUI
+
+struct ContentView: View {
+ var body: some View {
+  Image(uiImage: UIImage(data: attachment.data))
+ }
+}
+```
+
+</div>
+
+:::
+
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
+
+## Support multiple remote attachments of any size
+
+Multiple remote attachments of any size can be sent in a single message using the `MultiRemoteAttachmentCodec` and a storage provider.
+
+### Register necessary codecs
+
+:::code-group
+
+```tsx [React Native]
+export const registerCodecs = () => {
+  Client.register(new AttachmentCodec());
+  Client.register(new RemoteAttachmentCodec());
+  Client.register(new MultiRemoteAttachmentCodec());
+};
+```
+
+```kotlin [Kotlin]
+Client.register(codec = AttachmentCodec())
+Client.register(codec = RemoteAttachmentCodec())
+Client.register(codec = MultiRemoteAttachmentCodec())
+```
+
+```swift [Swift]
+Client.register(codec: AttachmentCodec())
+Client.register(codec: RemoteAttachmentCodec())
+Client.register(codec: MultiRemoteAttachmentCodec())
+```
+
+:::
+
+### Create multiple attachment objects
+
+Each attachment in the attachments array contains a URL that points to an encrypted `EncodedContent` object. The content must be accessible by an HTTP `GET` request to the URL.
+
+:::code-group
+
+```ts [React Native]
+const attachment1: DecryptedLocalAttachment = {
+  fileUri: 'content://media/external/images/media/image-1.png',
+  mimeType: 'image/png',
+  filename: 'image-1.png',
+};
+
+const attachment2: DecryptedLocalAttachment = {
+  fileUri: 'content://media/external/images/media/image-2.png',
+  mimeType: 'image/png',
+  filename: 'image-2.png',
+};
+```
+
+```kotlin [Kotlin]
+val attachment1 = Attachment(
+    filename = "test1.txt",
+    mimeType = "text/plain",
+    data = "hello world".toByteStringUtf8(),
+)
+
+val attachment2 = Attachment(
+    filename = "test2.txt",
+    mimeType = "text/plain",
+    data = "hello world".toByteStringUtf8(),
+)
+```
+
+```swift [Swift]
+let attachment1 = Attachment(
+    filename: "test1.txt",
+    mimeType: "text/plain",
+    data: Data("hello world".utf8)
+)
+
+let attachment2 = Attachment(
+    filename: "test2.txt",
+    mimeType: "text/plain",
+    data: Data("hello world".utf8)
+)
+```
+
+:::
+
+### Encrypt and upload multiple attachments to a remote server
+
+:::code-group
+
+```ts [React Native]
+const remoteAttachments: RemoteAttachmentInfo[] = [];
+for (const attachment of [attachment1, attachment2]) {
+  // Encrypt the attachment and receive the local URI of the encrypted file
+  const { encryptedLocalFileUri, metadata } =
+    await alix.encryptAttachment(attachment);
+
+  // Upload the attachment to a remote server and receive the URL
+  // (Integrator must supply upload from local uri and return url functionality!)
+  const url = uploadAttachmentForUrl(encryptedLocalFileUri);
+
+  // Build the remote attachment info
+  const remoteAttachmentInfo =
+    MultiRemoteAttachmentCodec.buildMultiRemoteAttachmentInfo(url, metadata);
+  remoteAttachments.push(remoteAttachmentInfo);
+}
+```
+
+```kotlin [Kotlin]
+val attachmentCodec = AttachmentCodec()
+val remoteAttachmentInfos: MutableList<RemoteAttachmentInfo> = ArrayList()
+
+for (attachment: Attachment in listOf(attachment1, attachment2)) {
+    // 1) Encode the attachment to raw bytes
+    val encodedBytes = attachmentCodec.encode(attachment).toByteArray()
+    // 2) Encrypt the bytes locally
+    val encryptedAttachment = MultiRemoteAttachmentCodec.encryptBytesForLocalAttachment(encodedBytes, attachment.filename)
+    // 3) "Upload" it, and get a url string back
+    // (Integrator must supply upload from local uri and return url functionality!)
+    val url = uploadEncryptedPayload(encryptedAttachment.payload.toByteArray())
+    // 4) Build a RemoteAttachmentInfo for that URL and encryptedAttachment
+    val remoteAttachmentInfo = MultiRemoteAttachmentCodec.buildRemoteAttachmentInfo(encryptedAttachment, URL(url))
+    remoteAttachmentInfos.add(remoteAttachmentInfo)
+}
+```
+
+```swift [Swift]
+var remoteAttachmentInfos: [MultiRemoteAttachment.RemoteAttachmentInfo] = []
+
+for att in [attachment1, attachment2] {
+    // 1) Encode the attachment to raw bytes
+    let encodedBytes = try AttachmentCodec().encode(content: att).serializedData()
+    // 2) Encrypt the bytes locally
+    let encrypted = try MultiRemoteAttachmentCodec.encryptBytesForLocalAttachment(encodedBytes, filename: att.filename)
+    // 3) "Upload" it, and get a url string back
+    // (Integrator must supply upload from local uri and return url functionality!)
+    let urlString = fakeUpload(encrypted.payload)
+    // 4) Build a RemoteAttachmentInfo for that URL and encryptedAttachment
+    let info = try MultiRemoteAttachmentCodec.buildRemoteAttachmentInfo(
+        encryptedAttachment: encrypted,
+        remoteUrl: URL(string: urlString)!
+    )
+    remoteAttachmentInfos.append(info)
+}
+```
+
+:::
+
+### Send a message with multiple remote attachments
+
+:::code-group
+
+```ts [React Native]
+await convo.send({
+  multiRemoteAttachment: {
+    attachments: remoteAttachments,
+  },
+});
+```
+
+```kotlin [Kotlin]
+val multiRemoteAttachment = MultiRemoteAttachment(remoteAttachments = remoteAttachmentInfos.toList())
+
+runBlocking {
+    aliceConversation.send(
+        content = multiRemoteAttachment,
+        options = SendOptions(contentType = ContentTypeMultiRemoteAttachment),
+    )
+}
+```
+
+```swift [Swift]
+let multiRemoteAttachment = MultiRemoteAttachment(remoteAttachments: remoteAttachmentInfos)
+let encodedContent = try MultiRemoteAttachmentCodec().encode(content: multiRemoteAttachment)
+try await alixConversation.send(encodedContent: encodedContent)
+```
+
+:::
+
+### Recognize and decode a multi remote attachment
+
+:::code-group
+
+```ts [React Native]
+const messages = await conversation.messages();
+if (
+  messages.size > 0 &&
+  messages[0].contentTypeId == 'xmtp.org/multiRemoteStaticContent:1.0'
+) {
+  // Decode the raw content back into a MultiRemoteAttachment
+  const multiRemoteAttachment: MultiRemoteAttachment = messages[0].content();
+
+  // See next section for download, and decrypt the attachments
+}
+```
+
+```kotlin [Kotlin]
+val messages = runBlocking { conversation.messages() }
+if (messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMultiRemoteAttachment)) {
+    // Decode the raw content back into a MultiRemoteAttachment
+  val multiRemoteAttachment: FfiMultiRemoteAttachment = messages[0].content()!!
+
+  // See next section for download, and decrypt the attachments
+}
+```
+
+```swift [Swift]
+let messages = try await conversation.messages()
+if messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMultiRemoteAttachment.id) {
+  // Decode the raw content back into a MultiRemoteAttachment
+  let multiRemoteAttachment: MultiRemoteAttachment = try messages[0].content()
+
+  // See next section for download, and decrypt the attachments
+}
+```
+
+:::
+
+### Decode, download, and decrypt the attachments
+
+:::code-group
+
+```ts [React Native]
+const decryptedAttachments: DecryptedLocalAttachment[] = [];
+
+for (const attachment of multiRemoteAttachment.attachments) {
+  // Downloading the encrypted payload from the attachment URL and save the local file
+  // (Integrator must supply download from url and save to local Uri functionality!)
+  const encryptedFileLocalURIAfterDownload: string = downloadFromUrl(
+    attachment.url
+  );
+  // Decrypt the local file
+  const decryptedLocalAttachment = await alix.decryptAttachment({
+    encryptedLocalFileUri: encryptedFileLocalURIAfterDownload,
+    metadata: {
+      secret: attachment.secret,
+      salt: attachment.salt,
+      nonce: attachment.nonce,
+      contentDigest: attachment.contentDigest,
+      filename: attachment.filename,
+    } as RemoteAttachmentContent,
+  });
+  decryptedAttachments.push(decryptedLocalAttachment);
+}
+```
+
+```kotlin [Kotlin]
+val decryptedAttachments: MutableList<Attachment> = ArrayList()
+
+for (remoteAttachmentInfo: FfiRemoteAttachmentInfo in multiRemoteAttachment.attachments) {
+  // convert to FfiRemoteAttachmentInfo to RemoteAttachment
+  val remoteAttachment = RemoteAttachment(
+    url = URL(remoteAttachmentInfo.url),
+    filename = remoteAttachmentInfo.filename,
+    contentDigest = remoteAttachmentInfo.contentDigest,
+    nonce = remoteAttachmentInfo.nonce.toByteString(),
+    scheme = remoteAttachmentInfo.scheme,
+    salt = remoteAttachmentInfo.salt.toByteString(),
+    secret = remoteAttachmentInfo.secret.toByteString(),
+    contentLength = remoteAttachmentInfo.contentLength?.toInt(),
+  )
+  // Download the encrypted payload (Integrator must supply download from url functionality!)
+  val url = remoteAttachment.url.toString()
+  val encryptedPayload: ByteArray = downloadFromUrl(url)
+
+  // Combine encrypted payload with RemoteAttachment to create an EncryptedEncodedContent Object
+  val encryptedAttachment: EncryptedEncodedContent = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(remoteAttachment, encryptedPayload)
+
+  // Decrypt payload
+  val encodedContent: EncodedContent = MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
+
+  // Convert EncodedContent to Attachment
+  val attachment = attachmentCodec.decode(encodedContent)
+  decryptedAttachments.add(attachment)
+}
+```
+
+```swift [Swift]
+var decryptedAttachments: [Attachment] = []
+
+for remoteAttachmentInfo in multiRemoteAttachment.remoteAttachments {
+    // convert to RemoteAttachmentInfo to RemoteAttachment
+    let remoteAttachment = try RemoteAttachment(
+        url: remoteAttachmentInfo.url,
+        contentDigest: remoteAttachmentInfo.contentDigest,
+        secret: remoteAttachmentInfo.secret,
+        salt: remoteAttachmentInfo.salt,
+        nonce: remoteAttachmentInfo.nonce,
+        scheme: RemoteAttachment.Scheme(rawValue: remoteAttachmentInfo.scheme) ?? .https,
+        contentLength: Int(remoteAttachmentInfo.contentLength),
+        filename: remoteAttachmentInfo.filename
+    )
+
+    // Download the encrypted payload (Integrator must supply download from url functionality!)
+    guard let encryptedPayload = downloadFromUrl(remoteAttachment.url)
+
+    // Combine encrypted payload with RemoteAttachment to create an EncryptedEncodedContent Object
+    let encryptedAttachment = MultiRemoteAttachmentCodec.buildEncryptAttachmentResult(
+        remoteAttachment: remoteAttachment,
+        encryptedPayload: downloadedPayload
+    )
+
+    // Decrypt payload
+    let encodedContent = try MultiRemoteAttachmentCodec.decryptAttachment(encryptedAttachment)
+
+    // Convert EncodedContent to Attachment
+    let attachment: Attachment = try encodedContent.decoded()
+    decryptedAttachments.append(attachment)
+}
+```
+
+:::
+
+### Accessing the unencrypted attachments
+
+Use the file URIs in the decrypted attachments objects to display the attachments.
+
+:::code-group
+
+```ts [React Native]
+// Example showing displaying attachments if they represent images
+const attachment1 = decryptedAttachments[0]
+const attachment2 = decryptedAttachments[1]
+
+<Image source={{ uri: attachment1.fileUri }} />
+<Image source={{ uri: attachment2.fileUri }} />
+```
+
+```kotlin [Kotlin]
+// Example showing accessing filenames of final decrypted attachments
+assertEquals(decryptedAttachments[0].filename, "test1.txt")
+assertEquals(decryptedAttachments[1].filename, "test2.txt")
+
+```
+
+```swift [Swift]
+// Example showing accessing filenames of final decrypted attachments
+XCTAssertEqual(decryptedAttachments[0].filename, "test1.txt")
+XCTAssertEqual(decryptedAttachments[1].filename, "test2.txt")
+```
+
+:::
+
+## Support attachments smaller than 1MB
+
+Attachments smaller than 1MB can be sent using the `AttachmentCodec`. The codec will automatically encrypt the attachment and upload it to the XMTP network.
+
+:::warning
+
+Unless a very specific use case we recommend using the [remote attachment content type](/chat-apps/content-types/attachments) instead since many attachments are larger than 1MB in a chat app.
+:::
+
+### Install the package
+
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-remote-attachment
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+:::
+
+### Import and register
+
+:::code-group
+
+```jsx [Browser]
+import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new AttachmentCodec()],
+});
+```
+
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  codecs: [new StaticAttachmentCodec()],
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.Attachment
+import org.xmtp.android.library.codecs.AttachmentCodec
+import org.xmtp.android.library.codecs.ContentTypeAttachment
+
+Client.register(codec = AttachmentCodec())
+```
+
+```swift [Swift]
+Client.register(AttachmentCodec());
+```
+
+:::
+
+### Load local file
+
+```tsx
+// Read local file and extract its details
+const file = fs.readFileSync('xmtp.png');
+const filename = path.basename('xmtp.png');
+const extname = path.extname('xmtp.png');
+console.log(`Filename: ${filename}`);
+console.log(`File Type: ${extname}`);
+```
+
+### Send encrypted file
+
+```tsx
+// Convert the file to a Uint8Array
+const blob = new Blob([file], { type: extname });
+let imgArray = new Uint8Array(await blob.arrayBuffer());
+
+const attachment = {
+  filename: filename,
+  mimeType: extname, //image, video or audio
+  data: imgArray,
+};
+
+console.log('Attachment created', attachment);
+await conversation.send(attachment, { contentType: ContentTypeAttachment });
+```
+
+### Receive encrypted file
+
+```jsx
+if (message.contentType.sameAs(ContentTypeAttachment)) {
+  const blobdecoded = new Blob([message.content.data], {
+    type: message.content.mimeType,
+  });
+  const url = URL.createObjectURL(blobdecoded);
+}
+```

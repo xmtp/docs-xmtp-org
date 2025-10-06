@@ -1,0 +1,91 @@
+# Create conversations
+
+With your agent, you can create a new conversation, whether it's a group chat or direct message (DM).
+
+## Create a new group chat
+
+Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
+
+### By Ethereum address
+
+```js [Node]
+const group = await agent.createGroupWithAddresses(
+  [bo.address, caro.address],
+  createGroupOptions /* optional */
+);
+```
+
+### By inbox ID
+
+```js [Node]
+const group = await agent.client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+```
+
+## Create a new DM
+
+Once you have the verified identity, get its inbox ID and create a new DM:
+
+### By Ethereum address
+
+```js [Node]
+// by Ethereum address
+const dm = await agent.createDmWithAddress({
+  identifier: bo.accountAddress,
+  identifierKind: IdentifierKind.Ethereum,
+});
+```
+
+### By inbox ID
+
+```js [Node]
+const dm = await agent.client.conversations.newDm(bo.inboxId);
+```
+
+### Get the address of the sender
+
+```ts [Node]
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
+
+agent.on('text', async (ctx) => {
+  const senderAddress = ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
+});
+```
+
+## Conversation helper methods
+
+Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
+
+```js [Node]
+// get a conversation by its ID
+const conversationById =
+  await agent.client.conversations.getConversationById(conversationId);
+
+// get a message by its ID
+const messageById = await agent.client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId =
+  await agent.client.conversations.getDmByInboxId(peerInboxId);
+```
+
+## Check if an identity is reachable
+
+The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
+
+```js [Node]
+import { Agent, IdentifierKind } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await agent.client.canMessage([
+  {
+    identifier: '0xcaroAddress',
+    identifierKind: IdentifierKind.Ethereum,
+  },
+]);
+```

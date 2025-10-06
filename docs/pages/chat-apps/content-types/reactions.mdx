@@ -1,0 +1,187 @@
+---
+description: Learn how to use the reaction content type to support reactions in your app built with XMTP
+---
+
+# Support reactions in your app built with XMTP
+
+Use the reaction content type to support reactions in your app. A reaction is a quick and often emoji-based way to respond to a message. Reactions are usually limited to a predefined set of emojis or symbols provided by the chat app.
+
+## Use a local database for performance
+
+Use a local database to store reactions. This enables your app to performantly display a reaction with its [referenced message](#send-a-reaction) when rendering message lists.
+
+### Install the package
+
+In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-reaction
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reaction
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reaction
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+:::code-group
+
+```jsx [Browser]
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new ReactionCodec()],
+});
+```
+
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  codecs: [new ReactionCodec()],
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ReactionCodec
+
+Client.register(codec = ReactionCodec())
+```
+
+```swift [Swift]
+Client.register(ReactionCodec());
+```
+
+:::
+
+## Send a reaction
+
+With XMTP, reactions are represented as objects with the following keys:
+
+- `reference`: ID of the message being reacted to
+
+- `action`: Action of the reaction (added or removed)
+
+- `content`: String representation of the reaction (smile, for example) to be interpreted by clients
+
+- `schema`: Schema of the reaction (Unicode, shortcode, or custom)
+
+:::code-group
+
+```tsx [Browser]
+const reaction = {
+  reference: someMessageID,
+  action: 'added',
+  content: 'smile',
+};
+
+await conversation.send(reaction, {
+  contentType: ContentTypeReaction,
+});
+```
+
+```jsx [React Native]
+// Assuming you have a conversation object and the ID of the message you're reacting to
+const reactionContent = {
+  reaction: {
+    reference: messageId, // ID of the message you're reacting to
+    action: 'added', // Action can be 'added' or 'removed'
+    schema: 'unicode', // Schema can be 'unicode', 'shortcode', or 'custom'
+    content: '👍', // Content of the reaction
+  },
+};
+
+await conversation.send(reactionContent);
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.Reaction
+import org.xmtp.android.library.codecs.ReactionAction
+import org.xmtp.android.library.codecs.ReactionSchema
+import org.xmtp.android.library.codecs.ContentTypeReaction
+import org.xmtp.android.library.SendOptions
+
+val reaction = Reaction(
+    reference = messageToReact.id, // the ID of the message you're reacting to
+    action = ReactionAction.Added, // the action of the reaction
+    content = "U+1F603", // the content of the reaction
+    schema = ReactionSchema.Unicode // the schema of the reaction
+)
+conversation.send(
+    content = reaction,
+    options = SendOptions(contentType = ContentTypeReaction)
+)
+
+```
+
+```swift [Swift]
+let reaction = Reaction(
+    reference: messageToReact.id,
+    action: .added,
+    content: "U+1F603",
+    schema: .unicode
+)
+
+try await conversation.send(
+    content: reaction,
+    options: .init(contentType: ContentTypeReaction)
+)
+```
+
+:::
+
+## Receive a reaction
+
+Now that you can send a reaction, you need a way to receive a reaction. For example:
+
+:::code-group
+
+```tsx [Browser]
+if (message.contentType.sameAs(ContentTypeReaction)) {
+  // We've got a reaction.
+  const reaction: Reaction = message.content;
+}
+```
+
+```jsx [React Native]
+if (message.contentTypeId === 'xmtp.org/reaction:1.0') {
+  const reaction = message.content();
+  return reaction;
+  //reaction.reference = id of the message being reacted to,
+  //reaction.action = 'added',
+  //reaction.schema =  'unicode',
+  //reaction.content = '💖',
+}
+```
+
+```kotlin [Kotlin]
+if (message.contentType == ContentTypeReaction) {
+    // The message is a reaction
+    val reactionCodec = ReactionCodec()
+    val reaction: Reaction = reactionCodec.decode(message.content)
+}
+```
+
+```swift [Swift]
+let content: Reaction = try message.content()
+```
+
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
+
+## Display the reaction
+
+Generally, reactions should be interpreted as emoji. So, "smile" would translate to 😄 in UI clients. That being said, how you ultimately choose to render a reaction in your app is up to you.
+
+## Notifications and reactions
+
+Reactions have `shouldPush` set to `false`, which means that reactions do not trigger push notifications as long as the notification server respects this flag.

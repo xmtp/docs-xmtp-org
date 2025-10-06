@@ -1,0 +1,108 @@
+# Enable history sync for apps built with XMTP
+
+:::warning[This feature is in beta]
+
+History sync is still in active development as we work on its reliability and performance. To provide feedback on this feature, please post to [Ideas & Improvements](https://community.xmtp.org/c/general/ideas/54) in the XMTP Community Forums.
+
+:::
+
+Enable the history sync feature to give your users a way to sync decrypted historical data from an existing app installation to a new app installation.
+
+This historical data includes:
+
+- Conversations
+- Conversation messages
+- Consent state
+- HMAC keys (for push notifications)
+
+History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is a pre-existing and online app installation to provide the data.
+
+## 🎥 walkthrough: History sync
+
+This video provides a walkthrough of history sync, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/_FtNqtjk-ls?si=uZ_Mnh9phF6y2h-O"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+## Enable history sync
+
+History sync is enabled by default and runs automatically. When [creating a client](/chat-apps/core-messaging/create-a-client), the `historySyncUrl` client option is dynamically set to a default history sync server URL based on your `env` client option setting.
+
+- When `env` is set to `dev`, the `historySyncUrl` is set to `https://message-history.dev.ephemera.network/`
+- When `env` is set to `production`, the `historySyncUrl` is set to `https://message-history.production.ephemera.network`
+
+These default servers are managed and operated by [Ephemera](https://ephemerahq.com/), a steward of the development and adoption of XMTP.
+
+You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server) and set the `historySyncUrl` to your server's URL.
+
+If needed, you can turn off history sync by setting the `historySyncUrl` client option to an empty string.
+
+## How history sync works
+
+When your app initializes an XMTP client and a `historySyncUrl` client option is present, history sync automatically triggers an initial sync request and creates an encrypted payload.
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step1.png"
+    width="600px"
+    alt="Diagram showing step 1 of history sync: client initialization triggers sync request and creates encrypted payload"
+  />
+</div>
+
+History sync then uploads the payload, sends a sync reply, and pulls all conversation state history into the new app installation, merging it with the existing app installations in the sync group.
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/history-sync-step2.png"
+    width="600px"
+    alt="Diagram showing step 2 of history sync: payload upload, sync reply, and merging conversation state history across app installations"
+  />
+</div>
+
+Ongoing updates to history are streamed automatically. Updates, whether for user consent preferences or messages, are sent across the sync group, ensuring all app installations have up-to-date information.
+
+History syncs are accomplished using these components:
+
+- Sync group
+- Sync worker
+- History server
+
+### Sync group
+
+A sync group is a special [Messaging Layer Security](/protocol/security) group that includes all of the user's devices. The sync group is used to send serialized sync messages across the user's devices. The sync group is filtered out of most queries by default so they don't appear in the user's inbox.
+
+### Sync worker
+
+A sync worker is a spawned background worker that listens for sync events, and processes them accordingly. This worker:
+
+- Emits and updates consent
+- Creates and consumes archive payloads for and from other devices
+- Keeps preferences synced across devices
+
+### History server
+
+A history server acts as a bucket that holds encrypted sync payloads. The URL location of these payloads and the password (cipher encryption key) to decrypt these payloads is sent over the sync group for the recipient to decrypt.
+
+## FAQ
+
+### A user logged into a new app installation and doesn't see their conversations. What's going on?
+
+A debounce feature checks for new app installations, at most, once every 30 minutes. To circumvent the cool-down timer, send a message using a pre-existing app installation.
+
+Once [this issue](https://github.com/xmtp/libxmtp/issues/1309) is resolved, conversations will appear almost instantly.
+
+### A user logged into a new app installation and sees their conversations, but no messages. What's going on?
+
+Ensure that you've initiated a call to [sync messages](/chat-apps/list-stream-sync/sync-and-syncall#sync-all-new-welcomes-conversations-messages-and-preferences) and that the pre-existing app installation is online to receive the sync request, process and encrypt the payload, upload it to the history server, and send a sync reply message to the new app installation.
+
+### I called a sync method (messages, consent state, or conversations), but nothing is happening. What's going on?
+
+After requesting a sync for one app installation, ensure that the pre-existing app installation is online to receive the sync request.

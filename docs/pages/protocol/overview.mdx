@@ -1,0 +1,80 @@
+# XMTP protocol overview
+
+XMTP is a decentralized messaging protocol that enables secure, end-to-end encrypted communication between any identities that can produce a verifiable cryptographic signature.
+
+XMTP implements [Messaging Layer Security](https://messaginglayersecurity.rocks/) (MLS), which is designed to operate within the context of a messaging service. As the messaging service, XMTP needs to provide two services to facilitate messaging using MLS:
+
+- An [authentication service](https://messaginglayersecurity.rocks/mls-architecture/draft-ietf-mls-architecture.html#name-authentication-service)
+- A [delivery service](https://messaginglayersecurity.rocks/mls-architecture/draft-ietf-mls-architecture.html#name-delivery-service)
+
+This section covers the elements of XMTP that provide these services.
+
+:::info[Who should read these docs]
+
+This protocol documentation is designed for:
+
+- Protocol contributors working on XMTP's core implementation
+- Security researchers auditing XMTP's cryptographic design
+- Anyone curious about the technical details behind XMTP's messaging
+
+For most developers, the [Build chat apps](/chat-apps/intro/get-started) and [Build agents](/agents/get-started/build-an-agent) sections provide the practical guidance needed to build with XMTP.
+
+:::
+
+## Encryption
+
+The encryption elements are mainly defined by MLS, with some additions by XMTP. To learn more, see:
+
+- [Security](/protocol/security)
+
+  XMTP and MLS prioritize security, privacy, and message integrity through advanced cryptographic techniques, delivering end-to-end
+  encryption for both 1:1 and group conversations
+
+- [Epochs](/protocol/epochs)
+
+  Represent the cryptographic state of a group at any point in time. Each group operation (like adding members) creates a new epoch with fresh encryption keys
+
+- [Envelope types](/protocol/envelope-types)
+
+  Messages are packaged as envelope types that contain the actual message data plus metadata for routing and processing.
+
+## Identity
+
+The identity elements are mainly defined by XMTP. To learn more, see:
+
+- [Inboxes, identities, and installations](/protocol/identity)
+
+  The identity model includes an inbox ID and its associated identities and installations.
+
+- [Wallet signatures](/protocol/signatures)
+
+  Authenticate users using verifiable cryptographic signatures.
+
+## Delivery
+
+The delivery elements are mainly defined by XMTP. To learn more, see:
+
+- [Topics](/protocol/topics)
+
+  Messages are routed through topics, which are unique addresses that identify conversation channels.
+
+- [Cursors](/protocol/cursors)
+
+  Enable efficient message synchronization by tracking where each client left off when fetching new messages.
+
+- [Intents](/protocol/intents)
+
+  Provide reliable groupstate management through an internal bookkeeping system that handles retries, crashes, and race conditions when applying group changes.
+
+## Protocol evolution
+
+XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), which are design documents that propose new features and improvements. This governance process ensures systematic and decentralized protocol development.
+
+## Additional resources
+
+For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
+
+- [Security](https://xmtp.org/vision/concepts/encryption)
+- [Identity](https://xmtp.org/vision/concepts/identity)
+- [Consent](https://xmtp.org/vision/concepts/consent)
+- [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp)

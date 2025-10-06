@@ -1,0 +1,68 @@
+# Event-driven architecture
+
+Subscribe only to what you need using Node’s `EventEmitter` interface. Events you can listen for:
+
+- **Message events**
+  - `attachment`: a new incoming remote attachment message
+  - `message`: all incoming messages (fires for every message regardless of type)
+  - `reaction`: a new incoming reaction message
+  - `reply`: a new incoming reply message
+  - `text`: a new incoming text message
+  - `unknownMessage`: a message that doesn't match any specific type
+
+- **Lifecycle events**
+  - `start` / `stop`: agent lifecycle events
+  - `unhandledError`: unhandled errors
+
+## Example
+
+```ts
+// Listen to specific message types
+agent.on('text', async (ctx) => {
+  console.log(`Text message: ${ctx.message.content}`);
+});
+
+agent.on('reaction', async (ctx) => {
+  console.log(`Reaction: ${ctx.message.content}`);
+});
+
+agent.on('reply', async (ctx) => {
+  console.log(`Reply to: ${ctx.message.content.reference}`);
+});
+
+// Listen to unhandled events
+agent.on('unhandledError', (error) => {
+  console.error(`Agent error: ${error}`);
+});
+
+agent.on('unknownMessage', (ctx) => {
+  // handle the unknown message
+});
+```
+
+:::warning
+
+The `"message"` event fires for **every** incoming message, regardless of type. When using the `"message"` event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
+:::
+
+## Best practice example
+
+```ts
+import { filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Filter for specific message types
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText(`Echo: ${ctx.message.content}`);
+  }
+});
+```
+
+## Next steps
+
+- Learn about [middleware and routing](./middleware) to add cross-cutting behavior
+- Explore [message filters](./filters) to process messages selectively
+- Understand [context and helpers](./context) for rich message handling

@@ -1,0 +1,156 @@
+---
+description: Learn how to use the read receipt content type to support read receipts in your app built with XMTP
+---
+
+# Support read receipts in your app built with XMTP
+
+Use the read receipt content type to support read receipts in your app. A read receipt is a `timestamp` that indicates when a message was read. It is sent as a message and can be used to calculate the time since the last message was read.
+
+## Provide an opt-out option
+
+While this is a per-app decision, the best practice is to provide users with the option to opt out of sending read receipts. If a user opts out, when they read a message, a read receipt will not be sent to the sender of the message.
+
+## Install the package
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-read-receipt
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-read-receipt
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-read-receipt
+```
+
+:::
+
+## Configure the content type
+
+:::code-group
+
+```js [Browser]
+import { ReadReceiptCodec } from '@xmtp/content-type-read-receipt';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new ReadReceiptCodec()],
+});
+```
+
+```js [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  codecs: [new ReadReceiptCodec()],
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.Client
+import org.xmtp.android.library.codecs.ReadReceiptCodec
+
+Client.register(codec = ReadReceiptCodec())
+```
+
+```swift [Swift]
+ Client.register(codec: ReadReceiptCodec())
+```
+
+:::
+
+## Send a read receipt
+
+:::code-group
+
+```js [Browser]
+// The content of a read receipt message must be an empty object.
+
+await conversation.messages.send({}, ContentTypeReadReceipt);
+```
+
+```jsx [React Native]
+await bobConversation.send({ readReceipt: {} });
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.Client
+import org.xmtp.android.library.codecs.ReadReceipt
+import org.xmtp.android.library.codecs.ContentTypeReadReceipt
+import org.xmtp.android.library.messages.SendOptions
+
+// Create a ReadReceipt instance
+val readReceipt = ReadReceipt
+
+// Send the read receipt
+aliceConversation.send(
+    content = readReceipt,
+    options = SendOptions(contentType = ContentTypeReadReceipt),
+)
+```
+
+```swift [Swift]
+let read = ReadReceipt(timestamp: "2019-09-26T07:58:30.996+0200")
+
+try await conversation.send(
+    content: read,
+    options: .init(contentType: ContentTypeReadReceipt)
+)
+```
+
+:::
+
+## Receive a read receipt
+
+Here's how you can receive a read receipt:
+
+:::code-group
+
+```js [Browser]
+if (message.contentType.sameAs(ContentTypeReadReceipt)) {
+  // The message is a read receipt
+  const timestamp = message.sent;
+}
+```
+
+```js [React Native]
+if (message.contentTypeId === 'xmtp.org/readReceipt:1.0') {
+  return message.sent; //Date received
+}
+```
+
+```kotlin [Kotlin]
+val message: DecodedMessage = conversation.messages().first()
+if (message.encodedContent.type == ContentTypeReadReceipt) {
+    // The message is a ReadReceipt
+    val readReceipt: ReadReceipt? = message.content()
+    if (readReceipt != null) {
+      println("Message read at: ${message.sent}")
+    }
+}
+```
+
+```swift [Swift]
+let content: ReadReceipt = try message.content()
+content.timestamp // "2019-09-26T07:58:30.996+0200"
+```
+
+:::
+
+## Display a read receipt
+
+`ReadReceipts` have an `undefined` or `nil` fallback, indicating the message is not expected to be displayed. To learn more, see [Handle unsupported content types](/chat-apps/content-types/fallback) section.
+
+## Notifications and read receipts
+
+Read receipts have `shouldPush` set to `false`, which means that read receipts do not trigger push notifications as long as the notification server respects this flag.
+
+## Use a read receipt
+
+Generally, a read receipt indicator should be displayed under the message it's associated with. The indicator can include a timestamp. Ultimately, how you choose to display a read receipt indicator is completely up to you.
+
+The read receipt is provided as an **empty message** whose timestamp provides the data needed for the indicators. **Be sure to filter out read receipt empty messages and not display them to users.**
+
+You can use a read receipt timestamp to calculate the time since the last message was read. While iterating through messages, you can be sure that the last message was read at the timestamp of the read receipt if the string of the timestamp is lower.

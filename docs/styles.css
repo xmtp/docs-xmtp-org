@@ -433,9 +433,9 @@ li ol ~ p {
   margin-top: 0.5rem !important;
 }
 
-/* Code groups */
-.vocs_CodeBlock {
-  margin: 0.5rem 0;
+/* Remove padding from tab content panels */
+.vocs_Tabs_content {
+  padding: 0 !important;
 }
 
 /* ====== SIDEBAR SPACING REDUCTION ====== */
@@ -609,10 +609,16 @@ li ol ~ p {
   overflow-x: auto;
 }
 
-/* Increase top navigation font size */
+/* Increase top navigation font size and spacing */
 .vocs_NavigationMenu_link {
   font-size: 1rem !important;
   font-weight: 500 !important;
+  margin-right: .75rem !important;
+}
+
+/* Remove margin from the last link to prevent overflow */
+.vocs_NavigationMenu_link:last-child {
+  margin-right: 0 !important;
 }
 
 
@@ -932,9 +938,9 @@ body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::befor
   text-align: left;
 }
 
-/* Inboxes section - only when on inboxes pages */
-body:has([data-active="true"][href*="/inboxes/"]) .vocs_Sidebar_navigation::before {
-  content: "Build inboxes";
+/* Chat apps section - only when on chat apps pages */
+body:has([data-active="true"][href*="/chat-apps/"]) .vocs_Sidebar_navigation::before {
+  content: "Build chat apps";
   display: block;
   font-size: 1rem;
   font-weight: 600;
@@ -986,7 +992,7 @@ body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::befo
 
 /* Dark mode border colors for sidebar section headers */
 .dark body:has([data-active="true"][href*="/agents/"]) .vocs_Sidebar_navigation::before,
-.dark body:has([data-active="true"][href*="/inboxes/"]) .vocs_Sidebar_navigation::before,
+.dark body:has([data-active="true"][href*="/chat-apps/"]) .vocs_Sidebar_navigation::before,
 .dark body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before,
 .dark body:has([data-active="true"][href*="/network/"]) .vocs_Sidebar_navigation::before {
   border-bottom-color: #A5B4FC;
@@ -1005,8 +1011,8 @@ body:has(.custom-homepage) .vocs_Socials {
   font-size: 0.8em;
 }
 
-.vocs_SearchDialog_result a[href*="/inboxes/"] .vocs_SearchDialog_titles::before {
-  content: "Build inboxes • ";
+.vocs_SearchDialog_result a[href*="/chat-apps/"] .vocs_SearchDialog_titles::before {
+  content: "Build chat apps • ";
   color: var(--vocs-color-text-accent);
   font-weight: 500;
   font-size: 0.8em;

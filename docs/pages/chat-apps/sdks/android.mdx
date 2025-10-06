@@ -1,0 +1,62 @@
+# Get started with the XMTP Android SDK
+
+Use the [XMTP Android SDK](https://github.com/xmtp/xmtp-android) to build secure, private, and decentralized messaging into your Android app.
+
+The guide provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free chats using user consent preferences
+
+## Quickstart
+
+```kotlin [Kotlin]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+class EOAWallet : SigningKey {
+    override val publicIdentity: PublicIdentity
+        get() = PublicIdentity(IdentityKind.ETHEREUM, key.publicAddress)
+    override val type: SignerType
+        get() = SignerType.EOA
+    override suspend fun sign(message: String): SignedData {
+        return SignedData(key.sign(message = message))
+    }
+}
+
+// 2. Create the XMTP client
+val client = Client.create(
+    account = SigningKey,
+    options = ClientOptions(
+        ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+        appContext = ApplicationContext(),
+        dbEncryptionKey = keyBytes // 32 bytes
+    )
+)
+
+// 3. Start conversations
+val group = client.conversations.newGroup(inboxIds = listOf(bo.inboxId, caro.inboxId))
+val groupWithMeta = client.conversations.newGroup(
+    inboxIds = listOf(bo.inboxId, caro.inboxId),
+    permissionLevel = GroupPermissionPreconfiguration.ALL_MEMBERS,
+    name = "The Group Name",
+    imageUrl = "www.groupImage.com",
+    description = "The description of the group"
+)
+
+// 4. Send messages
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+dm.send(text = "Hello world")
+group.send(text = "Hello everyone")
+
+// 5. List, stream, and sync
+// List existing conversations
+val conversations = client.conversations.list()
+val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
+// Stream all new conversations and new messages from allowed conversations
+client.conversations.streamAllMessages(consentStates = listOf(ConsentState.ALLOWED)).collect {
+    // Received a message
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations
+client.conversations.syncAll(consentStates = ConsentState.ALLOWED)
+```

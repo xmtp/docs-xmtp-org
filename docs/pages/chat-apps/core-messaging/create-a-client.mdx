@@ -1,0 +1,612 @@
+# Create an XMTP client
+
+Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate EOA or SCW.
+
+## Understand creating and building a client
+
+This video provides a walkthrough of creating and building a client.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+### How it works
+
+When you call `Client.create()`, the following steps happen under the hood:
+
+1. Extracts the `signer` and retrieves the wallet address from it.
+2. Checks the XMTP identity ledger to find an inbox ID associated with the signer address. The inbox ID serves as the user's identity on the XMTP network.
+   1. If it doesn't find an existing inbox ID, it requests a wallet signature to register the identity and create an inbox ID.
+   2. If it finds an existing inbox ID, it uses the existing inbox ID.
+3. Checks if a local SQLite database exists. This database contains the identity's installation state and message data.
+   1. If it doesn't find an existing local database, it creates one. On non-web platforms, it encrypts the database with the provided `dbEncryptionKey`.
+   2. If it finds an existing local database:
+      - **For the Node, React Native, Android, and iOS SDKs**: It checks if the provided `dbEncryptionKey` matches. If it matches, it uses the existing database. If not, it creates a new database encrypted with the provided key.
+      - **For the Browser SDK**: A `dbEncryptionKey` is not used for encryption due to technical limitations in web environments. Be aware that the database is not encrypted.
+4. Returns the XMTP client, ready to send and receive messages.
+
+### Keep the database encryption key safe
+
+The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
+
+The encryption key is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client.
+
+As long as the local database and encryption key remain intact, you can use [`Client.build()`](#build-an-existing-client) to rehydrate the same client without re-signing.
+
+This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
+
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Client.create()` or `Client.build()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages** unless the user has done a [history sync](/chat-apps/list-stream-sync/history-sync).
+
+To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
+
+The `dbEncryptionKey` client option is not used by the Browser SDK for due to technical limitations in web environments. In this case, be aware that the database is not encrypted.
+
+To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+### View an encrypted database
+
+For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates a [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
+
+To open this database, you need to construct the password by prefixing `0x` (to indicate hexadecimal numbers), then appending the encryption key (64 hex characters, 32 bytes) and the salt (32 hex characters, 16 bytes). For example, if your encryption key is `A` and your salt is `B`, the resulting password would be `0xAB`.
+
+The database also uses a [plaintext header size](https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_plaintext_header_size) of 32 bytes.
+
+If you want to inspect the database visually, you can use [DB Browser for SQLite](https://sqlitebrowser.org/), an open source tool that supports SQLite and SQLCipher. In its **Custom** encryption settings, set the **Plaintext Header Size** to **_32_**, and use the full **Password** as a **Raw key**:
+
+![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
+
+## Create a client
+
+To call `Client.create()`, you must pass in a required `signer` and can also pass in any of the optional parameters covered in [Configure an XMTP client](#configure-an-xmtp-client).
+
+:::code-group
+
+```tsx [Browser]
+import { Client, type Signer } from '@xmtp/browser-sdk';
+
+// create a signer
+const signer: Signer = {
+  /* ... */
+};
+
+const client = await Client.create(
+  signer,
+  // client options
+  {
+    // Note: dbEncryptionKey is not used for encryption in browser environments
+  }
+);
+```
+
+```tsx [Node]
+import { Client, type Signer } from '@xmtp/node-sdk';
+import { getRandomValues } from 'node:crypto';
+
+// create a signer
+const signer: Signer = {
+  /* ... */
+};
+
+/**
+ * The database encryption key is optional but strongly recommended for
+ * secure local storage of the database.
+ *
+ * This value must be consistent when creating a client with an existing
+ * database.
+ */
+const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+
+const client = await Client.create(
+  signer,
+  // client options
+  {
+    dbEncryptionKey,
+    // Optional: Use a function to dynamically set the database path based on inbox ID
+    // dbPath: (inboxId) => `./databases/xmtp-${inboxId}.db3`,
+  }
+);
+```
+
+```tsx [React Native]
+Client.create(signer, {
+  env: 'production', // 'local' | 'dev' | 'production'
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+```
+
+```kotlin [Kotlin]
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes // 32 bytes
+)
+val client = Client().create(
+        account = SigningKey,
+        options = options
+    )
+```
+
+```swift [Swift]
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.create(
+  account: SigningKey,
+  options: options
+)
+```
+
+:::
+
+### Configure an XMTP client
+
+You can configure an XMTP client with these options passed to `Client.create`:
+
+:::code-group
+
+```tsx [Browser]
+import type { ContentCodec } from '@xmtp/content-type-primitives';
+
+type ClientOptions = {
+  /**
+   * Specify which XMTP environment to connect to. (default: `dev`)
+   */
+  env?: 'local' | 'dev' | 'production';
+  /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * For example: `appVersion: 'alix/2.x'`
+   *
+   * If you have an app and an agent, it's best to distinguish them from each other by
+   * adding `-app` and `-agent` to the names. For example:
+   *
+   * - App: `appVersion: 'alix-app/3.x'`
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP core developers provide you with app
+   * support, especially around communicating important SDK updates, deprecations,
+   * and required upgrades.
+   */
+  appVersion?: string;
+  /**
+   * apiUrl can be used to override the `env` flag and connect to a
+   * specific endpoint
+   */
+  apiUrl?: string;
+  /**
+   * historySyncUrl can be used to override the `env` flag and connect to a
+   * specific endpoint for syncing history
+   */
+  historySyncUrl?: string | null;
+  /**
+   * Allow configuring codecs for additional content types
+   */
+  codecs?: ContentCodec[];
+  /**
+   * Path to the local DB
+   *
+   * There are 4 value types that can be used to specify the database path:
+   *
+   * - `undefined` (or excluded from the client options)
+   *    The database will be created in the current working directory and is based on
+   *    the XMTP environment and client inbox ID.
+   *    Example: `xmtp-dev-<inbox-id>.db3`
+   *
+   * - `null`
+   *    No database will be created and all data will be lost once the client disconnects.
+   *
+   * - `string`
+   *    The given path will be used to create the database.
+   *    Example: `./my-db.db3`
+   *
+   * - `function`
+   *    A callback function that receives the inbox ID and returns a string path.
+   *    Example: `(inboxId) => string`
+   */
+  dbPath?: string | null | ((inboxId: string) => string);
+  /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
+  /**
+   * Enable structured JSON logging
+   */
+  structuredLogging?: boolean;
+  /**
+   * Enable performance metrics
+   */
+  performanceLogging?: boolean;
+  /**
+   * Logging level
+   */
+  loggingLevel?: 'off' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
+  /**
+   * Disable automatic registration when creating a client
+   */
+  disableAutoRegister?: boolean;
+  /**
+   * Disable device sync
+   */
+  disableDeviceSync?: boolean;
+};
+```
+
+```tsx [Node]
+import type { ContentCodec } from '@xmtp/content-type-primitives';
+import type { LogLevel } from '@xmtp/node-bindings';
+
+type ClientOptions = {
+  /**
+   * Specify which XMTP environment to connect to. (default: `dev`)
+   */
+  env?: 'local' | 'dev' | 'production';
+  /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * For example: `appVersion: 'alix/2.x'`
+   *
+   * If you have an app and an agent, it's best to distinguish them from each other by
+   * adding `-app` and `-agent` to the names. For example:
+   *
+   * - App: `appVersion: 'alix-app/3.x'`
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP core developers provide you with app
+   * support, especially around communicating important SDK updates, deprecations,
+   * and required upgrades.
+   */
+  appVersion?: string;
+  /**
+   * apiUrl can be used to override the `env` flag and connect to a
+   * specific endpoint
+   */
+  apiUrl?: string;
+  /**
+   * historySyncUrl can be used to override the `env` flag and connect to a
+   * specific endpoint for syncing history
+   */
+  historySyncUrl?: string | null;
+  /**
+   * Path to the local DB
+   *
+   * There are 4 value types that can be used to specify the database path:
+   *
+   * - `undefined` (or excluded from the client options)
+   *    The database will be created in the current working directory and is based on
+   *    the XMTP environment and client inbox ID.
+   *    Example: `xmtp-dev-<inbox-id>.db3`
+   *
+   * - `null`
+   *    No database will be created and all data will be lost once the client disconnects.
+   *
+   * - `string`
+   *    The given path will be used to create the database.
+   *    Example: `./my-db.db3`
+   *
+   * - `function`
+   *    A callback function that receives the inbox ID and returns a string path.
+   *    Example: `(inboxId) => string`
+   */
+  dbPath?: string | null | ((inboxId: string) => string);
+  /**
+   * Encryption key for the local DB
+   */
+  dbEncryptionKey?: Uint8Array;
+  /**
+   * Allow configuring codecs for additional content types
+   */
+  codecs?: ContentCodec[];
+  /**
+   * Enable structured JSON logging
+   */
+  structuredLogging?: boolean;
+  /**
+   * Logging level
+   */
+  loggingLevel?: LogLevel;
+  /**
+   * Disable automatic registration when creating a client
+   */
+  disableAutoRegister?: boolean;
+  /**
+   * Disable device sync
+   */
+  disableDeviceSync?: boolean;
+};
+```
+
+```tsx [React Native]
+import type { ContentCodec } from '@xmtp/react-native-sdk';
+
+type ClientOptions = {
+  /**
+   * Specify which XMTP environment to connect to. (default: `dev`)
+   */
+  env: 'local' | 'dev' | 'production';
+  /**
+   * Add a client app version identifier that's included with API requests.
+   * Production apps are strongly encouraged to set this value.
+   *
+   * You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+   *
+   * For example: `appVersion: 'alix/2.x'`
+   *
+   * If you have an app and an agent, it's best to distinguish them from each other by
+   * adding `-app` and `-agent` to the names. For example:
+   *
+   * - App: `appVersion: 'alix-app/3.x'`
+   * - Agent: `appVersion: 'alix-agent/2.x'`
+   *
+   * Setting this value provides telemetry that shows which apps are using the
+   * XMTP client SDK. This information can help XMTP core developers provide you with app
+   * support, especially around communicating important SDK updates, deprecations,
+   * and required upgrades.
+   */
+  appVersion?: string;
+  /**
+   * REQUIRED specify the encryption key for the database. The encryption key must be exactly 32 bytes.
+   */
+  dbEncryptionKey: Uint8Array;
+  /**
+   * Set optional callbacks for handling identity setup
+   */
+  preAuthenticateToInboxCallback?: () => Promise<void> | void;
+  /**
+   * OPTIONAL specify the XMTP managed database directory
+   */
+  dbDirectory?: string;
+  /**
+   * OPTIONAL specify a url to sync message history from
+   */
+  historySyncUrl?: string;
+  /**
+   * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
+   */
+  customLocalHost?: string;
+  /**
+   * Allow configuring codecs for additional content types
+   */
+  codecs?: ContentCodec[];
+};
+```
+
+```kotlin [Kotlin]
+import android.content.Context
+
+typealias PreEventCallback = suspend () -> Unit
+
+data class ClientOptions(
+    val api: Api = Api(),
+    val preAuthenticateToInboxCallback: PreEventCallback? = null,
+    val appContext: Context,
+    val dbEncryptionKey: ByteArray,
+    val historySyncUrl: String? = when (api.env) {
+        XMTPEnvironment.PRODUCTION -> "https://message-history.production.ephemera.network/"
+        XMTPEnvironment.LOCAL -> "http://0.0.0.0:5558"
+        else -> "https://message-history.dev.ephemera.network/"
+    },
+    val dbDirectory: String? = null,
+) {
+    data class Api(
+        val env: XMTPEnvironment = XMTPEnvironment.DEV,
+        val isSecure: Boolean = true,
+        /**
+         * Add a client app version identifier that's included with API requests.
+         * Production apps are strongly encouraged to set this value.
+         *
+         * You can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+         *
+         * For example: `appVersion: 'alix/2.x'`
+         *
+         * If you have an app and an agent, it's best to distinguish them from each other by
+         * adding `-app` and `-agent` to the names. For example:
+         *
+         * - App: `appVersion: 'alix-app/3.x'`
+         * - Agent: `appVersion: 'alix-agent/2.x'`
+         *
+         * Setting this value provides telemetry that shows which apps are using the
+         * XMTP client SDK. This information can help XMTP core developers provide you
+         * with app support, especially around communicating important SDK updates,
+         * deprecations, and required upgrades.
+         */
+        val appVersion: String? = null,
+    )
+}
+```
+
+```swift [Swift]
+import LibXMTP
+
+public struct ClientOptions {
+ // Specify network options
+ public struct Api {
+  /// Specify which XMTP network to connect to. Defaults to ``.dev``
+  public var env: XMTPEnvironment = .dev
+
+  /// Specify whether the API client should use TLS security. In general this should only be false when using the `.local` environment.
+  public var isSecure: Bool = true
+
+  /// Add a client app version identifier that's included with API requests.
+  /// Production apps are strongly encouraged to set this value.
+  ///
+  /// You can use the following format: `appVersion: "APP_NAME/APP_VERSION"`.
+  ///
+  /// For example: `appVersion: 'alix/2.x'`
+  ///
+  /// If you have an app and an agent, it's best to distinguish them from each other by
+  /// adding `-app` and `-agent` to the names. For example:
+  /// - App: `appVersion: 'alix-app/3.x'`
+  /// - Agent: `appVersion: 'alix-agent/2.x'`
+  ///
+  /// Setting this value provides telemetry that shows which apps are using the
+  /// XMTP client SDK. This information can help XMTP core developers provide you
+  //  with app support, especially around communicating important SDK updates,
+  /// deprecations, and required upgrades.
+  public var appVersion: String?
+ }
+
+ public var api = Api()
+ public var codecs: [any ContentCodec] = []
+
+ /// `preAuthenticateToInboxCallback` will be called immediately before an Auth Inbox signature is requested from the user
+ public var preAuthenticateToInboxCallback: PreEventCallback?
+
+ public var dbEncryptionKey: Data
+ public var dbDirectory: String?
+ public var historySyncUrl: String?
+}
+```
+
+:::
+
+### Set the `appVersion` client option
+
+Be sure to set the `appVersion` client option for your production app.
+
+You can use the following format: `appVersion: 'APP_NAME/APP_VERSION'`.
+
+For example: `appVersion: 'alix/2.x'`
+
+If you have an app and an agent, it's best to distinguish them from each other by adding `-app` and `-agent` to the names. For example:
+
+- App: `appVersion: 'alix-app/3.x'`
+- Agent: `appVersion: 'alix-agent/2.x'`
+
+The `appVersion` value is included with API requests to provide telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide you with app support, especially around communicating important SDK updates, deprecations, and required upgrades.
+
+### XMTP network environments
+
+XMTP provides `dev` and `production` network environments. These networks are completely separate and not interchangeable.
+
+For example, an XMTP identity on the `dev` network is completely distinct from the XMTP identity on the `production` network, as are the messages associated with these identities. In addition, XMTP identities and messages created on the `dev` network can't be accessed from or moved to the `production` network, and vice versa.
+
+:::tip
+When you create a client, it connects to the XMTP `dev` network by default. Set your client's network environment using the appropriate [client option](#configure-an-xmtp-client).
+:::
+
+The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
+
+You can use a `local` network environment to have a client communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
+
+## Build an existing client
+
+Build, or resume, an existing client (created using [`Client.create()`](#create-a-client)) that's logged in and has an existing local database.
+
+For React Native, Android, and iOS SDKs, when building a client with an existing `inboxId`, the client automatically operates in offline mode since no network request is needed to check the identity ledger. In offline mode, the client:
+
+- Skips all network requests (preference syncing between installations, validating inbox, etc.)
+- Works entirely from the local database
+- Can be synchronized later with `syncAllConversations()` or by recreating the client without the offline flag.
+
+:::code-group
+
+```tsx [Browser]
+import { Client, type Identifier } from '@xmtp/browser-sdk';
+
+const identifier: Identifier = {
+  identifier: '0x1234567890abcdef1234567890abcdef12345678',
+  identifierKind: 'Ethereum',
+};
+const client = await Client.build(identifier, options);
+```
+
+```tsx [Node]
+import { Client, IdentifierKind, type Identifier } from '@xmtp/node-sdk';
+
+const identifier: Identifier = {
+  identifier: '0x1234567890abcdef1234567890abcdef12345678',
+  identifierKind: IdentifierKind.Ethereum,
+};
+const client = await Client.build(identifier, options);
+```
+
+```tsx [React Native]
+Client.build(identity, {
+  env: 'production', // 'local' | 'dev' | 'production'
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+```
+
+```kotlin [Kotlin]
+val options = ClientOptions(
+    ClientOptions.Api(XMTPEnvironment.PRODUCTION, true),
+    appContext = ApplicationContext(),
+    dbEncryptionKey = keyBytes
+)
+val client = Client().build(
+        identity = identity,
+        options = options
+    )
+```
+
+```swift [Swift]
+let options = ClientOptions.init(
+  api: .init(env: .production, isSecure: true),
+  dbEncryptionKey: keyBytes // 32 bytes
+)
+let client = try await Client.build(
+  identity: identity,
+  options: options
+)
+```
+
+:::
+
+## Log out a client
+
+When you log a user out of your app, you can give them the option to delete their local database.
+
+:::tip[Important]
+If the user chooses to delete their local database, they will lose all of their messages and will have to create a new installation the next time they log in.
+:::
+
+:::code-group
+
+```tsx [Browser]
+/**
+ * The Browser SDK client does not currently support deleting the local database.
+ */
+
+// this method only terminates the client's associated web worker
+client.close();
+```
+
+```tsx [Node]
+/**
+ * The Node SDK client does not have a method to delete the local database.
+ * Simply delete the local database file from the file system.
+ */
+```
+
+```tsx [React Native]
+await client.deleteLocalDatabase();
+await Client.dropClient(client.installationId);
+```
+
+```kotlin [Kotlin]
+client.deleteLocalDatabase()
+```
+
+```swift [Swift]
+try await client.deleteLocalDatabase()
+```
+
+:::

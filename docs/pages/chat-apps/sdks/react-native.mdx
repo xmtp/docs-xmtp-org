@@ -1,0 +1,65 @@
+# Get started with the XMTP React Native SDK
+
+Use the [XMTP React Native SDK](https://github.com/xmtp/xmtp-react-native) to build secure, private, and decentralized messaging into your cross-platform mobile app.
+
+The guide provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free chats using user consent preferences
+
+## Quickstart
+
+```tsx [React Native]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
+  return {
+    getIdentifier: async () =>
+      new PublicIdentity(eoaAccount.address, 'ETHEREUM'),
+    getChainId: () => undefined,
+    getBlockNumber: () => undefined,
+    signerType: () => 'EOA',
+    signMessage: async (message: string) => ({
+      signature: await eoaAccount.signMessage(message),
+    }),
+  };
+}
+
+// 2. Create the XMTP client
+const client = Client.create(signer, {
+  env: 'production',
+  dbEncryptionKey: keyBytes, // 32 bytes
+});
+
+// 3. Start conversations
+const group = await client.conversations.newGroup([bo.inboxId, caro.inboxId]);
+const groupWithMeta = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  {
+    name: 'The Group Name',
+    imageUrl: 'www.groupImage.com',
+    description: 'The description of the group',
+    permissionLevel: 'admin_only',
+  }
+);
+
+// 4. Send messages
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+await dm.send('Hello world');
+await group.send('Hello everyone');
+
+// 5. List, stream, and sync
+// List existing conversations
+await client.conversations.list(['allowed']);
+// Stream new messages
+await client.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ['allowed'] }
+);
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations
+await client.conversations.syncAllConversations(['allowed']);
+```

@@ -7,7 +7,7 @@ import { glob } from 'glob';
 // Define the directories to process
 const targetDirectories = [
   'docs/pages/agents/**/*.{md,mdx}',
-  'docs/pages/inboxes/**/*.{md,mdx}', 
+  'docs/pages/chat-apps/**/*.{md,mdx}', 
   'docs/pages/network/**/*.{md,mdx}',
   'docs/pages/protocol/**/*.{md,mdx}'
 ];
@@ -185,7 +185,7 @@ async function main() {
   
   if (processedCount > 0) {
     console.log('\n🎉 Breadcrumbs have been added to all documentation pages!');
-    console.log('💡 You can now navigate to any page in /agents/, /inboxes/, /network/, or /protocol/ to see the breadcrumbs.');
+    console.log('💡 You can now navigate to any page in /agents/, /chat-apps/, /network/, or /protocol/ to see the breadcrumbs.');
   }
 }
 
