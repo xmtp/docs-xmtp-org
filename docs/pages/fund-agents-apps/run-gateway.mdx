@@ -55,22 +55,22 @@ package main
 import (
 	"context"
 	"log"
+	"slices"
 
-	"github.com/xmtp/xmtpd/pkg/payer"
+	"github.com/xmtp/xmtpd/pkg/gateway"
 )
 
 func main() {
-	payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+	// This will gather all the config from environment variables and flags
+	gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
 		Build()
 	if err != nil {
-		log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
+		log.Fatalf("Failed to build gateway service: %v", err)
 	}
 
-	err = payerService.Serve(context.Background())
-	if err != nil {
-		log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
-	}
+	gatewayService.WaitForShutdown()
 }
+
 ```
 
 ## Configure your XMTP Gateway Service
