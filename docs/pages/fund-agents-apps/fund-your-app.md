@@ -48,7 +48,7 @@ In the next step, you'll allocate USDC in your payer wallet to create a messagin
 
 ## Step 4: Allocate funds for messaging
 
-The XMTP Funding Portal will accept only testnet USDC until **October 7, 2025**. Plan your testnet and mainnet funding accordingly.
+The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Home page, click **Fund**.
