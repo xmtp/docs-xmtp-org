@@ -149,7 +149,7 @@ To check conversation status before initiating a network action:
 :::code-group
 
 ```tsx [React Native]
-conversation.isActive();
+await conversation.isActive();
 ```
 
 ```kotlin [Kotlin]

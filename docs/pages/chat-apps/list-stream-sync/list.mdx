@@ -90,7 +90,7 @@ let orderFilteredConversations = try await client.conversations.listGroups(conse
 
 The `isActive()` method determines whether the current user is still an active member of a group conversation. For example:
 
-- When a user is added to a group, `isActive()` returns `true` for that user
-- When a user is removed from a group, `isActive()` returns `false` for that user
+- When a user is added to a group, `await isActive()` returns `true` for that user  
+- When a user is removed from a group, `await isActive()` returns `false` for that user
 
-You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
+In Browser SDK, `isActive()` is an async method that must be awaited. You can use the result to filter conversations or create separate sections for "archived" or "inactive" conversations.
