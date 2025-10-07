@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:48 PM UTC / October 06, 2025
+Generated at 05:40 PM UTC / October 07, 2025
 
 ## Instructions for AI Tools
 
@@ -11112,6 +11112,11 @@ Subscribe only to what you need using Node’s `EventEmitter` interface. Events 
   - `text`: a new incoming text message
   - `unknownMessage`: a message that doesn't match any specific type
 
+- **Conversation events**
+  - `conversation`: a new group or DM conversation
+  - `dm`: a new DM conversation
+  - `group`: a new group conversation
+
 - **Lifecycle events**
   - `start` / `stop`: agent lifecycle events
   - `unhandledError`: unhandled errors
@@ -11130,6 +11135,15 @@ agent.on('reaction', async (ctx) => {
 
 agent.on('reply', async (ctx) => {
   console.log(`Reply to: ${ctx.message.content.reference}`);
+});
+
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  await ctx.conversation.send('Welcome to our DM!');
+});
+
+agent.on('group', async (ctx) => {
+  await ctx.conversation.send('Hello group!');
 });
 
 // Listen to unhandled events
