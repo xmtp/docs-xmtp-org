@@ -93,4 +93,44 @@ The `isActive()` method determines whether the current user is still an active m
 - When a user is added to a group, `isActive()` returns `true` for that user
 - When a user is removed from a group, `isActive()` returns `false` for that user
 
-You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
+:::code-group
+
+```js [Browser]
+// Check if user is active in a specific conversation
+const isUserActive = await conversation.isActive();
+console.log('User is active:', isUserActive);
+
+// Filter active conversations
+const activeConversations = [];
+for (const conversation of allConversations) {
+  if (await conversation.isActive()) {
+    activeConversations.push(conversation);
+  }
+}
+```
+
+```js [Node]
+// Check if user is active in a specific conversation  
+const isUserActive = conversation.isActive;
+console.log('User is active:', isUserActive);
+
+// Filter active conversations (direct property access)
+const activeConversations = allConversations.filter(conversation => conversation.isActive);
+```
+
+```tsx [React Native]
+// Filter conversations by active status when listing
+const conversations = await alix.conversations.list({
+  members: false,
+  consentState: false,
+  description: false,
+  creatorInboxId: false,
+  addedByInboxId: false,
+  isActive: true, // Only show active conversations
+  lastMessage: true,
+});
+```
+
+:::
+
+You can use a user's active status to filter conversations and potentially have a separate section for "archived" or "inactive" conversations.
