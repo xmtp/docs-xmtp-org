@@ -46,11 +46,11 @@ agent.on('group', async (ctx) => {
 
 // Listen to unhandled events
 agent.on('unhandledError', (error) => {
-  console.error('Agent error', error);
+  console.error(`Agent error: ${error}`);
 });
 
 agent.on('unknownMessage', (ctx) => {
-  console.error('Message type is unknown', ctx);
+  // handle the unknown message
 });
 ```
 

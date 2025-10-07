@@ -42,8 +42,8 @@ import { getRandomValues } from 'node:crypto';
 const walletKey = generatePrivateKey();
 const encryptionKeyHex = getRandomValues(new Uint8Array(32));
 
-console.log('Wallet key:', walletKey);
-console.log('Encryption key:', encryptionKeyHex);
+console.log(`Wallet key: ${walletKey}`);
+console.log(`Encryption key: ${encryptionKeyHex}`);
 ```
 
 Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:

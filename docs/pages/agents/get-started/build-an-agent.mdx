@@ -54,6 +54,16 @@ agent.on('start', () => {
 await agent.start();
 ```
 
+### Local database
+
+:::danger
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+:::
+
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history. To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+
 ### Set environment variables
 
 To run an example XMTP agent, you must create a `.env` file with the following variables:

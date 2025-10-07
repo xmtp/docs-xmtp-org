@@ -51,7 +51,7 @@ import { getTestUrl } from '@xmtp/agent-sdk/debug';
 
 agent.on('text', async (ctx) => {
   const senderAddress = ctx.getSenderAddress();
-  console.log('Message from:', senderAddress);
+  console.log(`Message from: ${senderAddress}`);
 });
 ```
 
