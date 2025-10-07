@@ -10,7 +10,7 @@ The [smart contracts](https://github.com/xmtp/smart-contracts) used by the porta
 
 ## Step 1. Create your payer wallet
 
-A payer wallet is what you'll use to fund your XMTP Gateway Service.
+A payer wallet is what your XMTP Gateway Service uses to pay fees.
 
 The payer wallet must be:
 
@@ -21,7 +21,7 @@ The payer wallet must be:
 
 You can create a payer wallet using common non-custodial wallet apps, such as Coinbase Wallet and MetaMask.
 
-If useful for shared budgets, you can use a multisig wallet. For example, a Gnosis Safe or any ERC-1271 wallet can own a balance in the Payer Registry and sign allowance approvals.
+Payer wallets can be funded by Ethereum EOAs and smart contract wallets. For example, a Gnosis Safe or any ERC-1271 wallet can deposit funds into a payer account using the Funding Portal.
 
 You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-agents-apps/run-gateway).
 
@@ -48,7 +48,7 @@ In the next step, you'll allocate USDC in your payer wallet to create a messagin
 
 ## Step 4: Allocate funds for messaging
 
-The XMTP Funding Portal will accept only testnet USDC until **October 7, 2025**. Plan your testnet and mainnet funding accordingly.
+The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. On the Home page, click **Fund**.
