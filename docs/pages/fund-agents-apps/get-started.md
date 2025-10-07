@@ -4,7 +4,19 @@ Starting December 9, 2025, apps and agents must pay fees to send messages on the
 
 This guide provides a timeline and checklist to prepare your app for this transition.
 
-## Key milestones
+## Key production milestones
+- **October 15, 2025**:
+  - The XMTP gateway service library is available in Go.
+  - **→ Deploy your gateway service.**
+- **November 1, 2025**:
+  - XMTP payer wallets can be funded on mainnet.
+  - **→ Fund your payer wallet.**
+- **November 15 2025**:
+  - All client SDKs and are compatible with mainnet.
+  - **→ Update your client SDKs.**
+- **December 9, 2025**:
+  - All message traffic is routed through the decentralized network.
+  - **→ Older client SDKs are incompatible.**
 
 - **August 12, 2025**:
   - Decentralized network infrastructure and XMTP Funding Portal go live.
