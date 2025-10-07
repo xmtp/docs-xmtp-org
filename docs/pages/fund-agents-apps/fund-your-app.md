@@ -10,7 +10,7 @@ The [smart contracts](https://github.com/xmtp/smart-contracts) used by the porta
 
 ## Step 1. Create your payer wallet
 
-A payer wallet is what you'll use to fund your XMTP Gateway Service.
+A payer wallet is what your XMTP Gateway Service uses to pay fees.
 
 The payer wallet must be:
 
