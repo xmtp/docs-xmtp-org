@@ -8,7 +8,7 @@ This document covers **envelope types** that clients can publish to XMTP APIs. T
 
 The envelope types described here are handled automatically by XMTP SDKs and rarely need direct interaction from app developers.
 
-For **app development**, you'll typically work with [content types](/inboxes/content-types/content-types) instead. Content types define how your app's messages are structured and encoded (text, attachments, reactions, etc.) and are what you'll use in your day-to-day development.
+For **app development**, you'll typically work with [content types](/chat-apps/content-types/content-types) instead. Content types define how your app's messages are structured and encoded (text, attachments, reactions, etc.) and are what you'll use in your day-to-day development.
 
 ## Overview
 
@@ -57,7 +57,7 @@ Understanding commit messages is especially helpful when debugging and understan
 #### User-initiated commits
 
 - **Add member commits**: When a user explicitly adds someone to a group
-- **Remove member commits**: When a user removes someone from a group  
+- **Remove member commits**: When a user removes someone from a group
 - **Update metadata commits**: When a user changes group name, description, or permissions
 - **Update permissions commits**: When a user modifies group permission settings
 
@@ -115,6 +115,6 @@ They handle:
 
 - Linking an installation to an XMTP inbox
 - Key rotation and revocation
-- Linking multiple devices (though [history sync](/inboxes/list-stream-sync/history-sync) is used to synchronize data between those devices)
+- Linking multiple devices (though [history sync](/chat-apps/list-stream-sync/history-sync) is used to synchronize data between those devices)
 
 Identity update messages are stored permanently to ensure continuity of trust and identity verification.

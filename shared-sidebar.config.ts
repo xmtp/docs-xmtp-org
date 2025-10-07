@@ -2,18 +2,18 @@
 // This eliminates duplication between vocs.config.tsx and AutoBreadcrumb.tsx
 
 export const sidebarConfig = {
-  '/agents/': [
+  '/agents/':  [
     {
       text: "Get started",
       collapsed: false,
       items: [
         {
-          text: "Tutorial: Build an agent 🤖",
-          link: "/agents/get-started/build-an-agent",
+          text: "Introduction",
+          link: "/agents/get-started/intro",
         },
         {
-          text: "What is XMTP?",
-          link: "/agents/get-started/intro",
+          text: "Quickstart",
+          link: "/agents/get-started/build-an-agent",
         },
         {
           text: "FAQ",
@@ -22,44 +22,58 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Build core messaging",
+      text: "Build agents",
       collapsed: false,
       items: [
         {
-          text: "Create an EOA or SCW signer",
-          link: "/agents/core-messaging/create-a-signer",
-        },
-        {
           text: "Create a client",
-          link: "/agents/core-messaging/create-a-client",
+          link: "/agents/build-agents/create-a-client",
         },
         {
-          text: "Send messages",
-          link: "/agents/core-messaging/send-messages",
+          text: "Local database",
+          link: "/agents/build-agents/local-database",
         },
         {
           text: "Stream messages",
-          link: "/agents/core-messaging/stream",
+          link: "/agents/build-agents/stream",
         },
         {
           text: "Create conversations",
-          link: "/agents/core-messaging/create-conversations",
+          link: "/agents/build-agents/create-conversations",
         },
         {
-          text: "Manage agent installations",
-          link: "/agents/core-messaging/agent-installations",
+          text: "Groups",
+          link: "/agents/build-agents/groups",
         },
         {
-          text: "Manage group permissions",
-          link: "/agents/core-messaging/group-permissions",
+          text: "Group permissions",
+          link: "/agents/build-agents/group-permissions",
+        },
+      ],
+    },
+    {
+      text: "Core concepts",
+      collapsed: false,
+      items: [
+        {
+          text: "Identity",
+          link: "/agents/concepts/identity",
         },
         {
-          text: "Manage group metadata",
-          link: "/agents/core-messaging/group-metadata",
+          text: "Events",
+          link: "/agents/concepts/event-driven",
         },
         {
-          text: "Observe rate limits",
-          link: "/agents/core-messaging/rate-limits",
+          text: "Middleware",
+          link: "/agents/concepts/middleware",
+        },
+        {
+          text: "Filters",
+          link: "/agents/concepts/filters",
+        },
+        {
+          text: "Context",
+          link: "/agents/concepts/context",
         },
         {
           text: "Keep your agent funded",
@@ -77,6 +91,18 @@ export const sidebarConfig = {
           link: "/agents/content-types/content-types",
         },
         {
+          text: "Reactions",
+          link: "/agents/content-types/reactions",
+        },
+        {
+          text: "Replies",
+          link: "/agents/content-types/replies",
+        },
+        {
+          text: "Group updates",
+          link: "/agents/content-types/group-updates",
+        },
+        {
           text: "Attachments",
           link: "/agents/content-types/attachments",
         },
@@ -85,35 +111,39 @@ export const sidebarConfig = {
           link: "/agents/content-types/transactions",
         },
         {
-          text: "Onchain transaction references",
+          text: "Transaction references",
           link: "/agents/content-types/transaction-refs",
-        },
-        {
-          text: "Reactions",
-          link: "/agents/content-types/reactions",
-        },
-        {
-          text: "Replies",
-          link: "/agents/content-types/replies",
         },
       ],
     },
     {
-      text: "Debug agents",
-      link: "/agents/debug-agents",
+      text: "Examples",
+      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
       items: [],
     },
     {
-      text: "Deploy agents",
-      link: "/agents/deploy-agent",
-      items: [],
+      text: "Deployment",
+      collapsed: false,
+      items: [
+        {
+          text: "Debug agents",
+          link: "/agents/deploy/debug-agents",
+        },
+        {
+          text: "Deploy agents",
+          link: "/agents/deploy/deploy-agent",
+        },
+        {
+          text: "Security",
+          link: "/agents/deploy/agent-security",
+        },
+        {
+          text: "Rate limits",
+          link: "/agents/deploy/rate-limits",
+        },
+      ],
     },
-    {
-      text: "Security",
-      link: "/agents/agent-security",
-      items: [],
-    },
-  ],
+  ],  
   '/network/': [
     {
       text: "Run a network node",
@@ -152,70 +182,116 @@ export const sidebarConfig = {
       ],
   '/protocol/': [
     {
-      text: "XMTP Improvement Proposals",
-      link: "/protocol/xips",
-    },
-    {
-      text: "Envelope types",
-      link: "/protocol/envelope-types",
-    },
-    {
-      text: "Topics",
-      link: "/protocol/topics",
-    },
-    {
-      text: "Cursors",
-      link: "/protocol/cursors",
-    },
-    {
-      text: "Security",
-      link: "/protocol/security",
+      text: "Overview",
+      link: "/protocol/overview",
     },
     {
       text: "Encryption",
-      link: "https://xmtp.org/docs/concepts/encryption",
+      collapsed: false,
+      items: [
+        {
+          text: "Security",
+          link: "/protocol/security",
+        },
+        {
+          text: "Epochs",
+          link: "/protocol/epochs",
+        },
+        {
+          text: "Envelope types",
+          link: "/protocol/envelope-types",
+        },
+      ],
     },
     {
       text: "Identity",
-      link: "https://xmtp.org/docs/concepts/identity",
+      collapsed: false,
+      items: [
+        {
+          text: "Inboxes, identities, and installations",
+          link: "/protocol/identity",
+        },
+        {
+          text: "Wallet signatures",
+          link: "/protocol/signatures",
+        },
+      ],
     },
     {
-      text: "Consent",
-      link: "https://xmtp.org/docs/concepts/consent",
+      text: "Delivery",
+      collapsed: false,
+      items: [
+        {
+          text: "Topics",
+          link: "/protocol/topics",
+        },
+        {
+          text: "Cursors",
+          link: "/protocol/cursors",
+        },
+        {
+          text: "Intents",
+          link: "/protocol/intents",
+        },
+      ],
     },
     {
-      text: "Decentralization",
-      link: "https://xmtp.org/docs/concepts/decentralizing-xmtp",
+      text: "Evolution",
+      collapsed: false,
+      items: [
+        {
+          text: "XMTP Improvement Proposals",
+          link: "/protocol/xips",
+        },
+      ],
     },
     {
-      text: "Wallet signatures",
-      link: "/protocol/signatures",
+      text: "Vision",
+      collapsed: false,
+      items: [
+        {
+          text: "Security",
+          link: "https://xmtp.org/vision/concepts/encryption",
+        },      
+        {
+          text: "Identity",
+          link: "https://xmtp.org/vision/concepts/identity",
+        },     
+        {
+          text: "Consent",
+          link: "https://xmtp.org/vision/concepts/consent",
+        }, 
+        {
+          text: "Decentralization",
+          link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
+        }, 
+      ],
     },
   ],
-  '/inboxes/': [
+  '/chat-apps/': [
     {
       text: "Intro to XMTP",
       collapsed: false,
       items: [
         {
           text: "Get started",
-          link: "/inboxes/intro/get-started",
+          link: "/chat-apps/intro/get-started",
         },
         {
           text: "Why XMTP?",
-          link: "/inboxes/intro/why-xmtp",
+          link: "/chat-apps/intro/why-xmtp",
         },
         {
           text: "FAQ",
-          link: "/inboxes/intro/faq",
+          link: "/chat-apps/intro/faq",
         },
         {
           text: "Build with LLMs",
-          link: "/inboxes/intro/build-with-llms",
+          link: "/chat-apps/intro/build-with-llms",
         },
         {
           text: "Dev support",
-          link: "/inboxes/intro/dev-support",
+          link: "/chat-apps/intro/dev-support",
         },
         {
           text: "Roadmap",
@@ -229,23 +305,23 @@ export const sidebarConfig = {
       items: [
         {
           text: "Browser SDK",
-          link: "/inboxes/sdks/browser",
+          link: "/chat-apps/sdks/browser",
         },
         {
           text: "Node SDK",
-          link: "/inboxes/sdks/node",
+          link: "/chat-apps/sdks/node",
         },
         {
           text: "React Native SDK",
-          link: "/inboxes/sdks/react-native",
+          link: "/chat-apps/sdks/react-native",
         },
         {
           text: "Android SDK",
-          link: "/inboxes/sdks/android",
+          link: "/chat-apps/sdks/android",
         },
         {
           text: "iOS SDK",
-          link: "/inboxes/sdks/ios",
+          link: "/chat-apps/sdks/ios",
         },
       ],
     },
@@ -255,39 +331,39 @@ export const sidebarConfig = {
       items: [
         {
           text: "Create an EOA or SCW signer",
-          link: "/inboxes/core-messaging/create-a-signer",
+          link: "/chat-apps/core-messaging/create-a-signer",
         },
         {
           text: "Create a client",
-          link: "/inboxes/core-messaging/create-a-client",
+          link: "/chat-apps/core-messaging/create-a-client",
         },
         {
           text: "Create conversations",
-          link: "/inboxes/core-messaging/create-conversations",
+          link: "/chat-apps/core-messaging/create-conversations",
         },
         {
           text: "Send messages",
-          link: "/inboxes/core-messaging/send-messages",
+          link: "/chat-apps/core-messaging/send-messages",
         },
         {
           text: "Manage group permissions",
-          link: "/inboxes/core-messaging/group-permissions",
+          link: "/chat-apps/core-messaging/group-permissions",
         },
         {
           text: "Manage group metadata",
-          link: "/inboxes/core-messaging/group-metadata",
+          link: "/chat-apps/core-messaging/group-metadata",
         },
         {
           text: "Support group invite links",
-          link: "/inboxes/core-messaging/support-group-invite-links",
+          link: "/chat-apps/core-messaging/support-group-invite-links",
         },
         {
           text: "Manage inboxes, IDs, and installations",
-          link: "/inboxes/core-messaging/manage-inboxes",
+          link: "/chat-apps/core-messaging/manage-inboxes",
         },
         {
           text: "Observe rate limits",
-          link: "/inboxes/core-messaging/rate-limits",
+          link: "/chat-apps/core-messaging/rate-limits",
         },
         {
           text: "Keep your app funded",
@@ -301,27 +377,27 @@ export const sidebarConfig = {
       items: [
         {
           text: "List conversations",
-          link: "/inboxes/list-stream-sync/list",
+          link: "/chat-apps/list-stream-sync/list",
         },
         {
-          text: "Stream messages",
-          link: "/inboxes/list-stream-sync/stream",
+          text: "Stream conversations and messages",
+          link: "/chat-apps/list-stream-sync/stream",
         },
         {
           text: "Sync conversations and messages",
-          link: "/inboxes/list-stream-sync/sync-and-syncall",
+          link: "/chat-apps/list-stream-sync/sync-and-syncall",
         },
         {
           text: "Sync preferences",
-          link: "/inboxes/list-stream-sync/sync-preferences",
+          link: "/chat-apps/list-stream-sync/sync-preferences",
         },
         {
           text: "Support backups",
-          link: "/inboxes/list-stream-sync/archive-backups",
+          link: "/chat-apps/list-stream-sync/archive-backups",
         },
         {
           text: "History sync",
-          link: "/inboxes/list-stream-sync/history-sync",
+          link: "/chat-apps/list-stream-sync/history-sync",
         },
       ],
     },
@@ -331,53 +407,53 @@ export const sidebarConfig = {
       items: [
         {
           text: "Understand content types",
-          link: "/inboxes/content-types/content-types",
+          link: "/chat-apps/content-types/content-types",
         },
         {
           text: "Attachments",
-          link: "/inboxes/content-types/attachments",
+          link: "/chat-apps/content-types/attachments",
         },
         {
           text: "Onchain transactions",
-          link: "/inboxes/content-types/transactions",
+          link: "/chat-apps/content-types/transactions",
         },
         {
           text: "Onchain transaction references",
-          link: "/inboxes/content-types/transaction-refs",
+          link: "/chat-apps/content-types/transaction-refs",
         },
         {
           text: "Reactions",
-          link: "/inboxes/content-types/reactions",
+          link: "/chat-apps/content-types/reactions",
         },
         {
           text: "Replies",
-          link: "/inboxes/content-types/replies",
+          link: "/chat-apps/content-types/replies",
         },
         {
           text: "Read receipts",
-          link: "/inboxes/content-types/read-receipts",
+          link: "/chat-apps/content-types/read-receipts",
         },
         {
           text: "Custom content",
-          link: "/inboxes/content-types/custom",
+          link: "/chat-apps/content-types/custom",
         },
         {
           text: "Fallback text for compatibility",
-          link: "/inboxes/content-types/fallback",
+          link: "/chat-apps/content-types/fallback",
         },
       ],
     },
     {
-      text: "Support spam-free inboxes",
+      text: "Support spam-free chat apps",
       collapsed: false,
       items: [
         {
           text: "Understand user consent",
-          link: "/inboxes/user-consent/user-consent",
+          link: "/chat-apps/user-consent/user-consent",
         },
         {
           text: "Support user consent",
-          link: "/inboxes/user-consent/support-user-consent",
+          link: "/chat-apps/user-consent/support-user-consent",
         },
       ],
     },
@@ -387,34 +463,34 @@ export const sidebarConfig = {
       items: [
         {
           text: "Understand push notifications",
-          link: "/inboxes/push-notifs/understand-push-notifs",
+          link: "/chat-apps/push-notifs/understand-push-notifs",
         },
         {
           text: "Support push notifications",
-          link: "/inboxes/push-notifs/push-notifs",
+          link: "/chat-apps/push-notifs/push-notifs",
         },
         {
           text: "Run a push notifications server",
-          link: "/inboxes/push-notifs/pn-server",
+          link: "/chat-apps/push-notifs/pn-server",
         },
         {
           text: "Try Android push notifications",
-          link: "/inboxes/push-notifs/android-pn",
+          link: "/chat-apps/push-notifs/android-pn",
         },
         {
           text: "Try iOS push notifications",
-          link: "/inboxes/push-notifs/ios-pn",
+          link: "/chat-apps/push-notifs/ios-pn",
         },
       ],
     },
     {
       text: "Debug your app",
-      link: "/inboxes/debug-your-app",
+      link: "/chat-apps/debug-your-app",
       items: [],
     },
     {
       text: "Sign and verify payloads",
-      link: "/inboxes/use-signatures",
+      link: "/chat-apps/use-signatures",
       items: [],
     },
   ],

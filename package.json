@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vocs dev",
     "build": "vocs build",
+    "dev": "vocs dev",
+    "lint:md:fix": "npm run prettier:fix && markdownlint --fix 'docs/**/*.md' 'docs/**/*.mdx'",
+    "lint:md": "npm run prettier:lint && markdownlint 'docs/**/*.md' 'docs/**/*.mdx'",
+    "prettier:fix": "npm run prettier:lint -- --write",
+    "prettier:lint": "prettier --ignore-path .prettierignore docs/pages",
     "preview": "vocs preview",
-    "spell": "cspell",
-    "lint:md": "markdownlint 'docs/**/*.md' 'docs/**/*.mdx'",
-    "lint:md:fix": "markdownlint --fix 'docs/**/*.md' 'docs/**/*.mdx'"
+    "spell": "cspell"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
@@ -25,6 +27,7 @@
     "cspell": "^9.1.3",
     "markdownlint-cli": "^0.45.0",
     "markdownlint-rule-search-replace": "^1.2.0",
+    "prettier": "^3.6.2",
     "typescript": "latest"
   }
 }

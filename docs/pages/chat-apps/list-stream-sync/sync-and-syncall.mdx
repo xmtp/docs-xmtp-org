@@ -1,0 +1,112 @@
+# Sync conversations and messages
+
+:::tip[Note]
+Syncing does not refetch existing conversations and messages. It also does not fetch messages for group chats you are no longer a part of.
+:::
+
+## 🎥 walkthrough: Syncing
+
+This video provides a walkthrough of key concepts required to implement syncing correctly.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/jl7P0onApxw?si=YNafIHebx9Kxycos"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+## Sync a specific conversation
+
+Get all new messages and group updates (name, description, etc.) for a specific conversation from the network.
+
+:::code-group
+
+```js [Browser]
+await client.conversation.sync();
+```
+
+```js [Node]
+await client.conversation.sync();
+```
+
+```tsx [React Native]
+await client.conversation.sync();
+```
+
+```kotlin [Kotlin]
+client.conversation.sync()
+```
+
+```swift [Swift]
+try await client.conversation.sync()
+```
+
+:::
+
+## Sync new conversations
+
+Get any new group chat or DM conversations from the network.
+
+:::code-group
+
+```js [Browser]
+await client.conversations.sync();
+```
+
+```js [Node]
+await client.conversations.sync();
+```
+
+```tsx [React Native]
+await client.conversations.sync();
+```
+
+```kotlin [Kotlin]
+client.conversations.sync()
+```
+
+```swift [Swift]
+try await client.conversations.sync()
+```
+
+:::
+
+## Sync all new welcomes, conversations, messages, and preferences
+
+Sync all new welcomes, group chat and DM conversations, messages, and [preference updates](/chat-apps/list-stream-sync/sync-preferences) from the network.
+
+By default, `syncAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+
+To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stream-sync/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
+
+:::code-group
+
+```js [Browser]
+await client.conversations.syncAll(['allowed']);
+```
+
+```js [Node]
+await client.conversations.syncAll(['allowed']);
+```
+
+```tsx [React Native]
+await client.conversations.syncAllConversations(['allowed']);
+```
+
+```kotlin [Kotlin]
+client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+```
+
+```swift [Swift]
+try await client.conversations.syncAllConversations(consentState: [.allowed])
+```
+
+:::

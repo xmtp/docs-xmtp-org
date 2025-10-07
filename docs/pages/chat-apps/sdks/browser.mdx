@@ -1,0 +1,74 @@
+# Get started with the XMTP Browser SDK
+
+Use the [XMTP Browser SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/browser-sdk) to build web-based apps, tools, and experiences with secure, private, and decentralized messaging.
+
+The guide provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free chats using user consent preferences
+
+## Quickstart
+
+```tsx [Browser]
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+import type { Signer, Identifier } from '@xmtp/browser-sdk';
+
+const signer: Signer = {
+  type: 'EOA',
+  getIdentifier: () => ({
+    identifier: '0x...', // Ethereum address as the identifier
+    identifierKind: 'Ethereum',
+  }),
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+};
+
+// 2. Create the XMTP client
+import { Client } from '@xmtp/browser-sdk';
+const client = await Client.create(signer, {
+  // Note: dbEncryptionKey is not used for encryption in browser environments
+});
+
+// 3. Start conversations
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+
+// 4. Send messages
+await group.send('Hello everyone');
+
+// 5. List, stream, and sync
+// List existing conversations
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
+const allGroups = await client.conversations.listGroups({
+  consentStates: [ConsentState.Allowed],
+});
+const allDms = await client.conversations.listDms({
+  consentStates: [ConsentState.Allowed],
+});
+// Stream new messages
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log('New message:', message);
+  },
+  onError: (error) => {
+    console.error(error);
+  },
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  console.log('New message:', message);
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations
+await client.conversations.syncAll(['allowed']);
+```

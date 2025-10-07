@@ -1,0 +1,185 @@
+---
+description: Learn how to use the reply content type to support quote replies in your app built with XMTP
+---
+
+# Support replies in your app built with XMTP
+
+Use the reply content type to support quote replies in your app. A reply is a method to directly respond to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
+
+## Use a local database for performance
+
+Use a local database to store replies. This will enable your app to performantly display a reply with its [referenced message](#send-a-reply) when rendering message lists.
+
+### Install the package
+
+In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-reply
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reply
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reply
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+:::code-group
+
+```js [Browser]
+import { ReplyCodec } from '@xmtp/content-type-reply';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new ReplyCodec()],
+});
+```
+
+```js [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  codecs: [new ReplyCodec()],
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ReplyCodec
+
+Client.register(codec = ReplyCodec())
+```
+
+```swift [Swift]
+Client.register(codec: ReplyCodec())
+```
+
+:::
+
+## Send a reply
+
+Once you've created a reply, you can send it. Replies are represented as objects with two keys:
+
+- `reference`: ID of the message being replied to
+
+- `content`: String representation of the reply
+
+:::code-group
+
+```ts [Browser]
+import { ContentTypeText } from '@xmtp/content-type-text';
+import { ContentTypeReply } from '@xmtp/content-type-reply';
+import type { Reply } from '@xmtp/content-type-reply';
+
+const reply: Reply = {
+  reference: someMessageID,
+  contentType: ContentTypeText,
+  content: 'I concur',
+};
+
+await conversation.send(reply, {
+  contentType: ContentTypeReply,
+});
+```
+
+```js [React Native]
+// Assuming you have a conversation object and the ID of the message you're replying to
+const replyContent = {
+  reply: {
+    reference: messageId, // ID of the message you're replying to
+    content: {
+      text: 'This is a reply', // Content of the reply
+    },
+  },
+};
+
+await conversation.send(replyContent);
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ContentTypeReply
+import org.xmtp.android.library.codecs.ContentTypeText
+import org.xmtp.android.library.codecs.Reply
+
+// Assuming aliceConversation and messageToReact are already defined
+val reply = Reply(
+    reference = messageToReact.id,
+    content = "Hello",
+    contentType = ContentTypeText
+)
+
+aliceConversation.send(
+    content = reply,
+    options = SendOptions(contentType = ContentTypeReply),
+)
+```
+
+```swift [Swift]
+let reply = Reply(
+  reference: messageToReply.id,
+  content: "Hello",
+  contentType: ContentTypeText
+)
+
+try await conversation.send(
+  content: reply,
+  options: .init(contentType: ContentTypeReply)
+)
+```
+
+:::
+
+## Receive the content type
+
+:::code-group
+
+```ts [Browser]
+if (message.contentType.sameAs(ContentTypeReply)) {
+  // We've got a reply.
+  const reply: Reply = message.content;
+}
+```
+
+```jsx [React Native]
+if (message.contentTypeId === "xmtp.org/reply:1.0") {
+  const reply = message.content();
+  if (reply) {
+    const replyContent: ReplyContent = reply;
+    const replyContentType = replyContent.contentType;
+    const codec = client.codecRegistry[replyContentType];
+    const actualReplyContent = codec.decode(replyContent.content);
+  }
+}
+```
+
+```kotlin [Kotlin]
+if (encodedContent.type == ContentTypeReply) {
+    // The message is a reply
+    val reply: Reply? = message.content()
+    println("Reply to: ${reply?.reference}")
+    println("Content: ${reply?.content}")
+}
+```
+
+```swift [Swift]
+let content: Reply = try message.content()
+```
+
+:::
+
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
+
+## Display the reply
+
+How you choose to display replies in your app is up to you. It might be useful to look at the user experience for replies in popular apps such as Telegram and Discord.
+For example, in Discord, users can reply to individual messages, and the reply provides a link to the original message.
+
+Note that the user experience of replies in iMessage and Slack follows more of a threaded pattern, where messages display in logical groupings, or threads. This reply content type doesn't support the threaded pattern. If you'd like to request support for a threaded reply pattern, [post an XIP idea](https://community.xmtp.org/c/development/ideas/54).

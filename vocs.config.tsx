@@ -1,5 +1,5 @@
-import { defineConfig } from "vocs";
-import { sidebarConfig } from "./shared-sidebar.config";
+import { defineConfig } from 'vocs';
+import { sidebarConfig } from './shared-sidebar.config';
 
 // console.log('Loading Vocs config...')
 
@@ -10,14 +10,14 @@ export default defineConfig({
       backgroundAccent: { light: '#4F46E5', dark: '#4F46E5' },
       backgroundAccentHover: { light: '#4338CA', dark: '#4338CA' },
       backgroundAccentText: { light: 'white', dark: 'white' },
-      
-      // Text accent colors for links and highlights  
+
+      // Text accent colors for links and highlights
       textAccent: { light: '#4F46E5', dark: '#A5B4FC' },
       textAccentHover: { light: '#4338CA', dark: '#C7D2FE' },
-      
+
       // Border accent colors
       borderAccent: { light: '#4F46E5', dark: '#A5B4FC' },
-    }
+    },
   },
   search: {
     // Boost documents based on their section to help differentiate similar page names
@@ -26,8 +26,8 @@ export default defineConfig({
       if (documentId.includes('/agents/')) {
         return 1.2;
       }
-      // Boost inboxes section pages slightly  
-      if (documentId.includes('/inboxes/')) {
+      // Boost chat-apps section pages slightly
+      if (documentId.includes('/chat-apps/')) {
         return 1.1;
       }
       // Default boost for other sections
@@ -38,15 +38,15 @@ export default defineConfig({
       // Add section info to the result for display purposes
       if (result.id.includes('/agents/')) {
         result.section = 'Build agents';
-      } else if (result.id.includes('/inboxes/')) {
-        result.section = 'Build inboxes';  
+      } else if (result.id.includes('/chat-apps/')) {
+        result.section = 'Build chat apps';
       } else if (result.id.includes('/protocol/')) {
         result.section = 'Protocol';
       } else if (result.id.includes('/network/')) {
         result.section = 'Network';
       }
       return true; // Include all results
-    }
+    },
   },
   head: () => {
     // console.log(`Generating head content... ${new Date().toISOString()}`)
@@ -61,35 +61,43 @@ export default defineConfig({
       </>
     );
   },
-  title: "Build with XMTP",
+  title: 'Build with XMTP',
   description:
-    "XMTP is a secure and decentralized protocol for building communication platforms for the next phase of the internet.",
+    'XMTP is a secure and decentralized protocol for building communication platforms for the next phase of the internet.',
   logoUrl: {
-    light: "/logomark-light-purple.png",
-    dark: "/logomark-dark-purple.png",
+    light: '/logomark-light-purple.png',
+    dark: '/logomark-dark-purple.png',
   },
-  iconUrl: "/x-mark-blue-lightmode.png",
+  iconUrl: '/x-mark-blue-lightmode.png',
   topNav: [
-    { text: "Build agents", link: '/agents/get-started/build-an-agent' },
-    { text: "Build inboxes", link: '/inboxes/intro/get-started' },
-    { text: "Fund agents and apps", link: '/fund-agents-apps/get-started' },
-    { text: "Protocol", link: '/protocol/envelope-types' },
-    { text: "Network", link: '/network/run-a-node' },
+    {
+      text: 'Build agents',
+      link: '/agents/get-started/build-an-agent',
+      match: '/agents',
+    },
+    {
+      text: 'Build chat apps',
+      link: '/chat-apps/intro/get-started',
+      match: '/chat-apps',
+    },
+    { text: 'Fund agents and apps', link: '/fund-agents-apps/get-started' },
+    { text: 'Protocol', link: '/protocol/overview' },
+    { text: 'Network', link: '/network/run-a-node' },
   ],
   ogImageUrl: {
-    "/": "/xmtp-og-card.jpeg",
-    "/docs":
-      "https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
+    '/': '/xmtp-og-card.jpeg',
+    '/docs':
+      'https://vocs.dev/api/og?logo=%logo&title=%title&description=%description',
   },
   socials: [
     {
-      icon: "github",
-      link: "https://github.com/xmtp",
+      icon: 'github',
+      link: 'https://github.com/xmtp',
     },
   ],
   sidebar: sidebarConfig,
   editLink: {
-    pattern: "https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path",
-    text: "Edit this page on GitHub"
+    pattern: 'https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path',
+    text: 'Edit this page on GitHub',
   },
 });

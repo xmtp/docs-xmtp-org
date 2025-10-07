@@ -1,0 +1,190 @@
+# Context and helpers
+
+Every XMTP agent event handler receives a rich `MessageContext` object that provides access to the message, conversation, client, and powerful helper methods. This context makes it easy to build responsive agents without repetitive boilerplate code.
+
+## Message context
+
+### Type-safe content access
+
+Use type guards to safely access different content types:
+
+```typescript
+agent.on('message', async (ctx) => {
+  if (ctx.isText()) {
+    // ctx.message.content is now typed as string
+    console.log(`Text message: ${ctx.message.content}`);
+  } else if (ctx.isReply()) {
+    // ctx.message.content is now typed as Reply
+    console.log(`Reply to: ${ctx.message.content.reference}`);
+    console.log(`Reply content: ${ctx.message.content.content}`);
+  } else if (ctx.isReaction()) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Reference: ${ctx.message.content.reference}`);
+  } else if (ctx.isRemoteAttachment()) {
+    // ctx.message.content is now typed as RemoteAttachment
+    console.log(`Attachment: ${ctx.message.content.filename}`);
+  }
+});
+```
+
+### Message metadata
+
+Access message properties directly:
+
+```typescript
+agent.on('message', async (ctx) => {
+  const message = ctx.message;
+  
+  console.log(`Message ID: ${message.id}`);
+  console.log(`Sender inbox ID: ${message.senderInboxId}`);
+  console.log(`Sent at: ${message.sentAt}`);
+  console.log(`Content type: ${message.contentType}`);
+});
+```
+
+### sendText() and sendTextReply()
+
+Send messages and replies:
+
+```typescript
+agent.on('text', async (ctx) => {
+  // Send a regular message
+  await ctx.sendText('Hello!');
+  
+  // Send a reply to the current message
+  await ctx.sendTextReply('Thanks for your message!');
+});
+```
+
+### sendReaction()
+
+Add reactions to messages:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const content = ctx.message.content.toLowerCase();
+  
+  if (content.includes('good')) {
+    await ctx.sendReaction('👍');
+  } else if (content.includes('bad')) {
+    await ctx.sendReaction('👎');
+  }
+});
+```
+
+### getSenderAddress()
+
+Get the Ethereum address of the message sender:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const senderAddress = await ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
+  
+  // Use for authorization
+  if (senderAddress === '0x1234...') {
+    await ctx.sendTextReply('Hello, admin!');
+  }
+});
+```
+
+### getClientAddress()
+
+Get the Ethereum address of your agent:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const agentAddress = ctx.getClientAddress();
+  console.log(`Agent address: ${agentAddress}`);
+});
+```
+
+## Conversation context
+
+### Conversation operations
+
+```typescript
+agent.on('text', async (ctx) => {
+  const conversation = ctx.conversation;
+  
+  // Get conversation members
+  const members = await conversation.members();
+  console.log(`Member count: ${members.length}`);
+  
+  // Check conversation type
+  if (ctx.isDm()) {
+    console.log(`DM with: ${conversation.peerInboxId}`);
+  } else if (ctx.isGroup()) {
+    console.log(`Group conversation: ${conversation.name}`);
+  }
+});
+```
+
+### Consent state
+
+Check conversation consent states:
+
+```typescript
+agent.on('text', async (ctx) => {
+  if (ctx.isAllowed) {
+    console.log(`Messages allowed in this conversation`);
+  } else if (ctx.isDenied) {
+    console.log(`Messages denied in this conversation`);
+  } else if (ctx.isUnknown) {
+    console.log(`Consent state unknown`);
+  }
+});
+```
+
+### Member information
+
+```typescript
+agent.on('text', async (ctx) => {
+  const members = await ctx.conversation.members();
+  
+  for (const member of members) {
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
+    
+    // Get Ethereum address
+    const ethIdentifier = member.accountIdentifiers.find(
+      (id) => id.identifierKind === IdentifierKind.Ethereum
+    );
+    
+    if (ethIdentifier) {
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
+    }
+  }
+});
+```
+
+### Message history
+
+```typescript
+agent.on('text', async (ctx) => {
+  // Get all messages
+  const messages = await ctx.conversation.messages();
+  console.log(`Total messages: ${messages.length}`);
+  
+  // Get recent messages
+  const recentMessages = messages.slice(-10);
+  
+  for (const msg of recentMessages) {
+    console.log(`${msg.senderInboxId}: ${msg.content}`);
+  }
+});
+```
+
+## Client context
+
+### address
+
+```typescript
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+});
+```

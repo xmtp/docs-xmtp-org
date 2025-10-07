@@ -72,9 +72,9 @@ export default function AutoBreadcrumb({ path }: AutoBreadcrumbProps) {
     if (path.startsWith('/agents')) {
       sectionKey = '/agents/';
       sectionName = 'Build agents';
-    } else if (path.startsWith('/inboxes')) {
-      sectionKey = '/inboxes/';
-      sectionName = 'Build inboxes';
+    } else if (path.startsWith('/chat-apps')) {
+      sectionKey = '/chat-apps/';
+      sectionName = 'Build chat apps';
     } else if (path.startsWith('/protocol')) {
       sectionKey = '/protocol/';
       sectionName = 'Protocol';
@@ -103,7 +103,7 @@ export default function AutoBreadcrumb({ path }: AutoBreadcrumbProps) {
             return breadcrumbs;
           }
         }
-        // Handle nested structure (like Agents and Inboxes sections)
+        // Handle nested structure (like Agents and Chat apps sections)
         else if (typeof section === 'object' && 'items' in section) {
           // Check if this is a direct page (like build-an-agent)
           if ('link' in section && section.link === path) {

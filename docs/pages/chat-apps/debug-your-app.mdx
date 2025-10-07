@@ -1,0 +1,205 @@
+# Debug your chat app
+
+This document covers tools and features available for debugging building with XMTP, including stress testing, group chat diagnostics, logging, and network monitoring capabilities.
+
+## XMTP Debug
+
+You can use the XMTP Debug tool to stress and burn-in test your chat app on the `local` and `dev` XMTP environments.
+
+To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_debug/README.md).
+
+## Forked group debugging tool
+
+:::tip[Preventing forks is XMTP's responsibility]
+
+This tool helps you identify forked groups in your app, but preventing forks in the first place is XMTP's responsibility. This diagnostic tool is just an aid and not a shift in responsibility to your app.
+
+:::
+
+A conversation has `getDebugInformation`. You can use this to see:
+
+- The MLS epoch of a group chat conversation for a member
+- The local commit log for expert analysis
+- Whether a group chat is forked (no false positives) via:
+  - `isCommitLogForked` for Browser and Node SDKs
+  - `commitLogForkStatus` for React Native, Android and iOS SDKs
+
+The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork detection without false positives. To minimize the negative effects of spam, fork detection is active only for groups that a user has actively consented to, which is automatically true for groups/DMs they created or groups/DMs they've sent a message in. To learn more about consent, see [Support user consent](/chat-apps/user-consent/support-user-consent).
+
+:::code-group
+
+```typescript [Browser, Node]
+// Get detailed debug information for a conversation
+const debugInfo = await conversation?.debugInfo();
+
+console.log('Epoch:', debugInfo.epoch);
+console.log('Cursor:', debugInfo.cursor);
+console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+```typescript [React Native, Kotlin, Swift]
+// Get detailed debug information for a conversation
+const debugInfo = await conversation?.getDebugInformation();
+
+console.log('Epoch:', debugInfo.epoch);
+console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+:::
+
+You can also check fork status directly from conversation lists:
+
+:::code-group
+
+```typescript [Browser, Node]
+// Check fork status when listing conversations
+const conversations = await client.conversations.list();
+
+conversations.forEach((conversation) => {
+  if (conversation.isCommitLogForked) {
+    console.log(`Conversation ${conversation.id} is forked`);
+  }
+});
+```
+
+```typescript [React Native, Kotlin, Swift]
+// Check fork status when listing conversations
+const conversations = await client.conversations.list();
+
+conversations.forEach((conversation) => {
+  if (conversation.commitLogForkStatus === 'forked') {
+    console.log(`Conversation ${conversation.id} is forked`);
+  }
+});
+```
+
+:::
+
+To learn about group chat forks, see [MLS Group State Forks: What, Why, How](https://cryspen.com/post/mls-fork-resolution/).
+
+If you believe you are experiencing a forked group, please [open an issue](https://github.com/xmtp/libxmtp/issues) in the LibXMTP repo to get support. Please include logs, the epoch, and other fork details.
+
+Forked groups are not recoverable. Your options are to:
+
+- Remove all members from the forked group and then re-add them to the group.
+- Start a new group.
+
+## File logging
+
+These file logging functions enable the XMTP rust process to write directly to persistent log files that roll during every hour of active usage and provide a 6-hour window of logs. This can be especially helpful when debugging group chat errors and other complex issues.
+
+The file logs complement Android and iOS system logs, which rely on memory buffer constraints, but often don't go back far enough to help catch when an issue occurs.
+
+To use file logging, call the following static functions:
+
+- `Client.activatePersistentLibXMTPLogWriter()`: Use to activate the file logging feature.
+  - We recommend using `LogLevel.Debug`, `LogRotation.Hourly`, and a `logMaxFiles` value of 5-10. Log files can grow to ~100mb each with active clients on debug level in an hour of usage.
+- `Client.getXMTPLogFilePaths()`: Use to get the full paths of log files written so far. This is useful for passing to iOS or Android Share functions.
+- Here are additional helper static functions in the XMTP Client object:
+  - `deactivatePersistentLibXMTPLogWriter()`
+  - `isLogWriterActive()`
+  - `readXMTPLogFile()`
+  - `clearXMTPLogs()`
+
+For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/ephemeraHQ/convos-app/pull/6) to the Convos app, built with XMTP.
+
+## Network statistics
+
+You can use these statistics to see which and how many API, identity, and streaming calls are going across the network, which can help you better manage network usage and debug potential rate limiting issues.
+
+These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
+
+### Get aggregated statistics
+
+To return aggregated statistics, run:
+
+- For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For React Native SDK: `client.debugInformation.aggregateStatistics`
+
+```text
+Aggregate Stats:
+============ Api Stats ============
+UploadKeyPackage        1
+FetchKeyPackage         2
+SendGroupMessages       5
+SendWelcomeMessages     1
+QueryGroupMessages      7
+QueryWelcomeMessages    0
+============ Identity ============
+PublishIdentityUpdate    1
+GetIdentityUpdatesV2     4
+GetInboxIds             2
+VerifySCWSignatures     0
+============ Stream ============
+SubscribeMessages        0
+SubscribeWelcomes       0
+```
+
+### Get an individual statistic
+
+To return an individual statistic as a number, run:
+
+- For Browser, Node, iOS, and Android SDKs:
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For React Native SDK:
+  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
+
+### Clear statistics
+
+To clear all API, identity, and stream statistics and set them to zero, run `client.debugInformation.clearAllStatistics()`.
+
+This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
+
+### Upload an archive of network statistics
+
+With the Browser and Node SDKs, you can upload an archive of collected network statistics.
+
+```tsx [TypeScript]
+// Upload to default server (no serverUrl needed)
+const result1 = await client.debugInformation.uploadDebugArchive();
+
+// Upload to custom server (serverUrl provided)
+const result2 = await client.debugInformation.uploadDebugArchive(
+  'https://my-debug-server.com/api/upload'
+);
+```
+
+### Statistic descriptions
+
+#### API statistics
+
+| Statistic            | Description                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| UploadKeyPackage     | Number of times key packages have been uploaded.                                                        |
+| FetchKeyPackage      | Number of times key packages have been fetched.                                                         |
+| SendGroupMessages    | Number of times messages have been sent to group chat and DM conversations.                             |
+| SendWelcomeMessages  | Number of times welcome messages have been sent.                                                        |
+| QueryGroupMessages   | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
+| QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages.                                       |
+
+#### Identity statistics
+
+| Statistic             | Description                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| PublishIdentityUpdate | Number of times identity updates have been published.                              |
+| GetIdentityUpdatesV2  | Number of times identity updates have been fetched.                                |
+| GetInboxIds           | Number of times inbox ID queries have been made.                                   |
+| VerifySCWSignatures   | Number of times smart contract wallet signature verifications have been performed. |
+
+#### Stream statistics
+
+| Statistic         | Description                                                                                                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
+| SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations.      |
