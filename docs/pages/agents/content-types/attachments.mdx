@@ -111,10 +111,16 @@ await ctx.conversation.send(remoteAttachment, {
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```ts [Node]
-import { ContentTypeRemoteAttachment, RemoteAttachmentCodec } from '@xmtp/content-type-remote-attachment';
+import {
+  ContentTypeRemoteAttachment,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
 
 if (ctx.usesCodec(RemoteAttachmentCodec)) {
-  const attachment = await RemoteAttachmentCodec.load(ctx.message.content, client);
+  const attachment = await RemoteAttachmentCodec.load(
+    ctx.message.content,
+    client
+  );
 }
 ```
 
