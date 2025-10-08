@@ -139,7 +139,7 @@ Here are some sources you can use to acquire USDC:
 
 To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
 
-### Step 4: Allocate funds for messaging
+### Step 4: Allocate funds to the payer wallet
 
 The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
 
