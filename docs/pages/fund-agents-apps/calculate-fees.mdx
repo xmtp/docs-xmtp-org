@@ -1,5 +1,40 @@
 import Zoom from 'react-medium-image-zoom'
-import Mermaid from '../../components/Mermaid'
+import 'react-medium-image-zoom/dist/styles.css'
+import { useEffect, useRef } from 'react'
+import mermaid from 'mermaid'
+
+{/*
+  Custom Mermaid component for rendering diagrams in documentation.
+
+  This component is defined inline instead of imported from a separate file
+  because Vocs has a bug where local file imports break search indexing.
+  Only npm package imports (like react and mermaid) are safe.
+*/}
+export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
+  const container = useRef(null);
+
+  useEffect(() => {
+    mermaid.initialize({ startOnLoad: false });
+
+    const renderChart = async () => {
+      try {
+        const { svg } = await mermaid.render(id, chart);
+        if (container.current) {
+          container.current.innerHTML = svg;
+        }
+      } catch (error) {
+        console.error('Mermaid render error:', error);
+        if (container.current) {
+          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
+        }
+      }
+    };
+
+    renderChart();
+  }, [chart, id]);
+
+  return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
+};
 
 # Understand and calculate XMTP fees
 
@@ -54,6 +89,7 @@ This sequence diagram illustrates the messaging fee payment flow from payers to 
 <Mermaid
   id="payer-to-node"
   chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
     sequenceDiagram
         actor Payer
         participant PayerRegistry
