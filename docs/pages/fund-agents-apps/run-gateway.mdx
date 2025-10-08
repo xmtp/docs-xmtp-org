@@ -36,6 +36,44 @@ export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
   return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
 };
 
+<style>{`
+/* Make configuration table more readable with better column widths */
+.config-table-wrapper {
+  overflow-x: auto;
+}
+
+.config-table-wrapper table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 900px;
+}
+
+.config-table-wrapper table th:nth-child(1),
+.config-table-wrapper table td:nth-child(1) {
+  width: 15%;
+}
+
+.config-table-wrapper table th:nth-child(2),
+.config-table-wrapper table td:nth-child(2) {
+  width: 8%;
+}
+
+.config-table-wrapper table th:nth-child(3),
+.config-table-wrapper table td:nth-child(3) {
+  width: 20%;
+}
+
+.config-table-wrapper table th:nth-child(4),
+.config-table-wrapper table td:nth-child(4) {
+  width: 17%;
+}
+
+.config-table-wrapper table th:nth-child(5),
+.config-table-wrapper table td:nth-child(5) {
+  width: 40%;
+}
+`}</style>
+
 # Run an XMTP Gateway Service
 
 A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app's payment gateway for messaging.
@@ -112,14 +150,18 @@ func main() {
 
 You can provide the configuration options for your XMTP Gateway Service either directly in your code, via command line flag, or through environment variables.
 
+<div className="config-table-wrapper">
+
 | Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                               |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
 | Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract.    |
-| Appchain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                        |
+| App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                        |
 | Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                    |
 | Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet` |
 | Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                  |
 | Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                      |
+
+</div>
 
 ### Metrics and observability
 
@@ -402,7 +444,7 @@ Here are some high priority scenarios to test:
 - [ ]  Monitor resource usage and costs
 - [ ]  Simulate failure scenarios
 
-You can test on Base Sepolia, Appchain testnet, and Broadcast Network testnet. They all run identical contracts so you can dry-run funding and messaging.
+You can test on Base Sepolia, App Chain testnet, and Broadcast Network testnet. They all run identical contracts so you can dry-run funding and messaging.
 
 To get testnet USDC, use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
 
@@ -451,27 +493,27 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
 `} />
 </Zoom>
 
-### Flow for sending a message to the XMTP Appchain
+### Flow for sending a message to the XMTP App Chain
 
 <Zoom>
 <Mermaid
-  id="xmtp-appchain-flow"
+  id="xmtp-App Chain-flow"
   chart={`
     %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
     sequenceDiagram
-    title: Message sent to XMTP Appchain
+    title: Message sent to XMTP App Chain
     participant App
     participant Gateway Service
-    participant XMTP Appchain
+    participant XMTP App Chain
 
     App->>Gateway Service: Request to send message
     Gateway Service->>Gateway Service: Verify user authorization
     Gateway Service->>Gateway Service: Sign with payer wallet key
-    Gateway Service->>XMTP Appchain: Send message and pay Appchain gas fee
+    Gateway Service->>XMTP App Chain: Send message and pay App Chain gas fee
     alt Sufficient funds
-        XMTP Appchain-->>App: Message sent
+        XMTP App Chain-->>App: Message sent
     else Insufficient funds
-        XMTP Appchain-->>App: Message not sent
+        XMTP App Chain-->>App: Message not sent
     end
 `} />
 </Zoom>

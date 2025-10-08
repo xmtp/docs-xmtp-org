@@ -59,7 +59,7 @@ Network fees are estimated to cost $5 per 100,000 chat messages, inclusive of al
 To understand XMTP fee types, it's helpful to understand XMTP's architecture, which uses a two-layer system:
 
 1.  **XMTP Broadcast Network** (offchain): A globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users.
-2.  **XMTP Appchain** (onchain): A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations.
+2.  **XMTP App Chain** (onchain): A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations.
 
 ### Messaging fees
 
@@ -112,15 +112,15 @@ This sequence diagram illustrates the messaging fee payment flow from payers to 
 
 ### Gas fees
 
-Certain administrative operations involve transactions on the XMTP Appchain:
+Certain administrative operations involve transactions on the XMTP App Chain:
 
 - Group management updated (member additions, permission changes)
 - Identity updates
 - Payer-related updates
 
-To pay for these transactions, apps and agents need to maintain a gas reserve balance on the XMTP Appchain. The Funding Portal automatically manages funding this gas reserve for apps and agents based on their expected message volume.
+To pay for these transactions, apps and agents need to maintain a gas reserve balance on the XMTP App Chain. The Funding Portal automatically manages funding this gas reserve for apps and agents based on their expected message volume.
 
-Collected gas fees are paid directly to the XMTP Appchain. Fees are used to maintain the Appchain.
+Collected gas fees are paid directly to the XMTP App Chain. Fees are used to maintain the App Chain.
 
 ## Calculate estimated XMTP fees
 
@@ -128,7 +128,7 @@ As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 me
 
 - A 95/5 split between messaging and gas fees. Meaning, for every $5 in total fees:
   - $4.75 is for XMTP Broadcast Network messaging fees
-  - $0.25 is for XMTP Appchain gas fees
+  - $0.25 is for XMTP App Chain gas fees
 - An average message size of 1 KB (1024 bytes).
 - A message retention period of 90 days.
 - Normal network conditions (no congestion fees).
@@ -155,13 +155,13 @@ The congestion fee is applied only during periods of high network activity to ma
 
 ### Calculate estimated gas fees
 
-Gas fees for transactions on the XMTP Appchain are calculated as follows:
+Gas fees for transactions on the XMTP App Chain are calculated as follows:
 
 *gas fee = fee per unit of gas × amount of gas consumed by a transaction*
 
 This often works out to fractions of a US cent.
 
-The fee per unit of gas is set by the XMTP Appchain based on network activity.
+The fee per unit of gas is set by the XMTP App Chain based on network activity.
 
 The total amount of gas consumed depends on the size of the transaction.
 

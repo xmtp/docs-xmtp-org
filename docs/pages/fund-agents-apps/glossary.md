@@ -5,7 +5,9 @@
 Total amount of USDC allocated to pay for messaging and gas fees for a registered payer wallet. This includes:
 
 - USDC allocated to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
-- USDC in your payer wallet on the XMTP Appchain. This balance will be used to pay XMTP Appchain gas fees.
+- USDC in your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
 
 ## Base
 
@@ -15,11 +17,13 @@ An Ethereum L2 network developed by Coinbase on the OP Stack. Base processes tra
 
 A dynamic offchain fee added during high network activity to manage load, determined by and paid to node operators.
 
+To learn more, see [Understand and calculate XMTP fees](/fund-agents-apps/calculate-fees).
+
 ## Message fee
 
 A fixed offchain micropayment paid to node operators for delivering a message.
 
-To learn more, see [Understand XMTP messaging fees](https://file+.vscode-resource.vscode-cdn.net/docs/fund-your-app/fees).
+To learn more, see [Understand and calculate XMTP fees](/fund-agents-apps/calculate-fees).
 
 ## Node Registry
 
@@ -45,7 +49,9 @@ To learn more, see [PayerRegistry.sol](https://github.com/xmtp/smart-contracts/
 
 A non-custodial, Ethereum-compatible wallet that you register and use to allocate USDC to pay for your app's messaging fees.
 
-The payer wallet is the only wallet that can control its messaging balance in the PayerRegistry, but any wallet can allocate funds to its messaging balance.
+The payer wallet is the only wallet that can control its messaging balance in the Payer Registry, but any wallet can allocate funds to its messaging balance.
+
+To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
 
 ## XMTP Gateway Service
 
@@ -60,7 +66,9 @@ A small client that acts as a proxy between your app and the payer wallet, and m
     - It can enforce your app's business rules
 - Fee management: The XMTP Gateway Service handles both types of fees:
     - Signs transactions on Base for paying messaging fees from the PayerRegistry contract
-    - Signs transactions on the XMTP Appchain for paying gas fees from the payer wallet (Payers contract)
+    - Signs transactions on the XMTP App Chain for paying gas fees from the payer wallet (Payers contract)
+
+To learn more, see [Run an XMTP Gateway Service](/fund-agents-apps/run-gateway).
 
 ## Storage fee
 
@@ -70,17 +78,21 @@ An offchain micropayment paid to node operators based on the size (in bytes) of 
 
 A real-time index that tracks PayerRegistry contract activity—such as who funded a messaging balance, how much was spent, and which messages incurred fees—enabling the XMTP Funding Portal to display historical and live fee data.
 
-## XMTP Broadcast Network
-
-The offchain, globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
-
-## XMTP Appchain
+## XMTP App Chain
 
 An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It manages metadata requiring strict ordering through these smart contracts:
 
 - [`identity_update.go`](https://github.com/xmtp/xmtpd/blob/522d05f5a5d0499157635aba98c3f5b2556470d4/pkg/indexer/app_chain/contracts/identity_update.go): Tracks wallet addresses associated with each XMTP inbox
 - [`group_message.go`](https://github.com/xmtp/xmtpd/blob/522d05f5a5d0499157635aba98c3f5b2556470d4/pkg/indexer/app_chain/contracts/group_message.go): Manages group membership changes with guaranteed ordering
 
-Gas fees are charged for onchain transactions on the XMTP Appchain. These transactions are typically for group membership, identity, and payer-related updates. Fees are paid with USDC directly held by payer wallets on the XMTP Appchain.
+Gas fees are charged for onchain transactions on the XMTP App Chain. These transactions are typically for group membership, identity, and payer-related updates. Fees are paid with USDC directly held by payer wallets on the XMTP App Chain.
 
-When you [fund your payer wallet](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal, it automatically bridges an optimized percentage of the USDC funds to the XMTP Appchain to cover gas fees.
+When you [fund your payer wallet](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal, it automatically bridges an optimized percentage of the USDC funds to the XMTP App Chain to cover gas fees.
+
+## XMTP Broadcast Network
+
+The offchain globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
+
+## XMTP Settlement Chain
+
+An L3 blockchain built on Base that provides the final security layer where the XMTP App Chain settles its state. This gives the XMTP Network the speed of L3 operations with the security guarantees of established L2 infrastructure.
