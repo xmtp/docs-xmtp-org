@@ -66,6 +66,8 @@ This video provides a walkthrough of the idea behind the XMTP installation limit
   allowFullScreen
 ></iframe>
 
+### Inbox update limits
+
 An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
 - Add a wallet
@@ -77,7 +79,9 @@ This means that one inbox ID can have up to 256 installations. When you add an i
 
 If an inbox reaches its limit of 256 inbox updates, the user must [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows the user to continue using their identity with new XMTP conversations.
 
-To prevent users from reaching the 256-update limit, XMTP enforces a **10-installation limit per inbox**. When an inbox reaches 10 active installations, the user must revoke at least one installation before adding a new one. This limit serves two purposes:
+### Installation limits
+
+XMTP enforces a 10-installation limit per inbox. When an inbox reaches 10 active installations, the user must revoke at least one installation before adding a new one. This limit serves two purposes:
 
 1. Prevents excessive group sizes: Since all installations in an inbox are added as group members, limiting installations keeps group sizes manageable and maintains performance.
 2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256-update threshold.
@@ -87,6 +91,8 @@ To prevent users from reaching the 256-update limit, XMTP enforces a **10-instal
 Revoking an installation counts as one of the 256 inbox updates. This means frequently adding and revoking installations will still consume your update quota and could lead to reaching the limit prematurely.
 
 :::
+
+The only way to prevent consuming installation updates is to ensure your XMTP database is persisted and reloaded between app sessions and deployments. When you reuse an existing database, you maintain the same installation instead of creating a new one each time.
 
 Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
