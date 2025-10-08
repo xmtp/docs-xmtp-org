@@ -49,9 +49,35 @@ export const sidebarConfig = {
           text: "Group permissions",
           link: "/agents/build-agents/group-permissions",
         },
+      ],
+    },
+    {
+      text: "Fund your agent",
+      collapsed: false,
+      items: [
         {
-          text: "Keep your agent funded",
+          text: "Get started",
           link: "/fund-agents-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-agents-apps/calculate-fees",
+        },
+        {
+          text: "Fund your app",
+          link: "/fund-agents-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-agents-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-agents-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-agents-apps/glossary",
         },
       ],
     },
@@ -364,9 +390,35 @@ export const sidebarConfig = {
           text: "Observe rate limits",
           link: "/chat-apps/core-messaging/rate-limits",
         },
+      ],
+    },
+    {
+      text: "Fund your app",
+      collapsed: false,
+      items: [
         {
-          text: "Keep your app funded",
+          text: "Get started",
           link: "/fund-agents-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-agents-apps/calculate-fees",
+        },
+        {
+          text: "Fund your app",
+          link: "/fund-agents-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-agents-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-agents-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-agents-apps/glossary",
         },
       ],
     },

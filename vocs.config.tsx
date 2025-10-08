@@ -80,7 +80,6 @@ export default defineConfig({
       link: '/chat-apps/intro/get-started',
       match: '/chat-apps',
     },
-    { text: 'Fund agents and apps', link: '/fund-agents-apps/get-started' },
     { text: 'Protocol', link: '/protocol/overview' },
     { text: 'Network', link: '/network/run-a-node' },
   ],
