@@ -1,6 +1,29 @@
 import * as React from 'react';
 import * as RadixTabs from '@radix-ui/react-tabs';
 
+{/*
+  Custom Tabs component for creating tabbed content in documentation.
+
+  This component is defined inline instead of imported from a separate file
+  because Vocs has a bug where local file imports break search indexing.
+  Only npm package imports (like react and @radix-ui/react-tabs) are safe.
+
+  Features:
+  - Renders tabbed content with styling that matches Vocs theme
+  - Auto-switches to the correct tab when clicking outline/TOC links
+  - Uses forceMount to keep all tab content in DOM (required for outline links)
+  - Polls for hash changes as fallback when hashchange events don't fire
+
+  Usage:
+  <Tabs.Root defaultValue="tab-id">
+    <Tabs.List>
+      <Tabs.Trigger value="tab1">Tab 1 Title</Tabs.Trigger>
+      <Tabs.Trigger value="tab2">Tab 2 Title</Tabs.Trigger>
+    </Tabs.List>
+    <Tabs.Content value="tab1">Content for tab 1</Tabs.Content>
+    <Tabs.Content value="tab2">Content for tab 2</Tabs.Content>
+  </Tabs.Root>
+*/}
 export const Tabs = (() => {
   const Root = ({ defaultValue, children }) => {
     const [activeTab, setActiveTab] = React.useState(defaultValue);
@@ -79,6 +102,11 @@ export const Tabs = (() => {
   return { Root, List, Trigger, Content };
 })();
 
+{/*
+  Note: CSS is inlined here instead of imported from a separate file
+  because Vocs has a bug where local file imports (like import './styles.css')
+  break search indexing. npm package imports are fine, but CSS files must be inlined.
+*/}
 <style>{`
 .tabs-root {
   display: flex;
