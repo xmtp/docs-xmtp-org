@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 04:48 PM UTC / October 08, 2025
+Generated at 05:05 PM UTC / October 08, 2025
 
 ## Instructions for AI Tools
 
@@ -10714,7 +10714,7 @@ Access message properties directly:
 ```typescript
 agent.on('message', async (ctx) => {
   const message = ctx.message;
-  
+
   console.log(`Message ID: ${message.id}`);
   console.log(`Sender inbox ID: ${message.senderInboxId}`);
   console.log(`Sent at: ${message.sentAt}`);
@@ -10730,7 +10730,7 @@ Send messages and replies:
 agent.on('text', async (ctx) => {
   // Send a regular message
   await ctx.sendText('Hello!');
-  
+
   // Send a reply to the current message
   await ctx.sendTextReply('Thanks for your message!');
 });
@@ -10743,7 +10743,7 @@ Add reactions to messages:
 ```typescript
 agent.on('text', async (ctx) => {
   const content = ctx.message.content.toLowerCase();
-  
+
   if (content.includes('good')) {
     await ctx.sendReaction('👍');
   } else if (content.includes('bad')) {
@@ -10760,7 +10760,7 @@ Get the Ethereum address of the message sender:
 agent.on('text', async (ctx) => {
   const senderAddress = await ctx.getSenderAddress();
   console.log(`Message from: ${senderAddress}`);
-  
+
   // Use for authorization
   if (senderAddress === '0x1234...') {
     await ctx.sendTextReply('Hello, admin!');
@@ -10786,11 +10786,11 @@ agent.on('text', async (ctx) => {
 ```typescript
 agent.on('text', async (ctx) => {
   const conversation = ctx.conversation;
-  
+
   // Get conversation members
   const members = await conversation.members();
   console.log(`Member count: ${members.length}`);
-  
+
   // Check conversation type
   if (ctx.isDm()) {
     console.log(`DM with: ${conversation.peerInboxId}`);
@@ -10821,17 +10821,17 @@ agent.on('text', async (ctx) => {
 ```typescript
 agent.on('text', async (ctx) => {
   const members = await ctx.conversation.members();
-  
+
   for (const member of members) {
     console.log(`Member inbox ID: ${member.inboxId}`);
     console.log(`Permission level: ${member.permissionLevel}`);
     console.log(`Consent state: ${member.consentState}`);
-    
+
     // Get Ethereum address
     const ethIdentifier = member.accountIdentifiers.find(
       (id) => id.identifierKind === IdentifierKind.Ethereum
     );
-    
+
     if (ethIdentifier) {
       console.log(`Ethereum address: ${ethIdentifier.identifier}`);
     }
@@ -10846,10 +10846,10 @@ agent.on('text', async (ctx) => {
   // Get all messages
   const messages = await ctx.conversation.messages();
   console.log(`Total messages: ${messages.length}`);
-  
+
   // Get recent messages
   const recentMessages = messages.slice(-10);
-  
+
   for (const msg of recentMessages) {
     console.log(`${msg.senderInboxId}: ${msg.content}`);
   }
@@ -10867,6 +10867,7 @@ agent.on('start', () => {
   console.log(`🔗 ${getTestUrl(agent.client)}`);
 });
 ```
+
 
 ## pages/agents/concepts/identity.mdx
 # Create an XMTP client
@@ -11041,7 +11042,7 @@ if (f.isText(ctx.message)) {
 - `isText`
 - `isTextReply`
 
-To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
+To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
 
 
 ## pages/agents/concepts/event-driven.mdx
@@ -11052,6 +11053,7 @@ Subscribe only to what you need using Node’s `EventEmitter` interface. Events 
 - **Message events**
   - `attachment`: a new incoming remote attachment message
   - `message`: all incoming messages (fires for every message regardless of type)
+  - `group-update`: group members have been added or removed or metadata has been updated
   - `reaction`: a new incoming reaction message
   - `reply`: a new incoming reply message
   - `text`: a new incoming text message
@@ -11834,7 +11836,6 @@ on('group-update', async (ctx) => {
   console.log(`Group updated: ${JSON.stringify(ctx.message.content)}`);
 });
 ```
-
 
 ## Group update message structure
 
