@@ -50,14 +50,18 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 ## Stream conversations
 
+You can listen to new conversations using the `dm` and `group` events.
+
 ```js [Node]
 // Listen to new conversations
 agent.on('dm', async (ctx) => {
-  await ctx.conversation.send('Welcome to our DM!');
+  // received when you create a new dm
+  console.log('New dm created:', ctx.conversation.id);
 });
  
 agent.on('group', async (ctx) => {
-  await ctx.conversation.send('Hello group!');
+  // received when you create a new group
+  console.log('Added to group:', ctx.conversation.id);
 });
 ```
 
