@@ -18,16 +18,6 @@ This guide provides a timeline and checklist to prepare your app for this transi
   - All message traffic is routed through the decentralized network.
   - **→ Older client SDKs are incompatible.**
 
-- **August 12, 2025**:
-  - Decentralized network infrastructure and XMTP Funding Portal go live.
-  - You can begin deploying your gateway service.
-- **October 7, 2025**:
-  - Decentralization-ready client SDKs are available.
-  - You can begin updating your app.
-- **December 9, 2025**:
-  - The decentralized XMTP Broadcast Network is fully operational.
-  - Fees are now required to send messages.
-
 ## Required tasks
 
 Complete these tasks by **December 9, 2025**, to ensure your app can send messages on the decentralized XMTP Broadcast Network.

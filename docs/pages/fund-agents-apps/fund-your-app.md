@@ -1,6 +1,6 @@
-# Fund your app to send messages with XMTP
+# Fund an app to send messages with XMTP
 
-Use this guide to learn how to use the XMTP Funding Portal to fund your app to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
+Use this guide to learn how to use the XMTP Funding Portal to fund an app to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
 
 Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP Appchain gas payments, and all blockchain interactions.
 
@@ -8,9 +8,24 @@ Behind the scenes, the Funding Portal handles Payer Registry smart contract depo
 
 The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
 
-## Step 1. Create your payer wallet
+## Understand payer wallets
 
-A payer wallet is what your XMTP Gateway Service uses to pay fees.
+A payer wallet is what an app or agent's XMTP Gateway Service uses to pay fees.
+
+You can fund an app:
+
+- [Using its payer wallet](#fund-an-app-using-its-payer-wallet)
+- [Using a wallet other than its payer wallet](#fund-an-app-using-a-wallet-other-than-its-payer-wallet)
+
+For example:
+
+- You might want to use your payer wallet to fund your payer wallet.
+- You might want to use a different wallet to fund your payer wallet. In this case, you might want to use a multisig wallet to fund your payer wallet. (A multisig wallet can't be payer wallet because a payer wallet must have a private key.)
+- You might want to use a different wallet to support an app or agent by funding its payer wallet.
+
+## Fund an app using its payer wallet
+
+### Step 1. Create the payer wallet
 
 The payer wallet must be:
 
@@ -25,7 +40,17 @@ Payer wallets can be funded by Ethereum EOAs and smart contract wallets. For exa
 
 You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-agents-apps/run-gateway).
 
-## Step 2: Fund your payer wallet with USDC on Base
+### Step 2. Register the payer wallet
+
+1. Use your payer wallet to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
+2. On the **Welcome** page, click **Use connected wallet**.
+3. Open the drop-down menu in the upper right and click **Manage payers**.
+4. Click the pencil icon to give your payer wallet a human-readable name.
+5. Click the green check button to save.
+
+Your payer wallet is now a payer in the Payer Registry smart contract. 
+
+### Step 3: Fund the payer wallet with USDC on Base
 
 Fund your payer wallet with USDC on Base. Here are some sources you can use to acquire USDC:
 
@@ -35,27 +60,17 @@ Fund your payer wallet with USDC on Base. Here are some sources you can use to a
 
 To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
 
-## Step 3. Register your payer wallet
-
-1. Use your payer wallet to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
-2. On the Welcome page, click **Use connected wallet**.
-3. Open the **View as** menu and click **Manage payers**.
-4. Click the pencil icon to give your payer wallet a human-readable name.
-
-Your payer wallet is now a payer in the Payer Registry smart contract. 
-
-In the next step, you'll allocate USDC in your payer wallet to create a messaging balance that the network can use to pay for fees.
-
-## Step 4: Allocate funds for messaging
+### Step 4: Allocate funds for messaging
 
 The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
 
-1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
-2. On the Home page, click **Fund**.
+1. Connect the payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
+2. In the drop-down menu in the upper right, be sure to select the payer wallet.
+2. On the **Dashboard** page, click **Fund**.
 3. Enter the amount of USDC you want to allocate from your payer wallet.
-4. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Click the **+** icon to view the details of the split.
+4. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
 5. Click **Continue**.
-6. The Depositing funds screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+6. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
 Your payer wallet now has:
 
@@ -66,7 +81,7 @@ You can use the payer wallet (and only the payer wallet) to [withdraw](#step-6-w
 
 ## Step 5: Monitor your usage and allowance
 
-You can use the Usage panel on the home page of the XMTP Funding Portal to review the number of messages sent by your app, as well as actual and projected fees.
+You can use the **Usage** panel on the XMTP Funding Portal **Dashboard** to review the number of messages sent by your app, as well as actual and projected fees.
 
 Before data can display in the Usage panel, you must have completed the following on the appropriate network (testnet or mainnet):
 
@@ -80,12 +95,15 @@ The Funding Portal UI displays a warning if your allowance goes below XXXX does 
 
 If your allowance goes to zero, the Payer Registry smart contract rejects new messages sent to the XMTP Broadcast Network and returns an `INSUFFICIENT_PAYER_BALANCE` error.
 
-## Step 6: Withdraw and claim funds
+### Step 6: Withdraw and claim funds
 
-You can withdraw funds from your messaging balance at any time. Funds will be available after 48 hours, and require a second transaction to claim.
+You can use the payer wallet (and only the payer wallet) to withdraw USDC from its messaging fee allowance at any time.
+
+- Withdrawals that require bridging will be available after 7 days and require a second transaction to claim. 
+- Withdrawals without bridging will be available after 48 hours and require a second transaction to claim.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
-2. On the Home page, click **Withdraw**.
+2. On the **Dashboard** page, click **Withdraw**.
 3. Enter the amount of USDC you want to withdraw from your messaging balance. Click **MAX** if you want to withdraw the maximum amount available.
 4. Click **Request withdrawal**.
 5. XXXX Need to wait to see this part of the UI XXXXX.
@@ -94,11 +112,51 @@ You can withdraw funds from your messaging balance at any time. Funds will be av
 8. Verify the withdrawal details and click **Claim USDC**.
 9. XXXX Need to wait to see this part of the UI XXXXX.
 
-## Enable others to contribute to your funded allowance
+## Fund an app using a wallet other than its payer wallet
 
-Any wallet (investors, sponsors, partners, users) can deposit USDC funds to your payer wallet's allowance through the Funding Portal. You can also manage funds for other developers. ###what does this mean?###
+### Step 1. Get the payer wallet address
 
-Once deposited, funds are withdrawable only by your app.
+To fund an app using a wallet other than its payer wallet, you need the payer wallet address.
+
+### Step 2. Register the payer wallet
+
+1. Use the wallet you want to use to fund the app to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
+2. On the **Welcome** page, click **Use other wallet**.
+3. On the **Manage payer wallets** screen, enter the payer wallet address and a human-readable display name.
+4. Click the green check button to save.
+
+Your connected wallet can now fund the registered payer wallet.
+
+### Step 3: Deposit USDC into your wallet
+
+Deposit USDC into your wallet on Base. This is the wallet you want to use to fund the payer wallet.
+
+Here are some sources you can use to acquire USDC:
+
+- Centralized exchanges: Binance, Coinbase, Kraken
+- Direct purchase: Circle, Coinbase
+- Business accounts: Circle business accounts for larger operations
+
+To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
+
+### Step 4: Allocate funds for messaging
+
+The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
+
+1. Use the wallet you want to use to fund the app to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
+2. In the drop-down menu in the upper right, be sure to select the payer wallet.
+2. On the **Dashboard** page, click **Fund**.
+3. Enter the amount of USDC you want to allocate from your wallet to the payer wallet.
+4. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+5. Click **Continue**.
+6. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+
+The payer wallet now has:
+
+- USDC allocated to the registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- USDC bridged to the payer wallet on the XMTP Appchain. This balance will be used to pay XMTP Appchain gas fees.
+
+Only the payer wallet can be used to [withdraw](#step-6-withdraw-funds) USDC from the messaging fee allowance.
 
 ## Troubleshooting
 

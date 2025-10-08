@@ -49,6 +49,10 @@ export const sidebarConfig = {
           text: "Group permissions",
           link: "/agents/build-agents/group-permissions",
         },
+        {
+          text: "Keep your agent funded",
+          link: "/fund-agents-apps/get-started",
+        },
       ],
     },
     {
@@ -75,11 +79,6 @@ export const sidebarConfig = {
           text: "Context",
           link: "/agents/concepts/context",
         },
-        {
-          text: "Keep your agent funded",
-          link: "/fund-agents-apps/get-started",
-        },
-
       ],
     },
     {

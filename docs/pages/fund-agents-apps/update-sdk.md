@@ -2,46 +2,11 @@
 
 Starting on November 15, 2025, you'll be able to update your app to use an XMTP SDK version that supports XMTP Gateway Service helpers, enabling your app to communicate with your XMTP Gateway Service.
 
-- [Browser SDK >=vX.X](#TODO)
-- [Node SDK >=vX.X](#TODO)
-- [React Native SDK >=vX.X](#TODO)
-- [Kotlin SDK >=vX.X](#TODO)
-- [Swift SDK >=vX.X](#TODO)
-  
-## Update your app
+The minimum supported SDK version for each platform will be:
 
-:::code-group
-
-```jsx [Browser]
-const client = await Client.create(signer, {
-  env: 'mainnet',
-  payerService: YOUR_PAYER_URL,
-  payerAuthTokenFetcher: authTokenFetcher
-})
-
-```
-
-```jsx [Node]
-"@xmtp/sdk-js": "^12.0.0"  // Update version, payer included
-```
-
-```js [React Native]
-"@xmtp/sdk-js": "^12.0.0"  // Update version, payer included
-```
-
-```kotlin [Kotlin]
-"@xmtp/sdk-js": "^12.0.0"  // Update version, payer included
-```
-
-```swift [Swift]
-// iOS example
-let client = try await XMTPClient.create(
-  wallet: wallet,
-  options: .init(
-    api: .init(env: .mainnet),
-    payerEndpoint: YOUR_PAYER_URL
-  )
-)
-```
-
-:::
+- Agent SDK v2.0.0
+- Browser SDK v6.0.0
+- Node SDK v5.0.0
+- React Native SDK v6.0.0
+- Kotlin SDK v5.0.0
+- Swift SDK v5.0.0
