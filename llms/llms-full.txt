@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 05:40 PM UTC / October 07, 2025
+Generated at 04:48 PM UTC / October 08, 2025
 
 ## Instructions for AI Tools
 
@@ -9774,6 +9774,23 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 :::
 
+## Stream conversations
+
+You can listen to new conversations using the `dm` and `group` events.
+
+```js [Node]
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  // received when you create a new dm
+  console.log('New dm created:', ctx.conversation.id);
+});
+
+agent.on('group', async (ctx) => {
+  // received when you create a new group
+  console.log('Added to group:', ctx.conversation.id);
+});
+```
+
 ## Handle errors and failures
 
 The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
@@ -11026,78 +11043,6 @@ if (f.isText(ctx.message)) {
 
 To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
 
-```ts [Node]
-import { filter } from '@xmtp/agent-sdk';
-
-const fromSelf = <ContentTypes>(
-  message: DecodedMessage<ContentTypes>,
-  client: Client<ContentTypes>
-) => {
-  return message.senderInboxId === client.inboxId;
-};
-
-const hasContent = <ContentTypes>(
-  message: DecodedMessage<ContentTypes>
-): message is DecodedMessage<ContentTypes> & {
-  content: NonNullable<ContentTypes>;
-} => {
-  return message.content !== undefined && message.content !== null;
-};
-
-const isDM = (conversation: Conversation): conversation is Dm => {
-  return conversation instanceof Dm;
-};
-
-const isGroup = (conversation: Conversation): conversation is Group => {
-  return conversation instanceof Group;
-};
-
-const isGroupAdmin = (conversation: Conversation, message: DecodedMessage) => {
-  if (isGroup(conversation)) {
-    return conversation.isAdmin(message.senderInboxId);
-  }
-  return false;
-};
-
-const isGroupSuperAdmin = (
-  conversation: Conversation,
-  message: DecodedMessage
-) => {
-  if (isGroup(conversation)) {
-    return conversation.isSuperAdmin(message.senderInboxId);
-  }
-  return false;
-};
-
-const isReaction = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: Reaction } => {
-  return !!message.contentType?.sameAs(ContentTypeReaction);
-};
-
-const isReply = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: Reply } => {
-  return !!message.contentType?.sameAs(ContentTypeReply);
-};
-
-const isRemoteAttachment = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: RemoteAttachment } => {
-  return !!message.contentType?.sameAs(ContentTypeRemoteAttachment);
-};
-
-const isText = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: string } => {
-  return !!message.contentType?.sameAs(ContentTypeText);
-};
-
-const isTextReply = (message: DecodedMessage) => {
-  return isReply(message) && typeof message.content.content === 'string';
-};
-```
-
 
 ## pages/agents/concepts/event-driven.mdx
 # Event-driven architecture
@@ -11482,10 +11427,16 @@ await ctx.conversation.send(remoteAttachment, {
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```ts [Node]
-import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
+import {
+  ContentTypeRemoteAttachment,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
 
-if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+if (ctx.usesCodec(RemoteAttachmentCodec)) {
+  const attachment = await RemoteAttachmentCodec.load(
+    ctx.message.content,
+    client
+  );
 }
 ```
 
@@ -11600,16 +11551,9 @@ await ctx.conversation.send(transactionReference, {
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
-  // Handle non-transaction reference message
-  return;
+if (ctx.usesCodec(TransactionReferenceCodec)) {
+  // Process the transaction reference here
 }
-
-const transactionRef: TransactionReference = message.content;
-// Process the transaction reference here
 ```
 
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
@@ -11709,19 +11653,12 @@ await sendText(walletSendCalls, {
 To receive and process a transaction request:
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
+if (ctx.usesCodec(WalletSendCallsCodec)) {
+  // Process the transaction request here
 }
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
 ```
 
-> You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
+You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
 
 
 ## pages/agents/content-types/content-types.mdx
@@ -11873,9 +11810,9 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
-if (message.contentType.sameAs(ContentTypeReply)) {
+if (ctx.usesCodec(ReplyCodec)) {
   // We've got a reply.
-  const reply: Reply = message.content;
+  const reply: Reply = ctx.message.content;
 }
 ```
 
@@ -12049,9 +11986,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
-if (message.contentType.sameAs(ContentTypeReaction)) {
+if (ctx.usesCodec(ReactionCodec)) {
   // We've got a reaction.
-  const reaction: Reaction = message.content;
+  const reaction: Reaction = ctx.message.content;
 }
 ```
 
