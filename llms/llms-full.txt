@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 09:13 PM UTC / October 02, 2025
+Generated at 05:05 PM UTC / October 08, 2025
 
 ## Instructions for AI Tools
 
@@ -6431,7 +6431,7 @@ The first time someone uses your app with an identity they've never used with an
 
 The installation concepts described in this document apply to both inbox apps and agents. However, the context differs. **Inbox apps** typically have installations across different devices and apps (phone, laptop, different XMTP apps), while **agents** typically have installations across different deployment environments (local development, Railway, production servers).
 
-For more agent-specific guidance, see [Manage agent installations](/agents/concepts/installations).
+For more agent-specific guidance, see [Manage agent local database files and installations](/agents/build-agents/local-database).
 :::
 
 The client creates an inbox ID and installation ID associated with the identity. By default, this identity is designated as the recovery identity. A recovery identity will always have the same inbox ID and cannot be reassigned to a different inbox ID.
@@ -9179,7 +9179,7 @@ Each identity can authenticate new installations:
 
 ## Identity actions
 
-To learn how to build agents with identity actions, see [Manage XMTP inboxes, identities, and installations](/agents/concepts/installations).
+To learn how to build agents with identity actions, see [Manage agent local database files and installations](/agents/build-agents/local-database).
 
 To learn how to build chat apps with identity actions, see [Manage XMTP inboxes, identities, and installations](/chat-apps/core-messaging/manage-inboxes).
 
@@ -9774,6 +9774,23 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 :::
 
+## Stream conversations
+
+You can listen to new conversations using the `dm` and `group` events.
+
+```js [Node]
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  // received when you create a new dm
+  console.log('New dm created:', ctx.conversation.id);
+});
+
+agent.on('group', async (ctx) => {
+  // received when you create a new group
+  console.log('Added to group:', ctx.conversation.id);
+});
+```
+
 ## Handle errors and failures
 
 The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
@@ -10145,6 +10162,130 @@ const agent = await Agent.create(signer);
 ```
 
 
+## pages/agents/build-agents/local-database.mdx
+# Manage agent local database files and installations
+
+## Understand local database files
+
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
+
+**Database file naming:**
+
+Database files follow this pattern: `xmtp-{environment}-{inbox-id}.db3`
+
+Example:
+
+```bash
+xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688.db3
+```
+
+- `xmtp-production`: Environment prefix
+- `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
+- `.db3`: SQLite database file extension
+
+**Keep these files between deployments:**
+
+- Deleting them creates a new installation each time
+- Reusing them maintains the same installation
+- Each inbox can have up to 10 installations
+
+**For production deployments:**
+
+- Use persistent volumes (Railway volumes, Render disks, etc.)
+- The database needs to persist across restarts
+
+:::warning[Note]
+
+If you hit the 10 installation limit, use [this script](https://github.com/ephemeraHQ/xmtp-agent-examples?tab=readme-ov-file#revoke-installations) to revoke installations.
+
+:::
+
+## Understand installations
+
+With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
+
+When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
+
+For example, consider deploying your agent to these platforms:
+
+- Local development: Creates an installation
+- Railway: Creates another installation
+- Production server: Creates another installation
+
+Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
+
+For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
+
+- Local development: `local` network
+- Railway: `dev` network
+- Production server: `production` network
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png"
+    width="500px"
+    alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each"
+  />
+</div>
+
+If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
+
+- Local development: `production` network
+- Railway: `production` network
+- Production server: `production` network
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png"
+    width="500px"
+    alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations"
+  />
+</div>
+
+Here are some best practices for agent installation management:
+
+- Configure your deployments to preserve the agent's database
+- Consider how many platforms you'll need before hitting the 10 installation limit
+- Keep track of which installation corresponds to which platform
+- Regularly [check how many installations your agent has](/agents/deploy/debug-agents)
+- [Revoke installations](#revoke-agent-installations) from platforms you no longer use
+
+## Common agent installation scenarios
+
+### Deploy to a new platform
+
+When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
+
+- Your agent creates a new installation for the new platform
+- If you already have 10 installations, you'll need to [revoke one first](#revoke-agent-installations)
+- The new installation will start fresh without conversation history
+
+### Update an existing deployment
+
+When you redeploy your agent to the same platform:
+
+- If the platform preserves the database, the same installation continues working
+- If the platform doesn't preserve the database, a new installation is created
+
+## Revoke agent installations
+
+:::warning[Important]
+
+Revoking an installation is permanent. You cannot recover access to a revoked installation.
+
+:::
+
+When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database.
+
+Your agent can still run from any active installations on other deployment platforms.
+
+To revoke an agent installation, use [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo. For example:
+
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```
+
+
 ## pages/agents/build-agents/group-permissions.mdx
 # Understand the group permissions system
 
@@ -10451,6 +10592,16 @@ agent.on('start', () => {
 await agent.start();
 ```
 
+### Local database
+
+:::danger
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+:::
+
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history. To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+
 ### Set environment variables
 
 To run an example XMTP agent, you must create a `.env` file with the following variables:
@@ -10563,7 +10714,7 @@ Access message properties directly:
 ```typescript
 agent.on('message', async (ctx) => {
   const message = ctx.message;
-  
+
   console.log(`Message ID: ${message.id}`);
   console.log(`Sender inbox ID: ${message.senderInboxId}`);
   console.log(`Sent at: ${message.sentAt}`);
@@ -10579,7 +10730,7 @@ Send messages and replies:
 agent.on('text', async (ctx) => {
   // Send a regular message
   await ctx.sendText('Hello!');
-  
+
   // Send a reply to the current message
   await ctx.sendTextReply('Thanks for your message!');
 });
@@ -10592,7 +10743,7 @@ Add reactions to messages:
 ```typescript
 agent.on('text', async (ctx) => {
   const content = ctx.message.content.toLowerCase();
-  
+
   if (content.includes('good')) {
     await ctx.sendReaction('👍');
   } else if (content.includes('bad')) {
@@ -10609,7 +10760,7 @@ Get the Ethereum address of the message sender:
 agent.on('text', async (ctx) => {
   const senderAddress = await ctx.getSenderAddress();
   console.log(`Message from: ${senderAddress}`);
-  
+
   // Use for authorization
   if (senderAddress === '0x1234...') {
     await ctx.sendTextReply('Hello, admin!');
@@ -10635,11 +10786,11 @@ agent.on('text', async (ctx) => {
 ```typescript
 agent.on('text', async (ctx) => {
   const conversation = ctx.conversation;
-  
+
   // Get conversation members
   const members = await conversation.members();
   console.log(`Member count: ${members.length}`);
-  
+
   // Check conversation type
   if (ctx.isDm()) {
     console.log(`DM with: ${conversation.peerInboxId}`);
@@ -10670,17 +10821,17 @@ agent.on('text', async (ctx) => {
 ```typescript
 agent.on('text', async (ctx) => {
   const members = await ctx.conversation.members();
-  
+
   for (const member of members) {
     console.log(`Member inbox ID: ${member.inboxId}`);
     console.log(`Permission level: ${member.permissionLevel}`);
     console.log(`Consent state: ${member.consentState}`);
-    
+
     // Get Ethereum address
     const ethIdentifier = member.accountIdentifiers.find(
       (id) => id.identifierKind === IdentifierKind.Ethereum
     );
-    
+
     if (ethIdentifier) {
       console.log(`Ethereum address: ${ethIdentifier.identifier}`);
     }
@@ -10695,10 +10846,10 @@ agent.on('text', async (ctx) => {
   // Get all messages
   const messages = await ctx.conversation.messages();
   console.log(`Total messages: ${messages.length}`);
-  
+
   // Get recent messages
   const recentMessages = messages.slice(-10);
-  
+
   for (const msg of recentMessages) {
     console.log(`${msg.senderInboxId}: ${msg.content}`);
   }
@@ -10716,6 +10867,7 @@ agent.on('start', () => {
   console.log(`🔗 ${getTestUrl(agent.client)}`);
 });
 ```
+
 
 ## pages/agents/concepts/identity.mdx
 # Create an XMTP client
@@ -10890,166 +11042,7 @@ if (f.isText(ctx.message)) {
 - `isText`
 - `isTextReply`
 
-To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/utils/filter.ts).
-
-```ts [Node]
-import { filter } from '@xmtp/agent-sdk';
-
-const fromSelf = <ContentTypes>(
-  message: DecodedMessage<ContentTypes>,
-  client: Client<ContentTypes>
-) => {
-  return message.senderInboxId === client.inboxId;
-};
-
-const hasContent = <ContentTypes>(
-  message: DecodedMessage<ContentTypes>
-): message is DecodedMessage<ContentTypes> & {
-  content: NonNullable<ContentTypes>;
-} => {
-  return message.content !== undefined && message.content !== null;
-};
-
-const isDM = (conversation: Conversation): conversation is Dm => {
-  return conversation instanceof Dm;
-};
-
-const isGroup = (conversation: Conversation): conversation is Group => {
-  return conversation instanceof Group;
-};
-
-const isGroupAdmin = (conversation: Conversation, message: DecodedMessage) => {
-  if (isGroup(conversation)) {
-    return conversation.isAdmin(message.senderInboxId);
-  }
-  return false;
-};
-
-const isGroupSuperAdmin = (
-  conversation: Conversation,
-  message: DecodedMessage
-) => {
-  if (isGroup(conversation)) {
-    return conversation.isSuperAdmin(message.senderInboxId);
-  }
-  return false;
-};
-
-const isReaction = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: Reaction } => {
-  return !!message.contentType?.sameAs(ContentTypeReaction);
-};
-
-const isReply = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: Reply } => {
-  return !!message.contentType?.sameAs(ContentTypeReply);
-};
-
-const isRemoteAttachment = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: RemoteAttachment } => {
-  return !!message.contentType?.sameAs(ContentTypeRemoteAttachment);
-};
-
-const isText = (
-  message: DecodedMessage
-): message is DecodedMessage & { content: string } => {
-  return !!message.contentType?.sameAs(ContentTypeText);
-};
-
-const isTextReply = (message: DecodedMessage) => {
-  return isReply(message) && typeof message.content.content === 'string';
-};
-```
-
-
-## pages/agents/concepts/installations.mdx
-# Manage agent installations
-
-With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
-
-When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
-
-For example, consider deploying your agent to these platforms:
-
-- Local development: Creates an installation
-- Railway: Creates another installation
-- Production server: Creates another installation
-
-Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
-
-For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
-
-- Local development: `local` network
-- Railway: `dev` network
-- Production server: `production` network
-
-<div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png"
-    width="500px"
-    alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each"
-  />
-</div>
-
-If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
-
-- Local development: `production` network
-- Railway: `production` network
-- Production server: `production` network
-
-<div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png"
-    width="500px"
-    alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations"
-  />
-</div>
-
-Here are some best practices for agent installation management:
-
-- Configure your deployments to preserve the agent's database
-- Consider how many platforms you'll need before hitting the 10 installation limit
-- Keep track of which installation corresponds to which platform
-- Regularly [check how many installations your agent has](/agents/deploy/debug-agents)
-- [Revoke installations](#revoke-agent-installations) from platforms you no longer use
-
-## Common agent installation scenarios
-
-### Deploy to a new platform
-
-When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
-
-- Your agent creates a new installation for the new platform
-- If you already have 10 installations, you'll need to [revoke one first](#revoke-agent-installations)
-- The new installation will start fresh without conversation history
-
-### Update an existing deployment
-
-When you redeploy your agent to the same platform:
-
-- If the platform preserves the database, the same installation continues working
-- If the platform doesn't preserve the database, a new installation is created
-
-## Revoke agent installations
-
-:::warning[Important]
-
-Revoking an installation is permanent. You cannot recover access to a revoked installation.
-
-:::
-
-When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database.
-
-Your agent can still run from any active installations on other deployment platforms.
-
-To revoke an agent installation, use [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo. For example:
-
-```bash
-yarn revoke <inbox-id> <installations-to-exclude>
-```
+To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
 
 
 ## pages/agents/concepts/event-driven.mdx
@@ -11060,10 +11053,16 @@ Subscribe only to what you need using Node’s `EventEmitter` interface. Events 
 - **Message events**
   - `attachment`: a new incoming remote attachment message
   - `message`: all incoming messages (fires for every message regardless of type)
+  - `group-update`: group members have been added or removed or metadata has been updated
   - `reaction`: a new incoming reaction message
   - `reply`: a new incoming reply message
   - `text`: a new incoming text message
   - `unknownMessage`: a message that doesn't match any specific type
+
+- **Conversation events**
+  - `conversation`: a new group or DM conversation
+  - `dm`: a new DM conversation
+  - `group`: a new group conversation
 
 - **Lifecycle events**
   - `start` / `stop`: agent lifecycle events
@@ -11083,6 +11082,15 @@ agent.on('reaction', async (ctx) => {
 
 agent.on('reply', async (ctx) => {
   console.log(`Reply to: ${ctx.message.content.reference}`);
+});
+
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  await ctx.conversation.send('Welcome to our DM!');
+});
+
+agent.on('group', async (ctx) => {
+  await ctx.conversation.send('Hello group!');
 });
 
 // Listen to unhandled events
@@ -11421,10 +11429,16 @@ await ctx.conversation.send(remoteAttachment, {
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```ts [Node]
-import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
+import {
+  ContentTypeRemoteAttachment,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
 
-if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+if (ctx.usesCodec(RemoteAttachmentCodec)) {
+  const attachment = await RemoteAttachmentCodec.load(
+    ctx.message.content,
+    client
+  );
 }
 ```
 
@@ -11539,16 +11553,9 @@ await ctx.conversation.send(transactionReference, {
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
-  // Handle non-transaction reference message
-  return;
+if (ctx.usesCodec(TransactionReferenceCodec)) {
+  // Process the transaction reference here
 }
-
-const transactionRef: TransactionReference = message.content;
-// Process the transaction reference here
 ```
 
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
@@ -11648,19 +11655,12 @@ await sendText(walletSendCalls, {
 To receive and process a transaction request:
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
+if (ctx.usesCodec(WalletSendCallsCodec)) {
+  // Process the transaction request here
 }
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
 ```
 
-> You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
+You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
 
 
 ## pages/agents/content-types/content-types.mdx
@@ -11731,6 +11731,10 @@ Here are standards-track content types that you can review, test, and adopt in y
 - [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 - [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
 - [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.
+
+## Custom content types
+
+Custom content types allow you to define your own schemas for messages that go beyond what is covered by standard or standards-track types. These are useful for experiments, domain-specific features, or app-specific behaviors.
 
 
 ## pages/agents/content-types/replies.mdx
@@ -11808,9 +11812,9 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
-if (message.contentType.sameAs(ContentTypeReply)) {
+if (ctx.usesCodec(ReplyCodec)) {
   // We've got a reply.
-  const reply: Reply = message.content;
+  const reply: Reply = ctx.message.content;
 }
 ```
 
@@ -11832,7 +11836,6 @@ on('group-update', async (ctx) => {
   console.log(`Group updated: ${JSON.stringify(ctx.message.content)}`);
 });
 ```
-
 
 ## Group update message structure
 
@@ -11984,9 +11987,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
-if (message.contentType.sameAs(ContentTypeReaction)) {
+if (ctx.usesCodec(ReactionCodec)) {
   // We've got a reaction.
-  const reaction: Reaction = message.content;
+  const reaction: Reaction = ctx.message.content;
 }
 ```
 
