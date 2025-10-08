@@ -30,11 +30,13 @@ export const Tabs = (() => {
     const rootRef = React.useRef(null);
 
     React.useEffect(() => {
+      const timeouts = [];
+
       const switchToTabContainingHash = () => {
         const hash = window.location.hash.slice(1);
         if (!hash) return;
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           const allHeadings = document.querySelectorAll(`[id="${hash}"]`);
 
           allHeadings.forEach((heading) => {
@@ -43,13 +45,15 @@ export const Tabs = (() => {
               const tabValue = tabContent.getAttribute('data-value');
               if (tabValue && tabValue !== activeTab) {
                 setActiveTab(tabValue);
-                setTimeout(() => {
+                const scrollTimeoutId = setTimeout(() => {
                   heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }, 100);
+                timeouts.push(scrollTimeoutId);
               }
             }
           });
         }, 100);
+        timeouts.push(timeoutId);
       };
 
       switchToTabContainingHash();
@@ -61,10 +65,14 @@ export const Tabs = (() => {
           const heading = document.getElementById(hash);
           if (heading) {
             const tabContent = heading.closest('[data-value]');
-            if (tabContent) {
+            if (tabContent && rootRef.current?.contains(tabContent)) {
               const tabValue = tabContent.getAttribute('data-value');
               if (tabValue && tabValue !== activeTab) {
                 setActiveTab(tabValue);
+                const scrollTimeoutId = setTimeout(() => {
+                  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+                timeouts.push(scrollTimeoutId);
               }
             }
           }
@@ -74,6 +82,7 @@ export const Tabs = (() => {
       return () => {
         window.removeEventListener('hashchange', switchToTabContainingHash);
         clearInterval(interval);
+        timeouts.forEach(clearTimeout);
       };
     }, [activeTab]);
 
