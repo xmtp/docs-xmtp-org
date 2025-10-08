@@ -85,16 +85,9 @@ await ctx.conversation.send(transactionReference, {
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
-  // Handle non-transaction reference message
-  return;
+if (ctx.usesCodec(TransactionReferenceCodec)) {
+  // Process the transaction reference here
 }
-
-const transactionRef: TransactionReference = message.content;
-// Process the transaction reference here
 ```
 
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
