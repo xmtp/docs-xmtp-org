@@ -1,8 +1,20 @@
 # Manage agent local database files and installations
 
+Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
+
+## Important Installation Limits and Revocation Rules
+
+Understanding XMTP's installation and inbox limits is critical for production deployments:
+
+- **10-installation limit per inbox**: Each inbox supports up to 10 active installations. Once you reach this limit, you must [revoke an existing installation](/chat-apps/core-messaging/manage-inboxes#revoke-a-specific-installation) before adding a new one.
+
+- **256-update limit per inbox**: Every installation addition or revocation counts toward a cumulative limit of 256 updates. Exceeding this threshold requires inbox rotation, which permanently removes access to all historical conversations for that inbox.
+
+These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
+
 ## Understand local database files
 
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
+The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
 
 **Database file naming:**
 
