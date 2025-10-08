@@ -48,6 +48,19 @@ The `message` event fires for every incoming message, regardless of type. When u
 
 :::
 
+## Stream conversations
+
+```js [Node]
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  await ctx.conversation.send('Welcome to our DM!');
+});
+ 
+agent.on('group', async (ctx) => {
+  await ctx.conversation.send('Hello group!');
+});
+```
+
 ## Handle errors and failures
 
 The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
