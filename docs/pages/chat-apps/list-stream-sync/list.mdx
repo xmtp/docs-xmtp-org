@@ -1,0 +1,96 @@
+# List conversations
+
+## List existing conversations
+
+Get a list of existing group chat and DM conversations in the local database.
+
+By default, `list` returns only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend listing allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't degrade the user experience.
+
+To list all conversations regardless of consent state, use the `consentStates` option and pass all three consent states.
+
+Conversations are listed in descending order by their `lastMessage` created at value. If a conversation has no messages, the conversation is ordered by its `createdAt` value.
+
+:::code-group
+
+```js [Browser]
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
+const allGroups = await client.conversations.listGroups({
+  consentStates: [ConsentState.Allowed],
+});
+const allDms = await client.conversations.listDms({
+  consentStates: [ConsentState.Allowed],
+});
+```
+
+```js [Node]
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
+const allGroups = await client.conversations.listGroups({
+  consentStates: [ConsentState.Allowed],
+});
+const allDms = await client.conversations.listDms({
+  consentStates: [ConsentState.Allowed],
+});
+```
+
+```tsx [React Native]
+// List Conversation items
+await alix.conversations.list(['allowed']);
+
+// List Conversation items and return only the fields set to true. Optimize data transfer
+// by requesting only the fields the app needs.
+await alix.conversations.list({
+  members: false,
+  consentState: false,
+  description: false,
+  creatorInboxId: false,
+  addedByInboxId: false,
+  isActive: false,
+  lastMessage: true,
+});
+```
+
+```kotlin [Kotlin]
+// List conversations (both groups and dms)
+val conversations = alix.conversations.list()
+val filteredConversations = client.conversations.list(consentState = ConsentState.ALLOWED)
+
+// List just dms
+val dms = alix.conversations.listDms()
+val filteredDms = client.conversations.listDms(consentState = ConsentState.ALLOWED)
+
+//List just groups
+val groups = alix.conversations.listGroups()
+val filteredGroups = client.conversations.listGroups(consentState = ConsentState.ALLOWED)
+
+```
+
+```swift [Swift]
+// List conversations (both groups and dms)
+let conversations = try await alix.conversations.list()
+let orderFilteredConversations = try await client.conversations.list(consentState: .allowed)
+
+// List just dms
+let conversations = try await alix.conversations.listDms()
+let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
+
+//List just groups
+let conversations = try await alix.conversations.listGroups()
+let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
+```
+
+:::
+
+## List a user's active conversations
+
+The `isActive()` method determines whether the current user is still an active member of a group conversation. For example:
+
+- When a user is added to a group, `isActive()` returns `true` for that user
+- When a user is removed from a group, `isActive()` returns `false` for that user
+
+You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.

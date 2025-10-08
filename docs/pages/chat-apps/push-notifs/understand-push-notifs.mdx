@@ -1,0 +1,171 @@
+# Understand push notifications with XMTP
+
+With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
+
+At the highest level, push notifications with XMTP require these three elements:
+
+1. An **XMTP push notification server** that listens for all messages sent on the XMTP network. You set the server to listen to the`production`, `dev`, or `local` environment, and every message sent using that environment flows through the server. The server filters the messages accordingly and sends only the desired push notifications to a push notification service.
+
+2. A **push notification service**, such as Apple Push Notification service (APNs), Firebase Cloud Messaging (FCM), or W3C Web Push protocol, receives push notifications from the XMTP push notification server.
+
+3. An **app** that displays the push notifications.
+
+![Push notifications framework](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pn-framework.png)
+
+## Understand message filtering
+
+Let's dive deeper into how the XMTP push notification server filters messages to determine which ones to send to the push notification service.
+
+![XMTP push notification server filtering flow](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pn-server-filtering.png)
+
+1. **Check if the server is subscribed to the message's topic**
+   - A topic is a way to organize messages, and each message has a topic. To support push notifications, your app must [subscribe the server to the topics](https://docs.xmtp.org/chat-apps/push-notifs/push-notifs#subscribe-to-topics) that are relevant to your users. For example, for a user Alix, you must subscribe to all topics associated with Alix's conversations. The XMTP push notification server has a list of these subscriptions. Your push notification server should expose functions to post the subscriptions to. The SDKs use protobufs as a universal language that allows the creation of these functions in any language. For example, [here are bufs](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/push) generated from the [XMTP example push notification server](/chat-apps/push-notifs/pn-server). You can use these directly if you clone and use the example server.
+   - If the arriving message's topic is **not on the list**, the server ignores it.
+   - If the arriving message's topic is **on the list**, the server proceeds to check the message with the next filter.
+2. **Check the `shouldPush` field value**
+   - Each [content type](/chat-apps/content-types/content-types), such as text, attachment, or reply, can have
+   - A `shouldPush` boolean value is set at the content type level for each content type, such as text, attachment, or reply, so it can't be overwritten on send. By default, this value is set to **_true_** for all content types except read receipts and reactions.
+   - If the message's content type `shouldPush` value is **_false_**, the server ignores the message.
+   - If the message's content type `shouldPush` value is **_true_**, the server proceeds to check the message with the next filter.
+3. **Check the message's HMAC key**
+   - Each message sent with XMTP carries a single HMAC key. This key is updated with the encrypted message payload before being sent out.
+   - If the message is signed by an HMAC key that **matches** the user's HMAC key, the push notification server ignores the message. This match means that the message was sent by the user themself, and they should not receive a push notification about a message they sent.
+   - If the message is signed by an HMAC key that **does not match** the user's HMAC key, this means someone else sent the message and the user should be notified about it. At this point, the push notification server will send a notification.
+4. **Send to the push notification service**
+   - The server sends the message to the push notification service.
+   - Once the push notification service has the message, it can format it appropriately for the push notification. This includes extracting necessary information, such as the sender's identity and message content, to craft meaningful notifications. This is only possible with the push notifications service inside the app and not with the push notification server because the server doesn't have the notion of a client and, therefore, can't decrypt the message.
+
+XMTP provides an example XMTP push notification server that implements the filtering described here. To learn more, see [Run a push notification server for an app built with XMTP](/chat-apps/push-notifs/pn-server).
+
+## Understand sending push notifications
+
+The XMTP push notification server sends qualified messages to the appropriate push notification service:
+
+- Apple Push Notification service (APNs) for iOS apps
+- Firebase Cloud Messaging (FCM) for Android apps
+- W3C Web Push protocol for web apps
+
+### Best practices for Apple push notifications
+
+While we recommend that you do message filtering at the XMTP push notification server level, if you build an iOS app with XMTP, you can choose to use the [com.apple.developer.usernotifications.filtering](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_usernotifications_filtering) entitlement instead. This entitlement enables you to run a Notification Service Extension in your app that can decrypt and modify a notification before displaying it to a user.
+
+To use this entitlement, you must obtain permission from Apple. Submit the application using the app owner's Apple developer account via [https://developer.apple.com/contact/request/notification-service](https://developer.apple.com/contact/request/notification-service).
+
+:::warning
+
+Keep in mind that it may be difficult to obtain permission for the `com.apple.developer.usernotifications.filtering` entitlement from Apple if your app handles cryptocurrency or could be perceived—even loosely—as a crypto wallet. While Apple hasn't publicly stated an explicit policy, developers have anecdotally reported challenges in this area. If you don't receive the entitlement, you can always perform the message filtering using the XMTP push notification server.
+
+:::
+
+**Submit your application early**
+The approval process can take 2-3 weeks or longer.
+
+Here are some sample answers to help you complete the application:
+
+- **App name:** [Your app name]
+- **App Store URL:** [Your app store URL]
+- **Apple ID of App:** [Your app ID]
+- **App Type:** Messaging
+- **Does your app provide end-to-end encryption?:** Yes
+- **Explain why existing APIs are not adequate for your app:** The existing APIs always show some sort of notification when a push comes in. We don't want to show a notification for a user's own messages.
+- **Explain why your app doesn't show a visible notification each time a push notification is received:** The server delivering notifications only knows of the existence of a conversation. It does not know who the sender or recipient is. That data is decoded on the device in the extension. As a result, it sends a push notification for every message that occurs in the conversation. We want to filter out notifications for notifications that the user themself sent.
+- **When your extension runs, what system and network resources does it need:** We might need to make a gRPC request to load additional information about a conversation. This is only necessary when we haven't stored the conversation details locally, which is expected to be less common than being able to just decrypt the conversation locally. For example, we might have a scenario in which a welcome message is pushed before it's streamed.
+- **How often does your extension run? What can trigger it to run:** The extension will run whenever a message is sent or received in a conversation. The frequency will depend on how active a user is.
+
+## Understand displaying push notifications
+
+After the push notification service sends the notification, the app must [receive it](/chat-apps/push-notifs/push-notifs#receive-push-notifications).
+
+There are some nuances to how push notifications can be handled once received by the app. While it is useful for all of these app types to use the XMTP push notification server filtering capabilities, it is especially important for an iOS app without the user notification entitlement.
+
+|                                               | Can decrypt before displaying? |
+| --------------------------------------------- | ------------------------------ |
+| Android and web apps                          | Yes                            |
+| iOS app with user notification entitlement    | Yes                            |
+| iOS app without user notification entitlement | No                             |
+
+- If the app **can** **decrypt** the push notification before displaying it to the user, it can perform additional logic (should I display this?) before displaying the push notification. For example, the app can decrypt the push notification, see the topic type, and process it accordingly:
+  - Is the message in a welcome topic?
+    - `conversations.processWelcomeMessage`
+  - Is the message in a conversation topic?
+    - `conversation.processMessage`
+- If the app **cannot** **decrypt** the push notification before displaying it to the user, it can't perform additional logic (should I display this?) before displaying the push notification.
+
+  For example, without the user notification entitlement, the app cannot decrypt and modify the push notification before displaying it to the user. The notification arrives on the device, and iOS handles displaying it automatically. You can decrypt the content after the notification is shown, but you cannot intercept it before display and decide not to show it, for example.
+
+## Understand HMAC keys and push notifications
+
+XMTP uses Hash-based Message Authentication Code (HMAC) keys for push notifications. A user holds the HMAC keys for any conversation they join, but an outside observer only sees the keys without knowing who owns them. For instance, suppose Alix has HMAC key #1, and we also see HMAC keys #2 and #3. If Alix discloses that they hold key #1, then we know key #1 belongs to them. However, we have no way of knowing who holds keys #2 or #3 unless those individuals reveal that information. This design preserves privacy while enabling secure communication.
+
+### HMAC key generation and syncing
+
+XMTP uses a two-level HMAC key system:
+
+1. **Root HMAC key**: Each inbox has a root HMAC key that serves as the foundation for deriving group-specific keys
+2. **Group HMAC keys**: Each conversation group has its own HMAC key, derived from the root HMAC key, the message's group ID, and the number of 30-day periods since the Unix epoch, along with some salt. XMTP generates one HMAC key per group, not per installation.
+
+#### Root HMAC key syncing across installations
+
+When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the sync group. Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
+
+#### Effects of stale root HMAC keys
+
+The only side effect of having a stale root HMAC key is that a user might receive push notifications for their own messages. This happens because the push server uses group HMAC keys (derived from the root key) to filter out a user's own messages. When the derived group keys don't match due to having a stale root key, the server can't identify that the user sent the message and sends them a notification.
+
+#### How installations learn about new root HMAC keys
+
+This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+
+## Understand DM stitching and push notifications
+
+🎥 walkthrough: DM stitching
+
+This video provides a walkthrough of direct message (DM) stitching, covering the key ideas discussed in this section. After watching, feel free to continue reading for more details.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/YF5m_mTY6mw?si=EH0S4eP0GPEAafIw"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+Consider a scenario where `alix.id` using an existing installation #1 to create a conversation with `bo.id` and sends them a DM. And then `alix.id` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/chat-apps/list-stream-sync/history-sync) to bring in their existing conversations, `alix.id` creates a new conversation with `bo.id` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of identities, `alix.id` and `bo.id`, resulting in a confusing DM UX like this one:
+
+![No DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/no-dm-stitching.png)
+
+XMTP implements DM stitching to ensure that even if there are multiple DMs with the same pair of identities under the hood, your users see only one DM conversation with messages displayed appropriately.
+
+For example, with DM stitching, instead of seeing two separate DM conversations between `alix.id` and `bo.id` with one message each, `alix.id` sees one DM conversation between `alix.id` and `bo.id` with two messages in both installations #1 and #2
+
+![With DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/with-dm-stitching.png)
+
+### How DM stitching works
+
+1. When fetching messages from any of the MLS groups associated with a DM conversation, the XMTP SDK responds with messages from all of the groups associated with the DM conversation.
+   - For example, let's say you have three MLS groups associated with a DM conversation:
+     - alix-bo-1
+     - alix-bo-2
+     - alix-bo-3
+
+     Any messages sent in any of these DM conversations will display in all of these DM conversations.
+
+     For example, `alix.id` sends a message in alix-bo-1. `bo.id` is on alix-bo-3, but can still see messages sent in alix-bo-1.
+
+2. When sending messages in a DM conversation, all installations in that DM will eventually converge to sending them to the same MLS group, even if they originally start off using different ones.
+   - For example, `bo.id` sends a message in alix-bo-3. `alix.id` is on alix-bo-1, but can still see messages from alix-bo-3. When `alix.id` sends a reply to `bo.id`, it uses the most recently used DM conversation, alix-bo-3. In this way, all messaging will eventually move to alix-bo-3, and 1 and 2 will slowly fade away due to non-use.
+
+### DM stitching considerations for push notifications
+
+DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
+
+Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics.
+
+Therefore, when subscribing a DM conversations to push notifications, you should subscribe to a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
+
+For example, you must consider that with DM stitching, the conversation is moving from alix-bo-1 and alix-bo-3, for example, and [resubscribe appropriately](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys).
+
+Also, you must consider that a welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.

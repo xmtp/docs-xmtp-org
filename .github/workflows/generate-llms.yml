@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'docs/**/*.md'
+      - 'docs/**/*.mdx'
+      - '!llms/llms-full.txt'
 
 jobs:
   build:

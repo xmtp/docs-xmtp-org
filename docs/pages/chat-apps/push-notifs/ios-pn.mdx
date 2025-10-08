@@ -1,0 +1,51 @@
+# Try push notifications with the iOS example XMTP app
+
+This guide describes how to set up push notifications for the [XMTP iOS example app](https://github.com/xmtp/xmtp-ios/tree/main/XMTPiOSExample) built with the [xmtp-ios SDK](https://github.com/xmtp/xmtp-ios) using Firebase Cloud Messaging (FCM) and a custom notification server.
+
+Perform this setup to understand how you can enable push notifications for your own app built with the `xmtp-ios` SDK.
+
+## Prerequisites
+
+- An iOS device for testing. Push notifications don't work on simulators
+- A Firebase account and a project set up in the Firebase console
+
+## Set up Firebase Cloud Messaging
+
+For this tutorial, we'll use [Firebase Cloud Messaging](https://console.firebase.google.com/) (FCM) as a convenient way to set up a messaging server.
+
+1. Create an FCM project  
+   Go to the [Firebase Console](https://console.firebase.google.com/), create a new project, and follow the setup instructions.
+
+2. Add your app to the FCM project  
+   Add your iOS app to the project by following the Firebase setup workflow. You'll need your app's bundle ID.
+
+3. Download `GoogleService-Info.plist`  
+   At the end of the setup, download the `GoogleService-Info.plist` file and add it to your Xcode project.
+
+4. Generate FCM credentials  
+   In the Firebase console, navigate to your project settings, select the **Cloud Messaging** tab, and note your server key and sender ID. You'll need these for your notification server.
+
+## Configure the iOS example app for push notifications
+
+1. Enable push notifications  
+   In Xcode, go to your project's target capabilities and enable push notifications.
+
+2. Register for notifications  
+   Modify the `AppDelegate` to register for remote notifications and handle the device token.
+
+3. Handle incoming notifications  
+   Implement the necessary delegate methods to handle incoming notifications and foreground notification display.
+
+## Run the notification server
+
+1. Clone and configure the notification server  
+   If you're using the example notification server, clone the repository and follow the setup instructions. Make sure to configure it with your FCM server key.
+
+2. Run the server  
+   Start the server locally or deploy it to a hosting service.
+
+- Subscribe to push notifications in the app  
+  When initializing the XMTP client in your app, subscribe to push notifications using the device token obtained during registration.
+
+- Decode a notification envelope  
+  When you receive a push notification, you may want to decode the notification envelope to display a message preview or other information.

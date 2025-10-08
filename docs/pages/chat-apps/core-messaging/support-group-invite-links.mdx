@@ -1,0 +1,322 @@
+# Support group chat invite links
+
+This document provides suggested paths you might take to provide XMTP group chat invite links in your app. These are just proposals and the actual implementation direction and details are specific to your app and your goals.
+
+## Possible user experience flows
+
+1. A group member with permission to add group members [creates an invite link](#create-a-group-invite-link).
+2. An non-member clicks the invite link to [request to join the group](#generate-an-invite-landing-page).
+3. The non-member is granted access to the group in one of the following ways:
+   - [Automatic join via silent push notification to the link creator](#automatic-join-via-silent-push-notification-to-link-creator)
+   - [Automatic join via silent push notification to all group members](#automatic-join-via-silent-push-notification-to-all-group-members)
+   - [Manual join via push notification to the link creator](#manual-join-via-push-notification-to-link-creator)
+4. [Add the invitee to the group](#add-the-member-to-the-group)
+5. [Check and manage the invite status](#check-the-invite-status)
+
+### Sequence diagrams
+
+These diagrams help illustrate the sequence of interactions between users and participating systems for the suggested options for granting group access to an invitee.
+
+#### Option 1: Automatic join via silent push notification to the link creator
+
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-Link-Creator.png"
+  alt="Sequence diagram for Automatic join via silent push notification to the link creator"
+/>
+
+#### Option 2: Automatic join via silent push notification to all group members
+
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Automatic-Join-via-Silent-Push-to-All-Group-Members.png"
+  alt="Sequence diagram for Automatic join via silent push notification to all group members"
+/>
+
+#### Option 3: Manual join via push notification to the link creator
+
+<img
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/Manual-Join-via-Push-Notification-to-Link-Creator.png"
+  alt="Sequence diagram for Manual join via push notification to the link creator"
+/>
+
+## Create a group invite link
+
+You can provide a UI that enables a group member with permission to add members to create an invite link.
+
+Create the group invite by making a `POST` to a `/groupInvite` endpoint with any metadata your app wants to show on an invite landing page that will be displayed when an invitee clicks the invite link.
+
+### `POST /groupInvite`
+
+#### Example request
+
+```json
+{
+  "groupName": "XMTP Builders",
+  "groupImage": "https://..."
+  // Inviter can be inferred from the request auth token.
+  // Backend doesn't need the actual group ID, since the client can keep track in their DB
+}
+```
+
+#### Example response
+
+The backend returns a new invite link with a unique URL.
+
+Save the `linkUrl` to the client's local database (alongside the XMTP `group_id`) so the link can be surfaced in the UI for copy/paste later and used in push notification handlers.
+
+```json
+{
+  "id": "abcdefg",
+  "linkUrl": "https://converse.xyz/invite/abcdefg"
+}
+```
+
+## Generate an invite landing page
+
+When a user clicks the invite link, the link can display a group invite landing page at `app.xyz`, for example.
+
+To get the information to generate the invite landing page, you can make a `GET` to a `/groupInvite/:id` endpoint.
+
+For example, the invite landing page can display the group name, the invite link creator's profile, any other group metadata the app wants to show, and a Join button.
+
+When a user clicks the Join button on the invite landing page:
+
+- If the user doesn't have the app installed, the link can take them to an app store where they can be prompted to install the app. Once installed, the user can be returned to the invite landing page, where they can click Join again.
+- If the user does have the app installed, the link can open the app. The app can display the conversation list view with the new group grayed out to indicate a pending status.
+
+### `GET /groupInvite/:id`
+
+#### Example request
+
+```html
+GET /groupInvite/abcdefg
+```
+
+#### Example response
+
+```json
+{
+ id: "abcdefg",
+ linkUrl: "https://app.xyz/invite/abcdefg",
+ groupName: "XMTP Builders",
+ groupImage: "https://...",
+ createdBy: <InboxId>
+}
+```
+
+### `POST /groupJoinRequest`
+
+Can be used by the invitee to request to join the group.
+
+#### Example request
+
+```json
+{
+  "inviteId": "abcdefg" // User info implied from auth token
+}
+```
+
+#### Example response
+
+```json
+{
+  "id": "hijklmn", // The id of the join request
+  "status": "pending"
+}
+```
+
+## Handle the request to join the group
+
+When the invitee clicks the invite link to request to join the group, consider granting them access to the group in one of the following ways.
+
+### Automatic join via silent push notification to link creator
+
+As soon as the link creator is detected as being online, they can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic.
+
+#### Example request
+
+```json
+{
+  "inviteId": "abcdefg",
+  "joinRequestId": "hijklmn",
+  "recipientId": "user123",
+  "groupName": "XMTP Builders",
+  "type": "auto_join_creator"
+}
+```
+
+#### Example response
+
+```json
+{
+  "success": true,
+  "status": "processing",
+  "message": "Silent push notification sent to link creator"
+}
+```
+
+### Automatic join via silent push notification to all group members
+
+If the group permits all members to add members, consider sending a silent background push notification to all group members.
+
+The first member detected as being online can receive a silent push notification that automatically adds the invitee to the group. This can make the join appear automatic.
+
+This setup can take the dependency off the sole link creator being online and spreads it across the group, which can allow the group join to happen faster.
+
+#### Example request
+
+```json
+{
+  "inviteId": "abcdefg",
+  "joinRequestId": "hijklmn",
+  "recipientId": "user123",
+  "groupName": "XMTP Builders",
+  "type": "auto_join_members",
+  "groupMembers": ["member1", "member2", "member3"]
+}
+```
+
+#### Example response
+
+```json
+{
+  "success": true,
+  "status": "processing",
+  "message": "Silent push notifications sent to all group members",
+  "notificationsSent": 3
+}
+```
+
+### Manual join via push notification to link creator
+
+Consider having the link creator receive a push notification about a specific invitee requesting to join the group using their invite link. Enable the link creator to approve or reject the request.
+
+For example, you can send a push notification to the invite link creator saying, "User X has requested to join Group Y through your invite link." Give the link creator a way to approve or reject the request.
+
+#### Example request
+
+```json
+{
+  "inviteId": "abcdefg",
+  "joinRequestId": "hijklmn",
+  "recipientId": "user123",
+  "groupName": "XMTP Builders",
+  "type": "manual_approval",
+  "requesterName": "Alix A",
+  "requesterAvatar": "https://example.com/avatar.jpg"
+}
+```
+
+#### Example response
+
+```json
+{
+  "success": true,
+  "status": "pending_approval",
+  "message": "Push notification sent to link creator for manual approval"
+}
+```
+
+### Handle push notification delivery failure
+
+To handle cases where the push notification fails to deliver (maybe the user is offline for a while), XMTP can provide an API that enables clients to check for any pending joins.
+
+Want XMTP to build this API? [Open an issue](https://github.com/xmtp/libxmtp/issues) in the LibXMTP repo to request it.
+
+#### Example request
+
+```json
+{
+  "userId": "user123",
+  "lastCheckTimestamp": "2024-03-20T10:00:00Z"
+}
+```
+
+#### Example response
+
+```json
+{
+  "pendingJoins": [
+    {
+      "inviteId": "abcdefg",
+      "joinRequestId": "hijklmn",
+      "groupName": "XMTP Builders",
+      "status": "pending",
+      "requestedAt": "2024-03-20T09:30:00Z"
+    }
+  ],
+  "lastCheckTimestamp": "2024-03-20T10:00:00Z"
+}
+```
+
+## Add the member to the group
+
+If the invite link creator approves the request, in the background, you can call LibXMTP to load the group and add the member.
+
+### Example request
+
+```json
+{
+  "inviteId": "abcdefg" // User info implied from auth token
+}
+```
+
+### Example response
+
+```json
+{
+ id: "hijklmn" // id of the join request
+ status: 'pending'
+}
+```
+
+## Check the invite status
+
+### `/groups/joinFromInvite`
+
+You can poll a `/groups/joinFromInvite` endpoint to check the invite status and know when the invite link creator has marked it as approved or rejected.
+
+### `GET /groupJoinRequest/:id`
+
+You can provide this endpoint as a way for an invitee to check the status of their request to join a group.
+
+#### Example request
+
+```html
+GET /groupJoinRequest/hijklmn
+```
+
+#### Example response
+
+```json
+{
+ id: "hijklmn",
+ status: "approved"// Possible statuses ("approved", "rejected", "pending")
+ reason: null // Allow the system to pass a reason back to the client
+}
+```
+
+## Mark the invite request as complete
+
+Once the invite link creator has approved or rejected the request, you can make a `PUT` to a `/groupJoinRequest/:id` endpoint to mark the request as completed.
+
+### `PUT /groupJoinRequest/:id`
+
+#### Example request
+
+You can have the invite link creator mark an invite as approved or rejected. For basic invite links, approval can happen as soon as the push notification has been received.
+
+```json
+{
+  "status": "approved"
+}
+```
+
+#### Example response
+
+```json
+{
+  "id": "hijklmn",
+  "status": "approved",
+  "reason": null // Allow the system to pass a reason back to the client
+}
+```

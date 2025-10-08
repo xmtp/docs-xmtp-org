@@ -1,0 +1,221 @@
+---
+description: Learn how to implement an onchain transaction reference content type
+---
+
+# Support onchain transaction references in your app built with XMTP
+
+This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
+
+:::tip[Open for feedback]
+
+You're welcome to provide feedback by commenting on [XIP-21: Onchain transaction reference content type](https://community.xmtp.org/t/xip-21-on-chain-transaction-reference-content-type/532).
+
+:::
+
+## Install the package
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-transaction-reference
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-transaction-reference
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-transaction-reference
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+:::code-group
+
+```js [Browser]
+import {
+  ContentTypeTransactionReference,
+  TransactionReferenceCodec,
+} from '@xmtp/content-type-transaction-reference';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new TransactionReferenceCodec()],
+});
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.Client
+import org.xmtp.android.library.Signer
+import org.xmtp.android.library.codecs.ContentTypeTransactionReference
+import org.xmtp.android.library.codecs.TransactionReferenceCodec
+
+Client.register(codec = TransactionReferenceCodec())
+
+// Create the XMTP client (assume account is a Signer)
+val xmtp = Client.create(account)
+```
+
+```swift [Swift]
+import XMTP
+import XMTPContentTypeTransactionReference
+
+let codec = TransactionReferenceCodec()
+Client.register(codec: codec)
+
+// Create the XMTP client (assume account is a signer)
+let xmtp = try await Client.create(account: account)
+```
+
+:::
+
+## Send a transaction reference
+
+With XMTP, a transaction reference is represented as an object with the following keys:
+
+:::code-group
+
+```ts [Browser]
+const transactionReference: TransactionReference = {
+  /**
+   * Optional namespace for the networkId
+   */
+  namespace: "eip155",
+  /**
+   * The networkId for the transaction, in decimal or hexadecimal format
+   */
+  networkId: 1;
+  /**
+   * The transaction hash
+   */
+  reference: "0x123...abc";
+  /**
+   * Optional metadata object
+   */
+  metadata: {
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100000, // In integer format, this represents 1 USDC (100000/10^6)
+    decimals: 6, // Specifies that the currency uses 6 decimal places
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  };
+};
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.TransactionReference
+
+val transactionReference = TransactionReference(
+  namespace = "eip155",
+  networkId = "1",
+  reference = "0x123...abc",
+  metadata = TransactionReference.Metadata(
+    transactionType = "transfer",
+    currency = "USDC",
+    amount = 100000.0,
+    decimals = 6u,
+    fromAddress = "0x456...def",
+    toAddress = "0x789...ghi"
+  )
+)
+```
+
+```swift [Swift]
+import XMTPContentTypeTransactionReference
+
+let transactionReference = TransactionReference(
+  namespace: "eip155",
+  networkId: "1",
+  reference: "0x123...abc",
+  metadata: TransactionReference.Metadata(
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100_000,
+    decimals: 6,
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  )
+)
+```
+
+:::
+
+Once you have a transaction reference, you can send it as part of your conversation:
+
+:::code-group
+
+```js [Browser]
+await conversation.messages.send(transactionReference, {
+  contentType: ContentTypeTransactionReference,
+});
+```
+
+```kotlin [Kotlin]
+import kotlinx.coroutines.runBlocking
+import org.xmtp.android.library.SendOptions
+import org.xmtp.android.library.codecs.ContentTypeTransactionReference
+
+runBlocking {
+  conversation.send(
+    content = transactionReference,
+    options = SendOptions(contentType = ContentTypeTransactionReference)
+  )
+}
+```
+
+```swift [Swift]
+try await conversation.send(
+  transactionReference,
+  options: SendOptions(contentType: ContentTypeTransactionReference)
+)
+```
+
+:::
+
+## Receive a transaction reference
+
+To receive and process a transaction reference, you can use the following code samples.
+
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
+
+:::code-group
+
+```ts [Browser]
+// Assume `loadLastMessage` is a thing you have
+const message: DecodedMessage = await loadLastMessage();
+
+if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
+  // Handle non-transaction reference message
+  return;
+}
+
+const transactionRef: TransactionReference = message.content;
+// Process the transaction reference here
+```
+
+```kotlin [Kotlin]
+// Assume message is a DecodedMessage
+if (message.type == ContentTypeTransactionReference) {
+  val transactionRef: TransactionReference? = message.content()
+  // Process the transaction reference here
+}
+```
+
+```swift [Swift]
+if message.contentType == ContentTypeTransactionReference {
+  if let transactionRef = message.content as? TransactionReference {
+    // Process the transaction reference here
+  }
+}
+```
+
+:::
+
+## Display the transaction reference
+
+Displaying a transaction reference typically involves rendering details such as the transaction hash, network ID, and any relevant metadata. Because the exact UI representation can vary based on your app's design, you might want to fetch onchain data before showing it to the user.

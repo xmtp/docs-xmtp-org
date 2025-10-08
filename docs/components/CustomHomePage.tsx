@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const Root: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="custom-homepage">{children}</div>
@@ -90,29 +90,13 @@ const Tile: React.FC<TileProps> = ({
       {icon && <span className="custom-homepage-tile-icon">{icon}</span>}
       <h2 className="custom-homepage-tile-title">{title}</h2>
       <p className="custom-homepage-tile-description">{description}</p>
-      {isExternal && (
-        <img
-          src="/.vocs/icons/arrow-diagonal.svg"
-          alt=""
-          className="custom-homepage-tile-external-icon"
-        />
-      )}
     </>
   );
 
-  return isExternal ? (
-    <a
-      href={href}
-      className="custom-homepage-tile custom-homepage-tile-external"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+  return (
+    <div className="custom-homepage-tile">
       {content}
-    </a>
-  ) : (
-    <Link to={href} className="custom-homepage-tile">
-      {content}
-    </Link>
+    </div>
   );
 };
 
@@ -165,10 +149,11 @@ const SDKTile: React.FC<SDKTileProps> = ({
   );
 };
 
-const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
+const SectionTitle: React.FC<{ children: React.ReactNode; id?: string }> = ({
   children,
+  id,
 }) => (
-  <h2 className="custom-homepage-tile-title custom-homepage-section-title">
+  <h2 className="custom-homepage-tile-title custom-homepage-section-title" id={id}>
     {children}
   </h2>
 );

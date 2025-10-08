@@ -1,0 +1,57 @@
+# Built‑in filters
+
+Instead of manually checking every incoming message, you can use the provided filters.
+
+## Example
+
+```ts
+import { Agent, filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+// Using filter in message handler
+agent.on('text', async (ctx) => {
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText('You sent a text message!');
+  }
+});
+
+// Combine multiple conditions
+agent.on('text', async (ctx) => {
+  if (
+    filter.hasContent(ctx.message) &&
+    !filter.fromSelf(ctx.message, ctx.client) &&
+    filter.isText(ctx.message)
+  ) {
+    await ctx.sendText('Valid text message received ✅');
+  }
+});
+```
+
+For convenience, the `filter` object can also be imported as `f`:
+
+```ts
+// You can import either name:
+import { filter, f } from '@xmtp/agent-sdk';
+
+// Both work the same way:
+if (f.isText(ctx.message)) {
+  // Handle message...
+}
+```
+
+## Available filters
+
+- `fromSelf`
+- `hasContent`
+- `isDM`
+- `isGroup`
+- `isGroupAdmin`
+- `isGroupSuperAdmin`
+- `isReaction`
+- `isReply`
+- `isRemoteAttachment`
+- `isText`
+- `isTextReply`
+
+To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).

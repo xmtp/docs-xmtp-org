@@ -1,0 +1,473 @@
+# Manage group permissions
+
+Robust group chat permissions are key to providing users with a friendly and safe group chat experience.
+
+## Understand the group permissions system
+
+### Member statuses
+
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
+
+- Member
+  - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- Admin
+- Super admin
+
+### Options
+
+Use options to assign a role to a permission. These are the available options:
+
+- All members
+- Admin only
+  - Includes super admins
+- Super admin only
+
+### Permissions
+
+Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
+
+- Grant admin status to a member
+- Remove admin status from a member
+- Add a member to the group
+- Remove a member from the group
+- Update [group metadata](/chat-apps/core-messaging/group-metadata), such as group name, description, and image
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission` . To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+
+The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
+
+- Grant super admin status to a member
+- Remove super admin status from a member
+- Update group permissions
+
+## How the group permissions system works
+
+When a group is created, all groups have the same initial member "roles" set:
+
+- There is one super admin, and it is the group creator
+- There are no admins
+- Each user added to the group starts out as a member
+
+The super admin has all of the [available permissions](#permissions) and can use them to adjust the group's permissions and options.
+
+As the app developer, you can provide a UI that enables group participants to make further adjustments. For example, you can give the super admin the following permission options for group members when creating the group:
+
+- Add members
+- Update group metadata
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png"
+    width="300px"
+    alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings"
+  />
+</div>
+
+You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
+
+| Permission               | Allow all | Deny all | Admin only | Super admin only |
+| ------------------------ | --------- | -------- | ---------- | ---------------- |
+| Add member               | ✅        | ✅       | ✅         | ✅               |
+| Remove member            | ✅        | ✅       | ✅         | ✅               |
+| Add admin                | ❌        | ✅       | ✅         | ✅               |
+| Remove admin             | ❌        | ✅       | ✅         | ✅               |
+| Update group permissions | ❌        | ❌       | ❌         | ✅               |
+| Update group metadata    | ✅        | ✅       | ✅         | ✅               |
+
+If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
+
+- Add member - All members
+- Remove member - Admin only
+- Add admin - Super admin only
+- Remove admin - Super admin only
+- Update group permissions - Super admin only
+- Update group metadata - All members
+
+To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Manage group chat admins
+
+### Check if inbox ID is an admin
+
+:::code-group
+
+```js [Browser]
+const isAdmin = group.isAdmin(inboxId);
+```
+
+```js [Node]
+const isAdmin = group.isAdmin(inboxId);
+```
+
+```tsx [React Native]
+// Assume group is an existing group chat object for client
+const isAdmin = await group.isAdmin(adminClient.inboxID);
+```
+
+```kotlin [Kotlin]
+//Assume group is an existing group chat object for client
+val isInboxIDAdmin = group.isAdmin(inboxId)
+```
+
+```swift [Swift]
+// Assume group is an existing group chat object for client
+try group.isAdmin(client.inboxID)
+```
+
+:::
+
+### Check if inbox ID is a super admin
+
+:::code-group
+
+```js [Browser]
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+```
+
+```js [Node]
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+```
+
+```tsx [React Native]
+//Assume group is an existing group chat object for client
+const isSuperAdmin = await group.isSuperAdmin(client.inboxID);
+```
+
+```kotlin [Kotlin]
+//Assume group is an existing group chat object for client
+val isInboxIDSuperAdmin = group.isSuperAdmin(inboxId)
+```
+
+```swift [Swift]
+try group.isSuperAdmin(inboxid: inboxID)
+```
+
+:::
+
+### List admins
+
+:::code-group
+
+```js [Browser]
+const admins = group.admins;
+```
+
+```js [Node]
+const admins = group.admins;
+```
+
+```tsx [React Native]
+await group.listAdmins();
+```
+
+```kotlin [Kotlin]
+// Returns a list of inboxIds of Admins
+group.listAdmins()
+```
+
+```swift [Swift]
+try group.listAdmins()
+```
+
+:::
+
+### List super admins
+
+:::code-group
+
+```js [Browser]
+const superAdmins = group.superAdmins;
+```
+
+```js [Node]
+const superAdmins = group.superAdmins;
+```
+
+```tsx [React Native]
+await group.listSuperAdmins();
+```
+
+```kotlin [Kotlin]
+// Returns a list of inboxIds of Super Admins
+group.listSuperAdmins()
+```
+
+```swift [Swift]
+try group.listSuperAdmins()
+```
+
+:::
+
+### Add admin status to inbox ID
+
+:::code-group
+
+```js [Browser]
+await group.addAdmin(inboxId);
+```
+
+```js [Node]
+await group.addAdmin(inboxId);
+```
+
+```tsx [React Native]
+await group.addAdmin(client.inboxID);
+```
+
+```kotlin [Kotlin]
+group.addAdmin(inboxId)
+```
+
+```swift [Swift]
+try await group.addAdmin(inboxid: inboxID)
+```
+
+:::
+
+### Add super admin status to inbox ID
+
+:::code-group
+
+```js [Browser]
+await group.addSuperAdmin(inboxId);
+```
+
+```js [Node]
+await group.addSuperAdmin(inboxId);
+```
+
+```tsx [React Native]
+await group.addSuperAdmin(client.inboxID);
+```
+
+```kotlin [Kotlin]
+group.addSuperAdmin(inboxId)
+```
+
+```swift [Swift]
+try await group.addSuperAdmin(inboxid: inboxID)
+```
+
+:::
+
+### Remove admin status from inbox ID
+
+:::code-group
+
+```js [Browser]
+await group.removeAdmin(inboxId);
+```
+
+```js [Node]
+await group.removeAdmin(inboxId);
+```
+
+```tsx [React Native]
+await group.removeAdmin(client.inboxID);
+```
+
+```kotlin [Kotlin]
+group.removeAdmin(inboxId)
+```
+
+```swift [Swift]
+try await group.removeAdmin(inboxid: inboxid)
+```
+
+:::
+
+### Remove super admin status from inbox ID
+
+:::code-group
+
+```js [Browser]
+await group.removeSuperAdmin(inboxId);
+```
+
+```js [Node]
+await group.removeSuperAdmin(inboxId);
+```
+
+```tsx [React Native]
+await group.removeSuperAdmin(client.inboxId);
+```
+
+```kotlin [Kotlin]
+group.removeSuperAdmin(inboxId)
+```
+
+```swift [Swift]
+try await group.removeSuperAdmin(inboxid: inboxID)
+```
+
+:::
+
+## Manage group chat membership
+
+### Add members by inbox ID
+
+The maximum group chat size is 250 members.
+
+:::code-group
+
+```js [Browser]
+await group.addMembers([inboxId]);
+```
+
+```js [Node]
+await group.addMembers([inboxId]);
+```
+
+```tsx [React Native]
+await group.addMembers([inboxId]);
+```
+
+```kotlin [Kotlin]
+group.addMembers(listOf(client.inboxId))
+```
+
+```swift [Swift]
+try await group.addMembers(inboxIds: [inboxId])
+```
+
+:::
+
+### Remove member by inbox ID
+
+:::code-group
+
+```js [Browser]
+await group.removeMembers([inboxId]);
+```
+
+```js [Node]
+await group.removeMembers([inboxId]);
+```
+
+```tsx [React Native]
+await group.removeMembers([inboxId]);
+```
+
+```kotlin [Kotlin]
+group.removeMembers(listOf(inboxId))
+```
+
+```swift [Swift]
+try await group.removeMembers(inboxIds: [inboxId])
+```
+
+:::
+
+### Get inbox IDs for members
+
+:::code-group
+
+```js [Browser]
+const inboxId = await client.findInboxIdByIdentities([
+  bo.identity,
+  caro.identity,
+]);
+```
+
+```js [Node]
+const inboxId = await client.getInboxIdByIdentities([
+  bo.identity,
+  caro.identity,
+]);
+```
+
+```tsx [React Native]
+await group.memberInboxIds();
+```
+
+```kotlin [Kotlin]
+val members = group.members()
+val inboxIds = members.map { it.inboxId }
+
+OR
+
+val inboxId = client.inboxIdFromIdentity(peerIdentity)
+```
+
+```swift [Swift]
+let members = try group.members.map(\.inboxId).sorted()
+
+OR
+
+try await client.inboxIdFromIdentity(identity: peerIdentity)
+```
+
+:::
+
+### Get identities for members
+
+:::code-group
+
+```js [Browser]
+// sync group first
+await group.sync();
+
+// get group members
+const members = await group.members();
+
+// map inbox ID to account identity
+const inboxIdIdentityMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentity])
+);
+```
+
+```js [Node]
+// sync group first
+await group.sync();
+
+// get group members
+const members = group.members;
+
+// map inbox ID to account identity
+const inboxIdIdentityMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentity])
+);
+```
+
+```tsx [React Native]
+const members = await group.members();
+const identities = members.map((member) => member.identities);
+```
+
+```kotlin [Kotlin]
+val members = group.members()
+val identities = members.map { it.identities }
+```
+
+```swift [Swift]
+let peerMembers = try Conversation.group(group).peerInboxIds.sorted()
+```
+
+:::
+
+### Get the inbox ID that added the current member
+
+:::code-group
+
+```js [Browser]
+const addedByInboxId = group.addedByInboxId;
+```
+
+```js [Node]
+const addedByInboxId = group.addedByInboxId;
+```
+
+```tsx [React Native]
+// this API is experimental and may change in the future
+
+const addedByInboxId = await group.addedByInboxId();
+```
+
+```kotlin [Kotlin]
+val addedByInboxId = group.addedByInboxId();
+```
+
+```swift [Swift]
+try await group.addedByInboxId();
+```
+
+:::

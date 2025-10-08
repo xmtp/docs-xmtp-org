@@ -1,0 +1,60 @@
+# Get started with the XMTP iOS SDK
+
+Use the [XMTP iOS SDK](https://github.com/xmtp/xmtp-ios) to build secure, private, and decentralized messaging into your iOS app.
+
+The guide provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
+
+- End-to-end encrypted direct message and group chat conversations
+- Rich content types (attachments, reactions, replies, and more)
+- Spam-free chats using user consent preferences
+
+## Quickstart
+
+```swift [Swift]
+// 1. Create an EOA or SCW signer
+// Details depend on your app's wallet implementation.
+public struct EOAWallet: SigningKey {
+    public var identity: PublicIdentity {
+        return PublicIdentity(kind: .ethereum, identifier: key.publicAddress)
+    }
+    public var type: SignerType { .EOA }
+    public func sign(message: String) async throws -> SignedData {
+        return SignedData(try await key.sign(message: message))
+    }
+}
+
+// 2. Create the XMTP client
+let client = try await Client.create(
+    account: SigningKey,
+    options: ClientOptions.init(
+        api: .init(env: .production, isSecure: true),
+        dbEncryptionKey: keyBytes // 32 bytes
+    )
+)
+
+// 3. Start conversations
+let group = try await client.conversations.newGroup([bo.inboxId, caro.inboxId])
+let groupWithMeta = try await client.conversations.newGroup([bo.inboxId, caro.inboxId],
+    permissionLevel: .admin_only,
+    name: "The Group Name",
+    imageUrl: "www.groupImage.com",
+    description: "The description of the group"
+)
+
+// 4. Send messages
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+try await dm.send(content: "Hello world")
+try await group.send(content: "Hello everyone")
+
+// 5. List, stream, and sync
+// List existing conversations
+let conversations = try await client.conversations.list()
+let filteredConversations = try await client.conversations.list(consentState: .allowed)
+// Stream new messages
+for await message in try await client.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+    // Received a message
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations
+try await client.conversations.syncAllConversations(consentState: [.allowed])
+```

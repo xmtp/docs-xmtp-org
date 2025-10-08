@@ -1,0 +1,101 @@
+# Build XMTP agents
+
+Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
+
+## Installation
+
+Install `@xmtp/agent-sdk` as a dependency in your project.
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/agent-sdk
+```
+
+```bash [pnpm]
+pnpm i @xmtp/agent-sdk
+```
+
+```bash [yarn]
+yarn add @xmtp/agent-sdk
+```
+
+```bash [bun]
+bun i @xmtp/agent-sdk
+```
+
+:::
+
+## Usage
+
+This example shows how to create an agent that sends a message when it receives a text message.
+
+```ts [Node]
+import { Agent } from '@xmtp/agent-sdk';
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
+
+// 2. Spin up the agent
+const agent = await Agent.createFromEnv({
+  env: 'dev', // or 'production'
+});
+
+// 3. Respond to text messages
+agent.on('text', async (ctx) => {
+  await ctx.sendText('Hello from my XMTP Agent! 👋');
+});
+
+// 4. Log when we're ready
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+});
+
+await agent.start();
+```
+
+### Local database
+
+:::danger
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+:::
+
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history. To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+
+### Set environment variables
+
+To run an example XMTP agent, you must create a `.env` file with the following variables:
+
+```bash
+XMTP_WALLET_KEY= # the private key of the wallet
+XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
+XMTP_ENV=dev # local, dev, production
+```
+
+## Vibe coding
+
+See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+
+```bash
+Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
+```
+
+## Talk to your agent
+
+Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
+
+![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
+
+## Debug an agent
+
+To learn more, see [Debug an agent](/agents/deploy/debug-agents)
+
+## Deploy an agent
+
+To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
+
+## Agent examples
+
+Visit the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repository for more agent examples.

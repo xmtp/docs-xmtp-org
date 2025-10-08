@@ -1,0 +1,326 @@
+# Stream conversations and messages
+
+## Stream new group chat and DM conversations
+
+Listens to the network for new group chats and DMs. Whenever a new conversation starts, it triggers the provided callback function with a [`ConversationContainer` object](/chat-apps/core-messaging/create-conversations#conversation-union-type). This allows the client to immediately respond to any new group chats or DMs initiated by other users.
+
+:::code-group
+
+```js [Browser]
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
+    // Received a conversation
+    console.log('New conversation:', conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log('Stream failed');
+  },
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log('New conversation:', conversation);
+}
+```
+
+```js [Node]
+const stream = await client.conversations.stream({
+  onValue: (conversation) => {
+    // Received a conversation
+    console.log('New conversation:', conversation);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log('Stream failed');
+  },
+});
+
+// To stream only groups
+const groupStream = await client.conversations.streamGroups({
+  onValue: (conversation) => {
+    console.log('New group:', conversation);
+  },
+});
+
+// To stream only DMs
+const dmStream = await client.conversations.streamDms({
+  onValue: (conversation) => {
+    console.log('New DM:', conversation);
+  },
+});
+
+// Or use for-await loop
+for await (const conversation of stream) {
+  // Received a conversation
+  console.log('New conversation:', conversation);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.stream(async (conversation: Conversation<any>) => {
+  // Received a conversation
+});
+```
+
+```kotlin [Kotlin]
+alix.conversations.stream(type: /* OPTIONAL DMS, GROUPS, ALL */).collect {
+  // Received a conversation
+}
+```
+
+```swift [Swift]
+for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .groups, .all */) {
+  // Received a conversation
+}
+```
+
+:::
+
+## Stream new group chat and DM messages
+
+This function listens to the network for new messages within all active group chats and DMs.
+
+Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+
+We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+
+To stream all conversations regardless of consent state, pass `[Allowed, Unknown, Denied]`.
+
+:::warning[Important]
+
+The stream is infinite. Therefore, any looping construct used with the stream won't terminate unless you explicitly initiate the termination. You can initiate the termination by breaking the loop or by making an external call to `return`.
+
+:::
+
+:::code-group
+
+```js [Browser]
+// stream all messages from conversations with a consent state of allowed
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    // Received a message
+    console.log('New message:', message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log('Stream failed');
+  },
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log('New message:', message);
+}
+```
+
+```js [Node]
+// stream all messages from conversations with a consent state of allowed
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    // Received a message
+    console.log('New message:', message);
+  },
+  onError: (error) => {
+    // Log any stream errors
+    console.error(error);
+  },
+  onFail: () => {
+    console.log('Stream failed');
+  },
+});
+
+// stream only group messages
+const groupMessageStream = await client.conversations.streamAllGroupMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log('New group message:', message);
+  },
+});
+
+// stream only dm messages
+const dmMessageStream = await client.conversations.streamAllDmMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log('New DM message:', message);
+  },
+});
+
+// Or use for-await loop
+for await (const message of stream) {
+  // Received a message
+  console.log('New message:', message);
+}
+```
+
+```tsx [React Native]
+await alix.conversations.streamAllMessages(
+  async (message: DecodedMessage<any>) => {
+    // Received a message
+  },
+  { consentState: ['allowed'] }
+);
+```
+
+```kotlin [Kotlin]
+alix.conversations.streamAllMessages(type: /* OPTIONAL DMS, GROUPS, ALL */, consentState: listOf(ConsentState.ALLOWED)).collect {
+  // Received a message
+}
+```
+
+```swift [Swift]
+for await message in try await alix.conversations.streamAllMessages(type: /* OPTIONAL .dms, .groups, .all */, consentState: [.allowed]) {
+  // Received a message
+}
+```
+
+:::
+
+## Handle stream failures
+
+:::warning
+**Browser and Node SDK**
+
+Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
+:::
+
+:::code-group
+
+```ts [Node]
+// disable automatic reconnects
+const stream = await client.conversations.streamAllMessages({
+  retryOnFail: false,
+  onValue: (message) => {
+    console.log('New message:', message);
+  },
+});
+
+// use stream options with retry configuration
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  retryAttempts: 10,
+  retryDelay: 20000, // 20 seconds
+  onValue: (message) => {
+    console.log('New message:', message);
+  },
+  onError: (error) => {
+    console.error('Stream error:', error);
+  },
+  onFail: () => {
+    console.log('Stream failed after retries');
+  },
+  onRestart: () => {
+    console.log('Stream restarted');
+  },
+  onRetry: (attempt, maxAttempts) => {
+    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
+  },
+});
+```
+
+```tsx [Browser]
+// Browser SDK also supports stream retry options
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  retryAttempts: 5,
+  retryDelay: 15000, // 15 seconds
+  onValue: (message) => {
+    console.log('New message:', message);
+  },
+  onError: (error) => {
+    console.error('Stream error:', error);
+  },
+  onFail: () => {
+    console.log('Stream failed after retries');
+  },
+  onRestart: () => {
+    console.log('Stream restarted');
+  },
+  onRetry: (attempt, maxAttempts) => {
+    console.log(`Stream retry attempt ${attempt} of ${maxAttempts}`);
+  },
+});
+```
+
+```tsx [React Native]
+const [messages, setMessages] = useState<DecodedMessage[]>([]);
+
+const messageCallback = async (message: DecodedMessage<any>) => {
+  setMessages((prev) => [...prev, message]);
+};
+const conversationFilterType: ConversationFilterType = 'all';
+const consentStates: ConsentState[] = ['allowed'];
+const onCloseCallback = () => {
+  console.log('Message stream closed, handle retries here');
+};
+
+const startMessageStream = async () => {
+  await alix.conversations.streamAllMessages(
+    messageCallback,
+    conversationFilterType,
+    consentStates,
+    onCloseCallback
+  );
+};
+```
+
+```kotlin [Kotlin]
+    private val _messages = MutableStateFlow<List<DecodedMessage>>(emptyList())
+    val messages: StateFlow<List<DecodedMessage>> = _messages.asStateFlow()
+
+    fun startMessageStream() {
+        viewModelScope.launch {
+            streamMessages(onClose = {
+                Log.d("XMTP ViewModel", "Message stream closed.")
+            }).collect { decodedMessage ->
+                _messages.update { current ->
+                    current + decodedMessage
+                }
+            }
+        }
+}
+```
+
+```swift [Swift]
+    @Published private(set) var messages: [DecodedMessage] = []
+
+    private var streamTask: Task<Void, Never>? = nil
+
+    func startMessageStream(from conversation: XMTPConversation) {
+        streamTask?.cancel()
+
+        streamTask = Task {
+            do {
+                for try await message in conversation.streamMessages(onClose: {
+                    print("XMTP ViewModel: Message stream closed.")
+                }) {
+                    messages.append(message)
+                }
+            } catch {
+                print("XMTP ViewModel: Stream failed with error \(error)")
+            }
+        }
+    }
+
+    func stopMessageStream() {
+        streamTask?.cancel()
+        streamTask = nil
+    }
+```
+
+:::
