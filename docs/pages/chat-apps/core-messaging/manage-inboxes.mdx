@@ -75,9 +75,18 @@ An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
 This means that one inbox ID can have up to 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
 
-If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
+If an inbox reaches its limit of 256 inbox updates, the user must [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows the user to continue using their identity with new XMTP conversations.
 
-To avoid this scenario altogether, inboxes are limited to having only 10 active installations. When an inbox has 10 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
+To prevent users from reaching the 256-update limit, XMTP enforces a **10-installation limit per inbox**. When an inbox reaches 10 active installations, the user must revoke at least one installation before adding a new one. This limit serves two purposes:
+
+1. Prevents excessive group sizes: Since all installations in an inbox are added as group members, limiting installations keeps group sizes manageable and maintains performance.
+2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256-update threshold.
+
+:::warning[Important]
+
+Revoking an installation counts as one of the 256 inbox updates. This means frequently adding and revoking installations will still consume your update quota and could lead to reaching the limit prematurely.
+
+:::
 
 Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
