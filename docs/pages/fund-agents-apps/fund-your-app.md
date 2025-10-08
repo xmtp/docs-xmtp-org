@@ -58,7 +58,7 @@ Fund your payer wallet with USDC on Base. Here are some sources you can use to a
 - Direct purchase: Circle, Coinbase
 - Business accounts: Circle business accounts for larger operations
 
-To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
+To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
 
 ### Step 4: Allocate funds for messaging
 
