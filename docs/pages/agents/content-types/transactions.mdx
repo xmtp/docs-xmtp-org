@@ -91,16 +91,9 @@ await sendText(walletSendCalls, {
 To receive and process a transaction request:
 
 ```ts [Node]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
-
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
+if (ctx.usesCodec(WalletSendCallsCodec)) {
+  // Process the transaction request here
 }
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
 ```
 
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).

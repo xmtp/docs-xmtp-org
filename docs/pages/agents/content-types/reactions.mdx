@@ -68,8 +68,8 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
-if (message.contentType.sameAs(ContentTypeReaction)) {
+if (ctx.usesCodec(ReactionCodec)) {
   // We've got a reaction.
-  const reaction: Reaction = message.content;
+  const reaction: Reaction = ctx.message.content;
 }
 ```
