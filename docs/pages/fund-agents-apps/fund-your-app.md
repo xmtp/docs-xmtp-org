@@ -139,11 +139,11 @@ Here are some sources you can use to acquire USDC:
 
 To get USDC on Base Sepolia, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour. 
 
-### Step 4: Allocate funds for messaging
+### Step 4: Allocate funds to the payer wallet
 
 The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
 
-1. Use the wallet you want to use to fund the app to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
+1. Use the wallet you funded in Step 3 to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. In the drop-down menu in the upper right, be sure to select the payer wallet.
 2. On the **Dashboard** page, click **Fund**.
 3. Enter the amount of USDC you want to allocate from your wallet to the payer wallet.
