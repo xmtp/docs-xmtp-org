@@ -30,6 +30,10 @@ export const sidebarConfig = {
           link: "/agents/build-agents/create-a-client",
         },
         {
+          text: "Local database",
+          link: "/agents/build-agents/local-database",
+        },
+        {
           text: "Stream messages",
           link: "/agents/build-agents/stream",
         },
@@ -54,10 +58,6 @@ export const sidebarConfig = {
         {
           text: "Identity",
           link: "/agents/concepts/identity",
-        },
-        {
-          text: "Installations",
-          link: "/agents/concepts/installations",
         },
         {
           text: "Events",
@@ -94,8 +94,8 @@ export const sidebarConfig = {
           link: "/agents/content-types/replies",
         },
         {
-          text: "Group update",
-          link: "/agents/content-types/group-update",
+          text: "Group updates",
+          link: "/agents/content-types/group-updates",
         },
         {
           text: "Attachments",
