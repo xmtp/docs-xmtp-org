@@ -35,7 +35,7 @@ Access message properties directly:
 ```typescript
 agent.on('message', async (ctx) => {
   const message = ctx.message;
-  
+
   console.log(`Message ID: ${message.id}`);
   console.log(`Sender inbox ID: ${message.senderInboxId}`);
   console.log(`Sent at: ${message.sentAt}`);
@@ -51,7 +51,7 @@ Send messages and replies:
 agent.on('text', async (ctx) => {
   // Send a regular message
   await ctx.sendText('Hello!');
-  
+
   // Send a reply to the current message
   await ctx.sendTextReply('Thanks for your message!');
 });
@@ -64,7 +64,7 @@ Add reactions to messages:
 ```typescript
 agent.on('text', async (ctx) => {
   const content = ctx.message.content.toLowerCase();
-  
+
   if (content.includes('good')) {
     await ctx.sendReaction('👍');
   } else if (content.includes('bad')) {
@@ -81,7 +81,7 @@ Get the Ethereum address of the message sender:
 agent.on('text', async (ctx) => {
   const senderAddress = await ctx.getSenderAddress();
   console.log(`Message from: ${senderAddress}`);
-  
+
   // Use for authorization
   if (senderAddress === '0x1234...') {
     await ctx.sendTextReply('Hello, admin!');
@@ -107,11 +107,11 @@ agent.on('text', async (ctx) => {
 ```typescript
 agent.on('text', async (ctx) => {
   const conversation = ctx.conversation;
-  
+
   // Get conversation members
   const members = await conversation.members();
   console.log(`Member count: ${members.length}`);
-  
+
   // Check conversation type
   if (ctx.isDm()) {
     console.log(`DM with: ${conversation.peerInboxId}`);
@@ -142,17 +142,17 @@ agent.on('text', async (ctx) => {
 ```typescript
 agent.on('text', async (ctx) => {
   const members = await ctx.conversation.members();
-  
+
   for (const member of members) {
     console.log(`Member inbox ID: ${member.inboxId}`);
     console.log(`Permission level: ${member.permissionLevel}`);
     console.log(`Consent state: ${member.consentState}`);
-    
+
     // Get Ethereum address
     const ethIdentifier = member.accountIdentifiers.find(
       (id) => id.identifierKind === IdentifierKind.Ethereum
     );
-    
+
     if (ethIdentifier) {
       console.log(`Ethereum address: ${ethIdentifier.identifier}`);
     }
@@ -167,10 +167,10 @@ agent.on('text', async (ctx) => {
   // Get all messages
   const messages = await ctx.conversation.messages();
   console.log(`Total messages: ${messages.length}`);
-  
+
   // Get recent messages
   const recentMessages = messages.slice(-10);
-  
+
   for (const msg of recentMessages) {
     console.log(`${msg.senderInboxId}: ${msg.content}`);
   }
