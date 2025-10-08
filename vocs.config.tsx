@@ -44,6 +44,8 @@ export default defineConfig({
         result.section = 'Protocol';
       } else if (result.id.includes('/network/')) {
         result.section = 'Network';
+      } else if (result.id.includes('/fund-agents-apps/')) {
+        result.section = 'Fund agents and apps';
       }
       return true; // Include all results
     },
