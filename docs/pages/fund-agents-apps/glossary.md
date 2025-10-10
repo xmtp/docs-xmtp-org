@@ -1,4 +1,4 @@
-# Glossary for funding your app to send messages with XMTP
+# Glossary for funding an app or agent to send messages with XMTP
 
 ## Allowance
 

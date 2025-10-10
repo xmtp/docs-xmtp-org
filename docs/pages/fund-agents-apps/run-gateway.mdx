@@ -76,9 +76,9 @@ return <div ref={container} style={{ background: '#ffffff', padding: '1rem', bor
 }
 `}</style>
 
-# Run an XMTP Gateway Service
+# Run your XMTP Gateway Service
 
-A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app or agent's payment gateway for messaging.
+An XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app or agent's payment gateway for messaging.
 
 Behind the scenes, your XMTP Gateway Service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
 
@@ -193,7 +193,7 @@ You can use any authentication scheme you like to authenticate requests from you
 
 ### In your client—_COMING SOON_
 
-When creating a XMTP client, you will be able to optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
+When creating an XMTP client, you will be able to optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
 
 The value returned by this function will be included in all client requests to the XMTP Gateway Service. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway Service, and after any request to the XMTP Gateway Service fails due to a `PermissionDenied` error.
 

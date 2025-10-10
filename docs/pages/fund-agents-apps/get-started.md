@@ -1,4 +1,4 @@
-# Get started with funding your app to send messages with XMTP
+# Get started with funding an app or agent to send messages with XMTP
 
 Starting December 9, 2025, apps and agents must pay fees to send messages on the decentralized XMTP Broadcast Network.
 

@@ -52,7 +52,7 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Fund your agent",
+      text: "Fund an agent",
       collapsed: false,
       items: [
         {
@@ -64,11 +64,11 @@ export const sidebarConfig = {
           link: "/fund-agents-apps/calculate-fees",
         },
         {
-          text: "Fund your app",
+          text: "Fund an agent",
           link: "/fund-agents-apps/fund-your-app",
         },
         {
-          text: "Run your XMTP Gateway Service",
+          text: "Get your XMTP Gateway Service",
           link: "/fund-agents-apps/run-gateway",
         },
         {
@@ -393,7 +393,7 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Fund your app",
+      text: "Fund an app",
       collapsed: false,
       items: [
         {
@@ -405,7 +405,7 @@ export const sidebarConfig = {
           link: "/fund-agents-apps/calculate-fees",
         },
         {
-          text: "Fund your app",
+          text: "Fund an app",
           link: "/fund-agents-apps/fund-your-app",
         },
         {
