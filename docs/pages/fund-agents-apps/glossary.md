@@ -53,23 +53,6 @@ The payer wallet is the only wallet that can control its messaging balance in th
 
 To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
 
-## XMTP Gateway Service
-
-A small client that acts as a proxy between your app and the payer wallet, and more specifically, the payer wallet's private key. Here's what the XMTP Gateway Service handles:
-
-- Security: The payer wallet's private key is sensitive information that shouldn't be in your app
-    - The XMTP Gateway Service hosts this private key securely on your infrastructure
-    - Your app never sees or handles the private key directly
-- Authorization: The XMTP Gateway Service can implement your app's authorization logic
-    - It can verify that requests are coming from your legitimate users
-    - It can rate limit requests
-    - It can enforce your app's business rules
-- Fee management: The XMTP Gateway Service handles both types of fees:
-    - Signs transactions on Base for paying messaging fees from the PayerRegistry contract
-    - Signs transactions on the XMTP App Chain for paying gas fees from the payer wallet (Payers contract)
-
-To learn more, see [Run an XMTP Gateway Service](/fund-agents-apps/run-gateway).
-
 ## Storage fee
 
 An offchain micropayment paid to node operators based on the size (in bytes) of a stored message.
@@ -93,6 +76,25 @@ When you [fund your payer wallet](/fund-agents-apps/fund-your-app) using the XMT
 
 The offchain globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
 
+## XMTP Gateway Service
+
+A small client that acts as a proxy between your app and the payer wallet, and more specifically, the payer wallet's private key. Here's what the XMTP Gateway Service handles:
+
+- Security: The payer wallet's private key is sensitive information that shouldn't be in your app
+  - The XMTP Gateway Service hosts this private key securely on your infrastructure
+  - Your app never sees or handles the private key directly
+- Authorization: The XMTP Gateway Service can implement your app's authorization logic
+  - It can verify that requests are coming from your legitimate users
+  - It can rate limit requests
+  - It can enforce your app's business rules
+- Fee management: The XMTP Gateway Service handles both types of fees:
+  - Signs transactions on Base for paying messaging fees from the PayerRegistry contract
+  - Signs transactions on the XMTP App Chain for paying gas fees from the payer wallet (Payers contract)
+
+To learn more, see [Run an XMTP Gateway Service](/fund-agents-apps/run-gateway).
+
 ## XMTP Settlement Chain
 
-An L3 blockchain built on Base that provides the final security layer where the XMTP App Chain settles its state. This gives the XMTP Network the speed of L3 operations with the security guarantees of established L2 infrastructure.
+An L3 blockchain built on Base that manages the decentralized network of nodes and payers and facilitates the settlement of fees between them. The core functionality revolves around registering nodes, submitting and settling fees for offchain network usage by payers, and distributing the collected revenue to the node operators and the protocol.
+
+To learn more, see the [README](https://github.com/xmtp/smart-contracts/blob/main/src/settlement-chain/README.md) for the XMTP Settlement Chain smart contracts.

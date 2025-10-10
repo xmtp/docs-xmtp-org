@@ -1,20 +1,21 @@
-import Zoom from 'react-medium-image-zoom'
-import 'react-medium-image-zoom/dist/styles.css'
-import { useEffect, useRef } from 'react'
-import mermaid from 'mermaid'
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+import { useEffect, useRef } from 'react';
+import mermaid from 'mermaid';
 
 {/*
-  Custom Mermaid component for rendering diagrams in documentation.
+Custom Mermaid component for rendering diagrams in documentation.
 
-  This component is defined inline instead of imported from a separate file
-  because Vocs has a bug where local file imports break search indexing.
-  Only npm package imports (like react and mermaid) are safe.
+This component is defined inline instead of imported from a separate file
+because Vocs has a bug where local file imports break search indexing.
+Only npm package imports (like react and mermaid) are safe.
 */}
-export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-  const container = useRef(null);
 
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: false });
+export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
+const container = useRef(null);
+
+useEffect(() => {
+mermaid.initialize({ startOnLoad: false });
 
     const renderChart = async () => {
       try {
@@ -31,9 +32,10 @@ export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
     };
 
     renderChart();
-  }, [chart, id]);
 
-  return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
+}, [chart, id]);
+
+return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
 };
 
 <style>{`
@@ -76,28 +78,19 @@ export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
 
 # Run an XMTP Gateway Service
 
-A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app's payment gateway for messaging.
+A XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app or agent's payment gateway for messaging.
 
 Behind the scenes, your XMTP Gateway Service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
 
-You host your XMTP Gateway Service on your infrastructure because it contains your payer wallet's private key.
+- **For browser and mobile client apps**, you host your XMTP Gateway Service on your infrastructure because it contains your payer wallet's private key.
+
+- **For agents and Node.js apps**, there is no need to run a separate XMTP Gateway Service. The XMTP Gateway Service will be built into the XMTP Node and Agent SDKs.
 
 XMTP provides a standard implementation of an XMTP Gateway Service that you can extend to meet your unique needs. Once your XMTP Gateway Service is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your app or agent.
 
 ## Get started
 
-Every app needs a XMTP Gateway Service.
-
-### For Node.js apps
-
-The XMTP Gateway Service is built into the XMTP Node SDK. No need to run a separate XMTP Gateway Service.
-
-```jsx
-// Automatic gateway included, no separate service needed
-const client = await Client.create(wallet, {
-  env: 'mainnet'
-})
-```
+Every app and agent needs an XMTP Gateway Service.
 
 ### For browser and mobile client apps
 
@@ -116,32 +109,43 @@ You must run the XMTP Gateway Service written in Go. Choose the option that work
 - Implement custom rate limiting
 - Required for apps with authentication needs
 
+### For agents and Node.js apps
+
+**No need to run a separate XMTP Gateway Service.** The XMTP Gateway Service will be built into the XMTP Node and Agent SDKs—_COMING SOON_.
+
+```tsx [TypeScript]
+// Automatic gateway included, no separate service needed
+const client = await Client.create(wallet, {
+  env: 'mainnet',
+});
+```
+
 ## A minimal example
 
 This is all the code you need to create the most bare bones XMTP Gateway Service. The service will configure itself from command line flags or environment variables, and begin receiving traffic on ports `5050` and `5055`.
 
 This minimal example will authorize every request it receives with no limits. In a real production app, you will want to make sure that you only approve requests from your own users.
 
-```go
+```go [Go]
 package main
 
 import (
-	"context"
-	"log"
-	"slices"
+ "context"
+ "log"
+ "slices"
 
-	"github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/xmtp/xmtpd/pkg/gateway"
 )
 
 func main() {
-	// This will gather all the config from environment variables and flags
-	gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
-		Build()
-	if err != nil {
-		log.Fatalf("Failed to build gateway service: %v", err)
-	}
+ // This will gather all the config from environment variables and flags
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
 
-	gatewayService.WaitForShutdown()
+ gatewayService.WaitForShutdown()
 }
 
 ```
@@ -152,14 +156,14 @@ You can provide the configuration options for your XMTP Gateway Service either d
 
 <div className="config-table-wrapper">
 
-| Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                               |
-| ------------------------ | -------- | -------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract.    |
-| App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                        |
-| Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                    |
-| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet` |
-| Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                  |
-| Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                      |
+| Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
+| ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract. |
+| App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
+| Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
+| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet`                                                                                                 |
+| Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                                                                                                                         |
+| Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
 
 </div>
 
@@ -171,7 +175,7 @@ If the XMTP Gateway Service is configured with the `--metrics.enable` flag, it w
 
 The private key for your XMTP Gateway Service must belong to a payer wallet that has allocated funds for messaging in the XMTP Funding Portal.
 
-To learn more, see [Fund your app to send messages with XMTP](/fund-agents-apps/fund-your-app).
+To learn more, see [Fund your app or agent to send messages with XMTP](/fund-agents-apps/fund-your-app).
 
 ## Authenticate users
 
@@ -181,49 +185,64 @@ You can use any authentication scheme you like to authenticate requests from you
 
 :::tip[IMPORTANT]
 
-Browser and mobile client apps that need user authentication must customize the XMTP Gateway Service to integrate with their authentication system. Node.js apps that need user authentication can use the XMTP Gateway Service provided by the XMTP Node SDK without customization.
+- **Browser and mobile client apps** that need user authentication must customize the XMTP Gateway Service to integrate with their authentication system.
+
+- **Node.js apps and agents** that need user authentication will be able to use the XMTP Gateway Service provided by the XMTP Node SDK without customization.
 
 :::
 
-### In your client
+### In your client—_COMING SOON_
 
-When creating a XMTP client, you can optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
+When creating a XMTP client, you will be able to optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
 
-The value returned by this function will be included all client requests to the XMTP Gateway Service. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway Service, and after any request to the XMTP Gateway Service fails due to a `PermissionDenied` error.
+The value returned by this function will be included in all client requests to the XMTP Gateway Service. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway Service, and after any request to the XMTP Gateway Service fails due to a `PermissionDenied` error.
 
-### Create a `gatewayAuthTokenFetcher`
+{/*
+Commenting out b/c this functionality is not yet live
+
+#### Create a `gatewayAuthTokenFetcher`
 
 A Gateway Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
 
 :::code-group
 
+```tsx [Agent]
+import type { GatewayAuthTokenFetcher } from '@xmtp/node-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
 ```tsx [Browser]
-import type { GatewayAuthTokenFetcher } from "@xmtp/browser-sdk";
+import type { GatewayAuthTokenFetcher } from '@xmtp/browser-sdk';
 
 const authTokenFetcher: GatewayAuthTokenFetcher = {
   fetchAuthToken: async () => {
     // Get the auth token from your app somehow
-    return "my-auth-token";
+    return 'my-auth-token';
   },
 };
 ```
 
 ```tsx [Node]
-import type { GatewayAuthTokenFetcher } from "@xmtp/node-sdk";
+import type { GatewayAuthTokenFetcher } from '@xmtp/node-sdk';
 
 const authTokenFetcher: GatewayAuthTokenFetcher = {
   fetchAuthToken: async () => {
-    return "my-auth-token";
+    return 'my-auth-token';
   },
 };
 ```
 
 ```tsx [React Native]
-import type { GatewayAuthTokenFetcher } from "@xmtp/react-native-sdk";
+import type { GatewayAuthTokenFetcher } from '@xmtp/react-native-sdk';
 
 const authTokenFetcher: GatewayAuthTokenFetcher = {
   fetchAuthToken: async () => {
-    return "my-auth-token";
+    return 'my-auth-token';
   },
 };
 ```
@@ -245,6 +264,7 @@ public struct MyAuthTokenFetcher: GatewayAuthTokenFetcher {
 ```
 
 :::
+*/}
 
 ### In the XMTP Gateway Service
 
@@ -259,23 +279,23 @@ This identity will then be used for rate limiting, and will be passed to your `A
 package main
 
 import (
-	"context"
-	"log"
-	"slices"
+ "context"
+ "log"
+ "slices"
 
-	"github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/xmtp/xmtpd/pkg/gateway"
 )
 
 func main() {
-	// This will gather all the config from environment variables and flags
-	gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
-		// The gateway service will use the IP address of the client as the identity by default
-		Build()
-	if err != nil {
-		log.Fatalf("Failed to build gateway service: %v", err)
-	}
+ // This will gather all the config from environment variables and flags
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  // The gateway service will use the IP address of the client as the identity by default
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
 
-	gatewayService.WaitForShutdown()
+ gatewayService.WaitForShutdown()
 }
 
 ```
@@ -284,92 +304,91 @@ func main() {
 package main
 
 import (
-	"context"
-	"errors"
-	"log"
+ "context"
+ "errors"
+ "log"
 
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/golang-jwt/jwt/v5"
+ "github.com/xmtp/xmtpd/pkg/gateway"
 )
 
 const EXPECTED_ISSUER = "my-app.com"
 
 var (
-	ErrMissingToken     = errors.New("missing JWT token")
-	ErrInvalidToken     = errors.New("invalid JWT token")
-	ErrInvalidSignature = errors.New("invalid token signature")
+ ErrMissingToken     = errors.New("missing JWT token")
+ ErrInvalidToken     = errors.New("invalid JWT token")
+ ErrInvalidSignature = errors.New("invalid token signature")
 )
 
 // jwtIdentityFn creates an identity function that verifies JWTs
 func jwtIdentityFn(publicKey []byte) gateway.IdentityFn {
-	return func(ctx context.Context) (gateway.Identity, error) {
-		authHeader := gateway.AuthorizationHeaderFromContext(ctx)
-		if authHeader == "" {
-			return gateway.Identity{}, gateway.NewUnauthenticatedError(
-				"Missing JWT token",
-				ErrMissingToken,
-			)
-		}
+ return func(ctx context.Context) (gateway.Identity, error) {
+  authHeader := gateway.AuthorizationHeaderFromContext(ctx)
+  if authHeader == "" {
+   return gateway.Identity{}, gateway.NewUnauthenticatedError(
+    "Missing JWT token",
+    ErrMissingToken,
+   )
+  }
 
-		// Parse and verify the token
-		token, err := jwt.ParseWithClaims(
-			authHeader,
-			&jwt.RegisteredClaims{},
-			func(token *jwt.Token) (interface{}, error) {
-				// Verify signing method
-				if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
-					return nil, gateway.NewPermissionDeniedError(
-						"Invalid signing method",
-						ErrInvalidSignature,
-					)
-				}
-				return publicKey, nil
-			},
-			jwt.WithIssuer(EXPECTED_ISSUER),
-		)
-		if err != nil {
-			return gateway.Identity{}, gateway.NewPermissionDeniedError(
-				"failed to validate token",
-				err,
-			)
-		}
+  // Parse and verify the token
+  token, err := jwt.ParseWithClaims(
+   authHeader,
+   &jwt.RegisteredClaims{},
+   func(token *jwt.Token) (interface{}, error) {
+    // Verify signing method
+    if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+     return nil, gateway.NewPermissionDeniedError(
+      "Invalid signing method",
+      ErrInvalidSignature,
+     )
+    }
+    return publicKey, nil
+   },
+   jwt.WithIssuer(EXPECTED_ISSUER),
+  )
+  if err != nil {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to validate token",
+    err,
+   )
+  }
 
-		// Extract claims
-		claims, ok := token.Claims.(*jwt.RegisteredClaims)
-		if !ok || !token.Valid {
-			return gateway.Identity{}, gateway.NewPermissionDeniedError(
-				"failed to validate token",
-				ErrInvalidToken,
-			)
-		}
+  // Extract claims
+  claims, ok := token.Claims.(*jwt.RegisteredClaims)
+  if !ok || !token.Valid {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to validate token",
+    ErrInvalidToken,
+   )
+  }
 
-		userID, err := claims.GetSubject()
-		if err != nil {
-			return gateway.Identity{}, gateway.NewPermissionDeniedError(
-				"failed to get subject from token",
-				err,
-			)
-		}
+  userID, err := claims.GetSubject()
+  if err != nil {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to get subject from token",
+    err,
+   )
+  }
 
-		// Return identity based on JWT claims
-		return gateway.NewUserIdentity(userID), nil
-	}
+  // Return identity based on JWT claims
+  return gateway.NewUserIdentity(userID), nil
+ }
 }
 
 func main() {
-	// In a real application, this would be a secure key loaded from environment/config
-	publicKey := []byte("your-applications-public-key")
+ // In a real application, this would be a secure key loaded from environment/config
+ publicKey := []byte("your-applications-public-key")
 
-	gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
-		WithIdentityFn(jwtIdentityFn(publicKey)).
-		Build()
-	if err != nil {
-		log.Fatalf("Failed to build gateway service: %v", err)
-	}
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  WithIdentityFn(jwtIdentityFn(publicKey)).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
 
-	gatewayService.WaitForShutdown()
+ gatewayService.WaitForShutdown()
 }
-
 
 ```
 
@@ -381,42 +400,38 @@ Now that you have an identity for the caller of your API, you can use it to auth
 
 You can add multiple authorizers to your XMTP Gateway Service. All authorizers will be called in parallel. The first authorizer (based on the order they are added) that returns `false` or an error will cause the request to be rejected.
 
-:::code-group
-
 ```go [IP Allowlist]
 package main
 
 import (
-	"context"
-	"log"
-	"slices"
+ "context"
+ "log"
+ "slices"
 
-	"github.com/xmtp/xmtpd/pkg/payer"
+ "github.com/xmtp/xmtpd/pkg/payer"
 )
 
 func main() {
-	payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
-		WithAuthorizers(func(ctx context.Context, identity payer.Identity, req payer.PublishRequest) (bool, error) {
-			// A simple authorization function that allows only the IP 127.0.0.1
-			allowedIPs := []string{"127.0.0.1"}
-			if !slices.Contains(allowedIPs, identity.Identity) {
-				return false, payer.ErrUnauthorized
-			}
-			return true, nil
-		}).
-		Build() // This will gather all the config from environment variables and flags
-	if err != nil {
-		log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
-	}
+ payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+  WithAuthorizers(func(ctx context.Context, identity payer.Identity, req payer.PublishRequest) (bool, error) {
+   // A simple authorization function that allows only the IP 127.0.0.1
+   allowedIPs := []string{"127.0.0.1"}
+   if !slices.Contains(allowedIPs, identity.Identity) {
+    return false, payer.ErrUnauthorized
+   }
+   return true, nil
+  }).
+  Build() // This will gather all the config from environment variables and flags
+ if err != nil {
+  log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
+ }
 
-	err = payerService.Serve(context.Background())
-	if err != nil {
-		log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
-	}
+ err = payerService.Serve(context.Background())
+ if err != nil {
+  log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
+ }
 }
 ```
-
-:::
 
 ## Deploy your XMTP Gateway Service
 
@@ -424,11 +439,11 @@ Deploy the XMTP Gateway Service on your infrastructure of choice, such as a cont
 
 We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
 
-```bash
+```bash [Bash]
 docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
 ```
 
-Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the [`examples/docker`](#TODO) directory that you can use as a starting point.
+Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the xmtpd [`dev/docker`](https://github.com/xmtp/xmtpd/blob/main/dev/docker/gateway.Dockerfile) directory that you can use as a starting point.
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
@@ -438,11 +453,12 @@ If your XMTP Gateway Service goes down, messages will queue until it comes back 
 
 Here are some high priority scenarios to test:
 
-- [ ]  Deploy and test XMTP Gateway Service (unless using Node.js)
-- [ ]  Verify authentication works properly
-- [ ]  Test with expected message volumes
-- [ ]  Monitor resource usage and costs
-- [ ]  Simulate failure scenarios
+- Deploy and test XMTP Gateway Service
+  - **Not needed for agents and Node.js apps** using the XMTP Node or Agent SDKs, which will provide a built-in XMTP Gateway Service.
+- Verify authentication works properly
+- Test with expected message volumes
+- Monitor resource usage and costs
+- Simulate failure scenarios
 
 You can test on Base Sepolia, App Chain testnet, and Broadcast Network testnet. They all run identical contracts so you can dry-run funding and messaging.
 
@@ -457,7 +473,7 @@ To get testnet USDC, use [https://faucet.circle.com/](https://faucet.circle.com/
 - Test authentication flows
 - Ensure infrastructure scales
 
-**After November 1+**: Full mainnet testing
+**After November 1**: Full mainnet testing
 
 - Funding Portal accepts real USDC
 - Production environment testing
@@ -490,14 +506,16 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
     else Insufficient funds in Payer Registry
         XMTP Broadcast Network-->>App: Message not sent
     end
+
 `} />
+
 </Zoom>
 
 ### Flow for sending a message to the XMTP App Chain
 
 <Zoom>
 <Mermaid
-  id="xmtp-App Chain-flow"
+  id="xmtp-appchain-flow"
   chart={`
     %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
     sequenceDiagram
@@ -515,5 +533,7 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
     else Insufficient funds
         XMTP App Chain-->>App: Message not sent
     end
+
 `} />
+
 </Zoom>

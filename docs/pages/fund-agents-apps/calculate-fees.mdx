@@ -1,20 +1,20 @@
-import Zoom from 'react-medium-image-zoom'
-import 'react-medium-image-zoom/dist/styles.css'
-import { useEffect, useRef } from 'react'
-import mermaid from 'mermaid'
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+import { useEffect, useRef } from 'react';
+import mermaid from 'mermaid';
 
 {/*
-  Custom Mermaid component for rendering diagrams in documentation.
+Custom Mermaid component for rendering diagrams in documentation.
 
-  This component is defined inline instead of imported from a separate file
-  because Vocs has a bug where local file imports break search indexing.
-  Only npm package imports (like react and mermaid) are safe.
+This component is defined inline instead of imported from a separate file
+because Vocs has a bug where local file imports break search indexing.
+Only npm package imports (like react and mermaid) are safe.
 */}
 export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-  const container = useRef(null);
+const container = useRef(null);
 
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: false });
+useEffect(() => {
+mermaid.initialize({ startOnLoad: false });
 
     const renderChart = async () => {
       try {
@@ -31,9 +31,10 @@ export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
     };
 
     renderChart();
-  }, [chart, id]);
 
-  return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
+}, [chart, id]);
+
+return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
 };
 
 # Understand and calculate XMTP fees
@@ -58,8 +59,8 @@ Network fees are estimated to cost $5 per 100,000 chat messages, inclusive of al
 
 To understand XMTP fee types, it's helpful to understand XMTP's architecture, which uses a two-layer system:
 
-1.  **XMTP Broadcast Network** (offchain): A globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users.
-2.  **XMTP App Chain** (onchain): A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations.
+1. **XMTP Broadcast Network** (offchain): A globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users.
+2. **XMTP App Chain** (onchain): A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations.
 
 ### Messaging fees
 
@@ -106,8 +107,10 @@ This sequence diagram illustrates the messaging fee payment flow from payers to 
         DistributionManager->>NodeRegistry: 5. Verifies claimant is node owner
         NodeRegistry-->>DistributionManager: Returns node owner's address
         DistributionManager->>NodeOperator: 6. Transfers earned fees to node operator
+
 `}
 />
+
 </Zoom>
 
 ### Gas fees
@@ -141,15 +144,15 @@ All pricing is onchain and fully auditable. For the most accurate estimates base
 
 The total messaging fee for a single message is the sum of its component fees:
 
-*total messaging fee = base fee + storage fee + congestion fee*
+`total messaging fee = base fee + storage fee + congestion fee`
 
 The storage fee is calculated as follows:
 
-*storage fee = rate × message size in bytes × message retention in days*
+`storage fee = rate × message size in bytes × message retention in days`
 
-For example, a 1 KB text message stored for 90 days on the XMTP Broadcast Network would incur a messaging fee calculated as: 
+For example, a 1 KB text message stored for 90 days on the XMTP Broadcast Network would incur a messaging fee calculated as:
 
-*total messaging fee = base fee + (storage rate × 1024 bytes × 90 days) + congestion fee*
+`total messaging fee = base fee + (storage rate × 1024 bytes × 90 days) + congestion fee`
 
 The congestion fee is applied only during periods of high network activity to manage load.
 
@@ -157,7 +160,7 @@ The congestion fee is applied only during periods of high network activity to ma
 
 Gas fees for transactions on the XMTP App Chain are calculated as follows:
 
-*gas fee = fee per unit of gas × amount of gas consumed by a transaction*
+`gas fee = fee per unit of gas × amount of gas consumed by a transaction`
 
 This often works out to fractions of a US cent.
 

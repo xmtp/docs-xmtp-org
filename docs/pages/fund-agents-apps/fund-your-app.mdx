@@ -1,20 +1,22 @@
-import * as React from 'react';
-import * as RadixTabs from '@radix-ui/react-tabs';
+import *as React from 'react';
+import* as RadixTabs from '@radix-ui/react-tabs';
 
 {/*
-  Custom Tabs component for creating tabbed content in documentation.
+Custom Tabs component for creating tabbed content in documentation.
 
-  This component is defined inline instead of imported from a separate file
-  because Vocs has a bug where local file imports break search indexing.
-  Only npm package imports (like react and @radix-ui/react-tabs) are safe.
+This component is defined inline instead of imported from a separate file
+because Vocs has a bug where local file imports break search indexing.
+Only npm package imports (like react and @radix-ui/react-tabs) are safe.
 
-  Features:
-  - Renders tabbed content with styling that matches Vocs theme
-  - Auto-switches to the correct tab when clicking outline/TOC links
-  - Uses forceMount to keep all tab content in DOM (required for outline links)
-  - Polls for hash changes as fallback when hashchange events don't fire
+Features:
 
-  Usage:
+- Renders tabbed content with styling that matches Vocs theme
+- Auto-switches to the correct tab when clicking outline/TOC links
+- Uses forceMount to keep all tab content in DOM (required for outline links)
+- Polls for hash changes as fallback when hashchange events don't fire
+
+Usage:
+
   <Tabs.Root defaultValue="tab-id">
     <Tabs.List>
       <Tabs.Trigger value="tab1">Tab 1 Title</Tabs.Trigger>
@@ -92,30 +94,32 @@ export const Tabs = (() => {
       className: 'tabs-root',
       ref: rootRef
     }, children);
-  };
 
-  const List = ({ children }) =>
-    React.createElement(RadixTabs.List, { className: 'tabs-list' }, children);
+};
 
-  const Trigger = ({ value, children }) =>
-    React.createElement(RadixTabs.Trigger, { value, className: 'tabs-trigger' }, children);
+const List = ({ children }) =>
+React.createElement(RadixTabs.List, { className: 'tabs-list' }, children);
 
-  const Content = ({ value, children }) =>
-    React.createElement(RadixTabs.Content, {
-      value,
-      className: 'tabs-content',
-      forceMount: true,
-      'data-value': value
-    }, children);
+const Trigger = ({ value, children }) =>
+React.createElement(RadixTabs.Trigger, { value, className: 'tabs-trigger' }, children);
 
-  return { Root, List, Trigger, Content };
+const Content = ({ value, children }) =>
+React.createElement(RadixTabs.Content, {
+value,
+className: 'tabs-content',
+forceMount: true,
+'data-value': value
+}, children);
+
+return { Root, List, Trigger, Content };
 })();
 
 {/*
-  Note: CSS is inlined here instead of imported from a separate file
-  because Vocs has a bug where local file imports (like import './styles.css')
-  break search indexing. npm package imports are fine, but CSS files must be inlined.
+Note: CSS is inlined here instead of imported from a separate file
+because Vocs has a bug where local file imports (like import './styles.css')
+break search indexing. npm package imports are fine, but CSS files must be inlined.
 */}
+
 <style>{`
 .tabs-root {
   display: flex;
@@ -198,7 +202,7 @@ Use this guide to learn how to use the XMTP Funding Portal to fund an app to sen
 
 Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP App Chain gas payments, and all blockchain interactions.
 
-[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA. 
+[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
 
 The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
 
@@ -246,7 +250,7 @@ You'll need your payer wallet's private key when setting up your [XMTP Gateway S
 4. Click the pencil icon to give your payer wallet a human-readable name.
 5. Click the green check button to save.
 
-Your payer wallet is now a payer in the Payer Registry smart contract. 
+Your payer wallet is now a payer in the Payer Registry smart contract.
 
 ### Step 3: Fund the payer wallet with USDC on Base
 
@@ -264,11 +268,11 @@ The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**
 
 1. Connect the payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. In the drop-down menu in the upper right, be sure to select the payer wallet.
-2. On the **Dashboard** page, click **Fund**.
-3. Enter the amount of USDC you want to allocate from your payer wallet.
-4. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
-5. Click **Continue**.
-6. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+3. On the **Dashboard** page, click **Fund**.
+4. Enter the amount of USDC you want to allocate from your payer wallet.
+5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+6. Click **Continue**.
+7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
 Your payer wallet now has:
 
@@ -295,7 +299,7 @@ If your allowance goes to zero, the Payer Registry smart contract rejects new me
 
 You can use the payer wallet (and only the payer wallet) to withdraw USDC from its messaging fee allowance at any time.
 
-- Withdrawals that require bridging will be available after 7 days and require a second transaction to claim. 
+- Withdrawals that require bridging will be available after 7 days and require a second transaction to claim.
 - Withdrawals without bridging will be available after 48 hours and require a second transaction to claim.
 
 1. Connect your payer wallet to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
@@ -339,9 +343,9 @@ To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://fauc
 
 ### Step 4: Allocate funds to the payer wallet
 
-:::warning 
+:::warning
 
-Once you use your wallet to allocate funds to the payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-funds) USDC from the messaging fee allowance.
+Once you use your wallet to allocate funds to the payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) USDC from the messaging fee allowance.
 
 :::
 
@@ -349,11 +353,11 @@ The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**
 
 1. Use the wallet you funded in Step 3 to connect to the XMTP Funding Portal: [https://fund.xmtp.org/](http://fund.xmtp.org/).
 2. In the drop-down menu in the upper right, be sure to select the payer wallet.
-2. On the **Dashboard** page, click **Fund**.
-3. Enter the amount of USDC you want to allocate from your wallet to the payer wallet.
-4. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
-5. Click **Continue**.
-6. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+3. On the **Dashboard** page, click **Fund**.
+4. Enter the amount of USDC you want to allocate from your wallet to the payer wallet.
+5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+6. Click **Continue**.
+7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
 The payer wallet now has:
 
@@ -374,16 +378,16 @@ You can dry-run allocating funds using Base Sepolia USDC and sending messages us
 ### Signature rejected (MetaMask only)
 
 If you see a **Signature rejected** error in MetaMask, it can sometimes be caused by a stuck or out-of-sync **nonce** (a number that keeps track of your transaction order).
-    
+
 To fix this:
-    
+
 1. Open MetaMask.
 2. Click your **account icon** in the top right.
 3. Go to **Settings → Advanced**.
 4. Click **Reset Account**. This does not affect your funds or wallet.
-    
+
 If the issue persists:
-    
+
 - Check for any stuck or pending transactions in your wallet.
 - Try sending a new transaction with a **custom nonce** if needed.
 
