@@ -2,7 +2,7 @@
 
 Starting December 9, 2025, apps and agents must pay fees to send messages on the decentralized XMTP Broadcast Network.
 
-This guide provides a timeline and checklist to prepare your app for this transition.
+This guide provides a timeline and checklist to prepare your app or agent for this transition.
 
 ## Key production milestones
 
@@ -20,10 +20,10 @@ This guide provides a timeline and checklist to prepare your app for this transi
 
 ## Required tasks
 
-Complete these tasks by **December 9, 2025**, to ensure your app can send messages on the decentralized XMTP Broadcast Network.
+Complete these tasks by **December 9, 2025**, to ensure your app or agent can send messages on the decentralized XMTP Broadcast Network.
 
 1. **From October 15**: Deploy the [XMTP Gateway Service](/fund-agents-apps/run-gateway) to enable your app or agent to send messages and pay fees on XMTP mainnet.
-2. **From November 15**: Update your app to use a [decentralization-ready XMTP SDK](/fund-agents-apps/update-sdk) to connect to your XMTP Gateway Service and [fund your app](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
+2. **From November 15**: Update your app or agent to use a [decentralization-ready XMTP SDK](/fund-agents-apps/update-sdk) to connect to your XMTP Gateway Service and [fund your app or agent](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
 
 ## Recommended next steps
 

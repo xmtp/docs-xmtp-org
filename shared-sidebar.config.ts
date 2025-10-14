@@ -189,7 +189,7 @@ export const sidebarConfig = {
           link: "/fund-agents-apps/calculate-fees",
         },
         {
-          text: "Fund your app",
+          text: "Fund an app or agent",
           link: "/fund-agents-apps/fund-your-app",
         },
         {
