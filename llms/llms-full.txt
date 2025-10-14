@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 05:05 PM UTC / October 08, 2025
+Generated at 04:44 PM UTC / October 09, 2025
 
 ## Instructions for AI Tools
 
@@ -2420,6 +2420,24 @@ Attempting to send or sync on inactive conversations will throw a `Group is inac
 To check conversation status before initiating a network action:
 
 :::code-group
+
+```js [Browser]
+// Check if the conversation is active (async method in Browser SDK)
+if (await conversation.isActive()) {
+    // Conversation is active, safe to send or sync
+} else {
+    // Conversation is inactive, show read-only UI
+}
+```
+
+```js [Node]
+// Check if the conversation is active (async method in Node SDK)
+if (await conversation.isActive()) {
+    // Conversation is active, safe to send or sync
+} else {
+    // Conversation is inactive, show read-only UI
+}
+```
 
 ```tsx [React Native]
 conversation.isActive();
@@ -6485,6 +6503,8 @@ This video provides a walkthrough of the idea behind the XMTP installation limit
   allowFullScreen
 ></iframe>
 
+### Inbox update limits
+
 An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
 - Add a wallet
@@ -6494,9 +6514,22 @@ An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 
 This means that one inbox ID can have up to 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
 
-If an inbox is allowed to reach its limit of 256 inbox updates, the user will need to [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating their inbox will cause the user to lose of their existing conversations, but will enable them to continue using their identity with new XMTP conversations.
+If an inbox reaches its limit of 256 inbox updates, the user must [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows the user to continue using their identity with new XMTP conversations.
 
-To avoid this scenario altogether, inboxes are limited to having only 10 active installations. When an inbox has 10 active installations, the user must revoke 1 installation before they are able to add another. This helps keep groups to a reasonable size and also helps keep users from accidentally reaching the 256 limit. However, note that revoking a installation counts toward the 256 inbox update limit, so frequently revoking installations and adding new ones can still cause a user to quickly reach the inbox update limit.
+### Installation limits
+
+XMTP enforces a 10-installation limit per inbox. When an inbox reaches 10 active installations, the user must revoke at least one installation before adding a new one. This limit serves two purposes:
+
+1. Prevents excessive group sizes: Since all installations in an inbox are added as group members, limiting installations keeps group sizes manageable and maintains performance.
+2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256-update threshold.
+
+:::warning[Important]
+
+Revoking an installation counts as one of the 256 inbox updates. This means frequently adding and revoking installations will still consume your update quota and could lead to reaching the limit prematurely.
+
+:::
+
+The only way to prevent consuming installation updates is to ensure your XMTP database is persisted and reloaded between app sessions and deployments. When you reuse an existing database, you maintain the same installation instead of creating a new one each time.
 
 Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
@@ -9942,10 +9975,7 @@ Once you have the verified identity, get its inbox ID and create a new DM:
 
 ```js [Node]
 // by Ethereum address
-const dm = await agent.createDmWithAddress({
-  identifier: bo.accountAddress,
-  identifierKind: IdentifierKind.Ethereum,
-});
+const dm = await agent.createDmWithAddress(bo.accountAddress);
 ```
 
 ### By inbox ID
@@ -10165,9 +10195,21 @@ const agent = await Agent.create(signer);
 ## pages/agents/build-agents/local-database.mdx
 # Manage agent local database files and installations
 
+Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
+
+## Installation limits and revocation rules
+
+Understanding XMTP's installation and inbox limits is critical for production deployments:
+
+- Installation limit per inbox: Each inbox supports up to 10 active installations. Once you reach this limit, you must [revoke an existing installation](/chat-apps/core-messaging/manage-inboxes#revoke-a-specific-installation) before adding a new one.
+
+- Update limit per inbox: Every installation addition or revocation counts toward a cumulative limit of 256 [inbox updates](/chat-apps/core-messaging/manage-inboxes#inbox-update-limits). Exceeding this threshold requires [inbox rotation](/chat-apps/core-messaging/manage-inboxes#rotate-an-inbox-id), which permanently removes access to all historical conversations for that inbox.
+
+These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
+
 ## Understand local database files
 
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
+The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
 
 **Database file naming:**
 
