@@ -9,12 +9,11 @@ This guide provides a timeline and checklist to prepare your app for this transi
 - **October 15, 2025**:
   - The XMTP Gateway Service library is available in Go.
   - **→ Deploy your gateway service.**
-- **November 1, 2025**:
-  - XMTP payer wallets can be funded on mainnet.
-  - **→ Fund your payer wallet.**
 - **November 15 2025**:
   - All client SDKs and are compatible with mainnet.
   - **→ Update your client SDKs.**
+  - XMTP payer wallets can be funded on mainnet.
+  - **→ Fund your payer wallet.**
 - **December 9, 2025**:
   - All message traffic is routed through the decentralized network.
   - **→ Older client SDKs are incompatible.**
