@@ -1,0 +1,192 @@
+# Support markdown with your agent built with XMTP
+
+Use the markdown content type to send rich formatted text messages with your agent. Markdown allows you to include headers, lists, tables, code blocks, and other formatting elements to create more engaging and structured messages.
+
+:::tip[Quickstart]
+To learn more, see the [Markdown example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-markdown) in the xmtp-agent-examples repo.
+:::
+
+## Install the package
+
+In some SDKs, the `MarkdownCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-markdown
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-markdown
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-markdown
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```tsx [Node]
+import { ContentTypeMarkdown, MarkdownCodec } from '@xmtp/content-type-markdown';
+
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new MarkdownCodec()],
+});
+```
+
+## Send markdown content
+
+With XMTP, markdown content is sent as a string containing markdown formatting:
+
+```tsx [Node]
+// Basic markdown message
+const markdownContent = `## Welcome to XMTP
+
+This is a **bold** message with *italic* text and \`inline code\`.
+
+- Item 1
+- Item 2
+- Item 3`;
+
+await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+```
+
+## Common markdown patterns
+
+### Headers and lists
+
+```tsx [Node]
+const content = `## Results Summary
+
+- **Total items:** ${count}
+- *Status:* ${status}
+- \`Processing time:\` ${duration}ms
+
+### Next Steps
+1. Review results
+2. Update configuration
+3. Deploy changes`;
+
+await ctx.conversation.send(content, ContentTypeMarkdown);
+```
+
+### Tables for structured data
+
+```tsx [Node]
+const content = `
+| Metric | Value | Status |
+|--------|-------|--------|
+| Total  | ${total} | ✅ |
+| Active | ${active} | 🟡 |
+| Errors | ${errors} | ❌ |
+
+**Summary:** All systems operational
+`;
+
+await ctx.conversation.send(content, ContentTypeMarkdown);
+```
+
+### Code blocks and syntax highlighting
+
+```tsx [Node]
+const content = `
+Here's the code snippet:
+
+\`\`\`javascript
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new MarkdownCodec()],
+});
+\`\`\`
+
+Inline code: \`ctx.conversation.send()\`
+`;
+
+await ctx.conversation.send(content, ContentTypeMarkdown);
+```
+
+### Complete example with dynamic content
+
+```tsx [Node]
+const generateReport = (data) => {
+  return `## 📊 Daily Report
+
+### Overview
+| Metric | Today | Yesterday | Change |
+|--------|-------|-----------|--------|
+| Users | ${data.today.users} | ${data.yesterday.users} | ${data.change.users}% |
+| Messages | ${data.today.messages} | ${data.yesterday.messages} | ${data.change.messages}% |
+
+### Top Performers 🏆
+${data.topUsers.map(user => `- **${user.name}**: ${user.score} points`).join('\n')}
+
+### Alerts ⚠️
+${data.alerts.length > 0 ? 
+  data.alerts.map(alert => `- ${alert}`).join('\n') : 
+  'No alerts today'
+}
+
+---
+*Report generated at ${new Date().toLocaleString()}*`;
+
+await ctx.conversation.send(generateReport(reportData), ContentTypeMarkdown);
+```
+
+## Receive markdown content
+
+```tsx [Node]
+agent.on('message', async (ctx) => {
+  if (ctx.usesCodec(MarkdownCodec)) {
+    const markdownContent = ctx.message.content;
+    console.log('Received markdown:', markdownContent);
+    
+    // Process the markdown content
+    // You can parse it, extract data, or display it formatted
+  }
+});
+```
+
+## Filter for markdown content
+
+```tsx [Node]
+// Check if the message contains markdown
+if (ctx.usesCodec(MarkdownCodec)) {
+  const markdown: string = ctx.message.content;
+  // Handle markdown content
+}
+```
+
+## Best practices
+
+### Structure your content
+- Use headers (`##`, `###`) to organize sections
+- Add blank lines between sections for better readability
+- Use tables for structured data instead of plain lists
+
+### Formatting tips
+- Escape backticks in code: `\`code\``
+- Use two spaces + newline for line breaks: `  \n`
+- Add separators with `---` between sections
+- Use emojis sparingly for visual appeal
+
+### Performance considerations
+- Keep markdown content reasonably sized for better performance
+- Avoid extremely long tables or code blocks
+- Use dynamic content generation for reports and summaries
+
+### Error handling
+```tsx [Node]
+try {
+  await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+} catch (error) {
+  console.error('Failed to send markdown:', error);
+  // Fallback to plain text
+  await ctx.conversation.send('Failed to send formatted message');
+}
+```
