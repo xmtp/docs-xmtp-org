@@ -108,33 +108,6 @@ Inline code: \`ctx.conversation.send()\`
 await ctx.conversation.send(content, ContentTypeMarkdown);
 ```
 
-### Complete example with dynamic content
-
-```tsx [Node]
-const generateReport = (data) => {
-  return `## 📊 Daily Report
-
-### Overview
-| Metric | Today | Yesterday | Change |
-|--------|-------|-----------|--------|
-| Users | ${data.today.users} | ${data.yesterday.users} | ${data.change.users}% |
-| Messages | ${data.today.messages} | ${data.yesterday.messages} | ${data.change.messages}% |
-
-### Top Performers 🏆
-${data.topUsers.map(user => `- **${user.name}**: ${user.score} points`).join('\n')}
-
-### Alerts ⚠️
-${data.alerts.length > 0 ? 
-  data.alerts.map(alert => `- ${alert}`).join('\n') : 
-  'No alerts today'
-}
-
----
-*Report generated at ${new Date().toLocaleString()}*`;
-
-await ctx.conversation.send(generateReport(reportData), ContentTypeMarkdown);
-```
-
 ## Receive markdown content
 
 ```tsx [Node]
