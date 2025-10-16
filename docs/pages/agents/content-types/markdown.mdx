@@ -161,32 +161,3 @@ if (ctx.usesCodec(MarkdownCodec)) {
   // Handle markdown content
 }
 ```
-
-## Best practices
-
-### Structure your content
-- Use headers (`##`, `###`) to organize sections
-- Add blank lines between sections for better readability
-- Use tables for structured data instead of plain lists
-
-### Formatting tips
-- Escape backticks in code: `\`code\``
-- Use two spaces + newline for line breaks: `  \n`
-- Add separators with `---` between sections
-- Use emojis sparingly for visual appeal
-
-### Performance considerations
-- Keep markdown content reasonably sized for better performance
-- Avoid extremely long tables or code blocks
-- Use dynamic content generation for reports and summaries
-
-### Error handling
-```tsx [Node]
-try {
-  await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
-} catch (error) {
-  console.error('Failed to send markdown:', error);
-  // Fallback to plain text
-  await ctx.conversation.send('Failed to send formatted message');
-}
-```
