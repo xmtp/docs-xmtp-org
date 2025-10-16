@@ -56,7 +56,43 @@ await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
 
 ## Supported markdown patterns
 
-**Headers and lists**
+The markdown content type supports the following formatting patterns:
+
+### Headers
+- `#` H1 headers
+- `##` H2 headers  
+- `###` H3 headers
+- `####` H4 headers
+- `#####` H5 headers
+- `######` H6 headers
+
+### Text formatting
+- `**bold text**` or `__bold text__`
+- `*italic text*` or `_italic text_`
+- `~~strikethrough text~~`
+- \`inline code\`
+
+### Lists
+- Unordered lists with `-`, `*`, or `+`
+- Ordered lists with numbers
+- Nested lists with proper indentation
+
+### Tables
+- Standard markdown table syntax with `|` separators
+- Header rows with `---` separators
+
+### Code blocks
+- Fenced code blocks with triple backticks
+- Language-specific syntax highlighting
+- Inline code with single backticks
+
+### Other elements
+- Blockquotes with `>`
+- Horizontal rules with `---`
+- Links with `[text](url)`
+- Images with `![alt](url)`
+
+### Example usage
 
 ```tsx [Node]
 const content = `## Results Summary
@@ -68,42 +104,20 @@ const content = `## Results Summary
 ### Next Steps
 1. Review results
 2. Update configuration
-3. Deploy changes`;
+3. Deploy changes
 
-await ctx.conversation.send(content, ContentTypeMarkdown);
-```
-
-**Tables for structured data**
-
-```tsx [Node]
-const content = `
 | Metric | Value | Status |
 |--------|-------|--------|
 | Total  | ${total} | ✅ |
 | Active | ${active} | 🟡 |
 | Errors | ${errors} | ❌ |
 
-**Summary:** All systems operational
-`;
-
-await ctx.conversation.send(content, ContentTypeMarkdown);
-```
-
-**Code blocks and syntax highlighting**
-
-```tsx [Node]
-const content = `
-Here's the code snippet:
-
 \`\`\`javascript
 const agent = await Agent.create(signer, {
   env: 'dev',
   codecs: [new MarkdownCodec()],
 });
-\`\`\`
-
-Inline code: \`ctx.conversation.send()\`
-`;
+\`\`\``;
 
 await ctx.conversation.send(content, ContentTypeMarkdown);
 ```
