@@ -139,6 +139,10 @@ export const sidebarConfig = {
           text: "Transaction references",
           link: "/agents/content-types/transaction-refs",
         },
+        {
+          text: "Markdown",
+          link: "/agents/content-types/markdown",
+        },
       ],
     },
     {
