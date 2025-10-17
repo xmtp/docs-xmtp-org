@@ -48,6 +48,7 @@ function Utterances() {
     scriptEl.setAttribute('src', 'https://utteranc.es/client.js');
     scriptEl.setAttribute('repo', 'xmtp/docs-xmtp-org');
     scriptEl.setAttribute('issue-term', 'pathname');
+    scriptEl.setAttribute('label', 'comment-docs');
     scriptEl.setAttribute('theme', getVocsTheme());
     scriptEl.setAttribute('crossorigin', 'anonymous');
     scriptEl.setAttribute('async', 'true');
