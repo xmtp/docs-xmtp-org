@@ -1,17 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router';
 
 function Utterances() {
   const commentBox = useRef<HTMLDivElement>(null);
-  const [isHomePage, setIsHomePage] = useState(() => typeof window !== 'undefined' && window.location.pathname === '/');
-
-  useEffect(() => {
-    // Check if we're on the home page
-    setIsHomePage(window.location.pathname === '/');
-  }, []);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     // Don't render utterances on home page
-    if (isHomePage) return;
+    if (isHomePage) {
+      // Clear any existing utterances when navigating to home page
+      if (commentBox.current) {
+        commentBox.current.innerHTML = '';
+      }
+      return;
+    }
+
     const getVocsTheme = () => {
       // Check localStorage for Vocs theme
       let stored: string | null = null;
@@ -35,6 +39,11 @@ function Utterances() {
         : 'github-light';
     };
 
+    // Clear any existing utterances before injecting new script
+    if (commentBox.current) {
+      commentBox.current.innerHTML = '';
+    }
+
     const scriptEl = document.createElement('script');
     scriptEl.setAttribute('src', 'https://utteranc.es/client.js');
     scriptEl.setAttribute('repo', 'xmtp/docs-xmtp-org');
@@ -47,20 +56,7 @@ function Utterances() {
       commentBox.current.appendChild(scriptEl);
     }
 
-    // Watch for theme changes in localStorage
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'vocs.theme') {
-        const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage(
-            { type: 'set-theme', theme: getVocsTheme() },
-            'https://utteranc.es'
-          );
-        }
-      }
-    };
-
-    // Watch for DOM changes (class/attribute changes)
+    // Watch for DOM changes (class/attribute changes) when Vocs theme toggles
     const observer = new MutationObserver(() => {
       const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
       if (iframe && iframe.contentWindow) {
@@ -76,11 +72,8 @@ function Utterances() {
       attributeFilter: ['class', 'data-theme', 'data-color-scheme'],
     });
 
-    window.addEventListener('storage', handleStorageChange);
-
     return () => {
       observer.disconnect();
-      window.removeEventListener('storage', handleStorageChange);
     };
   }, [isHomePage]);
 
