@@ -75,7 +75,7 @@ function Utterances() {
     return () => {
       observer.disconnect();
     };
-  }, [isHomePage]);
+  }, [location.pathname]);
 
   // Don't render on home page
   if (isHomePage) return null;
