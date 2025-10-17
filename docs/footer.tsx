@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 function Utterances() {
   const commentBox = useRef<HTMLDivElement>(null);
-  const [isHomePage, setIsHomePage] = useState(false);
+  const [isHomePage, setIsHomePage] = useState(() => typeof window !== 'undefined' && window.location.pathname === '/');
 
   useEffect(() => {
     // Check if we're on the home page
@@ -14,7 +14,10 @@ function Utterances() {
     if (isHomePage) return;
     const getVocsTheme = () => {
       // Check localStorage for Vocs theme
-      const stored = localStorage.getItem('vocs.theme');
+      let stored: string | null = null;
+      try {
+        stored = localStorage.getItem('vocs.theme');
+      } catch {}
       if (stored === 'dark') return 'github-dark';
       if (stored === 'light') return 'github-light';
 
