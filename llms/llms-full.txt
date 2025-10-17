@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 04:44 PM UTC / October 09, 2025
+Generated at 10:40 PM UTC / October 15, 2025
 
 ## Instructions for AI Tools
 
@@ -10694,25 +10694,6 @@ XMTP agents are autonomous programs that can participate in secure, end-to-end e
 - **Decentralized**: Operates on a peer-to-peer network, eliminating single points of failure and ensuring continued operation even if some nodes go offline.
 - **Multi-agent**: Allows confidential communication between multiple agents and humans through MLS group chats.
 
-## Vibe coding
-
-See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
-
-```bash
-Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
-```
-
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/djRLnWUvwIA?si=JX25iQt57wgXnqVX"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
-
 ## Get started
 
 Ready to build? See [Quickstart](/agents/get-started/build-an-agent) to create your first XMTP agent.
@@ -12036,6 +12017,1326 @@ if (ctx.usesCodec(ReactionCodec)) {
 ```
 
 
+## pages/fund-agents-apps/calculate-fees.mdx
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+import { useEffect, useRef } from 'react';
+import mermaid from 'mermaid';
+
+{/*
+Custom Mermaid component for rendering diagrams in documentation.
+
+This component is defined inline instead of imported from a separate file
+because Vocs has a bug where local file imports break search indexing.
+Only npm package imports (like react and mermaid) are safe.
+*/}
+export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
+const container = useRef(null);
+
+useEffect(() => {
+mermaid.initialize({ startOnLoad: false });
+
+    const renderChart = async () => {
+      try {
+        const { svg } = await mermaid.render(id, chart);
+        if (container.current) {
+          container.current.innerHTML = svg;
+        }
+      } catch (error) {
+        console.error('Mermaid render error:', error);
+        if (container.current) {
+          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
+        }
+      }
+    };
+
+    renderChart();
+
+}, [chart, id]);
+
+return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
+};
+
+# Understand and calculate XMTP fees
+
+Use this guide to understand XMTP fees and how to calculate estimated XMTP fees for an app or agent.
+
+## Understand XMTP fees
+
+To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. The fees paid by apps and agents (payers) directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
+
+:::tip[How to estimate your costs]
+
+Network fees are estimated to cost $5 per 100,000 chat messages, inclusive of all fee types.
+
+- **If you know your message volume**, multiply by $5 per 100,000 to estimate your costs. For example, if your app or agent's message volume is 100,000 messages per day, your estimated cost is $5 per day or $150 per month.
+
+- **If you have not launched messaging**, we recommend assuming each monthly active messaging user sends 500 messages per month. For example, 10,000 monthly active messaging users sending an average of 500 messages per month per user will generate an estimated $250 per month in fees.
+
+:::
+
+### Fee types
+
+To understand XMTP fee types, it's helpful to understand XMTP's architecture, which uses a two-layer system:
+
+1. **XMTP Broadcast Network** (offchain): A globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users.
+2. **XMTP App Chain** (onchain): A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations.
+
+### Messaging fees
+
+Messages sent through the **XMTP Broadcast Network** incur these types of **messaging fees**:
+
+- **Base fee**: A flat per-message fee charged at a single global rate, not a rate per app or sender.
+- **Storage fee**: A fee charged per-byte-day of storage required.
+- **Congestion fee**: A dynamic fee computed by looking at the recent activity of an originator. Added only during periods of high network activity.
+
+The fee rates for the base fee, storage fee, and congestion fee are denominated in dollars and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
+
+Every message an app or agent sends through the XMTP Broadcast Network counts against its message allowance. These message types include:
+
+- App messages (text, reactions, replies)
+- Media attachments (charged by size, with a 1 MB cap). To send larger files and reduce fees, use a remote attachment to point to off-network storage (for example, IPFS or S3).
+- System messages (read receipts, typing indicators)
+
+To learn more, see [Envelope types](/protocol/envelope-types).
+
+Collected messaging fees are paid directly to the node operators who run the globally distributed nodes that power the XMTP Broadcast Network.
+
+#### Messaging fee payment flow
+
+This sequence diagram illustrates the messaging fee payment flow from payers to independent node operators using a series of [smart contracts](https://github.com/xmtp/smart-contracts/blob/main/src/settlement-chain/README.md).
+
+<Zoom>
+<Mermaid
+  id="payer-to-node"
+  chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
+    sequenceDiagram
+        actor Payer
+        participant PayerRegistry
+        participant PayerReportManager
+        participant DistributionManager
+        participant NodeRegistry
+        actor NodeOperator as Node operator
+
+        Payer->>PayerRegistry: 1. Allocates USDC to cover usage fees
+        Note over PayerReportManager: Node operator submits payer usage reports
+        PayerReportManager->>PayerRegistry: 2. Deducts fees from payer's balance
+        PayerRegistry->>DistributionManager: 3. Transfers collected fees
+        NodeOperator->>DistributionManager: 4. Claims share of fees
+        DistributionManager->>NodeRegistry: 5. Verifies claimant is node owner
+        NodeRegistry-->>DistributionManager: Returns node owner's address
+        DistributionManager->>NodeOperator: 6. Transfers earned fees to node operator
+
+`}
+/>
+
+</Zoom>
+
+### Gas fees
+
+Certain administrative operations involve transactions on the XMTP App Chain:
+
+- Group management updated (member additions, permission changes)
+- Identity updates
+- Payer-related updates
+
+To pay for these transactions, apps and agents need to maintain a gas reserve balance on the XMTP App Chain. The Funding Portal automatically manages funding this gas reserve for apps and agents based on their expected message volume.
+
+Collected gas fees are paid directly to the XMTP App Chain. Fees are used to maintain the App Chain.
+
+## Calculate estimated XMTP fees
+
+As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 messages** ($0.00005/message). This all-in fee for typical usage is based on the following key assumptions:
+
+- A 95/5 split between messaging and gas fees. Meaning, for every $5 in total fees:
+  - $4.75 is for XMTP Broadcast Network messaging fees
+  - $0.25 is for XMTP App Chain gas fees
+- An average message size of 1 KB (1024 bytes).
+- A message retention period of 90 days.
+- Normal network conditions (no congestion fees).
+
+Your actual costs may vary depending on your app's specific usage patterns. For example, sending smaller messages or using a shorter retention period will result in lower messaging fees.
+
+All pricing is onchain and fully auditable. For the most accurate estimates based on your specific usage, the XMTP Funding Portal provides a detailed breakdown of messaging fees, gas fees, and your historical and projected spend.
+
+### Calculate estimated messaging fees
+
+The total messaging fee for a single message is the sum of its component fees:
+
+`total messaging fee = base fee + storage fee + congestion fee`
+
+The storage fee is calculated as follows:
+
+`storage fee = rate × message size in bytes × message retention in days`
+
+For example, a 1 KB text message stored for 90 days on the XMTP Broadcast Network would incur a messaging fee calculated as:
+
+`total messaging fee = base fee + (storage rate × 1024 bytes × 90 days) + congestion fee`
+
+The congestion fee is applied only during periods of high network activity to manage load.
+
+### Calculate estimated gas fees
+
+Gas fees for transactions on the XMTP App Chain are calculated as follows:
+
+`gas fee = fee per unit of gas × amount of gas consumed by a transaction`
+
+This often works out to fractions of a US cent.
+
+The fee per unit of gas is set by the XMTP App Chain based on network activity.
+
+The total amount of gas consumed depends on the size of the transaction.
+
+### Fees and network scale
+
+The network is designed for sustainability, not to accumulate profit. Fee revenue is used to cover network operational costs incurred by node operators.
+
+The messaging fee per message is expected to step down as the network achieves and sustains global message volume milestones. For example, at a volume of 1 billion messages per month, revenue is expected to cover operational costs.
+
+The specific schedule for these milestones is managed by protocol governance, with a current effective floor fee target of $5 per 100,000 messages.
+
+While the system is designed for fees to decrease over time, the global messaging fee can rise if network volume drops significantly, ensuring node operator sustainability.
+
+
+## pages/fund-agents-apps/glossary.md
+# Glossary for funding an app or agent to send messages with XMTP
+
+## Allowance
+
+Total amount of USDC allocated to pay for messaging and gas fees for a registered payer wallet. This includes:
+
+- USDC allocated to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- USDC in your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
+
+## Base
+
+An Ethereum L2 network developed by Coinbase on the OP Stack. Base processes transactions offchain and settles them on Ethereum.
+
+## Congestion fee
+
+A dynamic offchain fee added during high network activity to manage load, determined by and paid to node operators.
+
+To learn more, see [Understand and calculate XMTP fees](/fund-agents-apps/calculate-fees).
+
+## Message fee
+
+A fixed offchain micropayment paid to node operators for delivering a message.
+
+To learn more, see [Understand and calculate XMTP fees](/fund-agents-apps/calculate-fees).
+
+## Node Registry
+
+A smart contract on Base that manages the list of authorized XMTP Broadcast Network nodes.
+
+To learn more, see [NodeRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/NodeRegistry.sol) in the smart-contracts repo.
+
+## Payer
+
+A payer is typically an app or agent that pays to use the XMTP Broadcast Network to send messages.
+
+## Payer Registry
+
+A smart contract that holds and manages messaging balances for registered payer wallets. The Payer Registry enables:
+
+- **Pay-as-you-go messaging**: A developer registers their payer wallet and allocates USDC to it, creating a messaging balance to compensate node operators.
+- **Balance management**: Any wallet can deposit USDC to a registered payer wallet's messaging balance. Only the registered payer wallet can withdraw funds from its balance.
+- **Fee settlement**: The Payer Registry tracks usage, deducts fees from messaging balances, and enforces sufficient balance requirements for sending messages.
+
+To learn more, see [PayerRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/PayerRegistry.sol#L38) in the XMTP smart-contracts repo.
+
+## Payer wallet
+
+A non-custodial, Ethereum-compatible wallet that you register and use to allocate USDC to pay for your app's messaging fees.
+
+The payer wallet is the only wallet that can control its messaging balance in the Payer Registry, but any wallet can allocate funds to its messaging balance.
+
+To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
+
+## Storage fee
+
+An offchain micropayment paid to node operators based on the size (in bytes) of a stored message.
+
+## Subgraph
+
+A real-time index that tracks PayerRegistry contract activity—such as who funded a messaging balance, how much was spent, and which messages incurred fees—enabling the XMTP Funding Portal to display historical and live fee data.
+
+## XMTP App Chain
+
+An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It manages metadata requiring strict ordering through these smart contracts:
+
+- [`identity_update.go`](https://github.com/xmtp/xmtpd/blob/522d05f5a5d0499157635aba98c3f5b2556470d4/pkg/indexer/app_chain/contracts/identity_update.go): Tracks wallet addresses associated with each XMTP inbox
+- [`group_message.go`](https://github.com/xmtp/xmtpd/blob/522d05f5a5d0499157635aba98c3f5b2556470d4/pkg/indexer/app_chain/contracts/group_message.go): Manages group membership changes with guaranteed ordering
+
+Gas fees are charged for onchain transactions on the XMTP App Chain. These transactions are typically for group membership, identity, and payer-related updates. Fees are paid with USDC directly held by payer wallets on the XMTP App Chain.
+
+When you [fund your payer wallet](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal, it automatically bridges an optimized percentage of the USDC funds to the XMTP App Chain to cover gas fees.
+
+## XMTP Broadcast Network
+
+The offchain globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
+
+## XMTP Gateway Service
+
+A small client that acts as a proxy between your app and the payer wallet, and more specifically, the payer wallet's private key. Here's what the XMTP Gateway Service handles:
+
+- Security: The payer wallet's private key is sensitive information that shouldn't be in your app
+  - The XMTP Gateway Service hosts this private key securely on your infrastructure
+  - Your app never sees or handles the private key directly
+- Authorization: The XMTP Gateway Service can implement your app's authorization logic
+  - It can verify that requests are coming from your legitimate users
+  - It can rate limit requests
+  - It can enforce your app's business rules
+- Fee management: The XMTP Gateway Service handles both types of fees:
+  - Signs transactions on Base for paying messaging fees from the PayerRegistry contract
+  - Signs transactions on the XMTP App Chain for paying gas fees from the payer wallet (Payers contract)
+
+To learn more, see [Run an XMTP Gateway Service](/fund-agents-apps/run-gateway).
+
+## XMTP Settlement Chain
+
+An L3 blockchain built on Base that manages the decentralized network of nodes and payers and facilitates the settlement of fees between them. The core functionality revolves around registering nodes, submitting and settling fees for offchain network usage by payers, and distributing the collected revenue to the node operators and the protocol.
+
+To learn more, see the [README](https://github.com/xmtp/smart-contracts/blob/main/src/settlement-chain/README.md) for the XMTP Settlement Chain smart contracts.
+
+
+## pages/fund-agents-apps/update-sdk.md
+# Update your app or agent to use an XMTP SDK with Gateway Service support
+
+Starting on November 15, 2025, you'll be able to update your app or agent to use an XMTP SDK version that supports XMTP Gateway Service helpers, enabling your app or agent to communicate with your XMTP Gateway Service.
+
+The minimum supported SDK version for each platform will be:
+
+- Agent SDK v2.0.0
+- Browser SDK v6.0.0
+- Node SDK v5.0.0
+- React Native SDK v6.0.0
+- Kotlin SDK v5.0.0
+- Swift SDK v5.0.0
+
+## FAQ
+
+### Will updating to an SDK that uses the decentralized network impact performance and network speed?
+
+Most SDK actions will have comparable performance on the decentralized network. All reads (`sync*`, `stream*`, etc.) and the most common writes (`conversation.send`) will have similar performance.
+
+However, the following actions will have an estimated ~500ms slowdown:
+
+- Registering a new identity to the network (first-time client setup)
+- Adding members to a group
+- Updating group metadata
+
+### Will existing local databases persist after updating my SDK?
+
+Local databases will be fully migrated. No messages will be lost during the transition.
+
+### Can I update my app or agent to use the new SDK version starting on November 15, or do I need to wait until December 9?
+
+Yes, you can use the new SDK version starting on November 15. The SDK versions released on November 15 will work in backward compatibility mode with the centralized network. Once you upgrade and have your [Gateway Service](/fund-agents-apps/run-gateway) properly set up, the transition on December 9 will happen automatically.
+
+On December 9, the centralized network will start returning a special error code that tells clients to switch over to the decentralized network. If you're already using the November 15 SDK version, this switch will happen automatically without requiring any action on your part.
+
+
+## pages/fund-agents-apps/fund-your-app.mdx
+import *as React from 'react';
+import* as RadixTabs from '@radix-ui/react-tabs';
+
+{/*
+Custom Tabs component for creating tabbed content in documentation.
+
+This component is defined inline instead of imported from a separate file
+because Vocs has a bug where local file imports break search indexing.
+Only npm package imports (like react and @radix-ui/react-tabs) are safe.
+
+Features:
+
+- Renders tabbed content with styling that matches Vocs theme
+- Auto-switches to the correct tab when clicking outline/TOC links
+- Uses forceMount to keep all tab content in DOM (required for outline links)
+- Polls for hash changes as fallback when hashchange events don't fire
+
+Usage:
+
+  <Tabs.Root defaultValue="tab-id">
+    <Tabs.List>
+      <Tabs.Trigger value="tab1">Tab 1 Title</Tabs.Trigger>
+      <Tabs.Trigger value="tab2">Tab 2 Title</Tabs.Trigger>
+    </Tabs.List>
+    <Tabs.Content value="tab1">Content for tab 1</Tabs.Content>
+    <Tabs.Content value="tab2">Content for tab 2</Tabs.Content>
+  </Tabs.Root>
+*/}
+export const Tabs = (() => {
+  const Root = ({ defaultValue, children }) => {
+    const [activeTab, setActiveTab] = React.useState(defaultValue);
+    const rootRef = React.useRef(null);
+
+    React.useEffect(() => {
+      const timeouts = [];
+
+      const switchToTabContainingHash = () => {
+        const hash = window.location.hash.slice(1);
+        if (!hash) return;
+
+        const timeoutId = setTimeout(() => {
+          const allHeadings = document.querySelectorAll(`[id="${hash}"]`);
+
+          allHeadings.forEach((heading) => {
+            const tabContent = heading.closest('[data-value]');
+            if (tabContent && rootRef.current?.contains(tabContent)) {
+              const tabValue = tabContent.getAttribute('data-value');
+              if (tabValue && tabValue !== activeTab) {
+                setActiveTab(tabValue);
+                const scrollTimeoutId = setTimeout(() => {
+                  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+                timeouts.push(scrollTimeoutId);
+              }
+            }
+          });
+        }, 100);
+        timeouts.push(timeoutId);
+      };
+
+      switchToTabContainingHash();
+      window.addEventListener('hashchange', switchToTabContainingHash);
+
+      const interval = setInterval(() => {
+        const hash = window.location.hash.slice(1);
+        if (hash) {
+          const heading = document.getElementById(hash);
+          if (heading) {
+            const tabContent = heading.closest('[data-value]');
+            if (tabContent && rootRef.current?.contains(tabContent)) {
+              const tabValue = tabContent.getAttribute('data-value');
+              if (tabValue && tabValue !== activeTab) {
+                setActiveTab(tabValue);
+                const scrollTimeoutId = setTimeout(() => {
+                  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+                timeouts.push(scrollTimeoutId);
+              }
+            }
+          }
+        }
+      }, 500);
+
+      return () => {
+        window.removeEventListener('hashchange', switchToTabContainingHash);
+        clearInterval(interval);
+        timeouts.forEach(clearTimeout);
+      };
+    }, [activeTab]);
+
+    return React.createElement(RadixTabs.Root, {
+      value: activeTab,
+      onValueChange: setActiveTab,
+      className: 'tabs-root',
+      ref: rootRef
+    }, children);
+
+};
+
+const List = ({ children }) =>
+React.createElement(RadixTabs.List, { className: 'tabs-list' }, children);
+
+const Trigger = ({ value, children }) =>
+React.createElement(RadixTabs.Trigger, { value, className: 'tabs-trigger' }, children);
+
+const Content = ({ value, children }) =>
+React.createElement(RadixTabs.Content, {
+value,
+className: 'tabs-content',
+forceMount: true,
+'data-value': value
+}, children);
+
+return { Root, List, Trigger, Content };
+})();
+
+{/*
+Note: CSS is inlined here instead of imported from a separate file
+because Vocs has a bug where local file imports (like import './styles.css')
+break search indexing. npm package imports are fine, but CSS files must be inlined.
+*/}
+
+<style>{`
+.tabs-root {
+  display: flex;
+  flex-direction: column;
+  margin: 1.5rem 0;
+}
+
+.tabs-list {
+  display: flex;
+  border-bottom: 1px solid var(--vocs-color_border);
+  gap: 0;
+}
+
+.tabs-trigger {
+  all: unset;
+  font-family: inherit;
+  background-color: transparent;
+  padding: 0.75rem 1.5rem;
+  height: 45px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9375rem;
+  line-height: 1;
+  color: var(--vocs-color_text3);
+  user-select: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tabs-trigger:hover {
+  color: var(--vocs-color_text);
+  background-color: var(--vocs-color_background2);
+}
+
+.tabs-trigger[data-state="active"] {
+  color: var(--vocs-color_text);
+  border-bottom-color: var(--vocs-color_link);
+  font-weight: 500;
+}
+
+.tabs-trigger:focus-visible {
+  outline: 2px solid var(--vocs-color_link);
+  outline-offset: 2px;
+}
+
+.tabs-content {
+  padding: 1.5rem 0;
+  outline: none;
+}
+
+.tabs-content[data-state="inactive"] {
+  display: block !important;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.tabs-content:focus {
+  outline: none;
+}
+
+.tabs-content > *:not(:last-child) {
+  margin-bottom: var(--vocs-space_24);
+}
+
+.tabs-content > *:last-child {
+  margin-bottom: 0;
+}
+`}</style>
+
+# Fund an app or agent to send messages with XMTP
+
+Use this guide to learn how to use the XMTP Funding Portal to fund an app or agent to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
+
+Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP App Chain gas payments, and all blockchain interactions.
+
+[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
+
+The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
+
+## Understand payer wallets
+
+A payer wallet is what an app or agent's XMTP Gateway Service uses to pay fees.
+
+You can:
+
+- [Self-fund a payer wallet](#self-fund-a-payer-wallet)
+- [Fund a payer wallet using another wallet](#fund-a-payer-wallet-using-another-wallet)
+
+For example, you might self-fund your payer wallet if it already has or can easily obtain USDC. Or, you might ask your finance team to fund your payer wallet from a company multi-sig. You might also use a wallet you control to support a different app or agent by funding its payer wallet.
+
+<Tabs.Root defaultValue="self-fund">
+  <Tabs.List>
+    <Tabs.Trigger value="self-fund">Self-fund a payer wallet</Tabs.Trigger>
+    <Tabs.Trigger value="other-wallet">Fund a payer wallet using another wallet</Tabs.Trigger>
+  </Tabs.List>
+
+  <Tabs.Content value="self-fund">
+
+## Self-fund a payer wallet
+
+### Step 1. Create the payer wallet
+
+The payer wallet must be:
+
+- A standard Ethereum-compatible wallet account
+- Non-custodial, meaning you control the private key (not a third-party service)
+- Able to sign and transact on the Base and XMTP App Chain networks
+- Able to hold and transfer USDC tokens
+
+You can create a payer wallet using common non-custodial wallet apps, such as Coinbase Wallet and MetaMask.
+
+Payer wallets can be funded by Ethereum EOAs and smart contract wallets. For example, a Gnosis Safe or any ERC-1271 wallet can deposit funds into a payer account using the Funding Portal.
+
+You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-agents-apps/run-gateway).
+
+### Step 2. Register the payer wallet
+
+1. Use your payer wallet to connect to the XMTP Funding Portal → testnet link coming soon.
+2. On the **Welcome** page, click **Use connected wallet**.
+3. Open the drop-down menu in the upper right and click **Manage payers**.
+4. Click the pencil icon to give your payer wallet a human-readable name.
+5. Click the green check button to save.
+
+Your payer wallet is now a payer in the Payer Registry smart contract.
+
+### Step 3: Fund the payer wallet with USDC on Base
+
+Fund your payer wallet with USDC on Base. Here are some sources you can use to acquire USDC:
+
+- Centralized exchanges: Binance, Coinbase, Kraken
+- Direct purchase: Circle, Coinbase
+- Business accounts: Circle business accounts for larger operations
+
+To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
+
+### Step 4: Allocate funds for messaging
+
+:::warning
+
+Once you fund a payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) USDC from the messaging and gas fee allowance.
+
+- Withdrawals from the Payer Registry will be available after 48 hours and require a second transaction to claim.
+- Withdrawals from the XMTP App Chain that require bridging to Base will be available after 7 days and require a second transaction to claim.
+
+:::
+
+The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
+
+1. Connect the payer wallet to the XMTP Funding Portal → testnet link coming soon.
+2. In the drop-down menu in the upper right, be sure to select the payer wallet.
+3. On the **Dashboard** page, click **Fund**.
+4. Enter the amount of USDC you want to allocate from your payer wallet.
+5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+6. Click **Continue**.
+7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+
+Your payer wallet now has:
+
+- USDC allocated to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- USDC bridged to your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+### Step 5: Monitor your usage and allowance
+
+You can use the **Usage** panel on the XMTP Funding Portal **Dashboard** to review the number of messages sent by your app, as well as actual and projected fees.
+
+Before data can display in the Usage panel, you must have completed the following on the appropriate network (testnet or mainnet):
+
+1. [Deployed your XMTP Gateway Service](/fund-agents-apps/run-gateway)
+2. Updated your app to [use a compatible XMTP SDK](/fund-agents-apps/update-sdk)
+3. Sent messages using your app
+
+We recommend funding an allowance for 3-6 months of estimated usage.
+
+If your allowance goes to zero, the Payer Registry smart contract rejects new messages sent to the XMTP Broadcast Network and returns an `INSUFFICIENT_PAYER_BALANCE` error.
+
+### Step 6: Withdraw and claim funds
+
+You can use the payer wallet (and only the payer wallet) to withdraw USDC from the messaging and gas fee allowance at any time.
+
+- Withdrawals from the Payer Registry will be available after 48 hours and require a second transaction to claim.
+- Withdrawals from the XMTP App Chain that require bridging to Base will be available after 7 days and require a second transaction to claim.
+
+1. Connect your payer wallet to the XMTP Funding Portal → testnet link coming soon.
+2. On the **Dashboard** page, click **Withdraw**.
+3. Enter the amount of USDC you want to withdraw from your messaging balance. Click **MAX** if you want to withdraw the maximum amount available.
+4. Click **Request withdrawal**.
+5. After the required wait time, return to the XMTP Funding Portal to complete your withdrawal. On the homepage, view the **Transaction** panel and locate your **Withdrawal** and **Bridge** transactions. The **Status** column should be set to **_Ready to withdraw_**.
+6. Click **Ready to withdraw** to display the **Transaction details** panel.
+7. Verify the withdrawal details and click **Claim USDC**.
+
+</Tabs.Content>
+
+<Tabs.Content value="other-wallet">
+
+## Fund a payer wallet using another wallet
+
+### Step 1. Get the payer wallet address
+
+To fund an app using a wallet other than its payer wallet, you need the payer wallet address.
+
+### Step 2. Select the payer wallet you want to fund
+
+1. Use the wallet you want to use to fund the payer wallet to connect to the XMTP Funding Portal → testnet link coming soon.
+2. On the **Welcome** page, click **Use other wallet**.
+3. On the **Manage payer wallets** screen, enter the payer wallet address you want to fund and a human-readable display name.
+4. Click the green check button to save.
+
+Your wallet can now fund the payer wallet.
+
+### Step 3: Deposit USDC into your wallet
+
+Deposit USDC into your wallet on Base. This is the wallet you want to use to fund the payer wallet.
+
+Here are some sources you can use to acquire USDC:
+
+- Centralized exchanges: Binance, Coinbase, Kraken
+- Direct purchase: Circle, Coinbase
+- Business accounts: Circle business accounts for larger operations
+
+To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
+
+### Step 4: Allocate funds to the payer wallet
+
+:::warning
+
+Once you use your wallet to allocate funds to the payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) USDC from the messaging fee allowance.
+
+:::
+
+The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
+
+1. Use the wallet you funded in Step 3 to connect to the XMTP Funding Portal → testnet link coming soon.
+2. In the drop-down menu in the upper right, be sure to select the payer wallet.
+3. On the **Dashboard** page, click **Fund**.
+4. Enter the amount of USDC you want to allocate from your wallet to the payer wallet.
+5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+6. Click **Continue**.
+7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+
+The payer wallet now has:
+
+- USDC allocated to the registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- USDC bridged to the payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+</Tabs.Content>
+</Tabs.Root>
+
+## Troubleshooting
+
+### Is there a testnet?
+
+Yes. The XMTP App Chain testnet and XMTP Broadcast Network testnet run smart contracts that are identical to those run on mainnet.
+
+You can dry-run allocating funds using Base Sepolia USDC and sending messages using these XMTP testnets.
+
+### Signature rejected (MetaMask only)
+
+If you see a **Signature rejected** error in MetaMask, it can sometimes be caused by a stuck or out-of-sync **nonce** (a number that keeps track of your transaction order).
+
+To fix this:
+
+1. Open MetaMask.
+2. Click your **account icon** in the top right.
+3. Go to **Settings → Advanced**.
+4. Click **Reset Account**. This does not affect your funds or wallet.
+
+If the issue persists:
+
+- Check for any stuck or pending transactions in your wallet.
+- Try sending a new transaction with a **custom nonce** if needed.
+
+### Bridge pending > 15 min
+
+Check Base status: [https://status.base.org/](https://status.base.org/).
+
+### Message reverted
+
+Check for `INSUFFICIENT_PAYER_BALANCE`.
+
+### Region restrictions
+
+Nodes in the XMTP testnet and mainnet that operate in US jurisdiction do so in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, for these nodes, IP-based geoblocking is in place for the following countries/territories:
+
+- Cuba
+- Iran
+- North Korea
+- Syria
+- The Crimea, Donetsk People’s Republic, and Luhansk People’s Republic regions of Ukraine
+
+
+## pages/fund-agents-apps/get-started.md
+# Get started with funding an app or agent to send messages with XMTP
+
+Starting December 9, 2025, apps and agents must pay fees to send messages on the decentralized XMTP Broadcast Network.
+
+This guide provides a timeline and checklist to prepare your app or agent for this transition.
+
+## Key production milestones
+
+- **October 15, 2025**:
+  - The XMTP Gateway Service library is available in Go.
+  - **→ Deploy your gateway service.**
+- **November 15 2025**:
+  - All client SDKs and are compatible with mainnet.
+  - **→ Update your client SDKs.**
+  - XMTP payer wallets can be funded on mainnet.
+  - **→ Fund your payer wallet.**
+- **December 9, 2025**:
+  - All message traffic is routed through the decentralized network.
+  - **→ Older client SDKs are incompatible.**
+
+## Required tasks
+
+Complete these tasks by **December 9, 2025**, to ensure your app or agent can send messages on the decentralized XMTP Broadcast Network.
+
+1. **From October 15**: Deploy the [XMTP Gateway Service](/fund-agents-apps/run-gateway) to enable your app or agent to send messages and pay fees on XMTP mainnet.
+2. **From November 15**: Update your app or agent to use a [decentralization-ready XMTP SDK](/fund-agents-apps/update-sdk) to connect to your XMTP Gateway Service and [fund your app or agent](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
+
+## Recommended next steps
+
+- Learn about [XMTP fees](/fund-agents-apps/calculate-fees).
+- Test your implementation:
+  - Verify that your [XMTP Gateway Service](/fund-agents-apps/run-gateway) and [funding](/fund-agents-apps/fund-your-app) are working correctly.
+- [Set up monitoring](/fund-agents-apps/run-gateway#metrics-and-observability) and automated tests for your XMTP Gateway Service.
+
+
+## pages/fund-agents-apps/run-gateway.mdx
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+import { useEffect, useRef } from 'react';
+import mermaid from 'mermaid';
+
+{/*
+Custom Mermaid component for rendering diagrams in documentation.
+
+This component is defined inline instead of imported from a separate file
+because Vocs has a bug where local file imports break search indexing.
+Only npm package imports (like react and mermaid) are safe.
+*/}
+
+export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
+const container = useRef(null);
+
+useEffect(() => {
+mermaid.initialize({ startOnLoad: false });
+
+    const renderChart = async () => {
+      try {
+        const { svg } = await mermaid.render(id, chart);
+        if (container.current) {
+          container.current.innerHTML = svg;
+        }
+      } catch (error) {
+        console.error('Mermaid render error:', error);
+        if (container.current) {
+          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
+        }
+      }
+    };
+
+    renderChart();
+
+}, [chart, id]);
+
+return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
+};
+
+<style>{`
+/* Make configuration table more readable with better column widths */
+.config-table-wrapper {
+  overflow-x: auto;
+}
+
+.config-table-wrapper table {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 900px;
+}
+
+.config-table-wrapper table th:nth-child(1),
+.config-table-wrapper table td:nth-child(1) {
+  width: 15%;
+}
+
+.config-table-wrapper table th:nth-child(2),
+.config-table-wrapper table td:nth-child(2) {
+  width: 8%;
+}
+
+.config-table-wrapper table th:nth-child(3),
+.config-table-wrapper table td:nth-child(3) {
+  width: 20%;
+}
+
+.config-table-wrapper table th:nth-child(4),
+.config-table-wrapper table td:nth-child(4) {
+  width: 17%;
+}
+
+.config-table-wrapper table th:nth-child(5),
+.config-table-wrapper table td:nth-child(5) {
+  width: 40%;
+}
+`}</style>
+
+# Run your XMTP Gateway Service
+
+An XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app or agent's payment gateway for messaging.
+
+Behind the scenes, your XMTP Gateway Service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
+
+- **For browser and mobile client apps**, you host your XMTP Gateway Service on your infrastructure because it contains your payer wallet's private key.
+
+- **For agents and Node.js apps**, there is no need to run a separate XMTP Gateway Service. The XMTP Gateway Service will be built into the XMTP Node and Agent SDKs.
+
+XMTP provides a standard implementation of an XMTP Gateway Service that you can extend to meet your unique needs. Once your XMTP Gateway Service is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your app or agent.
+
+## Get started
+
+Every app and agent needs an XMTP Gateway Service.
+
+### For browser and mobile client apps
+
+You must run the XMTP Gateway Service written in Go. Choose the option that works best for you:
+
+**Option 1: Basic Docker image** (No Go knowledge required)
+
+- XMTP provides a Docker image that works out of the box
+- Authorizes all requests (add authentication for production)
+- Suitable for testing
+
+**Option 2: Custom implementation** (Go knowledge required)
+
+- Start with XMTP's Go implementation
+- Add your own authentication logic
+- Implement custom rate limiting
+- Required for apps with authentication needs
+
+### For agents and Node.js apps
+
+**No need to run a separate XMTP Gateway Service.** The XMTP Gateway Service will be built into the XMTP Node and Agent SDKs—_COMING SOON_.
+
+```tsx [TypeScript]
+// Automatic gateway included, no separate service needed
+const client = await Client.create(wallet, {
+  env: 'mainnet',
+});
+```
+
+## A minimal example
+
+This is all the code you need to create the most bare bones XMTP Gateway Service. The service will configure itself from command line flags or environment variables, and begin receiving traffic on ports `5050` and `5055`.
+
+This minimal example will authorize every request it receives with no limits. In a real production app, you will want to make sure that you only approve requests from your own users.
+
+```go [Go]
+package main
+
+import (
+ "context"
+ "log"
+ "slices"
+
+ "github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+func main() {
+ // This will gather all the config from environment variables and flags
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+## Configure your XMTP Gateway Service
+
+You can provide the configuration options for your XMTP Gateway Service either directly in your code, via command line flag, or through environment variables.
+
+<div className="config-table-wrapper">
+
+| Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
+| ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract. |
+| App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
+| Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
+| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet`                                                                                                 |
+| Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                                                                                                                         |
+| Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
+
+</div>
+
+### Metrics and observability
+
+If the XMTP Gateway Service is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
+
+## Allocate funds for messaging
+
+The private key for your XMTP Gateway Service must belong to a payer wallet that has allocated funds for messaging in the XMTP Funding Portal.
+
+To learn more, see [Fund your app or agent to send messages with XMTP](/fund-agents-apps/fund-your-app).
+
+## Authenticate users
+
+You can think of the XMTP Gateway Service as an extension of your client app. If you already have a system for authenticating user requests in your app, you should use it in your XMTP Gateway Service. For example, many apps use [JSON Web Tokens](https://jwt.io) (JWTs) to authenticate client requests to servers.
+
+You can use any authentication scheme you like to authenticate requests from your client to the XMTP Gateway Service.
+
+:::tip[IMPORTANT]
+
+- **Browser and mobile client apps** that need user authentication must customize the XMTP Gateway Service to integrate with their authentication system.
+
+- **Node.js apps and agents** that need user authentication will be able to use the XMTP Gateway Service provided by the XMTP Node SDK without customization.
+
+:::
+
+### In your client—_COMING SOON_
+
+When creating an XMTP client, you will be able to optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
+
+The value returned by this function will be included in all client requests to the XMTP Gateway Service. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway Service, and after any request to the XMTP Gateway Service fails due to a `PermissionDenied` error.
+
+{/*
+Commenting out b/c this functionality is not yet live
+
+#### Create a `gatewayAuthTokenFetcher`
+
+A Gateway Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
+
+:::code-group
+
+```tsx [Agent]
+import type { GatewayAuthTokenFetcher } from '@xmtp/node-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
+```tsx [Browser]
+import type { GatewayAuthTokenFetcher } from '@xmtp/browser-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    // Get the auth token from your app somehow
+    return 'my-auth-token';
+  },
+};
+```
+
+```tsx [Node]
+import type { GatewayAuthTokenFetcher } from '@xmtp/node-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
+```tsx [React Native]
+import type { GatewayAuthTokenFetcher } from '@xmtp/react-native-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
+```kotlin [Kotlin]
+class MyAuthTokenFetcher : GatewayAuthTokenFetcher {
+    override suspend fun fetchAuthToken(): String {
+        return "my-auth-token"
+    }
+}
+```
+
+```swift [Swift]
+public struct MyAuthTokenFetcher: GatewayAuthTokenFetcher {
+    public func fetchAuthToken() async throws -> String {
+        return "my-auth-token"
+    }
+}
+```
+
+:::
+*/}
+
+### In the XMTP Gateway Service
+
+The `GatewayServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `gateway.Identity` struct, which identifies the user in a way that is unique to your app.
+
+This identity will then be used for rate limiting, and will be passed to your `AuthorizePublishFn` as additional context.
+
+:::code-group
+
+```go [IP Address]
+//  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
+package main
+
+import (
+ "context"
+ "log"
+ "slices"
+
+ "github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+func main() {
+ // This will gather all the config from environment variables and flags
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  // The gateway service will use the IP address of the client as the identity by default
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+```go [JWT]
+package main
+
+import (
+ "context"
+ "errors"
+ "log"
+
+ "github.com/golang-jwt/jwt/v5"
+ "github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+const EXPECTED_ISSUER = "my-app.com"
+
+var (
+ ErrMissingToken     = errors.New("missing JWT token")
+ ErrInvalidToken     = errors.New("invalid JWT token")
+ ErrInvalidSignature = errors.New("invalid token signature")
+)
+
+// jwtIdentityFn creates an identity function that verifies JWTs
+func jwtIdentityFn(publicKey []byte) gateway.IdentityFn {
+ return func(ctx context.Context) (gateway.Identity, error) {
+  authHeader := gateway.AuthorizationHeaderFromContext(ctx)
+  if authHeader == "" {
+   return gateway.Identity{}, gateway.NewUnauthenticatedError(
+    "Missing JWT token",
+    ErrMissingToken,
+   )
+  }
+
+  // Parse and verify the token
+  token, err := jwt.ParseWithClaims(
+   authHeader,
+   &jwt.RegisteredClaims{},
+   func(token *jwt.Token) (interface{}, error) {
+    // Verify signing method
+    if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+     return nil, gateway.NewPermissionDeniedError(
+      "Invalid signing method",
+      ErrInvalidSignature,
+     )
+    }
+    return publicKey, nil
+   },
+   jwt.WithIssuer(EXPECTED_ISSUER),
+  )
+  if err != nil {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to validate token",
+    err,
+   )
+  }
+
+  // Extract claims
+  claims, ok := token.Claims.(*jwt.RegisteredClaims)
+  if !ok || !token.Valid {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to validate token",
+    ErrInvalidToken,
+   )
+  }
+
+  userID, err := claims.GetSubject()
+  if err != nil {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to get subject from token",
+    err,
+   )
+  }
+
+  // Return identity based on JWT claims
+  return gateway.NewUserIdentity(userID), nil
+ }
+}
+
+func main() {
+ // In a real application, this would be a secure key loaded from environment/config
+ publicKey := []byte("your-applications-public-key")
+
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  WithIdentityFn(jwtIdentityFn(publicKey)).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+:::
+
+## Authorize requests
+
+Now that you have an identity for the caller of your API, you can use it to authorize requests. We provide some helpers to handle common authorization patterns, such as rate limiting.
+
+You can add multiple authorizers to your XMTP Gateway Service. All authorizers will be called in parallel. The first authorizer (based on the order they are added) that returns `false` or an error will cause the request to be rejected.
+
+```go [IP Allowlist]
+package main
+
+import (
+ "context"
+ "log"
+ "slices"
+
+ "github.com/xmtp/xmtpd/pkg/payer"
+)
+
+func main() {
+ payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+  WithAuthorizers(func(ctx context.Context, identity payer.Identity, req payer.PublishRequest) (bool, error) {
+   // A simple authorization function that allows only the IP 127.0.0.1
+   allowedIPs := []string{"127.0.0.1"}
+   if !slices.Contains(allowedIPs, identity.Identity) {
+    return false, payer.ErrUnauthorized
+   }
+   return true, nil
+  }).
+  Build() // This will gather all the config from environment variables and flags
+ if err != nil {
+  log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
+ }
+
+ err = payerService.Serve(context.Background())
+ if err != nil {
+  log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
+ }
+}
+```
+
+## Deploy your XMTP Gateway Service
+
+Deploy the XMTP Gateway Service on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+
+We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
+
+```bash [Bash]
+docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
+```
+
+Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the xmtpd [`dev/docker`](https://github.com/xmtp/xmtpd/blob/main/dev/docker/gateway.Dockerfile) directory that you can use as a starting point.
+
+The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
+
+If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
+
+## Test your XMTP Gateway Service
+
+Here are some high priority scenarios to test:
+
+- Deploy and test XMTP Gateway Service
+  - **Not needed for agents and Node.js apps** using the XMTP Node or Agent SDKs, which will provide a built-in XMTP Gateway Service.
+- Verify authentication works properly
+- Test with expected message volumes
+- Monitor resource usage and costs
+- Simulate failure scenarios
+
+You can test on Base Sepolia, App Chain testnet, and Broadcast Network testnet. They all run identical contracts so you can dry-run funding and messaging.
+
+To get testnet USDC, use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
+
+### Testing timeline
+
+**Until November 1**: Testnet-only period
+
+- Use testnet USDC (no real cost)
+- Validate XMTP Gateway Service setup
+- Test authentication flows
+- Ensure infrastructure scales
+
+**After November 1**: Full mainnet testing
+
+- Funding Portal accepts real USDC
+- Production environment testing
+- Fee validation with real funds
+- Final integration checks
+
+## XMTP Gateway Service flows
+
+The following sequence diagrams illustrate the XMTP Gateway Service's role in the following key flows.
+
+### Flow for sending a message to the XMTP Broadcast Network
+
+<Zoom>
+<Mermaid
+  id="xmtp-network-flow"
+  chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
+    sequenceDiagram
+    title: Message sent to XMTP Broadcast Network
+    participant App
+    participant Gateway Service
+    participant XMTP Broadcast Network
+
+    App->>Gateway Service: Request to send message
+    Gateway Service->>Gateway Service: Verify user authorization
+    Gateway Service->>Gateway Service: Sign with payer wallet key
+    Gateway Service->>XMTP Broadcast Network: Send message and pay network message fees
+    alt Sufficient funds in Payer Registry
+        XMTP Broadcast Network-->>App: Message sent
+    else Insufficient funds in Payer Registry
+        XMTP Broadcast Network-->>App: Message not sent
+    end
+
+`} />
+
+</Zoom>
+
+### Flow for sending a message to the XMTP App Chain
+
+<Zoom>
+<Mermaid
+  id="xmtp-appchain-flow"
+  chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
+    sequenceDiagram
+    title: Message sent to XMTP App Chain
+    participant App
+    participant Gateway Service
+    participant XMTP App Chain
+
+    App->>Gateway Service: Request to send message
+    Gateway Service->>Gateway Service: Verify user authorization
+    Gateway Service->>Gateway Service: Sign with payer wallet key
+    Gateway Service->>XMTP App Chain: Send message and pay App Chain gas fee
+    alt Sufficient funds
+        XMTP App Chain-->>App: Message sent
+    else Insufficient funds
+        XMTP App Chain-->>App: Message not sent
+    end
+
+`} />
+
+</Zoom>
+
+
 # Summary
 
-This documentation contains 83 files.
+This documentation contains 89 files.
