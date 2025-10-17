@@ -60,6 +60,47 @@ export default defineConfig({
           defer
         />
         <script src="/popup.js" async />
+        <script
+        // Put your entire snippet as a string here
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.DocsBotAI = window.DocsBotAI || {};
+            DocsBotAI.init = function(e){
+              return new Promise((t,r)=>{
+                var n=document.createElement("script");
+                n.type="text/javascript";
+                n.async=!0;
+                n.src="https://widget.docsbot.ai/chat.js";
+                let o=document.getElementsByTagName("script")[0];
+                o.parentNode.insertBefore(n,o),
+                n.addEventListener("load",()=>{
+                  let n;
+                  Promise.all([
+                    new Promise((t,r)=>{
+                      window.DocsBotAI.mount(Object.assign({}, e)).then(t).catch(r)
+                    }),
+                    (n=function e(t){
+                      return new Promise(res=>{
+                        if(document.querySelector(t)) return res(document.querySelector(t));
+                        let obs=new MutationObserver(()=>{
+                          if(document.querySelector(t)) return res(document.querySelector(t)), obs.disconnect()
+                        });
+                        if(!document.body){
+                          document.addEventListener("DOMContentLoaded",()=>{obs.observe(document.body,{childList:!0,subtree:!0})});
+                        } else {
+                          obs.observe(document.body,{childList:!0,subtree:!0})
+                        }
+                      })
+                    })("#docsbotai-root"),
+                  ]).then(()=>t()).catch(r)
+                }),
+                n.addEventListener("error",e=>{r(e.message)})
+              })
+            };
+            DocsBotAI.init({ id: "JCiSKj2QUUteuENo9sxg/L8OhzwuSlIY6d17beDop" });
+          `,
+        }}
+      />
       </>
     );
   },
