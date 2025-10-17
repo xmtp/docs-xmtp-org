@@ -2,7 +2,6 @@
 
 Use the markdown content type to send rich formatted text messages with your agent. Markdown allows you to include headers, lists, tables, code blocks, and other formatting elements to create more engaging and structured messages.
 
-
 ## Install the package
 
 In some SDKs, the `MarkdownCodec` is already included in the SDK. If not, you can install the package using the following command:
@@ -28,7 +27,10 @@ pnpm add @xmtp/content-type-markdown
 After importing the package, you can register the codec.
 
 ```tsx [Node]
-import { ContentTypeMarkdown, MarkdownCodec } from '@xmtp/content-type-markdown';
+import {
+  ContentTypeMarkdown,
+  MarkdownCodec,
+} from '@xmtp/content-type-markdown';
 
 // Create the XMTP agent
 const agent = await Agent.create(signer, {
@@ -59,34 +61,40 @@ await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
 The markdown content type supports the following formatting patterns:
 
 ### Headers
+
 - `#` H1 headers
-- `##` H2 headers  
+- `##` H2 headers
 - `###` H3 headers
 - `####` H4 headers
 - `#####` H5 headers
 - `######` H6 headers
 
 ### Text formatting
+
 - `**bold text**` or `__bold text__`
 - `*italic text*` or `_italic text_`
 - `~~strikethrough text~~`
 - \`inline code\`
 
 ### Lists
+
 - Unordered lists with `-`, `*`, or `+`
 - Ordered lists with numbers
 - Nested lists with proper indentation
 
 ### Tables
+
 - Standard markdown table syntax with `|` separators
 - Header rows with `---` separators
 
 ### Code blocks
+
 - Fenced code blocks with triple backticks
 - Language-specific syntax highlighting
 - Inline code with single backticks
 
 ### Other elements
+
 - Blockquotes with `>`
 - Horizontal rules with `---`
 - Links with `[text](url)`
@@ -129,7 +137,7 @@ agent.on('message', async (ctx) => {
   if (ctx.usesCodec(MarkdownCodec)) {
     const markdownContent = ctx.message.content;
     console.log('Received markdown:', markdownContent);
-    
+
     // Process the markdown content
     // You can parse it, extract data, or display it formatted
   }
