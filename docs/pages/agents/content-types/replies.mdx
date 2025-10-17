@@ -61,7 +61,9 @@ await ctx.sendTextReply(reply);
 
 ```tsx [Node]
 agent.on('reply', async (ctx) => {
-  console.log('New reply:', ctx.message.content);
+  const message = ctx.message;
+  const replyContent = message.content;
+  console.log(`New reply: ${replyContent.content}`);
 });
 ```
 
@@ -70,8 +72,8 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
-if (message.contentType.sameAs(ContentTypeReply)) {
+if (ctx.usesCodec(ReplyCodec)) {
   // We've got a reply.
-  const reply: Reply = message.content;
+  const reply: Reply = ctx.message.content;
 }
 ```

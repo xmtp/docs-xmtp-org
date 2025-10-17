@@ -1,4 +1,53 @@
-# Manage agent installations
+# Manage agent local database files and installations
+
+Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
+
+## Installation limits and revocation rules
+
+Understanding XMTP's installation and inbox limits is critical for production deployments:
+
+- Installation limit per inbox: Each inbox supports up to 10 active installations. Once you reach this limit, you must [revoke an existing installation](/chat-apps/core-messaging/manage-inboxes#revoke-a-specific-installation) before adding a new one.
+
+- Update limit per inbox: Every installation addition or revocation counts toward a cumulative limit of 256 [inbox updates](/chat-apps/core-messaging/manage-inboxes#inbox-update-limits). Exceeding this threshold requires [inbox rotation](/chat-apps/core-messaging/manage-inboxes#rotate-an-inbox-id), which permanently removes access to all historical conversations for that inbox.
+
+These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
+
+## Understand local database files
+
+The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
+
+**Database file naming:**
+
+Database files follow this pattern: `xmtp-{environment}-{inbox-id}.db3`
+
+Example:
+
+```bash
+xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688.db3
+```
+
+- `xmtp-production`: Environment prefix
+- `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
+- `.db3`: SQLite database file extension
+
+**Keep these files between deployments:**
+
+- Deleting them creates a new installation each time
+- Reusing them maintains the same installation
+- Each inbox can have up to 10 installations
+
+**For production deployments:**
+
+- Use persistent volumes (Railway volumes, Render disks, etc.)
+- The database needs to persist across restarts
+
+:::warning[Note]
+
+If you hit the 10 installation limit, use [this script](https://github.com/ephemeraHQ/xmtp-agent-examples?tab=readme-ov-file#revoke-installations) to revoke installations.
+
+:::
+
+## Understand installations
 
 With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
 

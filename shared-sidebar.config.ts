@@ -30,6 +30,10 @@ export const sidebarConfig = {
           link: "/agents/build-agents/create-a-client",
         },
         {
+          text: "Local database",
+          link: "/agents/build-agents/local-database",
+        },
+        {
           text: "Stream messages",
           link: "/agents/build-agents/stream",
         },
@@ -48,6 +52,36 @@ export const sidebarConfig = {
       ],
     },
     {
+      text: "Fund an agent",
+      collapsed: false,
+      items: [
+        {
+          text: "Get started",
+          link: "/fund-agents-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-agents-apps/calculate-fees",
+        },
+        {
+          text: "Fund an agent",
+          link: "/fund-agents-apps/fund-your-app",
+        },
+        {
+          text: "Get your XMTP Gateway Service",
+          link: "/fund-agents-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-agents-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-agents-apps/glossary",
+        },
+      ],
+    },
+    {
       text: "Core concepts",
       collapsed: false,
       items: [
@@ -56,11 +90,7 @@ export const sidebarConfig = {
           link: "/agents/concepts/identity",
         },
         {
-          text: "Manage installations",
-          link: "/agents/concepts/installations",
-        },
-        {
-          text: "Event-driven architecture",
+          text: "Events",
           link: "/agents/concepts/event-driven",
         },
         {
@@ -68,11 +98,11 @@ export const sidebarConfig = {
           link: "/agents/concepts/middleware",
         },
         {
-          text: "Message filters",
+          text: "Filters",
           link: "/agents/concepts/filters",
         },
         {
-          text: "Context & helpers",
+          text: "Context",
           link: "/agents/concepts/context",
         },
       ],
@@ -86,8 +116,16 @@ export const sidebarConfig = {
           link: "/agents/content-types/content-types",
         },
         {
-          text: "Group update",
-          link: "/agents/content-types/group-update",
+          text: "Reactions",
+          link: "/agents/content-types/reactions",
+        },
+        {
+          text: "Replies",
+          link: "/agents/content-types/replies",
+        },
+        {
+          text: "Group updates",
+          link: "/agents/content-types/group-updates",
         },
         {
           text: "Attachments",
@@ -98,16 +136,12 @@ export const sidebarConfig = {
           link: "/agents/content-types/transactions",
         },
         {
-          text: "Onchain transaction references",
+          text: "Transaction references",
           link: "/agents/content-types/transaction-refs",
         },
         {
-          text: "Reactions",
-          link: "/agents/content-types/reactions",
-        },
-        {
-          text: "Replies",
-          link: "/agents/content-types/replies",
+          text: "Markdown",
+          link: "/agents/content-types/markdown",
         },
       ],
     },
@@ -149,6 +183,32 @@ export const sidebarConfig = {
       link: "/network/network-nodes",
     },
   ],
+  '/fund-agents-apps/': [
+        {
+          text: "Get started",
+          link: "/fund-agents-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-agents-apps/calculate-fees",
+        },
+        {
+          text: "Fund an app or agent",
+          link: "/fund-agents-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-agents-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-agents-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-agents-apps/glossary",
+        },
+      ],
   '/protocol/': [
     {
       text: "Overview",
@@ -333,6 +393,36 @@ export const sidebarConfig = {
         {
           text: "Observe rate limits",
           link: "/chat-apps/core-messaging/rate-limits",
+        },
+      ],
+    },
+    {
+      text: "Fund an app",
+      collapsed: false,
+      items: [
+        {
+          text: "Get started",
+          link: "/fund-agents-apps/get-started",
+        },
+        {
+          text: "Calculate fees",
+          link: "/fund-agents-apps/calculate-fees",
+        },
+        {
+          text: "Fund an app",
+          link: "/fund-agents-apps/fund-your-app",
+        },
+        {
+          text: "Run your XMTP Gateway Service",
+          link: "/fund-agents-apps/run-gateway",
+        },
+        {
+          text: "Update your SDK",
+          link: "/fund-agents-apps/update-sdk",
+        },
+        {
+          text: "Glossary",
+          link: "/fund-agents-apps/glossary",
         },
       ],
     },

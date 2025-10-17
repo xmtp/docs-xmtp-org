@@ -2,133 +2,64 @@
 
 Every XMTP agent event handler receives a rich `MessageContext` object that provides access to the message, conversation, client, and powerful helper methods. This context makes it easy to build responsive agents without repetitive boilerplate code.
 
-## MessageContext overview
+## Message context
 
-The `MessageContext` object contains everything you need to handle messages effectively:
+### Type-safe content access
 
-```typescript
-interface MessageContext {
-  message: DecodedMessage; // The decoded message object
-  conversation: Conversation; // The active conversation
-  client: Client; // The underlying XMTP client
-
-  // Helper methods
-  sendTextReply(text: string): Promise<void>;
-  sendReaction(emoji: string): Promise<void>;
-  getSenderAddress(): string;
-  // ... and more
-}
-```
-
-## Message object
-
-The `message` property contains the decoded message with all its metadata:
+Use type guards to safely access different content types:
 
 ```typescript
-agent.on('text', async (ctx) => {
-  const message = ctx.message;
-
-  console.log('Content:', message.content);
-  console.log('Sender:', message.senderInboxId);
-  console.log('Sent at:', message.sentAt);
-  console.log('Message ID:', message.id);
-  console.log('Conversation ID:', message.conversationId);
-  console.log('Content type:', message.contentType);
-});
-```
-
-### Access different content types
-
-```typescript
-// Text messages
-agent.on('text', async (ctx) => {
-  const textContent: string = ctx.message.content;
-  console.log('User said:', textContent);
-});
-
-// Reactions
-agent.on('reaction', async (ctx) => {
-  const reaction = ctx.message.content;
-  console.log('Reaction:', reaction.content);
-  console.log('Reference:', reaction.reference);
-});
-
-// Replies
-agent.on('reply', async (ctx) => {
-  const reply = ctx.message.content;
-  console.log('Reply text:', reply.content);
-  console.log('Original message:', reply.reference);
-});
-```
-
-## Conversation object
-
-The `conversation` property provides access to the current conversation and its methods:
-
-```typescript
-agent.on('text', async (ctx) => {
-  const conversation = ctx.conversation;
-
-  console.log('Conversation ID:', conversation.id);
-
-  // Send a message
-  await ctx.sendText('Hello from the conversation!');
-
-  // Get conversation members
-  const members = await ctx.conversation.members();
-  console.log('Member count:', members.length);
-
-  // Check conversation type
-  if (conversation.peerInboxId) {
-    console.log('This is a DM with:', conversation.peerInboxId);
-  } else {
-    console.log('This is a group conversation');
+agent.on('message', async (ctx) => {
+  if (ctx.isText()) {
+    // ctx.message.content is now typed as string
+    console.log(`Text message: ${ctx.message.content}`);
+  } else if (ctx.isReply()) {
+    // ctx.message.content is now typed as Reply
+    console.log(`Reply to: ${ctx.message.content.reference}`);
+    console.log(`Reply content: ${ctx.message.content.content}`);
+  } else if (ctx.isReaction()) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Reference: ${ctx.message.content.reference}`);
+  } else if (ctx.isRemoteAttachment()) {
+    // ctx.message.content is now typed as RemoteAttachment
+    console.log(`Attachment: ${ctx.message.content.filename}`);
   }
 });
 ```
 
-## Client object
+### Message metadata
 
-The `client` property gives you access to the underlying XMTP client:
+Access message properties directly:
 
 ```typescript
-agent.on('text', async (ctx) => {
-  const client = ctx.client;
+agent.on('message', async (ctx) => {
+  const message = ctx.message;
 
-  console.log('Agent inbox ID:', client.inboxId);
-  console.log('Installation ID:', client.installationId);
-
-  // Access conversations manager
-  const conversations = client.conversations;
-
-  // Create new conversations
-  const newDM = await client.conversations.newDm('target-inbox-id');
-  const newGroup = await client.conversations.newGroup(['inbox1', 'inbox2'], {
-    groupName: 'New Group',
-  });
+  console.log(`Message ID: ${message.id}`);
+  console.log(`Sender inbox ID: ${message.senderInboxId}`);
+  console.log(`Sent at: ${message.sentAt}`);
+  console.log(`Content type: ${message.contentType}`);
 });
 ```
 
-## Helper methods
+### sendText() and sendTextReply()
 
-The context provides convenient helper methods for common operations:
-
-### sendTextReply()
-
-Send a text reply in one line:
+Send messages and replies:
 
 ```typescript
 agent.on('text', async (ctx) => {
-  await ctx.sendTextReply('Thanks for your message!');
+  // Send a regular message
+  await ctx.sendText('Hello!');
 
-  // Equivalent to:
-  // await ctx.sendText("Thanks for your message!");
+  // Send a reply to the current message
+  await ctx.sendTextReply('Thanks for your message!');
 });
 ```
 
 ### sendReaction()
 
-Add reactions to messages easily:
+Add reactions to messages:
 
 ```typescript
 agent.on('text', async (ctx) => {
@@ -138,8 +69,6 @@ agent.on('text', async (ctx) => {
     await ctx.sendReaction('👍');
   } else if (content.includes('bad')) {
     await ctx.sendReaction('👎');
-  } else {
-    await ctx.sendReaction('🤔');
   }
 });
 ```
@@ -150,8 +79,8 @@ Get the Ethereum address of the message sender:
 
 ```typescript
 agent.on('text', async (ctx) => {
-  const senderAddress = ctx.getSenderAddress();
-  console.log('Message from:', senderAddress);
+  const senderAddress = await ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
 
   // Use for authorization
   if (senderAddress === '0x1234...') {
@@ -160,20 +89,64 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-## Advanced context usage
+### getClientAddress()
+
+Get the Ethereum address of your agent:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const agentAddress = ctx.getClientAddress();
+  console.log(`Agent address: ${agentAddress}`);
+});
+```
+
+## Conversation context
+
+### Conversation operations
+
+```typescript
+agent.on('text', async (ctx) => {
+  const conversation = ctx.conversation;
+
+  // Get conversation members
+  const members = await conversation.members();
+  console.log(`Member count: ${members.length}`);
+
+  // Check conversation type
+  if (ctx.isDm()) {
+    console.log(`DM with: ${conversation.peerInboxId}`);
+  } else if (ctx.isGroup()) {
+    console.log(`Group conversation: ${conversation.name}`);
+  }
+});
+```
+
+### Consent state
+
+Check conversation consent states:
+
+```typescript
+agent.on('text', async (ctx) => {
+  if (ctx.isAllowed) {
+    console.log(`Messages allowed in this conversation`);
+  } else if (ctx.isDenied) {
+    console.log(`Messages denied in this conversation`);
+  } else if (ctx.isUnknown) {
+    console.log(`Consent state unknown`);
+  }
+});
+```
 
 ### Member information
-
-Get detailed information about conversation members:
 
 ```typescript
 agent.on('text', async (ctx) => {
   const members = await ctx.conversation.members();
 
   for (const member of members) {
-    console.log('Member inbox ID:', member.inboxId);
-    console.log('Permission level:', member.permissionLevel);
-    console.log('Consent state:', member.consentState);
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
 
     // Get Ethereum address
     const ethIdentifier = member.accountIdentifiers.find(
@@ -181,7 +154,7 @@ agent.on('text', async (ctx) => {
     );
 
     if (ethIdentifier) {
-      console.log('Ethereum address:', ethIdentifier.identifier);
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
     }
   }
 });
@@ -189,16 +162,14 @@ agent.on('text', async (ctx) => {
 
 ### Message history
 
-Access conversation message history:
-
 ```typescript
 agent.on('text', async (ctx) => {
   // Get all messages
   const messages = await ctx.conversation.messages();
-  console.log('Total messages:', messages.length);
+  console.log(`Total messages: ${messages.length}`);
 
   // Get recent messages
-  const recentMessages = messages.slice(-10); // Last 10 messages
+  const recentMessages = messages.slice(-10);
 
   for (const msg of recentMessages) {
     console.log(`${msg.senderInboxId}: ${msg.content}`);
@@ -206,83 +177,14 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-### Custom context extensions
+## Client context
 
-You can extend the context in middleware:
-
-```typescript
-const databaseMiddleware: AgentMiddleware = async (ctx, next) => {
-  // Add database connection to context
-  (ctx as any).db = await getDatabaseConnection();
-
-  try {
-    await next();
-  } finally {
-    await (ctx as any).db.close();
-  }
-};
-
-agent.use(databaseMiddleware);
-
-agent.on('text', async (ctx: any) => {
-  // Use the extended context
-  const user = await ctx.db.findUser(ctx.getSenderAddress());
-  await ctx.sendTextReply(`Hello ${user.name}!`);
-});
-```
-
-## Error handling with context
-
-Use context information for better error handling:
+### address
 
 ```typescript
-agent.on('text', async (ctx) => {
-  try {
-    await processMessage(ctx);
-  } catch (error) {
-    console.error('Error processing message:', {
-      messageId: ctx.message.id,
-      conversationId: ctx.conversation.id,
-      sender: ctx.getSenderAddress(),
-      error: error.message,
-    });
-
-    await ctx.sendTextReply(
-      'Sorry, I encountered an error processing your message.'
-    );
-  }
-});
-```
-
-## Context in different event types
-
-### New conversation context
-
-```typescript
-agent.on('dm', async (ctx) => {
-  // Context for new DM conversations
-  console.log('New DM started');
-  console.log('Peer:', ctx.conversation.peerInboxId);
-
-  await ctx.sendTextReply('Welcome to our DM! How can I help?');
-});
-
-agent.on('group', async (ctx) => {
-  // Context for new group conversations
-  console.log('Added to group:', ctx.conversation.name);
-
-  const members = await ctx.conversation.members();
-  await ctx.sendTextReply(
-    `Hello everyone! I see there are ${members.length} members here.`
-  );
-});
-```
-
-### Unknown message context
-
-```typescript
-agent.on('unknownMessage', async (ctx) => {
-  console.log('Unknown content type:', ctx.message.contentType);
-  await ctx.sendTextReply("I received a message type I don't understand yet.");
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
 });
 ```
