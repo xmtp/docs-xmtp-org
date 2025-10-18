@@ -38,7 +38,7 @@ The XMTP Agent SDK allows you to use environment variables (`process.env`) for e
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
-### Generate random keys
+## Generate random keys
 
 ```tsx [Node]
 import { generatePrivateKey } from 'viem';
@@ -59,7 +59,7 @@ yarn gen:keys
 
 > Running the command will append keys to your existing .env file.
 
-### Use environment variables
+## Use environment variables
 
 ```tsx [Node]
 // Load variables from .env file
@@ -70,8 +70,6 @@ const agent = await Agent.createFromEnv();
 ```
 
 ## Configuration options
-
-### Configure an XMTP client
 
 You can configure an XMTP client with these options passed to `Agent.create`:
 
