@@ -8,14 +8,16 @@ Create an XMTP agent that can use the signing capabilities provided by a signer.
 import { Agent } from '@xmtp/agent-sdk';
 import { createSigner, createUser } from '@xmtp/agent-sdk/user';
 import { getRandomValues } from 'node:crypto';
+import { fromString } from "uint8arrays/from-string";
+
 
 // Option 1: Create a local user + signer
 const user = createUser('0xprivateKey');
-const signer = createSigner(user);
+const dbEncryptionKey = fromString(`encryptionKey`,"hex");
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
-  dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later
+  dbEncryptionKey: dbEncryptionKey, // save it for later
 });
 ```
 
