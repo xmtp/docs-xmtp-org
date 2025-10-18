@@ -10,9 +10,13 @@ import { createSigner, createUser } from '@xmtp/agent-sdk/user';
 import { getRandomValues } from 'node:crypto';
 import { fromString } from "uint8arrays/from-string";
 
+// Replace with your own wallet key and encryption key
+const walletKey = "0xprivateKey";
+const encryptionKey = "encryptionKey";
+
 // Option 1: Create a local user + signer
-const user = createUser('0xprivateKey');
-const dbEncryptionKey = fromString(`encryptionKey`,"hex");
+const user = createUser(walletKey);
+const dbEncryptionKey = fromString(encryptionKey,"hex");
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
