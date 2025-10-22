@@ -2,6 +2,12 @@
 
 Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
 
+:::danger[Critical for Production]
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+:::
+
 ## Installation limits and revocation rules
 
 Understanding XMTP's installation and inbox limits is critical for production deployments:
@@ -11,6 +17,7 @@ Understanding XMTP's installation and inbox limits is critical for production de
 - Update limit per inbox: Every installation addition or revocation counts toward a cumulative limit of 256 [inbox updates](/chat-apps/core-messaging/manage-inboxes#inbox-update-limits). Exceeding this threshold requires [inbox rotation](/chat-apps/core-messaging/manage-inboxes#rotate-an-inbox-id), which permanently removes access to all historical conversations for that inbox.
 
 These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
+
 
 ## Understand local database files
 
@@ -38,8 +45,9 @@ xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688
 
 **For production deployments:**
 
-- Use persistent volumes (Railway volumes, Render disks, etc.)
-- The database needs to persist across restarts
+- **Database persistence is mandatory** - Use persistent volumes (Railway volumes, Render disks, etc.)
+- The database must persist across restarts to avoid creating new installations
+- **Never rely on creating new installations as a deployment strategy** - This will cause your agent to fail when you hit the 10 installation limit
 
 :::warning[Note]
 
@@ -89,14 +97,6 @@ If you deploy your agent to this same network environment, you have 1 inbox with
   />
 </div>
 
-Here are some best practices for agent installation management:
-
-- Configure your deployments to preserve the agent's database
-- Consider how many platforms you'll need before hitting the 10 installation limit
-- Keep track of which installation corresponds to which platform
-- Regularly [check how many installations your agent has](/agents/deploy/debug-agents)
-- [Revoke installations](#revoke-agent-installations) from platforms you no longer use
-
 ## Revoke agent installations
 
 When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database. Your agent can still run from any active installations on other deployment platforms.
@@ -107,10 +107,10 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 
 :::
 
-1. Via web tool [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
+1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
 2. Via [cli script](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
 
-```bash
-yarn revoke <inbox-id> <installations-to-exclude>
-```
+  ```bash
+  yarn revoke <inbox-id> <installations-to-exclude>
+  ```
 
