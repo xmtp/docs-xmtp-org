@@ -37,23 +37,8 @@ xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688
 - `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
 - `.db3`: SQLite database file extension
 
-**Keep these files between deployments:**
+Critical: Keep these files between deployments. Deleting them creates a new installation each time, and you're limited to 10 installations per inbox.
 
-- Deleting them creates a new installation each time
-- Reusing them maintains the same installation
-- Each inbox can have up to 10 installations
-
-**For production deployments:**
-
-- **Database persistence is mandatory** - Use persistent volumes (Railway volumes, Render disks, etc.)
-- The database must persist across restarts to avoid creating new installations
-- **Never rely on creating new installations as a deployment strategy** - This will cause your agent to fail when you hit the 10 installation limit
-
-:::warning[Note]
-
-If you hit the 10 installation limit, use [this script](https://github.com/ephemeraHQ/xmtp-agent-examples?tab=readme-ov-file#revoke-installations) to revoke installations.
-
-:::
 
 ## Understand installations
 
