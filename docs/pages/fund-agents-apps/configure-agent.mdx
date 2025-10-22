@@ -1,0 +1,63 @@
+# Configure your agent
+
+Your agent needs to pay for the messages it sends on the XMTP network. To get started, you'll need.
+
+1. An agent built using our Node or Agent SDK
+2. A payer wallet that has been [funded through the XMTP Funding Portal](./fund-your-app.mdx)
+
+## Setup your Signer
+
+When you create a client, you already specify a `Signer` that is used to link your XMTP identity to a wallet. You can choose to use the same `Signer` to pay for messages, or create a new one purely for this purpose.
+
+This Signer must be of type `eoa`. The `messagePayer` may not be a smart contract wallet, since the signatures need to be able to be verified offchain.
+
+:::code-group
+
+```js [Agent]
+import { Agent } from '@xmtp/agent-sdk';
+import { createSigner, createUser } from '@xmtp/agent-sdk/user';
+import { getRandomValues } from 'node:crypto';
+
+// Option 1: Create a local user + signer
+const user = createUser('0xprivateKey');
+const xmtpChainRPCUrl = 'https://xmtp-testnet.my-rpc-provider.com/1234'
+const baseRPCUrl = 'https://base-sepolia.my-rpc-provider.com/1234'
+const signer = createSigner(user);
+
+const agent = await Agent.create(signer, {
+  env: 'testnet', // or 'production'
+  dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later
+  rpcUrls: {
+    xmtp: xmtpChainRPCUrl,
+    base: baseRPCUrl,
+  },
+  messagePayer: signer, // use the same signer to pay for messages or use a different wallet
+});
+```
+:::
+
+## Specify a RPC URL
+
+In order to connect to the XMTP Chain, your client needs to set a blockchain RPC URL to a provider that supports XMTP, as well as a RPC URL for Base (or Base Sepolia for testnet).
+
+For example, you can use [Alchemy](https://alchemy.com/) and create an app with XMTP and Base enabled.
+
+:::code-group
+```js [Agent]
+import { Agent } from '@xmtp/agent-sdk';
+
+const user = createUser('0xprivateKey');
+const xmtpChainRPCUrl = 'https://xmtp-testnet.my-rpc-provider.com/1234'
+const baseRPCUrl = 'https://base-sepolia.my-rpc-provider.com/1234'
+const signer = createSigner(user);
+
+const agent = await Agent.create(signer, {
+  // ... other config options
+  rpcUrls: {
+    xmtp: xmtpChainRPCUrl,
+    base: baseRPCUrl,
+  }
+})
+````
+
+:::
