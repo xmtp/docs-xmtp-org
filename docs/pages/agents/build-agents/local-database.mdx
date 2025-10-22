@@ -2,7 +2,7 @@
 
 Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
 
-:::danger[Critical for Production]
+:::danger[CRITICAL FOR PRODUCTION]
 
 Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
 
@@ -36,8 +36,6 @@ xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688
 - `xmtp-production`: Environment prefix
 - `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
 - `.db3`: SQLite database file extension
-
-Critical: Keep these files between deployments. Deleting them creates a new installation each time, and you're limited to 10 installations per inbox.
 
 
 ## Understand installations
