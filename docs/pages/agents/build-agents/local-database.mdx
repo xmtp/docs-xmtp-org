@@ -97,24 +97,9 @@ Here are some best practices for agent installation management:
 - Regularly [check how many installations your agent has](/agents/deploy/debug-agents)
 - [Revoke installations](#revoke-agent-installations) from platforms you no longer use
 
-## Common agent installation scenarios
-
-### Deploy to a new platform
-
-When you deploy your agent to a new platform (e.g., from Railway to Fly.io):
-
-- Your agent creates a new installation for the new platform
-- If you already have 10 installations, you'll need to [revoke one first](#revoke-agent-installations)
-- The new installation will start fresh without conversation history
-
-### Update an existing deployment
-
-When you redeploy your agent to the same platform:
-
-- If the platform preserves the database, the same installation continues working
-- If the platform doesn't preserve the database, a new installation is created
-
 ## Revoke agent installations
+
+When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database. Your agent can still run from any active installations on other deployment platforms.
 
 :::warning[Important]
 
@@ -122,12 +107,10 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 
 :::
 
-When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database.
-
-Your agent can still run from any active installations on other deployment platforms.
-
-To revoke an agent installation, use [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo. For example:
+1. Via web tool xmtp.chathttps://xmtp.chat/inbox-tools
+2. Via  [cli script](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
 
 ```bash
 yarn revoke <inbox-id> <installations-to-exclude>
 ```
+
