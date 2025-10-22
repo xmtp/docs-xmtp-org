@@ -2,3 +2,7 @@
 docs/pages/chat-apps/intro/get-started.mdx
 # Contains "/xmtp/mls/1/w-$installationId/proto" which Prettier breaks in multiple lines
 docs/pages/chat-apps/push-notifs/push-notifs.mdx
+# Contains inline JSX components and CSS-in-JS that Prettier escapes incorrectly
+docs/pages/fund-agents-apps/calculate-fees.mdx
+docs/pages/fund-agents-apps/fund-your-app.mdx
+docs/pages/fund-agents-apps/run-gateway.mdx
