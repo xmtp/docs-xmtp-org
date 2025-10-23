@@ -36,7 +36,11 @@ When you call `Agent.create()`, the following steps happen under the hood:
 
 The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
 
-The encryption key is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client.
+The encryption key is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Agent.create()` or `Client.create()`, and must be provided every time you create or build a client.
+
+The database encryption key can be provided in two formats:
+- **Uint8Array**: A byte array of exactly 32 bytes
+- **Hex string**: A hexadecimal string with `0x` prefix representing 32 bytes (64 hex characters)
 
 This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
 
