@@ -34,7 +34,7 @@ To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-
 
 The maximum group chat size is 250 members.
 
-### Add members by address
+### Add members
 
 You can add members directly by their Ethereum addresses using `addMembersByIdentifiers`:
 
@@ -50,13 +50,7 @@ await group.addMembersByIdentifiers([
     identifierKind: IdentifierKind.Ethereum,
   },
 ]);
-```
 
-### Add members by inbox ID
-
-For more control, you can get inbox IDs first and then add members:
-
-```js [Node]
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
 ```
@@ -87,21 +81,8 @@ Retrieve and work with member data:
 await group.sync();
 
 // Get all members
-const members = group.members;
-const addedByInboxId = group.addedByInboxId;
+const members = await group.members();
 
-// Map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
-
-// Check if a specific address is a member
-const isMember = members.some(member => 
-  member.accountIdentifiers.some(id => 
-    id.identifierKind === IdentifierKind.Ethereum && 
-    id.identifier === "0x1234567890123456789012345678901234567890"
-  )
-);
 ```
 
 ## Manage group chat admins
@@ -122,7 +103,7 @@ await group.removeAdmin(inboxId);
 await group.removeSuperAdmin(inboxId);
 ```
 
-## Member information
+## Example usage
 
 Get detailed information about group members:
 
