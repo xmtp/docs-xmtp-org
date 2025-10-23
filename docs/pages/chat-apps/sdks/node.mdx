@@ -61,7 +61,9 @@ const signer: Signer = {
 import { Client } from '@xmtp/node-sdk';
 import { getRandomValues } from 'node:crypto';
 
+// Database encryption key can be either Uint8Array (32 bytes) or hex string
 const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+// Or as a hex string: const dbEncryptionKey = '0x' + Buffer.from(getRandomValues(new Uint8Array(32))).toString('hex');
 const client = await Client.create(signer, { dbEncryptionKey });
 
 // 3. Start a new conversation

@@ -102,8 +102,11 @@ const signer: Signer = {
  *
  * This value must be consistent when creating a client with an existing
  * database.
+ *
+ * You can provide either a Uint8Array (32 bytes) or a hex string.
  */
 const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+// Or as a hex string: const dbEncryptionKey = '0x' + Buffer.from(getRandomValues(new Uint8Array(32))).toString('hex');
 
 const client = await Client.create(
   signer,
@@ -219,9 +222,11 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes, hex)
+   *
+   * @see https://docs.xmtp.org/chat-apps/core-messaging/create-a-client#view-an-encrypted-database
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | string;
   /**
    * Enable structured JSON logging
    */
@@ -307,9 +312,11 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes, hex)
+   *
+   * @see https://docs.xmtp.org/chat-apps/core-messaging/create-a-client#view-an-encrypted-database
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | string;
   /**
    * Allow configuring codecs for additional content types
    */
