@@ -36,20 +36,12 @@ The maximum group chat size is 250 members.
 
 ### Add members
 
-You can add members directly by their Ethereum addresses using `addMembersByIdentifiers`:
+You can add members directly by their Ethereum addresses or by their inbox IDs
 
 ```js [Node]
 // Add members by Ethereum address
-await group.addMembersByIdentifiers([ 
-  {
-    identifier: "0x1234567890123456789012345678901234567890",
-    identifierKind: IdentifierKind.Ethereum,
-  },
-  {
-    identifier: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-    identifierKind: IdentifierKind.Ethereum,
-  },
-]);
+await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
+
 
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
@@ -57,19 +49,15 @@ await group.addMembers([inboxId]);
 
 ### Remove members
 
-Remove members from the group:
+Remove members from the group by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
+// Remove members by address
+//needs to send the group to the context
+await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+
 // Remove members by inbox ID
 await group.removeMembers([inboxId]);
-
-// Remove members by address
-await conversation.removeMembersByIdentifiers([
-  {
-    identifier: "0x1234567890123456789012345678901234567890",
-    identifierKind: IdentifierKind.Ethereum,
-  },
-]);
 ```
 
 ### Get member information
