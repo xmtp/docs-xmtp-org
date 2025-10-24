@@ -40,7 +40,7 @@ import { generatePrivateKey } from 'viem';
 import { getRandomValues } from 'node:crypto';
 
 const walletKey = generatePrivateKey();
-const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))};
+const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))}`;
 
 console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
