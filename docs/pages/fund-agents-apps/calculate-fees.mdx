@@ -43,7 +43,7 @@ Use this guide to understand XMTP fees and how to calculate estimated XMTP fees 
 
 ## Understand XMTP fees
 
-To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. The fees paid by apps and agents (payers) directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
+To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. **All XMTP network fees are paid in USDC** (USD Coin, a stablecoin pegged to the US dollar). The fees paid by apps and agents (payers) directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
 
 :::tip[How to estimate your costs]
 
@@ -70,7 +70,7 @@ Messages sent through the **XMTP Broadcast Network** incur these types of **mess
 - **Storage fee**: A fee charged per-byte-day of storage required.
 - **Congestion fee**: A dynamic fee computed by looking at the recent activity of an originator. Added only during periods of high network activity.
 
-The fee rates for the base fee, storage fee, and congestion fee are denominated in dollars and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
+The fee rates for the base fee, storage fee, and congestion fee are denominated in USDC and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
 
 Every message an app or agent sends through the XMTP Broadcast Network counts against its message allowance. These message types include:
 
