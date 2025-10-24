@@ -15,7 +15,7 @@ agent.on('message', async (ctx) => {
     console.log(`Text message: ${ctx.message.content}`);
   } else if (ctx.isReply()) {
     // ctx.message.content is now typed as Reply
-    console.log(`Reply tos: ${ctx.message.content.reference}`);
+    console.log(`Reply to: ${ctx.message.content.reference}`);
     console.log(`Reply content: ${ctx.message.content.content}`);
   } else if (ctx.isReaction()) {
     // ctx.message.content is now typed as Reaction
