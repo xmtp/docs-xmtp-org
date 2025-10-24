@@ -6,7 +6,57 @@ Group chats can have metadata like names, descriptions, and images to help users
 To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
 :::
 
-## Get member information
+## Group metadata
+
+### Available metadata fields
+
+- `group_name`: The name of the group chat
+- `description`: A description of the group chat
+- `image_url`: A URL pointing to an image for the group chat
+
+### Get and update metadata
+
+```js [Node]
+// Get metadata
+const groupName = group.name;
+const groupDescription = group.description;
+const groupImageUrl = group.imageUrl;
+
+// Update metadata
+await group.updateName('New Group Name');
+await group.updateDescription('New Group Description');
+await group.updateImageUrl('newurl.com');
+```
+
+## Group membership
+
+The maximum group chat size is 250 members.
+
+### Add members
+
+Add members directly by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Add members by Ethereum address
+await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
+
+// Add members using inbox IDs
+await group.addMembers([inboxId]);
+```
+
+### Remove members
+
+Remove members from the group by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Remove members by address
+await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+
+// Remove members by inbox ID
+await group.removeMembers([inboxId]);
+```
+
+### Get member information
 
 Retrieve and work with member data:
 
@@ -41,68 +91,19 @@ agent.on('text', async (ctx) => {
 });
 ```
 
-## Group metadata
+## Group roles
 
-### Available metadata fields
+Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
 
-- `group_name`: The name of the group chat
-- `description`: A description of the group chat
-- `image_url`: A URL pointing to an image for the group chat
+### Available roles
 
-### Get and update metadata
+- **Member** - Default role for all group participants
+- **Admin** - Members with elevated permissions  
+- **Super admin** - Highest permission level (creator starts as super admin)
 
-```js [Node]
-// Get metadata
-const groupName = group.name;
-const groupDescription = group.description;
-const groupImageUrl = group.imageUrl;
+### Manage roles
 
-// Update metadata
-await group.updateName('New Group Name');
-await group.updateDescription('New Group Description');
-await group.updateImageUrl('newurl.com');
-```
-
-## Group chat membership
-
-
-The maximum group chat size is 250 members.
-
-### Add members
-
-You can add members directly by their Ethereum addresses or by their inbox IDs
-
-```js [Node]
-// Add members by Ethereum address
-await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
-
-
-// Add members using inbox IDs
-await group.addMembers([inboxId]);
-```
-
-### Remove members
-
-Remove members from the group by their Ethereum addresses or by their inbox IDs:
-
-```js [Node]
-// Remove members by address
-//needs to send the group to the context
-await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
-
-// Remove members by inbox ID
-await group.removeMembers([inboxId]);
-```
-
-### Member roles
-
-Roles that can be assigned to each participant (inbox ID) in a group chat:
-
-- **Member** - Everyone in a group chat. Can be granted admin or super admin status.
-- **Admin** - Members with elevated permissions
-- **Super admin** - Highest permission level
-
-How to check and manage group chat member statuses:
+Check and assign roles to group members:
 
 ```js [Node]
 // Check admin status
