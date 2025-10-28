@@ -94,10 +94,7 @@ Every app and agent needs an XMTP Gateway Service.
 
 ### For browser and mobile client apps
 
-You must run the XMTP Gateway Service written in Go. You have two options:
-
-- **For production**: Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as a starting point to build your own custom gateway with authentication
-- **For testing only**: Use the prebuilt Docker image (`xmtp/xmtpd-gateway:main`) which authorizes all requests without authentication
+Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as a starting point to build your own custom gateway with authentication
 
 For detailed implementation steps, see [Deploy your XMTP Gateway Service](#deploy-your-xmtp-gateway-service).
 
@@ -470,16 +467,17 @@ func main() {
 
 ## Deploy your XMTP Gateway Service
 
-Deploy the XMTP Gateway Service on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+:::tip[Example repo]
 
-### For production deployments
+You can start with the [example gateway service repository](https://github.com/xmtp/gateway-service-example).
 
-Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as your starting point:
+:::
 
-1. Fork or clone the repository
-2. Customize the authentication logic for your app
-3. Build your own Docker image from the included Dockerfile
-4. Deploy your custom image to your hosting provider
+1. Fork or clone the repository.
+2. Add your own authentication logic.
+3. Implement custom rate limiting.
+4. Build your own Docker image from the included Dockerfile.
+5. Deploy your custom image on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
 
 #### Additional recommendations
 
@@ -487,7 +485,7 @@ The system is able to run without any external dependencies, but we recommend co
 
 If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
 
-### For testing only
+## Test your XMTP Gateway Service
 
 You can use the prebuilt Docker image for local development and testing:
 
@@ -501,7 +499,7 @@ This pre-built image authorizes all requests without authentication. Never use i
 
 :::
 
-## Test your XMTP Gateway Service
+### Test scenarios
 
 Here are some high priority scenarios to test:
 
