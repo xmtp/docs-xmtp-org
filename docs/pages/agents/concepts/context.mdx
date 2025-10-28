@@ -73,6 +73,15 @@ agent.on('text', async (ctx) => {
 });
 ```
 
+### Get inbox ID by identifier
+
+```typescript
+const inboxId = await ctx.client.getInboxIdByIdentifier({
+  identifier: targetAddress,
+  identifierKind: IdentifierKind.Ethereum,
+});
+```
+
 ### getSenderAddress()
 
 Get the Ethereum address of the message sender:
