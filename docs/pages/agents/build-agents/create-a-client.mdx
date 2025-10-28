@@ -15,7 +15,7 @@ const signer = createSigner(user);
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
-  dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later
+  dbEncryptionKey: `0x${getRandomValues(new Uint8Array(32))}`, // save it for later
 });
 ```
 
@@ -25,11 +25,11 @@ The XMTP Agent SDK allows you to use environment variables (`process.env`) for e
 
 **Available variables:**
 
-| Variable                 | Purpose                                                        | Example                                 |
-| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| Variable                 | Purpose                                                                              | Example                                 |
+| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                                               | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)                           | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex string with 0x prefix) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
@@ -40,7 +40,7 @@ import { generatePrivateKey } from 'viem';
 import { getRandomValues } from 'node:crypto';
 
 const walletKey = generatePrivateKey();
-const encryptionKeyHex = getRandomValues(new Uint8Array(32));
+const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))}`;
 
 console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
@@ -121,9 +121,13 @@ apiUrl?: string;
  */
 dbPath?: string | null | ((inboxId: string) => string);
 /**
- * Encryption key for the local DB
+ * Encryption key for the local DB (32 bytes)
+ *
+ * Accepts either:
+ * - Uint8Array (32 bytes)
+ * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
  */
-dbEncryptionKey?: Uint8Array;
+dbEncryptionKey?: Uint8Array | `0x${string}`;
 /**
  * Allow configuring codecs for additional content types
  */
