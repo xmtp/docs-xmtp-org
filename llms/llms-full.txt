@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:24 PM UTC / October 24, 2025
+Generated at 10:13 PM UTC / October 28, 2025
 
 ## Instructions for AI Tools
 
@@ -6623,30 +6623,51 @@ An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 - Add an installation
 - Revoke an installation
 
-This means that one inbox ID can have up to 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
+:::danger[CRITICAL FOR PRODUCTION]
 
-If an inbox reaches its limit of 256 inbox updates, the user must [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows the user to continue using their identity with new XMTP conversations.
+Inbox updates are cumulative and **cannot be reversed**. Revoking an installation counts as an update but does not decrease the total count. Once you've performed 256 updates, you've reached the permanent limit for that inbox.
+
+:::
+
+**What happens when you hit the limit:** If an inbox reaches its limit of 256 inbox updates, you may encounter an "inbox log is full" error. At this point, you must [rotate your inbox](#rotate-an-inbox-id) to continue using your identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows you to continue using your identity with new XMTP conversations.
+
+**Why this limit exists:** All identity updates for an inbox must be fetched and validated by every other inbox that interacts with you on the XMTP network. In group conversations, this validation requirement multiplies. If multiple members have extensive identity update histories, it can significantly impact performance and message delivery speed.
 
 ### Installation limits
 
 XMTP enforces a 10-installation limit per inbox. When an inbox reaches 10 active installations, the user must revoke at least one installation before adding a new one. This limit serves two purposes:
 
 1. Prevents excessive group sizes: Since all installations in an inbox are added as group members, limiting installations keeps group sizes manageable and maintains performance.
-2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256-update threshold.
+2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256 inbox update threshold.
 
 :::warning[Important]
 
-Revoking an installation counts as one of the 256 inbox updates. This means frequently adding and revoking installations will still consume your update quota and could lead to reaching the limit prematurely.
+The only way to avoid consuming installation updates is to ensure your XMTP database is persisted and reloaded between app sessions and deployments. When you reuse an existing database, you maintain the same installation instead of creating a new one each time.
 
 :::
 
-The only way to prevent consuming installation updates is to ensure your XMTP database is persisted and reloaded between app sessions and deployments. When you reuse an existing database, you maintain the same installation instead of creating a new one each time.
+### Best Practices
+
+**For testing and development:**
+
+If you're developing or testing and frequently creating new installations, you can quickly exhaust your inbox update limit. To avoid this during development:
+
+1. Use persistent storage: Always configure your deployments to preserve the database between restarts
+2. Use a local node: Run XMTP locally so you can reset it when hitting limits
+3. Use different wallets for testing: Create separate test wallets rather than repeatedly creating installations with the same wallet
+4. Monitor your usage: Regularly check your inbox state to track how many updates you've used
 
 Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
 ### Rotate an inbox ID
 
-When you create an inbox ID, there is a nonce on it that is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce and it will create a new inbox ID associated with the user's information.
+When you create an inbox ID, a [cryptographic nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce to create a new inbox ID associated with the same wallet address.
+
+:::danger[CRITICAL FOR PRODUCTION]
+
+Rotating an inbox creates a completely new inbox ID. All conversations and message history from the old inbox will be permanently lost. Other users will need to start new conversations with your new inbox ID.
+
+:::
 
 ## Help users manage installations
 
@@ -8181,8 +8202,12 @@ const signer: Signer = {
  *
  * This value must be consistent when creating a client with an existing
  * database.
+ *
+ * You can provide the key as either:
+ * - Uint8Array (32 bytes)
+ * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
  */
-const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+const dbEncryptionKey = `0x${getRandomValues(new Uint8Array(32))}`;
 
 const client = await Client.create(
   signer,
@@ -8298,9 +8323,13 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes)
+   *
+   * Accepts either:
+   * - Uint8Array (32 bytes)
+   * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | `0x${string}`;
   /**
    * Enable structured JSON logging
    */
@@ -8386,9 +8415,13 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes)
+   *
+   * Accepts either:
+   * - Uint8Array (32 bytes)
+   * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | `0x${string}`;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -9985,26 +10018,42 @@ To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-
 
 The maximum group chat size is 250 members.
 
+### Add members
+
+You can add members directly by their Ethereum addresses or by their inbox IDs
+
 ```js [Node]
-// Get inbox IDs for identities
-const inboxId = await client.getInboxIdByIdentities([
-  bo.identity,
-  caro.identity,
-]);
+// Add members by Ethereum address
+await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
 
-// Add/remove members
+
+// Add members using inbox IDs
 await group.addMembers([inboxId]);
+```
+
+### Remove members
+
+Remove members from the group by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Remove members by address
+//needs to send the group to the context
+await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+
+// Remove members by inbox ID
 await group.removeMembers([inboxId]);
+```
 
-// Get member information
+### Get member information
+
+Retrieve and work with member data:
+
+```js [Node]
+// Sync group data to get latest member information
 await group.sync();
-const members = group.members;
-const addedByInboxId = group.addedByInboxId;
 
-// Map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
+// Get all members
+const members = await group.members();
 ```
 
 ## Manage group chat admins
@@ -10025,7 +10074,7 @@ await group.removeAdmin(inboxId);
 await group.removeSuperAdmin(inboxId);
 ```
 
-## Member information
+## Example usage
 
 Get detailed information about group members:
 
@@ -10160,7 +10209,7 @@ const signer = createSigner(user);
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
-  dbEncryptionKey: getRandomValues(new Uint8Array(32)), // save it for later
+  dbEncryptionKey: `0x${getRandomValues(new Uint8Array(32))}`, // save it for later
 });
 ```
 
@@ -10170,11 +10219,11 @@ The XMTP Agent SDK allows you to use environment variables (`process.env`) for e
 
 **Available variables:**
 
-| Variable                 | Purpose                                                        | Example                                 |
-| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| Variable                 | Purpose                                                                              | Example                                 |
+| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                                               | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)                           | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex string with 0x prefix) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
@@ -10185,7 +10234,7 @@ import { generatePrivateKey } from 'viem';
 import { getRandomValues } from 'node:crypto';
 
 const walletKey = generatePrivateKey();
-const encryptionKeyHex = getRandomValues(new Uint8Array(32));
+const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))}`;
 
 console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
@@ -10266,9 +10315,13 @@ apiUrl?: string;
  */
 dbPath?: string | null | ((inboxId: string) => string);
 /**
- * Encryption key for the local DB
+ * Encryption key for the local DB (32 bytes)
+ *
+ * Accepts either:
+ * - Uint8Array (32 bytes)
+ * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
  */
-dbEncryptionKey?: Uint8Array;
+dbEncryptionKey?: Uint8Array | `0x${string}`;
 /**
  * Allow configuring codecs for additional content types
  */
@@ -10586,6 +10639,47 @@ Yes, messages are limited to just under 1MB. For larger content, use [remote att
 
 No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
+
+## Domains
+
+### How do I register a domain for my agent?
+
+#### 1. Register a new ENS domain
+
+1. Go to https://app.ens.domains/
+2. Search for your desired name (e.g., "myagent.eth")
+3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
+4. Wait ~1 minute for registration to complete
+
+#### 2. Create agent wallet in MetaMask
+
+1. Open MetaMask → Account selector → "Add account or hardware wallet" → "Add a new account"
+2. Name it (e.g., "Agent Wallet") → Create
+3. Click three dots → "Account details" → "Show private key" → enter password → **copy and save private key**
+4. Copy the wallet address
+
+#### 3. Link ENS domain to agent wallet
+
+1. Go to https://app.ens.domains/yourdomain.eth
+2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
+3. Sign the transaction
+
+#### 4. Set as primary name
+
+1. Switch MetaMask to the agent wallet account
+2. Go to https://app.ens.domains/
+3. Click "My account" → Find your domain → Click "Set as primary name"
+4. Sign the transaction
+
+#### 5. Transfer ownership (optional)
+
+1. Switch back to owner account in MetaMask
+2. On the ENS page, click "Transfer" → paste agent address → sign transaction
+3. Agent now owns the domain (can update records using private key)
+
+**Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
+
+
 ## Framework integration
 
 ### Does XMTP work with ElizaOS?
@@ -10852,6 +10946,15 @@ agent.on('text', async (ctx) => {
 });
 ```
 
+### Get inbox ID by identifier
+
+```typescript
+const inboxId = await ctx.client.getInboxIdByIdentifier({
+  identifier: targetAddress,
+  identifierKind: IdentifierKind.Ethereum,
+});
+```
+
 ### getSenderAddress()
 
 Get the Ethereum address of the message sender:
@@ -11008,7 +11111,7 @@ When you call `Agent.create()`, the following steps happen under the hood:
 
 The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
 
-The encryption key is critical to the stability and continuity of an XMTP client. It encrypts the local SQLite database created when you call `Client.create()`, and must be provided every time you create or build a client.
+The encryption key is used together with an auto-generated salt to encrypt the local database using [SQLCipher](https://www.zetetic.net/sqlcipher/). It encrypts the database created when you call `Agent.create()`.
 
 This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
 
