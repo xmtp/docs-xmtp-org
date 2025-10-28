@@ -94,20 +94,12 @@ Every app and agent needs an XMTP Gateway Service.
 
 ### For browser and mobile client apps
 
-You must run the XMTP Gateway Service written in Go. Choose the option that works best for you:
+You must run the XMTP Gateway Service written in Go. You have two options:
 
-**Option 1: Basic Docker image** (No Go knowledge required)
+- **For production**: Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as a starting point to build your own custom gateway with authentication
+- **For testing only**: Use the prebuilt Docker image (`xmtp/xmtpd-gateway:main`) which authorizes all requests without authentication
 
-- XMTP provides a Docker image that works out of the box
-- Authorizes all requests (add authentication for production)
-- Suitable for testing
-
-**Option 2: Custom implementation** (Go knowledge required)
-
-- Start with XMTP's Go implementation
-- Add your own authentication logic
-- Implement custom rate limiting
-- Required for apps with authentication needs
+For detailed implementation steps, see [Deploy your XMTP Gateway Service](#deploy-your-xmtp-gateway-service).
 
 ### For agents and Node.js apps
 
@@ -275,7 +267,7 @@ This identity will then be used for rate limiting, and will be passed to your `A
 
 :::code-group
 
-```go [IP Address]
+```go [IP address]
 //  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
 package main
 
@@ -393,7 +385,7 @@ func main() {
 
 ```
 
-```go [Rate Limiting]
+```go [Rate limiting]
 package main
 
 import (
@@ -480,17 +472,34 @@ func main() {
 
 Deploy the XMTP Gateway Service on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
 
-We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
+### For production deployments
+
+Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as your starting point:
+
+1. Fork or clone the repository
+2. Customize the authentication logic for your app
+3. Build your own Docker image from the included Dockerfile
+4. Deploy your custom image to your hosting provider
+
+#### Additional recommendations
+
+The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
+
+If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
+
+### For testing only
+
+You can use the prebuilt Docker image for local development and testing:
 
 ```bash [Bash]
 docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
 ```
 
-Most production apps will require some level of customization to authorize user requests. You can fork our [example repository](https://github.com/xmtp/gateway-service-example), which includes a Dockerfile and a sample configuration.
+:::warning
 
-The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
+This pre-built image authorizes all requests without authentication. Never use it in production.
 
-If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
+:::
 
 ## Test your XMTP Gateway Service
 
