@@ -26,19 +26,6 @@ pnpm add @xmtp/content-type-reaction
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```jsx [Node]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new ReactionCodec()],
-});
-```
-
 ## Send a reaction
 
 With XMTP, reactions are represented as objects with the following keys:
@@ -70,6 +57,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import type { Reaction } from '@xmtp/content-type-reaction';
+
 if (ctx.usesCodec(ReactionCodec)) {
   // We've got a reaction.
   const reaction: Reaction = ctx.message.content;

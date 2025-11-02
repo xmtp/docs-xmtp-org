@@ -22,28 +22,13 @@ pnpm add @xmtp/content-type-markdown
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```tsx [Node]
-import {
-  ContentTypeMarkdown,
-  MarkdownCodec,
-} from '@xmtp/content-type-markdown';
-
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new MarkdownCodec()],
-});
-```
-
 ## Send markdown content
 
 With XMTP, markdown content is sent as a string containing markdown formatting:
 
 ```tsx [Node]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
 // Basic markdown message
 const markdownContent = `## Welcome to XMTP
 
@@ -94,6 +79,8 @@ The markdown content type supports the following formatting patterns:
 ### Example usage
 
 ```tsx [Node]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
 const content = `## Results Summary
 
 - **Total items:** ${count}
@@ -114,7 +101,6 @@ const content = `## Results Summary
 \`\`\`javascript
 const agent = await Agent.create(signer, {
   env: 'dev',
-  codecs: [new MarkdownCodec()],
 });
 \`\`\``;
 
@@ -124,6 +110,8 @@ await ctx.conversation.send(content, ContentTypeMarkdown);
 ## Receive markdown content
 
 ```tsx [Node]
+import { MarkdownCodec } from '@xmtp/content-type-markdown';
+
 agent.on('message', async (ctx) => {
   if (ctx.usesCodec(MarkdownCodec)) {
     const markdownContent = ctx.message.content;
@@ -138,6 +126,8 @@ agent.on('message', async (ctx) => {
 ## Filter for markdown content
 
 ```tsx [Node]
+import { MarkdownCodec } from '@xmtp/content-type-markdown';
+
 // Check if the message contains markdown
 if (ctx.usesCodec(MarkdownCodec)) {
   const markdown: string = ctx.message.content;

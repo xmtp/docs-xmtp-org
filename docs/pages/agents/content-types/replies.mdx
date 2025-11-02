@@ -22,19 +22,6 @@ pnpm add @xmtp/content-type-reply
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Node]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new ReplyCodec()],
-});
-```
-
 ## Send a reply
 
 Once you've created a reply, you can send it. Replies are represented as objects with two keys:
@@ -72,6 +59,9 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
+import { ReplyCodec } from '@xmtp/content-type-reply';
+import type { Reply } from '@xmtp/content-type-reply';
+
 if (ctx.usesCodec(ReplyCodec)) {
   // We've got a reply.
   const reply: Reply = ctx.message.content;
