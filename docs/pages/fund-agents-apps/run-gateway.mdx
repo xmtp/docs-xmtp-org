@@ -159,10 +159,11 @@ You can provide the configuration options for your XMTP Gateway Service either d
 | Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract. |
+| App Chain RPC URL        | `true`   | `--contracts.app-chain.rpc-url`        | `XMTPD_APP_CHAIN_RPC_URL`        | The RPC URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
+| Settlement Chain RPC URL | `true`   | `--contracts.settlement-chain.rpc-url` | `XMTPD_SETTLEMENT_CHAIN_RPC_URL` | The RPC URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
 | App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
 | Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
-| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet`                                                                                                 |
-| Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                                                                                                                         |
+| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `anvil`, `testnet`, and `mainnet`                                                                                                 |
 | Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
 
 </div>
@@ -392,6 +393,48 @@ func main() {
 
 ```
 
+```go [Rate Limiting]
+package main
+
+import (
+	"context"
+	"log"
+	"time"
+
+	"github.com/xmtp/xmtpd/pkg/gateway"
+	"github.com/xmtp/xmtpd/pkg/gateway/authorizers"
+)
+
+func main() {
+	cfg := gateway.MustLoadConfig()
+	redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
+
+	authorizer := authorizers.NewRateLimitBuilder().
+		WithLogger(gateway.MustCreateLogger(cfg)).
+		WithRedis(redis).
+		// Set rate limits to 50 requests/minute and 250 requests/hour
+		WithLimits(authorizers.RateLimit{
+			Capacity:    50,
+			RefillEvery: time.Minute,
+		}, authorizers.RateLimit{
+			Capacity:    250,
+			RefillEvery: time.Hour,
+		}).
+		MustBuild()
+
+	gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
+		WithRedisClient(redis).
+		WithAuthorizers(authorizer).
+		Build()
+	if err != nil {
+		log.Fatalf("Failed to build gateway service: %v", err)
+	}
+
+	gatewayService.WaitForShutdown()
+}
+
+```
+
 :::
 
 ## Authorize requests
@@ -443,7 +486,7 @@ We provide a Docker image that corresponds to the bare bones example above that 
 docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
 ```
 
-Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the xmtpd [`dev/docker`](https://github.com/xmtp/xmtpd/blob/main/dev/docker/gateway.Dockerfile) directory that you can use as a starting point.
+Most production apps will require some level of customization to authorize user requests. You can fork our [example repository](https://github.com/xmtp/gateway-service-example), which includes a Dockerfile and a sample configuration.
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 

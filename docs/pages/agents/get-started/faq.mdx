@@ -96,6 +96,47 @@ Yes, messages are limited to just under 1MB. For larger content, use [remote att
 
 No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
+
+## Domains
+
+### How do I register a domain for my agent?
+
+#### 1. Register a new ENS domain
+
+1. Go to https://app.ens.domains/
+2. Search for your desired name (e.g., "myagent.eth")
+3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
+4. Wait ~1 minute for registration to complete
+
+#### 2. Create agent wallet in MetaMask
+
+1. Open MetaMask → Account selector → "Add account or hardware wallet" → "Add a new account"
+2. Name it (e.g., "Agent Wallet") → Create
+3. Click three dots → "Account details" → "Show private key" → enter password → **copy and save private key**
+4. Copy the wallet address
+
+#### 3. Link ENS domain to agent wallet
+
+1. Go to https://app.ens.domains/yourdomain.eth
+2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
+3. Sign the transaction
+
+#### 4. Set as primary name
+
+1. Switch MetaMask to the agent wallet account
+2. Go to https://app.ens.domains/
+3. Click "My account" → Find your domain → Click "Set as primary name"
+4. Sign the transaction
+
+#### 5. Transfer ownership (optional)
+
+1. Switch back to owner account in MetaMask
+2. On the ENS page, click "Transfer" → paste agent address → sign transaction
+3. Agent now owns the domain (can update records using private key)
+
+**Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
+
+
 ## Framework integration
 
 ### Does XMTP work with ElizaOS?
