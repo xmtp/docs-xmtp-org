@@ -42,6 +42,11 @@ const allDms = await client.conversations.listDms({
 // List Conversation items
 await alix.conversations.list(['allowed']);
 
+// List only active conversations (simplified usage)
+const alixConvoCount1 = await alix.conversations.list({
+  isActive: true // Only show active conversations
+});
+
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
 await alix.conversations.list({
@@ -93,4 +98,50 @@ The `isActive()` method determines whether the current user is still an active m
 - When a user is added to a group, `isActive()` returns `true` for that user
 - When a user is removed from a group, `isActive()` returns `false` for that user
 
-You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
+:::code-group
+
+```js [Browser]
+// Check if user is active in a specific conversation
+const isUserActive = await conversation.isActive();
+console.log('User is active:', isUserActive);
+
+// Filter active conversations
+const activeConversations = [];
+for (const conversation of allConversations) {
+  if (await conversation.isActive()) {
+    activeConversations.push(conversation);
+  }
+}
+```
+
+```js [Node]
+// Check if user is active in a specific conversation  
+const isUserActive = conversation.isActive;
+console.log('User is active:', isUserActive);
+
+// Filter active conversations (direct property access)
+const activeConversations = allConversations.filter(conversation => conversation.isActive);
+```
+
+```tsx [React Native]
+// Check if user is active in a specific conversation
+const isUserActive = await conversation.isActive();
+console.log('User is active:', isUserActive);
+
+// Filter active conversations
+const activeConversations = [];
+for (const conversation of allConversations) {
+  if (await conversation.isActive()) {
+    activeConversations.push(conversation);
+  }
+}
+
+// Or filter conversations by active status when listing (simplified)
+const conversations = await alix.conversations.list({
+  isActive: true // Only show active conversations
+});
+```
+
+:::
+
+You can use a user's active status to filter conversations and potentially have a separate section for "archived" or "inactive" conversations.
