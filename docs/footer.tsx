@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 
+const UTTERANCES_CONFIG = {
+  repo: 'xmtp/docs-xmtp-org',
+  issueTerm: 'pathname',
+  label: 'comment-docs',
+} as const;
+
 function Utterances() {
   const commentBox = useRef<HTMLDivElement>(null);
   const location = useLocation();
@@ -8,7 +14,7 @@ function Utterances() {
 
   useEffect(() => {
     // Don't render utterances on home page
-    if (isHomePage) {
+    if (location.pathname === '/') {
       // Clear any existing utterances when navigating to home page
       if (commentBox.current) {
         commentBox.current.innerHTML = '';
@@ -46,9 +52,9 @@ function Utterances() {
 
     const scriptEl = document.createElement('script');
     scriptEl.setAttribute('src', 'https://utteranc.es/client.js');
-    scriptEl.setAttribute('repo', 'xmtp/docs-xmtp-org');
-    scriptEl.setAttribute('issue-term', 'pathname');
-    scriptEl.setAttribute('label', 'comment-docs');
+    scriptEl.setAttribute('repo', UTTERANCES_CONFIG.repo);
+    scriptEl.setAttribute('issue-term', UTTERANCES_CONFIG.issueTerm);
+    scriptEl.setAttribute('label', UTTERANCES_CONFIG.label);
     scriptEl.setAttribute('theme', getVocsTheme());
     scriptEl.setAttribute('crossorigin', 'anonymous');
     scriptEl.setAttribute('async', 'true');
@@ -58,14 +64,20 @@ function Utterances() {
     }
 
     // Watch for DOM changes (class/attribute changes) when Vocs theme toggles
+    let debounceTimer: NodeJS.Timeout | null = null;
     const observer = new MutationObserver(() => {
-      const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage(
-          { type: 'set-theme', theme: getVocsTheme() },
-          'https://utteranc.es'
-        );
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
       }
+      debounceTimer = setTimeout(() => {
+        const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage(
+            { type: 'set-theme', theme: getVocsTheme() },
+            'https://utteranc.es'
+          );
+        }
+      }, 100);
     });
 
     observer.observe(document.documentElement, {
@@ -75,6 +87,9 @@ function Utterances() {
 
     return () => {
       observer.disconnect();
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
     };
   }, [location.pathname]);
 
