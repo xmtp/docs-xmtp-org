@@ -951,6 +951,19 @@ body:has([data-active="true"][href*="/chat-apps/"]) .vocs_Sidebar_navigation::be
   text-align: left;
 }
 
+/* Fund agents and apps section - only when on fund pages */
+body:has([data-active="true"][href*="/fund-agents-apps/"]) .vocs_Sidebar_navigation::before {
+  content: "Fund apps and agents";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--vocs-color-text);
+  padding: 0 0 .25rem 0;
+  margin: 0 0 .5rem 0;
+  border-bottom: 2px solid #4F46E5;
+  text-align: left;
+}
+
 /* Protocol section - only when on protocol pages */
 body:has([data-active="true"][href*="/protocol/"]) .vocs_Sidebar_navigation::before {
   content: "Protocol";

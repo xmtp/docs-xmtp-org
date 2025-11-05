@@ -32,10 +32,7 @@ Once you have the verified identity, get its inbox ID and create a new DM:
 
 ```js [Node]
 // by Ethereum address
-const dm = await agent.createDmWithAddress({
-  identifier: bo.accountAddress,
-  identifierKind: IdentifierKind.Ethereum,
-});
+const dm = await agent.createDmWithAddress(bo.accountAddress);
 ```
 
 ### By inbox ID
@@ -51,7 +48,7 @@ import { getTestUrl } from '@xmtp/agent-sdk/debug';
 
 agent.on('text', async (ctx) => {
   const senderAddress = ctx.getSenderAddress();
-  console.log('Message from:', senderAddress);
+  console.log(`Message from: ${senderAddress}`);
 });
 ```
 

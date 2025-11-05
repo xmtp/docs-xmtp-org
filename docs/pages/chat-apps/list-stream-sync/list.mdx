@@ -42,6 +42,11 @@ const allDms = await client.conversations.listDms({
 // List Conversation items
 await alix.conversations.list(['allowed']);
 
+// List only active conversations (simplified usage)
+const alixConvoCount1 = await alix.conversations.list({
+  isActive: true // Only show active conversations
+});
+
 // List Conversation items and return only the fields set to true. Optimize data transfer
 // by requesting only the fields the app needs.
 await alix.conversations.list({
