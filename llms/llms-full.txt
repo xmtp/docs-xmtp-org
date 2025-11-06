@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:13 PM UTC / October 28, 2025
+Generated at 06:29 PM UTC / November 06, 2025
 
 ## Instructions for AI Tools
 
@@ -8152,6 +8152,20 @@ The `dbEncryptionKey` client option is not used by the Browser SDK for due to te
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
+### Database encryption key loss during iOS device transfers
+
+When you transfer data to a new iOS device, the local database file may be moved without the encryption key, causing decryption errors. This commonly occurs when users choose Apple's direct transfer option during new device setup, as Apple aggressively moves files to the new device. To prevent this issue, exclude the database directory from backups and device transfers.
+
+For example, if you set a custom `dbPath` to a known directory, you can mark it as excluded from backups in iOS:
+
+```swift
+func addSkipBackupAttribute(var folder: URL) throws {
+  try folder.setResourceValue(true, forKey: .isExcludedFromBackupKey)
+}
+```
+
+To learn more about this function, see [isExcludedFromBackupKey](https://developer.apple.com/documentation/foundation/urlresourcekey/isexcludedfrombackupkey) in Apple's documentation.
+
 ### View an encrypted database
 
 For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates a [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
@@ -9990,13 +10004,15 @@ Group chats can have metadata like names, descriptions, and images to help users
 To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
 :::
 
-## Available metadata fields
+## Group metadata
+
+### Available metadata fields
 
 - `group_name`: The name of the group chat
 - `description`: A description of the group chat
 - `image_url`: A URL pointing to an image for the group chat
 
-## Get and update metadata
+### Get and update metadata
 
 ```js [Node]
 // Get metadata
@@ -10010,22 +10026,17 @@ await group.updateDescription('New Group Description');
 await group.updateImageUrl('newurl.com');
 ```
 
-## Manage group chat membership
-
-:::tip[Quickstart]
-To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
-:::
+## Group membership
 
 The maximum group chat size is 250 members.
 
 ### Add members
 
-You can add members directly by their Ethereum addresses or by their inbox IDs
+Add members directly by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Add members by Ethereum address
 await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
-
 
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
@@ -10037,7 +10048,6 @@ Remove members from the group by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Remove members by address
-//needs to send the group to the context
 await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
 
 // Remove members by inbox ID
@@ -10055,26 +10065,6 @@ await group.sync();
 // Get all members
 const members = await group.members();
 ```
-
-## Manage group chat admins
-
-```js [Node]
-// Check admin status
-const isAdmin = group.isAdmin(inboxId);
-const isSuperAdmin = group.isSuperAdmin(inboxId);
-
-// List admins
-const admins = group.admins;
-const superAdmins = group.superAdmins;
-
-// Add/remove admin status
-await group.addAdmin(inboxId);
-await group.addSuperAdmin(inboxId);
-await group.removeAdmin(inboxId);
-await group.removeSuperAdmin(inboxId);
-```
-
-## Example usage
 
 Get detailed information about group members:
 
@@ -10099,6 +10089,35 @@ agent.on('text', async (ctx) => {
 });
 ```
 
+## Group roles
+
+Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
+
+### Available roles
+
+- **Member** - Default role for all group participants
+- **Admin** - Members with elevated permissions  
+- **Super admin** - Highest permission level (creator starts as super admin)
+
+### Manage roles
+
+Check and assign roles to group members:
+
+```js [Node]
+// Check admin status
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// List admins
+const admins = group.admins;
+const superAdmins = group.superAdmins;
+
+// Add/remove admin status
+await group.addAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
+```
 
 ## pages/agents/build-agents/create-conversations.mdx
 # Create conversations
@@ -10457,16 +10476,17 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 
 
 ## pages/agents/build-agents/group-permissions.mdx
-# Understand the group permissions system
+# Understand group permissions
+
+The group permissions system controls what actions different members can take in a group chat. This guide explains how the system works conceptually. For practical code examples of managing roles and permissions, see [Manage group chats](/agents/build-agents/groups).
 
 ## Member statuses
 
-Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat:
 
-- Member
-  - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
-- Admin
-- Super admin
+- **Member** - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level with full control over the group
 
 ## Options
 
@@ -10538,6 +10558,13 @@ If you aren't opinionated and don't set any permissions and options, groups will
 - Update group metadata - All members
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Next steps
+
+Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
+- Adding and removing members
+- Assigning roles
+- Managing group metadata
 
 
 ## pages/agents/get-started/faq.mdx
@@ -13222,20 +13249,9 @@ Every app and agent needs an XMTP Gateway Service.
 
 ### For browser and mobile client apps
 
-You must run the XMTP Gateway Service written in Go. Choose the option that works best for you:
+Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as a starting point to build your own custom gateway with authentication
 
-**Option 1: Basic Docker image** (No Go knowledge required)
-
-- XMTP provides a Docker image that works out of the box
-- Authorizes all requests (add authentication for production)
-- Suitable for testing
-
-**Option 2: Custom implementation** (Go knowledge required)
-
-- Start with XMTP's Go implementation
-- Add your own authentication logic
-- Implement custom rate limiting
-- Required for apps with authentication needs
+For detailed implementation steps, see [Deploy your XMTP Gateway Service](#deploy-your-xmtp-gateway-service).
 
 ### For agents and Node.js apps
 
@@ -13403,7 +13419,7 @@ This identity will then be used for rate limiting, and will be passed to your `A
 
 :::code-group
 
-```go [IP Address]
+```go [IP address]
 //  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
 package main
 
@@ -13521,7 +13537,7 @@ func main() {
 
 ```
 
-```go [Rate Limiting]
+```go [Rate limiting]
 package main
 
 import (
@@ -13606,21 +13622,38 @@ func main() {
 
 ## Deploy your XMTP Gateway Service
 
-Deploy the XMTP Gateway Service on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+:::tip[Example repo]
 
-We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
+You can start with the [example gateway service repository](https://github.com/xmtp/gateway-service-example).
 
-```bash [Bash]
-docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
-```
+:::
 
-Most production apps will require some level of customization to authorize user requests. You can fork our [example repository](https://github.com/xmtp/gateway-service-example), which includes a Dockerfile and a sample configuration.
+1. Fork or clone the repository.
+2. Add your own authentication logic.
+3. Configure your rate limits
+4. Deploy your custom image on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+
+#### Additional recommendations
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
 If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
 
 ## Test your XMTP Gateway Service
+
+You can use the prebuilt Docker image for local development and testing:
+
+```bash [Bash]
+docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
+```
+
+:::warning
+
+This pre-built image authorizes all requests without authentication. Never use it in production.
+
+:::
+
+### Test scenarios
 
 Here are some high priority scenarios to test:
 

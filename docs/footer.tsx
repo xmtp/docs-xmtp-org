@@ -54,7 +54,7 @@ function Utterances() {
     commentBox.current.appendChild(script);
 
     // Sync theme changes with Utterances iframe (debounced)
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: ReturnType<typeof setTimeout>;
     const observer = new MutationObserver(() => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
