@@ -59,9 +59,8 @@ When you transfer data to a new iOS device, the local database file may be moved
 For example, if you set a custom `dbPath` to a known directory, you can mark it as excluded from backups in iOS:
 
 ```swift
-func addSkipBackupAttribute(folder: URL) throws {
-  var resourceURL = folder
-  try resourceURL.setResourceValue(true, forKey: .isExcludedFromBackupKey)
+func addSkipBackupAttribute(var folder: URL) throws {
+  try folder.setResourceValue(true, forKey: .isExcludedFromBackupKey)
 }
 ```
 
