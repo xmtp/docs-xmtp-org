@@ -151,18 +151,18 @@ To check conversation status before initiating a network action:
 ```js [Browser]
 // Check if the conversation is active (async method in Browser SDK)
 if (await conversation.isActive()) {
-    // Conversation is active, safe to send or sync
+  // Conversation is active, safe to send or sync
 } else {
-    // Conversation is inactive, show read-only UI
+  // Conversation is inactive, show read-only UI
 }
 ```
 
 ```js [Node]
 // Check if the conversation is active (async method in Node SDK)
 if (await conversation.isActive()) {
-    // Conversation is active, safe to send or sync
+  // Conversation is active, safe to send or sync
 } else {
-    // Conversation is inactive, show read-only UI
+  // Conversation is inactive, show read-only UI
 }
 ```
 
