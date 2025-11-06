@@ -35,10 +35,9 @@ function getVocsTheme(): 'github-dark' | 'github-light' {
 function Utterances() {
   const commentBox = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
-    if (!commentBox.current || isHomePage) return;
+    if (!commentBox.current || location.pathname === '/') return;
 
     // Clear container and inject Utterances script
     commentBox.current.innerHTML = '';
@@ -54,13 +53,17 @@ function Utterances() {
 
     commentBox.current.appendChild(script);
 
-    // Sync theme changes with Utterances iframe
+    // Sync theme changes with Utterances iframe (debounced)
+    let timeoutId: NodeJS.Timeout;
     const observer = new MutationObserver(() => {
-      const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
-      iframe?.contentWindow?.postMessage(
-        { type: 'set-theme', theme: getVocsTheme() },
-        'https://utteranc.es'
-      );
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
+        iframe?.contentWindow?.postMessage(
+          { type: 'set-theme', theme: getVocsTheme() },
+          'https://utteranc.es'
+        );
+      }, 100);
     });
 
     observer.observe(document.documentElement, {
@@ -68,10 +71,13 @@ function Utterances() {
       attributeFilter: ['class', 'data-theme'],
     });
 
-    return () => observer.disconnect();
-  }, [location.pathname, isHomePage]);
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, [location.pathname]);
 
-  if (isHomePage) return null;
+  if (location.pathname === '/') return null;
 
   return <div ref={commentBox} />;
 }
