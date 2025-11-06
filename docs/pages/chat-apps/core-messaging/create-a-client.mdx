@@ -116,8 +116,12 @@ const signer: Signer = {
  *
  * This value must be consistent when creating a client with an existing
  * database.
+ *
+ * You can provide the key as either:
+ * - Uint8Array (32 bytes)
+ * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
  */
-const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+const dbEncryptionKey = `0x${getRandomValues(new Uint8Array(32))}`;
 
 const client = await Client.create(
   signer,
@@ -233,9 +237,13 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes)
+   *
+   * Accepts either:
+   * - Uint8Array (32 bytes)
+   * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | `0x${string}`;
   /**
    * Enable structured JSON logging
    */
@@ -321,9 +329,13 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes)
+   *
+   * Accepts either:
+   * - Uint8Array (32 bytes)
+   * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | `0x${string}`;
   /**
    * Allow configuring codecs for additional content types
    */
