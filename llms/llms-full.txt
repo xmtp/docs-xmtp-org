@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 04:58 PM UTC / November 05, 2025
+Generated at 06:29 PM UTC / November 06, 2025
 
 ## Instructions for AI Tools
 
@@ -8151,6 +8151,20 @@ To ensure seamless app experiences persist the `dbEncryptionKey` securely, and m
 The `dbEncryptionKey` client option is not used by the Browser SDK for due to technical limitations in web environments. In this case, be aware that the database is not encrypted.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+### Database encryption key loss during iOS device transfers
+
+When you transfer data to a new iOS device, the local database file may be moved without the encryption key, causing decryption errors. This commonly occurs when users choose Apple's direct transfer option during new device setup, as Apple aggressively moves files to the new device. To prevent this issue, exclude the database directory from backups and device transfers.
+
+For example, if you set a custom `dbPath` to a known directory, you can mark it as excluded from backups in iOS:
+
+```swift
+func addSkipBackupAttribute(var folder: URL) throws {
+  try folder.setResourceValue(true, forKey: .isExcludedFromBackupKey)
+}
+```
+
+To learn more about this function, see [isExcludedFromBackupKey](https://developer.apple.com/documentation/foundation/urlresourcekey/isexcludedfrombackupkey) in Apple's documentation.
 
 ### View an encrypted database
 
