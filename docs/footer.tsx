@@ -7,93 +7,70 @@ const UTTERANCES_CONFIG = {
   label: 'comment-docs',
 } as const;
 
+// Detect current Vocs theme
+function getVocsTheme(): 'github-dark' | 'github-light' {
+  // Check localStorage
+  try {
+    const stored = localStorage.getItem('vocs.theme');
+    if (stored === 'dark') return 'github-dark';
+    if (stored === 'light') return 'github-light';
+  } catch {}
+
+  // Check data-theme attribute
+  const theme = document.documentElement.getAttribute('data-theme');
+  if (theme === 'dark') return 'github-dark';
+  if (theme === 'light') return 'github-light';
+
+  // Check dark class
+  if (document.documentElement.classList.contains('dark')) {
+    return 'github-dark';
+  }
+
+  // Fallback to system preference
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'github-dark'
+    : 'github-light';
+}
+
 function Utterances() {
   const commentBox = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
 
   useEffect(() => {
-    // Don't render utterances on home page
-    if (location.pathname === '/') {
-      // Clear any existing utterances when navigating to home page
-      if (commentBox.current) {
-        commentBox.current.innerHTML = '';
-      }
-      return;
-    }
+    if (!commentBox.current || isHomePage) return;
 
-    const getVocsTheme = () => {
-      // Check localStorage for Vocs theme
-      let stored: string | null = null;
-      try {
-        stored = localStorage.getItem('vocs.theme');
-      } catch {}
-      if (stored === 'dark') return 'github-dark';
-      if (stored === 'light') return 'github-light';
+    // Clear container and inject Utterances script
+    commentBox.current.innerHTML = '';
 
-      // Check data attribute on html element
-      const htmlTheme = document.documentElement.getAttribute('data-theme');
-      if (htmlTheme === 'dark') return 'github-dark';
-      if (htmlTheme === 'light') return 'github-light';
+    const script = document.createElement('script');
+    script.src = 'https://utteranc.es/client.js';
+    script.setAttribute('repo', UTTERANCES_CONFIG.repo);
+    script.setAttribute('issue-term', UTTERANCES_CONFIG.issueTerm);
+    script.setAttribute('label', UTTERANCES_CONFIG.label);
+    script.setAttribute('theme', getVocsTheme());
+    script.setAttribute('crossorigin', 'anonymous');
+    script.async = true;
 
-      // Check class on html element
-      if (document.documentElement.classList.contains('dark')) return 'github-dark';
+    commentBox.current.appendChild(script);
 
-      // Fallback to system preference
-      return window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'github-dark'
-        : 'github-light';
-    };
-
-    // Clear any existing utterances before injecting new script
-    if (commentBox.current) {
-      commentBox.current.innerHTML = '';
-    }
-
-    const scriptEl = document.createElement('script');
-    scriptEl.setAttribute('src', 'https://utteranc.es/client.js');
-    scriptEl.setAttribute('repo', UTTERANCES_CONFIG.repo);
-    scriptEl.setAttribute('issue-term', UTTERANCES_CONFIG.issueTerm);
-    scriptEl.setAttribute('label', UTTERANCES_CONFIG.label);
-    scriptEl.setAttribute('theme', getVocsTheme());
-    scriptEl.setAttribute('crossorigin', 'anonymous');
-    scriptEl.setAttribute('async', 'true');
-
-    if (commentBox.current) {
-      commentBox.current.appendChild(scriptEl);
-    }
-
-    // Watch for DOM changes (class/attribute changes) when Vocs theme toggles
-    let debounceTimer: NodeJS.Timeout | null = null;
+    // Sync theme changes with Utterances iframe
     const observer = new MutationObserver(() => {
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
-      debounceTimer = setTimeout(() => {
-        const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage(
-            { type: 'set-theme', theme: getVocsTheme() },
-            'https://utteranc.es'
-          );
-        }
-      }, 100);
+      const iframe = document.querySelector<HTMLIFrameElement>('.utterances-frame');
+      iframe?.contentWindow?.postMessage(
+        { type: 'set-theme', theme: getVocsTheme() },
+        'https://utteranc.es'
+      );
     });
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class', 'data-theme', 'data-color-scheme'],
+      attributeFilter: ['class', 'data-theme'],
     });
 
-    return () => {
-      observer.disconnect();
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
-    };
-  }, [location.pathname]);
+    return () => observer.disconnect();
+  }, [location.pathname, isHomePage]);
 
-  // Don't render on home page
   if (isHomePage) return null;
 
   return <div ref={commentBox} />;
