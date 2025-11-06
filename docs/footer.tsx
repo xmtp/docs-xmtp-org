@@ -79,7 +79,26 @@ function Utterances() {
 
   if (location.pathname === '/') return null;
 
-  return <div ref={commentBox} />;
+  return (
+    <div>
+      <hr style={{
+        marginBottom: '1em',
+        marginLeft: '1.5em',
+        marginRight: '1.5em',
+        borderColor: 'var(--vocs-color_border)'
+      }} />
+      <p style={{
+        fontSize: '0.9em',
+        fontWeight: 400,
+        color: 'var(--vocs-color_text2)',
+        marginTop: '0.5em',
+        marginBottom: '-0.5em',
+      }}>
+        Building with XMTP and have a question about this documentation? Leave a comment.
+      </p>
+      <div ref={commentBox} />
+    </div>
+  );
 }
 
 export default function Footer() {
