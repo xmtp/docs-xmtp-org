@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 06:29 PM UTC / November 06, 2025
+Generated at 09:41 PM UTC / November 06, 2025
 
 ## Instructions for AI Tools
 
@@ -1509,7 +1509,7 @@ await alix.conversations.list(['allowed']);
 
 // List only active conversations (simplified usage)
 const alixConvoCount1 = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
@@ -1580,12 +1580,14 @@ for (const conversation of allConversations) {
 ```
 
 ```js [Node]
-// Check if user is active in a specific conversation  
+// Check if user is active in a specific conversation
 const isUserActive = conversation.isActive;
 console.log('User is active:', isUserActive);
 
 // Filter active conversations (direct property access)
-const activeConversations = allConversations.filter(conversation => conversation.isActive);
+const activeConversations = allConversations.filter(
+  (conversation) => conversation.isActive
+);
 ```
 
 ```tsx [React Native]
@@ -1603,7 +1605,7 @@ for (const conversation of allConversations) {
 
 // Or filter conversations by active status when listing (simplified)
 const conversations = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 ```
 
@@ -2487,18 +2489,18 @@ To check conversation status before initiating a network action:
 ```js [Browser]
 // Check if the conversation is active (async method in Browser SDK)
 if (await conversation.isActive()) {
-    // Conversation is active, safe to send or sync
+  // Conversation is active, safe to send or sync
 } else {
-    // Conversation is inactive, show read-only UI
+  // Conversation is inactive, show read-only UI
 }
 ```
 
 ```js [Node]
 // Check if the conversation is active (async method in Node SDK)
 if (await conversation.isActive()) {
-    // Conversation is active, safe to send or sync
+  // Conversation is active, safe to send or sync
 } else {
-    // Conversation is inactive, show read-only UI
+  // Conversation is inactive, show read-only UI
 }
 ```
 
@@ -10036,7 +10038,7 @@ Add members directly by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Add members by Ethereum address
-await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
+await ctx.addMembersWithAddresses(group, [address1, address2]);
 
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
@@ -10048,7 +10050,7 @@ Remove members from the group by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Remove members by address
-await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+await ctx.removeMembersWithAddresses(group, [address1, address2]);
 
 // Remove members by inbox ID
 await group.removeMembers([inboxId]);
@@ -10096,7 +10098,7 @@ Members can be assigned different roles with varying permission levels. To learn
 ### Available roles
 
 - **Member** - Default role for all group participants
-- **Admin** - Members with elevated permissions  
+- **Admin** - Members with elevated permissions
 - **Super admin** - Highest permission level (creator starts as super admin)
 
 ### Manage roles
@@ -10118,6 +10120,7 @@ await group.addSuperAdmin(inboxId);
 await group.removeAdmin(inboxId);
 await group.removeSuperAdmin(inboxId);
 ```
+
 
 ## pages/agents/build-agents/create-conversations.mdx
 # Create conversations
@@ -10396,7 +10399,6 @@ Understanding XMTP's installation and inbox limits is critical for production de
 
 These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
 
-
 ## Understand local database files
 
 The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
@@ -10414,7 +10416,6 @@ xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688
 - `xmtp-production`: Environment prefix
 - `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
 - `.db3`: SQLite database file extension
-
 
 ## Understand installations
 
@@ -10469,10 +10470,9 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
 2. CLI script: [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
 
-  ```bash
-  yarn revoke <inbox-id> <installations-to-exclude>
-  ```
-
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```
 
 
 ## pages/agents/build-agents/group-permissions.mdx
@@ -10562,6 +10562,7 @@ To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_p
 ## Next steps
 
 Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
+
 - Adding and removing members
 - Assigning roles
 - Managing group metadata
@@ -10666,14 +10667,13 @@ Yes, messages are limited to just under 1MB. For larger content, use [remote att
 
 No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
-
 ## Domains
 
 ### How do I register a domain for my agent?
 
 #### 1. Register a new ENS domain
 
-1. Go to https://app.ens.domains/
+1. Go to [https://app.ens.domains](https://app.ens.domains/)
 2. Search for your desired name (e.g., "myagent.eth")
 3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
 4. Wait ~1 minute for registration to complete
@@ -10687,14 +10687,14 @@ No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
 #### 3. Link ENS domain to agent wallet
 
-1. Go to https://app.ens.domains/yourdomain.eth
+1. Go to [https://app.ens.domains](https://app.ens.domains)`/yourdomain.eth`
 2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
 3. Sign the transaction
 
 #### 4. Set as primary name
 
 1. Switch MetaMask to the agent wallet account
-2. Go to https://app.ens.domains/
+2. Go to [https://app.ens.domains](https://app.ens.domains/)
 3. Click "My account" → Find your domain → Click "Set as primary name"
 4. Sign the transaction
 
@@ -10705,7 +10705,6 @@ No messaging fees currently. Messages are stored off-chain on the XMTP network.
 3. Agent now owns the domain (can update records using private key)
 
 **Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
-
 
 ## Framework integration
 
@@ -10840,7 +10839,7 @@ To learn more, see [Manage agent local database files and installations](/agents
 
 :::
 
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history. 
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
 
 ### Set environment variables
 
@@ -11973,7 +11972,7 @@ The markdown content type supports the following formatting patterns:
 - \`inline code\`
 - \`\`\`code block\`\`\`
 - > block quote
-- [link](https://www.example.com)
+- [link text](https://www.example.com)
 
 ### Lists
 
@@ -11985,7 +11984,6 @@ The markdown content type supports the following formatting patterns:
 
 - Standard markdown table syntax with `|` separators
 - Header rows with `---` separators
-
 
 ### Example usage
 
@@ -13541,40 +13539,40 @@ func main() {
 package main
 
 import (
-	"context"
-	"log"
-	"time"
+ "context"
+ "log"
+ "time"
 
-	"github.com/xmtp/xmtpd/pkg/gateway"
-	"github.com/xmtp/xmtpd/pkg/gateway/authorizers"
+ "github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/xmtp/xmtpd/pkg/gateway/authorizers"
 )
 
 func main() {
-	cfg := gateway.MustLoadConfig()
-	redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
+ cfg := gateway.MustLoadConfig()
+ redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
 
-	authorizer := authorizers.NewRateLimitBuilder().
-		WithLogger(gateway.MustCreateLogger(cfg)).
-		WithRedis(redis).
-		// Set rate limits to 50 requests/minute and 250 requests/hour
-		WithLimits(authorizers.RateLimit{
-			Capacity:    50,
-			RefillEvery: time.Minute,
-		}, authorizers.RateLimit{
-			Capacity:    250,
-			RefillEvery: time.Hour,
-		}).
-		MustBuild()
+ authorizer := authorizers.NewRateLimitBuilder().
+  WithLogger(gateway.MustCreateLogger(cfg)).
+  WithRedis(redis).
+  // Set rate limits to 50 requests/minute and 250 requests/hour
+  WithLimits(authorizers.RateLimit{
+   Capacity:    50,
+   RefillEvery: time.Minute,
+  }, authorizers.RateLimit{
+   Capacity:    250,
+   RefillEvery: time.Hour,
+  }).
+  MustBuild()
 
-	gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
-		WithRedisClient(redis).
-		WithAuthorizers(authorizer).
-		Build()
-	if err != nil {
-		log.Fatalf("Failed to build gateway service: %v", err)
-	}
+ gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
+  WithRedisClient(redis).
+  WithAuthorizers(authorizer).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
 
-	gatewayService.WaitForShutdown()
+ gatewayService.WaitForShutdown()
 }
 
 ```
@@ -13633,7 +13631,7 @@ You can start with the [example gateway service repository](https://github.com/x
 3. Configure your rate limits
 4. Deploy your custom image on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
 
-#### Additional recommendations
+### Additional recommendations
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
