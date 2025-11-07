@@ -52,6 +52,20 @@ The `dbEncryptionKey` client option is not used by the Browser SDK for due to te
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
 
+### Database encryption key loss during iOS device transfers
+
+When you transfer data to a new iOS device, the local database file may be moved without the encryption key, causing decryption errors. This commonly occurs when users choose Apple's direct transfer option during new device setup, as Apple aggressively moves files to the new device. To prevent this issue, exclude the database directory from backups and device transfers.
+
+For example, if you set a custom `dbPath` to a known directory, you can mark it as excluded from backups in iOS:
+
+```swift
+func addSkipBackupAttribute(var folder: URL) throws {
+  try folder.setResourceValue(true, forKey: .isExcludedFromBackupKey)
+}
+```
+
+To learn more about this function, see [isExcludedFromBackupKey](https://developer.apple.com/documentation/foundation/urlresourcekey/isexcludedfrombackupkey) in Apple's documentation.
+
 ### View an encrypted database
 
 For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates a [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
@@ -102,8 +116,12 @@ const signer: Signer = {
  *
  * This value must be consistent when creating a client with an existing
  * database.
+ *
+ * You can provide the key as either:
+ * - Uint8Array (32 bytes)
+ * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
  */
-const dbEncryptionKey = getRandomValues(new Uint8Array(32));
+const dbEncryptionKey = `0x${getRandomValues(new Uint8Array(32))}`;
 
 const client = await Client.create(
   signer,
@@ -219,9 +237,13 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes)
+   *
+   * Accepts either:
+   * - Uint8Array (32 bytes)
+   * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | `0x${string}`;
   /**
    * Enable structured JSON logging
    */
@@ -307,9 +329,13 @@ type ClientOptions = {
    */
   dbPath?: string | null | ((inboxId: string) => string);
   /**
-   * Encryption key for the local DB
+   * Encryption key for the local DB (32 bytes)
+   *
+   * Accepts either:
+   * - Uint8Array (32 bytes)
+   * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
    */
-  dbEncryptionKey?: Uint8Array;
+  dbEncryptionKey?: Uint8Array | `0x${string}`;
   /**
    * Allow configuring codecs for additional content types
    */

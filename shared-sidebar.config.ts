@@ -42,7 +42,7 @@ export const sidebarConfig = {
           link: "/agents/build-agents/create-conversations",
         },
         {
-          text: "Groups",
+          text: "Group chats",
           link: "/agents/build-agents/groups",
         },
         {

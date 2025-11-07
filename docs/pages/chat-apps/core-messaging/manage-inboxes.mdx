@@ -75,30 +75,51 @@ An inbox ID is limited to 256 inbox updates. Inbox updates include actions like:
 - Add an installation
 - Revoke an installation
 
-This means that one inbox ID can have up to 256 installations. When you add an inbox ID to a group, you are adding every installation as a member of the group. This means a group with an inbox that has 200+ installations can very quickly make a group size very large, which can have downstream performance implications.
+:::danger[CRITICAL FOR PRODUCTION]
 
-If an inbox reaches its limit of 256 inbox updates, the user must [rotate their inbox](#rotate-an-inbox-id) to continue using their identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows the user to continue using their identity with new XMTP conversations.
+Inbox updates are cumulative and **cannot be reversed**. Revoking an installation counts as an update but does not decrease the total count. Once you've performed 256 updates, you've reached the permanent limit for that inbox.
+
+:::
+
+**What happens when you hit the limit:** If an inbox reaches its limit of 256 inbox updates, you may encounter an "inbox log is full" error. At this point, you must [rotate your inbox](#rotate-an-inbox-id) to continue using your identity with XMTP. Rotating the inbox permanently removes access to all existing conversations but allows you to continue using your identity with new XMTP conversations.
+
+**Why this limit exists:** All identity updates for an inbox must be fetched and validated by every other inbox that interacts with you on the XMTP network. In group conversations, this validation requirement multiplies. If multiple members have extensive identity update histories, it can significantly impact performance and message delivery speed.
 
 ### Installation limits
 
 XMTP enforces a 10-installation limit per inbox. When an inbox reaches 10 active installations, the user must revoke at least one installation before adding a new one. This limit serves two purposes:
 
 1. Prevents excessive group sizes: Since all installations in an inbox are added as group members, limiting installations keeps group sizes manageable and maintains performance.
-2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256-update threshold.
+2. Protects against accidental exhaustion: The limit helps prevent users from accidentally reaching the 256 inbox update threshold.
 
 :::warning[Important]
 
-Revoking an installation counts as one of the 256 inbox updates. This means frequently adding and revoking installations will still consume your update quota and could lead to reaching the limit prematurely.
+The only way to avoid consuming installation updates is to ensure your XMTP database is persisted and reloaded between app sessions and deployments. When you reuse an existing database, you maintain the same installation instead of creating a new one each time.
 
 :::
 
-The only way to prevent consuming installation updates is to ensure your XMTP database is persisted and reloaded between app sessions and deployments. When you reuse an existing database, you maintain the same installation instead of creating a new one each time.
+### Best Practices
+
+**For testing and development:**
+
+If you're developing or testing and frequently creating new installations, you can quickly exhaust your inbox update limit. To avoid this during development:
+
+1. Use persistent storage: Always configure your deployments to preserve the database between restarts
+2. Use a local node: Run XMTP locally so you can reset it when hitting limits
+3. Use different wallets for testing: Create separate test wallets rather than repeatedly creating installations with the same wallet
+4. Monitor your usage: Regularly check your inbox state to track how many updates you've used
 
 Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
 
 ### Rotate an inbox ID
 
-When you create an inbox ID, there is a nonce on it that is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce and it will create a new inbox ID associated with the user's information.
+When you create an inbox ID, a [cryptographic nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce) is used to create the ID. If an inbox reaches its inbox updates limit, you can increment the nonce to create a new inbox ID associated with the same wallet address.
+
+:::danger[CRITICAL FOR PRODUCTION]
+
+Rotating an inbox creates a completely new inbox ID. All conversations and message history from the old inbox will be permanently lost. Other users will need to start new conversations with your new inbox ID.
+
+:::
 
 ## Help users manage installations
 
