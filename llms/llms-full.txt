@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 02:16 AM UTC / November 05, 2025
+Generated at 02:06 AM UTC / November 07, 2025
 
 ## Instructions for AI Tools
 
@@ -141,31 +141,37 @@ The largest and most secure decentralized messaging network
 <CustomHomePage.Tile
   title="Quantum-resistant"
   description="Protection against 'harvest now, decrypt later' attacks through post-quantum cryptography"
+  href="/protocol/security#quantum-resistance"
 />
 
 <CustomHomePage.Tile
   title="End-to-end encrypted"
   description="Messages encrypted client-side and only recipients can decrypt them"
+  href="/protocol/overview#encryption"
 />
 
 <CustomHomePage.Tile
   title="Decentralized"
   description="Messages are distributed across a censorship-resistant network of nodes"
+  href="/network/run-a-node"
 />
 
 <CustomHomePage.Tile
   title="Flexible identities"
   description="Use any public DiD, like @ensdomains or @bluesky, or just a single device-bound passkey"
+  href="/protocol/identity"
 />
 
 <CustomHomePage.Tile
   title="Built-in consent"
   description="Chats are spam-free spaces for a user's chosen contacts only"
+  href="/chat-apps/user-consent/user-consent"
 />
 
 <CustomHomePage.Tile
   title="Rich content types"
   description="Send text, attachments, reactions, read receipts, onchain transactions, and more"
+  href="/chat-apps/content-types/content-types"
 />
 
 </CustomHomePage.TileGrid>
@@ -179,7 +185,15 @@ Start building today
 <CustomHomePage.SDKGrid>
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/browser"
+  href="/agents/get-started/build-an-agent"
+  lightSrc="/nodejsStackedDark.svg"
+  darkSrc="/nodejsStackedLight.svg"
+  alt="Node.js"
+  name="Agent SDK"
+/>
+
+<CustomHomePage.SDKTile
+  href="/chat-apps/sdks/browser"
   lightSrc="/ts-logo-128.svg"
   darkSrc="/ts-logo-128.svg"
   alt="TypeScript"
@@ -187,7 +201,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/node"
+  href="/chat-apps/sdks/node"
   lightSrc="/nodejsStackedDark.svg"
   darkSrc="/nodejsStackedLight.svg"
   alt="Node.js"
@@ -195,7 +209,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/react-native"
+  href="/chat-apps/sdks/react-native"
   lightSrc="/rn-header_logo.svg"
   darkSrc="/rn-header_logo.svg"
   alt="React Native"
@@ -203,7 +217,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/android"
+  href="/chat-apps/sdks/android"
   lightSrc="/Kotlin_Icon.svg"
   darkSrc="/Kotlin_Icon.svg"
   alt="Android/Kotlin"
@@ -211,7 +225,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/ios"
+  href="/chat-apps/sdks/ios"
   lightSrc="/swift_logo_color.svg"
   darkSrc="/swift_logo_color.svg"
   alt="iOS/Swift"
@@ -1509,7 +1523,7 @@ await alix.conversations.list(['allowed']);
 
 // List only active conversations (simplified usage)
 const alixConvoCount1 = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
@@ -1580,12 +1594,14 @@ for (const conversation of allConversations) {
 ```
 
 ```js [Node]
-// Check if user is active in a specific conversation  
+// Check if user is active in a specific conversation
 const isUserActive = conversation.isActive;
 console.log('User is active:', isUserActive);
 
 // Filter active conversations (direct property access)
-const activeConversations = allConversations.filter(conversation => conversation.isActive);
+const activeConversations = allConversations.filter(
+  (conversation) => conversation.isActive
+);
 ```
 
 ```tsx [React Native]
@@ -1603,7 +1619,7 @@ for (const conversation of allConversations) {
 
 // Or filter conversations by active status when listing (simplified)
 const conversations = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 ```
 
@@ -2487,18 +2503,18 @@ To check conversation status before initiating a network action:
 ```js [Browser]
 // Check if the conversation is active (async method in Browser SDK)
 if (await conversation.isActive()) {
-    // Conversation is active, safe to send or sync
+  // Conversation is active, safe to send or sync
 } else {
-    // Conversation is inactive, show read-only UI
+  // Conversation is inactive, show read-only UI
 }
 ```
 
 ```js [Node]
 // Check if the conversation is active (async method in Node SDK)
 if (await conversation.isActive()) {
-    // Conversation is active, safe to send or sync
+  // Conversation is active, safe to send or sync
 } else {
-    // Conversation is inactive, show read-only UI
+  // Conversation is inactive, show read-only UI
 }
 ```
 
@@ -2730,33 +2746,24 @@ See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/
 
 ### Where are XMTP messages stored?
 
-XMTP stores messages in the XMTP network before and after retrieval. App-specific message storage policies may vary.
+XMTP stores messages in the XMTP Network before and after retrieval. App-specific message storage policies may vary.
 
 ### What are the XMTP message retention policies?
 
-#### For XMTP's blockchain and node databases
+#### For xmtpd and the decentralized XMTP Network
 
-Currently, encrypted payloads are stored indefinitely.
+xmtpd (XMTP daemon) is the XMTP node software that powers the decentralized XMTP Testnet, as well as the forthcoming decentralized XMTP Mainnet.
 
-In the coming year, a retention policy will be added.
+To learn about xmtpd's message retention policies, see [XIP-69: Message retention and expiry strategy for xmtpd](https://community.xmtp.org/t/xip-69-message-retention-and-expiry-strategy-for-xmtpd/955)
 
-This retention policy would represent a minimum retention period, not a maximum.
-
-For example, a retention policy may look something like the following, though specifics are subject to change:
-
-- One year for messages
-- Indefinite storage for account information and personal preferences
-
-The team is researching a way to provide this indefinite storage and have it scale forever.
-
-- If research shows that it's possible, we'll share a plan for how it will be achieved.
-- If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
-
-Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
 #### For the on-device database managed by the XMTP SDK
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
+
+#### For the current production XMTP Network
+
+Encrypted payloads are stored indefinitely.
 
 ### What are XMTP message storage and retrieval costs?
 
@@ -6100,253 +6107,6 @@ if (!codec) {
 
 :::
 
-## Support disappearing messages
-
-Disappearing messages are messages that are intended to be visible to users for only a short period of time. After the message expiration time passes, the messages are removed from the UI and deleted from local storage so the messages are no longer accessible to conversation participants.
-
-### App-level disappearing messages vs. network-level message expiration
-
-Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network.
-
-Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
-
-To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
-
-Disappearing messages can be understood as app-level privacy that helps avoid leaving an easily accessible record in a messaging UI, while XMTP mainnet message expiration is the mechanism by which messages are deleted from the network.
-
-### Enable disappearing messages for a conversation
-
-Conversation participants using apps that support disappearing messages will have a UX that honors the message expiration conditions. Conversation participants using apps that don't support disappearing messages won't experience disappearing message behavior.
-
-Messages abide by the disappearing message settings for the conversation.
-
-When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
-
-This includes setting the following conditions expressed in nanoseconds (ns):
-
-- `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
-- `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
-
-For example:
-
-1. Set `disappearStartingAtNs` to the current time, such as `1738620126404999936` (nanoseconds since the Unix epoch of January 1, 1970).
-2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
-3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
-
-To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
-
-### Set disappearing message settings on conversation create
-
-For example:
-
-:::code-group
-
-```js [Browser]
-// DM
-await client.conversations.newDm(inboxId, {
-  messageDisappearingSettings: {
-    fromNs: 1738620126404999936n,
-    inNs: 1800000000000000n,
-  },
-});
-
-// Group
-await client.conversations.newGroup([inboxId], {
-  messageDisappearingSettings: {
-    fromNs: 1738620126404999936n,
-    inNs: 1800000000000000n,
-  },
-});
-```
-
-```js [Node]
-// DM
-await client.conversations.newDm(inboxId, {
-  messageDisappearingSettings: {
-    fromNs: 1738620126404999936,
-    inNs: 1800000000000000,
-  },
-});
-
-// Group
-await client.conversations.newGroup([inboxId], {
-  messageDisappearingSettings: {
-    fromNs: 1738620126404999936,
-    inNs: 1800000000000000,
-  },
-});
-```
-
-```tsx [React Native]
-// DM
-await client.conversations.newConversation(
-  inboxId,
-  {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
-)
-
-// Group
-await client.conversations.newGroup(
-  [inboxId],
-  {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
-)
-```
-
-```kotlin [Kotlin]
-// DM
-client.conversations.newConversation(
-    inboxId,
-    disappearingMessageSettings = DisappearingMessageSettings(
-        disappearStartingAtNs = 1738620126404999936,
-        retentionDurationInNs = 1800000000000000
-    )
-)
-
-// Group
-client.conversations.newGroup(
-    [inboxId],
-    disappearingMessageSettings = DisappearingMessageSettings(
-        disappearStartingAtNs = 1738620126404999936,
-        retentionDurationInNs = 1800000000000000
-    )
-)
-```
-
-```swift [Swift]
-// DM
-try await client.conversations.newConversation(
-    with: inboxId,
-    disappearingMessageSettings: DisappearingMessageSettings(
-        disappearStartingAtNs: 1738620126404999936,
-        retentionDurationInNs: 1800000000000000
-    )
-)
-
-// Group
-try await client.conversations.newGroup(
-    with: [inboxId],
-    disappearingMessageSettings: DisappearingMessageSettings(
-        disappearStartingAtNs: 1738620126404999936,
-        retentionDurationInNs: 1800000000000000
-    )
-)
-```
-
-:::
-
-### Update disappearing message settings for an existing conversation
-
-For example:
-
-:::code-group
-
-```tsx [Browser]
-// Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(
-  1738620126404999936n,
-  1800000000000000n
-);
-
-// Clear disappearing message settings
-await conversation.removeMessageDisappearingSettings();
-```
-
-```tsx [Node]
-// Update disappearing message settings
-await conversation.updateMessageDisappearingSettings(
-  1738620126404999936,
-  1800000000000000
-);
-
-// Clear disappearing message settings
-await conversation.removeMessageDisappearingSettings();
-```
-
-```tsx [React Native]
-await conversation.updateDisappearingMessageSettings(updatedSettings);
-await conversation.clearDisappearingMessageSettings();
-```
-
-```kotlin [Kotlin]
-conversation.updateDisappearingMessageSettings(updatedSettings)
-conversation.clearDisappearingMessageSettings()
-```
-
-```swift [Swift]
-try await conversation.updateDisappearingMessageSettings(updatedSettings)
-try await conversation.clearDisappearingMessageSettings()
-```
-
-:::
-
-### Get the disappearing message settings for a conversation
-
-For example:
-
-:::code-group
-
-```tsx [Browser]
-// Get the disappearing message settings
-const settings = await conversation.messageDisappearingSettings();
-
-// Check if disappearing messages are enabled
-const isEnabled = await conversation.isDisappearingMessagesEnabled();
-```
-
-```tsx [Node]
-// Get the disappearing message settings
-const settings = conversation.messageDisappearingSettings();
-
-const isEnabled = conversation.isDisappearingMessagesEnabled();
-```
-
-```tsx [React Native]
-conversation.disappearingMessageSettings;
-conversation.isDisappearingMessagesEnabled();
-```
-
-```kotlin [Kotlin]
-conversation.disappearingMessageSettings
-conversation.isDisappearingMessagesEnabled
-```
-
-```swift [Swift]
-conversation.disappearingMessageSettings
-try conversation.isDisappearingMessagesEnabled()
-```
-
-:::
-
-### Automatic deletion from local storage
-
-A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
-
-To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
-
-### Automatic removal from UI
-
-Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
-
-### Receive a disappearing message
-
-On the receiving side, your app doesn't need to check expiration conditions manually. Receive and process messages as usual, and the background worker handles message expiration cleanup.
-
-### UX tips for disappearing messages
-
-To ensure that users understand which messages are disappearing messages and their behavior, consider implementing:
-
-- A distinct visual style: Style disappearing messages differently from regular messages (e.g., a different background color or icon) to indicate their temporary nature.
-- A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
-
 
 ## pages/chat-apps/core-messaging/group-metadata.mdx
 # Manage group chat metadata
@@ -7179,6 +6939,255 @@ If the identity is then added as an associated identity to inbox ID 1, the ident
 To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox ID 2 again, you can use the recovery identity for inbox ID 2 to add a different identity to inbox ID 2 and have the user use that identity access it.
 
 If you are interested in providing this functionality in your app and want some guidance, post to the [XMTP Community Forums](https://community.xmtp.org).
+
+
+## pages/chat-apps/core-messaging/disappearing-messages.mdx
+# Support disappearing messages
+
+Disappearing messages are messages that are intended to be visible to users for only a short period of time. After the message expiration time passes, the messages are removed from the UI and deleted from local storage so the messages are no longer accessible to conversation participants.
+
+## App-level disappearing messages vs. network-level message expiration
+
+Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network.
+
+Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
+
+To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
+
+Disappearing messages can be understood as app-level privacy that helps avoid leaving an easily accessible record in a messaging UI, while XMTP mainnet message expiration is the mechanism by which messages are deleted from the network.
+
+## Enable disappearing messages for a conversation
+
+Conversation participants using apps that support disappearing messages will have a UX that honors the message expiration conditions. Conversation participants using apps that don't support disappearing messages won't experience disappearing message behavior.
+
+Messages abide by the disappearing message settings for the conversation.
+
+When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
+
+This includes setting the following conditions expressed in nanoseconds (ns):
+
+- `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
+- `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
+
+For example:
+
+1. Set `disappearStartingAtNs` to the current time, such as `1738620126404999936` (nanoseconds since the Unix epoch of January 1, 1970).
+2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
+3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
+
+To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
+
+## Set disappearing message settings on conversation create
+
+For example:
+
+:::code-group
+
+```js [Browser]
+// DM
+await client.conversations.newDm(inboxId, {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936n,
+    inNs: 1800000000000000n,
+  },
+});
+
+// Group
+await client.conversations.newGroup([inboxId], {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936n,
+    inNs: 1800000000000000n,
+  },
+});
+```
+
+```js [Node]
+// DM
+await client.conversations.newDm(inboxId, {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936,
+    inNs: 1800000000000000,
+  },
+});
+
+// Group
+await client.conversations.newGroup([inboxId], {
+  messageDisappearingSettings: {
+    fromNs: 1738620126404999936,
+    inNs: 1800000000000000,
+  },
+});
+```
+
+```tsx [React Native]
+// DM
+await client.conversations.newConversation(
+  inboxId,
+  {
+    disappearingMessageSettings: DisappearingMessageSettings(
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    )
+  }
+)
+
+// Group
+await client.conversations.newGroup(
+  [inboxId],
+  {
+    disappearingMessageSettings: DisappearingMessageSettings(
+      disappearStartingAtNs: 1738620126404999936,
+      retentionDurationInNs: 1800000000000000
+    )
+  }
+)
+```
+
+```kotlin [Kotlin]
+// DM
+client.conversations.newConversation(
+    inboxId,
+    disappearingMessageSettings = DisappearingMessageSettings(
+        disappearStartingAtNs = 1738620126404999936,
+        retentionDurationInNs = 1800000000000000
+    )
+)
+
+// Group
+client.conversations.newGroup(
+    [inboxId],
+    disappearingMessageSettings = DisappearingMessageSettings(
+        disappearStartingAtNs = 1738620126404999936,
+        retentionDurationInNs = 1800000000000000
+    )
+)
+```
+
+```swift [Swift]
+// DM
+try await client.conversations.newConversation(
+    with: inboxId,
+    disappearingMessageSettings: DisappearingMessageSettings(
+        disappearStartingAtNs: 1738620126404999936,
+        retentionDurationInNs: 1800000000000000
+    )
+)
+
+// Group
+try await client.conversations.newGroup(
+    with: [inboxId],
+    disappearingMessageSettings: DisappearingMessageSettings(
+        disappearStartingAtNs: 1738620126404999936,
+        retentionDurationInNs: 1800000000000000
+    )
+)
+```
+
+:::
+
+## Update disappearing message settings for an existing conversation
+
+For example:
+
+:::code-group
+
+```tsx [Browser]
+// Update disappearing message settings
+await conversation.updateMessageDisappearingSettings(
+  1738620126404999936n,
+  1800000000000000n
+);
+
+// Clear disappearing message settings
+await conversation.removeMessageDisappearingSettings();
+```
+
+```tsx [Node]
+// Update disappearing message settings
+await conversation.updateMessageDisappearingSettings(
+  1738620126404999936,
+  1800000000000000
+);
+
+// Clear disappearing message settings
+await conversation.removeMessageDisappearingSettings();
+```
+
+```tsx [React Native]
+await conversation.updateDisappearingMessageSettings(updatedSettings);
+await conversation.clearDisappearingMessageSettings();
+```
+
+```kotlin [Kotlin]
+conversation.updateDisappearingMessageSettings(updatedSettings)
+conversation.clearDisappearingMessageSettings()
+```
+
+```swift [Swift]
+try await conversation.updateDisappearingMessageSettings(updatedSettings)
+try await conversation.clearDisappearingMessageSettings()
+```
+
+:::
+
+## Get the disappearing message settings for a conversation
+
+For example:
+
+:::code-group
+
+```tsx [Browser]
+// Get the disappearing message settings
+const settings = await conversation.messageDisappearingSettings();
+
+// Check if disappearing messages are enabled
+const isEnabled = await conversation.isDisappearingMessagesEnabled();
+```
+
+```tsx [Node]
+// Get the disappearing message settings
+const settings = conversation.messageDisappearingSettings();
+
+const isEnabled = conversation.isDisappearingMessagesEnabled();
+```
+
+```tsx [React Native]
+conversation.disappearingMessageSettings;
+conversation.isDisappearingMessagesEnabled();
+```
+
+```kotlin [Kotlin]
+conversation.disappearingMessageSettings
+conversation.isDisappearingMessagesEnabled
+```
+
+```swift [Swift]
+conversation.disappearingMessageSettings
+try conversation.isDisappearingMessagesEnabled()
+```
+
+:::
+
+## Automatic deletion from local storage
+
+A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
+
+To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+
+## Automatic removal from UI
+
+Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
+
+## Receive a disappearing message
+
+On the receiving side, your app doesn't need to check expiration conditions manually. Receive and process messages as usual, and the background worker handles message expiration cleanup.
+
+## UX tips for disappearing messages
+
+To ensure that users understand which messages are disappearing messages and their behavior, consider implementing:
+
+- A distinct visual style: Style disappearing messages differently from regular messages (e.g., a different background color or icon) to indicate their temporary nature.
+- A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
 
 
 ## pages/chat-apps/core-messaging/create-conversations.mdx
@@ -8151,6 +8160,20 @@ To ensure seamless app experiences persist the `dbEncryptionKey` securely, and m
 The `dbEncryptionKey` client option is not used by the Browser SDK for due to technical limitations in web environments. In this case, be aware that the database is not encrypted.
 
 To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+### Database encryption key loss during iOS device transfers
+
+When you transfer data to a new iOS device, the local database file may be moved without the encryption key, causing decryption errors. This commonly occurs when users choose Apple's direct transfer option during new device setup, as Apple aggressively moves files to the new device. To prevent this issue, exclude the database directory from backups and device transfers.
+
+For example, if you set a custom `dbPath` to a known directory, you can mark it as excluded from backups in iOS:
+
+```swift
+func addSkipBackupAttribute(var folder: URL) throws {
+  try folder.setResourceValue(true, forKey: .isExcludedFromBackupKey)
+}
+```
+
+To learn more about this function, see [isExcludedFromBackupKey](https://developer.apple.com/documentation/foundation/urlresourcekey/isexcludedfrombackupkey) in Apple's documentation.
 
 ### View an encrypted database
 
@@ -9579,6 +9602,8 @@ XMTP implements quantum-resistant encryption to protect against "Harvest Now, De
 
 The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
 
+To learn more about how XMTP achieves quantum resistance, see [XMTP and the Future of Privacy in a Quantum World](https://community.xmtp.org/t/xmtp-and-the-future-of-privacy-in-a-quantum-world/1079).
+
 ## User anonymity
 
 Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
@@ -9990,13 +10015,15 @@ Group chats can have metadata like names, descriptions, and images to help users
 To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
 :::
 
-## Available metadata fields
+## Group metadata
+
+### Available metadata fields
 
 - `group_name`: The name of the group chat
 - `description`: A description of the group chat
 - `image_url`: A URL pointing to an image for the group chat
 
-## Get and update metadata
+### Get and update metadata
 
 ```js [Node]
 // Get metadata
@@ -10010,22 +10037,17 @@ await group.updateDescription('New Group Description');
 await group.updateImageUrl('newurl.com');
 ```
 
-## Manage group chat membership
-
-:::tip[Quickstart]
-To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
-:::
+## Group membership
 
 The maximum group chat size is 250 members.
 
 ### Add members
 
-You can add members directly by their Ethereum addresses or by their inbox IDs
+Add members directly by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Add members by Ethereum address
-await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
-
+await ctx.addMembersWithAddresses(group, [address1, address2]);
 
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
@@ -10037,8 +10059,7 @@ Remove members from the group by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Remove members by address
-//needs to send the group to the context
-await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+await ctx.removeMembersWithAddresses(group, [address1, address2]);
 
 // Remove members by inbox ID
 await group.removeMembers([inboxId]);
@@ -10055,26 +10076,6 @@ await group.sync();
 // Get all members
 const members = await group.members();
 ```
-
-## Manage group chat admins
-
-```js [Node]
-// Check admin status
-const isAdmin = group.isAdmin(inboxId);
-const isSuperAdmin = group.isSuperAdmin(inboxId);
-
-// List admins
-const admins = group.admins;
-const superAdmins = group.superAdmins;
-
-// Add/remove admin status
-await group.addAdmin(inboxId);
-await group.addSuperAdmin(inboxId);
-await group.removeAdmin(inboxId);
-await group.removeSuperAdmin(inboxId);
-```
-
-## Example usage
 
 Get detailed information about group members:
 
@@ -10097,6 +10098,36 @@ agent.on('text', async (ctx) => {
     }
   }
 });
+```
+
+## Group roles
+
+Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
+
+### Available roles
+
+- **Member** - Default role for all group participants
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level (creator starts as super admin)
+
+### Manage roles
+
+Check and assign roles to group members:
+
+```js [Node]
+// Check admin status
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// List admins
+const admins = group.admins;
+const superAdmins = group.superAdmins;
+
+// Add/remove admin status
+await group.addAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
 ```
 
 
@@ -10377,7 +10408,6 @@ Understanding XMTP's installation and inbox limits is critical for production de
 
 These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
 
-
 ## Understand local database files
 
 The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
@@ -10395,7 +10425,6 @@ xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688
 - `xmtp-production`: Environment prefix
 - `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
 - `.db3`: SQLite database file extension
-
 
 ## Understand installations
 
@@ -10450,23 +10479,23 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
 2. CLI script: [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
 
-  ```bash
-  yarn revoke <inbox-id> <installations-to-exclude>
-  ```
-
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```
 
 
 ## pages/agents/build-agents/group-permissions.mdx
-# Understand the group permissions system
+# Understand group permissions
+
+The group permissions system controls what actions different members can take in a group chat. This guide explains how the system works conceptually. For practical code examples of managing roles and permissions, see [Manage group chats](/agents/build-agents/groups).
 
 ## Member statuses
 
-Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat:
 
-- Member
-  - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
-- Admin
-- Super admin
+- **Member** - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level with full control over the group
 
 ## Options
 
@@ -10538,6 +10567,14 @@ If you aren't opinionated and don't set any permissions and options, groups will
 - Update group metadata - All members
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Next steps
+
+Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
+
+- Adding and removing members
+- Assigning roles
+- Managing group metadata
 
 
 ## pages/agents/get-started/faq.mdx
@@ -10639,14 +10676,13 @@ Yes, messages are limited to just under 1MB. For larger content, use [remote att
 
 No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
-
 ## Domains
 
 ### How do I register a domain for my agent?
 
 #### 1. Register a new ENS domain
 
-1. Go to https://app.ens.domains/
+1. Go to [https://app.ens.domains](https://app.ens.domains/)
 2. Search for your desired name (e.g., "myagent.eth")
 3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
 4. Wait ~1 minute for registration to complete
@@ -10660,14 +10696,14 @@ No messaging fees currently. Messages are stored off-chain on the XMTP network.
 
 #### 3. Link ENS domain to agent wallet
 
-1. Go to https://app.ens.domains/yourdomain.eth
+1. Go to [https://app.ens.domains](https://app.ens.domains)`/yourdomain.eth`
 2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
 3. Sign the transaction
 
 #### 4. Set as primary name
 
 1. Switch MetaMask to the agent wallet account
-2. Go to https://app.ens.domains/
+2. Go to [https://app.ens.domains](https://app.ens.domains/)
 3. Click "My account" → Find your domain → Click "Set as primary name"
 4. Sign the transaction
 
@@ -10678,7 +10714,6 @@ No messaging fees currently. Messages are stored off-chain on the XMTP network.
 3. Agent now owns the domain (can update records using private key)
 
 **Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
-
 
 ## Framework integration
 
@@ -10813,7 +10848,7 @@ To learn more, see [Manage agent local database files and installations](/agents
 
 :::
 
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history. 
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
 
 ### Set environment variables
 
@@ -11946,7 +11981,7 @@ The markdown content type supports the following formatting patterns:
 - \`inline code\`
 - \`\`\`code block\`\`\`
 - > block quote
-- [link](https://www.example.com)
+- [link text](https://www.example.com)
 
 ### Lists
 
@@ -11958,7 +11993,6 @@ The markdown content type supports the following formatting patterns:
 
 - Standard markdown table syntax with `|` separators
 - Header rows with `---` separators
-
 
 ### Example usage
 
@@ -13514,40 +13548,40 @@ func main() {
 package main
 
 import (
-	"context"
-	"log"
-	"time"
+ "context"
+ "log"
+ "time"
 
-	"github.com/xmtp/xmtpd/pkg/gateway"
-	"github.com/xmtp/xmtpd/pkg/gateway/authorizers"
+ "github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/xmtp/xmtpd/pkg/gateway/authorizers"
 )
 
 func main() {
-	cfg := gateway.MustLoadConfig()
-	redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
+ cfg := gateway.MustLoadConfig()
+ redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
 
-	authorizer := authorizers.NewRateLimitBuilder().
-		WithLogger(gateway.MustCreateLogger(cfg)).
-		WithRedis(redis).
-		// Set rate limits to 50 requests/minute and 250 requests/hour
-		WithLimits(authorizers.RateLimit{
-			Capacity:    50,
-			RefillEvery: time.Minute,
-		}, authorizers.RateLimit{
-			Capacity:    250,
-			RefillEvery: time.Hour,
-		}).
-		MustBuild()
+ authorizer := authorizers.NewRateLimitBuilder().
+  WithLogger(gateway.MustCreateLogger(cfg)).
+  WithRedis(redis).
+  // Set rate limits to 50 requests/minute and 250 requests/hour
+  WithLimits(authorizers.RateLimit{
+   Capacity:    50,
+   RefillEvery: time.Minute,
+  }, authorizers.RateLimit{
+   Capacity:    250,
+   RefillEvery: time.Hour,
+  }).
+  MustBuild()
 
-	gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
-		WithRedisClient(redis).
-		WithAuthorizers(authorizer).
-		Build()
-	if err != nil {
-		log.Fatalf("Failed to build gateway service: %v", err)
-	}
+ gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
+  WithRedisClient(redis).
+  WithAuthorizers(authorizer).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
 
-	gatewayService.WaitForShutdown()
+ gatewayService.WaitForShutdown()
 }
 
 ```
@@ -13606,7 +13640,7 @@ You can start with the [example gateway service repository](https://github.com/x
 3. Configure your rate limits
 4. Deploy your custom image on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
 
-#### Additional recommendations
+### Additional recommendations
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
@@ -13718,4 +13752,4 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
 
 # Summary
 
-This documentation contains 91 files.
+This documentation contains 92 files.

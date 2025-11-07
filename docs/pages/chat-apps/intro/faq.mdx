@@ -115,33 +115,24 @@ See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/
 
 ### Where are XMTP messages stored?
 
-XMTP stores messages in the XMTP network before and after retrieval. App-specific message storage policies may vary.
+XMTP stores messages in the XMTP Network before and after retrieval. App-specific message storage policies may vary.
 
 ### What are the XMTP message retention policies?
 
-#### For XMTP's blockchain and node databases
+#### For xmtpd and the decentralized XMTP Network
 
-Currently, encrypted payloads are stored indefinitely.
+xmtpd (XMTP daemon) is the XMTP node software that powers the decentralized XMTP Testnet, as well as the forthcoming decentralized XMTP Mainnet.
 
-In the coming year, a retention policy will be added.
+To learn about xmtpd's message retention policies, see [XIP-69: Message retention and expiry strategy for xmtpd](https://community.xmtp.org/t/xip-69-message-retention-and-expiry-strategy-for-xmtpd/955)
 
-This retention policy would represent a minimum retention period, not a maximum.
-
-For example, a retention policy may look something like the following, though specifics are subject to change:
-
-- One year for messages
-- Indefinite storage for account information and personal preferences
-
-The team is researching a way to provide this indefinite storage and have it scale forever.
-
-- If research shows that it's possible, we'll share a plan for how it will be achieved.
-- If research shows that it isn't possible, we'll share a plan that shows how retention periods will provide a permanent solution to storage scaling.
-
-Have questions or feedback regarding message storage and retention? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
 
 #### For the on-device database managed by the XMTP SDK
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
+
+#### For the current production XMTP Network
+
+Encrypted payloads are stored indefinitely.
 
 ### What are XMTP message storage and retrieval costs?
 
