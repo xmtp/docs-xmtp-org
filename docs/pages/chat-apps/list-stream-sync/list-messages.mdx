@@ -55,8 +55,21 @@ val dmMessages = dm.messages(limit = 50)
 ```
 
 ```tsx [React Native]
-// Not yet available in React Native
-// Coming soon
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10 });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936;
+const newMessages = await group.messages({
+  afterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50 });
 ```
 
 ```tsx [Browser]
@@ -131,7 +144,6 @@ val dmUnreadCount = dm.countMessages(afterNs = lastCheckTimestamp)
 
 ```tsx [React Native]
 // Not yet available in React Native
-// Coming soon
 ```
 
 ```tsx [Browser]
@@ -166,143 +178,6 @@ const dm = await client.conversations.findOrCreateDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });
-```
-
-:::
-
-## Implement unread message badges
-
-Here's a complete example of tracking unread messages for conversations:
-
-:::code-group
-
-```swift [Swift]
-// Store last check time when user opens a conversation
-func markConversationAsRead(_ conversation: Conversation) {
-    let currentTime = Int64(Date().timeIntervalSince1970 * 1_000_000_000)
-    UserDefaults.standard.set(currentTime, forKey: "lastCheck_\(conversation.id)")
-}
-
-// Get unread count for a conversation
-func getUnreadCount(_ conversation: Conversation) throws -> Int64 {
-    guard let lastCheckTime = UserDefaults.standard.object(
-        forKey: "lastCheck_\(conversation.id)"
-    ) as? Int64 else {
-        // No last check time, count all messages
-        return try conversation.countMessages()
-    }
-
-    return try conversation.countMessages(afterNs: lastCheckTime)
-}
-
-// Display unread counts for all conversations
-let conversations = try await client.conversations.list()
-for conversation in conversations {
-    let unreadCount = try getUnreadCount(conversation)
-    if unreadCount > 0 {
-        print("Conversation \(conversation.id): \(unreadCount) unread")
-    }
-}
-```
-
-```kotlin [Kotlin]
-// Store last check time when user opens a conversation
-fun markConversationAsRead(context: Context, conversation: Conversation) {
-    val currentTime = System.currentTimeMillis() * 1_000_000
-    context.getSharedPreferences("xmtp", Context.MODE_PRIVATE)
-        .edit()
-        .putLong("lastCheck_${conversation.id}", currentTime)
-        .apply()
-}
-
-// Get unread count for a conversation
-suspend fun getUnreadCount(
-    context: Context,
-    conversation: Conversation
-): Long {
-    val lastCheckTime = context.getSharedPreferences("xmtp", Context.MODE_PRIVATE)
-        .getLong("lastCheck_${conversation.id}", 0)
-
-    return if (lastCheckTime == 0L) {
-        // No last check time, count all messages
-        conversation.countMessages()
-    } else {
-        conversation.countMessages(afterNs = lastCheckTime)
-    }
-}
-
-// Display unread counts for all conversations
-val conversations = client.conversations.list()
-conversations.forEach { conversation ->
-    val unreadCount = getUnreadCount(context, conversation)
-    if (unreadCount > 0) {
-        println("Conversation ${conversation.id}: $unreadCount unread")
-    }
-}
-```
-
-```tsx [Browser]
-// Store last check time when user opens a conversation
-function markConversationAsRead(conversation: Conversation) {
-  const currentTime = BigInt(Date.now() * 1_000_000);
-  localStorage.setItem(`lastCheck_${conversation.id}`, currentTime.toString());
-}
-
-// Get unread count for a conversation
-async function getUnreadCount(conversation: Conversation): Promise<number> {
-  const lastCheckTime = localStorage.getItem(`lastCheck_${conversation.id}`);
-
-  if (!lastCheckTime) {
-    // No last check time, count all messages
-    return await conversation.countMessages();
-  }
-
-  return await conversation.countMessages({
-    sentAfterNs: BigInt(lastCheckTime),
-  });
-}
-
-// Display unread counts for all conversations
-const conversations = await client.conversations.list();
-for (const conversation of conversations) {
-  const unreadCount = await getUnreadCount(conversation);
-  if (unreadCount > 0) {
-    console.log(`Conversation ${conversation.id}: ${unreadCount} unread`);
-  }
-}
-```
-
-```tsx [Node]
-// Store last check time when user opens a conversation
-const lastCheckTimes = new Map<string, bigint>();
-
-function markConversationAsRead(conversation: Conversation) {
-  const currentTime = BigInt(Date.now() * 1_000_000);
-  lastCheckTimes.set(conversation.id, currentTime);
-}
-
-// Get unread count for a conversation
-async function getUnreadCount(conversation: Conversation): Promise<number> {
-  const lastCheckTime = lastCheckTimes.get(conversation.id);
-
-  if (!lastCheckTime) {
-    // No last check time, count all messages
-    return await conversation.countMessages();
-  }
-
-  return await conversation.countMessages({
-    sentAfterNs: lastCheckTime,
-  });
-}
-
-// Display unread counts for all conversations
-const conversations = await client.conversations.list();
-for (const conversation of conversations) {
-  const unreadCount = await getUnreadCount(conversation);
-  if (unreadCount > 0) {
-    console.log(`Conversation ${conversation.id}: ${unreadCount} unread`);
-  }
-}
 ```
 
 :::
@@ -314,8 +189,13 @@ Here's how to implement pagination to load messages in chunks:
 :::code-group
 
 ```swift [Swift]
+// Initial load
+var currentMessages = try await group.messages(limit: 20)
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
 func loadMoreMessages(conversation: Conversation, pageSize: Int = 20) async throws -> [DecodedMessage] {
-    // Get the oldest message currently loaded
+    // Get the oldest message currently loaded from your tracked messages
     let oldestMessage = currentMessages.last
 
     // Load the next page of messages before the oldest one
@@ -328,20 +208,22 @@ func loadMoreMessages(conversation: Conversation, pageSize: Int = 20) async thro
     return messages
 }
 
-// Initial load
-var currentMessages = try await group.messages(limit: 20)
-
 // Load next page
 let nextPage = try await loadMoreMessages(conversation: group)
 currentMessages.append(contentsOf: nextPage)
 ```
 
 ```kotlin [Kotlin]
+// Initial load
+var currentMessages = group.messages(limit = 20).toMutableList()
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
 suspend fun loadMoreMessages(
     conversation: Conversation,
     pageSize: Int = 20
 ): List<DecodedMessage> {
-    // Get the oldest message currently loaded
+    // Get the oldest message currently loaded from your tracked messages
     val oldestMessage = currentMessages.lastOrNull()
 
     // Load the next page of messages before the oldest one
@@ -352,14 +234,37 @@ suspend fun loadMoreMessages(
     )
 }
 
-// Initial load
-var currentMessages = group.messages(limit = 20).toMutableList()
-
 // Load next page
 val nextPage = loadMoreMessages(group)
 currentMessages.addAll(nextPage)
 ```
 
+```tsx [React Native]
+// Initial load
+let currentMessages = await group.messages({ limit: 20 });
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded from your tracked messages
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: pageSize,
+    beforeNs: oldestMessage?.sentAtNs,
+    direction: 'DESCENDING',
+  });
+}
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
 ```tsx [Browser]
 async function loadMoreMessages(
   conversation: Conversation,
@@ -410,254 +315,79 @@ currentMessages = [...currentMessages, ...nextPage];
 
 :::
 
-## Filter messages and counts
+## Filter messages and message counts
 
-All the filtering options work with both `messages()` and `countMessages()`. The examples below show `countMessages()`, but you can use the same parameters with `messages()` to retrieve filtered message lists.
-
-### Filter by time range
-
-Filter messages within a specific time range using nanosecond timestamps:
+Apply the same filtering parameters to both retrieve filtered messages with `messages()` or get counts of filtered messages with `countMessages()`.
 
 :::code-group
 
 ```swift [Swift]
-// Count messages after a specific time
-let afterTimestamp: Int64 = 1738620126404999936
-let countAfter = try group.countMessages(afterNs: afterTimestamp)
-
-// Count messages before a specific time
-let beforeTimestamp: Int64 = 1738620126404999936
-let countBefore = try group.countMessages(beforeNs: beforeTimestamp)
-
-// Count messages in a time range
-let countInRange = try group.countMessages(
-    afterNs: afterTimestamp,
-    beforeNs: beforeTimestamp
-)
-```
-
-```kotlin [Kotlin]
-// Count messages after a specific time
-val afterTimestamp: Long = 1738620126404999936
-val countAfter = group.countMessages(afterNs = afterTimestamp)
-
-// Count messages before a specific time
-val beforeTimestamp: Long = 1738620126404999936
-val countBefore = group.countMessages(beforeNs = beforeTimestamp)
-
-// Count messages in a time range
-val countInRange = group.countMessages(
-    afterNs = afterTimestamp,
-    beforeNs = beforeTimestamp
-)
-```
-
-```tsx [Browser]
-// Count messages after a specific time
-const afterTimestamp = 1738620126404999936n;
-const countAfter = await group.countMessages({
-  sentAfterNs: afterTimestamp,
-});
-
-// Count messages before a specific time
-const beforeTimestamp = 1738620126404999936n;
-const countBefore = await group.countMessages({
-  sentBeforeNs: beforeTimestamp,
-});
-
-// Count messages in a time range
-const countInRange = await group.countMessages({
-  sentAfterNs: afterTimestamp,
-  sentBeforeNs: beforeTimestamp,
-});
-```
-
-```tsx [Node]
-// Count messages after a specific time
-const afterTimestamp = 1738620126404999936n;
-const countAfter = await group.countMessages({
-  sentAfterNs: afterTimestamp,
-});
-
-// Count messages before a specific time
-const beforeTimestamp = 1738620126404999936n;
-const countBefore = await group.countMessages({
-  sentBeforeNs: beforeTimestamp,
-});
-
-// Count messages in a time range
-const countInRange = await group.countMessages({
-  sentAfterNs: afterTimestamp,
-  sentBeforeNs: beforeTimestamp,
-});
-```
-
-:::
-
-### Filter by delivery status
-
-Count only messages with a specific delivery status:
-
-:::code-group
-
-```swift [Swift]
-// Count only published messages
-let publishedCount = try group.countMessages(
-    deliveryStatus: .published
-)
-
-// Count unpublished messages
-let unpublishedCount = try group.countMessages(
-    deliveryStatus: .unpublished
-)
-
-// Count failed messages
-let failedCount = try group.countMessages(
-    deliveryStatus: .failed
-)
-```
-
-```kotlin [Kotlin]
-// Count only published messages
-val publishedCount = group.countMessages(
-    deliveryStatus = DecodedMessage.MessageDeliveryStatus.PUBLISHED
-)
-
-// Count unpublished messages
-val unpublishedCount = group.countMessages(
-    deliveryStatus = DecodedMessage.MessageDeliveryStatus.UNPUBLISHED
-)
-
-// Count failed messages
-val failedCount = group.countMessages(
-    deliveryStatus = DecodedMessage.MessageDeliveryStatus.FAILED
-)
-```
-
-```tsx [Browser]
-// Count only published messages
-const publishedCount = await group.countMessages({
-  deliveryStatus: 'published',
-});
-
-// Count unpublished messages
-const unpublishedCount = await group.countMessages({
-  deliveryStatus: 'unpublished',
-});
-
-// Count failed messages
-const failedCount = await group.countMessages({
-  deliveryStatus: 'failed',
-});
-```
-
-```tsx [Node]
-// Count only published messages
-const publishedCount = await group.countMessages({
-  deliveryStatus: 'published',
-});
-
-// Count unpublished messages
-const unpublishedCount = await group.countMessages({
-  deliveryStatus: 'unpublished',
-});
-
-// Count failed messages
-const failedCount = await group.countMessages({
-  deliveryStatus: 'failed',
-});
-```
-
-:::
-
-### Exclude specific content types
-
-Exclude certain content types from the count, such as reactions or read receipts:
-
-:::code-group
-
-```swift [Swift]
-// Count messages excluding reactions
-let countWithoutReactions = try group.countMessages(
+// Using messages()
+let messages = try await group.messages(
+    afterNs: 1738620126404999936,
+    deliveryStatus: .published,
     excludeContentTypes: [.reaction]
 )
 
-// Exclude multiple content types
-let countTextOnly = try group.countMessages(
-    excludeContentTypes: [.reaction, .readReceipt]
+// Using countMessages()
+let count = try group.countMessages(
+    afterNs: 1738620126404999936,
+    excludeSenderInboxIds: ["inbox_id_1"]
 )
 ```
 
 ```kotlin [Kotlin]
-// Count messages excluding reactions
-val reactionContentType = FfiContentType(
-    authorityId = "xmtp.org",
-    typeId = "reaction",
-    versionMajor = 1,
-    versionMinor = 0
+// Using messages()
+val reactionType = FfiContentType("xmtp.org", "reaction", 1, 0)
+val messages = group.messages(
+    afterNs = 1738620126404999936,
+    deliveryStatus = DecodedMessage.MessageDeliveryStatus.PUBLISHED,
+    excludedContentTypes = listOf(reactionType)
 )
-val countWithoutReactions = group.countMessages(
-    excludedContentTypes = listOf(reactionContentType)
+
+// Using countMessages()
+val count = group.countMessages(
+    afterNs = 1738620126404999936,
+    excludeSenderInboxIds = listOf("inbox_id_1")
 )
 ```
 
+```tsx [React Native]
+const messages = await group.messages({
+  afterNs: 1738620126404999936,
+  deliveryStatus: 'published',
+  excludeContentTypes: ['reaction'],
+  excludeSenderInboxIds: ['inbox_id_1'],
+});
+```
+
 ```tsx [Browser]
-// Count messages excluding reactions
-const countWithoutReactions = await group.countMessages({
+// Using messages()
+const messages = await group.messages({
+  sentAfterNs: 1738620126404999936n,
+  deliveryStatus: 'published',
   excludeContentTypes: [ContentType.Reaction],
 });
 
-// Exclude multiple content types
-const countTextOnly = await group.countMessages({
-  excludeContentTypes: [ContentType.Reaction, ContentType.ReadReceipt],
+// Using countMessages()
+const count = await group.countMessages({
+  sentAfterNs: 1738620126404999936n,
+  excludeSenderInboxIds: ['inbox_id_1'],
 });
 ```
 
 ```tsx [Node]
-// Count messages excluding reactions
-const countWithoutReactions = await group.countMessages({
+// Using messages()
+const messages = await group.messages({
+  sentAfterNs: 1738620126404999936n,
+  deliveryStatus: 'published',
   excludeContentTypes: [ContentType.Reaction],
 });
 
-// Exclude multiple content types
-const countTextOnly = await group.countMessages({
-  excludeContentTypes: [ContentType.Reaction, ContentType.ReadReceipt],
-});
-```
-
-:::
-
-### Exclude messages from specific senders
-
-Exclude messages sent by specific inbox IDs:
-
-:::code-group
-
-```swift [Swift]
-// Exclude messages from specific users
-let countExcludingSenders = try group.countMessages(
-    excludeSenderInboxIds: ["inbox_id_1", "inbox_id_2"]
-)
-```
-
-```kotlin [Kotlin]
-// Exclude messages from specific users
-val countExcludingSenders = group.countMessages(
-    excludeSenderInboxIds = listOf("inbox_id_1", "inbox_id_2")
-)
-```
-
-```tsx [Browser]
-// Exclude messages from specific users
-const countExcludingSenders = await group.countMessages({
-  excludeSenderInboxIds: ['inbox_id_1', 'inbox_id_2'],
-});
-```
-
-```tsx [Node]
-// Exclude messages from specific users
-const countExcludingSenders = await group.countMessages({
-  excludeSenderInboxIds: ['inbox_id_1', 'inbox_id_2'],
+// Using countMessages()
+const count = await group.countMessages({
+  sentAfterNs: 1738620126404999936n,
+  excludeSenderInboxIds: ['inbox_id_1'],
 });
 ```
 
