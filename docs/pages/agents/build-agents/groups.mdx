@@ -38,7 +38,7 @@ Add members directly by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Add members by Ethereum address
-await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
+await ctx.addMembersWithAddresses(group, [address1, address2]);
 
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
@@ -50,7 +50,7 @@ Remove members from the group by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Remove members by address
-await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+await ctx.removeMembersWithAddresses(group, [address1, address2]);
 
 // Remove members by inbox ID
 await group.removeMembers([inboxId]);
@@ -98,7 +98,7 @@ Members can be assigned different roles with varying permission levels. To learn
 ### Available roles
 
 - **Member** - Default role for all group participants
-- **Admin** - Members with elevated permissions  
+- **Admin** - Members with elevated permissions
 - **Super admin** - Highest permission level (creator starts as super admin)
 
 ### Manage roles

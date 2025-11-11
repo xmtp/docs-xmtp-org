@@ -52,7 +52,7 @@ const TileGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 interface TileProps {
-  href: string;
+  href?: string;
   title: string;
   description: string;
   icon?: string;
@@ -88,10 +88,28 @@ const Tile: React.FC<TileProps> = ({
   const content = (
     <>
       {icon && <span className="custom-homepage-tile-icon">{icon}</span>}
-      <h2 className="custom-homepage-tile-title">{title}</h2>
+      <h2 className="custom-homepage-tile-title">
+        {title}
+        {isExternal && <ExternalLinkIcon />}
+      </h2>
       <p className="custom-homepage-tile-description">{description}</p>
     </>
   );
+
+  if (href) {
+    if (isExternal) {
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="custom-homepage-tile custom-homepage-tile-link">
+          {content}
+        </a>
+      );
+    }
+    return (
+      <Link to={href} className="custom-homepage-tile custom-homepage-tile-link">
+        {content}
+      </Link>
+    );
+  }
 
   return (
     <div className="custom-homepage-tile">

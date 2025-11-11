@@ -44,7 +44,7 @@ await alix.conversations.list(['allowed']);
 
 // List only active conversations (simplified usage)
 const alixConvoCount1 = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
@@ -115,12 +115,14 @@ for (const conversation of allConversations) {
 ```
 
 ```js [Node]
-// Check if user is active in a specific conversation  
+// Check if user is active in a specific conversation
 const isUserActive = conversation.isActive;
 console.log('User is active:', isUserActive);
 
 // Filter active conversations (direct property access)
-const activeConversations = allConversations.filter(conversation => conversation.isActive);
+const activeConversations = allConversations.filter(
+  (conversation) => conversation.isActive
+);
 ```
 
 ```tsx [React Native]
@@ -138,7 +140,7 @@ for (const conversation of allConversations) {
 
 // Or filter conversations by active status when listing (simplified)
 const conversations = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 ```
 
