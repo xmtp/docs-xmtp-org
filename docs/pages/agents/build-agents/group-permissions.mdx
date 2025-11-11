@@ -1,13 +1,14 @@
-# Understand the group permissions system
+# Understand group permissions
+
+The group permissions system controls what actions different members can take in a group chat. This guide explains how the system works conceptually. For practical code examples of managing roles and permissions, see [Manage group chats](/agents/build-agents/groups).
 
 ## Member statuses
 
-Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat. These are the available member statuses:
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat:
 
-- Member
-  - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
-- Admin
-- Super admin
+- **Member** - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level with full control over the group
 
 ## Options
 
@@ -79,3 +80,11 @@ If you aren't opinionated and don't set any permissions and options, groups will
 - Update group metadata - All members
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Next steps
+
+Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
+
+- Adding and removing members
+- Assigning roles
+- Managing group metadata

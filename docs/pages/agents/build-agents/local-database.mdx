@@ -18,7 +18,6 @@ Understanding XMTP's installation and inbox limits is critical for production de
 
 These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
 
-
 ## Understand local database files
 
 The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
@@ -36,7 +35,6 @@ xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688
 - `xmtp-production`: Environment prefix
 - `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
 - `.db3`: SQLite database file extension
-
 
 ## Understand installations
 
@@ -91,7 +89,6 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
 2. CLI script: [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
 
-  ```bash
-  yarn revoke <inbox-id> <installations-to-exclude>
-  ```
-
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```

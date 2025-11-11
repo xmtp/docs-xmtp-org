@@ -44,7 +44,7 @@ await alix.conversations.list(['allowed']);
 
 // List only active conversations (simplified usage)
 const alixConvoCount1 = await alix.conversations.list({
-  isActive: true // Only show active conversations
+  isActive: true, // Only show active conversations
 });
 
 // List Conversation items and return only the fields set to true. Optimize data transfer
