@@ -324,15 +324,15 @@ Apply the same filtering parameters to both retrieve filtered messages with `mes
 ```swift [Swift]
 // Using messages()
 let messages = try await group.messages(
-    afterNs: 1738620126404999936,
-    deliveryStatus: .published,
-    excludeContentTypes: [.reaction]
+    afterNs: 1738620126404999936, // Filter by time
+    deliveryStatus: .published, // Filter by delivery status
+    excludeContentTypes: [.reaction] // Exclude content types
 )
 
 // Using countMessages()
 let count = try group.countMessages(
-    afterNs: 1738620126404999936,
-    excludeSenderInboxIds: ["inbox_id_1"]
+    afterNs: 1738620126404999936, // Filter by time
+    excludeSenderInboxIds: ["inbox_id_1"] // Exclude senders
 )
 ```
 
@@ -340,54 +340,56 @@ let count = try group.countMessages(
 // Using messages()
 val reactionType = FfiContentType("xmtp.org", "reaction", 1, 0)
 val messages = group.messages(
-    afterNs = 1738620126404999936,
-    deliveryStatus = DecodedMessage.MessageDeliveryStatus.PUBLISHED,
-    excludedContentTypes = listOf(reactionType)
+    afterNs = 1738620126404999936, // Filter by time
+    deliveryStatus = DecodedMessage.MessageDeliveryStatus.PUBLISHED, // Filter by delivery status
+    excludedContentTypes = listOf(reactionType) // Exclude content types
 )
 
 // Using countMessages()
 val count = group.countMessages(
-    afterNs = 1738620126404999936,
-    excludeSenderInboxIds = listOf("inbox_id_1")
+    afterNs = 1738620126404999936, // Filter by time
+    excludeSenderInboxIds = listOf("inbox_id_1") // Exclude senders
 )
 ```
 
 ```tsx [React Native]
+// Using messages()
 const messages = await group.messages({
-  afterNs: 1738620126404999936,
-  deliveryStatus: 'published',
-  excludeContentTypes: ['reaction'],
-  excludeSenderInboxIds: ['inbox_id_1'],
+  afterNs: 1738620126404999936, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: ['reaction'], // Exclude content types
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
 });
+// React Native does not yet include countMessages()
 ```
 
 ```tsx [Browser]
 // Using messages()
 const messages = await group.messages({
-  sentAfterNs: 1738620126404999936n,
-  deliveryStatus: 'published',
-  excludeContentTypes: [ContentType.Reaction],
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: [ContentType.Reaction], // Exclude content types
 });
 
 // Using countMessages()
 const count = await group.countMessages({
-  sentAfterNs: 1738620126404999936n,
-  excludeSenderInboxIds: ['inbox_id_1'],
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
 });
 ```
 
 ```tsx [Node]
 // Using messages()
 const messages = await group.messages({
-  sentAfterNs: 1738620126404999936n,
-  deliveryStatus: 'published',
-  excludeContentTypes: [ContentType.Reaction],
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: [ContentType.Reaction], // Exclude content types
 });
 
 // Using countMessages()
 const count = await group.countMessages({
-  sentAfterNs: 1738620126404999936n,
-  excludeSenderInboxIds: ['inbox_id_1'],
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
 });
 ```
 
