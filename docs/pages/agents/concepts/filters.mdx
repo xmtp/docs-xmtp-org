@@ -53,5 +53,46 @@ if (f.isText(ctx.message)) {
 - `isRemoteAttachment`
 - `isText`
 - `isTextReply`
+- `usesCodec`
+
+### `usesCodec` - Generic content type checking
+
+The `usesCodec` filter is a generic function that allows you to check if a message uses a specific content codec and provides proper TypeScript type narrowing:
+
+```ts
+import { Agent, filter } from '@xmtp/agent-sdk';
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import { ReplyCodec } from '@xmtp/content-type-reply';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('unknownMessage', async (ctx) => {
+  // Check for reactions
+  if (filter.usesCodec(ctx.message, ReactionCodec)) {
+    // TypeScript knows ctx.message.content is a Reaction type
+    const reaction = ctx.message.content;
+    await ctx.sendText(`You reacted with: ${reaction.content}`);
+  }
+  
+  // Check for replies
+  if (filter.usesCodec(ctx.message, ReplyCodec)) {
+    // TypeScript knows ctx.message.content is a Reply type  
+    const reply = ctx.message.content;
+    await ctx.sendText(`Reply to: ${reply.content}`);
+  }
+});
+```
+
+The `usesCodec` function works with any content codec that extends the `ContentCodec` interface, including:
+
+- `TextCodec` - for text messages
+- `ReactionCodec` - for reaction messages
+- `ReplyCodec` - for reply messages
+- `MarkdownCodec` - for markdown messages
+- `ReadReceiptCodec` - for read receipts
+- `RemoteAttachmentCodec` - for attachments
+- `TransactionReferenceCodec` - for transaction references
+- `WalletSendCallsCodec` - for wallet send calls
+- `GroupUpdatedCodec` - for group updates
 
 To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
