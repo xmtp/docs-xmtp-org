@@ -375,6 +375,10 @@ export const sidebarConfig = {
           link: "/chat-apps/core-messaging/send-messages",
         },
         {
+          text: "Support disappearing messages",
+          link: "/chat-apps/core-messaging/disappearing-messages",
+        },
+        {
           text: "Manage group permissions",
           link: "/chat-apps/core-messaging/group-permissions",
         },
