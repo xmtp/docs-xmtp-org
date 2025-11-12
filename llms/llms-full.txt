@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 02:06 AM UTC / November 07, 2025
+Generated at 09:30 PM UTC / November 12, 2025
 
 ## Instructions for AI Tools
 
@@ -11266,6 +11266,35 @@ if (f.isText(ctx.message)) {
 }
 ```
 
+## Custom content type filtering
+
+Use the `usesCodec` filter to check for custom content types with full TypeScript type inference:
+
+```ts
+import { Agent, filter } from '@xmtp/agent-sdk';
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import { MyCustomCodec } from './my-custom-codec';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Check for specific codec with type safety
+  if (filter.usesCodec(ctx.message, ReactionCodec)) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Action: ${ctx.message.content.action}`);
+  }
+
+  // Works with custom content types too
+  if (filter.usesCodec(ctx.message, MyCustomCodec)) {
+    // ctx.message.content is now typed to MyCustomCodec's decoded type
+    console.log('Received custom content:', ctx.message.content);
+  }
+});
+```
+
+This is particularly useful when you need to handle multiple custom content types or want precise type inference for your message content.
+
 ## Available filters
 
 - `fromSelf`
@@ -11279,6 +11308,7 @@ if (f.isText(ctx.message)) {
 - `isRemoteAttachment`
 - `isText`
 - `isTextReply`
+- `usesCodec`
 
 To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
 
