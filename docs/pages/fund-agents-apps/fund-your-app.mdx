@@ -244,7 +244,7 @@ You'll need your payer wallet's private key when setting up your [XMTP Gateway S
 
 ### Step 2. Register the payer wallet
 
-1. Use your payer wallet to connect to the XMTP Funding Portal → testnet link coming soon.
+1. Use your payer wallet to connect to the XMTP Funding Portal → testnet-staging link coming soon.
 2. On the **Welcome** page, click **Use connected wallet**.
 3. Open the drop-down menu in the upper right and click **Manage payers**.
 4. Click the pencil icon to give your payer wallet a human-readable name.
@@ -261,6 +261,12 @@ Fund your payer wallet with USDC on Base. Here are some sources you can use to a
 - Business accounts: Circle business accounts for larger operations
 
 To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
+
+:::warning[Using testnet-staging?]
+
+If you are using the XMTP Funding Portal on testnet-staging, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [For use with testnet-staging only: Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+:::
 
 ### Step 4: Allocate funds for messaging
 
@@ -373,6 +379,59 @@ The payer wallet now has:
 
 </Tabs.Content>
 </Tabs.Root>
+
+## For use with testnet-staging only: Self-mint mxUSD
+
+To fund your app on the testnet-staging environment, you must use mxUSD instead of USDC. To get mxUSD, you must self-mint it.
+
+### Self-mint mxUSD
+
+1. Start [Docker Desktop](https://docs.docker.com/desktop/).
+
+2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mxUSD:
+
+   ```bash
+    docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
+      funds mint --amount <1000> --to <receiving-address>
+      --private-key <receiving-address-private-key> \
+      --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
+      --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
+      --config-file https://github.com/xmtp/smart-contracts/releases/download/v0.5.5/testnet.json \
+    ```
+
+Available parameters:
+
+- `--amount`: Amount of mxUSD to mint, in whole units. For example, `1000`.
+- `--to`: Receiving address (typically your payer wallet address)
+- `--private-key`: Receiving address' private key
+- `--app-rpc-url`: Your Alchemy API endpoint for XMTP Ropsten
+- `--settlement-rpc-url`: Your Alchemy API endpoint for the Base Sepolia
+
+To learn how to create an Alchmey API endpoint, see [Create an Alchemy API Key](https://www.alchemy.com/docs/create-an-api-key).
+
+Expected output:
+
+```bash
+INFO    funds-admin     tokens minted   {"settlement_chain_id": 84532, "app_chain_id": 351243127, "from_address": "0x0000000000000000000000000000000000000000", "to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
+INFO    successfully minted mock underlying fee token   {"to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
+```
+
+Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mxUSD.
+
+### Add mxUSD to MetaMask
+
+After self-minting mxUSD, you'll need to add the token to MetaMask to view your balance:
+
+1. Open MetaMask and select the **Tokens** tab.
+2. Open the kebab menu and click **Import tokens**.
+3. Select the **Base Sepolia** network and enter these token details:
+   - **Token contract address**: `0x2d7e0534183dAD09008C97f230d9F4f6425eE859`
+   - **Token symbol**: `mxUSD`
+   - **Token decimal**: `6`
+6. Click **Next**.
+7. Click **Import** to confirm.
+
+Your mxUSD balance should now be visible in MetaMask.
 
 ## Troubleshooting
 
