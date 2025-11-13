@@ -1,80 +1,7 @@
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import { useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
-
-{/*
-Custom Mermaid component for rendering diagrams in documentation.
-
-This component is defined inline instead of imported from a separate file
-because Vocs has a bug where local file imports break search indexing.
-Only npm package imports (like react and mermaid) are safe.
-*/}
-
-export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-const container = useRef(null);
-
-useEffect(() => {
-mermaid.initialize({ startOnLoad: false });
-
-    const renderChart = async () => {
-      try {
-        const { svg } = await mermaid.render(id, chart);
-        if (container.current) {
-          container.current.innerHTML = svg;
-        }
-      } catch (error) {
-        console.error('Mermaid render error:', error);
-        if (container.current) {
-          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
-        }
-      }
-    };
-
-    renderChart();
-
-}, [chart, id]);
-
-return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
-};
-
-<style>{`
-/* Make configuration table more readable with better column widths */
-.config-table-wrapper {
-  overflow-x: auto;
-}
-
-.config-table-wrapper table {
-  table-layout: fixed;
-  width: 100%;
-  min-width: 900px;
-}
-
-.config-table-wrapper table th:nth-child(1),
-.config-table-wrapper table td:nth-child(1) {
-  width: 15%;
-}
-
-.config-table-wrapper table th:nth-child(2),
-.config-table-wrapper table td:nth-child(2) {
-  width: 8%;
-}
-
-.config-table-wrapper table th:nth-child(3),
-.config-table-wrapper table td:nth-child(3) {
-  width: 20%;
-}
-
-.config-table-wrapper table th:nth-child(4),
-.config-table-wrapper table td:nth-child(4) {
-  width: 17%;
-}
-
-.config-table-wrapper table th:nth-child(5),
-.config-table-wrapper table td:nth-child(5) {
-  width: 40%;
-}
-`}</style>
+import Mermaid from '../../components/Mermaid';
+import { ConfigTable } from '../../components/ConfigTable';
 
 # Run your XMTP Gateway Service
 
@@ -143,7 +70,7 @@ func main() {
 
 You can provide the configuration options for your XMTP Gateway Service either directly in your code, via command line flag, or through environment variables.
 
-<div className="config-table-wrapper">
+<ConfigTable>
 
 | Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -155,7 +82,7 @@ You can provide the configuration options for your XMTP Gateway Service either d
 | Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `anvil`, `testnet`, and `mainnet`                                                                                                 |
 | Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
 
-</div>
+</ConfigTable>
 
 ### Metrics and observability
 
