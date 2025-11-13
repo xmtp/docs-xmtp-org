@@ -75,12 +75,13 @@ def generate_llms_txt(base_directory, subdirectories, output_file, title, descri
                             # Get the path relative to the base directory
                             rel_path = os.path.relpath(file_path, base_directory)
                             content = extract_content_from_md(file_path)
-
+                            if isinstance(content, str) and content.startswith("Error:"):
+                                print(f"Warning: Skipping {rel_path}: {content}")
+                                continue
                             # Write the relative path as the header
                             llms_file.write(f"## {rel_path}\n")
                             llms_file.write(content)
                             llms_file.write("\n\n")
-
                             processed_files.append(rel_path)
 
             # Add a summary at the end
