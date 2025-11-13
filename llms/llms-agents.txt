@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 01:49 AM UTC / November 13, 2025
+Generated at 05:48 PM UTC / November 13, 2025
 
 ## About this file
 
@@ -66,7 +66,7 @@ console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
 ```
 
-Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
+Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
 
 ```bash
 yarn gen:keys
@@ -372,7 +372,7 @@ Now that you understand how the permission system works, see [Manage group chats
 Group chats can have metadata like names, descriptions, and images to help users identify them. You can set metadata when [creating a group chat](/agents/build-agents/create-conversations) or update it later.
 
 :::tip[Quickstart]
-To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
+To learn more, see the [Gated group example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
 :::
 
 ## Group metadata
@@ -581,7 +581,7 @@ Revoking an installation is permanent. You cannot recover access to a revoked in
 :::
 
 1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
-2. CLI script: [revokeInstallations.ts](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
+2. CLI script: [revokeInstallations.ts](https://github.com/xmtplabs/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
 
 ```bash
 yarn revoke <inbox-id> <installations-to-exclude>
@@ -750,7 +750,7 @@ XMTP_ENV=dev # local, dev, production
 
 ## Vibe coding
 
-See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+See these [Cursor rules](https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
 
 ```bash
 Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
@@ -760,7 +760,7 @@ Prompt: lets create an example that gets a number and returns its 2x multiple (u
 
 Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
 
-![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
+![xmtp.chat DM screenshot](https://github.com/xmtplabs/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
 
 ## Debug an agent
 
@@ -772,7 +772,7 @@ To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 
 ## Agent examples
 
-Visit the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repository for more agent examples.
+Visit the [examples](https://github.com/xmtplabs/xmtp-agent-examples) repository for more agent examples.
 
 
 ## agents/get-started/faq.mdx
@@ -1532,7 +1532,7 @@ Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` fi
 
 4. Try out the example agents using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
 
-   ![xmtp.chat DM screenshot](https://raw.githubusercontent.com/ephemeraHQ/xmtp-agent-examples/refs/heads/main/examples/xmtp-gm/screenshot.png)
+   ![xmtp.chat DM screenshot](https://raw.githubusercontent.com/xmtplabs/xmtp-agent-examples/refs/heads/main/examples/xmtp-gm/screenshot.png)
 
 ## Enable debug logging
 
@@ -1681,7 +1681,7 @@ When you reach either rate limit, your API calls will be rejected with a 429 (To
 Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
 
 ::::tip[Quickstart]
-To learn more, see the [Attachment example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
+To learn more, see the [Attachment example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
 ::::
 
 ## Install the package
@@ -2149,7 +2149,7 @@ if (ctx.usesCodec(MarkdownCodec)) {
 Use the reaction content type to support reactions with your agent. A reaction is a quick and often emoji-based way to respond to a message. Reactions are usually limited to a predefined set of emojis or symbols provided by the chat app.
 
 :::tip[Quickstart]
-To learn more, see the [Reaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
+To learn more, see the [Reaction example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
 :::
 
 ## Install the package
@@ -2311,7 +2311,7 @@ if (ctx.usesCodec(ReplyCodec)) {
 This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
 
 :::tip[Quickstart]
-To learn more, see the [Transaction reference example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+To learn more, see the [Transaction reference example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 :::
 
 ## Install the package
@@ -2407,7 +2407,7 @@ if (ctx.usesCodec(TransactionReferenceCodec)) {
 This package provides an XMTP content type to support sending transactions to a wallet for execution.
 
 ::::tip[Quickstart]
-To learn more, see the [Transactions example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+To learn more, see the [Transactions example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 ::::
 
 ## Install the package
