@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 01:35 AM UTC / November 13, 2025
+Generated at 01:49 AM UTC / November 13, 2025
 
 ## About this file
 
@@ -669,188 +669,332 @@ agent.on('unhandledError', (error) => {
 ```
 
 
-## agents/deploy/agent-security.mdx
-# Follow agent security best practices
+## agents/get-started/build-an-agent.mdx
+# Build XMTP agents
 
-For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond.
+Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
 
-Like any other user, this means your agent holds the cryptographic keys required to decrypt and send messages in the conversation. As an agent developer, it's important to uphold the security of these keys and messages.
+## Installation
 
-Here are some security best practices:
+Install `@xmtp/agent-sdk` as a dependency in your project.
 
-- **Never expose private keys**: Use environment variables.
-- **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
-- **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
+:::code-group
 
-
-## agents/deploy/debug-agents.mdx
-# Debug an agent
-
-You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web chat app for developers.
-
-Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
-
-## Run a local XMTP network
-
-`dev` and `production` networks are hosted by XMTP, while you can run your own `local` network.
-
-1. Install Docker
-
-2. Start the XMTP service and database
-
-   ```bash
-   ./dev/up
-   ```
-
-3. Change the `.env` file to use the `local` network
-
-   ```bash
-   XMTP_ENV = local
-   ```
-
-4. Try out the example agents using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
-
-   ![xmtp.chat DM screenshot](https://raw.githubusercontent.com/ephemeraHQ/xmtp-agent-examples/refs/heads/main/examples/xmtp-gm/screenshot.png)
-
-## Enable debug logging
-
-To activate detailed debugging logs, set the `XMTP_FORCE_DEBUG` environment variable in your `.env` file:
-
-```bash
-XMTP_FORCE_DEBUG=true
+```bash [npm]
+npm i @xmtp/agent-sdk
 ```
 
-This will enable verbose logging throughout the XMTP Agent SDK, helping you troubleshoot issues and understand the internal flow of messages and events.
-
-## Debug agent information
-
-You can use this code to get your agent's client information, which provides useful values for debugging:
-
-```tsx [Node]
-// Log when we're ready
-agent.on('start', (): void => {
-  logDetails(agent.client);
-});
+```bash [pnpm]
+pnpm i @xmtp/agent-sdk
 ```
 
-Example output:
-
-```bash
-✓ XMTP Client:
-• InboxId: 21313b5f4f2dd2dc063762eb939d3596229c30de1128826727154da5b28be0a5
-• Version: HEAD@a9d19aa (2025-08-25 21:45:01 +0000)
-• Address: 0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
-• Conversations: 0
-• Installations: 5
-• InstallationId: 3c072cd74f2f95185c068cf7ea9ee5a22bef5b42a1630749d9e0be8b7a27fe22
-• Key Package created: 9/19/2025, 7:07:30 PM
-• Key Package valid until: 12/12/2025, 8:07:30 PM
-• Networks: production
-• URL: http://xmtp.chat/dm/0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+```bash [yarn]
+yarn add @xmtp/agent-sdk
 ```
 
-
-## agents/deploy/deploy-agent.mdx
-# Deploy an agent
-
-This section covers how to deploy an agent using [Railway](https://railway.app/)—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
-
-Alternative platforms include (Ubuntu-based):
-
-- [Fly.io](https://fly.io/), [Heroku](https://www.heroku.com/), [Render](https://render.com/)
-
-Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
-
-:::tip
-
-The XMTP Agent SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
+```bash [bun]
+bun i @xmtp/agent-sdk
+```
 
 :::
 
-## 1. Create a Railway account
+## Usage
 
-Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+This example shows how to create an agent that sends a message when it receives a text message.
 
-## 2. Start a new project
+```ts [Node]
+import { Agent } from '@xmtp/agent-sdk';
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
 
-From your Railway dashboard, click **New Project** and select **Empty Project**.
-
-![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
-
-## 3. Import your agent's GitHub repository
-
-Click **Deploy from GitHub repo** and select the repository that contains your agent code.
-
-![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
-
-## 4. Configure volume storage
-
-Your XMTP agent will need persistent storage. Add a volume to your container:
-
-1. Navigate to your service settings.
-2. Select the **Volumes** tab.
-3. Add a new volume and specify the mount path.
-
-   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
-
-Use this code in your agent to properly connect to the Railway volume:
-
-```tsx [Node]
-const customDbPath = (inboxId) =>
-  `${process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.'}/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`;
-
+// 2. Spin up the agent
 const agent = await Agent.createFromEnv({
-  dbPath: customDbPath,
+  env: 'dev', // or 'production'
 });
+
+// 3. Respond to text messages
+agent.on('text', async (ctx) => {
+  await ctx.sendText('Hello from my XMTP Agent! 👋');
+});
+
+// 4. Log when we're ready
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+});
+
+await agent.start();
 ```
 
-## 5. Configure environment variables
+### Local database
 
-1. Get the connection string for your database.
+:::danger
 
-   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
 
-2. Add the connection string and any other required environment variables to your service.
+To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
 
-   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+:::
 
-## 6. Deploy your agent
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
 
-Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+### Set environment variables
 
-## 7. Share your agent (optional)
+To run an example XMTP agent, you must create a `.env` file with the following variables:
 
-Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+```bash
+XMTP_WALLET_KEY= # the private key of the wallet
+XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
+XMTP_ENV=dev # local, dev, production
+```
 
-## Example Railway deployment
+## Vibe coding
 
-For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+
+```bash
+Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
+```
+
+## Talk to your agent
+
+Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
+
+![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
+
+## Debug an agent
+
+To learn more, see [Debug an agent](/agents/deploy/debug-agents)
+
+## Deploy an agent
+
+To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
+
+## Agent examples
+
+Visit the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repository for more agent examples.
 
 
-## agents/deploy/rate-limits.mdx
-# Observe rate limits
+## agents/get-started/faq.mdx
+# FAQ about XMTP agents
 
-XMTP enforces separate rate limits for read and write operations per client per rolling 5-minute window:
+Get answers to frequently asked questions about building agents with XMTP.
 
-- **Read operations**: 20,000 requests per 5-minute window
-- **Write operations**: 3,000 messages published per 5-minute window
+## Platform and compatibility
 
-When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error.
+### What chains does XMTP support?
 
-**Read operations** include actions like:
+XMTP agents work with EOAs and SCWs on Ethereum and Ethereum L2s. Because messages are stored off-chain, agents are interoperable across EVM chains.
 
-- Fetching conversations
-- Retrieving messages
-- Getting inbox state
-- Listing installations
+Supported chains: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-compatible networks.
 
-**Write operations** include actions like:
+### What languages and libraries can I use?
 
-- Sending chat messages
-- Adding and removing wallets
-- Adding and revoking installations
-- Adding and removing group members
-- Updating group metadata
+- **SDKs**: XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building)
+- **Signing libraries**: The Agent SDK provides simplified abstractions. For custom integrations, use [ethers](https://ethers.org/) or another web3 library with [ethers Signer](https://docs.ethers.io/v5/api/signer/) support
+
+## Development setup
+
+### Should I use `dbPath: null` for development?
+
+**Not recommended.** Using `dbPath: null` creates a new installation on every restart, quickly hitting the 10-installation limit (within ~30 minutes of development).
+
+**Recommended approach:**
+
+- Use persistent database paths for development
+- Ideal setup: 2 installations (local + production), leaving 8 for testing
+- Only use `dbPath: null` for fire-and-forget or temporary agents
+
+## Database management
+
+### What files need to be backed up?
+
+Back up these SQLite files for persistent storage:
+
+- `{env}-{description}.db3` - Main database
+- `{env}-{description}.db3-shm` - Shared memory
+- `{env}-{description}.db3-wal` - Write-ahead log
+- `{env}-{description}.db3.sqlcipher_salt` - Encryption salt
+
+Example for production: `production-xmtp.db3`, `production-xmtp.db3-shm`, etc.
+
+### How much storage should I provision?
+
+Rough estimate: **1GB ≈ 15,000 conversations**. Plan based on your expected volume.
+
+### What data is stored in the database?
+
+- All messages and conversations
+- Conversation state and encryption keys
+- Group membership and metadata
+
+### Can I clear database data without deleting files?
+
+Not currently possible from SDKs. XMTP is developing database management tools ([XIP-70](https://community.xmtp.org/t/xip-70-local-database-management-tools/1116)).
+
+### What happens when I delete/wipe the database?
+
+**File deletion:**
+
+- Creates fresh database with new installation
+- Messages continue streaming normally
+- Works unless you've hit the 10-installation limit
+
+**Database wipe (once XIP-70 tools are available):**
+
+- Agent loses access to existing groups
+- Regains group access when receiving new messages
+- All local message history is lost
+
+## Installation limits and troubleshooting
+
+### What is the installation limit?
+
+Each inbox has a **maximum of 10 installations**. Creating a new installation beyond this limit will fail.
+
+### How do I recover from hitting the limit?
+
+Currently:
+
+- Use a different client/signer to create new agents
+- No built-in method to revoke old installations
+- Automatic revocation tools are planned for future releases
+
+## Messages and content
+
+### What content types can agents send?
+
+Text, reactions, replies, attachments, and transaction requests. See [Content types](/agents/content-types/content-types) for details.
+
+### Are there message size limits?
+
+Yes, messages are limited to just under 1MB. For larger content, use [remote attachments](/agents/content-types/attachments).
+
+### Are there any messaging costs?
+
+No messaging fees currently. Messages are stored off-chain on the XMTP network.
+
+## Domains
+
+### How do I register a domain for my agent?
+
+#### 1. Register a new ENS domain
+
+1. Go to [https://app.ens.domains](https://app.ens.domains/)
+2. Search for your desired name (e.g., "myagent.eth")
+3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
+4. Wait ~1 minute for registration to complete
+
+#### 2. Create agent wallet in MetaMask
+
+1. Open MetaMask → Account selector → "Add account or hardware wallet" → "Add a new account"
+2. Name it (e.g., "Agent Wallet") → Create
+3. Click three dots → "Account details" → "Show private key" → enter password → **copy and save private key**
+4. Copy the wallet address
+
+#### 3. Link ENS domain to agent wallet
+
+1. Go to [https://app.ens.domains](https://app.ens.domains)`/yourdomain.eth`
+2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
+3. Sign the transaction
+
+#### 4. Set as primary name
+
+1. Switch MetaMask to the agent wallet account
+2. Go to [https://app.ens.domains](https://app.ens.domains/)
+3. Click "My account" → Find your domain → Click "Set as primary name"
+4. Sign the transaction
+
+#### 5. Transfer ownership (optional)
+
+1. Switch back to owner account in MetaMask
+2. On the ENS page, click "Transfer" → paste agent address → sign transaction
+3. Agent now owns the domain (can update records using private key)
+
+**Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
+
+## Framework integration
+
+### Does XMTP work with ElizaOS?
+
+Yes! XMTP has official ElizaOS support through the [`@elizaos/plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) plugin, enabling secure, decentralized, and end-to-end encrypted messaging for ElizaOS agents.
+
+#### Installation
+
+```bash
+pnpm add @elizaos/plugin-xmtp
+# or
+elizaos add plugins @elizaos/plugin-xmtp
+```
+
+#### Environment variables
+
+- `WALLET_KEY` - Private key of the wallet
+- `XMTP_SIGNER_TYPE` - Signer type (SCW or EOA)
+- `XMTP_SCW_CHAIN_ID` - (Optional) Chain ID for smart contract wallet
+- `XMTP_ENV` - (Optional) XMTP environment (dev, local, production)
+
+#### Benefits of XMTP + ElizaOS
+
+- End-to-end encrypted agent communication
+- Decentralized messaging without single points of failure
+- Multi-agent, multi-human confidential group chats
+- Privacy and metadata protection
+
+### Can I contribute to XMTP integrations?
+
+Absolutely! We welcome contributions to improve XMTP agent integrations:
+
+- **ElizaOS plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
+- **Agent SDK**: Help improve the core [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk)
+- **Documentation**: Submit improvements to agent documentation and examples
+- **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
+
+## Identity and profile management
+
+### How do I create separate XMTP inboxes for multiple Lens profiles owned by the same address?
+
+Each Lens profile needs its own XMTP identity to have a separate inbox. XMTP doesn't support linking multiple identities to a single owner address.
+
+#### The challenge
+
+- One wallet address can own multiple Lens profiles
+- XMTP identity creation uses the profile owner's address
+- You want each Lens profile to have its own unique inbox
+
+#### The solution
+
+- Each Lens profile must have its own XMTP identity
+- This means each profile needs its own private key/wallet
+- You cannot have multiple XMTP identities linked to one owner address
+
+#### Example use case
+
+If you have 3 Lens profiles on one address and want separate inboxes for each, you'll need 3 different XMTP identities (each with their own private key), not 3 profiles sharing one XMTP identity.
+
+## Security
+
+### Has XMTP been audited?
+
+Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024. See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)
+
+
+## agents/get-started/intro.mdx
+# Build XMTP agents
+
+## Why build agents with XMTP?
+
+XMTP agents are autonomous programs that can participate in secure, end-to-end encrypted conversations on the XMTP network. Build agents that interact with humans and other agents across any XMTP-powered app.
+
+- **AI + Money + Secure Chat**: The only platform combining conversational AI, onchain transactions, and end-to-end encryption
+- **Open-source & trustless**: Built on top of the MLS protocol, it replaces trust in centralized certificate authorities with cryptographic proofs.
+- **Privacy & metadata protection**: Offers anonymous usage through SDKs and pseudonymous usage with nodes tracking minimum metadata.
+- **Decentralized**: Operates on a peer-to-peer network, eliminating single points of failure and ensuring continued operation even if some nodes go offline.
+- **Multi-agent**: Allows confidential communication between multiple agents and humans through MLS group chats.
+
+## Get started
+
+Ready to build? See [Quickstart](/agents/get-started/build-an-agent) to create your first XMTP agent.
 
 
 ## agents/concepts/context.mdx
@@ -1345,6 +1489,190 @@ Error middleware receives the `error`, `ctx`, and a `next` function. Just like r
 
 - Explore [message filters](./filters) to process messages selectively
 - Understand [context and helpers](./context) for rich message handling
+
+
+## agents/deploy/agent-security.mdx
+# Follow agent security best practices
+
+For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond.
+
+Like any other user, this means your agent holds the cryptographic keys required to decrypt and send messages in the conversation. As an agent developer, it's important to uphold the security of these keys and messages.
+
+Here are some security best practices:
+
+- **Never expose private keys**: Use environment variables.
+- **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
+- **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
+
+
+## agents/deploy/debug-agents.mdx
+# Debug an agent
+
+You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web chat app for developers.
+
+Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+## Run a local XMTP network
+
+`dev` and `production` networks are hosted by XMTP, while you can run your own `local` network.
+
+1. Install Docker
+
+2. Start the XMTP service and database
+
+   ```bash
+   ./dev/up
+   ```
+
+3. Change the `.env` file to use the `local` network
+
+   ```bash
+   XMTP_ENV = local
+   ```
+
+4. Try out the example agents using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+   ![xmtp.chat DM screenshot](https://raw.githubusercontent.com/ephemeraHQ/xmtp-agent-examples/refs/heads/main/examples/xmtp-gm/screenshot.png)
+
+## Enable debug logging
+
+To activate detailed debugging logs, set the `XMTP_FORCE_DEBUG` environment variable in your `.env` file:
+
+```bash
+XMTP_FORCE_DEBUG=true
+```
+
+This will enable verbose logging throughout the XMTP Agent SDK, helping you troubleshoot issues and understand the internal flow of messages and events.
+
+## Debug agent information
+
+You can use this code to get your agent's client information, which provides useful values for debugging:
+
+```tsx [Node]
+// Log when we're ready
+agent.on('start', (): void => {
+  logDetails(agent.client);
+});
+```
+
+Example output:
+
+```bash
+✓ XMTP Client:
+• InboxId: 21313b5f4f2dd2dc063762eb939d3596229c30de1128826727154da5b28be0a5
+• Version: HEAD@a9d19aa (2025-08-25 21:45:01 +0000)
+• Address: 0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+• Conversations: 0
+• Installations: 5
+• InstallationId: 3c072cd74f2f95185c068cf7ea9ee5a22bef5b42a1630749d9e0be8b7a27fe22
+• Key Package created: 9/19/2025, 7:07:30 PM
+• Key Package valid until: 12/12/2025, 8:07:30 PM
+• Networks: production
+• URL: http://xmtp.chat/dm/0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+```
+
+
+## agents/deploy/deploy-agent.mdx
+# Deploy an agent
+
+This section covers how to deploy an agent using [Railway](https://railway.app/)—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+
+Alternative platforms include (Ubuntu-based):
+
+- [Fly.io](https://fly.io/), [Heroku](https://www.heroku.com/), [Render](https://render.com/)
+
+Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
+
+:::tip
+
+The XMTP Agent SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
+
+:::
+
+## 1. Create a Railway account
+
+Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+
+## 2. Start a new project
+
+From your Railway dashboard, click **New Project** and select **Empty Project**.
+
+![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
+
+## 3. Import your agent's GitHub repository
+
+Click **Deploy from GitHub repo** and select the repository that contains your agent code.
+
+![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
+
+## 4. Configure volume storage
+
+Your XMTP agent will need persistent storage. Add a volume to your container:
+
+1. Navigate to your service settings.
+2. Select the **Volumes** tab.
+3. Add a new volume and specify the mount path.
+
+   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+
+Use this code in your agent to properly connect to the Railway volume:
+
+```tsx [Node]
+const customDbPath = (inboxId) =>
+  `${process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.'}/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`;
+
+const agent = await Agent.createFromEnv({
+  dbPath: customDbPath,
+});
+```
+
+## 5. Configure environment variables
+
+1. Get the connection string for your database.
+
+   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+
+2. Add the connection string and any other required environment variables to your service.
+
+   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+
+## 6. Deploy your agent
+
+Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+
+## 7. Share your agent (optional)
+
+Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+
+## Example Railway deployment
+
+For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
+
+## agents/deploy/rate-limits.mdx
+# Observe rate limits
+
+XMTP enforces separate rate limits for read and write operations per client per rolling 5-minute window:
+
+- **Read operations**: 20,000 requests per 5-minute window
+- **Write operations**: 3,000 messages published per 5-minute window
+
+When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error.
+
+**Read operations** include actions like:
+
+- Fetching conversations
+- Retrieving messages
+- Getting inbox state
+- Listing installations
+
+**Write operations** include actions like:
+
+- Sending chat messages
+- Adding and removing wallets
+- Adding and revoking installations
+- Adding and removing group members
+- Updating group metadata
 
 
 ## agents/content-types/attachments.mdx
@@ -2173,334 +2501,6 @@ if (ctx.usesCodec(WalletSendCallsCodec)) {
 ```
 
 You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
-
-
-## agents/get-started/build-an-agent.mdx
-# Build XMTP agents
-
-Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
-
-## Installation
-
-Install `@xmtp/agent-sdk` as a dependency in your project.
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/agent-sdk
-```
-
-```bash [pnpm]
-pnpm i @xmtp/agent-sdk
-```
-
-```bash [yarn]
-yarn add @xmtp/agent-sdk
-```
-
-```bash [bun]
-bun i @xmtp/agent-sdk
-```
-
-:::
-
-## Usage
-
-This example shows how to create an agent that sends a message when it receives a text message.
-
-```ts [Node]
-import { Agent } from '@xmtp/agent-sdk';
-import { getTestUrl } from '@xmtp/agent-sdk/debug';
-
-// 2. Spin up the agent
-const agent = await Agent.createFromEnv({
-  env: 'dev', // or 'production'
-});
-
-// 3. Respond to text messages
-agent.on('text', async (ctx) => {
-  await ctx.sendText('Hello from my XMTP Agent! 👋');
-});
-
-// 4. Log when we're ready
-agent.on('start', () => {
-  console.log(`Waiting for messages...`);
-  console.log(`Address: ${agent.address}`);
-  console.log(`🔗 ${getTestUrl(agent.client)}`);
-});
-
-await agent.start();
-```
-
-### Local database
-
-:::danger
-
-Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
-
-To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
-
-:::
-
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
-
-### Set environment variables
-
-To run an example XMTP agent, you must create a `.env` file with the following variables:
-
-```bash
-XMTP_WALLET_KEY= # the private key of the wallet
-XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
-XMTP_ENV=dev # local, dev, production
-```
-
-## Vibe coding
-
-See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
-
-```bash
-Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
-```
-
-## Talk to your agent
-
-Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
-
-![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
-
-## Debug an agent
-
-To learn more, see [Debug an agent](/agents/deploy/debug-agents)
-
-## Deploy an agent
-
-To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
-
-## Agent examples
-
-Visit the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repository for more agent examples.
-
-
-## agents/get-started/faq.mdx
-# FAQ about XMTP agents
-
-Get answers to frequently asked questions about building agents with XMTP.
-
-## Platform and compatibility
-
-### What chains does XMTP support?
-
-XMTP agents work with EOAs and SCWs on Ethereum and Ethereum L2s. Because messages are stored off-chain, agents are interoperable across EVM chains.
-
-Supported chains: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-compatible networks.
-
-### What languages and libraries can I use?
-
-- **SDKs**: XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building)
-- **Signing libraries**: The Agent SDK provides simplified abstractions. For custom integrations, use [ethers](https://ethers.org/) or another web3 library with [ethers Signer](https://docs.ethers.io/v5/api/signer/) support
-
-## Development setup
-
-### Should I use `dbPath: null` for development?
-
-**Not recommended.** Using `dbPath: null` creates a new installation on every restart, quickly hitting the 10-installation limit (within ~30 minutes of development).
-
-**Recommended approach:**
-
-- Use persistent database paths for development
-- Ideal setup: 2 installations (local + production), leaving 8 for testing
-- Only use `dbPath: null` for fire-and-forget or temporary agents
-
-## Database management
-
-### What files need to be backed up?
-
-Back up these SQLite files for persistent storage:
-
-- `{env}-{description}.db3` - Main database
-- `{env}-{description}.db3-shm` - Shared memory
-- `{env}-{description}.db3-wal` - Write-ahead log
-- `{env}-{description}.db3.sqlcipher_salt` - Encryption salt
-
-Example for production: `production-xmtp.db3`, `production-xmtp.db3-shm`, etc.
-
-### How much storage should I provision?
-
-Rough estimate: **1GB ≈ 15,000 conversations**. Plan based on your expected volume.
-
-### What data is stored in the database?
-
-- All messages and conversations
-- Conversation state and encryption keys
-- Group membership and metadata
-
-### Can I clear database data without deleting files?
-
-Not currently possible from SDKs. XMTP is developing database management tools ([XIP-70](https://community.xmtp.org/t/xip-70-local-database-management-tools/1116)).
-
-### What happens when I delete/wipe the database?
-
-**File deletion:**
-
-- Creates fresh database with new installation
-- Messages continue streaming normally
-- Works unless you've hit the 10-installation limit
-
-**Database wipe (once XIP-70 tools are available):**
-
-- Agent loses access to existing groups
-- Regains group access when receiving new messages
-- All local message history is lost
-
-## Installation limits and troubleshooting
-
-### What is the installation limit?
-
-Each inbox has a **maximum of 10 installations**. Creating a new installation beyond this limit will fail.
-
-### How do I recover from hitting the limit?
-
-Currently:
-
-- Use a different client/signer to create new agents
-- No built-in method to revoke old installations
-- Automatic revocation tools are planned for future releases
-
-## Messages and content
-
-### What content types can agents send?
-
-Text, reactions, replies, attachments, and transaction requests. See [Content types](/agents/content-types/content-types) for details.
-
-### Are there message size limits?
-
-Yes, messages are limited to just under 1MB. For larger content, use [remote attachments](/agents/content-types/attachments).
-
-### Are there any messaging costs?
-
-No messaging fees currently. Messages are stored off-chain on the XMTP network.
-
-## Domains
-
-### How do I register a domain for my agent?
-
-#### 1. Register a new ENS domain
-
-1. Go to [https://app.ens.domains](https://app.ens.domains/)
-2. Search for your desired name (e.g., "myagent.eth")
-3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
-4. Wait ~1 minute for registration to complete
-
-#### 2. Create agent wallet in MetaMask
-
-1. Open MetaMask → Account selector → "Add account or hardware wallet" → "Add a new account"
-2. Name it (e.g., "Agent Wallet") → Create
-3. Click three dots → "Account details" → "Show private key" → enter password → **copy and save private key**
-4. Copy the wallet address
-
-#### 3. Link ENS domain to agent wallet
-
-1. Go to [https://app.ens.domains](https://app.ens.domains)`/yourdomain.eth`
-2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
-3. Sign the transaction
-
-#### 4. Set as primary name
-
-1. Switch MetaMask to the agent wallet account
-2. Go to [https://app.ens.domains](https://app.ens.domains/)
-3. Click "My account" → Find your domain → Click "Set as primary name"
-4. Sign the transaction
-
-#### 5. Transfer ownership (optional)
-
-1. Switch back to owner account in MetaMask
-2. On the ENS page, click "Transfer" → paste agent address → sign transaction
-3. Agent now owns the domain (can update records using private key)
-
-**Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
-
-## Framework integration
-
-### Does XMTP work with ElizaOS?
-
-Yes! XMTP has official ElizaOS support through the [`@elizaos/plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) plugin, enabling secure, decentralized, and end-to-end encrypted messaging for ElizaOS agents.
-
-#### Installation
-
-```bash
-pnpm add @elizaos/plugin-xmtp
-# or
-elizaos add plugins @elizaos/plugin-xmtp
-```
-
-#### Environment variables
-
-- `WALLET_KEY` - Private key of the wallet
-- `XMTP_SIGNER_TYPE` - Signer type (SCW or EOA)
-- `XMTP_SCW_CHAIN_ID` - (Optional) Chain ID for smart contract wallet
-- `XMTP_ENV` - (Optional) XMTP environment (dev, local, production)
-
-#### Benefits of XMTP + ElizaOS
-
-- End-to-end encrypted agent communication
-- Decentralized messaging without single points of failure
-- Multi-agent, multi-human confidential group chats
-- Privacy and metadata protection
-
-### Can I contribute to XMTP integrations?
-
-Absolutely! We welcome contributions to improve XMTP agent integrations:
-
-- **ElizaOS plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
-- **Agent SDK**: Help improve the core [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk)
-- **Documentation**: Submit improvements to agent documentation and examples
-- **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
-
-## Identity and profile management
-
-### How do I create separate XMTP inboxes for multiple Lens profiles owned by the same address?
-
-Each Lens profile needs its own XMTP identity to have a separate inbox. XMTP doesn't support linking multiple identities to a single owner address.
-
-#### The challenge
-
-- One wallet address can own multiple Lens profiles
-- XMTP identity creation uses the profile owner's address
-- You want each Lens profile to have its own unique inbox
-
-#### The solution
-
-- Each Lens profile must have its own XMTP identity
-- This means each profile needs its own private key/wallet
-- You cannot have multiple XMTP identities linked to one owner address
-
-#### Example use case
-
-If you have 3 Lens profiles on one address and want separate inboxes for each, you'll need 3 different XMTP identities (each with their own private key), not 3 profiles sharing one XMTP identity.
-
-## Security
-
-### Has XMTP been audited?
-
-Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024. See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)
-
-
-## agents/get-started/intro.mdx
-# Build XMTP agents
-
-## Why build agents with XMTP?
-
-XMTP agents are autonomous programs that can participate in secure, end-to-end encrypted conversations on the XMTP network. Build agents that interact with humans and other agents across any XMTP-powered app.
-
-- **AI + Money + Secure Chat**: The only platform combining conversational AI, onchain transactions, and end-to-end encryption
-- **Open-source & trustless**: Built on top of the MLS protocol, it replaces trust in centralized certificate authorities with cryptographic proofs.
-- **Privacy & metadata protection**: Offers anonymous usage through SDKs and pseudonymous usage with nodes tracking minimum metadata.
-- **Decentralized**: Operates on a peer-to-peer network, eliminating single points of failure and ensuring continued operation even if some nodes go offline.
-- **Multi-agent**: Allows confidential communication between multiple agents and humans through MLS group chats.
-
-## Get started
-
-Ready to build? See [Quickstart](/agents/get-started/build-an-agent) to create your first XMTP agent.
 
 
 # Section: protocol
