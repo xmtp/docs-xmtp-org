@@ -42,7 +42,7 @@ export const sidebarConfig = {
           link: "/agents/build-agents/create-conversations",
         },
         {
-          text: "Groups",
+          text: "Group chats",
           link: "/agents/build-agents/groups",
         },
         {
@@ -373,6 +373,10 @@ export const sidebarConfig = {
         {
           text: "Send messages",
           link: "/chat-apps/core-messaging/send-messages",
+        },
+        {
+          text: "Support disappearing messages",
+          link: "/chat-apps/core-messaging/disappearing-messages",
         },
         {
           text: "Manage group permissions",

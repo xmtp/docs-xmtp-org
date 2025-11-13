@@ -6,13 +6,15 @@ Group chats can have metadata like names, descriptions, and images to help users
 To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
 :::
 
-## Available metadata fields
+## Group metadata
+
+### Available metadata fields
 
 - `group_name`: The name of the group chat
 - `description`: A description of the group chat
 - `image_url`: A URL pointing to an image for the group chat
 
-## Get and update metadata
+### Get and update metadata
 
 ```js [Node]
 // Get metadata
@@ -26,22 +28,17 @@ await group.updateDescription('New Group Description');
 await group.updateImageUrl('newurl.com');
 ```
 
-## Manage group chat membership
-
-:::tip[Quickstart]
-To learn more, see the [Gated group example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
-:::
+## Group membership
 
 The maximum group chat size is 250 members.
 
 ### Add members
 
-You can add members directly by their Ethereum addresses or by their inbox IDs
+Add members directly by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Add members by Ethereum address
-await ctx.addMembersWithAddresses(group, [ address1, address2 ]);
-
+await ctx.addMembersWithAddresses(group, [address1, address2]);
 
 // Add members using inbox IDs
 await group.addMembers([inboxId]);
@@ -53,8 +50,7 @@ Remove members from the group by their Ethereum addresses or by their inbox IDs:
 
 ```js [Node]
 // Remove members by address
-//needs to send the group to the context
-await ctx.removeMembersWithAddresses(group, [ address1, address2 ]);
+await ctx.removeMembersWithAddresses(group, [address1, address2]);
 
 // Remove members by inbox ID
 await group.removeMembers([inboxId]);
@@ -71,26 +67,6 @@ await group.sync();
 // Get all members
 const members = await group.members();
 ```
-
-## Manage group chat admins
-
-```js [Node]
-// Check admin status
-const isAdmin = group.isAdmin(inboxId);
-const isSuperAdmin = group.isSuperAdmin(inboxId);
-
-// List admins
-const admins = group.admins;
-const superAdmins = group.superAdmins;
-
-// Add/remove admin status
-await group.addAdmin(inboxId);
-await group.addSuperAdmin(inboxId);
-await group.removeAdmin(inboxId);
-await group.removeSuperAdmin(inboxId);
-```
-
-## Example usage
 
 Get detailed information about group members:
 
@@ -113,4 +89,34 @@ agent.on('text', async (ctx) => {
     }
   }
 });
+```
+
+## Group roles
+
+Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
+
+### Available roles
+
+- **Member** - Default role for all group participants
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level (creator starts as super admin)
+
+### Manage roles
+
+Check and assign roles to group members:
+
+```js [Node]
+// Check admin status
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// List admins
+const admins = group.admins;
+const superAdmins = group.superAdmins;
+
+// Add/remove admin status
+await group.addAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
 ```
