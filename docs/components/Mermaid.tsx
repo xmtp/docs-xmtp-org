@@ -32,5 +32,14 @@ export default function Mermaid({ chart, id = 'mermaid-graph' }: MermaidProps) {
     renderChart();
   }, [chart, id]);
 
-  return <div ref={container} />;
+  return (
+    <div
+      ref={container}
+      style={{
+        background: '#ffffff',
+        padding: '1rem',
+        borderRadius: '0.5rem',
+      }}
+    />
+  );
 }
