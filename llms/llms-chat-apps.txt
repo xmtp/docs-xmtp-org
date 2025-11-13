@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 01:49 AM UTC / November 13, 2025
+Generated at 05:48 PM UTC / November 13, 2025
 
 ## About this file
 
@@ -139,7 +139,7 @@ To use file logging, call the following static functions:
   - `readXMTPLogFile()`
   - `clearXMTPLogs()`
 
-For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/ephemeraHQ/convos-app/pull/6) to the Convos app, built with XMTP.
+For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
 
 ## Network statistics
 
@@ -2540,7 +2540,7 @@ Ephemera employees work alongside other XMTP community members to build with and
 
 Ephemera focuses on serving developers. We build [SDKs](https://docs.xmtp.org/#start-building), developer tools, and example apps that help developers build great experiences with XMTP.
 
-Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024. Converse is now [Convos](https://github.com/ephemeraHQ/convos-app), open-sourced for the entire XMTP network.
+Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024. Converse is now [Convos](https://github.com/xmtplabs/convos-app), open-sourced for the entire XMTP network.
 
 
 ## chat-apps/intro/get-started.mdx
@@ -5335,7 +5335,7 @@ This package provides an XMTP content type to support sending transactions to a 
 
 Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
 
-For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
+For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
 
 :::tip[Open for feedback]
 
