@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 02:06 AM UTC / November 07, 2025
+Generated at 12:33 AM UTC / November 13, 2025
 
 ## Instructions for AI Tools
 
@@ -2219,7 +2219,7 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 :::warning
 **Browser and Node SDK**
 
-Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
+Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 10 times with a 60 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
 :::
 
 :::code-group
@@ -2865,6 +2865,8 @@ Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with
 
 
 ## pages/chat-apps/intro/get-started.mdx
+import { SdkButtons, SdkButton } from '../../../components/SdkButtons';
+
 # Get started building with XMTP
 
 XMTP (Extensible Message Transport Protocol) is the largest and most secure decentralized messaging network. XMTP is open and permissionless, empowering any developer to build end-to-end encrypted 1:1, group, and agent messaging experiences, and more.
@@ -2875,45 +2877,13 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 - Pick your SDK:
 
-  <style>
-   {`
-      /* Inline styles instead of styles.css bc vocs
-      search bug doesn't allow imports */
-      .sdk-buttons {
-         display: flex;
-         gap: 20px;
-         flex-wrap: wrap;
-         margin: 20px 0;
-      }
-
-      .sdk-button {
-         padding: 8px 16px;
-         background-color: #4F46E5;
-         border-radius: 5px;
-         text-decoration: none;
-         color: #ffffff;
-         font-weight: 400;
-         transition: all 0.2s;
-      }
-
-      .sdk-button:hover {
-         background-color: #4338CA;
-      }
-   `}
-  </style>
-
-  <div className="sdk-buttons">
-    <a href="/chat-apps/sdks/browser"
-  className="sdk-button">Browser</a>
-    <a href="/chat-apps/sdks/node"
-  className="sdk-button">Node</a>
-    <a href="/chat-apps/sdks/react-native"
-  className="sdk-button">React Native</a>
-    <a href="/chat-apps/sdks/android"
-  className="sdk-button">Android</a>
-    <a href="/chat-apps/sdks/ios"
-  className="sdk-button">iOS</a>
-  </div>
+  <SdkButtons>
+    <SdkButton href="/chat-apps/sdks/browser">Browser</SdkButton>
+    <SdkButton href="/chat-apps/sdks/node">Node</SdkButton>
+    <SdkButton href="/chat-apps/sdks/react-native">React Native</SdkButton>
+    <SdkButton href="/chat-apps/sdks/android">Android</SdkButton>
+    <SdkButton href="/chat-apps/sdks/ios">iOS</SdkButton>
+  </SdkButtons>
 
 - [Use llms-full.txt](/chat-apps/intro/build-with-llms) to provide the full text of the XMTP developer documentation to an AI coding assistant.
 
@@ -11266,6 +11236,35 @@ if (f.isText(ctx.message)) {
 }
 ```
 
+## Custom content type filtering
+
+Use the `usesCodec` filter to check for custom content types with full TypeScript type inference:
+
+```ts
+import { Agent, filter } from '@xmtp/agent-sdk';
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import { MyCustomCodec } from './my-custom-codec';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Check for specific codec with type safety
+  if (filter.usesCodec(ctx.message, ReactionCodec)) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Action: ${ctx.message.content.action}`);
+  }
+
+  // Works with custom content types too
+  if (filter.usesCodec(ctx.message, MyCustomCodec)) {
+    // ctx.message.content is now typed to MyCustomCodec's decoded type
+    console.log('Received custom content:', ctx.message.content);
+  }
+});
+```
+
+This is particularly useful when you need to handle multiple custom content types or want precise type inference for your message content.
+
 ## Available filters
 
 - `fromSelf`
@@ -11279,6 +11278,7 @@ if (f.isText(ctx.message)) {
 - `isRemoteAttachment`
 - `isText`
 - `isTextReply`
+- `usesCodec`
 
 To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
 
@@ -12384,42 +12384,7 @@ if (ctx.usesCodec(ReactionCodec)) {
 ## pages/fund-agents-apps/calculate-fees.mdx
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import { useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
-
-{/*
-Custom Mermaid component for rendering diagrams in documentation.
-
-This component is defined inline instead of imported from a separate file
-because Vocs has a bug where local file imports break search indexing.
-Only npm package imports (like react and mermaid) are safe.
-*/}
-export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-const container = useRef(null);
-
-useEffect(() => {
-mermaid.initialize({ startOnLoad: false });
-
-    const renderChart = async () => {
-      try {
-        const { svg } = await mermaid.render(id, chart);
-        if (container.current) {
-          container.current.innerHTML = svg;
-        }
-      } catch (error) {
-        console.error('Mermaid render error:', error);
-        if (container.current) {
-          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
-        }
-      }
-    };
-
-    renderChart();
-
-}, [chart, id]);
-
-return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
-};
+import Mermaid from '../../components/Mermaid';
 
 # Understand and calculate XMTP fees
 
@@ -12704,203 +12669,7 @@ On December 9, the centralized network will start returning a special error code
 
 
 ## pages/fund-agents-apps/fund-your-app.mdx
-import *as React from 'react';
-import* as RadixTabs from '@radix-ui/react-tabs';
-
-{/*
-Custom Tabs component for creating tabbed content in documentation.
-
-This component is defined inline instead of imported from a separate file
-because Vocs has a bug where local file imports break search indexing.
-Only npm package imports (like react and @radix-ui/react-tabs) are safe.
-
-Features:
-
-- Renders tabbed content with styling that matches Vocs theme
-- Auto-switches to the correct tab when clicking outline/TOC links
-- Uses forceMount to keep all tab content in DOM (required for outline links)
-- Polls for hash changes as fallback when hashchange events don't fire
-
-Usage:
-
-  <Tabs.Root defaultValue="tab-id">
-    <Tabs.List>
-      <Tabs.Trigger value="tab1">Tab 1 Title</Tabs.Trigger>
-      <Tabs.Trigger value="tab2">Tab 2 Title</Tabs.Trigger>
-    </Tabs.List>
-    <Tabs.Content value="tab1">Content for tab 1</Tabs.Content>
-    <Tabs.Content value="tab2">Content for tab 2</Tabs.Content>
-  </Tabs.Root>
-*/}
-export const Tabs = (() => {
-  const Root = ({ defaultValue, children }) => {
-    const [activeTab, setActiveTab] = React.useState(defaultValue);
-    const rootRef = React.useRef(null);
-
-    React.useEffect(() => {
-      const timeouts = [];
-
-      const switchToTabContainingHash = () => {
-        const hash = window.location.hash.slice(1);
-        if (!hash) return;
-
-        const timeoutId = setTimeout(() => {
-          const allHeadings = document.querySelectorAll(`[id="${hash}"]`);
-
-          allHeadings.forEach((heading) => {
-            const tabContent = heading.closest('[data-value]');
-            if (tabContent && rootRef.current?.contains(tabContent)) {
-              const tabValue = tabContent.getAttribute('data-value');
-              if (tabValue && tabValue !== activeTab) {
-                setActiveTab(tabValue);
-                const scrollTimeoutId = setTimeout(() => {
-                  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-                timeouts.push(scrollTimeoutId);
-              }
-            }
-          });
-        }, 100);
-        timeouts.push(timeoutId);
-      };
-
-      switchToTabContainingHash();
-      window.addEventListener('hashchange', switchToTabContainingHash);
-
-      const interval = setInterval(() => {
-        const hash = window.location.hash.slice(1);
-        if (hash) {
-          const heading = document.getElementById(hash);
-          if (heading) {
-            const tabContent = heading.closest('[data-value]');
-            if (tabContent && rootRef.current?.contains(tabContent)) {
-              const tabValue = tabContent.getAttribute('data-value');
-              if (tabValue && tabValue !== activeTab) {
-                setActiveTab(tabValue);
-                const scrollTimeoutId = setTimeout(() => {
-                  heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-                timeouts.push(scrollTimeoutId);
-              }
-            }
-          }
-        }
-      }, 500);
-
-      return () => {
-        window.removeEventListener('hashchange', switchToTabContainingHash);
-        clearInterval(interval);
-        timeouts.forEach(clearTimeout);
-      };
-    }, [activeTab]);
-
-    return React.createElement(RadixTabs.Root, {
-      value: activeTab,
-      onValueChange: setActiveTab,
-      className: 'tabs-root',
-      ref: rootRef
-    }, children);
-
-};
-
-const List = ({ children }) =>
-React.createElement(RadixTabs.List, { className: 'tabs-list' }, children);
-
-const Trigger = ({ value, children }) =>
-React.createElement(RadixTabs.Trigger, { value, className: 'tabs-trigger' }, children);
-
-const Content = ({ value, children }) =>
-React.createElement(RadixTabs.Content, {
-value,
-className: 'tabs-content',
-forceMount: true,
-'data-value': value
-}, children);
-
-return { Root, List, Trigger, Content };
-})();
-
-{/*
-Note: CSS is inlined here instead of imported from a separate file
-because Vocs has a bug where local file imports (like import './styles.css')
-break search indexing. npm package imports are fine, but CSS files must be inlined.
-*/}
-
-<style>{`
-.tabs-root {
-  display: flex;
-  flex-direction: column;
-  margin: 1.5rem 0;
-}
-
-.tabs-list {
-  display: flex;
-  border-bottom: 1px solid var(--vocs-color_border);
-  gap: 0;
-}
-
-.tabs-trigger {
-  all: unset;
-  font-family: inherit;
-  background-color: transparent;
-  padding: 0.75rem 1.5rem;
-  height: 45px;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9375rem;
-  line-height: 1;
-  color: var(--vocs-color_text3);
-  user-select: none;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tabs-trigger:hover {
-  color: var(--vocs-color_text);
-  background-color: var(--vocs-color_background2);
-}
-
-.tabs-trigger[data-state="active"] {
-  color: var(--vocs-color_text);
-  border-bottom-color: var(--vocs-color_link);
-  font-weight: 500;
-}
-
-.tabs-trigger:focus-visible {
-  outline: 2px solid var(--vocs-color_link);
-  outline-offset: 2px;
-}
-
-.tabs-content {
-  padding: 1.5rem 0;
-  outline: none;
-}
-
-.tabs-content[data-state="inactive"] {
-  display: block !important;
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  height: 0;
-  overflow: hidden;
-  visibility: hidden;
-}
-
-.tabs-content:focus {
-  outline: none;
-}
-
-.tabs-content > *:not(:last-child) {
-  margin-bottom: var(--vocs-space_24);
-}
-
-.tabs-content > *:last-child {
-  margin-bottom: 0;
-}
-`}</style>
+import { Tabs } from '../../components/Tabs';
 
 # Fund an app or agent to send messages with XMTP
 
@@ -13162,81 +12931,8 @@ Complete these tasks by **December 9, 2025**, to ensure your app or agent can se
 ## pages/fund-agents-apps/run-gateway.mdx
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import { useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
-
-{/*
-Custom Mermaid component for rendering diagrams in documentation.
-
-This component is defined inline instead of imported from a separate file
-because Vocs has a bug where local file imports break search indexing.
-Only npm package imports (like react and mermaid) are safe.
-*/}
-
-export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-const container = useRef(null);
-
-useEffect(() => {
-mermaid.initialize({ startOnLoad: false });
-
-    const renderChart = async () => {
-      try {
-        const { svg } = await mermaid.render(id, chart);
-        if (container.current) {
-          container.current.innerHTML = svg;
-        }
-      } catch (error) {
-        console.error('Mermaid render error:', error);
-        if (container.current) {
-          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
-        }
-      }
-    };
-
-    renderChart();
-
-}, [chart, id]);
-
-return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
-};
-
-<style>{`
-/* Make configuration table more readable with better column widths */
-.config-table-wrapper {
-  overflow-x: auto;
-}
-
-.config-table-wrapper table {
-  table-layout: fixed;
-  width: 100%;
-  min-width: 900px;
-}
-
-.config-table-wrapper table th:nth-child(1),
-.config-table-wrapper table td:nth-child(1) {
-  width: 15%;
-}
-
-.config-table-wrapper table th:nth-child(2),
-.config-table-wrapper table td:nth-child(2) {
-  width: 8%;
-}
-
-.config-table-wrapper table th:nth-child(3),
-.config-table-wrapper table td:nth-child(3) {
-  width: 20%;
-}
-
-.config-table-wrapper table th:nth-child(4),
-.config-table-wrapper table td:nth-child(4) {
-  width: 17%;
-}
-
-.config-table-wrapper table th:nth-child(5),
-.config-table-wrapper table td:nth-child(5) {
-  width: 40%;
-}
-`}</style>
+import Mermaid from '../../components/Mermaid';
+import { ConfigTable } from '../../components/ConfigTable';
 
 # Run your XMTP Gateway Service
 
@@ -13305,7 +13001,7 @@ func main() {
 
 You can provide the configuration options for your XMTP Gateway Service either directly in your code, via command line flag, or through environment variables.
 
-<div className="config-table-wrapper">
+<ConfigTable>
 
 | Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -13317,7 +13013,7 @@ You can provide the configuration options for your XMTP Gateway Service either d
 | Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `anvil`, `testnet`, and `mainnet`                                                                                                 |
 | Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
 
-</div>
+</ConfigTable>
 
 ### Metrics and observability
 
