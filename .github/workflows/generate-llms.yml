@@ -7,7 +7,7 @@ on:
     paths:
       - 'docs/**/*.md'
       - 'docs/**/*.mdx'
-      - '!llms/llms-full.txt'
+      - '!llms/llms-*.txt'
 
 jobs:
   build:
@@ -33,12 +33,15 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Update llms-full.txt
-          title: Update llms-full.txt
+          commit-message: Update LLM documentation files
+          title: Update LLM documentation files
           body: |
-            This PR updates the llms-full.txt file with the latest documentation.
-            
+            This PR updates the LLM documentation files with the latest changes:
+            - llms-chat-apps.txt (for chat app developers)
+            - llms-agents.txt (for agent developers)
+            - llms-full.txt (comprehensive documentation)
+
             Automated PR created by GitHub Actions.
-          branch: update-llms-full
+          branch: update-llms-docs
           base: main
           delete-branch: true

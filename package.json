@@ -9,6 +9,7 @@
   "scripts": {
     "build": "vocs build",
     "dev": "vocs dev",
+    "generate:llms": "python3 llms/generate_llms_full.py",
     "lint:md:fix": "npm run prettier:fix && markdownlint --fix 'docs/**/*.md' 'docs/**/*.mdx'",
     "lint:md": "npm run prettier:lint && markdownlint 'docs/**/*.md' 'docs/**/*.mdx'",
     "prettier:fix": "npm run prettier:lint -- --write",
