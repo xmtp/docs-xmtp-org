@@ -147,7 +147,7 @@ export const sidebarConfig = {
     },
     {
       text: "Examples",
-      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
+      link: "https://github.com/xmtplabs/xmtp-agent-examples",
       items: [],
     },
     {
