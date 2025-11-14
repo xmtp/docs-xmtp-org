@@ -439,7 +439,7 @@ export const sidebarConfig = {
           link: "/chat-apps/list-stream-sync/list",
         },
         {
-          text: "List and count messages",
+          text: "List messages",
           link: "/chat-apps/list-stream-sync/list-messages",
         },
         {

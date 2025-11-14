@@ -1,24 +1,137 @@
-# List and count messages
+# List messages
 
 Query messages from a conversation using filters including time ranges, delivery status, and content types. You can either retrieve the full message list or just get a message count for efficiency.
 
 ## Method parameters
 
-Both `messages()` and `countMessages()` accept the same filtering parameters. All parameters are optional and can be combined to create precise filters:
+All parameters are optional and can be combined to create precise filters and sorts:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `limit` | `Int` / `Long` / `bigint` | Maximum number of messages to return (not available for `countMessages`) |
+| `limit` | `Int` / `Long` / `bigint` | Maximum number of messages to return |
 | `beforeNs` / `sentBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages sent before this timestamp (nanoseconds) |
 | `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` | Filter messages sent after this timestamp (nanoseconds) |
-| `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first). Not available for `countMessages` |
+| `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
 | `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
-| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts) |
-| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded |
+| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). Not available for `enrichedMessages()` |
+| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. Not available for `enrichedMessages()` |
 
-## List messages from a conversation
+## List messages with enriched metadata
 
-Retrieve messages from a conversation with optional filtering and pagination.
+The `enrichedMessages()` method retrieves messages from conversations with enriched metadata automatically included. This means reactions, replies, and other associated data are "baked in" to each message, eliminating the need for separate queries to fetch this information.
+
+You may want to use enriched messages by default. The `enrichedMessages()` method provides better performance and simpler code.
+
+Be sure to handle content types properly by using the generic `content<T>()` method with the appropriate type for reactions and replies.
+
+### List messages enriched with reaction metadata
+
+Each message includes reaction information:
+
+- **`reactions`**: List of reaction messages associated with the message (available in Swift and Kotlin)
+- **`hasReactions`**: Boolean indicating if the message has any reactions (Kotlin only)
+- **`reactionCount`**: Total number of reactions on the message (Kotlin only)
+
+In Swift, check if `reactions` is nil or use `reactions?.count` to get the number of reactions.
+
+:::code-group
+
+```swift [Swift]
+// Retrieve messages with enriched data from a group
+let groupMessages = try await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+let dmMessages = try await dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+for message in groupMessages {
+  if let reactions = message.reactions {
+    print("This message has \(reactions.count) reactions")
+
+    // Access individual reactions
+    for reaction in reactions {
+      let reactionContent: Reaction = try reaction.content()
+      print("Reaction: \(reactionContent.content)")
+    }
+  }
+}
+```
+
+```kotlin [Kotlin]
+// Retrieve messages with enriched data from a group
+val groupMessages = group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+val dmMessages = dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach { message ->
+  if (message.hasReactions) {
+    println("This message has ${message.reactionCount} reactions")
+
+    // Access individual reactions
+    message.reactions.forEach { reaction ->
+      val reactionContent = reaction.content<Reaction>()
+      println("Reaction: ${reactionContent.content} from ${reactionContent.reference}")
+    }
+  }
+}
+```
+
+:::
+
+### List messages enriched with reply metadata
+
+Messages returned by `enrichedMessages()` include reply information when a message is a reply to another message.
+
+:::code-group
+
+```swift [Swift]
+// Retrieve messages with enriched data from a group
+let groupMessages = try await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+let dmMessages = try await dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+for message in groupMessages {
+  let replyContent: Reply = try message.content()
+
+  if let inReplyTo = replyContent.inReplyTo {
+    let originalContent: String = try inReplyTo.content()
+    print("This is a reply to message: \(originalContent)")
+    print("Reply text: \(replyContent.content)")
+  }
+}
+```
+
+```kotlin [Kotlin]
+// Retrieve messages with enriched data from a group
+val groupMessages = group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+val dmMessages = dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach { message ->
+  val replyContent = message.content<Reply>()
+
+  if (replyContent != null) {
+    println("This is a reply to message: ${replyContent.reference}")
+    println("Reply text: ${replyContent.content}")
+  }
+}
+```
+
+:::
+
+## List messages (unenriched)
+
+Retrieve messages from a conversation.
 
 :::code-group
 
@@ -394,3 +507,4 @@ const count = await group.countMessages({
 ```
 
 :::
+
