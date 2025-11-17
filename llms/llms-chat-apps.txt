@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 05:48 PM UTC / November 13, 2025
+Generated at 05:26 PM UTC / November 17, 2025
 
 ## About this file
 
@@ -9880,6 +9880,16 @@ You can:
 
 For example, you might self-fund your payer wallet if it already has or can easily obtain USDC. Or, you might ask your finance team to fund your payer wallet from a company multi-sig. You might also use a wallet you control to support a different app or agent by funding its payer wallet.
 
+## Access the XMTP Funding Portal
+
+At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
+
+Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mxUSD (mock XMTP USD fee token).
+
+To learn how to get mxUSD, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+Currently, mxUSD balances on testnet-staging are unaffected by usage.
+
 <Tabs.Root defaultValue="self-fund">
   <Tabs.List>
     <Tabs.Trigger value="self-fund">Self-fund a payer wallet</Tabs.Trigger>
@@ -9907,7 +9917,7 @@ You'll need your payer wallet's private key when setting up your [XMTP Gateway S
 
 ### Step 2. Register the payer wallet
 
-1. Use your payer wallet to connect to the XMTP Funding Portal → testnet link coming soon.
+1. Use your payer wallet to connect to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
 2. On the **Welcome** page, click **Use connected wallet**.
 3. Open the drop-down menu in the upper right and click **Manage payers**.
 4. Click the pencil icon to give your payer wallet a human-readable name.
@@ -9917,45 +9927,47 @@ Your payer wallet is now a payer in the Payer Registry smart contract.
 
 ### Step 3: Fund the payer wallet with USDC on Base
 
+:::tip[Using testnet-staging?]
+
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+:::
+
 Fund your payer wallet with USDC on Base. Here are some sources you can use to acquire USDC:
 
 - Centralized exchanges: Binance, Coinbase, Kraken
 - Direct purchase: Circle, Coinbase
 - Business accounts: Circle business accounts for larger operations
 
-To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
-
 ### Step 4: Allocate funds for messaging
 
 :::warning
 
-Once you fund a payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) USDC from the messaging and gas fee allowance.
+Once you fund a payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) from the messaging and gas fee allowance.
 
 - Withdrawals from the Payer Registry will be available after 48 hours and require a second transaction to claim.
 - Withdrawals from the XMTP App Chain that require bridging to Base will be available after 7 days and require a second transaction to claim.
 
 :::
 
-The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
-
-1. Connect the payer wallet to the XMTP Funding Portal → testnet link coming soon.
+1. Connect the payer wallet to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
 2. In the drop-down menu in the upper right, be sure to select the payer wallet.
 3. On the **Dashboard** page, click **Fund**.
-4. Enter the amount of USDC you want to allocate from your payer wallet.
+4. Enter the amount you want to allocate from your payer wallet.
 5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
 6. Click **Continue**.
 7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
 Your payer wallet now has:
 
-- USDC allocated to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
-- USDC bridged to your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+- An allocation to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- An amount bridged to your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
 
 ### Step 5: Monitor your usage and allowance
 
 You can use the **Usage** panel on the XMTP Funding Portal **Dashboard** to review the number of messages sent by your app, as well as actual and projected fees.
 
-Before data can display in the Usage panel, you must have completed the following on the appropriate network (testnet or mainnet):
+Before data can display in the **Usage** panel, you must have completed the following on the appropriate network (testnet or mainnet):
 
 1. [Deployed your XMTP Gateway Service](/fund-agents-apps/run-gateway)
 2. Updated your app to [use a compatible XMTP SDK](/fund-agents-apps/update-sdk)
@@ -9967,14 +9979,14 @@ If your allowance goes to zero, the Payer Registry smart contract rejects new me
 
 ### Step 6: Withdraw and claim funds
 
-You can use the payer wallet (and only the payer wallet) to withdraw USDC from the messaging and gas fee allowance at any time.
+You can use the payer wallet (and only the payer wallet) to withdraw from the messaging and gas fee allowance at any time.
 
 - Withdrawals from the Payer Registry will be available after 48 hours and require a second transaction to claim.
 - Withdrawals from the XMTP App Chain that require bridging to Base will be available after 7 days and require a second transaction to claim.
 
-1. Connect your payer wallet to the XMTP Funding Portal → testnet link coming soon.
+1. Connect your payer wallet to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
 2. On the **Dashboard** page, click **Withdraw**.
-3. Enter the amount of USDC you want to withdraw from your messaging balance. Click **MAX** if you want to withdraw the maximum amount available.
+3. Enter the amount you want to withdraw from your messaging balance. Click **MAX** if you want to withdraw the maximum amount available.
 4. Click **Request withdrawal**.
 5. After the required wait time, return to the XMTP Funding Portal to complete your withdrawal. On the homepage, view the **Transaction** panel and locate your **Withdrawal** and **Bridge** transactions. The **Status** column should be set to **_Ready to withdraw_**.
 6. Click **Ready to withdraw** to display the **Transaction details** panel.
@@ -9992,7 +10004,7 @@ To fund an app using a wallet other than its payer wallet, you need the payer wa
 
 ### Step 2. Select the payer wallet you want to fund
 
-1. Use the wallet you want to use to fund the payer wallet to connect to the XMTP Funding Portal → testnet link coming soon.
+1. Use the wallet you want to use to fund the payer wallet to connect to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
 2. On the **Welcome** page, click **Use other wallet**.
 3. On the **Manage payer wallets** screen, enter the payer wallet address you want to fund and a human-readable display name.
 4. Click the green check button to save.
@@ -10000,6 +10012,12 @@ To fund an app using a wallet other than its payer wallet, you need the payer wa
 Your wallet can now fund the payer wallet.
 
 ### Step 3: Deposit USDC into your wallet
+
+:::tip[Using testnet-staging?]
+
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+:::
 
 Deposit USDC into your wallet on Base. This is the wallet you want to use to fund the payer wallet.
 
@@ -10009,41 +10027,92 @@ Here are some sources you can use to acquire USDC:
 - Direct purchase: Circle, Coinbase
 - Business accounts: Circle business accounts for larger operations
 
-To get USDC on Base Sepolia for use with XMTP testnet, you can use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
-
 ### Step 4: Allocate funds to the payer wallet
 
 :::warning
 
-Once you use your wallet to allocate funds to the payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) USDC from the messaging fee allowance.
+Once you use your wallet to allocate funds to the payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) from the messaging and gas fee allowance.
 
 :::
 
-The XMTP Funding Portal will accept only testnet USDC until **November 1, 2025**. Plan your testnet and mainnet funding accordingly.
-
-1. Use the wallet you funded in Step 3 to connect to the XMTP Funding Portal → testnet link coming soon.
+1. Use the wallet you funded in Step 3 to connect to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
 2. In the drop-down menu in the upper right, be sure to select the payer wallet.
 3. On the **Dashboard** page, click **Fund**.
-4. Enter the amount of USDC you want to allocate from your wallet to the payer wallet.
+4. Enter the amount you want to allocate from your wallet to the payer wallet.
 5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
 6. Click **Continue**.
 7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
 
 The payer wallet now has:
 
-- USDC allocated to the registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
-- USDC bridged to the payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+- An allocation to the registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- An amount bridged to the payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
 
 </Tabs.Content>
 </Tabs.Root>
+
+## For use with testnet-staging only: Self-mint mxUSD
+
+To fund your app on the testnet-staging deployment of the [XMTP Funding Portal](#access-the-xmtp-funding-portal), you must use mxUSD (mock XMTP USD fee token) instead of USDC.
+
+To get mxUSD, you must self-mint it.
+
+### Self-mint mxUSD
+
+1. Start [Docker Desktop](https://docs.docker.com/desktop/).
+
+2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mxUSD:
+
+   ```bash
+    docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
+      funds mint --amount <1000> --to <receiving-address>
+      --private-key <private-key> \
+      --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
+      --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
+      --config-file https://github.com/xmtp/smart-contracts/releases/download/v0.5.5/testnet.json \
+    ```
+
+Available parameters:
+
+- `--amount`: Amount of mxUSD to mint, in whole units. For example, `1000`.
+- `--to`: Receiving address (typically your payer wallet address)
+- `--private-key`: Private key of the address you want to use to pay the gas fee to mint the mxUSD
+- `--app-rpc-url`: Your Alchemy API endpoint for XMTP Ropsten
+- `--settlement-rpc-url`: Your Alchemy API endpoint for the Base Sepolia
+
+To learn how to create an Alchemy API endpoint, see [Create an Alchemy API Key](https://www.alchemy.com/docs/create-an-api-key).
+
+Expected output:
+
+```bash
+INFO    funds-admin     tokens minted   {"settlement_chain_id": 84532, "app_chain_id": 351243127, "from_address": "0x0000000000000000000000000000000000000000", "to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
+INFO    successfully minted mock underlying fee token   {"to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
+```
+
+Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mxUSD.
+
+### Add mxUSD to MetaMask
+
+After self-minting mxUSD, you'll need to add the token to MetaMask to view your balance:
+
+1. Open MetaMask and select the **Tokens** tab.
+2. Open the kebab menu and click **Import tokens**.
+3. Select the **Base Sepolia** network and enter these token details:
+   - **Token contract address**: `0x2d7e0534183dAD09008C97f230d9F4f6425eE859`
+   - **Token symbol**: `mxUSD`
+   - **Token decimal**: `6`
+4. Click **Next**.
+5. Click **Import** to confirm.
+
+Your mxUSD balance should now be visible in MetaMask.
 
 ## Troubleshooting
 
 ### Is there a testnet?
 
-Yes. The XMTP App Chain testnet and XMTP Broadcast Network testnet run smart contracts that are identical to those run on mainnet.
+Yes. There are testnets for the XMTP App Chain and XMTP Broadcast Network.
 
-You can dry-run allocating funds using Base Sepolia USDC and sending messages using these XMTP testnets.
+At this time, you can dry-run allocating funds using the [testnet-staging deployment of the XMTP Funding Portal](#access-the-xmtp-funding-portal) and sending messages using these XMTP testnets.
 
 ### Signature rejected (MetaMask only)
 
@@ -10083,37 +10152,36 @@ Nodes in the XMTP testnet and mainnet that operate in US jurisdiction do so in 
 ## fund-agents-apps/get-started.md
 # Get started with funding an app or agent to send messages with XMTP
 
-Starting December 9, 2025, apps and agents must pay fees to send messages on the decentralized XMTP Broadcast Network.
+Mainnet of the decentralized XMTP Network is expected to launch in early 2026.
 
-This guide provides a timeline and checklist to prepare your app or agent for this transition.
+Specifically, Mainnet launch will occur 60 days after the release of an SDK version that meets production standards for performance and reliability on Testnet.
 
-## Key production milestones
+With Mainnet launch, all message traffic will be automatically routed from the current production network to Mainnet. At this time, apps and agents will begin paying fees to send messages on Mainnet.
 
-- **October 15, 2025**:
-  - The XMTP Gateway Service library is available in Go.
-  - **→ Deploy your gateway service.**
-- **November 15 2025**:
-  - All client SDKs and are compatible with mainnet.
-  - **→ Update your client SDKs.**
-  - XMTP payer wallets can be funded on mainnet.
-  - **→ Fund your payer wallet.**
-- **December 9, 2025**:
-  - All message traffic is routed through the decentralized network.
-  - **→ Older client SDKs are incompatible.**
+## Key milestones and actions
 
-## Required tasks
+Once a milestone is delivered, you can proceed with required and recommended actions.
 
-Complete these tasks by **December 9, 2025**, to ensure your app or agent can send messages on the decentralized XMTP Broadcast Network.
-
-1. **From October 15**: Deploy the [XMTP Gateway Service](/fund-agents-apps/run-gateway) to enable your app or agent to send messages and pay fees on XMTP mainnet.
-2. **From November 15**: Update your app or agent to use a [decentralization-ready XMTP SDK](/fund-agents-apps/update-sdk) to connect to your XMTP Gateway Service and [fund your app or agent](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
-
-## Recommended next steps
-
-- Learn about [XMTP fees](/fund-agents-apps/calculate-fees).
-- Test your implementation:
-  - Verify that your [XMTP Gateway Service](/fund-agents-apps/run-gateway) and [funding](/fund-agents-apps/fund-your-app) are working correctly.
-- [Set up monitoring](/fund-agents-apps/run-gateway#metrics-and-observability) and automated tests for your XMTP Gateway Service.
+**Milestone**|**Delivered?**|**Action**
+:-----|:-----|:-----
+Payer wallets can be funded on Testnet|🟢|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)
+XMTP Gateway Service library is available in Go|🟢|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
+Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)
+|  |🔴 iOS|
+|  |🔴 Android|
+|  |🔴 React Native|
+|  |🔴 Browser|
+|  |🔴 Node|
+|  |🔴 Agent|
+Client SDKs are compatible with Mainnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)
+|  |🔴 iOS|
+|  |🔴 Android|
+|  |🔴 React Native|
+|  |🔴 Browser|
+|  |🔴 Node|
+|  |🔴 Agent|
+Payer wallets can be funded on Mainnet|🔴|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)
+All message traffic routed through Mainnet|🔴|Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required)
 
 
 ## fund-agents-apps/glossary.md
