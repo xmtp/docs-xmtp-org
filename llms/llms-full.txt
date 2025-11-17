@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 05:26 PM UTC / November 17, 2025
+Generated at 09:07 PM UTC / November 17, 2025
 
 ## About this file
 
@@ -1450,7 +1450,7 @@ Be transparent about the post-import experience:
 
 :::warning[This feature is in beta]
 
-History sync is still in active development as we work on its reliability and performance. To provide feedback on this feature, please post to [Ideas & Improvements](https://community.xmtp.org/c/general/ideas/54) in the XMTP Community Forums.
+History sync is still in active development as we work on its reliability and performance. To provide feedback on this feature, please post to [Ideas & Improvements](https://community.xmtp.org/c/general/ideas/54) in the XMTP Technical Forums.
 
 :::
 
@@ -2357,7 +2357,7 @@ Please open an issue in the relevant repo:
 - [Android SDK](https://github.com/xmtp/xmtp-android/issues)
 - [iOS SDK](https://github.com/xmtp/xmtp-ios/issues)
 
-For all other topics, post to the [XMTP Community Forums](https://community.xmtp.org/).
+For all other topics, post to the [XMTP Technical Forums](https://community.xmtp.org/).
 
 
 ## chat-apps/intro/faq.mdx
@@ -2464,7 +2464,7 @@ XMTP core developers and researchers are working on a specific fee model for XMT
 - Infrastructure costs for the network must remain low even when decentralized, and comparable to the costs for an equivalent centralized messaging service.
 - There must be a low "take rate": the biggest driver of cost must be infrastructure costs, with any remaining cost returned to the network.
 
-Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging fee collection](https://community.xmtp.org/t/xip-57-messaging-fee-collection/876) in the XMTP Community Forums.
+Have questions or feedback about the fee model for XMTP? See [XIP-57: Messaging fee collection](https://community.xmtp.org/t/xip-57-messaging-fee-collection/876) in the XMTP Technical Forums.
 
 ## Security
 
@@ -2527,7 +2527,7 @@ For this reason, XMTP supports [remote attachments](/chat-apps/content-types/att
 
 Not currently. However, Ephemera is exploring ways to support message deletion and editing.
 
-Have ideas about message deletion and editing? Post to the [XMTP Community Forums](https://community.xmtp.org/c/development/ideas/54).
+Have ideas about message deletion and editing? Post to the [XMTP Technical Forums](https://community.xmtp.org/c/development/ideas/54).
 
 ### Is XMTP more like email or chat?
 
@@ -5973,7 +5973,7 @@ For example, an XMTP identity on the `dev` network is completely distinct from t
 When you create a client, it connects to the XMTP `dev` network by default. Set your client's network environment using the appropriate [client option](#configure-an-xmtp-client).
 :::
 
-The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Community Forums](https://community.xmtp.org/).
+The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Technical Forums](https://community.xmtp.org/).
 
 You can use a `local` network environment to have a client communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
 
@@ -6199,7 +6199,7 @@ Here is a list of supported chain IDs:
 - chain_rpc_59144 = string
 - chain_rpc_480 = string
 
-Need support for a different chain ID? Please post your request to the [XMTP Community Forums](https://community.xmtp.org/c/general/ideas/54).
+Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -7682,7 +7682,7 @@ If you're developing or testing and frequently creating new installations, you c
 3. Use different wallets for testing: Create separate test wallets rather than repeatedly creating installations with the same wallet
 4. Monitor your usage: Regularly check your inbox state to track how many updates you've used
 
-Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Community Forums](https://community.xmtp.org/).
+Have feedback about the inbox update and installation limits? We'd love to hear it. Post to the [XMTP Technical Forums](https://community.xmtp.org/).
 
 ### Rotate an inbox ID
 
@@ -8203,7 +8203,7 @@ If the identity is then added as an associated identity to inbox ID 1, the ident
 
 To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox ID 2 again, you can use the recovery identity for inbox ID 2 to add a different identity to inbox ID 2 and have the user use that identity access it.
 
-If you are interested in providing this functionality in your app and want some guidance, post to the [XMTP Community Forums](https://community.xmtp.org).
+If you are interested in providing this functionality in your app and want some guidance, post to the [XMTP Technical Forums](https://community.xmtp.org).
 
 
 ## chat-apps/core-messaging/rate-limits.mdx
