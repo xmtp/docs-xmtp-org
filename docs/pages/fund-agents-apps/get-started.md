@@ -13,6 +13,7 @@ Once a milestone is delivered, you can proceed with required and recommended act
 **Milestone**|**Delivered?**|**Action**
 :-----|:-----|:-----
 Payer wallets can be funded on Testnet|🟢|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)
+XMTP Gateway Service library is available in Go|🟢|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
 Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)
 |  |🔴 iOS|
 |  |🔴 Android|
@@ -20,7 +21,6 @@ Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-
 |  |🔴 Browser|
 |  |🔴 Node|
 |  |🔴 Agent|
-XMTP Gateway Service library is available in Go|🔴|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
 Client SDKs are compatible with Mainnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)
 |  |🔴 iOS|
 |  |🔴 Android|
