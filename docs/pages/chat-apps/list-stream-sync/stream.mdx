@@ -204,7 +204,7 @@ for await message in try await alix.conversations.streamAllMessages(type: /* OPT
 :::warning
 **Browser and Node SDK**
 
-Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 6 times with a 10 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
+Streams will automatically attempt to reconnect if they fail. By default, a stream will attempt to reconnect up to 10 times with a 60 second delay between each retry. To change these defaults, use the `retryAttempts` and `retryDelay` options. To disable this feature, set the `retryOnFail` option to `false`. During the retry process, the `onRetry` and `onRestart` callbacks can be used to monitor progress.
 :::
 
 :::code-group
