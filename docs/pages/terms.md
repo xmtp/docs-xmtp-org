@@ -16,7 +16,7 @@ This means that except as otherwise noted, page content is licensed under the [C
 
 When you see a page with this notice, you are free to use [nearly everything](#what-is-not-licensed) on the page in your own creations. For example, you could quote the text in a book, cut-and-paste sections to your blog, record it as an audiobook for the visually impaired, or even translate it into Swahili. Really. That's what open content licenses are all about. We just ask that you give us [attribution](#attribution) when you reuse our work.
 
-If you have any questions about these terms of service, post to the [XMTP Community Forums](https://community.xmtp.org/).
+If you have any questions about these terms of service, post to the [XMTP Technical Forums](https://community.xmtp.org/).
 
 ## What is _not_ licensed?
 
