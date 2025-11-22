@@ -14,7 +14,7 @@ You can contribute by submitting:
   
 If you submit a pull request (PR), include a link to the bug report or feature request your PR addresses. If a documentation issue doesn't exist, please [open one](https://github.com/xmtp/docs-xmtp-org/issues) before you start contributing.
 
-Have a question about contributing? Post to the [XMTP Community Forums](https://community.xmtp.org/).
+Have a question about contributing? Post to the [XMTP Technical Forums](https://community.xmtp.org/).
 
 And lastly, when contributing, please follow the XMTP community code of conduct to help create a safe and positive experience for all.
 
