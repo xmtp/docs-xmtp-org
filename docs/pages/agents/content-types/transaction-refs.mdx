@@ -24,22 +24,6 @@ pnpm add @xmtp/content-type-transaction-reference
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Node]
-import {
-  ContentTypeTransactionReference,
-  TransactionReferenceCodec,
-} from '@xmtp/content-type-transaction-reference';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new TransactionReferenceCodec()],
-});
-```
-
 ## Send a transaction reference
 
 With XMTP, a transaction reference is represented as an object with the following keys:
@@ -75,9 +59,9 @@ const transactionReference: TransactionReference = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-await ctx.conversation.send(transactionReference, {
-  contentType: ContentTypeTransactionReference,
-});
+import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
+
+await ctx.conversation.send(transactionReference, ContentTypeTransactionReference);
 ```
 
 ## Receive a transaction reference
@@ -85,6 +69,8 @@ await ctx.conversation.send(transactionReference, {
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
+import { TransactionReferenceCodec } from '@xmtp/content-type-transaction-reference';
+
 if (ctx.usesCodec(TransactionReferenceCodec)) {
   // Process the transaction reference here
 }
