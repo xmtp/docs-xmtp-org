@@ -294,6 +294,12 @@ const messageById = await client.conversations.getMessageById(messageId);
 
 // get a 1:1 conversation by a peer's inbox ID
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+
+// get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
+const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
+  identifier: "0xpeerAddress", 
+  identifierKind: "Ethereum" 
+});
 ```
 
 ```tsx [React Native]

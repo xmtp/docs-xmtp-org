@@ -67,6 +67,12 @@ const messageById = await agent.client.conversations.getMessageById(messageId);
 // get a 1:1 conversation by a peer's inbox ID
 const dmByInboxId =
   await agent.client.conversations.getDmByInboxId(peerInboxId);
+
+// get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
+const dmByIdentifier = await agent.client.conversations.getDmByIdentifier({ 
+  identifier: "0xpeerAddress", 
+  identifierKind: IdentifierKind.Ethereum 
+});
 ```
 
 ## Check if an identity is reachable
