@@ -7,16 +7,14 @@ Create an XMTP agent that can use the signing capabilities provided by a signer.
 ```tsx [Node]
 import { Agent } from '@xmtp/agent-sdk';
 import { createSigner, createUser } from '@xmtp/agent-sdk/user';
-import { getRandomValues } from 'node:crypto';
-import { fromString } from "uint8arrays/from-string";
 
 // Replace with your own wallet key and encryption key
 const walletKey = "0xprivateKey";
-const encryptionKey = "0xencryptionKey";
+const db_encryptionKey = "0xencryptionKey";
 
 // Option 1: Create a local user + signer
 const user = createUser(walletKey);
-const dbEncryptionKey = fromString(encryptionKey,"hex");
+const dbEncryptionKey = Buffer.from(db_encryptionKey).toString("hex")
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
