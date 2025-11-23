@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 09:07 PM UTC / November 17, 2025
+Generated at 04:55 AM UTC / November 23, 2025
 
 ## About this file
 
@@ -6608,6 +6608,12 @@ const messageById = await client.conversations.getMessageById(messageId);
 
 // get a 1:1 conversation by a peer's inbox ID
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+
+// get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
+const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
+  identifier: "0xpeerAddress", 
+  identifierKind: "Ethereum" 
+});
 ```
 
 ```js [Node]
@@ -6620,6 +6626,12 @@ const messageById = await client.conversations.getMessageById(messageId);
 
 // get a 1:1 conversation by a peer's inbox ID
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
+
+// get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
+const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
+  identifier: "0xpeerAddress", 
+  identifierKind: IdentifierKind.Ethereum 
+});
 ```
 
 ```tsx [React Native]
