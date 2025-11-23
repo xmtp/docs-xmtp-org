@@ -1,80 +1,7 @@
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import { useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
-
-{/*
-Custom Mermaid component for rendering diagrams in documentation.
-
-This component is defined inline instead of imported from a separate file
-because Vocs has a bug where local file imports break search indexing.
-Only npm package imports (like react and mermaid) are safe.
-*/}
-
-export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-const container = useRef(null);
-
-useEffect(() => {
-mermaid.initialize({ startOnLoad: false });
-
-    const renderChart = async () => {
-      try {
-        const { svg } = await mermaid.render(id, chart);
-        if (container.current) {
-          container.current.innerHTML = svg;
-        }
-      } catch (error) {
-        console.error('Mermaid render error:', error);
-        if (container.current) {
-          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
-        }
-      }
-    };
-
-    renderChart();
-
-}, [chart, id]);
-
-return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
-};
-
-<style>{`
-/* Make configuration table more readable with better column widths */
-.config-table-wrapper {
-  overflow-x: auto;
-}
-
-.config-table-wrapper table {
-  table-layout: fixed;
-  width: 100%;
-  min-width: 900px;
-}
-
-.config-table-wrapper table th:nth-child(1),
-.config-table-wrapper table td:nth-child(1) {
-  width: 15%;
-}
-
-.config-table-wrapper table th:nth-child(2),
-.config-table-wrapper table td:nth-child(2) {
-  width: 8%;
-}
-
-.config-table-wrapper table th:nth-child(3),
-.config-table-wrapper table td:nth-child(3) {
-  width: 20%;
-}
-
-.config-table-wrapper table th:nth-child(4),
-.config-table-wrapper table td:nth-child(4) {
-  width: 17%;
-}
-
-.config-table-wrapper table th:nth-child(5),
-.config-table-wrapper table td:nth-child(5) {
-  width: 40%;
-}
-`}</style>
+import Mermaid from '../../components/Mermaid';
+import { ConfigTable } from '../../components/ConfigTable';
 
 # Run your XMTP Gateway Service
 
@@ -94,20 +21,9 @@ Every app and agent needs an XMTP Gateway Service.
 
 ### For browser and mobile client apps
 
-You must run the XMTP Gateway Service written in Go. Choose the option that works best for you:
+Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as a starting point to build your own custom gateway with authentication
 
-**Option 1: Basic Docker image** (No Go knowledge required)
-
-- XMTP provides a Docker image that works out of the box
-- Authorizes all requests (add authentication for production)
-- Suitable for testing
-
-**Option 2: Custom implementation** (Go knowledge required)
-
-- Start with XMTP's Go implementation
-- Add your own authentication logic
-- Implement custom rate limiting
-- Required for apps with authentication needs
+For detailed implementation steps, see [Deploy your XMTP Gateway Service](#deploy-your-xmtp-gateway-service).
 
 ### For agents and Node.js apps
 
@@ -154,18 +70,19 @@ func main() {
 
 You can provide the configuration options for your XMTP Gateway Service either directly in your code, via command line flag, or through environment variables.
 
-<div className="config-table-wrapper">
+<ConfigTable>
 
 | Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
 | ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract. |
+| App Chain RPC URL        | `true`   | `--contracts.app-chain.rpc-url`        | `XMTPD_APP_CHAIN_RPC_URL`        | The RPC URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
+| Settlement Chain RPC URL | `true`   | `--contracts.settlement-chain.rpc-url` | `XMTPD_SETTLEMENT_CHAIN_RPC_URL` | The RPC URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
 | App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
 | Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
-| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `local`, `testnet`, and `mainnet`                                                                                                 |
-| Enable Redis             | `true`   | `--redis.enable`                       | `XMTPD_REDIS_ENABLE`             | Use Redis for nonce management and rate limiting.                                                                                                                                                         |
+| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `anvil`, `testnet`, and `mainnet`                                                                                                 |
 | Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
 
-</div>
+</ConfigTable>
 
 ### Metrics and observability
 
@@ -274,7 +191,7 @@ This identity will then be used for rate limiting, and will be passed to your `A
 
 :::code-group
 
-```go [IP Address]
+```go [IP address]
 //  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
 package main
 
@@ -392,6 +309,48 @@ func main() {
 
 ```
 
+```go [Rate limiting]
+package main
+
+import (
+ "context"
+ "log"
+ "time"
+
+ "github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/xmtp/xmtpd/pkg/gateway/authorizers"
+)
+
+func main() {
+ cfg := gateway.MustLoadConfig()
+ redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
+
+ authorizer := authorizers.NewRateLimitBuilder().
+  WithLogger(gateway.MustCreateLogger(cfg)).
+  WithRedis(redis).
+  // Set rate limits to 50 requests/minute and 250 requests/hour
+  WithLimits(authorizers.RateLimit{
+   Capacity:    50,
+   RefillEvery: time.Minute,
+  }, authorizers.RateLimit{
+   Capacity:    250,
+   RefillEvery: time.Hour,
+  }).
+  MustBuild()
+
+ gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
+  WithRedisClient(redis).
+  WithAuthorizers(authorizer).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
 :::
 
 ## Authorize requests
@@ -435,21 +394,38 @@ func main() {
 
 ## Deploy your XMTP Gateway Service
 
-Deploy the XMTP Gateway Service on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+:::tip[Example repo]
 
-We provide a Docker image that corresponds to the bare bones example above that you can run with the appropriate environment variables set in any hosting provider that supports Docker.
+You can start with the [example gateway service repository](https://github.com/xmtp/gateway-service-example).
 
-```bash [Bash]
-docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
-```
+:::
 
-Most production apps will require some level of customization to authorize user requests. We provide a sample Dockerfile in the xmtpd [`dev/docker`](https://github.com/xmtp/xmtpd/blob/main/dev/docker/gateway.Dockerfile) directory that you can use as a starting point.
+1. Fork or clone the repository.
+2. Add your own authentication logic.
+3. Configure your rate limits
+4. Deploy your custom image on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+
+### Additional recommendations
 
 The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
 
 If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
 
 ## Test your XMTP Gateway Service
+
+You can use the prebuilt Docker image for local development and testing:
+
+```bash [Bash]
+docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
+```
+
+:::warning
+
+This pre-built image authorizes all requests without authentication. Never use it in production.
+
+:::
+
+### Test scenarios
 
 Here are some high priority scenarios to test:
 

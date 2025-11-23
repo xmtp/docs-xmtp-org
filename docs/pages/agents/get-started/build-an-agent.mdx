@@ -60,9 +60,11 @@ await agent.start();
 
 Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
 
+To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+
 :::
 
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history. To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
 
 ### Set environment variables
 
@@ -76,7 +78,7 @@ XMTP_ENV=dev # local, dev, production
 
 ## Vibe coding
 
-See these [Cursor rules](https://github.com/ephemeraHQ/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+See these [Cursor rules](https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
 
 ```bash
 Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
@@ -86,7 +88,7 @@ Prompt: lets create an example that gets a number and returns its 2x multiple (u
 
 Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
 
-![xmtp.chat DM screenshot](https://github.com/ephemeraHQ/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
+![xmtp.chat DM screenshot](https://github.com/xmtplabs/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
 
 ## Debug an agent
 
@@ -98,4 +100,4 @@ To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 
 ## Agent examples
 
-Visit the [examples](https://github.com/ephemeraHQ/xmtp-agent-examples) repository for more agent examples.
+Visit the [examples](https://github.com/xmtplabs/xmtp-agent-examples) repository for more agent examples.

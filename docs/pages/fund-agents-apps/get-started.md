@@ -1,33 +1,32 @@
 # Get started with funding an app or agent to send messages with XMTP
 
-Starting December 9, 2025, apps and agents must pay fees to send messages on the decentralized XMTP Broadcast Network.
+Mainnet of the decentralized XMTP Network is expected to launch in early 2026.
 
-This guide provides a timeline and checklist to prepare your app or agent for this transition.
+Specifically, Mainnet launch will occur 60 days after the release of an SDK version that meets production standards for performance and reliability on Testnet.
 
-## Key production milestones
+With Mainnet launch, all message traffic will be automatically routed from the current production network to Mainnet. At this time, apps and agents will begin paying fees to send messages on Mainnet.
 
-- **October 15, 2025**:
-  - The XMTP Gateway Service library is available in Go.
-  - **→ Deploy your gateway service.**
-- **November 15 2025**:
-  - All client SDKs and are compatible with mainnet.
-  - **→ Update your client SDKs.**
-  - XMTP payer wallets can be funded on mainnet.
-  - **→ Fund your payer wallet.**
-- **December 9, 2025**:
-  - All message traffic is routed through the decentralized network.
-  - **→ Older client SDKs are incompatible.**
+## Key milestones and actions
 
-## Required tasks
+Once a milestone is delivered, you can proceed with required and recommended actions.
 
-Complete these tasks by **December 9, 2025**, to ensure your app or agent can send messages on the decentralized XMTP Broadcast Network.
-
-1. **From October 15**: Deploy the [XMTP Gateway Service](/fund-agents-apps/run-gateway) to enable your app or agent to send messages and pay fees on XMTP mainnet.
-2. **From November 15**: Update your app or agent to use a [decentralization-ready XMTP SDK](/fund-agents-apps/update-sdk) to connect to your XMTP Gateway Service and [fund your app or agent](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal. We recommend funding 3-6 months of estimated usage.
-
-## Recommended next steps
-
-- Learn about [XMTP fees](/fund-agents-apps/calculate-fees).
-- Test your implementation:
-  - Verify that your [XMTP Gateway Service](/fund-agents-apps/run-gateway) and [funding](/fund-agents-apps/fund-your-app) are working correctly.
-- [Set up monitoring](/fund-agents-apps/run-gateway#metrics-and-observability) and automated tests for your XMTP Gateway Service.
+**Milestone**|**Delivered?**|**Action**
+:-----|:-----|:-----
+Payer wallets can be funded on Testnet|🟢|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)
+XMTP Gateway Service library is available in Go|🟢|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
+Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)
+|  |🔴 iOS|
+|  |🔴 Android|
+|  |🔴 React Native|
+|  |🔴 Browser|
+|  |🔴 Node|
+|  |🔴 Agent|
+Client SDKs are compatible with Mainnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)
+|  |🔴 iOS|
+|  |🔴 Android|
+|  |🔴 React Native|
+|  |🔴 Browser|
+|  |🔴 Node|
+|  |🔴 Agent|
+Payer wallets can be funded on Mainnet|🔴|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)
+All message traffic routed through Mainnet|🔴|Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required)

@@ -1,41 +1,6 @@
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import { useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
-
-{/*
-Custom Mermaid component for rendering diagrams in documentation.
-
-This component is defined inline instead of imported from a separate file
-because Vocs has a bug where local file imports break search indexing.
-Only npm package imports (like react and mermaid) are safe.
-*/}
-export const Mermaid = ({ chart, id = 'mermaid-graph' }) => {
-const container = useRef(null);
-
-useEffect(() => {
-mermaid.initialize({ startOnLoad: false });
-
-    const renderChart = async () => {
-      try {
-        const { svg } = await mermaid.render(id, chart);
-        if (container.current) {
-          container.current.innerHTML = svg;
-        }
-      } catch (error) {
-        console.error('Mermaid render error:', error);
-        if (container.current) {
-          container.current.innerHTML = `<pre style="color: red;">Failed to render diagram: ${String(error)}</pre>`;
-        }
-      }
-    };
-
-    renderChart();
-
-}, [chart, id]);
-
-return <div ref={container} style={{ background: '#ffffff', padding: '1rem', borderRadius: '0.5rem' }} />;
-};
+import Mermaid from '../../components/Mermaid';
 
 # Understand and calculate XMTP fees
 
@@ -43,7 +8,7 @@ Use this guide to understand XMTP fees and how to calculate estimated XMTP fees 
 
 ## Understand XMTP fees
 
-To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. The fees paid by apps and agents (payers) directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
+To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. **All XMTP network fees are paid in USDC** (USD Coin, a stablecoin pegged to the US dollar). The fees paid by apps and agents (payers) directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
 
 :::tip[How to estimate your costs]
 
@@ -70,7 +35,7 @@ Messages sent through the **XMTP Broadcast Network** incur these types of **mess
 - **Storage fee**: A fee charged per-byte-day of storage required.
 - **Congestion fee**: A dynamic fee computed by looking at the recent activity of an originator. Added only during periods of high network activity.
 
-The fee rates for the base fee, storage fee, and congestion fee are denominated in dollars and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
+The fee rates for the base fee, storage fee, and congestion fee are denominated in USDC and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
 
 Every message an app or agent sends through the XMTP Broadcast Network counts against its message allowance. These message types include:
 

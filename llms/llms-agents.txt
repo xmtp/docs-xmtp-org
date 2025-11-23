@@ -1,0 +1,4452 @@
+# XMTP Documentation for Building Agents
+
+Generated at 09:07 PM UTC / November 17, 2025
+
+## About this file
+
+This documentation is tailored for developers building agents with XMTP. It includes guides on agent concepts, building and deploying agents, content types, and integration patterns, along with protocol fundamentals, network operations, and funding information.
+
+## Included Sections
+
+- agents
+- protocol
+- network
+- fund-agents-apps
+
+---
+
+# Section: agents
+
+## agents/build-agents/create-a-client.mdx
+# Create an XMTP agent
+
+Create an XMTP agent that can use the signing capabilities provided by a signer. This signer links the agent to the appropriate EOA or SCW.
+
+## Create an EOA signer
+
+```tsx [Node]
+import { Agent } from '@xmtp/agent-sdk';
+import { createSigner, createUser } from '@xmtp/agent-sdk/user';
+import { getRandomValues } from 'node:crypto';
+
+// Option 1: Create a local user + signer
+const user = createUser('0xprivateKey');
+const signer = createSigner(user);
+
+const agent = await Agent.create(signer, {
+  env: 'dev', // or 'production'
+  dbEncryptionKey: `0x${getRandomValues(new Uint8Array(32))}`, // save it for later
+});
+```
+
+## Environment variables
+
+The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code.
+
+**Available variables:**
+
+| Variable                 | Purpose                                                                              | Example                                 |
+| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                                               | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)                           | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex string with 0x prefix) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+
+Using the environment variables, you can setup your agent in just a few lines of code:
+
+### Generate random keys
+
+```tsx [Node]
+import { generatePrivateKey } from 'viem';
+import { getRandomValues } from 'node:crypto';
+
+const walletKey = generatePrivateKey();
+const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))}`;
+
+console.log(`Wallet key: ${walletKey}`);
+console.log(`Encryption key: ${encryptionKeyHex}`);
+```
+
+Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
+
+```bash
+yarn gen:keys
+```
+
+> Running the command will append keys to your existing .env file.
+
+### Use environment variables
+
+```tsx [Node]
+// Load variables from .env file
+process.loadEnvFile('.env');
+
+// Create agent using environment variables
+const agent = await Agent.createFromEnv();
+```
+
+## Configuration options
+
+### Configure an XMTP client
+
+You can configure an XMTP client with these options passed to `Agent.create`:
+
+```tsx [Node]
+/**
+ * Specify which XMTP environment to connect to. (default: `dev`)
+ */
+env?: 'local' | 'dev' | 'production';
+/**
+ * Add a client app version identifier that's included with API requests.
+ * Production apps are strongly encouraged to set this value.
+ *
+ * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
+ * For example, `appVersion: 'alix/2.x'`
+ *
+ * If you have an agent and an app, it's best to distinguish them from each other by
+ * adding `-agent` and `-app` to the names. For example:
+ * - Agent: `appVersion: 'alix-agent/2.x'`
+ * - App: `appVersion: 'alix-app/3.x'`
+ *
+ * Setting this value provides telemetry that shows which agents are using the
+ * XMTP client SDK. This information can help XMTP core developers provide you with agent
+ * support, especially around communicating important SDK updates, including
+ * deprecations and required upgrades.
+ */
+appVersion?: string;
+/**
+ * apiUrl can be used to override the `env` flag and connect to a
+ * specific endpoint
+ */
+apiUrl?: string;
+/**
+ * Path to the local DB
+ *
+ * There are 4 value types that can be used to specify the database path:
+ *
+ * - `undefined` (or excluded from the client options)
+ *    The database will be created in the current working directory and is based on
+ *    the XMTP environment and client inbox ID.
+ *    Example: `xmtp-dev-<inbox-id>.db3`
+ *
+ * - `null`
+ *    No database will be created and all data will be lost once the client disconnects.
+ *
+ * - `string`
+ *    The given path will be used to create the database.
+ *    Example: `./my-db.db3`
+ *
+ * - `function`
+ *    A callback function that receives the inbox ID and returns a string path.
+ *    Example: `(inboxId) => string`
+ */
+dbPath?: string | null | ((inboxId: string) => string);
+/**
+ * Encryption key for the local DB (32 bytes)
+ *
+ * Accepts either:
+ * - Uint8Array (32 bytes)
+ * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
+ */
+dbEncryptionKey?: Uint8Array | `0x${string}`;
+/**
+ * Allow configuring codecs for additional content types
+ */
+codecs?: ContentCodec[];
+/**
+ * Enable structured JSON logging
+ */
+structuredLogging?: boolean;
+/**
+ * Logging level
+ */
+loggingLevel?: LogLevel;
+```
+
+## Create a smart contract wallet (SCW) signer
+
+When working with smart contract wallets, you can create an XMTP agent using the wallet's seed or private key:
+
+```tsx [Node]
+import { Agent } from '@xmtp/agent-sdk';
+import { createSigner, createUser } from '@xmtp/agent-sdk/user';
+
+const walletData = await initializeWallet('wallet.json');
+/* Create the signer using viem and parse the encryption key for the local db */
+const user = createUser(walletData.seed as `0x${string}`);
+const signer = createSigner(user);
+
+// Create agent with SCW signer
+const agent = await Agent.create(signer);
+
+/* Add your own business logic here */
+```
+
+
+## agents/build-agents/create-conversations.mdx
+# Create conversations
+
+With your agent, you can create a new conversation, whether it's a group chat or direct message (DM).
+
+## Create a new group chat
+
+Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
+
+### By Ethereum address
+
+```js [Node]
+const group = await agent.createGroupWithAddresses(
+  [bo.address, caro.address],
+  createGroupOptions /* optional */
+);
+```
+
+### By inbox ID
+
+```js [Node]
+const group = await agent.client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+```
+
+## Create a new DM
+
+Once you have the verified identity, get its inbox ID and create a new DM:
+
+### By Ethereum address
+
+```js [Node]
+// by Ethereum address
+const dm = await agent.createDmWithAddress(bo.accountAddress);
+```
+
+### By inbox ID
+
+```js [Node]
+const dm = await agent.client.conversations.newDm(bo.inboxId);
+```
+
+### Get the address of the sender
+
+```ts [Node]
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
+
+agent.on('text', async (ctx) => {
+  const senderAddress = ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
+});
+```
+
+## Conversation helper methods
+
+Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
+
+```js [Node]
+// get a conversation by its ID
+const conversationById =
+  await agent.client.conversations.getConversationById(conversationId);
+
+// get a message by its ID
+const messageById = await agent.client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId =
+  await agent.client.conversations.getDmByInboxId(peerInboxId);
+```
+
+## Check if an identity is reachable
+
+The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
+
+```js [Node]
+import { Agent, IdentifierKind } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await agent.client.canMessage([
+  {
+    identifier: '0xcaroAddress',
+    identifierKind: IdentifierKind.Ethereum,
+  },
+]);
+```
+
+
+## agents/build-agents/group-permissions.mdx
+# Understand group permissions
+
+The group permissions system controls what actions different members can take in a group chat. This guide explains how the system works conceptually. For practical code examples of managing roles and permissions, see [Manage group chats](/agents/build-agents/groups).
+
+## Member statuses
+
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat:
+
+- **Member** - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level with full control over the group
+
+## Options
+
+Use options to assign a role to a permission. These are the available options:
+
+- All members
+- Admin only
+  - Includes super admins
+- Super admin only
+
+## Permissions
+
+Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
+
+- Grant admin status to a member
+- Remove admin status from a member
+- Add a member to the group
+- Remove a member from the group
+- Update group metadata, such as group name, description, and image
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission`. To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+
+The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
+
+- Grant super admin status to a member
+- Remove super admin status from a member
+- Update group permissions
+
+## How the group permissions system works
+
+When a group is created, all groups have the same initial member "roles" set:
+
+- There is one super admin, and it is the group creator
+- There are no admins
+- Each user added to the group starts out as a member
+
+The super admin has all of the [available permissions](#permissions) and can use them to adjust the group's permissions and options.
+
+The app's developer can provide a UI that enables group participants to make further adjustments. For example, they can give the super admin the following permission options for group members when creating the group:
+
+- Add members
+- Update group metadata
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png"
+    width="300px"
+    alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings"
+  />
+</div>
+
+You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
+
+| Permission               | Allow all | Deny all | Admin only | Super admin only |
+| ------------------------ | --------- | -------- | ---------- | ---------------- |
+| Add member               | ✅        | ✅       | ✅         | ✅               |
+| Remove member            | ✅        | ✅       | ✅         | ✅               |
+| Add admin                | ❌        | ✅       | ✅         | ✅               |
+| Remove admin             | ❌        | ✅       | ✅         | ✅               |
+| Update group permissions | ❌        | ❌       | ❌         | ✅               |
+| Update group metadata    | ✅        | ✅       | ✅         | ✅               |
+
+If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
+
+- Add member - All members
+- Remove member - Admin only
+- Add admin - Super admin only
+- Remove admin - Super admin only
+- Update group permissions - Super admin only
+- Update group metadata - All members
+
+To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Next steps
+
+Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
+
+- Adding and removing members
+- Assigning roles
+- Managing group metadata
+
+
+## agents/build-agents/groups.mdx
+# Manage group chats
+
+Group chats can have metadata like names, descriptions, and images to help users identify them. You can set metadata when [creating a group chat](/agents/build-agents/create-conversations) or update it later.
+
+:::tip[Quickstart]
+To learn more, see the [Gated group example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
+:::
+
+## Group metadata
+
+### Available metadata fields
+
+- `group_name`: The name of the group chat
+- `description`: A description of the group chat
+- `image_url`: A URL pointing to an image for the group chat
+
+### Get and update metadata
+
+```js [Node]
+// Get metadata
+const groupName = group.name;
+const groupDescription = group.description;
+const groupImageUrl = group.imageUrl;
+
+// Update metadata
+await group.updateName('New Group Name');
+await group.updateDescription('New Group Description');
+await group.updateImageUrl('newurl.com');
+```
+
+## Group membership
+
+The maximum group chat size is 250 members.
+
+### Add members
+
+Add members directly by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Add members by Ethereum address
+await ctx.addMembersWithAddresses(group, [address1, address2]);
+
+// Add members using inbox IDs
+await group.addMembers([inboxId]);
+```
+
+### Remove members
+
+Remove members from the group by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Remove members by address
+await ctx.removeMembersWithAddresses(group, [address1, address2]);
+
+// Remove members by inbox ID
+await group.removeMembers([inboxId]);
+```
+
+### Get member information
+
+Retrieve and work with member data:
+
+```js [Node]
+// Sync group data to get latest member information
+await group.sync();
+
+// Get all members
+const members = await group.members();
+```
+
+Get detailed information about group members:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const members = await group.members();
+
+  for (const member of members) {
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
+
+    // Get Ethereum address
+    const ethIdentifier = member.accountIdentifiers.find(
+      (id) => id.identifierKind === IdentifierKind.Ethereum
+    );
+
+    if (ethIdentifier) {
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
+    }
+  }
+});
+```
+
+## Group roles
+
+Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
+
+### Available roles
+
+- **Member** - Default role for all group participants
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level (creator starts as super admin)
+
+### Manage roles
+
+Check and assign roles to group members:
+
+```js [Node]
+// Check admin status
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// List admins
+const admins = group.admins;
+const superAdmins = group.superAdmins;
+
+// Add/remove admin status
+await group.addAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
+```
+
+
+## agents/build-agents/local-database.mdx
+# Manage agent local database files and installations
+
+Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
+
+:::danger[CRITICAL FOR PRODUCTION]
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+:::
+
+## Installation limits and revocation rules
+
+Understanding XMTP's installation and inbox limits is critical for production deployments:
+
+- Installation limit per inbox: Each inbox supports up to 10 active installations. Once you reach this limit, you must [revoke an existing installation](/chat-apps/core-messaging/manage-inboxes#revoke-a-specific-installation) before adding a new one.
+
+- Update limit per inbox: Every installation addition or revocation counts toward a cumulative limit of 256 [inbox updates](/chat-apps/core-messaging/manage-inboxes#inbox-update-limits). Exceeding this threshold requires [inbox rotation](/chat-apps/core-messaging/manage-inboxes#rotate-an-inbox-id), which permanently removes access to all historical conversations for that inbox.
+
+These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
+
+## Understand local database files
+
+The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
+
+**Database file naming:**
+
+Database files follow this pattern: `xmtp-{environment}-{inbox-id}.db3`
+
+Example:
+
+```bash
+xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688.db3
+```
+
+- `xmtp-production`: Environment prefix
+- `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
+- `.db3`: SQLite database file extension
+
+## Understand installations
+
+With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
+
+When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
+
+For example, consider deploying your agent to these platforms:
+
+- Local development: Creates an installation
+- Railway: Creates another installation
+- Production server: Creates another installation
+
+Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
+
+For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
+
+- Local development: `local` network
+- Railway: `dev` network
+- Production server: `production` network
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png"
+    width="500px"
+    alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each"
+  />
+</div>
+
+If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
+
+- Local development: `production` network
+- Railway: `production` network
+- Production server: `production` network
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png"
+    width="500px"
+    alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations"
+  />
+</div>
+
+## Revoke agent installations
+
+When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database. Your agent can still run from any active installations on other deployment platforms.
+
+:::danger[Important]
+Revoking an installation is permanent. You cannot recover access to a revoked installation.
+:::
+
+1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
+2. CLI script: [revokeInstallations.ts](https://github.com/xmtplabs/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
+
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```
+
+
+## agents/build-agents/stream.mdx
+# Stream conversations and messages
+
+## Stream messages
+
+With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+
+```js [Node]
+// Listen for text messages
+agent.on('text', async (ctx) => {
+  console.log(`New text message: ${ctx.message.content}`);
+  await ctx.sendText('Got your message!');
+});
+
+// Listen for reactions
+agent.on('reaction', async (ctx) => {
+  console.log(`New reaction: ${ctx.message.content}`);
+});
+
+// Listen for replies
+agent.on('reply', async (ctx) => {
+  console.log(`New reply: ${ctx.message.content}`);
+});
+```
+
+## Stream all messages
+
+```js [Node]
+import { filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Filter for specific message types
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText(`Echo: ${ctx.message.content}`);
+  }
+});
+
+// Listen for unknown messages
+agent.on('unknownMessage', (ctx) => {
+  // handle the unknown message
+});
+```
+
+:::warning
+
+The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
+:::
+
+## Stream conversations
+
+You can listen to new conversations using the `dm` and `group` events.
+
+```js [Node]
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  // received when you create a new dm
+  console.log('New dm created:', ctx.conversation.id);
+});
+
+agent.on('group', async (ctx) => {
+  // received when you create a new group
+  console.log('Added to group:', ctx.conversation.id);
+});
+```
+
+## Handle errors and failures
+
+The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
+
+```js [Node]
+// Handle uncaught errors
+agent.on('unhandledError', (error) => {
+  console.error(`Agent error: ${error}`);
+  // Handle the error appropriately
+});
+```
+
+
+## agents/get-started/build-an-agent.mdx
+# Build XMTP agents
+
+Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
+
+## Installation
+
+Install `@xmtp/agent-sdk` as a dependency in your project.
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/agent-sdk
+```
+
+```bash [pnpm]
+pnpm i @xmtp/agent-sdk
+```
+
+```bash [yarn]
+yarn add @xmtp/agent-sdk
+```
+
+```bash [bun]
+bun i @xmtp/agent-sdk
+```
+
+:::
+
+## Usage
+
+This example shows how to create an agent that sends a message when it receives a text message.
+
+```ts [Node]
+import { Agent } from '@xmtp/agent-sdk';
+import { getTestUrl } from '@xmtp/agent-sdk/debug';
+
+// 2. Spin up the agent
+const agent = await Agent.createFromEnv({
+  env: 'dev', // or 'production'
+});
+
+// 3. Respond to text messages
+agent.on('text', async (ctx) => {
+  await ctx.sendText('Hello from my XMTP Agent! 👋');
+});
+
+// 4. Log when we're ready
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+});
+
+await agent.start();
+```
+
+### Local database
+
+:::danger
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+
+:::
+
+XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
+
+### Set environment variables
+
+To run an example XMTP agent, you must create a `.env` file with the following variables:
+
+```bash
+XMTP_WALLET_KEY= # the private key of the wallet
+XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
+XMTP_ENV=dev # local, dev, production
+```
+
+## Vibe coding
+
+See these [Cursor rules](https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+
+```bash
+Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
+```
+
+## Talk to your agent
+
+Try out the example agents using [xmtp.chat](https://xmtp.chat), the official playground for agents.
+
+![xmtp.chat DM screenshot](https://github.com/xmtplabs/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
+
+## Debug an agent
+
+To learn more, see [Debug an agent](/agents/deploy/debug-agents)
+
+## Deploy an agent
+
+To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
+
+## Agent examples
+
+Visit the [examples](https://github.com/xmtplabs/xmtp-agent-examples) repository for more agent examples.
+
+
+## agents/get-started/faq.mdx
+# FAQ about XMTP agents
+
+Get answers to frequently asked questions about building agents with XMTP.
+
+## Platform and compatibility
+
+### What chains does XMTP support?
+
+XMTP agents work with EOAs and SCWs on Ethereum and Ethereum L2s. Because messages are stored off-chain, agents are interoperable across EVM chains.
+
+Supported chains: Ethereum, Base, Arbitrum, Optimism, Polygon, and other EVM-compatible networks.
+
+### What languages and libraries can I use?
+
+- **SDKs**: XMTP SDKs are [available for multiple languages](https://docs.xmtp.org/#start-building)
+- **Signing libraries**: The Agent SDK provides simplified abstractions. For custom integrations, use [ethers](https://ethers.org/) or another web3 library with [ethers Signer](https://docs.ethers.io/v5/api/signer/) support
+
+## Development setup
+
+### Should I use `dbPath: null` for development?
+
+**Not recommended.** Using `dbPath: null` creates a new installation on every restart, quickly hitting the 10-installation limit (within ~30 minutes of development).
+
+**Recommended approach:**
+
+- Use persistent database paths for development
+- Ideal setup: 2 installations (local + production), leaving 8 for testing
+- Only use `dbPath: null` for fire-and-forget or temporary agents
+
+## Database management
+
+### What files need to be backed up?
+
+Back up these SQLite files for persistent storage:
+
+- `{env}-{description}.db3` - Main database
+- `{env}-{description}.db3-shm` - Shared memory
+- `{env}-{description}.db3-wal` - Write-ahead log
+- `{env}-{description}.db3.sqlcipher_salt` - Encryption salt
+
+Example for production: `production-xmtp.db3`, `production-xmtp.db3-shm`, etc.
+
+### How much storage should I provision?
+
+Rough estimate: **1GB ≈ 15,000 conversations**. Plan based on your expected volume.
+
+### What data is stored in the database?
+
+- All messages and conversations
+- Conversation state and encryption keys
+- Group membership and metadata
+
+### Can I clear database data without deleting files?
+
+Not currently possible from SDKs. XMTP is developing database management tools ([XIP-70](https://community.xmtp.org/t/xip-70-local-database-management-tools/1116)).
+
+### What happens when I delete/wipe the database?
+
+**File deletion:**
+
+- Creates fresh database with new installation
+- Messages continue streaming normally
+- Works unless you've hit the 10-installation limit
+
+**Database wipe (once XIP-70 tools are available):**
+
+- Agent loses access to existing groups
+- Regains group access when receiving new messages
+- All local message history is lost
+
+## Installation limits and troubleshooting
+
+### What is the installation limit?
+
+Each inbox has a **maximum of 10 installations**. Creating a new installation beyond this limit will fail.
+
+### How do I recover from hitting the limit?
+
+Currently:
+
+- Use a different client/signer to create new agents
+- No built-in method to revoke old installations
+- Automatic revocation tools are planned for future releases
+
+## Messages and content
+
+### What content types can agents send?
+
+Text, reactions, replies, attachments, and transaction requests. See [Content types](/agents/content-types/content-types) for details.
+
+### Are there message size limits?
+
+Yes, messages are limited to just under 1MB. For larger content, use [remote attachments](/agents/content-types/attachments).
+
+### Are there any messaging costs?
+
+No messaging fees currently. Messages are stored off-chain on the XMTP network.
+
+## Domains
+
+### How do I register a domain for my agent?
+
+#### 1. Register a new ENS domain
+
+1. Go to [https://app.ens.domains](https://app.ens.domains/)
+2. Search for your desired name (e.g., "myagent.eth")
+3. If available, click "Request to register" → Complete registration (requires ETH for registration + gas fees)
+4. Wait ~1 minute for registration to complete
+
+#### 2. Create agent wallet in MetaMask
+
+1. Open MetaMask → Account selector → "Add account or hardware wallet" → "Add a new account"
+2. Name it (e.g., "Agent Wallet") → Create
+3. Click three dots → "Account details" → "Show private key" → enter password → **copy and save private key**
+4. Copy the wallet address
+
+#### 3. Link ENS domain to agent wallet
+
+1. Go to [https://app.ens.domains](https://app.ens.domains)`/yourdomain.eth`
+2. Click "Edit profile" → Under "ETH Address" → paste agent wallet address → Save
+3. Sign the transaction
+
+#### 4. Set as primary name
+
+1. Switch MetaMask to the agent wallet account
+2. Go to [https://app.ens.domains](https://app.ens.domains/)
+3. Click "My account" → Find your domain → Click "Set as primary name"
+4. Sign the transaction
+
+#### 5. Transfer ownership (optional)
+
+1. Switch back to owner account in MetaMask
+2. On the ENS page, click "Transfer" → paste agent address → sign transaction
+3. Agent now owns the domain (can update records using private key)
+
+**Result**: Your agent can now use the private key to control the wallet/domain, reverse resolution works (address → name), and people can send funds to yourdomain.eth
+
+## Framework integration
+
+### Does XMTP work with ElizaOS?
+
+Yes! XMTP has official ElizaOS support through the [`@elizaos/plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) plugin, enabling secure, decentralized, and end-to-end encrypted messaging for ElizaOS agents.
+
+#### Installation
+
+```bash
+pnpm add @elizaos/plugin-xmtp
+# or
+elizaos add plugins @elizaos/plugin-xmtp
+```
+
+#### Environment variables
+
+- `WALLET_KEY` - Private key of the wallet
+- `XMTP_SIGNER_TYPE` - Signer type (SCW or EOA)
+- `XMTP_SCW_CHAIN_ID` - (Optional) Chain ID for smart contract wallet
+- `XMTP_ENV` - (Optional) XMTP environment (dev, local, production)
+
+#### Benefits of XMTP + ElizaOS
+
+- End-to-end encrypted agent communication
+- Decentralized messaging without single points of failure
+- Multi-agent, multi-human confidential group chats
+- Privacy and metadata protection
+
+### Can I contribute to XMTP integrations?
+
+Absolutely! We welcome contributions to improve XMTP agent integrations:
+
+- **ElizaOS plugin**: Contribute to the official [`plugin-xmtp`](https://github.com/elizaos-plugins/plugin-xmtp) repository
+- **Agent SDK**: Help improve the core [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk)
+- **Documentation**: Submit improvements to agent documentation and examples
+- **Community**: Share your agent projects and help others in [XMTP Discord](https://discord.gg/xmtp)
+
+## Identity and profile management
+
+### How do I create separate XMTP inboxes for multiple Lens profiles owned by the same address?
+
+Each Lens profile needs its own XMTP identity to have a separate inbox. XMTP doesn't support linking multiple identities to a single owner address.
+
+#### The challenge
+
+- One wallet address can own multiple Lens profiles
+- XMTP identity creation uses the profile owner's address
+- You want each Lens profile to have its own unique inbox
+
+#### The solution
+
+- Each Lens profile must have its own XMTP identity
+- This means each profile needs its own private key/wallet
+- You cannot have multiple XMTP identities linked to one owner address
+
+#### Example use case
+
+If you have 3 Lens profiles on one address and want separate inboxes for each, you'll need 3 different XMTP identities (each with their own private key), not 3 profiles sharing one XMTP identity.
+
+## Security
+
+### Has XMTP been audited?
+
+Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its MLS implementation in December 2024. See: [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/)
+
+
+## agents/get-started/intro.mdx
+# Build XMTP agents
+
+## Why build agents with XMTP?
+
+XMTP agents are autonomous programs that can participate in secure, end-to-end encrypted conversations on the XMTP network. Build agents that interact with humans and other agents across any XMTP-powered app.
+
+- **AI + Money + Secure Chat**: The only platform combining conversational AI, onchain transactions, and end-to-end encryption
+- **Open-source & trustless**: Built on top of the MLS protocol, it replaces trust in centralized certificate authorities with cryptographic proofs.
+- **Privacy & metadata protection**: Offers anonymous usage through SDKs and pseudonymous usage with nodes tracking minimum metadata.
+- **Decentralized**: Operates on a peer-to-peer network, eliminating single points of failure and ensuring continued operation even if some nodes go offline.
+- **Multi-agent**: Allows confidential communication between multiple agents and humans through MLS group chats.
+
+## Get started
+
+Ready to build? See [Quickstart](/agents/get-started/build-an-agent) to create your first XMTP agent.
+
+
+## agents/concepts/context.mdx
+# Context and helpers
+
+Every XMTP agent event handler receives a rich `MessageContext` object that provides access to the message, conversation, client, and powerful helper methods. This context makes it easy to build responsive agents without repetitive boilerplate code.
+
+## Message context
+
+### Type-safe content access
+
+Use type guards to safely access different content types:
+
+```typescript
+agent.on('message', async (ctx) => {
+  if (ctx.isText()) {
+    // ctx.message.content is now typed as string
+    console.log(`Text message: ${ctx.message.content}`);
+  } else if (ctx.isReply()) {
+    // ctx.message.content is now typed as Reply
+    console.log(`Reply to: ${ctx.message.content.reference}`);
+    console.log(`Reply content: ${ctx.message.content.content}`);
+  } else if (ctx.isReaction()) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Reference: ${ctx.message.content.reference}`);
+  } else if (ctx.isRemoteAttachment()) {
+    // ctx.message.content is now typed as RemoteAttachment
+    console.log(`Attachment: ${ctx.message.content.filename}`);
+  }
+});
+```
+
+### Message metadata
+
+Access message properties directly:
+
+```typescript
+agent.on('message', async (ctx) => {
+  const message = ctx.message;
+
+  console.log(`Message ID: ${message.id}`);
+  console.log(`Sender inbox ID: ${message.senderInboxId}`);
+  console.log(`Sent at: ${message.sentAt}`);
+  console.log(`Content type: ${message.contentType}`);
+});
+```
+
+### sendText() and sendTextReply()
+
+Send messages and replies:
+
+```typescript
+agent.on('text', async (ctx) => {
+  // Send a regular message
+  await ctx.sendText('Hello!');
+
+  // Send a reply to the current message
+  await ctx.sendTextReply('Thanks for your message!');
+});
+```
+
+### sendReaction()
+
+Add reactions to messages:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const content = ctx.message.content.toLowerCase();
+
+  if (content.includes('good')) {
+    await ctx.sendReaction('👍');
+  } else if (content.includes('bad')) {
+    await ctx.sendReaction('👎');
+  }
+});
+```
+
+### Get inbox ID by identifier
+
+```typescript
+const inboxId = await ctx.client.getInboxIdByIdentifier({
+  identifier: targetAddress,
+  identifierKind: IdentifierKind.Ethereum,
+});
+```
+
+### getSenderAddress()
+
+Get the Ethereum address of the message sender:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const senderAddress = await ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
+
+  // Use for authorization
+  if (senderAddress === '0x1234...') {
+    await ctx.sendTextReply('Hello, admin!');
+  }
+});
+```
+
+### getClientAddress()
+
+Get the Ethereum address of your agent:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const agentAddress = ctx.getClientAddress();
+  console.log(`Agent address: ${agentAddress}`);
+});
+```
+
+## Conversation context
+
+### Conversation operations
+
+```typescript
+agent.on('text', async (ctx) => {
+  const conversation = ctx.conversation;
+
+  // Get conversation members
+  const members = await conversation.members();
+  console.log(`Member count: ${members.length}`);
+
+  // Check conversation type
+  if (ctx.isDm()) {
+    console.log(`DM with: ${conversation.peerInboxId}`);
+  } else if (ctx.isGroup()) {
+    console.log(`Group conversation: ${conversation.name}`);
+  }
+});
+```
+
+### Consent state
+
+Check conversation consent states:
+
+```typescript
+agent.on('text', async (ctx) => {
+  if (ctx.isAllowed) {
+    console.log(`Messages allowed in this conversation`);
+  } else if (ctx.isDenied) {
+    console.log(`Messages denied in this conversation`);
+  } else if (ctx.isUnknown) {
+    console.log(`Consent state unknown`);
+  }
+});
+```
+
+### Member information
+
+```typescript
+agent.on('text', async (ctx) => {
+  const members = await ctx.conversation.members();
+
+  for (const member of members) {
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
+
+    // Get Ethereum address
+    const ethIdentifier = member.accountIdentifiers.find(
+      (id) => id.identifierKind === IdentifierKind.Ethereum
+    );
+
+    if (ethIdentifier) {
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
+    }
+  }
+});
+```
+
+### Message history
+
+```typescript
+agent.on('text', async (ctx) => {
+  // Get all messages
+  const messages = await ctx.conversation.messages();
+  console.log(`Total messages: ${messages.length}`);
+
+  // Get recent messages
+  const recentMessages = messages.slice(-10);
+
+  for (const msg of recentMessages) {
+    console.log(`${msg.senderInboxId}: ${msg.content}`);
+  }
+});
+```
+
+## Client context
+
+### address
+
+```typescript
+agent.on('start', () => {
+  console.log(`Waiting for messages...`);
+  console.log(`Address: ${agent.address}`);
+  console.log(`🔗 ${getTestUrl(agent.client)}`);
+});
+```
+
+
+## agents/concepts/event-driven.mdx
+# Event-driven architecture
+
+Subscribe only to what you need using Node’s `EventEmitter` interface. Events you can listen for:
+
+- **Message events**
+  - `attachment`: a new incoming remote attachment message
+  - `message`: all incoming messages (fires for every message regardless of type)
+  - `group-update`: group members have been added or removed or metadata has been updated
+  - `reaction`: a new incoming reaction message
+  - `reply`: a new incoming reply message
+  - `text`: a new incoming text message
+  - `unknownMessage`: a message that doesn't match any specific type
+
+- **Conversation events**
+  - `conversation`: a new group or DM conversation
+  - `dm`: a new DM conversation
+  - `group`: a new group conversation
+
+- **Lifecycle events**
+  - `start` / `stop`: agent lifecycle events
+  - `unhandledError`: unhandled errors
+
+## Example
+
+```ts
+// Listen to specific message types
+agent.on('text', async (ctx) => {
+  console.log(`Text message: ${ctx.message.content}`);
+});
+
+agent.on('reaction', async (ctx) => {
+  console.log(`Reaction: ${ctx.message.content}`);
+});
+
+agent.on('reply', async (ctx) => {
+  console.log(`Reply to: ${ctx.message.content.reference}`);
+});
+
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  await ctx.conversation.send('Welcome to our DM!');
+});
+
+agent.on('group', async (ctx) => {
+  await ctx.conversation.send('Hello group!');
+});
+
+// Listen to unhandled events
+agent.on('unhandledError', (error) => {
+  console.error(`Agent error: ${error}`);
+});
+
+agent.on('unknownMessage', (ctx) => {
+  // handle the unknown message
+});
+```
+
+:::warning
+
+The `"message"` event fires for **every** incoming message, regardless of type. When using the `"message"` event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
+:::
+
+## Best practice example
+
+```ts
+import { filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Filter for specific message types
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText(`Echo: ${ctx.message.content}`);
+  }
+});
+```
+
+## Next steps
+
+- Learn about [middleware and routing](./middleware) to add cross-cutting behavior
+- Explore [message filters](./filters) to process messages selectively
+- Understand [context and helpers](./context) for rich message handling
+
+
+## agents/concepts/filters.mdx
+# Built‑in filters
+
+Instead of manually checking every incoming message, you can use the provided filters.
+
+## Example
+
+```ts
+import { Agent, filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+// Using filter in message handler
+agent.on('text', async (ctx) => {
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText('You sent a text message!');
+  }
+});
+
+// Combine multiple conditions
+agent.on('text', async (ctx) => {
+  if (
+    filter.hasContent(ctx.message) &&
+    !filter.fromSelf(ctx.message, ctx.client) &&
+    filter.isText(ctx.message)
+  ) {
+    await ctx.sendText('Valid text message received ✅');
+  }
+});
+```
+
+For convenience, the `filter` object can also be imported as `f`:
+
+```ts
+// You can import either name:
+import { filter, f } from '@xmtp/agent-sdk';
+
+// Both work the same way:
+if (f.isText(ctx.message)) {
+  // Handle message...
+}
+```
+
+## Custom content type filtering
+
+Use the `usesCodec` filter to check for custom content types with full TypeScript type inference:
+
+```ts
+import { Agent, filter } from '@xmtp/agent-sdk';
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import { MyCustomCodec } from './my-custom-codec';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Check for specific codec with type safety
+  if (filter.usesCodec(ctx.message, ReactionCodec)) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Action: ${ctx.message.content.action}`);
+  }
+
+  // Works with custom content types too
+  if (filter.usesCodec(ctx.message, MyCustomCodec)) {
+    // ctx.message.content is now typed to MyCustomCodec's decoded type
+    console.log('Received custom content:', ctx.message.content);
+  }
+});
+```
+
+This is particularly useful when you need to handle multiple custom content types or want precise type inference for your message content.
+
+## Available filters
+
+- `fromSelf`
+- `hasContent`
+- `isDM`
+- `isGroup`
+- `isGroupAdmin`
+- `isGroupSuperAdmin`
+- `isReaction`
+- `isReply`
+- `isRemoteAttachment`
+- `isText`
+- `isTextReply`
+- `usesCodec`
+
+To learn more about all available prebuilt filters, see [filter.ts](https://github.com/xmtp/xmtp-js/blob/main/sdks/agent-sdk/src/core/filter.ts).
+
+
+## agents/concepts/identity.mdx
+# Create an XMTP client
+
+Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate EOA or SCW.
+
+## Understand creating and building a client
+
+This video provides a walkthrough of creating and building a client.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/kdUP1ZaauNI?si=ETuEbvwbKx4bjtwc"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+## How it works
+
+When you call `Agent.create()`, the following steps happen under the hood:
+
+1. Extracts the `signer` and retrieves the wallet address from it.
+2. Checks the XMTP identity ledger to find an inbox ID associated with the signer address. The inbox ID serves as the user's identity on the XMTP network.
+   1. If it doesn't find an existing inbox ID, it requests a wallet signature to register the identity and create an inbox ID.
+   2. If it finds an existing inbox ID, it uses the existing inbox ID.
+3. Checks if a local SQLite database exists. This database contains the identity's installation state and message data.
+   1. If it doesn't find an existing local database, it creates one. On non-web platforms, it encrypts the database with the provided `dbEncryptionKey`.
+   2. If it finds an existing local database:
+      - **For the Node, React Native, Android, and iOS SDKs**: It checks if the provided `dbEncryptionKey` matches. If it matches, it uses the existing database. If not, it creates a new database encrypted with the provided key.
+      - **For the Browser SDK**: A `dbEncryptionKey` is not used for encryption due to technical limitations in web environments. Be aware that the database is not encrypted.
+4. Returns the XMTP client, ready to send and receive messages.
+
+## Keep the database encryption key safe
+
+The `dbEncryptionKey` client option is used by the Node, React Native, Android, and Swift SDKs only.
+
+The encryption key is used together with an auto-generated salt to encrypt the local database using [SQLCipher](https://www.zetetic.net/sqlcipher/). It encrypts the database created when you call `Agent.create()`.
+
+This encryption key is not stored or persisted by the XMTP SDK, so it's your responsibility as the app developer to store it securely and consistently.
+
+If the encryption key is lost, rotated, or passed incorrectly during a subsequent `Agent.create()` call (on non-web platforms), the app will be unable to access the local database. Likewise, if you initially provided the `dbPath` option, you must always provide it with every subsequent call or the client may be unable to access the database. The client will assume that the database can't be decrypted or doesn't exist, and will fall back to creating a new installation.
+
+Creating a new installation requires a new identity registration and signature—and most importantly, **results in loss of access to all previously stored messages**.
+
+To ensure seamless app experiences persist the `dbEncryptionKey` securely, and make sure it's available and correctly passed on each app launch
+
+The `dbEncryptionKey` client option is not used by the Browser SDK for due to technical limitations in web environments. In this case, be aware that the database is not encrypted.
+
+To learn more about database operations, see the [XMTP MLS protocol spec](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/README.md).
+
+## View an encrypted database
+
+For debugging, it can be useful to decrypt a locally stored database. When a `dbEncryptionKey` is used, the XMTP client creates a [SQLCipher database](https://www.zetetic.net/sqlcipher/) which applies transparent 256-bit AES encryption. A `.sqlitecipher_salt` file is also generated alongside the database.
+
+To open this database, you need to construct the password by prefixing `0x` (to indicate hexadecimal numbers), then appending the encryption key (64 hex characters, 32 bytes) and the salt (32 hex characters, 16 bytes). For example, if your encryption key is `A` and your salt is `B`, the resulting password would be `0xAB`.
+
+The database also uses a [plaintext header size](https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_plaintext_header_size) of 32 bytes.
+
+If you want to inspect the database visually, you can use [DB Browser for SQLite](https://sqlitebrowser.org/), an open source tool that supports SQLite and SQLCipher. In its **Custom** encryption settings, set the **Plaintext Header Size** to **_32_**, and use the full **Password** as a **Raw key**:
+
+![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
+
+
+## agents/concepts/middleware.mdx
+# Middleware support
+
+Extend your agent with custom business logic using middleware. Compose cross-cutting behavior like routing, telemetry, rate limiting, analytics, and feature flags, or plug in your own.
+
+## Standard middleware
+
+Middleware can be registered with `agent.use` either one at a time or as an array. They are executed in the order they were added.
+
+Middleware functions receive a `ctx` (context) object and a `next` function. Normally, middleware calls `next()` to hand off control to the next one in the chain. However, middleware can also alter the flow in the following ways:
+
+1. Use `next()` to continue the chain and pass control to the next middleware
+2. Use `return` to stop the chain and prevent events from firing
+3. Use `throw` to trigger the error-handling middleware chain
+
+### Example
+
+```ts
+import { Agent, AgentMiddleware, filter } from '@xmtp/agent-sdk';
+
+const onlyText: AgentMiddleware = async (ctx, next) => {
+  if (filter.isText(ctx.message)) {
+    // Continue to next middleware
+    await next();
+  }
+  // Break middleware chain
+  return;
+};
+
+const agent = await Agent.createFromEnv();
+agent.use(onlyText);
+```
+
+## Error-handling middleware
+
+Error middleware can be registered with `agent.errors.use` either one at a time or as an array. They are executed in the order they were added.
+
+Error middleware receives the `error`, `ctx`, and a `next` function. Just like regular middleware, the flow in error middleware depends on how to use `next`:
+
+1. Use `next()` to mark the error as handled and continue with the main middleware chain
+2. Use `next(error)` to forward the original (or transformed) error to the next error handler
+3. Use `return` to end error handling and stop the middleware chain
+4. Use `throw` to raise a new error to be caught by the error chain
+
+## Next steps
+
+- Explore [message filters](./filters) to process messages selectively
+- Understand [context and helpers](./context) for rich message handling
+
+
+## agents/deploy/agent-security.mdx
+# Follow agent security best practices
+
+For an agent to function—whether it's answering questions, executing commands, or providing automated responses—it must be able to read the conversation to understand what's being asked, and write messages to respond.
+
+Like any other user, this means your agent holds the cryptographic keys required to decrypt and send messages in the conversation. As an agent developer, it's important to uphold the security of these keys and messages.
+
+Here are some security best practices:
+
+- **Never expose private keys**: Use environment variables.
+- **Keep messages secure and private**: Do not log messages in plaintext. Do not share messages with third parties.
+- **Label agents clearly**: Clearly identify your agent as an agent and don't have an agent impersonate a human.
+
+
+## agents/deploy/debug-agents.mdx
+# Debug an agent
+
+You can debug and interact with your agent using [xmtp.chat](https://xmtp.chat), the official web chat app for developers.
+
+Be sure to point xmtp.chat to the XMTP environment set in your agent's `.env` file.
+
+## Run a local XMTP network
+
+`dev` and `production` networks are hosted by XMTP, while you can run your own `local` network.
+
+1. Install Docker
+
+2. Start the XMTP service and database
+
+   ```bash
+   ./dev/up
+   ```
+
+3. Change the `.env` file to use the `local` network
+
+   ```bash
+   XMTP_ENV = local
+   ```
+
+4. Try out the example agents using [xmtp.chat](https://xmtp.chat), the official web inbox for developers.
+
+   ![xmtp.chat DM screenshot](https://raw.githubusercontent.com/xmtplabs/xmtp-agent-examples/refs/heads/main/examples/xmtp-gm/screenshot.png)
+
+## Enable debug logging
+
+To activate detailed debugging logs, set the `XMTP_FORCE_DEBUG` environment variable in your `.env` file:
+
+```bash
+XMTP_FORCE_DEBUG=true
+```
+
+This will enable verbose logging throughout the XMTP Agent SDK, helping you troubleshoot issues and understand the internal flow of messages and events.
+
+## Debug agent information
+
+You can use this code to get your agent's client information, which provides useful values for debugging:
+
+```tsx [Node]
+// Log when we're ready
+agent.on('start', (): void => {
+  logDetails(agent.client);
+});
+```
+
+Example output:
+
+```bash
+✓ XMTP Client:
+• InboxId: 21313b5f4f2dd2dc063762eb939d3596229c30de1128826727154da5b28be0a5
+• Version: HEAD@a9d19aa (2025-08-25 21:45:01 +0000)
+• Address: 0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+• Conversations: 0
+• Installations: 5
+• InstallationId: 3c072cd74f2f95185c068cf7ea9ee5a22bef5b42a1630749d9e0be8b7a27fe22
+• Key Package created: 9/19/2025, 7:07:30 PM
+• Key Package valid until: 12/12/2025, 8:07:30 PM
+• Networks: production
+• URL: http://xmtp.chat/dm/0xadc58094c42e2a8149d90f626a1d6cfb4a79f002
+```
+
+
+## agents/deploy/deploy-agent.mdx
+# Deploy an agent
+
+This section covers how to deploy an agent using [Railway](https://railway.app/)—a platform many developers prefer for quickly and easily deploying agents. While this tutorial focuses on Railway, you can use any hosting provider that supports Node.js and environment variables.
+
+Alternative platforms include (Ubuntu-based):
+
+- [Fly.io](https://fly.io/), [Heroku](https://www.heroku.com/), [Render](https://render.com/)
+
+Want to contribute a deployment guide for another platform? We welcome [pull requests](https://github.com/xmtp/docs-xmtp-org/blob/main/README.md)!
+
+:::tip
+
+The XMTP Agent SDK has been tested on Ubuntu distributions only. While other Debian-based distributions may work, compatibility is not guaranteed.
+
+:::
+
+## 1. Create a Railway account
+
+Sign up for an account at [Railway](https://railway.app/) if you don't already have one.
+
+## 2. Start a new project
+
+From your Railway dashboard, click **New Project** and select **Empty Project**.
+
+![Railway New Project Screen](https://github.com/user-attachments/assets/42016550-0ab5-4c6b-a644-39d27746916f)
+
+## 3. Import your agent's GitHub repository
+
+Click **Deploy from GitHub repo** and select the repository that contains your agent code.
+
+![Import GitHub Repository](https://github.com/user-attachments/assets/88305e11-0e8a-4a92-9bbf-d9fece23b42f)
+
+## 4. Configure volume storage
+
+Your XMTP agent will need persistent storage. Add a volume to your container:
+
+1. Navigate to your service settings.
+2. Select the **Volumes** tab.
+3. Add a new volume and specify the mount path.
+
+   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+
+Use this code in your agent to properly connect to the Railway volume:
+
+```tsx [Node]
+const customDbPath = (inboxId) =>
+  `${process.env.RAILWAY_VOLUME_MOUNT_PATH ?? '.'}/${process.env.XMTP_ENV}-${inboxId.slice(0, 8)}.db3`;
+
+const agent = await Agent.createFromEnv({
+  dbPath: customDbPath,
+});
+```
+
+## 5. Configure environment variables
+
+1. Get the connection string for your database.
+
+   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
+
+2. Add the connection string and any other required environment variables to your service.
+
+   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
+
+## 6. Deploy your agent
+
+Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
+
+## 7. Share your agent (optional)
+
+Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
+
+## Example Railway deployment
+
+For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
+
+## agents/deploy/rate-limits.mdx
+# Observe rate limits
+
+XMTP enforces separate rate limits for read and write operations per client per rolling 5-minute window:
+
+- **Read operations**: 20,000 requests per 5-minute window
+- **Write operations**: 3,000 messages published per 5-minute window
+
+When you reach either rate limit, your API calls will be rejected with a 429 (Too Many Requests) error.
+
+**Read operations** include actions like:
+
+- Fetching conversations
+- Retrieving messages
+- Getting inbox state
+- Listing installations
+
+**Write operations** include actions like:
+
+- Sending chat messages
+- Adding and removing wallets
+- Adding and revoking installations
+- Adding and removing group members
+- Updating group metadata
+
+
+## agents/content-types/attachments.mdx
+# Support attachments with your agent built with XMTP
+
+Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
+
+::::tip[Quickstart]
+To learn more, see the [Attachment example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
+::::
+
+## Install the package
+
+In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+::::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-remote-attachment
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-remote-attachment
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-remote-attachment
+```
+
+::::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```tsx [Node]
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
+});
+```
+
+## Send a remote attachment
+
+Load the file. This example uses a web browser to load the file:
+
+```tsx [Node]
+//image is the uploaded event.target.files[0];
+const data = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => {
+    if (reader.result instanceof ArrayBuffer) {
+      resolve(reader.result);
+    } else {
+      reject(new Error('Not an ArrayBuffer'));
+    }
+  };
+  reader.readAsArrayBuffer(image);
+});
+```
+
+Create an attachment object:
+
+```tsx [Node]
+// Local file details
+const attachment = {
+  filename: image?.name,
+  mimeType: image?.type,
+  data: new Uint8Array(data),
+};
+```
+
+Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+
+```tsx [Node]
+const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
+  attachment,
+  new AttachmentCodec()
+);
+```
+
+Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
+
+Now that you have a `url`, you can create a `RemoteAttachment`:
+
+```tsx [Node]
+const remoteAttachment = {
+  url: url,
+  contentDigest: encryptedEncoded.digest,
+  salt: encryptedEncoded.salt,
+  nonce: encryptedEncoded.nonce,
+  secret: encryptedEncoded.secret,
+  scheme: 'https://',
+  filename: attachment.filename,
+  contentLength: attachment.data.byteLength,
+};
+```
+
+Now that you have a remote attachment, you can send it:
+
+```tsx [Node]
+await ctx.conversation.send(remoteAttachment, {
+  contentType: ContentTypeRemoteAttachment,
+});
+```
+
+## Receive, decode, and decrypt a remote attachment
+
+Now that you can send a remote attachment, you need a way to receive it. For example:
+
+```ts [Node]
+import {
+  ContentTypeRemoteAttachment,
+  RemoteAttachmentCodec,
+} from '@xmtp/content-type-remote-attachment';
+
+if (ctx.usesCodec(RemoteAttachmentCodec)) {
+  const attachment = await RemoteAttachmentCodec.load(
+    ctx.message.content,
+    client
+  );
+}
+```
+
+You now have the original attachment:
+
+```ts [Node]
+attachment.filename; // => "screenshot.png"
+attachment.mimeType; // => "image/png",
+attachment.data; // => [the PNG data]
+```
+
+Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+
+```tsx [Node]
+const objectURL = URL.createObjectURL(
+  new Blob([Buffer.from(attachment.data)], {
+    type: attachment.mimeType,
+  })
+);
+
+const img = document.createElement('img');
+img.src = objectURL;
+img.title = attachment.filename;
+```
+
+
+## agents/content-types/content-types.mdx
+# Understand content types with XMTP
+
+When you build an agent with XMTP, all messages are encoded with a content type to ensure that an XMTP client knows how to encode and decode messages, ensuring interoperability and consistent display of messages across apps.
+
+In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
+
+At a high level, there are three categories of content types with XMTP:
+
+- Standard
+- Standards-track
+- Custom
+
+## Standard content types
+
+A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
+
+Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their agent or app.
+
+Here is the current standard content type:
+
+### Text content type
+
+An agent built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
+
+```jsx [Node]
+await sendText('gm');
+```
+
+## Receiving content types
+
+When your agent receives messages with different content types, use event handlers to handle them appropriately:
+
+```jsx [Node]
+// Listen for specific content types
+agent.on('attachment', async (ctx) => {
+  // Handle attachment logic
+});
+
+agent.on('reaction', async (ctx) => {
+  // Handle reaction logic
+});
+
+agent.on('reply', async (ctx) => {
+  // Handle reply logic
+});
+
+// For custom content types, you can access the content type directly
+agent.on('message', async (ctx) => {
+  const contentType = ctx.message.contentType;
+  if (contentType?.typeId === 'my-custom-type') {
+    // Handle custom content logic
+  }
+});
+```
+
+## Standards-track content types
+
+A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
+
+Here are standards-track content types that you can review, test, and adopt in your agent today:
+
+- [Group updates content type](/agents/content-types/group-updates): Use to send group updates, such as name, description, and members.
+- [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
+- [Markdown content type](/agents/content-types/markdown): Use to send rich formatted text messages with headers, lists, tables, and code blocks.
+- [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
+- [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
+- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
+- [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.
+
+## Custom content types
+
+Custom content types allow you to define your own schemas for messages that go beyond what is covered by standard or standards-track types. These are useful for experiments, domain-specific features, or app-specific behaviors.
+
+
+## agents/content-types/group-updates.mdx
+# Stream group updates with XMTP
+
+Stream group metadata changes (name, description, members) in real-time using the `group_updated` native content type. Group updates allow you to monitor changes to group conversations including member additions/removals, name changes, and description updates.
+
+:::tip[Quickstart]
+The `group_updated` content type is a native XMTP content type, so no additional packages need to be installed. Simply listen for the `group-update` event to receive real-time updates.
+:::
+
+## Listen for group updates
+
+```typescript
+on('group-update', async (ctx) => {
+  // handle the group update
+  console.log(`Group updated: ${JSON.stringify(ctx.message.content)}`);
+});
+```
+
+## Group update message structure
+
+```typescript
+{
+  conversationId: string,
+  contentType: { typeId: "group_updated" },
+  content: {
+    metadataFieldChanges?: Array<{
+      fieldName: string,        // "group_name", "group_description", etc.
+      oldValue: string,
+      newValue: string
+    }>,
+    addedInboxes?: Array<{     // New members added
+      inboxId: string
+    }>,
+    initiatedByInboxId?: string // Who triggered the update
+  }
+}
+```
+
+## Usage examples
+
+### Monitor group name changes
+
+```tsx
+on('group-update', async (ctx) => {
+  const content = ctx.message.content as any;
+
+  const nameChange = content.metadataFieldChanges?.find(
+    (change) => change.fieldName === 'group_name'
+  );
+
+  if (nameChange) {
+    console.log(
+      `Group renamed: ${nameChange.oldValue} → ${nameChange.newValue}`
+    );
+  }
+});
+```
+
+### Monitor member additions
+
+```typescript
+on('group-update', async (ctx) => {
+  const content = ctx.message.content as any;
+
+  if (content.addedInboxes?.length > 0) {
+    console.log(`New members added: ${JSON.stringify(content.addedInboxes)}`);
+  }
+});
+```
+
+### Monitor member removals
+
+```typescript
+on('group-update', async (ctx) => {
+  const content = ctx.message.content as any;
+
+  if (content.removedInboxes?.length > 0) {
+    console.log(`Members removed: ${JSON.stringify(content.removedInboxes)}`);
+  }
+});
+```
+
+### Filter by specific group
+
+```typescript
+const targetGroupId = 'your-group-conversation-id';
+
+on('group-update', async (ctx) => {
+  if (ctx.message.conversationId === targetGroupId) {
+    console.log(`Target group updated: ${JSON.stringify(ctx.message.content)}`);
+  }
+});
+```
+
+
+## agents/content-types/markdown.mdx
+# Support markdown with your agent built with XMTP
+
+Use the markdown content type to send rich formatted text messages with your agent. Markdown allows you to include headers, lists, tables, code blocks, and other formatting elements to create more engaging and structured messages.
+
+## Install the package
+
+In some SDKs, the `MarkdownCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-markdown
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-markdown
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-markdown
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```tsx [Node]
+import {
+  ContentTypeMarkdown,
+  MarkdownCodec,
+} from '@xmtp/content-type-markdown';
+
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new MarkdownCodec()],
+});
+```
+
+## Send markdown content
+
+With XMTP, markdown content is sent as a string containing markdown formatting:
+
+```tsx [Node]
+// Basic markdown message
+const markdownContent = `## Welcome to XMTP
+
+This is a **bold** message with *italic* text and \`inline code\`.
+
+- Item 1
+- Item 2
+- Item 3`;
+
+await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+```
+
+## Supported markdown patterns
+
+The markdown content type supports the following formatting patterns:
+
+### Headers
+
+- `#` H1 headers
+- `##` H2 headers
+- `###` H3 headers
+- `####` H4 headers
+- `#####` H5 headers
+- `######` H6 headers
+
+### Text formatting
+
+- `**bold text**` or `__bold text__`
+- `*italic text*` or `_italic text_`
+- `~~strikethrough text~~`
+- \`inline code\`
+- \`\`\`code block\`\`\`
+- > block quote
+- [link text](https://www.example.com)
+
+### Lists
+
+- Unordered lists with `-`, `*`, or `+`
+- Ordered lists with numbers
+- Nested lists with proper indentation
+
+### Tables
+
+- Standard markdown table syntax with `|` separators
+- Header rows with `---` separators
+
+### Example usage
+
+```tsx [Node]
+const content = `## Results Summary
+
+- **Total items:** ${count}
+- *Status:* ${status}
+- \`Processing time:\` ${duration}ms
+
+### Next Steps
+1. Review results
+2. Update configuration
+3. Deploy changes
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| Total  | ${total} | ✅ |
+| Active | ${active} | 🟡 |
+| Errors | ${errors} | ❌ |
+
+\`\`\`javascript
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new MarkdownCodec()],
+});
+\`\`\``;
+
+await ctx.conversation.send(content, ContentTypeMarkdown);
+```
+
+## Receive markdown content
+
+```tsx [Node]
+agent.on('message', async (ctx) => {
+  if (ctx.usesCodec(MarkdownCodec)) {
+    const markdownContent = ctx.message.content;
+    console.log('Received markdown:', markdownContent);
+
+    // Process the markdown content
+    // You can parse it, extract data, or display it formatted
+  }
+});
+```
+
+## Filter for markdown content
+
+```tsx [Node]
+// Check if the message contains markdown
+if (ctx.usesCodec(MarkdownCodec)) {
+  const markdown: string = ctx.message.content;
+  // Handle markdown content
+}
+```
+
+
+## agents/content-types/reactions.mdx
+# Support reactions with your agent built with XMTP
+
+Use the reaction content type to support reactions with your agent. A reaction is a quick and often emoji-based way to respond to a message. Reactions are usually limited to a predefined set of emojis or symbols provided by the chat app.
+
+:::tip[Quickstart]
+To learn more, see the [Reaction example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
+:::
+
+## Install the package
+
+In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-reaction
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reaction
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reaction
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```jsx [Node]
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new ReactionCodec()],
+});
+```
+
+## Send a reaction
+
+With XMTP, reactions are represented as objects with the following keys:
+
+- `reference`: ID of the message being reacted to
+
+- `action`: Action of the reaction (added or removed)
+
+- `content`: String representation of the reaction (smile, for example) to be interpreted by clients
+
+- `schema`: Schema of the reaction (Unicode, shortcode, or custom)
+
+```tsx [Node]
+await ctx.sendReaction('❤️');
+```
+
+## Receive a reaction
+
+```tsx [Node]
+agent.on('reaction', async (ctx) => {
+  const message = ctx.message;
+  const reactionContent = message.content;
+  console.log(`New reaction: ${reactionContent.content}`);
+});
+```
+
+## Filter a reaction
+
+Now that you can send a reaction, you need a way to receive a reaction. For example:
+
+```tsx [Node]
+if (ctx.usesCodec(ReactionCodec)) {
+  // We've got a reaction.
+  const reaction: Reaction = ctx.message.content;
+}
+```
+
+
+## agents/content-types/replies.mdx
+# Support replies with your agent built with XMTP
+
+Use the reply content type to support quote replies with your agent. A reply is a method to directly respond to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
+
+## Install the package
+
+In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-reply
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-reply
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-reply
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Node]
+import { ReplyCodec } from '@xmtp/content-type-reply';
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new ReplyCodec()],
+});
+```
+
+## Send a reply
+
+Once you've created a reply, you can send it. Replies are represented as objects with two keys:
+
+- `reference`: ID of the message being replied to
+
+- `content`: String representation of the reply
+
+```ts [Node]
+import { ContentTypeText } from '@xmtp/content-type-text';
+import { ContentTypeReply } from '@xmtp/content-type-reply';
+import type { Reply } from '@xmtp/content-type-reply';
+
+const reply: Reply = {
+  reference: someMessageID,
+  contentType: ContentTypeText,
+  content: 'I concur',
+};
+
+await ctx.sendTextReply(reply);
+```
+
+## Receive a reply
+
+```tsx [Node]
+agent.on('reply', async (ctx) => {
+  const message = ctx.message;
+  const replyContent = message.content;
+  console.log(`New reply: ${replyContent.content}`);
+});
+```
+
+## Filter a reply
+
+Now that you can send a reply, you need a way to receive a reply. For example:
+
+```tsx [Node]
+if (ctx.usesCodec(ReplyCodec)) {
+  // We've got a reply.
+  const reply: Reply = ctx.message.content;
+}
+```
+
+
+## agents/content-types/transaction-refs.mdx
+# Support onchain transaction references with your agent built with XMTP
+
+This package provides an XMTP content type to support onchain transaction references. It is a reference to an onchain transaction sent as a message. This content type facilitates sharing transaction hashes or IDs, thereby providing a direct link to onchain activities. Transaction references serve to display transaction details, facilitating the sharing of onchain activities, such as token transfers, between users.
+
+:::tip[Quickstart]
+To learn more, see the [Transaction reference example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+:::
+
+## Install the package
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-transaction-reference
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-transaction-reference
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-transaction-reference
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Node]
+import {
+  ContentTypeTransactionReference,
+  TransactionReferenceCodec,
+} from '@xmtp/content-type-transaction-reference';
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new TransactionReferenceCodec()],
+});
+```
+
+## Send a transaction reference
+
+With XMTP, a transaction reference is represented as an object with the following keys:
+
+```ts [Node]
+const transactionReference: TransactionReference = {
+  /**
+   * Optional namespace for the networkId
+   */
+  namespace: 'eip155',
+  /**
+   * The networkId for the transaction, in decimal or hexadecimal format
+   */
+  networkId: 1,
+  /**
+   * The transaction hash
+   */
+  reference: '0x123...abc',
+  /**
+   * Optional metadata object
+   */
+  metadata: {
+    transactionType: 'transfer',
+    currency: 'USDC',
+    amount: 100000, // In integer format, this represents 1 USDC (100000/10^6)
+    decimals: 6, // Specifies that the currency uses 6 decimal places
+    fromAddress: '0x456...def',
+    toAddress: '0x789...ghi',
+  },
+};
+```
+
+Once you have a transaction reference, you can send it as part of your conversation:
+
+```js [Node]
+await ctx.conversation.send(transactionReference, {
+  contentType: ContentTypeTransactionReference,
+});
+```
+
+## Receive a transaction reference
+
+To receive and process a transaction reference, you can use the following code samples.
+
+```ts [Node]
+if (ctx.usesCodec(TransactionReferenceCodec)) {
+  // Process the transaction reference here
+}
+```
+
+> You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
+
+
+## agents/content-types/transactions.mdx
+# Support onchain transactions with your agent built with XMTP
+
+This package provides an XMTP content type to support sending transactions to a wallet for execution.
+
+::::tip[Quickstart]
+To learn more, see the [Transactions example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
+::::
+
+## Install the package
+
+::::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-wallet-send-calls
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-wallet-send-calls
+```
+
+```bash [pnpm]
+pnpm i @xmtp/content-type-wallet-send-calls
+```
+
+::::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+```js [Node]
+import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
+// Create the XMTP agent
+const agent = await Agent.create(signer, {
+  env: 'dev',
+  codecs: [new WalletSendCallsCodec()],
+});
+```
+
+## Create a transaction request
+
+With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
+
+```ts [Node]
+const walletSendCalls: WalletSendCallsParams = {
+  version: '1.0',
+  from: '0x123...abc',
+  chainId: '0x2105',
+  calls: [
+    {
+      to: '0x456...def',
+      value: '0x5AF3107A4000',
+      metadata: {
+        description: 'Send 0.0001 ETH on base to 0x456...def',
+        transactionType: 'transfer',
+        currency: 'ETH',
+        amount: 100000000000000,
+        decimals: 18,
+        toAddress: '0x456...def',
+      },
+    },
+    {
+      to: '0x789...cba',
+      data: '0xdead...beef',
+      metadata: {
+        description: 'Lend 10 USDC on base with Morpho @ 8.5% APY',
+        transactionType: 'lend',
+        currency: 'USDC',
+        amount: 10000000,
+        decimals: 6,
+        platform: 'morpho',
+        apy: '8.5',
+      },
+    },
+  ],
+};
+```
+
+## Send a transaction request
+
+Once you have a transaction reference, you can send it as part of your conversation:
+
+```ts [Node]
+await sendText(walletSendCalls, {
+  contentType: ContentTypeWalletSendCalls,
+});
+```
+
+## Receive a transaction request
+
+To receive and process a transaction request:
+
+```ts [Node]
+if (ctx.usesCodec(WalletSendCallsCodec)) {
+  // Process the transaction request here
+}
+```
+
+You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
+
+
+# Section: protocol
+
+## protocol/cursors.mdx
+# Cursors with XMTP
+
+This document explains the concept of **cursors** as they relate to message synchronization on the XMTP network. Cursors are a fundamental part of how XMTP clients efficiently fetch new messages and maintain state, particularly with the `sync()` family of functions.
+
+While cursors are managed automatically by the XMTP SDKs, understanding how they work is crucial for debugging and for grasping the underlying mechanics of message synchronization.
+
+## What is a cursor?
+
+A cursor is a pointer or a marker that an XMTP client maintains for each topic it subscribes to (both [group message topics](/protocol/topics#group-message-topic) and [welcome message topics](/protocol/topics#welcome-message-topic)). This cursor is stored locally and is specific to each app installation.
+
+Think of it as a bookmark in the chronological log of messages and events for a given topic. Its purpose is to remember the exact point up to which an installation has successfully synchronized its data.
+
+## How cursors work with `sync()`
+
+The primary role of a cursor becomes evident when you use the `sync()` functions (`conversation.sync()`, `conversations.sync()`, and `conversations.syncAll()`).
+
+1. **Initial sync**: The first time an app installation calls `sync()` for a specific conversation, it fetches all available messages and events from the network for that conversation's topic.
+2. **Cursor placement**: Once the sync is complete, the SDK places a cursor at the end of that batch of fetched messages.
+3. **Subsequent syncs**: On the next `sync()` call for that same conversation, the client sends its current cursor position to the network. The network then returns only the messages and events that have occurred _after_ that cursor.
+4. **Cursor advancement**: After the new messages are successfully fetched, the SDK advances the cursor to the new latest point.
+
+This process ensures that each `sync()` call only retrieves what's new, making synchronization efficient by avoiding the re-downloading of messages the client already has.
+
+### How Cursors Enable Efficient Sync
+
+The XMTP SDKs use cursors to make message synchronization highly efficient. The design principle is to fetch new data from the network with `sync()` while providing access to historical data from a local database.
+
+- **`sync()` fetches new data from the network:** The `sync()` functions are designed specifically to retrieve new messages and events from the network. To do this efficiently, the SDK advances the cursor to the position of the last synchronized item. On subsequent `sync()` calls, the client provides this cursor, and the network returns only what has arrived since. This forward-only cursor movement is an intentional design choice that prevents re-downloading data the client already has.
+
+- **Access old messages from the local database:** Once `sync()` fetches messages from the network, they are stored in a local database managed by the SDK. You can query this database at any time to retrieve historical messages without making a network request. This provides fast, local access to the full message history available to the installation.
+
+- **History on new devices is handled by history sync:** The behavior of cursors should not be confused with loading message history on a new device. A new app installation lacks the encryption keys to decrypt old messages. Even if it could fetch them from the network, they would be unreadable. [History sync](/chat-apps/list-stream-sync/history-sync) is the dedicated process for securely transferring message history and the necessary encryption keys to a new installation.
+
+- **Streaming does not affect the cursor:** Receiving messages via a real-time `stream()` does not move the cursor. Streaming provides instant message delivery but doesn't guarantee order or completeness if the client is briefly offline. `sync()` serves as the mechanism to ensure the local state is complete and correctly ordered, and only then is the cursor advanced.
+
+## Cursors for different sync functions
+
+Each `sync()` function corresponds to a different type of cursor:
+
+- `conversation.sync()`: This operates on the **group message topic** for a single conversation. It moves the cursor for that specific conversation, fetching new messages or group updates (like name changes).
+- `conversations.sync()`: This operates on the **welcome message topic**. It moves the cursor for welcome messages, fetching any new conversations the user has been invited to. It does _not_ fetch the contents of those new conversations.
+- `conversations.syncAll()`: This is the most comprehensive sync. It effectively performs the actions of the other two syncs for all of the user's conversations. It moves the cursors for the welcome topic _and_ for every individual group message topic, ensuring the client has fetched all new conversations and all new messages in existing conversations.
+
+For example, here is a sequence diagram illustrating how cursors operate with `conversation.sync()`:
+
+![Sequence diagram showing cursor flow during conversation.sync() operation, illustrating how cursors track message positions and enable incremental synchronization](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/cursor-flow.png)
+
+By understanding cursors, you can better reason about the behavior of your app's synchronization logic and the data being transferred from the XMTP network.
+
+
+## protocol/envelope-types.mdx
+# Envelope types with XMTP
+
+This document covers **envelope types** that clients can publish to XMTP APIs. These are the top-level message structures that can be sent and received through the XMTP network. This information is primarily useful for:
+
+- Developers contributing to the XMTP protocol itself
+- Understanding XMTP internals and debugging
+- Reading XMTP Improvement Proposals (XIPs)
+
+The envelope types described here are handled automatically by XMTP SDKs and rarely need direct interaction from app developers.
+
+For **app development**, you'll typically work with [content types](/chat-apps/content-types/content-types) instead. Content types define how your app's messages are structured and encoded (text, attachments, reactions, etc.) and are what you'll use in your day-to-day development.
+
+## Overview
+
+XMTP supports several envelope types that clients can publish to the network:
+
+- **Group message envelopes**: Contain MLS protocol messages (application messages and commits)
+- **Welcome message envelopes**: Bootstrap new members into existing groups
+- **Key package envelopes**: Register cryptographic credentials for user installations
+- **Identity update envelopes**: Verify and authenticate user identities
+
+These envelope types work together to enable secure group communication with [forward secrecy and post-compromise security](/protocol/security).
+
+**Note**: In the MLS context, "group" refers to any collection of clients that share cryptographic state, which includes both direct message (1:1) or group chat conversations.
+
+## Group message envelope
+
+A group message envelope contains an MLS protocol message that can be either an application message or a commit message. This is the primary envelope type used for day-to-day communication.
+
+### Application messages
+
+Application messages represent the actual content that users send to each other, including:
+
+- Text messages
+- Attachments
+- Reactions
+- Read receipts
+- On-chain transaction references
+- Custom content types
+
+Application messages are:
+
+- Encrypted using the group's shared secrets
+- Authenticated with sender signatures
+- Encoded using XMTP content types
+- Sent on the `groupMessage` topic
+
+### Commit messages
+
+Commit messages update the group's cryptographic state, membership, and permissions. While technically a single message type, commit messages serve many different purposes.
+
+Understanding commit messages is especially helpful when debugging and understanding your app's user experience. For example:
+
+- Different commit types help explain why certain messages appear in logs
+- Some commits happen invisibly, while others are tied to user actions
+
+#### User-initiated commits
+
+- **Add member commits**: When a user explicitly adds someone to a group
+- **Remove member commits**: When a user removes someone from a group
+- **Update metadata commits**: When a user changes group name, description, or permissions
+- **Update permissions commits**: When a user modifies group permission settings
+
+#### System-initiated commits
+
+- **Key update commits**: Automatically generated when a new member joins before sending their first message
+- **Missing member commits**: Triggered when the system detects someone is missing from the group
+- **Scheduled commits**: Periodic commits for security maintenance
+
+#### MLS protocol commits
+
+- **Update path commits**: Generated by the MLS protocol for key rotation and security
+- **External sender commits**: For handling external participants
+
+For more information about MLS commits, see [RFC 9420 Section 12.4](https://www.rfc-editor.org/rfc/rfc9420.html#section-12.4).
+
+## Welcome message envelope
+
+A welcome message envelope bootstraps a new member into an existing group. The welcome is dependent on the newcomer's [key package](#key-package-envelope) and provides the new member with the current state of the group after application of a [commit message](#commit-messages).
+
+A welcome message contains:
+
+- Group context information
+- Encrypted group secrets
+- Tree structure for the group
+- Confirmation tags for epoch verification
+
+If decryption fails due to an outdated or missing key package, the SDK automatically fetches the latest package and retries.
+
+## Key package envelope
+
+A key package envelope registers cryptographic credentials for a user installation. XMTP SDKs create and upload fresh key packages behind the scenes when an installation is initialized or rotated.
+
+Think of a key package as a calling card for an installation that says: here's how to encrypt to me, here's how long this card is valid, and it's signed so you can trust it.
+
+A key package contains:
+
+- Public key for encrypting welcome messages
+- Signature key for authentication
+- Capabilities (supported protocol version, cipher suites, lifetime, etc.)
+- Credential for identity verification
+- Content of the leaf node representing this client
+
+Group members cache key packages to authenticate future handshakes and welcome material, enabling asynchronous addition of clients to groups.
+
+When an app inspects a group member, the SDK provides a `PublicIdentity` object containing the decoded fields, allowing apps to display identity information or check if the key package has expired.
+
+## Identity update envelope
+
+An identity update envelope verifies and authenticates a user identity across the network. It is signed by the user's identity and verifiable by peers.
+
+Identity update envelopes enable group members to rotate their signature or HPKE keys while preserving group continuity and authenticity.
+
+They handle:
+
+- Linking an installation to an XMTP inbox
+- Key rotation and revocation
+- Linking multiple devices (though [history sync](/chat-apps/list-stream-sync/history-sync) is used to synchronize data between those devices)
+
+Identity update messages are stored permanently to ensure continuity of trust and identity verification.
+
+
+## protocol/epochs.mdx
+# Epochs with XMTP
+
+With XMTP, each [commit](/protocol/envelope-types#commit-messages) starts a new epoch, which represents the current cryptographic state of a group chat.
+
+Epochs are a core concept from [Messaging Layer Security](https://messaginglayersecurity.rocks/) (MLS), which XMTP implements for secure group messaging.
+
+Epochs work according to these requirements:
+
+- Sequential numbering: Epochs are strictly ordered and increase by one with each commit (epoch 1, epoch 2, etc.).
+- New keys: Each epoch introduces a fresh encryption key, and keys from previous epochs are discarded (with the exception of a configurable number of recent past epochs that may be retained for special cases).
+- Decryption requirement: To read messages or commits in a given epoch, a member must have the correct epoch key.
+- Fork risk: If members diverge on which epoch they're in (e.g., due to missed or out-of-order commits), they won't be able to decrypt each other's messages, causing a fork.
+
+[Intents](/protocol/intents) help ensure two types of ordering:
+
+- **Epoch ordering**: Commits must be published in the correct epoch (one greater than the last applied epoch) to be processed by clients
+- **Consistent ordering**: All clients must receive published commits in the same order to prevent forks, regardless of epoch validity
+
+Intents achieve epoch ordering by enabling retries, while relying on the server's guarantee of consistent ordering across all clients.
+
+## Handle concurrent commits
+
+When multiple commits arrive at nearly the same time, XMTP uses a "first-to-arrive wins" approach. For example, if commits 2 and 3 both attempt to advance from epoch 1, whichever commit arrived first becomes the accepted next epoch, and the other commit is rejected.
+
+For example, if commit 2 arrived first, it will be built on epoch 2 and commit 3 will be rejected.
+
+However, [intents](/protocol/intents) provide a mechanism for the rejected commit 3 to be retried. The intent can be reprocessed against the new epoch 2 state, allowing the operation to succeed in the updated context rather than being permanently lost.
+
+
+## protocol/identity.mdx
+# Identity model with XMTP
+
+XMTP's identity model includes an inbox ID and its associated identities and installations.
+
+With an inbox ID at its core, instead of a specific wallet address or other identity value, the model is designed for extensibility. A user can associate any number of identity types to their inbox ID and use them to send and receive messages. This gives the user the freedom to add and remove identity types as they naturally change over time, while maintaining the same stable inbox destination for their messages.
+
+![Diagram showing a core inbox ID associated with multiple identities, with access to multiple apps](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/multi-id.png)
+
+The identity model also allows XMTP to support any identity type, as long as it can produce a verifiable cryptographic signature. Currently supported identity types include Ethereum EOAs, Ethereum smart contract wallets, and passkeys.
+
+## Inbox ID
+
+An **inbox ID** is a user's stable destination for their messages. Their inbox ID remains constant even as they add or remove [identities](#identity) and [installations](#installation).
+
+The inbox ID is derived from the hash of the first associated wallet address and a nonce and acts as an opaque identifier that apps use for messaging.
+
+## Identity
+
+An **identity** is an addressable account that can be associated with an inbox ID. Each identity has a type (like EOA, smart contract wallet, or passkey) and an identifier (like an Ethereum address).
+
+- Multiple identities can be linked to a single inbox ID
+- The first identity becomes the **recovery identity** with special privileges
+- All messages sent to any associated identity are delivered to the same inbox
+- Any identity that can produce a verifiable cryptographic signature can be supported by XMTP
+
+## Installation
+
+An **installation** represents a specific app installation that can access an inbox. Each installation has its own cryptographic keys for signing messages and participating in conversations.
+
+- Generated automatically when `Client.create()` is called for the first time with an identity that hasn't been used with XMTP before
+- Multiple installations can access the same inbox (up to 10)
+- Installations can be revoked by the recovery identity
+
+## Relationships
+
+**One inbox ID** → **multiple identities**: Users can receive messages as any of their identities, all flowing to the same inbox
+
+```text
+Inbox ID (stable destination for messages)
+├── Identity 1 (recovery identity, first identity added to an inbox)
+├── Identity 2 (EOA wallet)
+├── Identity 3 (SCW wallet)
+└── Any identity that can produce a verifiable cryptographic signature
+```
+
+**One identity** → **multiple installations**: Users can access their messages from different apps on the same or different devices
+
+```text
+Each identity can authenticate new installations:
+├── Installation A (phone app)
+├── Installation B (web app)
+├── Installation C (desktop app)
+└── Up to 10 installations
+```
+
+## Identity actions
+
+To learn how to build agents with identity actions, see [Manage agent local database files and installations](/agents/build-agents/local-database).
+
+To learn how to build chat apps with identity actions, see [Manage XMTP inboxes, identities, and installations](/chat-apps/core-messaging/manage-inboxes).
+
+
+## protocol/intents.mdx
+# Intents with XMTP
+
+Intents provide an internal state machine, or "bookkeeping" mechanism, for reliably applying changes to XMTP group chat states, even when the process encounters retries, crashes, race conditions, or ordering issues.
+
+Developers building apps and agents with XMTP don't need to work with intents directly, but understanding them provides insight into how the protocol maintains integrity behind the scenes.
+
+## Intent actions
+
+An intent represents an action that intends to change the state of a group chat via a [commit](/protocol/envelope-types#commit-messages), along with enough information to retry the action if it fails.
+
+Each commit rotates the group's encryption state into a new [epoch](/protocol/epochs) and must be applied in epoch order. If a client processes a commit that is in an incorrect epoch, it will simply discard the commit.
+
+Intents provide a structured way to track the multi-step process of publishing commits, handling retries, and recovering from interruptions. This ensures that every commit is eventually published in the correct epoch.
+
+Examples of intent actions include:
+
+- Add member: Add a participant to a group
+- Remove member: Remove a participant from a group
+- Send message: Deliver an application message to the group
+- Change metadata: Rename a group, for example
+
+## Intent states
+
+Each intent progresses through a series of states as it is processed:
+
+- **To publish**: Intent has been created and queued, but not yet sent
+- **Published**: Commit has been sent to the network
+- **Error**: Intent failed with a permanent, non-retryable error (for example, a member without adequate permission tries to add a member, or the member was removed from the group). These intents will not be retried.
+  - Note: Temporary, retryable failures (such as network issues or app restarts) keep the intent in the **To publish** state for retry on the next sync.
+- **Committed**: Commit has been accepted into the group's state, and dependent operations can now be performed. For example, after adding group members, welcome messages can be sent with the new encryption state.
+- **Processed**: Intent is fully complete and all related operations have finished
+
+By tracking intent states, XMTP ensures that if an app crashes before a commit has been accepted, for example, the commit process can resume later from the stored state without losing intent information.
+
+## Example intent flow
+
+![Flow diagram showing the progression of an intent through different states: Pending → Committed → Processed, illustrating how XMTP tracks and manages group operations](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/intents-flow.png)
+
+
+## protocol/overview.mdx
+# XMTP protocol overview
+
+XMTP is a decentralized messaging protocol that enables secure, end-to-end encrypted communication between any identities that can produce a verifiable cryptographic signature.
+
+XMTP implements [Messaging Layer Security](https://messaginglayersecurity.rocks/) (MLS), which is designed to operate within the context of a messaging service. As the messaging service, XMTP needs to provide two services to facilitate messaging using MLS:
+
+- An [authentication service](https://messaginglayersecurity.rocks/mls-architecture/draft-ietf-mls-architecture.html#name-authentication-service)
+- A [delivery service](https://messaginglayersecurity.rocks/mls-architecture/draft-ietf-mls-architecture.html#name-delivery-service)
+
+This section covers the elements of XMTP that provide these services.
+
+:::info[Who should read these docs]
+
+This protocol documentation is designed for:
+
+- Protocol contributors working on XMTP's core implementation
+- Security researchers auditing XMTP's cryptographic design
+- Anyone curious about the technical details behind XMTP's messaging
+
+For most developers, the [Build chat apps](/chat-apps/intro/get-started) and [Build agents](/agents/get-started/build-an-agent) sections provide the practical guidance needed to build with XMTP.
+
+:::
+
+## Encryption
+
+The encryption elements are mainly defined by MLS, with some additions by XMTP. To learn more, see:
+
+- [Security](/protocol/security)
+
+  XMTP and MLS prioritize security, privacy, and message integrity through advanced cryptographic techniques, delivering end-to-end
+  encryption for both 1:1 and group conversations
+
+- [Epochs](/protocol/epochs)
+
+  Represent the cryptographic state of a group at any point in time. Each group operation (like adding members) creates a new epoch with fresh encryption keys
+
+- [Envelope types](/protocol/envelope-types)
+
+  Messages are packaged as envelope types that contain the actual message data plus metadata for routing and processing.
+
+## Identity
+
+The identity elements are mainly defined by XMTP. To learn more, see:
+
+- [Inboxes, identities, and installations](/protocol/identity)
+
+  The identity model includes an inbox ID and its associated identities and installations.
+
+- [Wallet signatures](/protocol/signatures)
+
+  Authenticate users using verifiable cryptographic signatures.
+
+## Delivery
+
+The delivery elements are mainly defined by XMTP. To learn more, see:
+
+- [Topics](/protocol/topics)
+
+  Messages are routed through topics, which are unique addresses that identify conversation channels.
+
+- [Cursors](/protocol/cursors)
+
+  Enable efficient message synchronization by tracking where each client left off when fetching new messages.
+
+- [Intents](/protocol/intents)
+
+  Provide reliable groupstate management through an internal bookkeeping system that handles retries, crashes, and race conditions when applying group changes.
+
+## Protocol evolution
+
+XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), which are design documents that propose new features and improvements. This governance process ensures systematic and decentralized protocol development.
+
+## Additional resources
+
+For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
+
+- [Security](https://xmtp.org/vision/concepts/encryption)
+- [Identity](https://xmtp.org/vision/concepts/identity)
+- [Consent](https://xmtp.org/vision/concepts/consent)
+- [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp)
+
+
+## protocol/security.mdx
+# Messaging security properties with XMTP
+
+XMTP delivers end-to-end encrypted 1:1 and group chat using the following resources:
+
+- Advanced cryptographic techniques
+- Secure key management practices
+- MLS ([Messaging Layer Security](https://www.rfc-editor.org/rfc/rfc9420.html))
+
+Specifically, XMTP messaging provides the comprehensive security properties covered in the following sections. In these sections, **group** refers to the MLS concept of a group, which includes both 1:1 and group conversations.
+
+🎥 **walkthrough: XMTP and MLS**
+
+This video provides a walkthrough of XMTP's implementation of MLS.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/g6I9qXOkDMo?si=o5pD2xwa_yynoP5s"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/xmtp_mls).
+
+## A deep dive into messaging security properties
+
+### Message confidentiality
+
+Ensures that the contents of messages in transit can't be read without the corresponding encryption keys.
+
+Message confidentiality is achieved through symmetric encryption, ensuring that only intended recipients can read the message content. [AEAD](#cryptographic-tools-in-use) (Authenticated Encryption with Associated Data) is used to encrypt the message content, providing robust protection against unauthorized access.
+
+## Forward secrecy
+
+Ensures that even if current session keys are compromised, past messages remain secure.
+
+MLS achieves this by using the ratcheting mechanism, where the keys used to encrypt application messages are ratcheted forward every time a message is sent. When the old key is deleted, old messages can't be decrypted, even if the newer keys are known. This property is supported by using ephemeral keys during the key encapsulation process.
+
+## Post-compromise security
+
+Ensures that future messages remain secure even if current encryption keys are compromised.
+
+XMTP uses regular key rotation achieved through a commit mechanism with a specific update path in MLS, meaning a new group secret is encrypted to all other members. This essentially resets the key and an attacker with the old state can't derive the new secret, as long as the private key from the leaf node in the ratchet tree construction hasn't been compromised. This ensures forward secrecy and protection against future compromises.
+
+## Message authentication
+
+Validates the identity of the participants in the conversation, preventing impersonation.
+
+XMTP uses digital signatures to strongly guarantee message authenticity. These signatures ensure that each message is cryptographically signed by the sender, verifying the sender's identity without revealing it to unauthorized parties. This prevents attackers from impersonating conversation participants.
+
+## Message integrity
+
+Ensures that messages can't be tampered with during transit and that messages are genuine and unaltered.
+
+XMTP achieves this through the use of MLS. The combination of digital signatures and [AEAD](#cryptographic-tools-in-use) enables XMTP to detect changes to message content.
+
+## Quantum resistance
+
+Protects against future quantum computer attacks through post-quantum cryptography.
+
+XMTP implements quantum-resistant encryption to protect against "Harvest Now, Decrypt Later" (HNDL) attacks, where adversaries store encrypted messages until quantum computers become powerful enough to break current encryption. XMTP uses a hybrid approach that combines post-quantum algorithms with conventional cryptography, ensuring protection against future quantum threats without compromising current security.
+
+The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
+
+To learn more about how XMTP achieves quantum resistance, see [XMTP and the Future of Privacy in a Quantum World](https://community.xmtp.org/t/xmtp-and-the-future-of-privacy-in-a-quantum-world/1079).
+
+## User anonymity
+
+Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.
+
+User anonymity is achieved through a combination of the following functions:
+
+- MLS Welcome messages encrypt the sender metadata and group ID, protecting the social graph.
+
+- XMTP adds a layer of encryption to MLS Welcome messages using [HPKE](#cryptographic-tools-in-use) (Hybrid Public Key Encryption). This prevents multiple recipients of the same Welcome message from being correlated to the same group.
+
+- XMTP uses MLS [PrivateMessage](https://www.rfc-editor.org/rfc/rfc9420.html#name-confidentiality-of-sender-d) framing to hide the sender and content of group messages.
+
+- XMTP's backend doesn't authenticate reads or writes and only implements per-IP rate limits. Aside from Welcome messages, all payloads for a given group are stored under a single group ID, and any client may anonymously query or write to any group ID. Only legitimate members possess the correct encryption keys for a given group.
+
+It's technically possible for XMTP network node operators to analyze query patterns per IP address. However, clients may choose to obfuscate this information using proxying/onion routing.
+
+XMTP currently hides the sender of Welcome messages (used to add users to a group) but doesn't hide the Welcome message recipients. This makes it possible to determine how many groups a user was invited to but not whether the user did anything about the invitations.
+
+## Cryptographic tools in use
+
+XMTP messaging uses the ciphersuite _MLS_128_HPKEX25519_CHACHA20POLY1305_SHA256_Ed25519_.
+
+Here is a summary of individual cryptographic tools used to collectively ensure that XMTP messaging is secure, authenticated, and tamper-proof:
+
+- [HPKE](https://www.rfc-editor.org/rfc/rfc9180.html)
+
+  Used to encrypt Welcome messages, protect the identities of group invitees, and maintain the confidentiality of group membership. We use the ciphersuite HPKEX25519.
+
+- [AEAD](https://developers.google.com/tink/aead)
+
+  Used to ensure both confidentiality and integrity of messages. In particular, we use the ciphersuite CHACHA20POLY1305.
+
+- [SHA3_256 and SHA2_256](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf)
+
+  XMTP uses two cryptographic hash functions to ensure data integrity and provide strong cryptographic binding. SHA3_256 is used in the multi-wallet identity structure. SHA2_256 is used in MLS. The ciphersuite is SHA256.
+
+- [Ed25519](https://ed25519.cr.yp.to/ed25519-20110926.pdf)
+
+  Used for digital signatures to provide secure, high-performance signing and verification of messages. The ciphersuite is Ed25519.
+
+- [XWING KEM](https://www.ietf.org/archive/id/draft-connolly-cfrg-xwing-kem-02.html)
+
+  Used for quantum-resistant key encapsulation in Welcome messages. XWING is a hybrid post-quantum KEM that combines conventional cryptography with [ML-KEM](https://csrc.nist.gov/pubs/fips/203/final) (the NIST-standardized post-quantum component), providing protection against future quantum computer attacks while maintaining current security standards.
+
+## FAQ about messaging security
+
+1. **Can XMTP read user messages?**
+
+   No, messages are encrypted end-to-end. Only participants in a conversation have the keys to decrypt the messages in it. Your app cannot decrypt messages either.
+
+2. **How does XMTP's encryption compare to Signal or WhatsApp?**
+
+   XMTP provides the same security properties (forward secrecy and post-compromise security) as Signal and WhatsApp, using the newer, more efficient MLS protocol.
+
+3. **Can others see who users are messaging with?**
+
+   No. Message recipients are encrypted, so even network nodes cannot see who is messaging whom. Nodes can only see timing and size of encrypted messages.
+
+4. **What happens if a user loses access to their wallet?**
+
+   They'll need to start new conversations from their new wallet. Messages sent to their old wallet address can't be decrypted without access to that wallet.
+
+5. **Are group messages as secure as direct messages?**
+
+   Yes, MLS provides the same security properties for both group and direct messages. In fact, MLS is particularly efficient for group messaging.
+
+6. **What if a user suspects their wallet is compromised?**
+
+   Due to forward secrecy, even if someone gains access to their wallet, they can't read their past messages. They should start using a new wallet immediately - this ensures attackers won't be able to read future messages either.
+
+7. **How does encryption work across different XMTP apps?**
+
+   All XMTP apps use the same MLS protocol, ensuring consistent encryption across the ecosystem regardless of which app users choose.
+
+
+## protocol/signatures.mdx
+---
+description: 'Learn about wallet signature types when using XMTP'
+---
+
+# Wallet signatures with XMTP
+
+Learn about the types of wallet address signatures you might be prompted to provide when using apps built with XMTP. These signatures are always made with a specific wallet address controlled by your wallet.
+
+## First-time app installation use
+
+The first time you use an installation of an app built with XMTP, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. For example:
+
+```text
+XMTP : Authenticate to inbox
+
+Inbox ID: ${INBOX_ID}
+Current time: ${YYYY-MM-DD HH:MM:SS UTC}
+```
+
+More specifically, the message will request that you sign:
+
+- A **Grant messaging access to app** message to grant the app installation access to messaging owned by your signing wallet address. For example:
+
+  ```text
+  - Grant messaging access to app
+    (ID: ${hex(INSTALLATION_PUBLIC_KEY)})
+  ```
+
+- A **Create inbox** message to create an XMTP inbox owned by your signing address, but only if you have never used an app installation built with XMTP v3 before. For example:
+
+  ```text
+  - Create inbox
+    (Owner: ${INITIAL_ADDRESS})
+  ```
+
+Sign the **XMTP : Authenticate to inbox** message with your wallet address to consent to the message requests.
+
+<img
+  width="400"
+  src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/authen-to-inbox.PNG"
+  alt="MetaMask wallet browser extension Sign this message? window showing an XMTP: Authenticate to inbox message"
+/>
+
+## Sign to add another address to your inbox
+
+You can add another wallet address to your inbox at any time. For example, you might have started using an app with one wallet address and now want to use the app with an additional wallet address.
+
+If you decide to add another wallet address to your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Link address to inbox** message. For example:
+
+```text
+- Link address to inbox
+  (Address: ${ASSOCIATED_ADDRESS})
+```
+
+Sign with the wallet address you want to add to grant it access to the inbox. You can now use your inbox to exchange messages using the wallet address you just added.
+
+## Sign to remove address from your inbox
+
+You can remove a wallet address from your inbox at any time.
+
+If you decide to remove a wallet address from your inbox, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign an **Unlink address from inbox** message. For example:
+
+```text
+- Unlink address from inbox
+  (Address: ${ASSOCIATED_ADDRESS})
+```
+
+Sign with the wallet address you want to remove to unlink it from your inbox. You can no longer access your inbox using the wallet address you removed.
+
+## Sign to change inbox recovery address
+
+The first time you used an app installation built with XMTP v3, the wallet address you used to create an inbox is automatically set as the inbox recovery address. You can change the recovery address to a different wallet address at any time.
+
+If you decide to change the recovery address, a **Sign this message?** window displays to request that you sign an **XMTP : Authenticate to inbox** message. Specifically, the message requests that you sign a **Change inbox recovery address** message. For example:
+
+```text
+- Change inbox recovery address
+  (Address: ${NEW_RECOVERY_ADDRESS})
+```
+
+Sign with the wallet address you want to set as the recovery address to change the recovery address.
+
+## Sign to consent to receive broadcast messages
+
+When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
+
+For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
+
+![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
+
+When you click **Sign**, you're consenting to receive broadcast messages from the publisher at your connected wallet address. You can see the publisher's sending address in the **Signature request** window.
+
+When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
+
+To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
+
+
+## protocol/topics.mdx
+# Topics with XMTP
+
+This document describes the concept of **topics** on the XMTP network. Topics are used to address and route [envelopes](/protocol/envelope-types), forming the backbone of the XMTP pub/sub messaging system.
+
+While XMTP SDKs manage topic subscriptions automatically, understanding them can be helpful for protocol-level development, debugging, and building services like push notification servers.
+
+## Topic naming convention
+
+XMTP topics follow a standardized format that indicates the protocol version, message type, and a unique identifier. The general structure is:
+
+`/xmtp/mls/1/{topic-type}-{identifier}/proto`
+
+- `/xmtp/mls/1/`: The protocol namespace, indicating XMTP with MLS, version 1.
+- `{topic-type}`: A single letter representing the purpose of the topic (for example, `g` for group, `w` for welcome).
+- `{identifier}`: A unique ID for the specific conversation or installation.
+- `/proto`: The payload serialization format.
+
+## Core topics in XMTP
+
+XMTP uses two primary topic types for delivering messages.
+
+### Group message topic
+
+The group message topic is used to send and receive messages within a specific conversation (both 1:1 DMs and group chats). Each conversation has its own unique topic.
+
+- **Format**: `/xmtp/mls/1/g-$conversationId/proto`
+- **Envelope**: [Group message envelope](/protocol/envelope-types#group-message-envelope)
+- **Purpose**: Carries all ongoing communication for a conversation, including [application messages](/protocol/envelope-types#application-messages) (text, reactions, etc.) and [commit messages](/protocol/envelope-types#commit-messages) that modify the group state.
+- **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value.
+
+> \*\*Note on [DM stitching](/chat-apps/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications): For direct messages, multiple underlying conversations might be "stitched" together in the UI. For push notifications to be reliable, an app must subscribe to the group message topic for each of these underlying conversations.
+
+### Welcome message topic
+
+The welcome message topic is used to deliver a `Welcome` message to a new member of a group. This message bootstraps the new member, providing them with the group's state so they can participate.
+
+- **Format**: `/xmtp/mls/1/w-$installationId/proto`
+- **Envelope**: [Welcome message envelope](/protocol/envelope-types#welcome-message-envelope)
+- **Purpose**: To notify a specific app installation that it has been added to a new conversation.
+- **Usage**: A push notification server subscribes to an installation's welcome topic to be notified when that installation is invited to a new group chat or DM. The SDKs provide this via methods like `client.welcomeTopic()`.
+
+## How other envelopes are handled
+
+Not all envelope types are broadcast on persistent pub/sub topics.
+
+- **[Key package envelopes](/protocol/envelope-types#key-package-envelope)**: These are not sent over a topic. Instead, they are published to a network-level store where they can be retrieved by other clients who need to start a conversation or add a new member to a group.
+
+- **[Identity update envelopes](/protocol/envelope-types#identity-update-envelope)**: These are also not sent over a topic. They are stored permanently on the XMTP network to ensure the continuity and verifiability of a user's identity across their devices.
+
+
+## protocol/xips.mdx
+# XMTP Improvement Proposals (XIPs)
+
+An XIP is a design document that proposes a new feature or improvement for XMTP or its processes or environment.
+
+XIPs intend to be the primary mechanisms for:
+
+- Proposing new features
+- Collecting community technical input on an issue
+- Documenting the design decisions that have gone into XMTP
+
+For these reasons, XIPs are a great way to learn about XMTP's newest features and participate in shaping the evolution of the protocol.
+
+To review the latest XIPs, see [Improvement Proposals](https://community.xmtp.org/c/xips/xip-drafts/53).
+
+To learn more about XIPs and how to participate in the process, including authoring an XIP of your own, see [XIP purpose, process, and guidelines](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-0-purpose-process.md).
+
+
+# Section: network
+
+## network/network-nodes.mdx
+# XMTP testnet nodes
+
+For real-time statuses of nodes in the XMTP testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
+The following table lists the nodes currently registered to power the XMTP testnet.
+
+|     | Node operator               | Node address                                  |
+| --- | --------------------------- | --------------------------------------------- |
+| 1   | Artifact Capital            | xmtp.artifact.systems:443                     |
+| 2   | Crystal One                 | xmtp.node-op.com:443                          |
+| 3   | Emerald Onion               | xmtp.disobey.net:443                          |
+| 4   | Encapsulate                 | lb.validator.xmtp.testnet.encapsulate.xyz:443 |
+| 5   | Ethereum Name Service (ENS) | grpc.ens-xmtp.com:443                         |
+| 6   | Laminated Labs              | xmtp.validators.laminatedlabs.net:443         |
+| 7   | Next.id                     | xmtp.nextnext.id:443                          |
+| 8   | Nodle                       | xmtpd.nodleprotocol.io:443                    |
+| 9   | Ephemera                    | grpc.testnet.xmtp.network:443                 |
+| 10  | Ephemera                    | grpc2.testnet.xmtp.network:443                |
+
+Here is a map of node locations:
+
+<div
+  style={{
+    position: 'relative',
+    paddingBottom: '56.25%',
+    height: 0,
+    overflow: 'hidden',
+  }}
+>
+  <iframe
+    src="https://www.google.com/maps/d/embed?mid=18y4nFTXQKdgiSJCQbEGl5dojPoHL3LQ&ehbc=2E312F&noprof=1"
+    style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      border: 0,
+    }}
+    allowFullScreen=""
+    loading="lazy"
+  ></iframe>
+</div>
+
+A purple pin indicates that the node is operated by a non-profit organization.
+
+
+## network/run-a-node.mdx
+# Run an XMTP network node
+
+A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
+
+To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+
+## Interested in becoming a registered XMTP node operator?
+
+1. Review [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+2. [Submit an application](https://docs.google.com/forms/d/e/1FAIpQLScBpJ0i962xBPpZZeI6q7-UMo5Bc2JkhvHR_v2rliLDoBkzXQ/viewform?usp=sharing) to become a registered node operator.
+
+## Already a registered node operator?
+
+To get started, see the [xmtpd-infrastructure](https://github.com/xmtp/xmtpd-infrastructure) repository, which provides infrastructure-as-code examples and tooling to help node operators deploy and manage xmtpd nodes.
+
+## FAQ about the XMTP network
+
+To follow and provide feedback on the engineering work covered in this FAQ, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
+
+### Is the XMTP network decentralized?
+
+A testnet of the decentralized XMTP network was launched in early December 2024.
+
+All of the nodes in the `dev` and `production` XMTP network environments are still operated by [Ephemera](https://ephemerahq.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+
+These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
+
+- Cuba
+- Iran
+- North Korea
+- Syria
+- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
+
+### Is XMTP a blockchain?
+
+The testnet of the decentralized XMTP network includes two distributed systems:
+
+- The XMTP broadcast network
+- The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
+
+To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+
+The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
+
+### Will I be able to run my own XMTP node?
+
+At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
+
+To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+
+### Does XMTP have a token?
+
+XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
+
+
+# Section: fund-agents-apps
+
+## fund-agents-apps/calculate-fees.mdx
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+import Mermaid from '../../components/Mermaid';
+
+# Understand and calculate XMTP fees
+
+Use this guide to understand XMTP fees and how to calculate estimated XMTP fees for an app or agent.
+
+## Understand XMTP fees
+
+To support a decentralized and sustainable network, XMTP operates on a usage-based fee model. **All XMTP network fees are paid in USDC** (USD Coin, a stablecoin pegged to the US dollar). The fees paid by apps and agents (payers) directly compensate the independent node operators who run the infrastructure, ensuring the network remains resilient, secure, and censorship-resistant.
+
+:::tip[How to estimate your costs]
+
+Network fees are estimated to cost $5 per 100,000 chat messages, inclusive of all fee types.
+
+- **If you know your message volume**, multiply by $5 per 100,000 to estimate your costs. For example, if your app or agent's message volume is 100,000 messages per day, your estimated cost is $5 per day or $150 per month.
+
+- **If you have not launched messaging**, we recommend assuming each monthly active messaging user sends 500 messages per month. For example, 10,000 monthly active messaging users sending an average of 500 messages per month per user will generate an estimated $250 per month in fees.
+
+:::
+
+### Fee types
+
+To understand XMTP fee types, it's helpful to understand XMTP's architecture, which uses a two-layer system:
+
+1. **XMTP Broadcast Network** (offchain): A globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users.
+2. **XMTP App Chain** (onchain): A specialized blockchain that stores critical metadata, such as user identities, contacts, and group permissions. This onchain layer is essential for decentralized identity and ensuring that only the appropriate users can access conversations.
+
+### Messaging fees
+
+Messages sent through the **XMTP Broadcast Network** incur these types of **messaging fees**:
+
+- **Base fee**: A flat per-message fee charged at a single global rate, not a rate per app or sender.
+- **Storage fee**: A fee charged per-byte-day of storage required.
+- **Congestion fee**: A dynamic fee computed by looking at the recent activity of an originator. Added only during periods of high network activity.
+
+The fee rates for the base fee, storage fee, and congestion fee are denominated in USDC and stored as constants in a smart contract. These rates are set and adjusted through protocol governance and remain constant for a specified period of time.
+
+Every message an app or agent sends through the XMTP Broadcast Network counts against its message allowance. These message types include:
+
+- App messages (text, reactions, replies)
+- Media attachments (charged by size, with a 1 MB cap). To send larger files and reduce fees, use a remote attachment to point to off-network storage (for example, IPFS or S3).
+- System messages (read receipts, typing indicators)
+
+To learn more, see [Envelope types](/protocol/envelope-types).
+
+Collected messaging fees are paid directly to the node operators who run the globally distributed nodes that power the XMTP Broadcast Network.
+
+#### Messaging fee payment flow
+
+This sequence diagram illustrates the messaging fee payment flow from payers to independent node operators using a series of [smart contracts](https://github.com/xmtp/smart-contracts/blob/main/src/settlement-chain/README.md).
+
+<Zoom>
+<Mermaid
+  id="payer-to-node"
+  chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
+    sequenceDiagram
+        actor Payer
+        participant PayerRegistry
+        participant PayerReportManager
+        participant DistributionManager
+        participant NodeRegistry
+        actor NodeOperator as Node operator
+
+        Payer->>PayerRegistry: 1. Allocates USDC to cover usage fees
+        Note over PayerReportManager: Node operator submits payer usage reports
+        PayerReportManager->>PayerRegistry: 2. Deducts fees from payer's balance
+        PayerRegistry->>DistributionManager: 3. Transfers collected fees
+        NodeOperator->>DistributionManager: 4. Claims share of fees
+        DistributionManager->>NodeRegistry: 5. Verifies claimant is node owner
+        NodeRegistry-->>DistributionManager: Returns node owner's address
+        DistributionManager->>NodeOperator: 6. Transfers earned fees to node operator
+
+`}
+/>
+
+</Zoom>
+
+### Gas fees
+
+Certain administrative operations involve transactions on the XMTP App Chain:
+
+- Group management updated (member additions, permission changes)
+- Identity updates
+- Payer-related updates
+
+To pay for these transactions, apps and agents need to maintain a gas reserve balance on the XMTP App Chain. The Funding Portal automatically manages funding this gas reserve for apps and agents based on their expected message volume.
+
+Collected gas fees are paid directly to the XMTP App Chain. Fees are used to maintain the App Chain.
+
+## Calculate estimated XMTP fees
+
+As a rough estimate, an app or agent can expect to pay about **$5 per 100,000 messages** ($0.00005/message). This all-in fee for typical usage is based on the following key assumptions:
+
+- A 95/5 split between messaging and gas fees. Meaning, for every $5 in total fees:
+  - $4.75 is for XMTP Broadcast Network messaging fees
+  - $0.25 is for XMTP App Chain gas fees
+- An average message size of 1 KB (1024 bytes).
+- A message retention period of 90 days.
+- Normal network conditions (no congestion fees).
+
+Your actual costs may vary depending on your app's specific usage patterns. For example, sending smaller messages or using a shorter retention period will result in lower messaging fees.
+
+All pricing is onchain and fully auditable. For the most accurate estimates based on your specific usage, the XMTP Funding Portal provides a detailed breakdown of messaging fees, gas fees, and your historical and projected spend.
+
+### Calculate estimated messaging fees
+
+The total messaging fee for a single message is the sum of its component fees:
+
+`total messaging fee = base fee + storage fee + congestion fee`
+
+The storage fee is calculated as follows:
+
+`storage fee = rate × message size in bytes × message retention in days`
+
+For example, a 1 KB text message stored for 90 days on the XMTP Broadcast Network would incur a messaging fee calculated as:
+
+`total messaging fee = base fee + (storage rate × 1024 bytes × 90 days) + congestion fee`
+
+The congestion fee is applied only during periods of high network activity to manage load.
+
+### Calculate estimated gas fees
+
+Gas fees for transactions on the XMTP App Chain are calculated as follows:
+
+`gas fee = fee per unit of gas × amount of gas consumed by a transaction`
+
+This often works out to fractions of a US cent.
+
+The fee per unit of gas is set by the XMTP App Chain based on network activity.
+
+The total amount of gas consumed depends on the size of the transaction.
+
+### Fees and network scale
+
+The network is designed for sustainability, not to accumulate profit. Fee revenue is used to cover network operational costs incurred by node operators.
+
+The messaging fee per message is expected to step down as the network achieves and sustains global message volume milestones. For example, at a volume of 1 billion messages per month, revenue is expected to cover operational costs.
+
+The specific schedule for these milestones is managed by protocol governance, with a current effective floor fee target of $5 per 100,000 messages.
+
+While the system is designed for fees to decrease over time, the global messaging fee can rise if network volume drops significantly, ensuring node operator sustainability.
+
+
+## fund-agents-apps/fund-your-app.mdx
+import { Tabs } from '../../components/Tabs';
+
+# Fund an app or agent to send messages with XMTP
+
+Use this guide to learn how to use the XMTP Funding Portal to fund an app or agent to send messages with XMTP. You can also use the portal to view usage and current and projected fees.
+
+Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP App Chain gas payments, and all blockchain interactions.
+
+[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
+
+The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
+
+## Understand payer wallets
+
+A payer wallet is what an app or agent's XMTP Gateway Service uses to pay fees.
+
+You can:
+
+- [Self-fund a payer wallet](#self-fund-a-payer-wallet)
+- [Fund a payer wallet using another wallet](#fund-a-payer-wallet-using-another-wallet)
+
+For example, you might self-fund your payer wallet if it already has or can easily obtain USDC. Or, you might ask your finance team to fund your payer wallet from a company multi-sig. You might also use a wallet you control to support a different app or agent by funding its payer wallet.
+
+## Access the XMTP Funding Portal
+
+At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
+
+Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mxUSD (mock XMTP USD fee token).
+
+To learn how to get mxUSD, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+Currently, mxUSD balances on testnet-staging are unaffected by usage.
+
+<Tabs.Root defaultValue="self-fund">
+  <Tabs.List>
+    <Tabs.Trigger value="self-fund">Self-fund a payer wallet</Tabs.Trigger>
+    <Tabs.Trigger value="other-wallet">Fund a payer wallet using another wallet</Tabs.Trigger>
+  </Tabs.List>
+
+  <Tabs.Content value="self-fund">
+
+## Self-fund a payer wallet
+
+### Step 1. Create the payer wallet
+
+The payer wallet must be:
+
+- A standard Ethereum-compatible wallet account
+- Non-custodial, meaning you control the private key (not a third-party service)
+- Able to sign and transact on the Base and XMTP App Chain networks
+- Able to hold and transfer USDC tokens
+
+You can create a payer wallet using common non-custodial wallet apps, such as Coinbase Wallet and MetaMask.
+
+Payer wallets can be funded by Ethereum EOAs and smart contract wallets. For example, a Gnosis Safe or any ERC-1271 wallet can deposit funds into a payer account using the Funding Portal.
+
+You'll need your payer wallet's private key when setting up your [XMTP Gateway Service](/fund-agents-apps/run-gateway).
+
+### Step 2. Register the payer wallet
+
+1. Use your payer wallet to connect to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
+2. On the **Welcome** page, click **Use connected wallet**.
+3. Open the drop-down menu in the upper right and click **Manage payers**.
+4. Click the pencil icon to give your payer wallet a human-readable name.
+5. Click the green check button to save.
+
+Your payer wallet is now a payer in the Payer Registry smart contract.
+
+### Step 3: Fund the payer wallet with USDC on Base
+
+:::tip[Using testnet-staging?]
+
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+:::
+
+Fund your payer wallet with USDC on Base. Here are some sources you can use to acquire USDC:
+
+- Centralized exchanges: Binance, Coinbase, Kraken
+- Direct purchase: Circle, Coinbase
+- Business accounts: Circle business accounts for larger operations
+
+### Step 4: Allocate funds for messaging
+
+:::warning
+
+Once you fund a payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) from the messaging and gas fee allowance.
+
+- Withdrawals from the Payer Registry will be available after 48 hours and require a second transaction to claim.
+- Withdrawals from the XMTP App Chain that require bridging to Base will be available after 7 days and require a second transaction to claim.
+
+:::
+
+1. Connect the payer wallet to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
+2. In the drop-down menu in the upper right, be sure to select the payer wallet.
+3. On the **Dashboard** page, click **Fund**.
+4. Enter the amount you want to allocate from your payer wallet.
+5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+6. Click **Continue**.
+7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+
+Your payer wallet now has:
+
+- An allocation to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- An amount bridged to your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+### Step 5: Monitor your usage and allowance
+
+You can use the **Usage** panel on the XMTP Funding Portal **Dashboard** to review the number of messages sent by your app, as well as actual and projected fees.
+
+Before data can display in the **Usage** panel, you must have completed the following on the appropriate network (testnet or mainnet):
+
+1. [Deployed your XMTP Gateway Service](/fund-agents-apps/run-gateway)
+2. Updated your app to [use a compatible XMTP SDK](/fund-agents-apps/update-sdk)
+3. Sent messages using your app
+
+We recommend funding an allowance for 3-6 months of estimated usage.
+
+If your allowance goes to zero, the Payer Registry smart contract rejects new messages sent to the XMTP Broadcast Network and returns an `INSUFFICIENT_PAYER_BALANCE` error.
+
+### Step 6: Withdraw and claim funds
+
+You can use the payer wallet (and only the payer wallet) to withdraw from the messaging and gas fee allowance at any time.
+
+- Withdrawals from the Payer Registry will be available after 48 hours and require a second transaction to claim.
+- Withdrawals from the XMTP App Chain that require bridging to Base will be available after 7 days and require a second transaction to claim.
+
+1. Connect your payer wallet to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
+2. On the **Dashboard** page, click **Withdraw**.
+3. Enter the amount you want to withdraw from your messaging balance. Click **MAX** if you want to withdraw the maximum amount available.
+4. Click **Request withdrawal**.
+5. After the required wait time, return to the XMTP Funding Portal to complete your withdrawal. On the homepage, view the **Transaction** panel and locate your **Withdrawal** and **Bridge** transactions. The **Status** column should be set to **_Ready to withdraw_**.
+6. Click **Ready to withdraw** to display the **Transaction details** panel.
+7. Verify the withdrawal details and click **Claim USDC**.
+
+</Tabs.Content>
+
+<Tabs.Content value="other-wallet">
+
+## Fund a payer wallet using another wallet
+
+### Step 1. Get the payer wallet address
+
+To fund an app using a wallet other than its payer wallet, you need the payer wallet address.
+
+### Step 2. Select the payer wallet you want to fund
+
+1. Use the wallet you want to use to fund the payer wallet to connect to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
+2. On the **Welcome** page, click **Use other wallet**.
+3. On the **Manage payer wallets** screen, enter the payer wallet address you want to fund and a human-readable display name.
+4. Click the green check button to save.
+
+Your wallet can now fund the payer wallet.
+
+### Step 3: Deposit USDC into your wallet
+
+:::tip[Using testnet-staging?]
+
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+
+:::
+
+Deposit USDC into your wallet on Base. This is the wallet you want to use to fund the payer wallet.
+
+Here are some sources you can use to acquire USDC:
+
+- Centralized exchanges: Binance, Coinbase, Kraken
+- Direct purchase: Circle, Coinbase
+- Business accounts: Circle business accounts for larger operations
+
+### Step 4: Allocate funds to the payer wallet
+
+:::warning
+
+Once you use your wallet to allocate funds to the payer wallet, only the payer wallet can [withdraw](#step-6-withdraw-and-claim-funds) from the messaging and gas fee allowance.
+
+:::
+
+1. Use the wallet you funded in Step 3 to connect to the [XMTP Funding Portal](#access-the-xmtp-funding-portal).
+2. In the drop-down menu in the upper right, be sure to select the payer wallet.
+3. On the **Dashboard** page, click **Fund**.
+4. Enter the amount you want to allocate from your wallet to the payer wallet.
+5. The XMTP Funding Portal automatically optimizes how the funds are allocated to cover messaging fees and gas fees. Expand the **Transaction details** area to view the details of the split.
+6. Click **Continue**.
+7. The **Depositing funds** screen displays. You can click **Cancel transaction** to attempt to cancel the transaction, if needed.
+
+The payer wallet now has:
+
+- An allocation to the registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- An amount bridged to the payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+</Tabs.Content>
+</Tabs.Root>
+
+## For use with testnet-staging only: Self-mint mxUSD
+
+To fund your app on the testnet-staging deployment of the [XMTP Funding Portal](#access-the-xmtp-funding-portal), you must use mxUSD (mock XMTP USD fee token) instead of USDC.
+
+To get mxUSD, you must self-mint it.
+
+### Self-mint mxUSD
+
+1. Start [Docker Desktop](https://docs.docker.com/desktop/).
+
+2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mxUSD:
+
+   ```bash
+    docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
+      funds mint --amount <1000> --to <receiving-address>
+      --private-key <private-key> \
+      --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
+      --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
+      --config-file https://github.com/xmtp/smart-contracts/releases/download/v0.5.5/testnet.json \
+    ```
+
+Available parameters:
+
+- `--amount`: Amount of mxUSD to mint, in whole units. For example, `1000`.
+- `--to`: Receiving address (typically your payer wallet address)
+- `--private-key`: Private key of the address you want to use to pay the gas fee to mint the mxUSD
+- `--app-rpc-url`: Your Alchemy API endpoint for XMTP Ropsten
+- `--settlement-rpc-url`: Your Alchemy API endpoint for the Base Sepolia
+
+To learn how to create an Alchemy API endpoint, see [Create an Alchemy API Key](https://www.alchemy.com/docs/create-an-api-key).
+
+Expected output:
+
+```bash
+INFO    funds-admin     tokens minted   {"settlement_chain_id": 84532, "app_chain_id": 351243127, "from_address": "0x0000000000000000000000000000000000000000", "to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
+INFO    successfully minted mock underlying fee token   {"to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
+```
+
+Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mxUSD.
+
+### Add mxUSD to MetaMask
+
+After self-minting mxUSD, you'll need to add the token to MetaMask to view your balance:
+
+1. Open MetaMask and select the **Tokens** tab.
+2. Open the kebab menu and click **Import tokens**.
+3. Select the **Base Sepolia** network and enter these token details:
+   - **Token contract address**: `0x2d7e0534183dAD09008C97f230d9F4f6425eE859`
+   - **Token symbol**: `mxUSD`
+   - **Token decimal**: `6`
+4. Click **Next**.
+5. Click **Import** to confirm.
+
+Your mxUSD balance should now be visible in MetaMask.
+
+## Troubleshooting
+
+### Is there a testnet?
+
+Yes. There are testnets for the XMTP App Chain and XMTP Broadcast Network.
+
+At this time, you can dry-run allocating funds using the [testnet-staging deployment of the XMTP Funding Portal](#access-the-xmtp-funding-portal) and sending messages using these XMTP testnets.
+
+### Signature rejected (MetaMask only)
+
+If you see a **Signature rejected** error in MetaMask, it can sometimes be caused by a stuck or out-of-sync **nonce** (a number that keeps track of your transaction order).
+
+To fix this:
+
+1. Open MetaMask.
+2. Click your **account icon** in the top right.
+3. Go to **Settings → Advanced**.
+4. Click **Reset Account**. This does not affect your funds or wallet.
+
+If the issue persists:
+
+- Check for any stuck or pending transactions in your wallet.
+- Try sending a new transaction with a **custom nonce** if needed.
+
+### Bridge pending > 15 min
+
+Check Base status: [https://status.base.org/](https://status.base.org/).
+
+### Message reverted
+
+Check for `INSUFFICIENT_PAYER_BALANCE`.
+
+### Region restrictions
+
+Nodes in the XMTP testnet and mainnet that operate in US jurisdiction do so in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, for these nodes, IP-based geoblocking is in place for the following countries/territories:
+
+- Cuba
+- Iran
+- North Korea
+- Syria
+- The Crimea, Donetsk People’s Republic, and Luhansk People’s Republic regions of Ukraine
+
+
+## fund-agents-apps/get-started.md
+# Get started with funding an app or agent to send messages with XMTP
+
+Mainnet of the decentralized XMTP Network is expected to launch in early 2026.
+
+Specifically, Mainnet launch will occur 60 days after the release of an SDK version that meets production standards for performance and reliability on Testnet.
+
+With Mainnet launch, all message traffic will be automatically routed from the current production network to Mainnet. At this time, apps and agents will begin paying fees to send messages on Mainnet.
+
+## Key milestones and actions
+
+Once a milestone is delivered, you can proceed with required and recommended actions.
+
+**Milestone**|**Delivered?**|**Action**
+:-----|:-----|:-----
+Payer wallets can be funded on Testnet|🟢|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)
+XMTP Gateway Service library is available in Go|🟢|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
+Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)
+|  |🔴 iOS|
+|  |🔴 Android|
+|  |🔴 React Native|
+|  |🔴 Browser|
+|  |🔴 Node|
+|  |🔴 Agent|
+Client SDKs are compatible with Mainnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)
+|  |🔴 iOS|
+|  |🔴 Android|
+|  |🔴 React Native|
+|  |🔴 Browser|
+|  |🔴 Node|
+|  |🔴 Agent|
+Payer wallets can be funded on Mainnet|🔴|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)
+All message traffic routed through Mainnet|🔴|Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required)
+
+
+## fund-agents-apps/glossary.md
+# Glossary for funding an app or agent to send messages with XMTP
+
+## Allowance
+
+Total amount of USDC allocated to pay for messaging and gas fees for a registered payer wallet. This includes:
+
+- USDC allocated to your registered payer wallet in the Payer Registry smart contract. This allowance will be used to pay XMTP Broadcast Network messaging fees.
+- USDC in your payer wallet on the XMTP App Chain. This balance will be used to pay XMTP App Chain gas fees.
+
+To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
+
+## Base
+
+An Ethereum L2 network developed by Coinbase on the OP Stack. Base processes transactions offchain and settles them on Ethereum.
+
+## Congestion fee
+
+A dynamic offchain fee added during high network activity to manage load, determined by and paid to node operators.
+
+To learn more, see [Understand and calculate XMTP fees](/fund-agents-apps/calculate-fees).
+
+## Message fee
+
+A fixed offchain micropayment paid to node operators for delivering a message.
+
+To learn more, see [Understand and calculate XMTP fees](/fund-agents-apps/calculate-fees).
+
+## Node Registry
+
+A smart contract on Base that manages the list of authorized XMTP Broadcast Network nodes.
+
+To learn more, see [NodeRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/NodeRegistry.sol) in the smart-contracts repo.
+
+## Payer
+
+A payer is typically an app or agent that pays to use the XMTP Broadcast Network to send messages.
+
+## Payer Registry
+
+A smart contract that holds and manages messaging balances for registered payer wallets. The Payer Registry enables:
+
+- **Pay-as-you-go messaging**: A developer registers their payer wallet and allocates USDC to it, creating a messaging balance to compensate node operators.
+- **Balance management**: Any wallet can deposit USDC to a registered payer wallet's messaging balance. Only the registered payer wallet can withdraw funds from its balance.
+- **Fee settlement**: The Payer Registry tracks usage, deducts fees from messaging balances, and enforces sufficient balance requirements for sending messages.
+
+To learn more, see [PayerRegistry.sol](https://github.com/xmtp/smart-contracts/blob/6ff95e20acdcfdbf932cb3254ad132daeb3e59e4/src/settlement-chain/PayerRegistry.sol#L38) in the XMTP smart-contracts repo.
+
+## Payer wallet
+
+A non-custodial, Ethereum-compatible wallet that you register and use to allocate USDC to pay for your app's messaging fees.
+
+The payer wallet is the only wallet that can control its messaging balance in the Payer Registry, but any wallet can allocate funds to its messaging balance.
+
+To learn more, see [Fund an app to send messages with XMTP](/fund-agents-apps/fund-your-app).
+
+## Storage fee
+
+An offchain micropayment paid to node operators based on the size (in bytes) of a stored message.
+
+## Subgraph
+
+A real-time index that tracks PayerRegistry contract activity—such as who funded a messaging balance, how much was spent, and which messages incurred fees—enabling the XMTP Funding Portal to display historical and live fee data.
+
+## XMTP App Chain
+
+An L3 blockchain built as an Arbitrum Orbit rollup that settles onto Base. It manages metadata requiring strict ordering through these smart contracts:
+
+- [`identity_update.go`](https://github.com/xmtp/xmtpd/blob/522d05f5a5d0499157635aba98c3f5b2556470d4/pkg/indexer/app_chain/contracts/identity_update.go): Tracks wallet addresses associated with each XMTP inbox
+- [`group_message.go`](https://github.com/xmtp/xmtpd/blob/522d05f5a5d0499157635aba98c3f5b2556470d4/pkg/indexer/app_chain/contracts/group_message.go): Manages group membership changes with guaranteed ordering
+
+Gas fees are charged for onchain transactions on the XMTP App Chain. These transactions are typically for group membership, identity, and payer-related updates. Fees are paid with USDC directly held by payer wallets on the XMTP App Chain.
+
+When you [fund your payer wallet](/fund-agents-apps/fund-your-app) using the XMTP Funding Portal, it automatically bridges an optimized percentage of the USDC funds to the XMTP App Chain to cover gas fees.
+
+## XMTP Broadcast Network
+
+The offchain globally distributed network of nodes responsible for securely routing and delivering encrypted messages between users. Messaging fees support the operators of these nodes.
+
+## XMTP Gateway Service
+
+A small client that acts as a proxy between your app and the payer wallet, and more specifically, the payer wallet's private key. Here's what the XMTP Gateway Service handles:
+
+- Security: The payer wallet's private key is sensitive information that shouldn't be in your app
+  - The XMTP Gateway Service hosts this private key securely on your infrastructure
+  - Your app never sees or handles the private key directly
+- Authorization: The XMTP Gateway Service can implement your app's authorization logic
+  - It can verify that requests are coming from your legitimate users
+  - It can rate limit requests
+  - It can enforce your app's business rules
+- Fee management: The XMTP Gateway Service handles both types of fees:
+  - Signs transactions on Base for paying messaging fees from the PayerRegistry contract
+  - Signs transactions on the XMTP App Chain for paying gas fees from the payer wallet (Payers contract)
+
+To learn more, see [Run an XMTP Gateway Service](/fund-agents-apps/run-gateway).
+
+## XMTP Settlement Chain
+
+An L3 blockchain built on Base that manages the decentralized network of nodes and payers and facilitates the settlement of fees between them. The core functionality revolves around registering nodes, submitting and settling fees for offchain network usage by payers, and distributing the collected revenue to the node operators and the protocol.
+
+To learn more, see the [README](https://github.com/xmtp/smart-contracts/blob/main/src/settlement-chain/README.md) for the XMTP Settlement Chain smart contracts.
+
+
+## fund-agents-apps/run-gateway.mdx
+import Zoom from 'react-medium-image-zoom';
+import 'react-medium-image-zoom/dist/styles.css';
+import Mermaid from '../../components/Mermaid';
+import { ConfigTable } from '../../components/ConfigTable';
+
+# Run your XMTP Gateway Service
+
+An XMTP Gateway Service is a proxy that pays for and forwards messages to the XMTP Broadcast Network on behalf of your users. Think of it as your app or agent's payment gateway for messaging.
+
+Behind the scenes, your XMTP Gateway Service handles all the complexity of blockchain payments so your users (and you) don't have to think about it.
+
+- **For browser and mobile client apps**, you host your XMTP Gateway Service on your infrastructure because it contains your payer wallet's private key.
+
+- **For agents and Node.js apps**, there is no need to run a separate XMTP Gateway Service. The XMTP Gateway Service will be built into the XMTP Node and Agent SDKs.
+
+XMTP provides a standard implementation of an XMTP Gateway Service that you can extend to meet your unique needs. Once your XMTP Gateway Service is deployed, you will need to include the `payer_service_address` when creating any XMTP client in your app or agent.
+
+## Get started
+
+Every app and agent needs an XMTP Gateway Service.
+
+### For browser and mobile client apps
+
+Use the [example gateway service repository](https://github.com/xmtp/gateway-service-example) as a starting point to build your own custom gateway with authentication
+
+For detailed implementation steps, see [Deploy your XMTP Gateway Service](#deploy-your-xmtp-gateway-service).
+
+### For agents and Node.js apps
+
+**No need to run a separate XMTP Gateway Service.** The XMTP Gateway Service will be built into the XMTP Node and Agent SDKs—_COMING SOON_.
+
+```tsx [TypeScript]
+// Automatic gateway included, no separate service needed
+const client = await Client.create(wallet, {
+  env: 'mainnet',
+});
+```
+
+## A minimal example
+
+This is all the code you need to create the most bare bones XMTP Gateway Service. The service will configure itself from command line flags or environment variables, and begin receiving traffic on ports `5050` and `5055`.
+
+This minimal example will authorize every request it receives with no limits. In a real production app, you will want to make sure that you only approve requests from your own users.
+
+```go [Go]
+package main
+
+import (
+ "context"
+ "log"
+ "slices"
+
+ "github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+func main() {
+ // This will gather all the config from environment variables and flags
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+## Configure your XMTP Gateway Service
+
+You can provide the configuration options for your XMTP Gateway Service either directly in your code, via command line flag, or through environment variables.
+
+<ConfigTable>
+
+| Name                     | Required | Command line flag                      | Environment variable             | Info                                                                                                                                                                                                      |
+| ------------------------ | -------- | -------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Payer Private Key        | `true`   | `--payer.private-key`                  | `XMTPD_PAYER_PRIVATE_KEY`        | The `secp256k1` private key of the Ethereum Account you have already funded in the Funding Portal. Used to sign transactions and pay fees from your payer allowance in the Payer Registry smart contract. |
+| App Chain RPC URL        | `true`   | `--contracts.app-chain.rpc-url`        | `XMTPD_APP_CHAIN_RPC_URL`        | The RPC URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
+| Settlement Chain RPC URL | `true`   | `--contracts.settlement-chain.rpc-url` | `XMTPD_SETTLEMENT_CHAIN_RPC_URL` | The RPC URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
+| App Chain WSS URL        | `true`   | `--contracts.app-chain.wss-url`        | `XMTPD_APP_CHAIN_WSS_URL`        | The websocket URL of your Blockchain RPC provider's endpoint for XMTP Chain                                                                                                                               |
+| Settlement Chain WSS URL | `true`   | `--contracts.settlement-chain.wss-url` | `XMTPD_SETTLEMENT_CHAIN_WSS_URL` | The websocket URL of your Blockchain RPC provider's endpoint for the Base chain                                                                                                                           |
+| Environment              | `true`   | `--contracts.environment`              | `XMTPD_CONTRACTS_ENVIRONMENT`    | The environment your XMTP Gateway Service will run in. Valid values are `anvil`, `testnet`, and `mainnet`                                                                                                 |
+| Redis Connection String  | `false`  | `--redis.connection-string`            | `XMTPD_REDIS_CONNECTION_STRING`  | The connection string for your Redis instance                                                                                                                                                             |
+
+</ConfigTable>
+
+### Metrics and observability
+
+If the XMTP Gateway Service is configured with the `--metrics.enable` flag, it will expose a [Prometheus](https://prometheus.io) endpoint at `/metrics` on port `8008` which can be ingested by any compatible monitoring system.
+
+## Allocate funds for messaging
+
+The private key for your XMTP Gateway Service must belong to a payer wallet that has allocated funds for messaging in the XMTP Funding Portal.
+
+To learn more, see [Fund your app or agent to send messages with XMTP](/fund-agents-apps/fund-your-app).
+
+## Authenticate users
+
+You can think of the XMTP Gateway Service as an extension of your client app. If you already have a system for authenticating user requests in your app, you should use it in your XMTP Gateway Service. For example, many apps use [JSON Web Tokens](https://jwt.io) (JWTs) to authenticate client requests to servers.
+
+You can use any authentication scheme you like to authenticate requests from your client to the XMTP Gateway Service.
+
+:::tip[IMPORTANT]
+
+- **Browser and mobile client apps** that need user authentication must customize the XMTP Gateway Service to integrate with their authentication system.
+
+- **Node.js apps and agents** that need user authentication will be able to use the XMTP Gateway Service provided by the XMTP Node SDK without customization.
+
+:::
+
+### In your client—_COMING SOON_
+
+When creating an XMTP client, you will be able to optionally provide an `gatewayAuthTokenFetcher` as part of client configuration.
+
+The value returned by this function will be included in all client requests to the XMTP Gateway Service. The `fetchAuthToken` function will be called before the first request is made to the XMTP Gateway Service, and after any request to the XMTP Gateway Service fails due to a `PermissionDenied` error.
+
+{/*
+Commenting out b/c this functionality is not yet live
+
+#### Create a `gatewayAuthTokenFetcher`
+
+A Gateway Auth Token Fetcher provides a single function: `fetchAuthToken` that returns a string.
+
+:::code-group
+
+```tsx [Agent]
+import type { GatewayAuthTokenFetcher } from '@xmtp/node-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
+```tsx [Browser]
+import type { GatewayAuthTokenFetcher } from '@xmtp/browser-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    // Get the auth token from your app somehow
+    return 'my-auth-token';
+  },
+};
+```
+
+```tsx [Node]
+import type { GatewayAuthTokenFetcher } from '@xmtp/node-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
+```tsx [React Native]
+import type { GatewayAuthTokenFetcher } from '@xmtp/react-native-sdk';
+
+const authTokenFetcher: GatewayAuthTokenFetcher = {
+  fetchAuthToken: async () => {
+    return 'my-auth-token';
+  },
+};
+```
+
+```kotlin [Kotlin]
+class MyAuthTokenFetcher : GatewayAuthTokenFetcher {
+    override suspend fun fetchAuthToken(): String {
+        return "my-auth-token"
+    }
+}
+```
+
+```swift [Swift]
+public struct MyAuthTokenFetcher: GatewayAuthTokenFetcher {
+    public func fetchAuthToken() async throws -> String {
+        return "my-auth-token"
+    }
+}
+```
+
+:::
+*/}
+
+### In the XMTP Gateway Service
+
+The `GatewayServiceBuilder` allows you to provide an `IdentityFn` that you can use to identify your users. The function is expected to return a `gateway.Identity` struct, which identifies the user in a way that is unique to your app.
+
+This identity will then be used for rate limiting, and will be passed to your `AuthorizePublishFn` as additional context.
+
+:::code-group
+
+```go [IP address]
+//  We provide a simple implementation that uses the client's IP address to identify users. For a production application, you should limit requests to only users actually authenticated in your application.
+package main
+
+import (
+ "context"
+ "log"
+ "slices"
+
+ "github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+func main() {
+ // This will gather all the config from environment variables and flags
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  // The gateway service will use the IP address of the client as the identity by default
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+```go [JWT]
+package main
+
+import (
+ "context"
+ "errors"
+ "log"
+
+ "github.com/golang-jwt/jwt/v5"
+ "github.com/xmtp/xmtpd/pkg/gateway"
+)
+
+const EXPECTED_ISSUER = "my-app.com"
+
+var (
+ ErrMissingToken     = errors.New("missing JWT token")
+ ErrInvalidToken     = errors.New("invalid JWT token")
+ ErrInvalidSignature = errors.New("invalid token signature")
+)
+
+// jwtIdentityFn creates an identity function that verifies JWTs
+func jwtIdentityFn(publicKey []byte) gateway.IdentityFn {
+ return func(ctx context.Context) (gateway.Identity, error) {
+  authHeader := gateway.AuthorizationHeaderFromContext(ctx)
+  if authHeader == "" {
+   return gateway.Identity{}, gateway.NewUnauthenticatedError(
+    "Missing JWT token",
+    ErrMissingToken,
+   )
+  }
+
+  // Parse and verify the token
+  token, err := jwt.ParseWithClaims(
+   authHeader,
+   &jwt.RegisteredClaims{},
+   func(token *jwt.Token) (interface{}, error) {
+    // Verify signing method
+    if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok {
+     return nil, gateway.NewPermissionDeniedError(
+      "Invalid signing method",
+      ErrInvalidSignature,
+     )
+    }
+    return publicKey, nil
+   },
+   jwt.WithIssuer(EXPECTED_ISSUER),
+  )
+  if err != nil {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to validate token",
+    err,
+   )
+  }
+
+  // Extract claims
+  claims, ok := token.Claims.(*jwt.RegisteredClaims)
+  if !ok || !token.Valid {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to validate token",
+    ErrInvalidToken,
+   )
+  }
+
+  userID, err := claims.GetSubject()
+  if err != nil {
+   return gateway.Identity{}, gateway.NewPermissionDeniedError(
+    "failed to get subject from token",
+    err,
+   )
+  }
+
+  // Return identity based on JWT claims
+  return gateway.NewUserIdentity(userID), nil
+ }
+}
+
+func main() {
+ // In a real application, this would be a secure key loaded from environment/config
+ publicKey := []byte("your-applications-public-key")
+
+ gatewayService, err := gateway.NewGatewayServiceBuilder(gateway.MustLoadConfig()).
+  WithIdentityFn(jwtIdentityFn(publicKey)).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+```go [Rate limiting]
+package main
+
+import (
+ "context"
+ "log"
+ "time"
+
+ "github.com/xmtp/xmtpd/pkg/gateway"
+ "github.com/xmtp/xmtpd/pkg/gateway/authorizers"
+)
+
+func main() {
+ cfg := gateway.MustLoadConfig()
+ redis := gateway.MustSetupRedisClient(context.Background(), cfg.Redis)
+
+ authorizer := authorizers.NewRateLimitBuilder().
+  WithLogger(gateway.MustCreateLogger(cfg)).
+  WithRedis(redis).
+  // Set rate limits to 50 requests/minute and 250 requests/hour
+  WithLimits(authorizers.RateLimit{
+   Capacity:    50,
+   RefillEvery: time.Minute,
+  }, authorizers.RateLimit{
+   Capacity:    250,
+   RefillEvery: time.Hour,
+  }).
+  MustBuild()
+
+ gatewayService, err := gateway.NewGatewayServiceBuilder(cfg).
+  WithRedisClient(redis).
+  WithAuthorizers(authorizer).
+  Build()
+ if err != nil {
+  log.Fatalf("Failed to build gateway service: %v", err)
+ }
+
+ gatewayService.WaitForShutdown()
+}
+
+```
+
+:::
+
+## Authorize requests
+
+Now that you have an identity for the caller of your API, you can use it to authorize requests. We provide some helpers to handle common authorization patterns, such as rate limiting.
+
+You can add multiple authorizers to your XMTP Gateway Service. All authorizers will be called in parallel. The first authorizer (based on the order they are added) that returns `false` or an error will cause the request to be rejected.
+
+```go [IP Allowlist]
+package main
+
+import (
+ "context"
+ "log"
+ "slices"
+
+ "github.com/xmtp/xmtpd/pkg/payer"
+)
+
+func main() {
+ payerService, err := payer.NewPayerServiceBuilder(payer.MustLoadConfig()).
+  WithAuthorizers(func(ctx context.Context, identity payer.Identity, req payer.PublishRequest) (bool, error) {
+   // A simple authorization function that allows only the IP 127.0.0.1
+   allowedIPs := []string{"127.0.0.1"}
+   if !slices.Contains(allowedIPs, identity.Identity) {
+    return false, payer.ErrUnauthorized
+   }
+   return true, nil
+  }).
+  Build() // This will gather all the config from environment variables and flags
+ if err != nil {
+  log.Fatalf("Failed to build XMTP Gateway Service: %v", err)
+ }
+
+ err = payerService.Serve(context.Background())
+ if err != nil {
+  log.Fatalf("Failed to serve XMTP Gateway Service: %v", err)
+ }
+}
+```
+
+## Deploy your XMTP Gateway Service
+
+:::tip[Example repo]
+
+You can start with the [example gateway service repository](https://github.com/xmtp/gateway-service-example).
+
+:::
+
+1. Fork or clone the repository.
+2. Add your own authentication logic.
+3. Configure your rate limits
+4. Deploy your custom image on your infrastructure of choice, such as a container hosting service ($25-50/month minimum).
+
+### Additional recommendations
+
+The system is able to run without any external dependencies, but we recommend configuring a Redis instance to use for nonce management and rate limiting.
+
+If your XMTP Gateway Service goes down, messages will queue until it comes back online. Build redundancy, if needed.
+
+## Test your XMTP Gateway Service
+
+You can use the prebuilt Docker image for local development and testing:
+
+```bash [Bash]
+docker run -p 5050:5050 -p 5055:5055 -e XMTPD_PAYER_PRIVATE_KEY=... xmtp/xmtpd-gateway:main
+```
+
+:::warning
+
+This pre-built image authorizes all requests without authentication. Never use it in production.
+
+:::
+
+### Test scenarios
+
+Here are some high priority scenarios to test:
+
+- Deploy and test XMTP Gateway Service
+  - **Not needed for agents and Node.js apps** using the XMTP Node or Agent SDKs, which will provide a built-in XMTP Gateway Service.
+- Verify authentication works properly
+- Test with expected message volumes
+- Monitor resource usage and costs
+- Simulate failure scenarios
+
+You can test on Base Sepolia, App Chain testnet, and Broadcast Network testnet. They all run identical contracts so you can dry-run funding and messaging.
+
+To get testnet USDC, use [https://faucet.circle.com/](https://faucet.circle.com/), which provides 10 USDC per hour.
+
+### Testing timeline
+
+**Until November 1**: Testnet-only period
+
+- Use testnet USDC (no real cost)
+- Validate XMTP Gateway Service setup
+- Test authentication flows
+- Ensure infrastructure scales
+
+**After November 1**: Full mainnet testing
+
+- Funding Portal accepts real USDC
+- Production environment testing
+- Fee validation with real funds
+- Final integration checks
+
+## XMTP Gateway Service flows
+
+The following sequence diagrams illustrate the XMTP Gateway Service's role in the following key flows.
+
+### Flow for sending a message to the XMTP Broadcast Network
+
+<Zoom>
+<Mermaid
+  id="xmtp-network-flow"
+  chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
+    sequenceDiagram
+    title: Message sent to XMTP Broadcast Network
+    participant App
+    participant Gateway Service
+    participant XMTP Broadcast Network
+
+    App->>Gateway Service: Request to send message
+    Gateway Service->>Gateway Service: Verify user authorization
+    Gateway Service->>Gateway Service: Sign with payer wallet key
+    Gateway Service->>XMTP Broadcast Network: Send message and pay network message fees
+    alt Sufficient funds in Payer Registry
+        XMTP Broadcast Network-->>App: Message sent
+    else Insufficient funds in Payer Registry
+        XMTP Broadcast Network-->>App: Message not sent
+    end
+
+`} />
+
+</Zoom>
+
+### Flow for sending a message to the XMTP App Chain
+
+<Zoom>
+<Mermaid
+  id="xmtp-appchain-flow"
+  chart={`
+    %%{init: {'theme':'default', 'themeVariables': {'background':'#ffffff'}}}%%
+    sequenceDiagram
+    title: Message sent to XMTP App Chain
+    participant App
+    participant Gateway Service
+    participant XMTP App Chain
+
+    App->>Gateway Service: Request to send message
+    Gateway Service->>Gateway Service: Verify user authorization
+    Gateway Service->>Gateway Service: Sign with payer wallet key
+    Gateway Service->>XMTP App Chain: Send message and pay App Chain gas fee
+    alt Sufficient funds
+        XMTP App Chain-->>App: Message sent
+    else Insufficient funds
+        XMTP App Chain-->>App: Message not sent
+    end
+
+`} />
+
+</Zoom>
+
+
+## fund-agents-apps/update-sdk.md
+# Update your app or agent to use an XMTP SDK with Gateway Service support
+
+Starting on November 15, 2025, you'll be able to update your app or agent to use an XMTP SDK version that supports XMTP Gateway Service helpers, enabling your app or agent to communicate with your XMTP Gateway Service.
+
+The minimum supported SDK version for each platform will be:
+
+- Agent SDK v2.0.0
+- Browser SDK v6.0.0
+- Node SDK v5.0.0
+- React Native SDK v6.0.0
+- Kotlin SDK v5.0.0
+- Swift SDK v5.0.0
+
+## FAQ
+
+### Will updating to an SDK that uses the decentralized network impact performance and network speed?
+
+Most SDK actions will have comparable performance on the decentralized network. All reads (`sync*`, `stream*`, etc.) and the most common writes (`conversation.send`) will have similar performance.
+
+However, the following actions will have an estimated ~500ms slowdown:
+
+- Registering a new identity to the network (first-time client setup)
+- Adding members to a group
+- Updating group metadata
+
+### Will existing local databases persist after updating my SDK?
+
+Local databases will be fully migrated. No messages will be lost during the transition.
+
+### Can I update my app or agent to use the new SDK version starting on November 15, or do I need to wait until December 9?
+
+Yes, you can use the new SDK version starting on November 15. The SDK versions released on November 15 will work in backward compatibility mode with the centralized network. Once you upgrade and have your [Gateway Service](/fund-agents-apps/run-gateway) properly set up, the transition on December 9 will happen automatically.
+
+On December 9, the centralized network will start returning a special error code that tells clients to switch over to the decentralized network. If you're already using the November 15 SDK version, this switch will happen automatically without requiring any action on your part.
+
+
+# Summary
+
+This documentation contains 44 files from 4 sections.
