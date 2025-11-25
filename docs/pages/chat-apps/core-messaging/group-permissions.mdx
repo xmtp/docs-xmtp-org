@@ -357,6 +357,46 @@ try await group.removeMembers(inboxIds: [inboxId])
 
 :::
 
+### Leave a group
+
+A member can remove themselves from a group by calling `leaveGroup()`. After leaving, the group becomes inactive for that member.
+
+A member who is the super admin of the group cannot leave the group. By default, the group creator is a super admin.
+
+:::code-group
+
+```tsx [React Native]
+await group.leaveGroup();
+
+// Sync to update group state
+await group.sync();
+
+// Verify the group is now inactive
+const isActive = await group.isActive(); // Returns false
+```
+
+```kotlin [Kotlin]
+group.leaveGroup()
+
+// Sync to update group state
+group.sync()
+
+// Verify the group is now inactive
+val isActive = group.isActive() // Returns false
+```
+
+```swift [Swift]
+try await group.leaveGroup()
+
+// Sync to update group state
+await group.sync()
+
+// Verify the group is now inactive
+let isActive = try group.isActive() // Returns false
+```
+
+:::
+
 ### Get inbox IDs for members
 
 :::code-group
