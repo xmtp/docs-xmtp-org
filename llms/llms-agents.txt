@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 09:07 PM UTC / November 17, 2025
+Generated at 04:55 AM UTC / November 23, 2025
 
 ## About this file
 
@@ -27,15 +27,18 @@ Create an XMTP agent that can use the signing capabilities provided by a signer.
 ```tsx [Node]
 import { Agent } from '@xmtp/agent-sdk';
 import { createSigner, createUser } from '@xmtp/agent-sdk/user';
-import { getRandomValues } from 'node:crypto';
+
+// Replace with your own wallet key and encryption key
+const walletKey = "0xprivateKey";
+const db_encryptionKey = "0xencryptionKey";
 
 // Option 1: Create a local user + signer
-const user = createUser('0xprivateKey');
-const signer = createSigner(user);
+const user = createUser(walletKey);
+const dbEncryptionKey = Buffer.from(db_encryptionKey).toString("hex")
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
-  dbEncryptionKey: `0x${getRandomValues(new Uint8Array(32))}`, // save it for later
+  dbEncryptionKey, // save it for later
 });
 ```
 
@@ -45,28 +48,28 @@ The XMTP Agent SDK allows you to use environment variables (`process.env`) for e
 
 **Available variables:**
 
-| Variable                 | Purpose                                                                              | Example                                 |
-| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | Private key for wallet                                                               | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)                           | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex string with 0x prefix) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| Variable                 | Purpose                                                        | Example                                 |
+| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
-### Generate random keys
+## Generate random keys
 
 ```tsx [Node]
 import { generatePrivateKey } from 'viem';
 import { getRandomValues } from 'node:crypto';
 
 const walletKey = generatePrivateKey();
-const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))}`;
+const encryptionKeyHex = getRandomValues(new Uint8Array(32));
 
 console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
 ```
 
-Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
+Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
 
 ```bash
 yarn gen:keys
@@ -74,7 +77,7 @@ yarn gen:keys
 
 > Running the command will append keys to your existing .env file.
 
-### Use environment variables
+## Use environment variables
 
 ```tsx [Node]
 // Load variables from .env file
@@ -85,8 +88,6 @@ const agent = await Agent.createFromEnv();
 ```
 
 ## Configuration options
-
-### Configure an XMTP client
 
 You can configure an XMTP client with these options passed to `Agent.create`:
 
@@ -141,13 +142,9 @@ apiUrl?: string;
  */
 dbPath?: string | null | ((inboxId: string) => string);
 /**
- * Encryption key for the local DB (32 bytes)
- *
- * Accepts either:
- * - Uint8Array (32 bytes)
- * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
+ * Encryption key for the local DB
  */
-dbEncryptionKey?: Uint8Array | `0x${string}`;
+dbEncryptionKey?: Uint8Array;
 /**
  * Allow configuring codecs for additional content types
  */
@@ -743,8 +740,8 @@ XMTP creates local database files in the `dbPath` (default is `'/'`) directory. 
 To run an example XMTP agent, you must create a `.env` file with the following variables:
 
 ```bash
-XMTP_WALLET_KEY= # the private key of the wallet
-XMTP_DB_ENCRYPTION_KEY= # encryption key for the local database
+XMTP_WALLET_KEY=0x # the private key of the wallet
+XMTP_DB_ENCRYPTION_KEY=0x # encryption key for the local database
 XMTP_ENV=dev # local, dev, production
 ```
 
@@ -1609,11 +1606,11 @@ Click **Deploy from GitHub repo** and select the repository that contains your a
 
 Your XMTP agent will need persistent storage. Add a volume to your container:
 
-1. Navigate to your service settings.
-2. Select the **Volumes** tab.
-3. Add a new volume and specify the mount path.
+![Add a Volume](https://github.com/user-attachments/assets/fee339f2-5c89-4fc0-accf-fdd374d959c4)
 
-   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+Add a new volume and specify the mount path.
+
+![Set a Volume Path](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
 
 Use this code in your agent to properly connect to the Railway volume:
 
@@ -1626,21 +1623,11 @@ const agent = await Agent.createFromEnv({
 });
 ```
 
-## 5. Configure environment variables
-
-1. Get the connection string for your database.
-
-   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
-
-2. Add the connection string and any other required environment variables to your service.
-
-   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
-
-## 6. Deploy your agent
+## 5. Deploy your agent
 
 Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
 
-## 7. Share your agent (optional)
+## 6. Share your agent (optional)
 
 Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
 
@@ -1704,22 +1691,6 @@ pnpm add @xmtp/content-type-remote-attachment
 
 ::::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```tsx [Node]
-import {
-  AttachmentCodec,
-  RemoteAttachmentCodec,
-} from '@xmtp/content-type-remote-attachment';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
-});
-```
-
 ## Send a remote attachment
 
 Load the file. This example uses a web browser to load the file:
@@ -1753,6 +1724,8 @@ const attachment = {
 Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 
 ```tsx [Node]
+import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
+
 const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
   attachment,
   new AttachmentCodec()
@@ -1779,9 +1752,7 @@ const remoteAttachment = {
 Now that you have a remote attachment, you can send it:
 
 ```tsx [Node]
-await ctx.conversation.send(remoteAttachment, {
-  contentType: ContentTypeRemoteAttachment,
-});
+await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
 ```
 
 ## Receive, decode, and decrypt a remote attachment
@@ -1790,6 +1761,7 @@ Now that you can send a remote attachment, you need a way to receive it. For exa
 
 ```ts [Node]
 import {
+  AttachmentCodec,
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
 } from '@xmtp/content-type-remote-attachment';
@@ -2020,28 +1992,13 @@ pnpm add @xmtp/content-type-markdown
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```tsx [Node]
-import {
-  ContentTypeMarkdown,
-  MarkdownCodec,
-} from '@xmtp/content-type-markdown';
-
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new MarkdownCodec()],
-});
-```
-
 ## Send markdown content
 
 With XMTP, markdown content is sent as a string containing markdown formatting:
 
 ```tsx [Node]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
 // Basic markdown message
 const markdownContent = `## Welcome to XMTP
 
@@ -2091,6 +2048,8 @@ The markdown content type supports the following formatting patterns:
 ### Example usage
 
 ```tsx [Node]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
 const content = `## Results Summary
 
 - **Total items:** ${count}
@@ -2111,7 +2070,6 @@ const content = `## Results Summary
 \`\`\`javascript
 const agent = await Agent.create(signer, {
   env: 'dev',
-  codecs: [new MarkdownCodec()],
 });
 \`\`\``;
 
@@ -2121,6 +2079,8 @@ await ctx.conversation.send(content, ContentTypeMarkdown);
 ## Receive markdown content
 
 ```tsx [Node]
+import { MarkdownCodec } from '@xmtp/content-type-markdown';
+
 agent.on('message', async (ctx) => {
   if (ctx.usesCodec(MarkdownCodec)) {
     const markdownContent = ctx.message.content;
@@ -2135,6 +2095,8 @@ agent.on('message', async (ctx) => {
 ## Filter for markdown content
 
 ```tsx [Node]
+import { MarkdownCodec } from '@xmtp/content-type-markdown';
+
 // Check if the message contains markdown
 if (ctx.usesCodec(MarkdownCodec)) {
   const markdown: string = ctx.message.content;
@@ -2172,19 +2134,6 @@ pnpm add @xmtp/content-type-reaction
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```jsx [Node]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new ReactionCodec()],
-});
-```
-
 ## Send a reaction
 
 With XMTP, reactions are represented as objects with the following keys:
@@ -2216,6 +2165,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import type { Reaction } from '@xmtp/content-type-reaction';
+
 if (ctx.usesCodec(ReactionCodec)) {
   // We've got a reaction.
   const reaction: Reaction = ctx.message.content;
@@ -2247,19 +2199,6 @@ pnpm add @xmtp/content-type-reply
 ```
 
 :::
-
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Node]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new ReplyCodec()],
-});
-```
 
 ## Send a reply
 
@@ -2298,6 +2237,9 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
+import { ReplyCodec } from '@xmtp/content-type-reply';
+import type { Reply } from '@xmtp/content-type-reply';
+
 if (ctx.usesCodec(ReplyCodec)) {
   // We've got a reply.
   const reply: Reply = ctx.message.content;
@@ -2331,22 +2273,6 @@ pnpm add @xmtp/content-type-transaction-reference
 ```
 
 :::
-
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Node]
-import {
-  ContentTypeTransactionReference,
-  TransactionReferenceCodec,
-} from '@xmtp/content-type-transaction-reference';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new TransactionReferenceCodec()],
-});
-```
 
 ## Send a transaction reference
 
@@ -2383,9 +2309,9 @@ const transactionReference: TransactionReference = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-await ctx.conversation.send(transactionReference, {
-  contentType: ContentTypeTransactionReference,
-});
+import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
+
+await ctx.conversation.send(transactionReference, ContentTypeTransactionReference);
 ```
 
 ## Receive a transaction reference
@@ -2393,6 +2319,8 @@ await ctx.conversation.send(transactionReference, {
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
+import { TransactionReferenceCodec } from '@xmtp/content-type-transaction-reference';
+
 if (ctx.usesCodec(TransactionReferenceCodec)) {
   // Process the transaction reference here
 }
@@ -2427,19 +2355,6 @@ pnpm i @xmtp/content-type-wallet-send-calls
 ```
 
 ::::
-
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Node]
-import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new WalletSendCallsCodec()],
-});
-```
 
 ## Create a transaction request
 
@@ -2485,9 +2400,9 @@ const walletSendCalls: WalletSendCallsParams = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```ts [Node]
-await sendText(walletSendCalls, {
-  contentType: ContentTypeWalletSendCalls,
-});
+import { ContentTypeWalletSendCalls } from '@xmtp/content-type-wallet-send-calls';
+
+await conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
 ```
 
 ## Receive a transaction request
@@ -2495,6 +2410,8 @@ await sendText(walletSendCalls, {
 To receive and process a transaction request:
 
 ```ts [Node]
+import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
+
 if (ctx.usesCodec(WalletSendCallsCodec)) {
   // Process the transaction request here
 }
