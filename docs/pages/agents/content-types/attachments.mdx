@@ -26,22 +26,6 @@ pnpm add @xmtp/content-type-remote-attachment
 
 ::::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```tsx [Node]
-import {
-  AttachmentCodec,
-  RemoteAttachmentCodec,
-} from '@xmtp/content-type-remote-attachment';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
-});
-```
-
 ## Send a remote attachment
 
 Load the file. This example uses a web browser to load the file:
@@ -75,6 +59,8 @@ const attachment = {
 Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
 
 ```tsx [Node]
+import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
+
 const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
   attachment,
   new AttachmentCodec()
@@ -101,9 +87,7 @@ const remoteAttachment = {
 Now that you have a remote attachment, you can send it:
 
 ```tsx [Node]
-await ctx.conversation.send(remoteAttachment, {
-  contentType: ContentTypeRemoteAttachment,
-});
+await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
 ```
 
 ## Receive, decode, and decrypt a remote attachment
@@ -112,6 +96,7 @@ Now that you can send a remote attachment, you need a way to receive it. For exa
 
 ```ts [Node]
 import {
+  AttachmentCodec,
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
 } from '@xmtp/content-type-remote-attachment';
