@@ -34,11 +34,11 @@ Click **Deploy from GitHub repo** and select the repository that contains your a
 
 Your XMTP agent will need persistent storage. Add a volume to your container:
 
-1. Navigate to your service settings.
-2. Select the **Volumes** tab.
-3. Add a new volume and specify the mount path.
+![Add a Volume](https://github.com/user-attachments/assets/fee339f2-5c89-4fc0-accf-fdd374d959c4)
 
-   ![Adding a Volume](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
+Add a new volume and specify the mount path.
+
+![Set a Volume Path](https://github.com/user-attachments/assets/85c45d1b-ee5b-469a-9c57-6e4a71c8bb92)
 
 Use this code in your agent to properly connect to the Railway volume:
 
@@ -51,21 +51,11 @@ const agent = await Agent.createFromEnv({
 });
 ```
 
-## 5. Configure environment variables
-
-1. Get the connection string for your database.
-
-   ![Get Redis Connection String](https://github.com/user-attachments/assets/0fbebe34-e09f-4bf7-bc8b-b43cbc2b7762)
-
-2. Add the connection string and any other required environment variables to your service.
-
-   ![Environment Variables Editor](https://github.com/user-attachments/assets/4393b179-227e-4c7c-8313-165f191356ff)
-
-## 6. Deploy your agent
+## 5. Deploy your agent
 
 Once all configurations are set, Railway will automatically deploy your agent. You can monitor the deployment process on the **Deployments** tab.
 
-## 7. Share your agent (optional)
+## 6. Share your agent (optional)
 
 Consider registering an [ENS domain](https://ens.domains/) for your agent to make it easy to share and access.
 

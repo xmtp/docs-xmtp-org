@@ -24,19 +24,6 @@ pnpm i @xmtp/content-type-wallet-send-calls
 
 ::::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Node]
-import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new WalletSendCallsCodec()],
-});
-```
-
 ## Create a transaction request
 
 With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
@@ -81,9 +68,9 @@ const walletSendCalls: WalletSendCallsParams = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```ts [Node]
-await sendText(walletSendCalls, {
-  contentType: ContentTypeWalletSendCalls,
-});
+import { ContentTypeWalletSendCalls } from '@xmtp/content-type-wallet-send-calls';
+
+await conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
 ```
 
 ## Receive a transaction request
@@ -91,6 +78,8 @@ await sendText(walletSendCalls, {
 To receive and process a transaction request:
 
 ```ts [Node]
+import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
+
 if (ctx.usesCodec(WalletSendCallsCodec)) {
   // Process the transaction request here
 }
