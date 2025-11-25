@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 04:55 AM UTC / November 23, 2025
+Generated at 10:02 PM UTC / November 25, 2025
 
 ## About this file
 
@@ -1556,6 +1556,559 @@ Ensure that you've initiated a call to [sync messages](/chat-apps/list-stream-sy
 After requesting a sync for one app installation, ensure that the pre-existing app installation is online to receive the sync request.
 
 
+## chat-apps/list-stream-sync/list-messages.mdx
+# List messages
+
+Query messages from a conversation using filters including time ranges, delivery status, and content types. You can either retrieve the full message list or just get a message count for efficiency.
+
+## Method parameters
+
+All parameters are optional and can be combined to create precise filters and sorts:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `limit` | `Int` / `Long` / `bigint` | Maximum number of messages to return |
+| `beforeNs` / `sentBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages sent before this timestamp (nanoseconds) |
+| `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` | Filter messages sent after this timestamp (nanoseconds) |
+| `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
+| `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
+| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
+| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
+
+## List messages with enriched metadata
+
+The `enrichedMessages()` method retrieves messages from conversations with enriched metadata automatically included. This means reactions, replies, and other associated data are "baked in" to each message, eliminating the need for separate queries to fetch this information.
+
+You may want to use enriched messages by default. The `enrichedMessages()` method provides better performance and simpler code.
+
+Be sure to handle content types properly by using the generic `content<T>()` method with the appropriate type for reactions and replies.
+
+### List messages enriched with reaction metadata
+
+Use `reactions` to get a list of reaction messages associated with the message.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Retrieve messages with enriched data from a group
+val groupMessages = group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+val dmMessages = dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach { message ->
+  // Access the list of reactions
+  message.reactions.forEach { reaction ->
+    val reactionContent = reaction.content<Reaction>()
+    println("Reaction: ${reactionContent.content}")
+  }
+}
+```
+
+```swift [Swift]
+// Retrieve messages with enriched data from a group
+let groupMessages = try await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+let dmMessages = try await dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+for message in groupMessages {
+  // Access the list of reactions
+  for reaction in message.reactions {
+    let reactionContent: Reaction = try reaction.content()
+    print("Reaction: \(reactionContent.content)")
+  }
+}
+```
+
+:::
+
+### List messages enriched with reply metadata
+
+Messages returned by `enrichedMessages()` include reply information when a message is a reply to another message.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Retrieve messages with enriched data from a group
+val groupMessages = group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+val dmMessages = dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach { message ->
+  // Check if the message is a reply
+  if (message.contentType == ContentTypeReply) {
+    val replyContent = message.content<Reply>()
+
+    if (replyContent != null) {
+      println("This is a reply to message: ${replyContent.reference}")
+      println("Reply text: ${replyContent.content}")
+    }
+  }
+}
+```
+
+```swift [Swift]
+// Retrieve messages with enriched data from a group
+let groupMessages = try await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+let dmMessages = try await dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+for message in groupMessages {
+  // Check if the message is a reply
+  if message.contentType == ContentTypeReply {
+    let replyContent: Reply = try message.content()
+
+    if let inReplyTo = replyContent.inReplyTo {
+      let originalContent: String = try inReplyTo.content()
+      print("This is a reply to message: \(originalContent)")
+      print("Reply text: \(replyContent.content)")
+    }
+  }
+}
+```
+
+:::
+
+## List messages (unenriched)
+
+Retrieve messages from a conversation.
+
+:::code-group
+
+```tsx [Browser]
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10n });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936n;
+const newMessages = await group.messages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50n });
+```
+
+```tsx [Node]
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10n });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936n;
+const newMessages = await group.messages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50n });
+```
+
+```tsx [React Native]
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10 });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936;
+const newMessages = await group.messages({
+  afterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50 });
+```
+
+```kotlin [Kotlin]
+// Get all messages
+val messages = group.messages()
+
+// Get the 10 most recent messages
+val recentMessages = group.messages(limit = 10)
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+val lastCheckTimestamp: Long = 1738620126404999936
+val newMessages = group.messages(afterNs = lastCheckTimestamp)
+
+// Get messages from a DM conversation
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+val dmMessages = dm.messages(limit = 50)
+```
+
+```swift [Swift]
+// Get all messages
+let messages = try await group.messages()
+
+// Get the 10 most recent messages
+let recentMessages = try await group.messages(limit: 10)
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+let lastCheckTimestamp: Int64 = 1738620126404999936
+let newMessages = try await group.messages(afterNs: lastCheckTimestamp)
+
+// Get messages from a DM conversation
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+let dmMessages = try await dm.messages(limit: 50)
+```
+
+:::
+
+## Count messages in a conversation
+
+Get a count of messages without retrieving the full message list. This is more efficient when you only need the number, such as for unread message badges.
+
+:::code-group
+
+```tsx [Browser]
+// Get total message count
+const totalCount = await group.countMessages();
+
+// Get count of messages after last check (for unread badge)
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get count for a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmUnreadCount = await dm.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+```
+
+```tsx [Node]
+// Get total message count
+const totalCount = await group.countMessages();
+
+// Get count of messages after last check (for unread badge)
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get count for a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmUnreadCount = await dm.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+```
+
+```tsx [React Native]
+// Not yet available in React Native
+```
+
+```kotlin [Kotlin]
+// Get total message count
+val totalCount = group.countMessages()
+
+// Get count of messages after last check (for unread badge)
+val lastCheckTimestamp: Long = 1738620126404999936
+val unreadCount = group.countMessages(afterNs = lastCheckTimestamp)
+
+// Get count for a DM conversation
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+val dmUnreadCount = dm.countMessages(afterNs = lastCheckTimestamp)
+```
+
+```swift [Swift]
+// Get total message count
+let totalCount = try group.countMessages()
+
+// Get count of messages after last check (for unread badge)
+let lastCheckTimestamp: Int64 = 1738620126404999936
+let unreadCount = try group.countMessages(afterNs: lastCheckTimestamp)
+
+// Get count for a DM conversation
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+let dmUnreadCount = try dm.countMessages(afterNs: lastCheckTimestamp)
+```
+
+:::
+
+### Count unread messages excluding reactions
+
+You can combine filters to count messages after the last check, excluding reactions, for example.
+
+:::code-group
+
+```tsx [Browser]
+// Get count of unread messages, excluding reactions
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+  excludeContentTypes: [ContentType.Reaction],
+});
+```
+
+```tsx [Node]
+// Get count of unread messages, excluding reactions
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+  excludeContentTypes: [ContentType.Reaction],
+});
+```
+
+```tsx [React Native]
+// Not yet available in React Native
+```
+
+```kotlin [Kotlin]
+// Get count of unread messages, excluding reactions
+val lastCheckTimestamp: Long = 1738620126404999936
+val reactionType = FfiContentType("xmtp.org", "reaction", 1, 0)
+val unreadCount = group.countMessages(
+  afterNs = lastCheckTimestamp,
+  excludedContentTypes = listOf(reactionType)
+)
+```
+
+```swift [Swift]
+// Get count of unread messages, excluding reactions
+let lastCheckTimestamp: Int64 = 1738620126404999936
+let unreadCount = try group.countMessages(
+  afterNs: lastCheckTimestamp,
+  excludeContentTypes: [.reaction]
+)
+```
+
+:::
+
+## Filter messages and message counts
+
+Apply the same filtering parameters to both retrieve filtered messages with `messages()` or get counts of filtered messages with `countMessages()`.
+
+:::code-group
+
+```tsx [Browser]
+// Using messages()
+const messages = await group.messages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: [ContentType.Reaction], // Exclude content types
+});
+
+// Using countMessages()
+const count = await group.countMessages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+```
+
+```tsx [Node]
+// Using messages()
+const messages = await group.messages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: [ContentType.Reaction], // Exclude content types
+});
+
+// Using countMessages()
+const count = await group.countMessages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+```
+
+```tsx [React Native]
+// Using messages()
+const messages = await group.messages({
+  afterNs: 1738620126404999936, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: ['reaction'], // Exclude content types
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+// React Native does not yet include countMessages()
+```
+
+```kotlin [Kotlin]
+// Using messages()
+val reactionType = FfiContentType("xmtp.org", "reaction", 1, 0)
+val messages = group.messages(
+    afterNs = 1738620126404999936, // Filter by time
+    deliveryStatus = DecodedMessage.MessageDeliveryStatus.PUBLISHED, // Filter by delivery status
+    excludedContentTypes = listOf(reactionType) // Exclude content types
+)
+
+// Using countMessages()
+val count = group.countMessages(
+    afterNs = 1738620126404999936, // Filter by time
+    excludeSenderInboxIds = listOf("inbox_id_1") // Exclude senders
+)
+```
+
+```swift [Swift]
+// Using messages()
+let messages = try await group.messages(
+    afterNs: 1738620126404999936, // Filter by time
+    deliveryStatus: .published, // Filter by delivery status
+    excludeContentTypes: [.reaction] // Exclude content types
+)
+
+// Using countMessages()
+let count = try group.countMessages(
+    afterNs: 1738620126404999936, // Filter by time
+    excludeSenderInboxIds: ["inbox_id_1"] // Exclude senders
+)
+```
+
+:::
+
+## Paginate messages
+
+Here's how to implement pagination to load messages in chunks:
+
+:::code-group
+
+```tsx [Browser]
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: BigInt(pageSize),
+    sentBeforeNs: oldestMessage?.sentAtNs,
+    direction: 'descending',
+  });
+}
+
+// Initial load
+let currentMessages = await group.messages({ limit: 20n });
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
+```tsx [Node]
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: BigInt(pageSize),
+    sentBeforeNs: oldestMessage?.sentAtNs,
+    direction: 'descending',
+  });
+}
+
+// Initial load
+let currentMessages = await group.messages({ limit: 20n });
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
+```tsx [React Native]
+// Initial load
+let currentMessages = await group.messages({ limit: 20 });
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded from your tracked messages
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: pageSize,
+    beforeNs: oldestMessage?.sentAtNs,
+    direction: 'DESCENDING',
+  });
+}
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
+```kotlin [Kotlin]
+// Initial load
+var currentMessages = group.messages(limit = 20).toMutableList()
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+suspend fun loadMoreMessages(
+    conversation: Conversation,
+    pageSize: Int = 20
+): List<DecodedMessage> {
+    // Get the oldest message currently loaded from your tracked messages
+    val oldestMessage = currentMessages.lastOrNull()
+
+    // Load the next page of messages before the oldest one
+    return conversation.messages(
+        limit = pageSize,
+        beforeNs = oldestMessage?.sentAtNs,
+        direction = DecodedMessage.SortDirection.DESCENDING
+    )
+}
+
+// Load next page
+val nextPage = loadMoreMessages(group)
+currentMessages.addAll(nextPage)
+```
+
+```swift [Swift]
+// Initial load
+var currentMessages = try await group.messages(limit: 20)
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+func loadMoreMessages(conversation: Conversation, pageSize: Int = 20) async throws -> [DecodedMessage] {
+    // Get the oldest message currently loaded from your tracked messages
+    let oldestMessage = currentMessages.last
+
+    // Load the next page of messages before the oldest one
+    let messages = try await conversation.messages(
+        limit: pageSize,
+        beforeNs: oldestMessage?.sentAtNs,
+        direction: .descending
+    )
+
+    return messages
+}
+
+// Load next page
+let nextPage = try await loadMoreMessages(conversation: group)
+currentMessages.append(contentsOf: nextPage)
+```
+
+:::
+
+
 ## chat-apps/list-stream-sync/list.mdx
 # List conversations
 
@@ -1641,11 +2194,11 @@ let orderFilteredConversations = try await client.conversations.list(consentStat
 
 // List just dms
 let conversations = try await alix.conversations.listDms()
-let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
+let orderFilteredConversations = try client.conversations.listDms(consentState: .allowed)
 
 //List just groups
 let conversations = try await alix.conversations.listGroups()
-let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
+let orderFilteredConversations = try client.conversations.listGroups(consentState: .allowed)
 ```
 
 :::
@@ -1657,55 +2210,144 @@ The `isActive()` method determines whether the current user is still an active m
 - When a user is added to a group, `isActive()` returns `true` for that user
 - When a user is removed from a group, `isActive()` returns `false` for that user
 
+You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
+
+## Paginate the conversation list
+
+You can paginate the conversation list by using the `limit` parameter and either the `createdAtNs` or `lastActivityNs` parameters.
+
+By default, the conversation will be sorted by last activity (either when the last message was sent, or the group's creation time if no messages are found) in descending order.
+
+### Paginate by `createdAt`
+
+For most pagination use cases, use the `createdBeforeNs` parameter for filtering and set `orderBy` to `createdAt`. This enables you to paginate against a stably sorted list. You can then perform a final sort of conversations in your app.
+
 :::code-group
 
-```js [Browser]
-// Check if user is active in a specific conversation
-const isUserActive = await conversation.isActive();
-console.log('User is active:', isUserActive);
-
-// Filter active conversations
-const activeConversations = [];
-for (const conversation of allConversations) {
-  if (await conversation.isActive()) {
-    activeConversations.push(conversation);
-  }
-}
+```ts [Browser]
+const firstPage = await client.conversations.list({
+  limit: 10,
+  orderBy: 'createdAt'
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs
+});
 ```
 
-```js [Node]
-// Check if user is active in a specific conversation
-const isUserActive = conversation.isActive;
-console.log('User is active:', isUserActive);
+```ts [Node]
+const firstPage = await client.conversations.list({
+  limit: 10,
+  orderBy: 'createdAt'
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs
+});
+```
 
-// Filter active conversations (direct property access)
-const activeConversations = allConversations.filter(
-  (conversation) => conversation.isActive
+```ts [React Native]
+const firstPage = await client.conversations.list(
+  {},
+  10,        // limit
+  undefined, // consentStates
+  undefined, // createdAfterNs
+  undefined, // createdBeforeNs
+  undefined, // lastActivityAfterNs
+  undefined, // lastActivityBeforeNs
+  'created_at' // orderBy
+);
+const secondPage = await client.conversations.list(
+  {},
+  10,
+  undefined,
+  undefined,
+  firstPage[firstPage.length - 1].createdAtNs, // createdBeforeNs
+  undefined,
+  undefined,
+  'created_at'
 );
 ```
 
-```tsx [React Native]
-// Check if user is active in a specific conversation
-const isUserActive = await conversation.isActive();
-console.log('User is active:', isUserActive);
+```kotlin [Kotlin]
+val firstPage = try client.conversations.list(limit = 10, orderBy = Conversations.ListConversationsOrderBy.CREATED_AT)
+val secondPage = try client.conversations.list(
+    limit = 10,
+    createdBeforeNs = firstPage.last().createdAtNs
+)
+```
 
-// Filter active conversations
-const activeConversations = [];
-for (const conversation of allConversations) {
-  if (await conversation.isActive()) {
-    activeConversations.push(conversation);
-  }
-}
-
-// Or filter conversations by active status when listing (simplified)
-const conversations = await alix.conversations.list({
-  isActive: true, // Only show active conversations
-});
+```swift [Swift]
+let firstPage = try await client.conversations.list(limit: 10, orderBy: .createdAt)
+let secondPage = try await client.conversations.list(createdBeforeNs: firstPage.last!.createdAtNs, limit: 10)
 ```
 
 :::
 
-You can use a user's active status to filter conversations and potentially have a separate section for "archived" or "inactive" conversations.
+### Edge case: Paginate by `lastActivityNs`
+
+In the edge case where your app doesn't use streaming, you can choose to sort conversations by `lastActivityNs` for pagination because it won't stream unexpected new messages in the conversations.
+
+Using `lastActivityNs` for pagination can work if the page size is very large and missing some conversations is tolerable.
+
+:::warning[Do not use with streaming]
+
+Do not sort by `lastActivityNs` for pagination in an app that uses streaming. This might cause conversations to "jump" between pages as new messages stream in, resulting in an unstable sort and an incomplete list of conversations.
+
+:::
+
+:::code-group
+
+```ts [Browser]
+const firstPage = await client.conversations.list({
+  limit: 10
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs
+});
+```
+
+```ts [Node]
+const firstPage = await client.conversations.list({
+  limit: 10
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs
+});
+```
+
+```ts [React Native]
+const firstPage = await client.conversations.list(
+  {},
+  10 // limit
+);
+const secondPage = await client.conversations.list(
+  {},
+  10,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  firstPage[firstPage.length - 1].lastActivityNs // lastActivityBeforeNs
+);
+```
+
+```kotlin [Kotlin]
+val firstPage = try client.conversations.list(limit = 10)
+val secondPage = try client.conversations.list(
+    limit = 10,
+    lastActivityBeforeNs = firstPage.last().lastActivityNs
+)
+```
+
+```swift [Swift]
+let firstPage = try await client.conversations.list(limit: 10)
+let secondPage = try await client.conversations.list(lastActivityBeforeNs: firstPage.last!.lastActivityAtNs, limit: 10)
+```
+
+:::
 
 
 ## chat-apps/list-stream-sync/stream.mdx
@@ -1799,7 +2441,15 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 This function listens to the network for new messages within all active group chats and DMs.
 
-Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+When you start streaming messages, the stream includes:
+
+1. **Real-time messages**
+
+   New messages as they arrive. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
+
+2. **Catch-up messages**
+
+   All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time.
 
 By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
@@ -2040,10 +2690,6 @@ const startMessageStream = async () => {
 ## chat-apps/list-stream-sync/sync-and-syncall.mdx
 # Sync conversations and messages
 
-:::tip[Note]
-Syncing does not refetch existing conversations and messages. It also does not fetch messages for group chats you are no longer a part of.
-:::
-
 ## 🎥 walkthrough: Syncing
 
 This video provides a walkthrough of key concepts required to implement syncing correctly.
@@ -2115,17 +2761,21 @@ try await client.conversations.sync()
 
 :::
 
-## Sync all new welcomes, conversations, messages, and preferences
+## Sync new welcomes, conversations with unread messages, and preferences
 
-Sync all new welcomes, group chat and DM conversations, messages, and [preference updates](/chat-apps/list-stream-sync/sync-preferences) from the network.
+Use `syncAll` to sync the following from the network:
 
-By default, `syncAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+- New welcomes
+- Group chat and DM conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown that have unread messages
+- [Preference updates](/chat-apps/list-stream-sync/sync-preferences)
 
-We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+We recommend syncing messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
 
-To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+To sync conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
 
 To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stream-sync/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
+
+The method returns a summary that includes the total number of conversations and the number of conversations that were actually synced.
 
 :::code-group
 
@@ -7462,6 +8112,46 @@ group.removeMembers(listOf(inboxId))
 
 ```swift [Swift]
 try await group.removeMembers(inboxIds: [inboxId])
+```
+
+:::
+
+### Leave a group
+
+A member can remove themselves from a group by calling `leaveGroup()`. After leaving, the group becomes inactive for that member.
+
+A member who is the super admin of the group cannot leave the group. By default, the group creator is a super admin.
+
+:::code-group
+
+```tsx [React Native]
+await group.leaveGroup();
+
+// Sync to update group state
+await group.sync();
+
+// Verify the group is now inactive
+const isActive = await group.isActive(); // Returns false
+```
+
+```kotlin [Kotlin]
+group.leaveGroup()
+
+// Sync to update group state
+group.sync()
+
+// Verify the group is now inactive
+val isActive = group.isActive() // Returns false
+```
+
+```swift [Swift]
+try await group.leaveGroup()
+
+// Sync to update group state
+await group.sync()
+
+// Verify the group is now inactive
+let isActive = try group.isActive() // Returns false
 ```
 
 :::
@@ -13262,4 +13952,4 @@ On December 9, the centralized network will start returning a special error code
 
 # Summary
 
-This documentation contains 88 files from 5 sections.
+This documentation contains 89 files from 5 sections.
