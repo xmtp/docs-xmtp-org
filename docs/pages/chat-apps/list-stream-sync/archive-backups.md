@@ -23,6 +23,7 @@ To enable a user to create an archive:
 3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
    - Archive start and end time. If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
+   - `excludeDisappearingMessages`: Set to `true` to exclude messages with [disappearing message settings](/chat-apps/core-messaging/disappearing-messages) from the backup. Defaults to `false` (disappearing messages are included).
 
    :::code-group
 
@@ -30,7 +31,8 @@ To enable a user to create an archive:
    createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
      startTime?: Date,
      endTime?: Date,
-     elements?: ("Consent" | "Messages")[]
+     elements?: ("Consent" | "Messages")[],
+     excludeDisappearingMessages?: boolean
    })
    ```
 
@@ -42,7 +44,8 @@ To enable a user to create an archive:
        options = ArchiveOptions(
            startTime = startTime,
            endTime = endTime,
-           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES)
+           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES),
+           excludeDisappearingMessages = false // Set to true to exclude disappearing messages
        )
    )
    ```
@@ -55,7 +58,8 @@ To enable a user to create an archive:
        options: ArchiveOptions(
            startTime: startTime,
            endTime: endTime,
-           elements: [.consent, .messages]
+           elements: [.consent, .messages],
+           excludeDisappearingMessages: false // Set to true to exclude disappearing messages
        )
    )
    ```
