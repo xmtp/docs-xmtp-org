@@ -56,36 +56,6 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Fund an agent",
-      collapsed: false,
-      items: [
-        {
-          text: "Get started",
-          link: "/fund-agents-apps/get-started",
-        },
-        {
-          text: "Calculate fees",
-          link: "/fund-agents-apps/calculate-fees",
-        },
-        {
-          text: "Fund an agent",
-          link: "/fund-agents-apps/fund-your-app",
-        },
-        {
-          text: "Get your XMTP Gateway Service",
-          link: "/fund-agents-apps/run-gateway",
-        },
-        {
-          text: "Update your SDK",
-          link: "/fund-agents-apps/update-sdk",
-        },
-        {
-          text: "Glossary",
-          link: "/fund-agents-apps/glossary",
-        },
-      ],
-    },
-    {
       text: "Core concepts",
       collapsed: false,
       items: [
