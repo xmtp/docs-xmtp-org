@@ -19,6 +19,10 @@ export const sidebarConfig = {
           text: "FAQ",
           link: "/agents/get-started/faq",
         },
+        {
+          text: "Cursor rules",
+          link: "https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc",
+        },
       ],
     },
     {
