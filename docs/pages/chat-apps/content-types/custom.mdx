@@ -23,3 +23,116 @@ If another app wants to display your custom content type, they must implement yo
 For more common content types, you can usually find a [standard](/chat-apps/content-types/content-types#standard-content-types) or [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content type to serve your needs.
 
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
+
+## Implement a custom codec
+
+When building a custom content codec for XMTP, you must implement several methods, including the new `shouldPush` method that controls push notification behavior:
+
+:::code-group
+
+```tsx [React Native]
+import { ContentCodec, ContentTypeId } from '@xmtp/react-native-sdk';
+
+export interface MyCustomContent {
+  data: string;
+  timestamp: number;
+}
+
+export class MyCustomCodec implements ContentCodec<MyCustomContent> {
+  get contentType(): ContentTypeId {
+    return {
+      authorityId: 'myapp.com',
+      typeId: 'custom',
+      versionMajor: 1,
+      versionMinor: 0,
+    };
+  }
+
+  encode(content: MyCustomContent): EncodedContent {
+    return {
+      type: this.contentType,
+      parameters: {},
+      content: new TextEncoder().encode(JSON.stringify(content)),
+    };
+  }
+
+  decode(encodedContent: EncodedContent): MyCustomContent {
+    const text = new TextDecoder().decode(encodedContent.content);
+    return JSON.parse(text);
+  }
+
+  fallback(content: MyCustomContent): string {
+    return `Custom message: ${content.data}`;
+  }
+
+  // New method: Control push notification behavior
+  shouldPush(content: MyCustomContent): boolean {
+    // Only push notifications for important messages
+    return content.data.includes('urgent') || content.data.includes('important');
+  }
+}
+```
+
+```tsx [Browser/Node]
+import { ContentCodec, EncodedContent } from '@xmtp/content-type-primitives';
+
+export interface MyCustomContent {
+  data: string;
+  timestamp: number;
+}
+
+export class MyCustomCodec implements ContentCodec<MyCustomContent> {
+  get contentType(): ContentTypeId {
+    return {
+      authorityId: 'myapp.com',
+      typeId: 'custom',
+      versionMajor: 1,
+      versionMinor: 0,
+    };
+  }
+
+  encode(content: MyCustomContent): EncodedContent {
+    return {
+      type: this.contentType,
+      parameters: {},
+      content: new TextEncoder().encode(JSON.stringify(content)),
+    };
+  }
+
+  decode(encodedContent: EncodedContent): MyCustomContent {
+    const text = new TextDecoder().decode(encodedContent.content);
+    return JSON.parse(text);
+  }
+
+  fallback(content: MyCustomContent): string {
+    return `Custom message: ${content.data}`;
+  }
+
+  // New method: Control push notification behavior
+  shouldPush(content: MyCustomContent): boolean {
+    // Only push notifications for important messages
+    return content.data.includes('urgent') || content.data.includes('important');
+  }
+}
+```
+
+:::
+
+## Configure push notification behavior
+
+The `shouldPush` method allows you to control whether a message of your content type should trigger push notifications:
+
+- **Return `true`**: Message will trigger push notifications (default for most message types)
+- **Return `false`**: Message will be delivered but won't trigger push notifications (useful for reactions, read receipts, etc.)
+
+### Examples of push behavior by content type
+
+Different content types have different default push behaviors:
+
+- **Text messages**: `shouldPush = true` - Always notify users of new text messages
+- **Attachments**: `shouldPush = true` - Notify users of new media/files
+- **Reactions**: `shouldPush = false` - Don't spam users with reaction notifications
+- **Read receipts**: `shouldPush = false` - These are status updates, not conversation content
+- **Replies**: `shouldPush = true` - Important conversational content
+
+You can override the default behavior when sending messages by using the `shouldPush` parameter in send options.

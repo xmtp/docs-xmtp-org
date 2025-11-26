@@ -272,6 +272,70 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
 
+## Control push notifications
+
+You can control whether messages trigger push notifications using the `shouldPush` parameter in send options. This is particularly useful when you want to send messages that don't require immediate user attention:
+
+:::code-group
+
+```tsx [React Native]
+// Send a message without triggering push notifications
+await conversation.send('This is a quiet message', {
+  shouldPush: false,
+});
+
+// Send a message that will trigger push notifications (default behavior)
+await conversation.send('This is an important message', {
+  shouldPush: true,
+});
+
+// For reactions (typically don't need push notifications)
+const reactionContent = {
+  reaction: {
+    reference: messageId,
+    action: 'added',
+    content: '👍',
+    schema: 'unicode',
+  },
+};
+await conversation.send(reactionContent, {
+  contentType: ContentTypeReaction,
+  shouldPush: false, // Override default behavior
+});
+
+// For custom content types, shouldPush defaults to the codec's shouldPush() method
+const customContent = { data: 'urgent update', timestamp: Date.now() };
+await conversation.send(customContent, {
+  contentType: myCustomContentType,
+  // shouldPush will be determined by myCustomContentType.shouldPush(customContent)
+  // unless explicitly overridden here
+});
+```
+
+```tsx [Browser]
+// Note: Push notification control may not be available in browser environments
+// This feature is primarily for mobile React Native applications
+```
+
+```tsx [Node]
+// Note: Push notification control may not be available in Node.js environments
+// This feature is primarily for mobile React Native applications
+```
+
+:::
+
+### Push notification behavior by content type
+
+Different content types have different default push behaviors:
+
+- **Text messages**: Push notifications enabled by default
+- **Media/Attachments**: Push notifications enabled by default
+- **Reactions**: Push notifications disabled by default
+- **Read receipts**: Push notifications disabled by default
+- **Replies**: Push notifications enabled by default
+
+The `shouldPush` parameter in send options allows you to override the default behavior for any content type.
+
 ## Handle unsupported content types
 
 As more [custom](/chat-apps/content-types/custom) and [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.

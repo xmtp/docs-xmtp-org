@@ -362,6 +362,30 @@ type ClientOptions = {
 ```tsx [React Native]
 import type { ContentCodec } from '@xmtp/react-native-sdk';
 
+type ForkRecoveryPolicy = 'none' | 'all' | 'groups';
+
+type ForkRecoveryOptions = {
+  /**
+   * Policy for enabling recovery requests
+   * - 'none': No recovery requests
+   * - 'all': Recovery for all groups
+   * - 'groups': Recovery only for allowlisted groups
+   */
+  enableRecoveryRequests?: ForkRecoveryPolicy;
+  /**
+   * List of group IDs to request recovery for (when enableRecoveryRequests is 'groups')
+   */
+  groupsToRequestRecovery?: string[];
+  /**
+   * Whether to disable recovery responses
+   */
+  disableRecoveryResponses?: boolean;
+  /**
+   * Worker interval in nanoseconds
+   */
+  workerIntervalNs?: number;
+};
+
 type ClientOptions = {
   /**
    * Specify which XMTP environment to connect to. (default: `dev`)
@@ -407,6 +431,14 @@ type ClientOptions = {
    * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
    */
   customLocalHost?: string;
+  /**
+   * OPTIONAL specify the gateway host
+   */
+  gatewayHost?: string;
+  /**
+   * OPTIONAL specify fork recovery options for handling group forks
+   */
+  forkRecoveryOptions?: ForkRecoveryOptions;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -517,6 +549,38 @@ If you have an app and an agent, it's best to distinguish them from each other b
 - Agent: `appVersion: 'alix-agent/2.x'`
 
 The `appVersion` value is included with API requests to provide telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide you with app support, especially around communicating important SDK updates, deprecations, and required upgrades.
+
+### Configure fork recovery options
+
+Fork recovery options help handle group conversation forks, which can occur when group state becomes inconsistent. Configure these options to control how your app responds to and recovers from group forks:
+
+```tsx [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  dbEncryptionKey: keyBytes,
+  forkRecoveryOptions: {
+    enableRecoveryRequests: 'all', // Enable recovery for all groups
+    disableRecoveryResponses: false, // Allow responding to recovery requests
+    workerIntervalNs: 5000000000, // Check for recovery every 5 seconds
+  },
+});
+
+// Or configure for specific groups only
+const clientWithSelectiveRecovery = await Client.create(signer, {
+  env: 'production', 
+  dbEncryptionKey: keyBytes,
+  forkRecoveryOptions: {
+    enableRecoveryRequests: 'groups', // Only recover specific groups
+    groupsToRequestRecovery: ['groupId1', 'groupId2'],
+    disableRecoveryResponses: false,
+  },
+});
+```
+
+**Fork Recovery Policy Options:**
+- `'none'`: Disable recovery requests entirely
+- `'all'`: Enable recovery for all groups (default recommended)
+- `'groups'`: Enable recovery only for groups specified in `groupsToRequestRecovery`
 
 ### XMTP network environments
 

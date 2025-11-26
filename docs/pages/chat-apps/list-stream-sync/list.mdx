@@ -40,7 +40,7 @@ const allDms = await client.conversations.listDms({
 
 ```tsx [React Native]
 // List Conversation items
-await alix.conversations.list(['allowed']);
+await alix.conversations.list({}, undefined, ['allowed']);
 
 // List only active conversations (simplified usage)
 const alixConvoCount1 = await alix.conversations.list({
@@ -58,6 +58,18 @@ await alix.conversations.list({
   isActive: false,
   lastMessage: true,
 });
+
+// Advanced filtering with time-based parameters
+await alix.conversations.list(
+  {}, // conversation options
+  10, // limit
+  ['allowed'], // consent states
+  Date.now() * 1_000_000 - 7 * 24 * 60 * 60 * 1_000_000_000, // createdAfterNs (last 7 days)
+  undefined, // createdBeforeNs
+  Date.now() * 1_000_000 - 24 * 60 * 60 * 1_000_000_000, // lastActivityAfterNs (last 24 hours)
+  undefined, // lastActivityBeforeNs
+  'last_activity' // orderBy
+);
 ```
 
 ```kotlin [Kotlin]
@@ -214,11 +226,12 @@ const firstPage = await client.conversations.list(
 const secondPage = await client.conversations.list(
   {},
   10,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  firstPage[firstPage.length - 1].lastActivityNs // lastActivityBeforeNs
+  undefined, // consentStates
+  undefined, // createdAfterNs
+  undefined, // createdBeforeNs
+  undefined, // lastActivityAfterNs
+  firstPage[firstPage.length - 1].lastActivityNs, // lastActivityBeforeNs
+  'last_activity' // orderBy
 );
 ```
 
