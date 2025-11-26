@@ -351,3 +351,33 @@ Represents a group chat conversation, providing methods to manage group-specific
 Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
 
 - React Native: [Dm.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts)
+
+## Leave a group chat (React Native SDK v5.1.0+)
+
+Users can leave group chats they are currently members of. When a user leaves a group, they will no longer receive messages from that group and cannot send messages to it.
+
+:::code-group
+
+```tsx [React Native]
+// Leave a group chat
+await group.leaveGroup();
+
+console.log('Successfully left the group');
+```
+
+```kotlin [Kotlin]
+// Not available in current version
+```
+
+```swift [Swift]
+// Not available in current version  
+```
+
+:::
+
+:::note[Important considerations]
+- Once you leave a group, you cannot rejoin unless another member adds you back
+- You will stop receiving new messages from the group immediately
+- Your message history remains in your local database but you won't see new messages
+- Other group members will see a system message indicating you left the group
+:::

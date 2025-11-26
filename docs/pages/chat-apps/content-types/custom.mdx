@@ -23,3 +23,78 @@ If another app wants to display your custom content type, they must implement yo
 For more common content types, you can usually find a [standard](/chat-apps/content-types/content-types#standard-content-types) or [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content type to serve your needs.
 
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
+
+## Push notification behavior for content types (React Native SDK v5.1.0+)
+
+Starting with React Native SDK v5.1.0, all content codecs must implement a `shouldPush(content)` method that determines whether messages using that content type should trigger push notifications.
+
+```tsx [React Native]
+export interface ContentCodec<T> {
+  contentType: ContentTypeId;
+  encode(content: T): EncodedContent;
+  decode(encodedContent: EncodedContent): T;
+  fallback(content: T): string | undefined;
+  shouldPush(content: T): boolean; // New in v5.1.0
+}
+```
+
+### Standard content type push behaviors
+
+The built-in content types have the following push notification behaviors:
+
+- **Text messages**: `shouldPush(content) => true` - Always triggers push notifications
+- **Attachments**: `shouldPush(content) => true` - Always triggers push notifications
+- **Reactions**: `shouldPush(content) => false` - Never triggers push notifications
+- **Read receipts**: `shouldPush(content) => false` - Never triggers push notifications  
+- **Replies**: `shouldPush(content) => true` - Always triggers push notifications
+- **Group updates**: `shouldPush(content) => true` - Always triggers push notifications
+
+### Implementing shouldPush for custom content types
+
+When creating a custom content type, consider whether messages of this type should generate push notifications:
+
+```tsx [React Native]
+class CustomContentCodec implements ContentCodec<CustomContent> {
+  contentType: ContentTypeId = {
+    authorityId: 'yourapp.com',
+    typeId: 'custom-type',
+    versionMajor: 1,
+    versionMinor: 0,
+  };
+
+  encode(content: CustomContent): EncodedContent {
+    // Implementation
+  }
+
+  decode(encodedContent: EncodedContent): CustomContent {
+    // Implementation  
+  }
+
+  fallback(content: CustomContent): string | undefined {
+    return `Custom message: ${content.title}`;
+  }
+
+  shouldPush(content: CustomContent): boolean {
+    // Return true for important messages, false for ephemeral content
+    return content.priority === 'high';
+  }
+}
+```
+
+### Override push behavior when sending
+
+You can override the default push behavior for any content type when sending messages using the `shouldPush` option:
+
+```tsx [React Native]
+// Override codec's shouldPush behavior
+await conversation.send(content, {
+  contentType: myCustomContentType,
+  shouldPush: false, // Force no push notification
+});
+
+// Or force push notification
+await conversation.send(reactionContent, {
+  contentType: ContentTypeReaction,
+  shouldPush: true, // Force push notification even for reactions
+});
+```

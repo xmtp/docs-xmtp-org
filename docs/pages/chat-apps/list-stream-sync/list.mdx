@@ -58,6 +58,30 @@ await alix.conversations.list({
   isActive: false,
   lastMessage: true,
 });
+
+// List groups with new filtering options
+const groups = await alix.conversations.listGroups(
+  {}, // options
+  10, // limit
+  ['allowed'], // consentStates
+  undefined, // createdAfterNs
+  Date.now() * 1000000 - 7 * 24 * 60 * 60 * 1000000000, // createdBeforeNs (past 7 days)
+  undefined, // lastActivityAfterNs
+  undefined, // lastActivityBeforeNs
+  'created_at' // orderBy
+);
+
+// List DMs with filtering
+const dms = await alix.conversations.listDms(
+  {},
+  20,
+  ['allowed'],
+  undefined,
+  undefined,
+  Date.now() * 1000000 - 24 * 60 * 60 * 1000000000, // lastActivityAfterNs (past 24 hours)
+  undefined,
+  'last_activity'
+);
 ```
 
 ```kotlin [Kotlin]
@@ -218,7 +242,8 @@ const secondPage = await client.conversations.list(
   undefined,
   undefined,
   undefined,
-  firstPage[firstPage.length - 1].lastActivityNs // lastActivityBeforeNs
+  firstPage[firstPage.length - 1].lastActivityNs, // lastActivityBeforeNs
+  'last_activity' // orderBy
 );
 ```
 

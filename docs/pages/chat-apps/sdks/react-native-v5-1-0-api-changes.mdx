@@ -1,0 +1,228 @@
+# React Native SDK v5.1.0 API Changes
+
+This page documents the new features, changes, and enhancements introduced in React Native SDK v5.1.0-rc1.cfbcd1a.
+
+## Client Options
+
+### New Fork Recovery Options
+
+Configure how the client handles group forks with the new `forkRecoveryOptions` parameter:
+
+```tsx
+import { Client, ForkRecoveryOptions } from '@xmtp/react-native-sdk';
+
+const forkRecoveryOptions: ForkRecoveryOptions = {
+  enableRecoveryRequests: 'all', // 'none' | 'all' | 'groups'
+  groupsToRequestRecovery: ['group-id-1', 'group-id-2'], // Required when 'groups'
+  disableRecoveryResponses: false,
+  workerIntervalNs: 5000000000, // 5 seconds in nanoseconds
+};
+
+const client = await Client.create(signer, {
+  env: 'production',
+  dbEncryptionKey: keyBytes,
+  forkRecoveryOptions,
+});
+```
+
+### Gateway Host Option
+
+The `gatewayUrl` option has been renamed to `gatewayHost`:
+
+```tsx
+// ❌ Old (v5.0.x)
+const client = await Client.create(signer, {
+  gatewayUrl: 'https://custom-gateway.example.com',
+});
+
+// ✅ New (v5.1.0+)
+const client = await Client.create(signer, {
+  gatewayHost: 'custom-gateway.example.com',
+});
+```
+
+## Conversation Listing Enhancements
+
+All conversation listing methods (`listGroups`, `listDms`, `listConversations`) now support advanced filtering and sorting:
+
+### New Parameters
+
+- `createdAfterNs?: number` - Filter conversations created after timestamp (nanoseconds)
+- `createdBeforeNs?: number` - Filter conversations created before timestamp (nanoseconds)  
+- `lastActivityAfterNs?: number` - Filter by last activity after timestamp (nanoseconds)
+- `lastActivityBeforeNs?: number` - Filter by last activity before timestamp (nanoseconds)
+- `orderBy?: 'created_at' | 'last_activity'` - Sort order (default: 'last_activity')
+
+### Usage Examples
+
+```tsx
+// List groups created in the last 7 days
+const recentGroups = await client.conversations.listGroups(
+  {}, // options
+  50, // limit
+  ['allowed'], // consentStates
+  Date.now() * 1000000 - 7 * 24 * 60 * 60 * 1000000000, // createdAfterNs
+  undefined, // createdBeforeNs
+  undefined, // lastActivityAfterNs
+  undefined, // lastActivityBeforeNs
+  'created_at' // orderBy
+);
+
+// List DMs with recent activity
+const activeDms = await client.conversations.listDms(
+  {},
+  20,
+  ['allowed'],
+  undefined,
+  undefined,
+  Date.now() * 1000000 - 24 * 60 * 60 * 1000000000, // lastActivityAfterNs (past 24 hours)
+  undefined,
+  'last_activity'
+);
+
+// Paginate by creation time (stable sort)
+const firstPage = await client.conversations.list(
+  {},
+  10,
+  ['allowed'],
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  'created_at'
+);
+
+const secondPage = await client.conversations.list(
+  {},
+  10,
+  ['allowed'],
+  undefined,
+  firstPage[firstPage.length - 1].createdAtNs, // createdBeforeNs
+  undefined,
+  undefined,
+  'created_at'
+);
+```
+
+## Message Querying Enhancements
+
+The `messages()` and `messagesWithReactions()` methods now support content and sender filtering:
+
+### New Parameters
+
+- `excludeContentTypes?: string[]` - Content types to exclude from results
+- `excludeSenderInboxIds?: string[]` - Sender inbox IDs to exclude from results
+
+### Usage Examples
+
+```tsx
+// Get messages excluding reactions and read receipts
+const messages = await group.messages({
+  limit: 50,
+  excludeContentTypes: [
+    'xmtp.org/reaction:1.0',
+    'xmtp.org/readReceipt:1.0'
+  ],
+});
+
+// Get messages excluding specific blocked users
+const filteredMessages = await group.messagesWithReactions({
+  afterNs: lastReadTimestamp,
+  excludeSenderInboxIds: ['blocked-user-inbox-id-1', 'blocked-user-inbox-id-2'],
+});
+
+// Combine multiple filters
+const cleanMessages = await dm.messages({
+  afterNs: yesterdayTimestamp,
+  direction: 'DESCENDING',
+  excludeContentTypes: ['xmtp.org/reaction:1.0'],
+  excludeSenderInboxIds: blockedUsers,
+});
+```
+
+## Content Codec Changes
+
+### New shouldPush Method
+
+All content codecs must now implement a `shouldPush(content)` method:
+
+```tsx
+interface ContentCodec<T> {
+  contentType: ContentTypeId;
+  encode(content: T): EncodedContent;
+  decode(encodedContent: EncodedContent): T;
+  fallback(content: T): string | undefined;
+  shouldPush(content: T): boolean; // ✅ New required method
+}
+```
+
+### Built-in Content Type Behaviors
+
+| Content Type | shouldPush Behavior |
+|-------------|-------------------|
+| Text messages | `true` - Always send push notifications |
+| Attachments | `true` - Always send push notifications |
+| Reactions | `false` - Never send push notifications |
+| Read receipts | `false` - Never send push notifications |
+| Replies | `true` - Always send push notifications |
+| Group updates | `true` - Always send push notifications |
+
+## Send Options Enhancement
+
+### shouldPush Parameter
+
+Override default push notification behavior when sending messages:
+
+```tsx
+// Force push notification for typically silent content
+await conversation.send(reactionContent, {
+  contentType: ContentTypeReaction,
+  shouldPush: true, // Override reaction's default false behavior
+});
+
+// Suppress push notification for normally loud content
+await conversation.send('Hello!', {
+  shouldPush: false, // Override text's default true behavior
+});
+
+// Use codec's default behavior (omit shouldPush)
+await conversation.send('Hello!'); // Uses TextCodec.shouldPush() => true
+```
+
+## Group Management
+
+### Leave Group Functionality
+
+Users can now leave group conversations:
+
+```tsx
+// Leave a group chat
+await group.leaveGroup();
+
+console.log('Successfully left the group');
+```
+
+**Important considerations:**
+- Once you leave a group, you cannot rejoin unless another member adds you back
+- You will stop receiving new messages from the group immediately
+- Your message history remains in your local database but you won't see new messages
+- Other group members will see a system message indicating you left the group
+
+## Migration Guide
+
+### Breaking Changes
+
+1. **gatewayUrl renamed**: Update `gatewayUrl` to `gatewayHost` in client options
+2. **ContentCodec interface**: Implement `shouldPush(content)` method in custom codecs
+
+### New Features to Adopt
+
+1. **Enhanced filtering**: Use new timestamp and ordering filters for better conversation and message management
+2. **Content filtering**: Exclude unwanted content types and senders from message queries
+3. **Push control**: Fine-tune push notification behavior with `shouldPush` options
+4. **Fork recovery**: Configure group fork handling for better reliability
+5. **Leave groups**: Allow users to leave group conversations
+
+### Backward Compatibility
+
+All existing code continues to work. New parameters are optional and have sensible defaults. The only breaking change is the `gatewayUrl` → `gatewayHost` rename and the new required `shouldPush` method for custom content codecs.

@@ -13,8 +13,8 @@ All parameters are optional and can be combined to create precise filters and so
 | `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` | Filter messages sent after this timestamp (nanoseconds) |
 | `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
 | `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
-| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
-| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
+| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). **New in v5.1.0** |
+| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. **New in v5.1.0** |
 
 ## List messages with enriched metadata
 
@@ -46,6 +46,24 @@ groupMessages.forEach { message ->
     println("Reaction: ${reactionContent.content}")
   }
 }
+```
+
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.messagesWithReactions();
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.messagesWithReactions();
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach((message) => {
+  // Access the list of reactions
+  message.reactions?.forEach((reaction) => {
+    const reactionContent = reaction.content();
+    console.log(`Reaction: ${reactionContent.content}`);
+  });
+});
 ```
 
 ```swift [Swift]
@@ -94,6 +112,28 @@ groupMessages.forEach { message ->
     }
   }
 }
+```
+
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.messagesWithReactions();
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.messagesWithReactions();
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach((message) => {
+  // Check if the message is a reply
+  if (message.contentTypeId.startsWith('xmtp.org/reply:')) {
+    const replyContent = message.content();
+
+    if (replyContent.reference) {
+      console.log(`This is a reply to message: ${replyContent.reference}`);
+      console.log(`Reply text: ${replyContent.content}`);
+    }
+  }
+});
 ```
 
 ```swift [Swift]
@@ -376,9 +416,16 @@ const count = await group.countMessages({
 // Using messages()
 const messages = await group.messages({
   afterNs: 1738620126404999936, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
-  excludeContentTypes: ['reaction'], // Exclude content types
+  direction: 'DESCENDING', // Sort direction
+  excludeContentTypes: ['xmtp.org/reaction:1.0'], // Exclude content types
   excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+
+// Using messagesWithReactions() for enriched data with filtering
+const enrichedMessages = await group.messagesWithReactions({
+  afterNs: 1738620126404999936,
+  limit: 50,
+  excludeSenderInboxIds: ['blocked_user_inbox_id'],
 });
 // React Native does not yet include countMessages()
 ```

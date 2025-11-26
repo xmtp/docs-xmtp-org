@@ -360,7 +360,7 @@ type ClientOptions = {
 ```
 
 ```tsx [React Native]
-import type { ContentCodec } from '@xmtp/react-native-sdk';
+import type { ContentCodec, ForkRecoveryOptions } from '@xmtp/react-native-sdk';
 
 type ClientOptions = {
   /**
@@ -407,6 +407,14 @@ type ClientOptions = {
    * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
    */
   customLocalHost?: string;
+  /**
+   * OPTIONAL specify the gateway host
+   */
+  gatewayHost?: string;
+  /**
+   * OPTIONAL specify fork recovery options for handling group forks
+   */
+  forkRecoveryOptions?: ForkRecoveryOptions;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -531,6 +539,45 @@ When you create a client, it connects to the XMTP `dev` network by default. Set 
 The `production` network is configured to store messages indefinitely. XMTP may occasionally delete messages and identities from the `dev` network, and will provide advance notice in the [XMTP Technical Forums](https://community.xmtp.org/).
 
 You can use a `local` network environment to have a client communicate with an XMTP node you are running locally. During development, using `local` is a great option for speed and reliability. Use the [xmtp-local-node](https://github.com/xmtp/xmtp-local-node/tree/main) repo to easily run a local XMTP node.
+
+### Configure Fork Recovery Options (React Native SDK)
+
+The React Native SDK supports fork recovery options to handle group forks gracefully. These options help maintain group consistency when network partitions or other issues occur.
+
+```tsx [React Native]
+type ForkRecoveryOptions = {
+  /**
+   * Policy for enabling recovery requests
+   * - 'none': No recovery requests
+   * - 'all': Recovery for all groups
+   * - 'groups': Recovery only for allowlisted groups
+   */
+  enableRecoveryRequests?: 'none' | 'all' | 'groups';
+  /**
+   * List of group IDs to request recovery for (when enableRecoveryRequests is 'groups')
+   */
+  groupsToRequestRecovery?: string[];
+  /**
+   * Whether to disable recovery responses
+   */
+  disableRecoveryResponses?: boolean;
+  /**
+   * Worker interval in nanoseconds (will be converted to ULong on Android, UInt64 on iOS)
+   */
+  workerIntervalNs?: number;
+};
+
+// Example usage
+const client = await Client.create(signer, {
+  env: 'production',
+  dbEncryptionKey: keyBytes,
+  forkRecoveryOptions: {
+    enableRecoveryRequests: 'all',
+    disableRecoveryResponses: false,
+    workerIntervalNs: 5000000000, // 5 seconds
+  },
+});
+```
 
 ## Build an existing client
 
