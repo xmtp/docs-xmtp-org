@@ -4343,7 +4343,7 @@ The minimum supported SDK version for each platform will be:
 - Agent SDK v2.0.0
 - Browser SDK v6.0.0
 - Node SDK v5.0.0
-- React Native SDK v6.0.0
+- React Native SDK v5.2.0
 - Kotlin SDK v5.0.0
 - Swift SDK v5.0.0
 

@@ -15,6 +15,9 @@ All parameters are optional and can be combined to create precise filters and so
 | `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
 | `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
 | `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
+| `sortBy` | `MessageSortBy` / `string` | Sort criterion: `sent_at` (default, by sent timestamp) or `inserted_at` (by insertion timestamp) |
+| `insertedAfterNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into local database after this timestamp (nanoseconds) |
+| `insertedBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into local database before this timestamp (nanoseconds) |
 
 ## List messages with enriched metadata
 
