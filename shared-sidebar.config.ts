@@ -19,6 +19,10 @@ export const sidebarConfig = {
           text: "FAQ",
           link: "/agents/get-started/faq",
         },
+        {
+          text: "Cursor rules",
+          link: "https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc",
+        },
       ],
     },
     {
@@ -48,36 +52,6 @@ export const sidebarConfig = {
         {
           text: "Group permissions",
           link: "/agents/build-agents/group-permissions",
-        },
-      ],
-    },
-    {
-      text: "Fund an agent",
-      collapsed: false,
-      items: [
-        {
-          text: "Get started",
-          link: "/fund-agents-apps/get-started",
-        },
-        {
-          text: "Calculate fees",
-          link: "/fund-agents-apps/calculate-fees",
-        },
-        {
-          text: "Fund an agent",
-          link: "/fund-agents-apps/fund-your-app",
-        },
-        {
-          text: "Get your XMTP Gateway Service",
-          link: "/fund-agents-apps/run-gateway",
-        },
-        {
-          text: "Update your SDK",
-          link: "/fund-agents-apps/update-sdk",
-        },
-        {
-          text: "Glossary",
-          link: "/fund-agents-apps/glossary",
         },
       ],
     },
