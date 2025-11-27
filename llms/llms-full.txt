@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 05:19 PM UTC / November 26, 2025
+Generated at 01:00 AM UTC / November 27, 2025
 
 ## About this file
 
@@ -1192,6 +1192,7 @@ To enable a user to create an archive:
 3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
    - Archive start and end time. If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
+   - `excludeDisappearingMessages`: Set to `true` to exclude [disappearing messages](/chat-apps/core-messaging/disappearing-messages) from the backup. Defaults to `false` (disappearing messages are included).
 
    :::code-group
 
@@ -1199,7 +1200,8 @@ To enable a user to create an archive:
    createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
      startTime?: Date,
      endTime?: Date,
-     elements?: ("Consent" | "Messages")[]
+     elements?: ("Consent" | "Messages")[],
+     excludeDisappearingMessages?: boolean
    })
    ```
 
@@ -1211,7 +1213,8 @@ To enable a user to create an archive:
        options = ArchiveOptions(
            startTime = startTime,
            endTime = endTime,
-           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES)
+           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES),
+           excludeDisappearingMessages = false // Set to true to exclude disappearing messages
        )
    )
    ```
@@ -1224,7 +1227,8 @@ To enable a user to create an archive:
        options: ArchiveOptions(
            startTime: startTime,
            endTime: endTime,
-           elements: [.consent, .messages]
+           elements: [.consent, .messages],
+           excludeDisappearingMessages: false // Set to true to exclude disappearing messages
        )
    )
    ```
@@ -1574,6 +1578,9 @@ All parameters are optional and can be combined to create precise filters and so
 | `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
 | `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
 | `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
+| `insertedBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database before this timestamp (nanoseconds) |
+| `insertedAfterNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database after this timestamp (nanoseconds) |
+| `sortBy` | `SortBy` / enum | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
 
 ## List messages with enriched metadata
 
@@ -1975,9 +1982,174 @@ let count = try group.countMessages(
 
 :::
 
+### Filter messages by insertion time
+
+You can filter messages using insertion time ranges with `insertedAfterNs` and `insertedBeforeNs`. This is useful when you need to query based on when messages were added to the local database rather than when they were sent.
+
+:::code-group
+
+```tsx [React Native]
+// Get messages inserted after a specific time
+const lastInsertionTime = 1738620126404999936;
+const newMessages = await group.messages({
+  insertedAfterNs: lastInsertionTime,
+  sortBy: 'INSERTED',
+});
+
+// Get messages inserted within a time range
+const messages = await group.messages({
+  insertedAfterNs: startTime,
+  insertedBeforeNs: endTime,
+  sortBy: 'INSERTED',
+});
+```
+
+```kotlin [Kotlin]
+// Get messages inserted after a specific time
+val lastInsertionTime: Long = 1738620126404999936
+val newMessages = group.messages(
+  insertedAfterNs = lastInsertionTime,
+  sortBy = SortBy.INSERTED_TIME
+)
+
+// Get messages inserted within a time range
+val messages = group.messages(
+  insertedAfterNs = startTime,
+  insertedBeforeNs = endTime,
+  sortBy = SortBy.INSERTED_TIME
+)
+```
+
+```swift [Swift]
+// Get messages inserted after a specific time
+let lastInsertionTime: Int64 = 1738620126404999936
+let newMessages = try await group.messages(
+  insertedAfterNs: lastInsertionTime,
+  sortBy: .insertedTime
+)
+
+// Get messages inserted within a time range
+let messages = try await group.messages(
+  insertedAfterNs: startTime,
+  insertedBeforeNs: endTime,
+  sortBy: .insertedTime
+)
+```
+
+:::
+
+## Sort messages by insertion time
+
+You can sort messages using `insertedAtNs`.
+
+:::code-group
+
+```tsx [React Native]
+  // Sort by insertion time for reliable pagination
+  const messages = await group.messages({
+      sortBy: "INSERTED",
+      limit: 20
+  });
+
+  // Each message has both timestamps available
+  messages.forEach((message) => {
+      console.log(`Sent at: ${message.sentAtNs}`);
+      console.log(`Inserted at: ${message.insertedAtNs}`);
+  });
+```
+
+```kotlin [Kotlin]
+// Sort by insertion time for reliable pagination
+val messages = group.messages(
+    sortBy = SortBy.INSERTED_TIME,
+    limit = 20
+)
+
+// Each message has both timestamps available
+messages.forEach { message ->
+    println("Sent at: ${message.sentAtNs}")
+    println("Inserted at: ${message.insertedAtNs}")
+}
+```
+
+```swift [Swift]
+// Sort by insertion time for reliable pagination
+let messages = try await group.messages(
+    sortBy: .insertedTime,
+    limit: 20
+)
+
+// Each message has both timestamps available
+for message in messages {
+    print("Sent at: \\(message.sentAtNs)")
+    print("Inserted at: \\(message.insertedAtNs)")
+}
+```
+
+:::
+
 ## Paginate messages
 
-Here's how to implement pagination to load messages in chunks:
+### Paginate by insertion time (recommended)
+
+By default, messages are sorted by their `sentAtNs` timestamp (time when the message was sent). When you sort by `sentAtNs`, messages might arrive out of order. For example, a message sent 5 minutes ago might arrive in the local database after a message sent 1 minute ago. This can cause pagination issues, where you might miss messages when loading the next page.
+
+Therefore, when paginating messages, it's more reliable to sort by `insertedAtNs` (time when the message was inserted into the local database). Sorting by `insertedAtNs` provides a totally ordered list because insertion timestamps are strictly sequential in the local database and are also deterministic and consistent.
+
+Here's how to implement reliable message pagination using insertion time:
+
+:::code-group
+
+```tsx [React Native]
+// First page
+const firstPage = await group.messages({
+  limit: 20,
+  sortBy: 'INSERTED',
+});
+
+// Next page
+const secondPage = await group.messages({
+  limit: 20,
+  insertedBeforeNs: firstPage[firstPage.length - 1].insertedAtNs,
+  sortBy: 'INSERTED',
+});
+```
+
+```kotlin [Kotlin]
+// First page
+val firstPage = group.messages(
+  limit = 20,
+  sortBy = SortBy.INSERTED_TIME
+)
+
+// Next page
+val secondPage = group.messages(
+  limit = 20,
+  insertedBeforeNs = firstPage.last().insertedAtNs,
+  sortBy = SortBy.INSERTED_TIME
+)
+```
+
+```swift [Swift]
+// First page
+let firstPage = try await group.messages(
+  limit: 20,
+  sortBy: .insertedTime
+)
+
+// Next page
+let secondPage = try await group.messages(
+  limit: 20,
+  insertedBeforeNs: firstPage.last?.insertedAtNs,
+  sortBy: .insertedTime
+)
+```
+
+:::
+
+### Paginate by sent time
+
+You can also paginate using the message sent time, though this may have ordering issues if messages arrive out of sequence:
 
 :::code-group
 
@@ -7572,6 +7744,12 @@ To learn more about the background worker, see [disappearing_messages.rs](https:
 ## Automatic removal from UI
 
 Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
+
+## Exclude from archive-based backups
+
+You can exclude disappearing messages from archive-based backups. 
+
+To learn more, see [Support archive-based backups](/chat-apps/list-stream-sync/archive-backups).
 
 ## Receive a disappearing message
 
