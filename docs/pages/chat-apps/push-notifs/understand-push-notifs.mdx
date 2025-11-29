@@ -162,10 +162,14 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
 
 DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
 
-Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics.
+Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation.
 
-Therefore, when subscribing a DM conversations to push notifications, you should subscribe to a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
+- They have two different conversation IDs, and thus two different topics.
 
-For example, you must consider that with DM stitching, the conversation is moving from alix-bo-1 and alix-bo-3, for example, and [resubscribe appropriately](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys).
+- When subscribing a DM conversation to push notifications, you should subscribe with a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
 
-Also, you must consider that a welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.
+- While a DM conversation can have multiple topics, each individual message is sent to only one topic. This means you will receive only one push notification per message, not multiple notifications for the same message. Subscribing to all topics just ensures you don't miss a message, regardless of which topic it's sent on.
+
+- A welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.
+
+- The conversation is moving from alix-bo-1 and alix-bo-3, for example, and you should [resubscribe appropriately](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys).
