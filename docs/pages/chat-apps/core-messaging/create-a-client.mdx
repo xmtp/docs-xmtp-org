@@ -138,6 +138,13 @@ const client = await Client.create(
 Client.create(signer, {
   env: 'production', // 'local' | 'dev' | 'production'
   dbEncryptionKey: keyBytes, // 32 bytes
+  gatewayHost: 'your-custom-gateway.com', // Optional: specify custom gateway host
+  forkRecoveryOptions: { // Optional: configure fork recovery behavior
+    enableRecoveryRequests: 'groups', // 'none' | 'all' | 'groups'
+    groupsToRequestRecovery: ['group-id-1', 'group-id-2'], // required when enableRecoveryRequests is 'groups'
+    disableRecoveryResponses: false, // Optional: disable recovery responses
+    workerIntervalNs: 60000000000, // Optional: worker interval in nanoseconds
+  },
 });
 ```
 
@@ -362,6 +369,30 @@ type ClientOptions = {
 ```tsx [React Native]
 import type { ContentCodec } from '@xmtp/react-native-sdk';
 
+type ForkRecoveryPolicy = 'none' | 'all' | 'groups';
+
+type ForkRecoveryOptions = {
+  /**
+   * Policy for enabling recovery requests
+   * - 'none': No recovery requests
+   * - 'all': Recovery for all groups
+   * - 'groups': Recovery only for allowlisted groups
+   */
+  enableRecoveryRequests?: ForkRecoveryPolicy;
+  /**
+   * List of group IDs to request recovery for (when enableRecoveryRequests is 'groups')
+   */
+  groupsToRequestRecovery?: string[];
+  /**
+   * Whether to disable recovery responses
+   */
+  disableRecoveryResponses?: boolean;
+  /**
+   * Worker interval in nanoseconds (will be converted to ULong on Android, UInt64 on iOS)
+   */
+  workerIntervalNs?: number;
+};
+
 type ClientOptions = {
   /**
    * Specify which XMTP environment to connect to. (default: `dev`)
@@ -407,6 +438,14 @@ type ClientOptions = {
    * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
    */
   customLocalHost?: string;
+  /**
+   * OPTIONAL specify the gateway host
+   */
+  gatewayHost?: string;
+  /**
+   * OPTIONAL specify fork recovery options for handling group forks
+   */
+  forkRecoveryOptions?: ForkRecoveryOptions;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -568,6 +607,13 @@ const client = await Client.build(identifier, options);
 Client.build(identity, {
   env: 'production', // 'local' | 'dev' | 'production'
   dbEncryptionKey: keyBytes, // 32 bytes
+  gatewayHost: 'your-custom-gateway.com', // Optional: specify custom gateway host
+  forkRecoveryOptions: { // Optional: configure fork recovery behavior
+    enableRecoveryRequests: 'groups', // 'none' | 'all' | 'groups'
+    groupsToRequestRecovery: ['group-id-1', 'group-id-2'], // required when enableRecoveryRequests is 'groups'
+    disableRecoveryResponses: false, // Optional: disable recovery responses
+    workerIntervalNs: 60000000000, // Optional: worker interval in nanoseconds
+  },
 });
 ```
 

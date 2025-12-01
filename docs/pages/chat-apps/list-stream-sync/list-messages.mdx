@@ -376,13 +376,33 @@ const count = await group.countMessages({
 ```
 
 ```tsx [React Native]
-// Using messages()
+// Using messages() with new filtering options (v5.1.0+)
 const messages = await group.messages({
   afterNs: 1738620126404999936, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
-  excludeContentTypes: ['reaction'], // Exclude content types
-  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+  beforeNs: Date.now() * 1000000, // Filter before specific time
+  direction: 'DESCENDING', // Sort direction: 'ASCENDING' | 'DESCENDING'
+  excludeContentTypes: ['xmtp.org/reaction:1.0', 'xmtp.org/readReceipt:1.0'], // Exclude content types
+  excludeSenderInboxIds: ['inbox_id_1', 'inbox_id_2'], // Exclude senders
+  limit: 50, // Limit number of messages
 });
+
+// Advanced filtering examples
+const recentTextMessages = await group.messages({
+  afterNs: Date.now() - (24 * 60 * 60 * 1000) * 1000000, // Last 24 hours
+  excludeContentTypes: [
+    'xmtp.org/reaction:1.0',
+    'xmtp.org/readReceipt:1.0', 
+    'xmtp.org/groupUpdated:1.0'
+  ], // Only text messages and attachments
+  limit: 20,
+});
+
+// Filter out messages from specific users (e.g., blocked users)
+const filteredMessages = await group.messages({
+  excludeSenderInboxIds: blockedUserInboxIds,
+  limit: 30,
+});
+
 // React Native does not yet include countMessages()
 ```
 

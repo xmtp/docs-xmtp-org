@@ -23,3 +23,90 @@ If another app wants to display your custom content type, they must implement yo
 For more common content types, you can usually find a [standard](/chat-apps/content-types/content-types#standard-content-types) or [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content type to serve your needs.
 
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
+
+## Required codec methods
+
+When implementing a custom content type codec, you must implement these methods:
+
+### React Native SDK v5.1.0+ Requirements
+
+All content type codecs must implement a `shouldPush` method that returns a boolean indicating whether messages of this content type should trigger push notifications by default.
+
+```tsx [React Native v5.1.0+]
+import type { ContentCodec } from '@xmtp/react-native-sdk';
+
+class CustomContentCodec implements ContentCodec<CustomContent> {
+  contentType = {
+    authorityId: 'your.domain',
+    typeId: 'custom',
+    versionMajor: 1,
+    versionMinor: 0,
+  };
+
+  encode(content: CustomContent): EncodedContent {
+    // Your encoding logic
+  }
+
+  decode(encodedContent: EncodedContent): CustomContent {
+    // Your decoding logic
+  }
+
+  fallback(content: CustomContent): string | undefined {
+    // Return fallback text for unsupported clients
+    return `Custom content: ${content.description}`;
+  }
+
+  // NEW in v5.1.0+: Required shouldPush method
+  shouldPush(content: CustomContent): boolean {
+    // Return true if this content type should trigger push notifications
+    // Return false for silent content types like reactions, read receipts, etc.
+    return true; // Most content types should trigger notifications
+  }
+}
+```
+
+### shouldPush method guidelines
+
+- **Return `true`** for content types that users should be notified about (messages, attachments, replies, etc.)
+- **Return `false`** for silent content types (reactions, read receipts, typing indicators, etc.)
+- Consider user experience when deciding the default behavior
+- Apps can still override this behavior using the `shouldPush` parameter in send options
+
+### Examples by content type
+
+```tsx [shouldPush Examples]
+// Message content types - should notify
+shouldPush(content: TextContent): boolean {
+  return true;
+}
+
+shouldPush(content: AttachmentContent): boolean {
+  return true;
+}
+
+shouldPush(content: ReplyContent): boolean {
+  return true;
+}
+
+// Interactive content types - typically silent
+shouldPush(content: ReactionContent): boolean {
+  return false; // Reactions are usually silent
+}
+
+shouldPush(content: ReadReceiptContent): boolean {
+  return false; // Read receipts are always silent
+}
+
+shouldPush(content: TypingIndicatorContent): boolean {
+  return false; // Typing indicators are ephemeral
+}
+
+// Custom content - depends on use case
+shouldPush(content: GameMoveContent): boolean {
+  return true; // Game moves might be important
+}
+
+shouldPush(content: StatusUpdateContent): boolean {
+  return false; // Status updates might be silent
+}
+```

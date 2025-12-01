@@ -31,6 +31,22 @@ const group = await client.conversations.newGroup([
   recipientInboxId2,
 ]);
 await group.send('Hello everyone');
+
+// Send with custom options (v5.1.0+)
+await dm.send('Hello world', {
+  shouldPush: false, // Optional: control push notification behavior
+});
+
+// Send custom content type with options
+await group.send(reactionContent, {
+  contentType: new ContentTypeId({
+    authorityId: 'xmtp.org',
+    typeId: 'reaction',
+    versionMajor: 1,
+    versionMinor: 0,
+  }),
+  shouldPush: false, // Reactions typically don't trigger push notifications
+});
 ```
 
 ```kotlin [Kotlin]
@@ -54,6 +70,43 @@ try await group.send(content: "Hello everyone")
 ```
 
 :::
+
+## Control push notifications with shouldPush
+
+The `shouldPush` parameter in React Native SDK v5.1.0+ allows you to control whether sending a message triggers push notifications. This is useful for different content types that have different notification requirements.
+
+```tsx [React Native v5.1.0+]
+// Regular messages typically should trigger push notifications (default: true)
+await dm.send('Important update!', { shouldPush: true });
+
+// Reactions typically shouldn't trigger push notifications
+await group.send(reaction, {
+  contentType: reactionContentType,
+  shouldPush: false
+});
+
+// Read receipts should not trigger notifications
+await dm.send(readReceipt, {
+  contentType: readReceiptContentType,
+  shouldPush: false
+});
+
+// Use codec's default shouldPush behavior (recommended)
+await group.send('Hello!'); // Uses codec's shouldPush() method
+```
+
+### Default shouldPush behavior by content type
+
+Each content type codec defines its own default `shouldPush` behavior:
+
+- **Text messages**: `true` (trigger notifications)
+- **Attachments**: `true` (trigger notifications) 
+- **Replies**: `true` (trigger notifications)
+- **Reactions**: `false` (silent)
+- **Read receipts**: `false` (silent)
+- **Group updates**: `true` (trigger notifications)
+
+When you don't specify `shouldPush`, the SDK uses the content type's default behavior.
 
 ## Optimistically send messages
 
