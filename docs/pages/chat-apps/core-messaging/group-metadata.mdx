@@ -9,7 +9,7 @@ The following group chat metadata can be updated:
 - `group_name`: The name of the group chat
 - `description`: A description of the group chat
 - `image_url`: A URL pointing to an image for the group chat
-- `app_data`: Custom application-specific data for the group chat
+- `app_data`: Custom app-specific data for the group chat
 - `disappearing_message_settings`: Settings for disappearing messages in the group chat. To learn more about disappearing messages, see [Support disappearing messages](/chat-apps/core-messaging/send-messages#support-disappearing-messages)
 
 ## Get a group chat name
@@ -170,7 +170,7 @@ try await group.updateImageUrl(imageUrl: "newurl.com")
 
 ## Get group app data
 
-App data is custom application-specific data that can be stored with a group. This allows your app to store additional metadata or settings for groups.
+App data is custom app-specific data that can be stored with a group. This allows your app to store additional metadata or settings for groups.
 
 :::code-group
 
@@ -180,10 +180,6 @@ const appData = await group.appData();
 
 ```kotlin [Kotlin]
 val appData = group.appData
-```
-
-```swift [Swift]
-let appData = try group.appData()
 ```
 
 :::
