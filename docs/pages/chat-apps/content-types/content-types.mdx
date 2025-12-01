@@ -26,6 +26,46 @@ An app built with XMTP uses the `TextCodec` (plain text) standard content type b
 await conversation.send('gm');
 ```
 
+## Push notification behavior
+
+Starting with React Native SDK v5.1.0, all content codecs include a `shouldPush` method that determines whether a message should trigger a push notification. This allows for fine-grained control over which message types generate notifications.
+
+### Content type push behavior
+
+Different content types have different default push notification behaviors:
+
+- **Text messages**: Always trigger push notifications (`shouldPush: true`)
+- **Attachments**: Always trigger push notifications (`shouldPush: true`) 
+- **Replies**: Always trigger push notifications (`shouldPush: true`)
+- **Reactions**: Never trigger push notifications (`shouldPush: false`)
+- **Read receipts**: Never trigger push notifications (`shouldPush: false`)
+- **Group updates**: Always trigger push notifications (`shouldPush: true`)
+
+### Override push behavior
+
+You can override the default push behavior when sending messages using the `shouldPush` option:
+
+```tsx [React Native]
+// Send a text message without push notification
+await conversation.send('gm', {
+  shouldPush: false
+});
+
+// Send a reaction with push notification (overriding default)
+await conversation.send(
+  {
+    reference: messageId,
+    action: 'added',
+    content: '👍',
+    schema: 'unicode'
+  },
+  {
+    contentType: ContentTypes.Reaction,
+    shouldPush: true // Override default false for reactions
+  }
+);
+```
+
 ## Standards-track content types
 
 A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.

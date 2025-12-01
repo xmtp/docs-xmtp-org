@@ -8,16 +8,16 @@ All parameters are optional and can be combined to create precise filters and so
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `limit` | `Int` / `Long` / `bigint` | Maximum number of messages to return |
-| `beforeNs` / `sentBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages sent before this timestamp (nanoseconds) |
-| `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` | Filter messages sent after this timestamp (nanoseconds) |
-| `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
+| `limit` | `Int` / `Long` / `bigint` / `number` | Maximum number of messages to return |
+| `beforeNs` / `sentBeforeNs` | `Int64` / `Long` / `bigint` / `number` | Filter messages sent before this timestamp (nanoseconds) |
+| `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` / `number` | Filter messages sent after this timestamp (nanoseconds) |
+| `direction` | `SortDirection` / `string` | Sort order: `descending` / `'DESCENDING'` (default, newest first) or `ascending` / `'ASCENDING'` (oldest first) |
 | `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
-| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
-| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
-| `insertedBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database before this timestamp (nanoseconds) |
-| `insertedAfterNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database after this timestamp (nanoseconds) |
-| `sortBy` | `SortBy` / enum | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
+| `excludeContentTypes` / `excludedContentTypes` | Array of strings | Content types to exclude (e.g., `'xmtp.org/reaction:1.0'`, `'xmtp.org/readReceipt:1.0'`). **New in React Native v5.1.0** |
+| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. **New in React Native v5.1.0** |
+| `insertedBeforeNs` | `Int64` / `Long` / `bigint` / `number` | Filter messages inserted into the local database before this timestamp (nanoseconds) |
+| `insertedAfterNs` | `Int64` / `Long` / `bigint` / `number` | Filter messages inserted into the local database after this timestamp (nanoseconds) |
+| `sortBy` | `SortBy` / enum / `string` | Sort by `SENT_TIME` / `'SENT_TIME'` (default, when message was sent) or `INSERTED_TIME` / `'INSERTED_TIME'` (when message was added to local database) |
 
 ## List messages with enriched metadata
 
@@ -179,9 +179,21 @@ const newMessages = await group.messages({
   afterNs: lastCheckTimestamp,
 });
 
+// Get messages with advanced filtering
+const filteredMessages = await group.messages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  direction: 'ASCENDING',
+  excludeContentTypes: ['xmtp.org/reaction:1.0'], // Exclude reactions
+  excludeSenderInboxIds: ['inbox-id-to-exclude'], // Exclude messages from specific senders
+});
+
 // Get messages from a DM conversation
 const dm = await client.conversations.findOrCreateDm(recipientInboxId);
-const dmMessages = await dm.messages({ limit: 50 });
+const dmMessages = await dm.messages({ 
+  limit: 50,
+  excludeContentTypes: ['xmtp.org/readReceipt:1.0'], // Exclude read receipts
+});
 ```
 
 ```kotlin [Kotlin]
@@ -376,13 +388,30 @@ const count = await group.countMessages({
 ```
 
 ```tsx [React Native]
-// Using messages()
+// Using messages() with comprehensive filtering
 const messages = await group.messages({
+  limit: 100,
   afterNs: 1738620126404999936, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
-  excludeContentTypes: ['reaction'], // Exclude content types
-  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+  direction: 'DESCENDING', // Sort order
+  excludeContentTypes: [
+    'xmtp.org/reaction:1.0',
+    'xmtp.org/readReceipt:1.0'
+  ], // Exclude content types
+  excludeSenderInboxIds: ['inbox_id_1', 'inbox_id_2'], // Exclude senders
 });
+
+// Get text messages only (exclude all other content types)
+const textOnlyMessages = await group.messages({
+  excludeContentTypes: [
+    'xmtp.org/reaction:1.0',
+    'xmtp.org/reaction:2.0',
+    'xmtp.org/reply:1.0',
+    'xmtp.org/attachment:1.0',
+    'xmtp.org/remoteStaticAttachment:1.0',
+    'xmtp.org/readReceipt:1.0',
+  ],
+});
+
 // React Native does not yet include countMessages()
 ```
 

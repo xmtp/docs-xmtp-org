@@ -40,16 +40,27 @@ const allDms = await client.conversations.listDms({
 
 ```tsx [React Native]
 // List Conversation items
-await alix.conversations.list(['allowed']);
+await client.conversations.list(['allowed']);
 
 // List only active conversations (simplified usage)
-const alixConvoCount1 = await alix.conversations.list({
+const activeConversations = await client.conversations.list({
   isActive: true, // Only show active conversations
 });
 
-// List Conversation items and return only the fields set to true. Optimize data transfer
-// by requesting only the fields the app needs.
-await alix.conversations.list({
+// List conversations with advanced filtering
+const filteredConversations = await client.conversations.list(
+  { isActive: true }, // opts
+  10, // limit
+  ['allowed'], // consentStates
+  Date.now() * 1000000 - 86400000000000, // createdAfterNs (24 hours ago)
+  undefined, // createdBeforeNs
+  Date.now() * 1000000 - 3600000000000, // lastActivityAfterNs (1 hour ago)
+  undefined, // lastActivityBeforeNs
+  'last_activity' // orderBy
+);
+
+// List conversations and return only specific fields to optimize data transfer
+await client.conversations.list({
   members: false,
   consentState: false,
   description: false,
@@ -100,11 +111,56 @@ The `isActive()` method determines whether the current user is still an active m
 
 You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
 
+## Filter conversations with advanced options
+
+The React Native SDK provides advanced filtering options for listing conversations. These parameters allow precise control over which conversations are returned:
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `opts` | `ConversationOptions` | Configure which fields to include/exclude in the response |
+| `limit` | `number` | Maximum number of conversations to return |
+| `consentStates` | `ConsentState[]` | Filter by consent states (`['allowed']`, `['denied']`, etc.) |
+| `createdAfterNs` | `number` | Filter conversations created after this timestamp (nanoseconds) |
+| `createdBeforeNs` | `number` | Filter conversations created before this timestamp (nanoseconds) |
+| `lastActivityAfterNs` | `number` | Filter conversations with activity after this timestamp (nanoseconds) |
+| `lastActivityBeforeNs` | `number` | Filter conversations with activity before this timestamp (nanoseconds) |
+| `orderBy` | `'created_at' \| 'last_activity'` | Order results by creation time or last activity (default: `'last_activity'`) |
+
+:::code-group
+
+```tsx [React Native]
+// Filter conversations created in the last 7 days with recent activity
+const recentConversations = await client.conversations.list(
+  { isActive: true },
+  50, // limit
+  ['allowed'], // only allowed conversations
+  Date.now() * 1000000 - 604800000000000, // createdAfterNs (7 days ago)
+  undefined, // createdBeforeNs
+  Date.now() * 1000000 - 86400000000000, // lastActivityAfterNs (24 hours ago)
+  undefined, // lastActivityBeforeNs
+  'last_activity' // orderBy
+);
+
+// Get conversations created in a specific time range
+const conversationsInRange = await client.conversations.list(
+  {},
+  100,
+  ['allowed'],
+  startTimeNs, // createdAfterNs
+  endTimeNs,   // createdBeforeNs
+  undefined,
+  undefined,
+  'created_at'
+);
+```
+
+:::
+
 ## Paginate the conversation list
 
-You can paginate the conversation list by using the `limit` parameter and either the `createdAtNs` or `lastActivityNs` parameters.
+You can paginate the conversation list by using the `limit` parameter and either the `createdAfterNs`/`createdBeforeNs` or `lastActivityAfterNs`/`lastActivityBeforeNs` parameters.
 
-By default, the conversation will be sorted by last activity (either when the last message was sent, or the group's creation time if no messages are found) in descending order.
+By default, conversations are sorted by last activity (either when the last message was sent, or the group's creation time if no messages are found) in descending order. You can change this behavior using the `orderBy` parameter.
 
 ### Paginate by `createdAt`
 
@@ -135,6 +191,7 @@ const secondPage = await client.conversations.list({
 ```
 
 ```ts [React Native]
+// First page - get 10 most recently created conversations
 const firstPage = await client.conversations.list(
   {},
   10,        // limit
@@ -145,15 +202,17 @@ const firstPage = await client.conversations.list(
   undefined, // lastActivityBeforeNs
   'created_at' // orderBy
 );
+
+// Second page - get next 10 conversations created before the last one from first page
 const secondPage = await client.conversations.list(
   {},
-  10,
-  undefined,
-  undefined,
+  10,        // limit
+  undefined, // consentStates
+  undefined, // createdAfterNs
   firstPage[firstPage.length - 1].createdAtNs, // createdBeforeNs
-  undefined,
-  undefined,
-  'created_at'
+  undefined, // lastActivityAfterNs
+  undefined, // lastActivityBeforeNs
+  'created_at' // orderBy
 );
 ```
 
@@ -207,18 +266,22 @@ const secondPage = await client.conversations.list({
 ```
 
 ```ts [React Native]
+// First page - get 10 conversations with most recent activity
 const firstPage = await client.conversations.list(
   {},
   10 // limit
 );
+
+// Second page - get next 10 conversations with activity before the last one from first page
 const secondPage = await client.conversations.list(
   {},
-  10,
-  undefined,
-  undefined,
-  undefined,
-  undefined,
-  firstPage[firstPage.length - 1].lastActivityNs // lastActivityBeforeNs
+  10,        // limit
+  undefined, // consentStates
+  undefined, // createdAfterNs
+  undefined, // createdBeforeNs
+  undefined, // lastActivityAfterNs
+  firstPage[firstPage.length - 1].lastActivityNs, // lastActivityBeforeNs
+  undefined  // orderBy (defaults to last_activity)
 );
 ```
 

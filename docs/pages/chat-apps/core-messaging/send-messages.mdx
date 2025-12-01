@@ -25,12 +25,26 @@ await group.send('Hello everyone');
 const dm = await client.conversations.findOrCreateDm(recipientInboxId);
 await dm.send('Hello world');
 
+// Send a message with custom push notification setting
+await dm.send('Silent message', {
+  shouldPush: false // Don't trigger push notification
+});
+
 // OR for a group chat
 const group = await client.conversations.newGroup([
   recipientInboxId1,
   recipientInboxId2,
 ]);
 await group.send('Hello everyone');
+
+// Send with custom content type and push setting
+await group.send(
+  { text: 'Custom content' },
+  {
+    contentType: CustomContentType,
+    shouldPush: true // Force push notification
+  }
+);
 ```
 
 ```kotlin [Kotlin]
@@ -54,6 +68,46 @@ try await group.send(content: "Hello everyone")
 ```
 
 :::
+
+## Control push notifications (React Native v5.1.0+)
+
+In React Native SDK v5.1.0 and later, you can control whether a message triggers a push notification using the `shouldPush` option. This is useful for:
+
+- Sending silent messages (like typing indicators)
+- Overriding default push behavior for specific content types
+- Implementing custom notification logic
+
+### Default push behavior by content type
+
+- **Text messages, attachments, replies**: Trigger push notifications
+- **Reactions, read receipts**: Do not trigger push notifications  
+- **Group updates**: Trigger push notifications
+
+### Examples
+
+```tsx [React Native]
+// Send a silent text message
+await conversation.send('This won\'t send a push notification', {
+  shouldPush: false
+});
+
+// Force a push notification for a reaction (override default)
+await conversation.send(
+  {
+    reference: messageId,
+    action: 'added',
+    content: '👍',
+    schema: 'unicode'
+  },
+  {
+    contentType: ContentTypes.Reaction,
+    shouldPush: true // Override default false for reactions
+  }
+);
+
+// Use default push behavior (determined by content type)
+await conversation.send('Regular message'); // Will push
+```
 
 ## Optimistically send messages
 

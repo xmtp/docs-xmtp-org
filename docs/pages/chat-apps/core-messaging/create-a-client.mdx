@@ -135,9 +135,23 @@ const client = await Client.create(
 ```
 
 ```tsx [React Native]
-Client.create(signer, {
+// Basic client creation
+const client = await Client.create(signer, {
   env: 'production', // 'local' | 'dev' | 'production'
   dbEncryptionKey: keyBytes, // 32 bytes
+});
+
+// Client with advanced options
+const advancedClient = await Client.create(signer, {
+  env: 'production',
+  dbEncryptionKey: keyBytes,
+  appVersion: 'MyApp/1.0',
+  gatewayHost: 'custom-gateway.example.com',
+  forkRecoveryOptions: {
+    enableRecoveryRequests: 'all',
+    disableRecoveryResponses: false,
+    workerIntervalNs: 1000000000, // 1 second
+  },
 });
 ```
 
@@ -408,9 +422,47 @@ type ClientOptions = {
    */
   customLocalHost?: string;
   /**
+   * OPTIONAL specify the gateway host
+   */
+  gatewayHost?: string;
+  /**
+   * OPTIONAL specify fork recovery options for handling group forks
+   */
+  forkRecoveryOptions?: ForkRecoveryOptions;
+  /**
    * Allow configuring codecs for additional content types
    */
   codecs?: ContentCodec[];
+};
+
+/**
+ * Fork recovery policy for handling group forks
+ */
+type ForkRecoveryPolicy = 'none' | 'all' | 'groups';
+
+/**
+ * Configuration options for fork recovery
+ */
+type ForkRecoveryOptions = {
+  /**
+   * Policy for enabling recovery requests
+   * - 'none': No recovery requests
+   * - 'all': Recovery for all groups
+   * - 'groups': Recovery only for allowlisted groups
+   */
+  enableRecoveryRequests?: ForkRecoveryPolicy;
+  /**
+   * List of group IDs to request recovery for (when enableRecoveryRequests is 'groups')
+   */
+  groupsToRequestRecovery?: string[];
+  /**
+   * Whether to disable recovery responses
+   */
+  disableRecoveryResponses?: boolean;
+  /**
+   * Worker interval in nanoseconds (will be converted to ULong on Android, UInt64 on iOS)
+   */
+  workerIntervalNs?: number;
 };
 ```
 
@@ -565,9 +617,20 @@ const client = await Client.build(identifier, options);
 ```
 
 ```tsx [React Native]
-Client.build(identity, {
+// Basic client build
+const client = await Client.build(identity, {
   env: 'production', // 'local' | 'dev' | 'production'
   dbEncryptionKey: keyBytes, // 32 bytes
+});
+
+// Client build with advanced options
+const advancedClient = await Client.build(identity, {
+  env: 'production',
+  dbEncryptionKey: keyBytes,
+  forkRecoveryOptions: {
+    enableRecoveryRequests: 'groups',
+    groupsToRequestRecovery: ['group-id-1', 'group-id-2'],
+  },
 });
 ```
 

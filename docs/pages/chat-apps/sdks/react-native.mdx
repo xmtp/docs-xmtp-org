@@ -27,7 +27,7 @@ export function convertEOAToSigner(eoaAccount: EOAAccount): Signer {
 }
 
 // 2. Create the XMTP client
-const client = Client.create(signer, {
+const client = await Client.create(signer, {
   env: 'production',
   dbEncryptionKey: keyBytes, // 32 bytes
 });
@@ -49,9 +49,25 @@ const dm = await client.conversations.findOrCreateDm(recipientInboxId);
 await dm.send('Hello world');
 await group.send('Hello everyone');
 
+// Send with push notification control (v5.1.0+)
+await dm.send('Silent message', { shouldPush: false });
+
 // 5. List, stream, and sync
-// List existing conversations
+// List existing conversations with advanced filtering (v5.1.0+)
 await client.conversations.list(['allowed']);
+
+// List with time-based filtering
+const recentConversations = await client.conversations.list(
+  { isActive: true },
+  10, // limit
+  ['allowed'], // consentStates
+  Date.now() * 1000000 - 86400000000000, // createdAfterNs (24 hours ago)
+  undefined, // createdBeforeNs
+  undefined, // lastActivityAfterNs
+  undefined, // lastActivityBeforeNs
+  'last_activity' // orderBy
+);
+
 // Stream new messages
 await client.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
@@ -59,6 +75,7 @@ await client.conversations.streamAllMessages(
   },
   { consentState: ['allowed'] }
 );
+
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations
 await client.conversations.syncAllConversations(['allowed']);

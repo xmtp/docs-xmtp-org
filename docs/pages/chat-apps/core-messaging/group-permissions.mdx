@@ -363,9 +363,20 @@ A member can remove themselves from a group by calling `leaveGroup()`. After lea
 
 A member who is the super admin of the group cannot leave the group. By default, the group creator is a super admin.
 
+**Note:** The `leaveGroup()` method is available in React Native SDK v5.1.0 and later.
+
 :::code-group
 
+```js [Browser]
+// Not available in Browser SDK yet
+```
+
+```js [Node]
+// Not available in Node SDK yet
+```
+
 ```tsx [React Native]
+// Leave the group
 await group.leaveGroup();
 
 // Sync to update group state
@@ -373,6 +384,14 @@ await group.sync();
 
 // Verify the group is now inactive
 const isActive = await group.isActive(); // Returns false
+
+// The group will no longer appear in active conversation lists
+const activeGroups = await client.conversations.listGroups(
+  { isActive: true },
+  undefined,
+  ['allowed']
+);
+// This group will not be included in activeGroups
 ```
 
 ```kotlin [Kotlin]
