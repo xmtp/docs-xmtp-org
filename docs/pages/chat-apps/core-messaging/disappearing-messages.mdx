@@ -234,6 +234,12 @@ To learn more about the background worker, see [disappearing_messages.rs](https:
 
 Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
 
+## Exclude from archive-based backups
+
+You can exclude disappearing messages from archive-based backups. 
+
+To learn more, see [Support archive-based backups](/chat-apps/list-stream-sync/archive-backups).
+
 ## Receive a disappearing message
 
 On the receiving side, your app doesn't need to check expiration conditions manually. Receive and process messages as usual, and the background worker handles message expiration cleanup.
