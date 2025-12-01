@@ -26,9 +26,3 @@ However, the following actions will have an estimated ~500ms slowdown:
 ### Will existing local databases persist after updating my SDK?
 
 Local databases will be fully migrated. No messages will be lost during the transition.
-
-### Can I update my app or agent to use the new SDK version starting on November 15, or do I need to wait until December 9?
-
-Yes, you can use the new SDK version starting on November 15. The SDK versions released on November 15 will work in backward compatibility mode with the centralized network. Once you upgrade and have your [Gateway Service](/fund-agents-apps/run-gateway) properly set up, the transition on December 9 will happen automatically.
-
-On December 9, the centralized network will start returning a special error code that tells clients to switch over to the decentralized network. If you're already using the November 15 SDK version, this switch will happen automatically without requiring any action on your part.
