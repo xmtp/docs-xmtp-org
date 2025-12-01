@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 01:00 AM UTC / November 27, 2025
+Generated at 08:26 PM UTC / December 01, 2025
 
 ## About this file
 
@@ -1156,13 +1156,17 @@ For example, with DM stitching, instead of seeing two separate DM conversations 
 
 DM stitching provides a unified UX in the app. However, the multiple DM conversations under the hood must still be addressed for push notifications.
 
-Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation. However, we must remember that they have two different conversation IDs, and thus two different topics.
+Let's take DM conversations alix-bo-1 and alix-bo-3 between `alix.id` and `bo.id`. With DM stitching, these two conversations display as one conversation.
 
-Therefore, when subscribing a DM conversations to push notifications, you should subscribe to a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
+- They have two different conversation IDs, and thus two different topics.
 
-For example, you must consider that with DM stitching, the conversation is moving from alix-bo-1 and alix-bo-3, for example, and [resubscribe appropriately](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys).
+- When subscribing a DM conversation to push notifications, you should subscribe with a list of topics because every DM conversation can potentially have multiple topics. You will miss push notifications for messages if you are not listening to every potential topic for a DM conversation that messages could potentially be sent on.
 
-Also, you must consider that a welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.
+- While a DM conversation can have multiple topics, each individual message is sent to only one topic. This means you will receive only one push notification per message, not multiple notifications for the same message. Subscribing to all topics just ensures you don't miss a message, regardless of which topic it's sent on.
+
+- A welcome message will be sent when a DM conversation is added to the stitched DMs, and you should not send a push for the welcome message because the user already has a conversation with the person. It is just a different DM conversation in the set of DM conversations that are stitched together. These welcome messages are filtered out of streams, but they are not filtered out for the XMTP push notification server, so you must handle these duplicate DM welcomes at the push notification service.
+
+- The conversation is moving from alix-bo-1 and alix-bo-3, for example, and you should [resubscribe appropriately](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys).
 
 
 ## chat-apps/list-stream-sync/archive-backups.md
@@ -11714,12 +11718,6 @@ However, the following actions will have an estimated ~500ms slowdown:
 ### Will existing local databases persist after updating my SDK?
 
 Local databases will be fully migrated. No messages will be lost during the transition.
-
-### Can I update my app or agent to use the new SDK version starting on November 15, or do I need to wait until December 9?
-
-Yes, you can use the new SDK version starting on November 15. The SDK versions released on November 15 will work in backward compatibility mode with the centralized network. Once you upgrade and have your [Gateway Service](/fund-agents-apps/run-gateway) properly set up, the transition on December 9 will happen automatically.
-
-On December 9, the centralized network will start returning a special error code that tells clients to switch over to the decentralized network. If you're already using the November 15 SDK version, this switch will happen automatically without requiring any action on your part.
 
 
 # Summary
