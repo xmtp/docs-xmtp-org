@@ -70,6 +70,8 @@ With XMTP, reactions are represented as objects with the following keys:
 
 - `reference`: ID of the message being reacted to
 
+- `referenceInboxId`: (Optional) Inbox ID of the sender of the message being reacted to. This helps with message attribution in group conversations.
+
 - `action`: Action of the reaction (added or removed)
 
 - `content`: String representation of the reaction (smile, for example) to be interpreted by clients
@@ -95,6 +97,7 @@ await conversation.send(reaction, {
 const reactionContent = {
   reaction: {
     reference: messageId, // ID of the message you're reacting to
+    referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
     action: 'added', // Action can be 'added' or 'removed'
     schema: 'unicode', // Schema can be 'unicode', 'shortcode', or 'custom'
     content: '👍', // Content of the reaction

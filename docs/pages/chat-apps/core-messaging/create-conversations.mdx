@@ -112,6 +112,7 @@ const group = await alix.conversations.newGroup([bo.inboxId, caro.inboxId], {
   imageUrl: 'www.groupImage.com',
   description: 'The description of the group',
   permissionLevel: 'admin_only', // 'all_members' | 'admin_only'
+  appData: JSON.stringify({ theme: 'dark', version: '1.0' }), // Custom app data
 });
 ```
 

@@ -41,6 +41,7 @@ const groupWithMeta = await client.conversations.newGroup(
     imageUrl: 'www.groupImage.com',
     description: 'The description of the group',
     permissionLevel: 'admin_only',
+    appData: JSON.stringify({ theme: 'dark' }), // Custom app data
   }
 );
 
