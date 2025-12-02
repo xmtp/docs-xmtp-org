@@ -303,6 +303,9 @@ export const sidebarConfig = {
           text: "Roadmap",
           link: "https://github.com/orgs/xmtp/projects/34/views/1",
         },
+        { text: 'Join the XMTP Switchboard group',
+          link: 'https://forms.gle/hesZ55WGMjJnZ7sQA',
+        },
       ],
     },
     {
