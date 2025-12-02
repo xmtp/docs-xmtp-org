@@ -84,7 +84,7 @@ export default defineConfig({
     },
     { text: 'Protocol', link: '/protocol/overview' },
     { text: 'Network', link: '/network/run-a-node' },
-    { text: 'Join XMTP Switchboard', link: 'https://forms.gle/hesZ55WGMjJnZ7sQA' },
+    { text: 'Join XMTP dev community', link: 'https://forms.gle/hesZ55WGMjJnZ7sQA' },
   ],
   ogImageUrl: {
     '/': '/xmtp-og-card.jpeg',
