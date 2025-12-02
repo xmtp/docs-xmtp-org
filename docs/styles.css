@@ -27,6 +27,78 @@ small + ul.TabbedList {
 
 /* Custom Homepage text styles */
 
+/* Plug icon styling for tiles */
+.plug-icon-light-mode,
+.plug-icon-dark-mode {
+  display: inline-block;
+  width: 1.75em;
+  height: 1.75em;
+  vertical-align: middle;
+  margin-right: -0.3em;
+  margin-left: -0.4em;
+  transform: translateY(-0.125em);
+}
+
+/* Light mode - show indigo plug */
+.plug-icon-light-mode {
+  display: inline-block;
+}
+
+.plug-icon-dark-mode {
+  display: none;
+}
+
+/* Dark mode - show lighter indigo plug */
+.dark .plug-icon-light-mode {
+  display: none;
+}
+
+.dark .plug-icon-dark-mode {
+  display: inline-block;
+}
+
+/* Switchboard tile glow animation */
+@keyframes subtleGlow {
+  0% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(79, 70, 229, 0.4), 0 0 15px rgba(79, 70, 229, 0.3), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+}
+
+@keyframes subtleGlowDark {
+  0% {
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(165, 180, 252, 0.3), 0 0 15px rgba(165, 180, 252, 0.2), 0 1px 3px rgba(255, 255, 255, 0.05);
+  }
+  100% {
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+  }
+}
+
+.switchboard-tile-wrapper {
+  display: contents;
+}
+
+.switchboard-tile-wrapper .custom-homepage-tile {
+  animation: subtleGlow 3.5s ease-in-out 0.5s 1;
+}
+
+.dark .switchboard-tile-wrapper .custom-homepage-tile {
+  animation: subtleGlowDark 3.5s ease-in-out 0.5s 1;
+}
+
+/* Hide external link icon on Switchboard tile */
+.switchboard-tile-wrapper .custom-homepage-tile-external-icon {
+  display: none;
+}
+
 /* Override Vocs layout containers for landing page - exclude top nav */
 html body[data-layout="landing"] .vocs_Content,
 html body[data-layout="landing"] article,
