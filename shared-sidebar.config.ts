@@ -23,6 +23,9 @@ export const sidebarConfig = {
           text: "Cursor rules",
           link: "https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc",
         },
+        { text: 'Join the XMTP Switchboard group',
+          link: 'https://forms.gle/hesZ55WGMjJnZ7sQA',
+        },
       ],
     },
     {
