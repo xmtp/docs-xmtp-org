@@ -34,7 +34,9 @@ small + ul.TabbedList {
   width: 1.75em;
   height: 1.75em;
   vertical-align: middle;
-  margin-right: 0.05em;
+  margin-right: -0.3em;
+  margin-left: -0.4em;
+  transform: translateY(-0.125em);
 }
 
 /* Light mode - show indigo plug */
