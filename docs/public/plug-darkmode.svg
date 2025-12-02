@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="#A5B4FC" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+
+  <!-- Plug body (within the compressed, nearly 1:1 footprint) -->
+  <rect x="9" y="13" width="14" height="8" rx="3" />
+
+  <!-- Prongs -->
+  <path d="M13 9v3M19 9v3" />
+
+  <!-- Cord with +1 added length -->
+  <path d="M16 22v2" />
+</svg>
