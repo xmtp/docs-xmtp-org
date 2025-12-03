@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 04:43 PM UTC / December 03, 2025
+Generated at 05:16 PM UTC / December 03, 2025
 
 ## About this file
 
@@ -2146,6 +2146,8 @@ With XMTP, reactions are represented as objects with the following keys:
 
 - `reference`: ID of the message being reacted to
 
+- `referenceInboxId`: (Optional) Inbox ID of the sender of the message being reacted to. This helps with message attribution in group conversations.
+
 - `action`: Action of the reaction (added or removed)
 
 - `content`: String representation of the reaction (smile, for example) to be interpreted by clients
@@ -2153,7 +2155,22 @@ With XMTP, reactions are represented as objects with the following keys:
 - `schema`: Schema of the reaction (Unicode, shortcode, or custom)
 
 ```tsx [Node]
+// Simple
 await ctx.sendReaction('❤️');
+
+// With all fields
+import { ContentTypeReaction, type Reaction } from '@xmtp/content-type-reaction';
+
+await ctx.conversation.send(
+  {
+    reference: ctx.message.id,
+    referenceInboxId: ctx.message.senderInboxId, // Optional: Inbox ID of the message sender
+    action: 'added',
+    content: '❤️',
+    schema: 'unicode',
+  } as Reaction,
+  ContentTypeReaction,
+);
 ```
 
 ## Receive a reaction
