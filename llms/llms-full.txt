@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 08:26 PM UTC / December 01, 2025
+Generated at 04:43 PM UTC / December 03, 2025
 
 ## About this file
 
@@ -7016,14 +7016,14 @@ The SCW signer has the same 3 required properties as the EOA signer, but also re
 
 Here is a list of supported chain IDs:
 
-- chain_rpc_1 = string
-- chain_rpc_8453 = string
-- chain_rpc_42161 = string
-- chain_rpc_10 = string
-- chain_rpc_137 = string
-- chain_rpc_324 = string
-- chain_rpc_59144 = string
-- chain_rpc_480 = string
+- chain_rpc_1 = Ethereum Mainnet
+- chain_rpc_10 = Optimism
+- chain_rpc_137 = Polygon (formerly Matic)
+- chain_rpc_324 = zkSync Era
+- chain_rpc_480 = World Chain
+- chain_rpc_8453 = Base
+- chain_rpc_42161 = Arbitrum One
+- chain_rpc_59144 = Linea
 
 Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54).
 
