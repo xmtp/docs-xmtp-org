@@ -118,3 +118,40 @@ val envelope = getEnvelopeFromXMTP()
 
 val decodedMessage = conversation.decode(envelope)
 ```
+
+## Debug notification issues with multi-process logging
+
+When debugging notification-related issues, it's helpful to enable separate log files for your notification extension process. This prevents log file conflicts with your main app and makes it easier to trace issues that occur specifically in the notification service.
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.ProcessType
+import org.xmtp.android.library.Client
+
+class MyNotificationService : FirebaseMessagingService() {
+
+    override fun onCreate() {
+        super.onCreate()
+
+        // Enable logging for the notification extension process
+        Client.enterDebugWriter(
+            directory = File(filesDir, "xmtp_logs").absolutePath,
+            logLevel = FfiLogLevel.DEBUG,
+            rotation = FfiLogRotation.HOURLY,
+            maxFiles = 5u,
+            processType = ProcessType.NOTIFICATION_EXTENSION
+        )
+    }
+
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        // Your notification handling code
+        // Logs will be written to separate files with 'notif' in the filename
+    }
+}
+```
+
+Log files from your notification extension will have a distinct naming pattern:
+
+- Notification logs: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+- Main app logs: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+
+To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug-your-app#file-logging).
