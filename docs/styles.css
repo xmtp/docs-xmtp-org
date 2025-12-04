@@ -456,6 +456,11 @@ li ol ~ p {
   width: 100%;
 }
 
+.custom-homepage-sdk-grid--centered {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+  justify-content: center;
+}
+
 @media (max-width: 768px) {
   .custom-homepage-sdk-grid {
     grid-template-columns: repeat(2, 1fr);
