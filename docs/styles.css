@@ -578,6 +578,16 @@ li ol ~ p {
   color: inherit;
 }
 
+.custom-homepage-section-title:has(+ p) {
+  margin-bottom: 0.5rem;
+}
+
+.custom-homepage-section-title + p {
+  margin-top: 0;
+  text-align: center;
+  color: var(--vocs-color-text-secondary);
+}
+
 /* For smaller screens */
 @media (max-width: 768px) {
   .custom-homepage-section-title {
