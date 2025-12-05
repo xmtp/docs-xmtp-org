@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 05:16 PM UTC / December 03, 2025
+Generated at 07:27 PM UTC / December 05, 2025
 
 ## About this file
 
@@ -29,12 +29,12 @@ import { Agent } from '@xmtp/agent-sdk';
 import { createSigner, createUser } from '@xmtp/agent-sdk/user';
 
 // Replace with your own wallet key and encryption key
-const walletKey = "0xprivateKey";
-const db_encryptionKey = "0xencryptionKey";
+const walletKey = '0xprivateKey';
+const db_encryptionKey = '0xencryptionKey';
 
 // Option 1: Create a local user + signer
 const user = createUser(walletKey);
-const dbEncryptionKey = Buffer.from(db_encryptionKey).toString("hex")
+const dbEncryptionKey = Buffer.from(db_encryptionKey).toString('hex');
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
@@ -69,7 +69,7 @@ console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
 ```
 
-Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
+Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
 
 ```bash
 yarn gen:keys
@@ -2159,7 +2159,10 @@ With XMTP, reactions are represented as objects with the following keys:
 await ctx.sendReaction('❤️');
 
 // With all fields
-import { ContentTypeReaction, type Reaction } from '@xmtp/content-type-reaction';
+import {
+  ContentTypeReaction,
+  type Reaction,
+} from '@xmtp/content-type-reaction';
 
 await ctx.conversation.send(
   {
@@ -2169,7 +2172,7 @@ await ctx.conversation.send(
     content: '❤️',
     schema: 'unicode',
   } as Reaction,
-  ContentTypeReaction,
+  ContentTypeReaction
 );
 ```
 
@@ -2334,7 +2337,10 @@ Once you have a transaction reference, you can send it as part of your conversat
 ```js [Node]
 import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
 
-await ctx.conversation.send(transactionReference, ContentTypeTransactionReference);
+await ctx.conversation.send(
+  transactionReference,
+  ContentTypeTransactionReference
+);
 ```
 
 ## Receive a transaction reference
@@ -3165,8 +3171,8 @@ The following table lists the nodes currently registered to power the XMTP testn
 | 6   | Laminated Labs              | xmtp.validators.laminatedlabs.net:443         |
 | 7   | Next.id                     | xmtp.nextnext.id:443                          |
 | 8   | Nodle                       | xmtpd.nodleprotocol.io:443                    |
-| 9   | Ephemera                    | grpc.testnet.xmtp.network:443                 |
-| 10  | Ephemera                    | grpc2.testnet.xmtp.network:443                |
+| 9   | XMTP Labs                   | grpc.testnet.xmtp.network:443                 |
+| 10  | XMTP Labs                   | grpc2.testnet.xmtp.network:443                |
 
 Here is a map of node locations:
 
@@ -3220,7 +3226,7 @@ To follow and provide feedback on the engineering work covered in this FAQ, see 
 
 A testnet of the decentralized XMTP network was launched in early December 2024.
 
-All of the nodes in the `dev` and `production` XMTP network environments are still operated by [Ephemera](https://ephemerahq.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+All of the nodes in the `dev` and `production` XMTP network environments are still operated by [XMTP Labs](https://xmtplabs.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
 
 These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
 
@@ -3410,7 +3416,7 @@ Use this guide to learn how to use the XMTP Funding Portal to fund an app or age
 
 Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP App Chain gas payments, and all blockchain interactions.
 
-[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
+[XMTP Labs](https://xmtplabs.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
 
 The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
 
@@ -3707,26 +3713,26 @@ With Mainnet launch, all message traffic will be automatically routed from the c
 
 Once a milestone is delivered, you can proceed with required and recommended actions.
 
-**Milestone**|**Delivered?**|**Action**
-:-----|:-----|:-----
-Payer wallets can be funded on Testnet|🟢|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)
-XMTP Gateway Service library is available in Go|🟢|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
-Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)
-|  |🔴 iOS|
-|  |🔴 Android|
-|  |🔴 React Native|
-|  |🔴 Browser|
-|  |🔴 Node|
-|  |🔴 Agent|
-Client SDKs are compatible with Mainnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)
-|  |🔴 iOS|
-|  |🔴 Android|
-|  |🔴 React Native|
-|  |🔴 Browser|
-|  |🔴 Node|
-|  |🔴 Agent|
-Payer wallets can be funded on Mainnet|🔴|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)
-All message traffic routed through Mainnet|🔴|Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required)
+| **Milestone**                                   | **Delivered?**  | **Action**                                                                                   |
+| :---------------------------------------------- | :-------------- | :------------------------------------------------------------------------------------------- |
+| Payer wallets can be funded on Testnet          | 🟢              | [Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)           |
+| XMTP Gateway Service library is available in Go | 🟢              | [Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)   |
+| Client SDKs are compatible with Testnet         |                 | [Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)   |
+|                                                 | 🔴 iOS          |                                                                                              |
+|                                                 | 🔴 Android      |                                                                                              |
+|                                                 | 🔴 React Native |                                                                                              |
+|                                                 | 🔴 Browser      |                                                                                              |
+|                                                 | 🔴 Node         |                                                                                              |
+|                                                 | 🔴 Agent        |                                                                                              |
+| Client SDKs are compatible with Mainnet         |                 | [Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)      |
+|                                                 | 🔴 iOS          |                                                                                              |
+|                                                 | 🔴 Android      |                                                                                              |
+|                                                 | 🔴 React Native |                                                                                              |
+|                                                 | 🔴 Browser      |                                                                                              |
+|                                                 | 🔴 Node         |                                                                                              |
+|                                                 | 🔴 Agent        |                                                                                              |
+| Payer wallets can be funded on Mainnet          | 🔴              | [Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)              |
+| All message traffic routed through Mainnet      | 🔴              | Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required) |
 
 
 ## fund-agents-apps/glossary.md
