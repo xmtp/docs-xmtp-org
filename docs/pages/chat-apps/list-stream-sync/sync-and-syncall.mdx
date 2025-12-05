@@ -99,7 +99,9 @@ await client.conversations.syncAll(['allowed']);
 
 ```tsx [React Native]
 // Returns a summary object with sync statistics
-const syncSummary = await client.conversations.syncAllConversations(['allowed']);
+const syncSummary = await client.conversations.syncAllConversations([
+  'allowed',
+]);
 // syncSummary.numEligible - Total number of conversations eligible for syncing
 // syncSummary.numSynced - Number of conversations that were actually synced
 ```

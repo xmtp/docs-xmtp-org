@@ -280,9 +280,9 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
-const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
-  identifier: "0xpeerAddress", 
-  identifierKind: "Ethereum" 
+const dmByIdentifier = await client.conversations.getDmByIdentifier({
+  identifier: '0xpeerAddress',
+  identifierKind: 'Ethereum',
 });
 ```
 
@@ -298,9 +298,9 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
-const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
-  identifier: "0xpeerAddress", 
-  identifierKind: IdentifierKind.Ethereum 
+const dmByIdentifier = await client.conversations.getDmByIdentifier({
+  identifier: '0xpeerAddress',
+  identifierKind: IdentifierKind.Ethereum,
 });
 ```
 
