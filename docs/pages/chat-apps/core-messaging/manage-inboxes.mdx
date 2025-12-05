@@ -290,7 +290,8 @@ await Client.revokeInstallations(
   signer,
   inboxId,
   toRevokeInstallationBytes,
-  'production' // optional, defaults to "dev"
+  'production', // optional, defaults to "dev"
+  'https://grpc.production.xmtp.network:443' // optional gatewayHost
 );
 ```
 
