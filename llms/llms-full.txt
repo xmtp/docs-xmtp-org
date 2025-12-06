@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 07:27 PM UTC / December 05, 2025
+Generated at 01:07 AM UTC / December 06, 2025
 
 ## About this file
 
@@ -14198,7 +14198,7 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
 ## fund-agents-apps/update-sdk.md
 # Update your app or agent to use an XMTP SDK with Gateway Service support
 
-Starting on November 15, 2025, you'll be able to update your app or agent to use an XMTP SDK version that supports XMTP Gateway Service helpers, enabling your app or agent to communicate with your XMTP Gateway Service.
+Once [Testnet- and Mainnet-compatible XMTP SDKs are delivered](/fund-agents-apps/get-started#key-milestones-and-actions), you can update your app or agent to a compatible SDK version that includes helpers that enable it to communicate with your XMTP Gateway Service.
 
 The minimum supported SDK version for each platform will be:
 
