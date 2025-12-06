@@ -230,6 +230,24 @@ A background worker runs every one second to clean up expired disappearing messa
 
 To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
 
+### Stream message deletions
+
+Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+
+```tsx [Node]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
 ## Automatic removal from UI
 
 Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.

@@ -218,45 +218,45 @@ let dmMessages = try await dm.messages(limit: 50)
 
 :::
 
-## Count messages in a conversation
-
-Get a count of messages without retrieving the full message list. This is more efficient when you only need the number, such as for unread message badges.
+## Count messages in a conversation 
+ 
+Get a count of messages without retrieving the full message list. This is more efficient when you only need the number, such as for unread message badges. 
 
 :::code-group
 
-```tsx [Browser]
-// Get total message count
-const totalCount = await group.countMessages();
-
-// Get count of messages after last check (for unread badge)
-const lastCheckTimestamp = 1738620126404999936n;
-const unreadCount = await group.countMessages({
-  sentAfterNs: lastCheckTimestamp,
-});
-
-// Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
-const dmUnreadCount = await dm.countMessages({
-  sentAfterNs: lastCheckTimestamp,
-});
-```
-
-```tsx [Node]
-// Get total message count
-const totalCount = await group.countMessages();
-
-// Get count of messages after last check (for unread badge)
-const lastCheckTimestamp = 1738620126404999936n;
-const unreadCount = await group.countMessages({
-  sentAfterNs: lastCheckTimestamp,
-});
-
-// Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
-const dmUnreadCount = await dm.countMessages({
-  sentAfterNs: lastCheckTimestamp,
-});
-```
+```tsx [Browser] 
+// Get total message count 
+const totalCount = await group.countMessages(); 
+ 
+// Get count of messages after last check (for unread badge) 
+const lastCheckTimestamp = 1738620126404999936n; 
+const unreadCount = await group.countMessages({ 
+  sentAfterNs: lastCheckTimestamp, 
+}); 
+ 
+// Get count for a DM conversation 
+const dm = await client.conversations.findOrCreateDm(recipientInboxId); 
+const dmUnreadCount = await dm.countMessages({ 
+  sentAfterNs: lastCheckTimestamp, 
+}); 
+``` 
+ 
+```tsx [Node] 
+// Get total message count 
+const totalCount = await group.countMessages(); 
+ 
+// Get count of messages after last check (for unread badge) 
+const lastCheckTimestamp = 1738620126404999936n; 
+const unreadCount = await group.countMessages({ 
+  sentAfterNs: lastCheckTimestamp, 
+}); 
+ 
+// Get count for a DM conversation 
+const dm = await client.conversations.findOrCreateDm(recipientInboxId); 
+const dmUnreadCount = await dm.countMessages({ 
+  sentAfterNs: lastCheckTimestamp, 
+}); 
+``` 
 
 ```tsx [React Native]
 // Not yet available in React Native

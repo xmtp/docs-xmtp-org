@@ -84,7 +84,7 @@ for await convo in try await alix.conversations.stream(type: /* OPTIONAL .dms, .
 
 :::
 
-## Stream new group chat and DM messages
+## Stream new group chat and DM messages 
 
 This function listens to the network for new messages within all active group chats and DMs.
 
@@ -94,9 +94,9 @@ When you start streaming messages, the stream includes:
 
    New messages as they arrive. Whenever a new message is sent to any of these conversations, the callback is triggered with a `DecodedMessage` object. This keeps the inbox up to date by streaming in messages as they arrive.
 
-2. **Catch-up messages**
-
-   All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time.
+2. **Catch-up messages** 
+ 
+   All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time. 
 
 By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
