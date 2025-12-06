@@ -97,4 +97,8 @@ for await (const message of stream) {
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations
 await client.conversations.syncAll(['allowed']);
+
+// 6. Access client version information
+console.log('LibXMTP version:', client.libxmtpVersion);
+console.log('App version:', client.appVersion);
 ```
