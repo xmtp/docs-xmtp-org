@@ -125,9 +125,10 @@ interface SDKTileProps {
   darkSrc?: string;
   alt: string;
   name?: string;
+  isExternal?: boolean;
 }
-const SDKGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="custom-homepage-sdk-grid">{children}</div>
+const SDKGrid: React.FC<{ children: React.ReactNode; centered?: boolean }> = ({ children, centered }) => (
+  <div className={`custom-homepage-sdk-grid ${centered ? 'custom-homepage-sdk-grid--centered' : ''}`}>{children}</div>
 );
 const SDKTile: React.FC<SDKTileProps> = ({
   href,
@@ -136,6 +137,7 @@ const SDKTile: React.FC<SDKTileProps> = ({
   darkSrc,
   alt,
   name,
+  isExternal,
 }) => {
   if (!src && !(lightSrc && darkSrc)) {
     console.warn(
@@ -144,8 +146,8 @@ const SDKTile: React.FC<SDKTileProps> = ({
     return null;
   }
 
-  return (
-    <Link to={href} className="custom-homepage-sdk-tile">
+  const content = (
+    <>
       {src ? (
         <img src={src} alt={alt} className="custom-homepage-sdk-icon" />
       ) : (
@@ -163,6 +165,20 @@ const SDKTile: React.FC<SDKTileProps> = ({
         </>
       )}
       {name && <p className="custom-homepage-sdk-name">{name}</p>}
+    </>
+  );
+
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className="custom-homepage-sdk-tile">
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link to={href} className="custom-homepage-sdk-tile">
+      {content}
     </Link>
   );
 };
