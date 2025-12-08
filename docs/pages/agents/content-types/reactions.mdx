@@ -45,7 +45,10 @@ With XMTP, reactions are represented as objects with the following keys:
 await ctx.sendReaction('❤️');
 
 // With all fields
-import { ContentTypeReaction, type Reaction } from '@xmtp/content-type-reaction';
+import {
+  ContentTypeReaction,
+  type Reaction,
+} from '@xmtp/content-type-reaction';
 
 await ctx.conversation.send(
   {
@@ -55,7 +58,7 @@ await ctx.conversation.send(
     content: '❤️',
     schema: 'unicode',
   } as Reaction,
-  ContentTypeReaction,
+  ContentTypeReaction
 );
 ```
 

@@ -61,7 +61,10 @@ Once you have a transaction reference, you can send it as part of your conversat
 ```js [Node]
 import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
 
-await ctx.conversation.send(transactionReference, ContentTypeTransactionReference);
+await ctx.conversation.send(
+  transactionReference,
+  ContentTypeTransactionReference
+);
 ```
 
 ## Receive a transaction reference
