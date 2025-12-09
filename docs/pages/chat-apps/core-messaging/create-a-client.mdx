@@ -596,6 +596,48 @@ let client = try await Client.build(
 
 :::
 
+## Get client version information
+
+You can retrieve version information from the XMTP client to help with debugging or ensuring compatibility.
+
+### Get libxmtp version
+
+Get the version of the underlying libxmtp library used by the client:
+
+:::code-group
+
+```tsx [Browser]
+const libxmtpVersion = await client.libxmtpVersion();
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```tsx [Node]
+const libxmtpVersion = await client.libxmtpVersion();
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+:::
+
+### Get app version
+
+Get the app version that was configured when creating the client:
+
+:::code-group
+
+```tsx [Browser]
+const appVersion = await client.appVersion();
+console.log('App version:', appVersion);
+```
+
+```tsx [Node]
+const appVersion = await client.appVersion();
+console.log('App version:', appVersion);
+```
+
+:::
+
+The `libxmtpVersion` property can be useful for debugging or ensuring compatibility with the underlying XMTP APIs. The `appVersion` returns the value that was set in the `appVersion` client option during client creation.
+
 ## Log out a client
 
 When you log a user out of your app, you can give them the option to delete their local database.
