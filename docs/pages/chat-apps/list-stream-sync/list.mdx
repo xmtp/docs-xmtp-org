@@ -106,33 +106,33 @@ You can paginate the conversation list by using the `limit` parameter and either
 
 By default, the conversation will be sorted by last activity (either when the last message was sent, or the group's creation time if no messages are found) in descending order.
 
-### Paginate by `createdAt` 
- 
-For most pagination use cases, use the `createdBeforeNs` parameter for filtering and set `orderBy` to `createdAt`. This enables you to paginate against a stably sorted list. You can then perform a final sort of conversations in your app. 
- 
+### Paginate by `createdAt`
+
+For most pagination use cases, use the `createdBeforeNs` parameter for filtering and set `orderBy` to `createdAt`. This enables you to paginate against a stably sorted list. You can then perform a final sort of conversations in your app.
+
 :::code-group
 
-```ts [Browser] 
-const firstPage = await client.conversations.list({ 
-  limit: 10, 
-  orderBy: 'createdAt', 
-}); 
-const secondPage = await client.conversations.list({ 
-  limit: 10, 
-  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs, 
-}); 
-``` 
- 
-```ts [Node] 
-const firstPage = await client.conversations.list({ 
-  limit: 10, 
-  orderBy: 'createdAt', 
-}); 
-const secondPage = await client.conversations.list({ 
-  limit: 10, 
-  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs, 
-}); 
-``` 
+```ts [Browser]
+const firstPage = await client.conversations.list({
+  limit: 10,
+  orderBy: 'createdAt',
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
+});
+```
+
+```ts [Node]
+const firstPage = await client.conversations.list({
+  limit: 10,
+  orderBy: 'createdAt',
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
+});
+```
 
 ```ts [React Native]
 const firstPage = await client.conversations.list(
