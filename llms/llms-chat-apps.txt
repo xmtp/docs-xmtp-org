@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 07:15 PM UTC / December 10, 2025
+Generated at 07:38 PM UTC / December 10, 2025
 
 ## About this file
 
@@ -7608,7 +7608,7 @@ Disappearing messages are messages that are intended to be visible to users for 
 
 Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network.
 
-Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
+Starting with XMTP Mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
 
 To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
 
@@ -7620,12 +7620,21 @@ Conversation participants using apps that support disappearing messages will hav
 
 Messages abide by the disappearing message settings for the conversation.
 
-When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
+### Permissions for setting disappearing message conditions
 
-This includes setting the following conditions expressed in nanoseconds (ns):
+Who can set or change disappearing message settings depends on the conversation type:
+
+- **Group chats**: Only group admins can set or change disappearing message settings
+- **DMs**: Both participants can set or change disappearing message settings
+
+### Disappearing message settings
+
+Disappearing message expiration conditions are expressed in nanoseconds (ns):
 
 - `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
+  - In protocol messages, this appears as `message_disappear_from_ns`
 - `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
+  - In protocol messages, this appears as `message_disappear_in_ns`
 
 For example:
 
@@ -7633,11 +7642,9 @@ For example:
 2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
 3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
 
-To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
+To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
 
 ## Set disappearing message settings on conversation create
-
-For example:
 
 :::code-group
 
@@ -7745,7 +7752,10 @@ try await client.conversations.newGroup(
 
 ## Update disappearing message settings for an existing conversation
 
-For example:
+When you update disappearing message settings, the system changes each field separately under the hood. This means you'll receive two separate protocol messages when settings are updated:
+
+1. One message for `message_disappear_from_ns` (the `disappearStartingAtNs` field)
+2. One message for `message_disappear_in_ns` (the `retentionDurationInNs` field)
 
 :::code-group
 
@@ -7789,8 +7799,6 @@ try await conversation.clearDisappearingMessageSettings()
 :::
 
 ## Get the disappearing message settings for a conversation
-
-For example:
 
 :::code-group
 
