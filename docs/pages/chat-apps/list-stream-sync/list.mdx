@@ -115,29 +115,29 @@ For most pagination use cases, use the `createdBeforeNs` parameter for filtering
 ```ts [Browser]
 const firstPage = await client.conversations.list({
   limit: 10,
-  orderBy: 'createdAt'
+  orderBy: 'createdAt',
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
 });
 ```
 
 ```ts [Node]
 const firstPage = await client.conversations.list({
   limit: 10,
-  orderBy: 'createdAt'
+  orderBy: 'createdAt',
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
 });
 ```
 
 ```ts [React Native]
 const firstPage = await client.conversations.list(
   {},
-  10,        // limit
+  10, // limit
   undefined, // consentStates
   undefined, // createdAfterNs
   undefined, // createdBeforeNs
@@ -188,21 +188,21 @@ Do not sort by `lastActivityNs` for pagination in an app that uses streaming. Th
 
 ```ts [Browser]
 const firstPage = await client.conversations.list({
-  limit: 10
+  limit: 10,
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs,
 });
 ```
 
 ```ts [Node]
 const firstPage = await client.conversations.list({
-  limit: 10
+  limit: 10,
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs,
 });
 ```
 

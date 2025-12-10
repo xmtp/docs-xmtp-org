@@ -193,7 +193,7 @@ Update the custom application-specific data for a group. The data is stored as a
 ```tsx [React Native]
 const customData = JSON.stringify({
   theme: 'dark',
-  settings: { notifications: true }
+  settings: { notifications: true },
 });
 await group.updateAppData(customData);
 ```

@@ -1,6 +1,6 @@
 # Update your app or agent to use an XMTP SDK with Gateway Service support
 
-Starting on November 15, 2025, you'll be able to update your app or agent to use an XMTP SDK version that supports XMTP Gateway Service helpers, enabling your app or agent to communicate with your XMTP Gateway Service.
+Once [Testnet- and Mainnet-compatible XMTP SDKs are delivered](/fund-agents-apps/get-started#key-milestones-and-actions), you can update your app or agent to a compatible SDK version that includes helpers that enable it to communicate with your XMTP Gateway Service.
 
 The minimum supported SDK version for each platform will be:
 

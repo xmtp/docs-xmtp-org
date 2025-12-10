@@ -98,6 +98,12 @@ When you start streaming messages, the stream includes:
 
    All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time.
 
+:::tip[Stream only new messages]
+
+To stream only new real-time messages without catch-up messages, [sync with the network](/chat-apps/list-stream-sync/sync-and-syncall#sync-new-welcomes-conversations-with-unread-messages-and-preferences) before starting the stream.
+
+:::
+
 By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
 We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.

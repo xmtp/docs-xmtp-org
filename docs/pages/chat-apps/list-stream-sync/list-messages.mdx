@@ -6,18 +6,18 @@ Query messages from a conversation using filters including time ranges, delivery
 
 All parameters are optional and can be combined to create precise filters and sorts:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `limit` | `Int` / `Long` / `bigint` | Maximum number of messages to return |
-| `beforeNs` / `sentBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages sent before this timestamp (nanoseconds) |
-| `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` | Filter messages sent after this timestamp (nanoseconds) |
-| `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
-| `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
-| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
-| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
-| `insertedBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database before this timestamp (nanoseconds) |
-| `insertedAfterNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database after this timestamp (nanoseconds) |
-| `sortBy` | `SortBy` / enum | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
+| Parameter                                      | Type                               | Description                                                                                                        |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `limit`                                        | `Int` / `Long` / `bigint`          | Maximum number of messages to return                                                                               |
+| `beforeNs` / `sentBeforeNs`                    | `Int64` / `Long` / `bigint`        | Filter messages sent before this timestamp (nanoseconds)                                                           |
+| `afterNs` / `sentAfterNs`                      | `Int64` / `Long` / `bigint`        | Filter messages sent after this timestamp (nanoseconds)                                                            |
+| `direction`                                    | `SortDirection` / `string`         | Sort order: `descending` (default, newest first) or `ascending` (oldest first)                                     |
+| `deliveryStatus`                               | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed`                                |
+| `excludeContentTypes` / `excludedContentTypes` | Array                              | Content types to exclude (e.g., reactions, read receipts).                                                         |
+| `excludeSenderInboxIds`                        | Array of strings                   | Inbox IDs whose messages should be excluded.                                                                       |
+| `insertedBeforeNs`                             | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database before this timestamp (nanoseconds)                               |
+| `insertedAfterNs`                              | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database after this timestamp (nanoseconds)                                |
+| `sortBy`                                       | `SortBy` / enum                    | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
 
 ## List messages with enriched metadata
 
@@ -482,17 +482,17 @@ You can sort messages using `insertedAtNs`.
 :::code-group
 
 ```tsx [React Native]
-  // Sort by insertion time for reliable pagination
-  const messages = await group.messages({
-      sortBy: "INSERTED",
-      limit: 20
-  });
+// Sort by insertion time for reliable pagination
+const messages = await group.messages({
+  sortBy: 'INSERTED',
+  limit: 20,
+});
 
-  // Each message has both timestamps available
-  messages.forEach((message) => {
-      console.log(`Sent at: ${message.sentAtNs}`);
-      console.log(`Inserted at: ${message.insertedAtNs}`);
-  });
+// Each message has both timestamps available
+messages.forEach((message) => {
+  console.log(`Sent at: ${message.sentAtNs}`);
+  console.log(`Inserted at: ${message.insertedAtNs}`);
+});
 ```
 
 ```kotlin [Kotlin]

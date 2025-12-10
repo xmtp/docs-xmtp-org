@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 05:16 PM UTC / December 03, 2025
+Generated at 05:30 PM UTC / December 10, 2025
 
 ## About this file
 
@@ -1495,7 +1495,7 @@ History sync is enabled by default and runs automatically. When [creating a clie
 - When `env` is set to `dev`, the `historySyncUrl` is set to `https://message-history.dev.ephemera.network/`
 - When `env` is set to `production`, the `historySyncUrl` is set to `https://message-history.production.ephemera.network`
 
-These default servers are managed and operated by [Ephemera](https://ephemerahq.com/), a steward of the development and adoption of XMTP.
+These default servers are managed and operated by [XMTP Labs](https://xmtplabs.com/), a steward of the development and adoption of XMTP.
 
 You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server) and set the `historySyncUrl` to your server's URL.
 
@@ -1573,18 +1573,18 @@ Query messages from a conversation using filters including time ranges, delivery
 
 All parameters are optional and can be combined to create precise filters and sorts:
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `limit` | `Int` / `Long` / `bigint` | Maximum number of messages to return |
-| `beforeNs` / `sentBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages sent before this timestamp (nanoseconds) |
-| `afterNs` / `sentAfterNs` | `Int64` / `Long` / `bigint` | Filter messages sent after this timestamp (nanoseconds) |
-| `direction` | `SortDirection` / `string` | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
-| `deliveryStatus` | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed` |
-| `excludeContentTypes` / `excludedContentTypes` | Array | Content types to exclude (e.g., reactions, read receipts). |
-| `excludeSenderInboxIds` | Array of strings | Inbox IDs whose messages should be excluded. |
-| `insertedBeforeNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database before this timestamp (nanoseconds) |
-| `insertedAfterNs` | `Int64` / `Long` / `bigint` | Filter messages inserted into the local database after this timestamp (nanoseconds) |
-| `sortBy` | `SortBy` / enum | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
+| Parameter                                      | Type                               | Description                                                                                                        |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `limit`                                        | `Int` / `Long` / `bigint`          | Maximum number of messages to return                                                                               |
+| `beforeNs` / `sentBeforeNs`                    | `Int64` / `Long` / `bigint`        | Filter messages sent before this timestamp (nanoseconds)                                                           |
+| `afterNs` / `sentAfterNs`                      | `Int64` / `Long` / `bigint`        | Filter messages sent after this timestamp (nanoseconds)                                                            |
+| `direction`                                    | `SortDirection` / `string`         | Sort order: `descending` (default, newest first) or `ascending` (oldest first)                                     |
+| `deliveryStatus`                               | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed`                                |
+| `excludeContentTypes` / `excludedContentTypes` | Array                              | Content types to exclude (e.g., reactions, read receipts).                                                         |
+| `excludeSenderInboxIds`                        | Array of strings                   | Inbox IDs whose messages should be excluded.                                                                       |
+| `insertedBeforeNs`                             | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database before this timestamp (nanoseconds)                               |
+| `insertedAfterNs`                              | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database after this timestamp (nanoseconds)                                |
+| `sortBy`                                       | `SortBy` / enum                    | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
 
 ## List messages with enriched metadata
 
@@ -2049,17 +2049,17 @@ You can sort messages using `insertedAtNs`.
 :::code-group
 
 ```tsx [React Native]
-  // Sort by insertion time for reliable pagination
-  const messages = await group.messages({
-      sortBy: "INSERTED",
-      limit: 20
-  });
+// Sort by insertion time for reliable pagination
+const messages = await group.messages({
+  sortBy: 'INSERTED',
+  limit: 20,
+});
 
-  // Each message has both timestamps available
-  messages.forEach((message) => {
-      console.log(`Sent at: ${message.sentAtNs}`);
-      console.log(`Inserted at: ${message.insertedAtNs}`);
-  });
+// Each message has both timestamps available
+messages.forEach((message) => {
+  console.log(`Sent at: ${message.sentAtNs}`);
+  console.log(`Inserted at: ${message.insertedAtNs}`);
+});
 ```
 
 ```kotlin [Kotlin]
@@ -2403,29 +2403,29 @@ For most pagination use cases, use the `createdBeforeNs` parameter for filtering
 ```ts [Browser]
 const firstPage = await client.conversations.list({
   limit: 10,
-  orderBy: 'createdAt'
+  orderBy: 'createdAt',
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
 });
 ```
 
 ```ts [Node]
 const firstPage = await client.conversations.list({
   limit: 10,
-  orderBy: 'createdAt'
+  orderBy: 'createdAt',
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
 });
 ```
 
 ```ts [React Native]
 const firstPage = await client.conversations.list(
   {},
-  10,        // limit
+  10, // limit
   undefined, // consentStates
   undefined, // createdAfterNs
   undefined, // createdBeforeNs
@@ -2476,21 +2476,21 @@ Do not sort by `lastActivityNs` for pagination in an app that uses streaming. Th
 
 ```ts [Browser]
 const firstPage = await client.conversations.list({
-  limit: 10
+  limit: 10,
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs,
 });
 ```
 
 ```ts [Node]
 const firstPage = await client.conversations.list({
-  limit: 10
+  limit: 10,
 });
 const secondPage = await client.conversations.list({
   limit: 10,
-  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs,
 });
 ```
 
@@ -2626,6 +2626,12 @@ When you start streaming messages, the stream includes:
 2. **Catch-up messages**
 
    All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time.
+
+:::tip[Stream only new messages]
+
+To stream only new real-time messages without catch-up messages, [sync with the network](/chat-apps/list-stream-sync/sync-and-syncall#sync-new-welcomes-conversations-with-unread-messages-and-preferences) before starting the stream.
+
+:::
 
 By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
@@ -2965,7 +2971,9 @@ await client.conversations.syncAll(['allowed']);
 
 ```tsx [React Native]
 // Returns a summary object with sync statistics
-const syncSummary = await client.conversations.syncAllConversations(['allowed']);
+const syncSummary = await client.conversations.syncAllConversations([
+  'allowed',
+]);
 // syncSummary.numEligible - Total number of conversations eligible for syncing
 // syncSummary.numSynced - Number of conversations that were actually synced
 ```
@@ -3317,7 +3325,6 @@ xmtpd (XMTP daemon) is the XMTP node software that powers the decentralized XMTP
 
 To learn about xmtpd's message retention policies, see [XIP-69: Message retention and expiry strategy for xmtpd](https://community.xmtp.org/t/xip-69-message-retention-and-expiry-strategy-for-xmtpd/955)
 
-
 #### For the on-device database managed by the XMTP SDK
 
 Messages are stored for as long as the user decides to keep them. However, encryption keys are regularly rotated.
@@ -3328,7 +3335,7 @@ Encrypted payloads are stored indefinitely.
 
 ### What are XMTP message storage and retrieval costs?
 
-Messages are stored off-chain on the XMTP network, with all nodes currently hosted by Ephemera. Ephemera currently absorbs all message storage and retrieval costs.
+Messages are stored off-chain on the XMTP network, with all nodes currently hosted by XMTP Labs. XMTP Labs currently absorbs all message storage and retrieval costs.
 
 Today, there are no message storage and retrieval-related fees incurred by developers for building with the XMTP SDK.
 
@@ -3354,7 +3361,7 @@ For this reason, XMTP supports [remote attachments](/chat-apps/content-types/att
 
 ### Does XMTP support message deletion and editing?
 
-Not currently. However, Ephemera is exploring ways to support message deletion and editing.
+Not currently. However, XMTP Labs is exploring ways to support message deletion and editing.
 
 Have ideas about message deletion and editing? Post to the [XMTP Technical Forums](https://community.xmtp.org/c/development/ideas/54).
 
@@ -3362,15 +3369,15 @@ Have ideas about message deletion and editing? Post to the [XMTP Technical Forum
 
 XMTP enables developers to implement messaging features and UX paradigms that best fit their needs. As a result, messages sent using apps built with XMTP might resemble many typical forms of communication, such as email, direct and group messaging, broadcasts, text messaging, push notifications, and more.
 
-## What is Ephemera?
+## What is XMTP Labs?
 
-Ephemera is a web3 software company that contributes to XMTP, an open network, protocol, and standards for secure messaging between blockchain accounts.
+XMTP Labs is a web3 software company that contributes to XMTP, an open network, protocol, and standards for secure messaging between blockchain accounts.
 
-Ephemera employees work alongside other XMTP community members to build with and extend XMTP. Community [contributions and participation](https://community.xmtp.org/) are critical to the development and adoption of XMTP.
+XMTP Labs employees work alongside other XMTP community members to build with and extend XMTP. Community [contributions and participation](https://community.xmtp.org/) are critical to the development and adoption of XMTP.
 
-Ephemera focuses on serving developers. We build [SDKs](https://docs.xmtp.org/#start-building), developer tools, and example apps that help developers build great experiences with XMTP.
+XMTP Labs focuses on serving developers. We build [SDKs](https://docs.xmtp.org/#start-building), developer tools, and example apps that help developers build great experiences with XMTP.
 
-Ephemera [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024. Converse is now [Convos](https://github.com/xmtplabs/convos-app), open-sourced for the entire XMTP network.
+XMTP Labs [acquired Converse](https://paragraph.xyz/@ephemera/converse) in June 2024. Converse is now [Convos](https://github.com/xmtplabs/convos-app), open-sourced for the entire XMTP network.
 
 
 ## chat-apps/intro/get-started.mdx
@@ -7464,9 +7471,9 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
-const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
-  identifier: "0xpeerAddress", 
-  identifierKind: "Ethereum" 
+const dmByIdentifier = await client.conversations.getDmByIdentifier({
+  identifier: '0xpeerAddress',
+  identifierKind: 'Ethereum',
 });
 ```
 
@@ -7482,9 +7489,9 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
-const dmByIdentifier = await client.conversations.getDmByIdentifier({ 
-  identifier: "0xpeerAddress", 
-  identifierKind: IdentifierKind.Ethereum 
+const dmByIdentifier = await client.conversations.getDmByIdentifier({
+  identifier: '0xpeerAddress',
+  identifierKind: IdentifierKind.Ethereum,
 });
 ```
 
@@ -7772,13 +7779,49 @@ A background worker runs every one second to clean up expired disappearing messa
 
 To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
 
+### Stream message deletions
+
+Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+
+:::code-group
+
+```tsx [Browser]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
+```tsx [Node]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
+:::
+
 ## Automatic removal from UI
 
 Expired messages don't require manual removal from the UI. If your app UI updates when the local storage changes, expired messages will disappear automatically when the background worker deletes them from local storage.
 
 ## Exclude from archive-based backups
 
-You can exclude disappearing messages from archive-based backups. 
+You can exclude disappearing messages from archive-based backups.
 
 To learn more, see [Support archive-based backups](/chat-apps/list-stream-sync/archive-backups).
 
@@ -7990,7 +8033,7 @@ Update the custom application-specific data for a group. The data is stored as a
 ```tsx [React Native]
 const customData = JSON.stringify({
   theme: 'dark',
-  settings: { notifications: true }
+  settings: { notifications: true },
 });
 await group.updateAppData(customData);
 ```
@@ -9867,12 +9910,12 @@ import { Agent } from '@xmtp/agent-sdk';
 import { createSigner, createUser } from '@xmtp/agent-sdk/user';
 
 // Replace with your own wallet key and encryption key
-const walletKey = "0xprivateKey";
-const db_encryptionKey = "0xencryptionKey";
+const walletKey = '0xprivateKey';
+const db_encryptionKey = '0xencryptionKey';
 
 // Option 1: Create a local user + signer
 const user = createUser(walletKey);
-const dbEncryptionKey = Buffer.from(db_encryptionKey).toString("hex")
+const dbEncryptionKey = Buffer.from(db_encryptionKey).toString('hex');
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
@@ -9907,7 +9950,7 @@ console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
 ```
 
-Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
+Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
 
 ```bash
 yarn gen:keys
@@ -11997,7 +12040,10 @@ With XMTP, reactions are represented as objects with the following keys:
 await ctx.sendReaction('❤️');
 
 // With all fields
-import { ContentTypeReaction, type Reaction } from '@xmtp/content-type-reaction';
+import {
+  ContentTypeReaction,
+  type Reaction,
+} from '@xmtp/content-type-reaction';
 
 await ctx.conversation.send(
   {
@@ -12007,7 +12053,7 @@ await ctx.conversation.send(
     content: '❤️',
     schema: 'unicode',
   } as Reaction,
-  ContentTypeReaction,
+  ContentTypeReaction
 );
 ```
 
@@ -12172,7 +12218,10 @@ Once you have a transaction reference, you can send it as part of your conversat
 ```js [Node]
 import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
 
-await ctx.conversation.send(transactionReference, ContentTypeTransactionReference);
+await ctx.conversation.send(
+  transactionReference,
+  ContentTypeTransactionReference
+);
 ```
 
 ## Receive a transaction reference
@@ -13003,8 +13052,8 @@ The following table lists the nodes currently registered to power the XMTP testn
 | 6   | Laminated Labs              | xmtp.validators.laminatedlabs.net:443         |
 | 7   | Next.id                     | xmtp.nextnext.id:443                          |
 | 8   | Nodle                       | xmtpd.nodleprotocol.io:443                    |
-| 9   | Ephemera                    | grpc.testnet.xmtp.network:443                 |
-| 10  | Ephemera                    | grpc2.testnet.xmtp.network:443                |
+| 9   | XMTP Labs                   | grpc.testnet.xmtp.network:443                 |
+| 10  | XMTP Labs                   | grpc2.testnet.xmtp.network:443                |
 
 Here is a map of node locations:
 
@@ -13058,7 +13107,7 @@ To follow and provide feedback on the engineering work covered in this FAQ, see 
 
 A testnet of the decentralized XMTP network was launched in early December 2024.
 
-All of the nodes in the `dev` and `production` XMTP network environments are still operated by [Ephemera](https://ephemerahq.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+All of the nodes in the `dev` and `production` XMTP network environments are still operated by [XMTP Labs](https://xmtplabs.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
 
 These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
 
@@ -13248,7 +13297,7 @@ Use this guide to learn how to use the XMTP Funding Portal to fund an app or age
 
 Behind the scenes, the Funding Portal handles Payer Registry smart contract deposits, XMTP Broadcast Network messaging fee and XMTP App Chain gas payments, and all blockchain interactions.
 
-[Ephemera](https://ephemerahq.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
+[XMTP Labs](https://xmtplabs.com/) currently hosts the XMTP Funding Portal UI as a community service. Stewardship will move to DUNA post-GA.
 
 The [smart contracts](https://github.com/xmtp/smart-contracts) used by the portal are fully decentralized and non-custodial. Full audits from [Trail of Bits](https://www.trailofbits.com/) and [Octane](https://www.octane.security/) will be published before paid messaging is enforced.
 
@@ -13545,26 +13594,26 @@ With Mainnet launch, all message traffic will be automatically routed from the c
 
 Once a milestone is delivered, you can proceed with required and recommended actions.
 
-**Milestone**|**Delivered?**|**Action**
-:-----|:-----|:-----
-Payer wallets can be funded on Testnet|🟢|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)
-XMTP Gateway Service library is available in Go|🟢|[Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)
-Client SDKs are compatible with Testnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)
-|  |🔴 iOS|
-|  |🔴 Android|
-|  |🔴 React Native|
-|  |🔴 Browser|
-|  |🔴 Node|
-|  |🔴 Agent|
-Client SDKs are compatible with Mainnet| |[Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)
-|  |🔴 iOS|
-|  |🔴 Android|
-|  |🔴 React Native|
-|  |🔴 Browser|
-|  |🔴 Node|
-|  |🔴 Agent|
-Payer wallets can be funded on Mainnet|🔴|[Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)
-All message traffic routed through Mainnet|🔴|Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required)
+| **Milestone**                                   | **Delivered?**  | **Action**                                                                                   |
+| :---------------------------------------------- | :-------------- | :------------------------------------------------------------------------------------------- |
+| Payer wallets can be funded on Testnet          | 🟢              | [Fund your payer wallet](/fund-agents-apps/fund-your-app) on Testnet (recommended)           |
+| XMTP Gateway Service library is available in Go | 🟢              | [Deploy your gateway service](/fund-agents-apps/run-gateway) (required for chat apps only)   |
+| Client SDKs are compatible with Testnet         |                 | [Update your client SDK](/fund-agents-apps/update-sdk) to connect to Testnet (recommended)   |
+|                                                 | 🔴 iOS          |                                                                                              |
+|                                                 | 🔴 Android      |                                                                                              |
+|                                                 | 🔴 React Native |                                                                                              |
+|                                                 | 🔴 Browser      |                                                                                              |
+|                                                 | 🔴 Node         |                                                                                              |
+|                                                 | 🔴 Agent        |                                                                                              |
+| Client SDKs are compatible with Mainnet         |                 | [Update your client SDK](/fund-agents-apps/update-sdk) to connect to Mainnet (required)      |
+|                                                 | 🔴 iOS          |                                                                                              |
+|                                                 | 🔴 Android      |                                                                                              |
+|                                                 | 🔴 React Native |                                                                                              |
+|                                                 | 🔴 Browser      |                                                                                              |
+|                                                 | 🔴 Node         |                                                                                              |
+|                                                 | 🔴 Agent        |                                                                                              |
+| Payer wallets can be funded on Mainnet          | 🔴              | [Fund your payer wallet](/fund-agents-apps/fund-your-app) on Mainnet (required)              |
+| All message traffic routed through Mainnet      | 🔴              | Start paying [fees](/fund-agents-apps/calculate-fees) to send messages on Mainnet (required) |
 
 
 ## fund-agents-apps/glossary.md
@@ -14191,7 +14240,7 @@ The following sequence diagrams illustrate the XMTP Gateway Service's role in th
 ## fund-agents-apps/update-sdk.md
 # Update your app or agent to use an XMTP SDK with Gateway Service support
 
-Starting on November 15, 2025, you'll be able to update your app or agent to use an XMTP SDK version that supports XMTP Gateway Service helpers, enabling your app or agent to communicate with your XMTP Gateway Service.
+Once [Testnet- and Mainnet-compatible XMTP SDKs are delivered](/fund-agents-apps/get-started#key-milestones-and-actions), you can update your app or agent to a compatible SDK version that includes helpers that enable it to communicate with your XMTP Gateway Service.
 
 The minimum supported SDK version for each platform will be:
 
