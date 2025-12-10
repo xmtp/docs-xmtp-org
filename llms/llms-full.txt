@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 01:07 AM UTC / December 06, 2025
+Generated at 01:46 AM UTC / December 10, 2025
 
 ## About this file
 
@@ -2626,6 +2626,12 @@ When you start streaming messages, the stream includes:
 2. **Catch-up messages**
 
    All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time.
+
+:::tip[Stream only new messages]
+
+To stream only new real-time messages without catch-up messages, [sync with the network](/chat-apps/list-stream-sync/sync-and-syncall#sync-new-welcomes-conversations-with-unread-messages-and-preferences) before starting the stream.
+
+:::
 
 By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
@@ -7772,6 +7778,42 @@ try conversation.isDisappearingMessagesEnabled()
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
 To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+
+### Stream message deletions
+
+Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+
+:::code-group
+
+```tsx [Browser]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
+```tsx [Node]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
+:::
 
 ## Automatic removal from UI
 
