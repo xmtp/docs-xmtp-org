@@ -234,6 +234,22 @@ To learn more about the background worker, see [disappearing_messages.rs](https:
 
 Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
 
+:::code-group
+
+```tsx [Browser]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
 ```tsx [Node]
 // Stream message deletions
 const stream = await client.conversations.streamMessageDeletions();
@@ -247,6 +263,8 @@ for await (const messageId of stream) {
 // When done, end the stream
 stream.end();
 ```
+
+:::
 
 ## Automatic removal from UI
 
