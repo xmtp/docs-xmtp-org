@@ -1,53 +1,76 @@
 # Run an XMTP network node
 
-A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
-
-To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
-
 ## Interested in becoming a registered XMTP node operator?
 
-1. Review [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
-2. [Submit an application](https://docs.google.com/forms/d/e/1FAIpQLScBpJ0i962xBPpZZeI6q7-UMo5Bc2JkhvHR_v2rliLDoBkzXQ/viewform?usp=sharing) to become a registered node operator.
+To start, the XMTP Network operates with a limited set of curated node operators to ensure maximum performance and censorship resistance.
 
-## Already a registered node operator?
+* **Limited slots:** Initial cap of **7 node operators** to ensure low-latency, high-throughput messaging.
+* **Mandatory diversity:** Selection is heavily weighted toward operators offering **geographic, geopolitical, and industry diversity** to mitigate collusion and regulatory risk.
+* **Infrastructure control:** Preference for those with strong control over infrastructure, ideally **bare metal in censorship-resistant jurisdictions**, over cloud-only solutions.
+* **Excellence required:** Proven track record of **technical excellence, 24/7 operations, robust security protocols**, and a high community reputation.
+* **Censorship resistance:** Operators must explicitly align with XMTP's core values, prioritizing **censorship resistance and decentralized principles**.
 
-To get started, see the [xmtpd-infrastructure](https://github.com/xmtp/xmtpd-infrastructure) repository, which provides infrastructure-as-code examples and tooling to help node operators deploy and manage xmtpd nodes.
+For a complete understanding of the qualification criteria, selection process, and rationale, see [XIP-54: XMTP network node operator qualification criteria](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-54-node-operator-qualifications.md).
 
-## FAQ about the XMTP network
+If your organization meets these standards, **[apply to operate](https://forms.gle/mJM5ynCAE6xzaUae9)** a registered XMTP network node.
 
-To follow and provide feedback on the engineering work covered in this FAQ, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
+## Participate in XMTP Testnet load testing
 
-### Is the XMTP network decentralized?
+[XMTP Testnet](/network/network-nodes) is entering the **load testing stage**—a critical milestone on the path to Mainnet.
 
-A testnet of the decentralized XMTP network was launched in early December 2024.
+As an existing XMTP Testnet node operator, your participation in this phase will stress-test the network, first by migrating **150M+ real messages** that have been sent on XMTP's v3 network, then introducing tests that simulate real-world traffic conditions.
 
-All of the nodes in the `dev` and `production` XMTP network environments are still operated by [XMTP Labs](https://xmtplabs.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+## What to expect
 
-These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
+1. **Testnet load test (now)**: Nodes must upgrade to 1.0.0 and complete the steps below to participate in the initial load test
+2. **Additional load tests (January)**: Subsequent tests will approximate more real-world traffic conditions
+3. **Mainnet**: Successfully participating in the load test phase is a **prerequisite** to be considered for the initial Mainnet node operator set
 
-- Cuba
-- Iran
-- North Korea
-- Syria
-- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
+## Readiness checklist
 
-### Is XMTP a blockchain?
+As an existing XMTP Testnet node operator, complete the following steps to participate in Testnet load testing and prepare for Mainnet.
 
-The testnet of the decentralized XMTP network includes two distributed systems:
+| **Requirement** | **Why** | **How** |
+| --- | --- | --- |
+| **1. Evaluate infrastructure setup** | Now is the time to consider moving off AWS/Kubernetes to simpler deployment models for Mainnet. | For example, see the [Systemd Guide](https://github.com/xmtp/xmtpd-infrastructure/tree/main/systemd).<br/>Ansible is also an option but no guide is available yet. |
+| **2. Upgrade to xmtpd 1.0.0** | Required for Testnet load testing stage. Mainnet will require a subsequent release. | Update your deployment to pull the 1.0.0 release from [xmtpd releases](https://github.com/xmtp/xmtpd/releases).<br/>Upgrade again when Mainnet release is available. |
+| **3. Provide a public DNS** | Nodes must provide a publicly accessible DNS hostname so they can serve **gRPC traffic**, which **requires valid TLS certificates**. A stable domain with proper A/AAAA records is needed for certificate issuance and for other nodes and clients to discover and connect securely. | Register a domain, configure DNS A/AAAA records pointing to your load balancer or node IP, and ensure proper CORS header forwarding. To learn more, see [Public DNS and secure connection](#public-dns-and-secure-connection-requirements). |
+| **4. Alchemy account + paid tier** | xmtpd requires reliable blockchain RPC access with sufficient rate limits for Mainnet traffic volumes. | [Sign up for Alchemy](https://docs.alchemy.com/docs/alchemy-quickstart-guide), select appropriate paid tier based on expected request volume, and configure RPC endpoint URL in xmtpd config. |
+| **5. Funded wallet with ETH** | Required to pay gas fees for node registration on the XMTP App Chain (L3) and interact with smart contracts. | Generate a secure private key, fund it with ETH on the appropriate chain, and store securely in secrets management. Use the [Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia) to get test ETH. ~$10 of ETH should last months. |
+| **6. Set up metrics/alerting (Prometheus)** | Monitor node health, resource usage, and errors. Detect issues proactively. | [Deploy Prometheus](https://github.com/xmtp/xmtpd-infrastructure/blob/main/doc/k8s-prometheus-monitoring.md) with xmtpd metrics scraping (OpenMetrics format) and set up Grafana dashboards and alerts. |
+| **7. Monitor ETH balance** | Ensure wallet never runs out of funds, preventing node from failing to submit transactions. | Set up alerting on wallet balance (e.g., via Prometheus + custom exporter, or third-party services like [Alchemy Notify](https://www.alchemy.com/dapps/alchemy-notify)) with thresholds for low balance warnings. |
+| **8. Register the node** | Register the node on the Nodes smart contract to participate in the Broadcast Network. | Generate your node's signing keypair and provide the **public key** to the XMTP team. XMTP will configure the registration for you. |
+| **9. Enable migration** | XMTP will enable a message migration service that acts as a load test for your node. | No action required yet. Instructions will be provided at a later date. |
 
-- The XMTP broadcast network
-- The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
+## Public DNS and secure connection requirements
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+The node must provide a publicly accessible DNS hostname to ensure secure discovery and stable gRPC traffic. This section details the high-level requirements, particularly for bare metal setups.
 
-The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
+### Core requirements
 
-### Will I be able to run my own XMTP node?
+- gRPC traffic: Your node must be capable of serving public gRPC traffic.
+- Valid TLS certificates: gRPC strictly requires a secure connection, meaning your DNS hostname must have a valid, trusted TLS certificate.
+- Discovery: The DNS hostname acts as the public address for other nodes and clients to discover and connect securely.
 
-At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
+### High-level implementation steps
 
-To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+The following steps must be completed to establish your node's public access:
 
-### Does XMTP have a token?
+1. Register a domain and configure public DNS records
 
-XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
+   - Domain registration: You must own a stable domain name.
+
+   - DNS configuration: Configure A records (IPv4) and preferably AAAA records (IPv6) to point your chosen hostname (e.g., node.yourdomain.com) to the static public IP address of your infrastructure's point of entry.
+
+2. Edge infrastructure requirements (bare metal focus)
+
+   You must ensure the following configurations are in place to successfully handle public gRPC connections:
+
+   - Static public IP: The domain's DNS records must resolve to a stable, static public IPv4 and/or IPv6 address associated with your node's point of entry (e.g., your data center's edge router).
+
+   - TLS termination and certificates: A device (e.g., Edge Router, Load Balancer, or Reverse Proxy) must be configured for TLS termination for the hostname. This requires the use of valid, trusted, and automatically renewing TLS certificates to satisfy gRPC security requirements.
+
+   - Firewall/routing: Your network must employ secure firewall rules and/or port forwarding (DNAT) to direct incoming public gRPC traffic (typically over port 443) from the edge device to the internal host running the XMTP node.
+
+   - CORS header forwarding: If necessary for client-side web access, the termination device must be configured to correctly forward CORS (Cross-Origin Resource Sharing) headers.
+   
