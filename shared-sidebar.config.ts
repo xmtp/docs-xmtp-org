@@ -159,6 +159,10 @@ export const sidebarConfig = {
       text: "Testnet nodes",
       link: "/network/network-nodes",
     },
+   {
+      text: "FAQ",
+      link: "/network/faq",
+    },
   ],
   '/fund-agents-apps/': [
         {
