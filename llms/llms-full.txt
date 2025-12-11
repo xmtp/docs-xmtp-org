@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 07:38 PM UTC / December 10, 2025
+Generated at 10:35 PM UTC / December 11, 2025
 
 ## About this file
 
@@ -12784,10 +12784,11 @@ XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), wh
 
 For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
 
-- [Security](https://xmtp.org/vision/concepts/encryption)
-- [Identity](https://xmtp.org/vision/concepts/identity)
-- [Consent](https://xmtp.org/vision/concepts/consent)
-- [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp)
+- [Security](https://xmtp.org/security)
+- [Identity](https://xmtp.org/identity)
+- [Digital money](https://xmtp.org/digital-money)
+- [Consent](https://xmtp.org/consent)
+- [Decentralizing XMTP](https://xmtp.org/decentralization)
 
 
 ## protocol/security.mdx
@@ -13154,9 +13155,9 @@ A purple pin indicates that the node is operated by a non-profit organization.
 ## network/run-a-node.mdx
 # Run an XMTP network node
 
-A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
+The [XMTP Testnet](/network/network-nodes) is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power Mainnet.
 
-To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 ## Interested in becoming a registered XMTP node operator?
 
@@ -13192,7 +13193,7 @@ The testnet of the decentralized XMTP network includes two distributed systems:
 - The XMTP broadcast network
 - The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
 
