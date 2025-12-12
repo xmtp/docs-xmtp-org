@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 10:35 PM UTC / December 11, 2025
+Generated at 07:39 PM UTC / December 12, 2025
 
 ## About this file
 
@@ -3363,6 +3363,8 @@ A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use 
 See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
 ## Storage
+
+This section answers XMTP storage FAQ about where messages are stored, message retention policies, and storage and retrieval costs.
 
 ### Where are XMTP messages stored?
 
