@@ -44,8 +44,42 @@ For this tutorial, we'll use [Firebase Cloud Messaging](https://console.firebase
 2. Run the server  
    Start the server locally or deploy it to a hosting service.
 
-- Subscribe to push notifications in the app  
+- Subscribe to push notifications in the app
   When initializing the XMTP client in your app, subscribe to push notifications using the device token obtained during registration.
 
-- Decode a notification envelope  
+- Decode a notification envelope
   When you receive a push notification, you may want to decode the notification envelope to display a message preview or other information.
+
+## Debug notification issues with multi-process logging
+
+When debugging notification-related issues, it's helpful to enable separate log files for your notification extension process. This prevents log file conflicts with your main app and makes it easier to trace issues that occur specifically in the notification service.
+
+```swift [Swift]
+import XMTP
+
+class NotificationService: UNNotificationServiceExtension {
+
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
+        // Enable logging for the notification extension process
+        try? await Client.activatePersistentLibXMTPLogWriter(
+            logLevel: .debug,
+            rotationSchedule: .hourly,
+            maxFiles: 5,
+            processType: .notificationExtension
+        )
+
+        // Your notification handling code
+        // Logs will be written to separate files with 'notif' in the filename
+    }
+}
+```
+
+Log files from your notification extension will have a distinct naming pattern:
+
+- Notification logs: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+- Main app logs: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+
+To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug-your-app#file-logging).
