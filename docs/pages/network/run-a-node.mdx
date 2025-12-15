@@ -85,6 +85,12 @@ As an existing XMTP Testnet node operator, complete the following steps to parti
 
    To do this, send the **public key** of the wallet you funded in a previous step to the XMTP team. XMTP will configure the registration for you.
 
+   Here is a script you can use to get the public key:
+
+   ```bash
+   docker run ghcr.io/xmtp/xmtpd-cli --private-key <private key> keys get-public-key
+   ```
+
 9. **Enable migration**
 
    XMTP will enable a message migration service that acts as a load test for your node.
