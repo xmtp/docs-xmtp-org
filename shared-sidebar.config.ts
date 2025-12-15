@@ -261,19 +261,23 @@ export const sidebarConfig = {
       items: [
         {
           text: "Security",
-          link: "https://xmtp.org/vision/concepts/encryption",
+          link: "https://xmtp.org/security",
         },      
         {
           text: "Identity",
-          link: "https://xmtp.org/vision/concepts/identity",
+          link: "https://xmtp.org/identity",
         },     
         {
+          text: "Digital money",
+          link: "https://xmtp.org/digital-money",
+        }, 
+        {
           text: "Consent",
-          link: "https://xmtp.org/vision/concepts/consent",
+          link: "https://xmtp.org/consent",
         }, 
         {
           text: "Decentralization",
-          link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
+          link: "https://xmtp.org/decentralization",
         }, 
       ],
     },
