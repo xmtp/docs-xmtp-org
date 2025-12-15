@@ -7,6 +7,8 @@ type CollapsibleProps = {
 };
 
 export const Collapsible = ({ title, children, defaultOpen = false }: CollapsibleProps) => {
+  const [isOpen, setIsOpen] = React.useState(defaultOpen);
+
   return (
     <>
       <style>{`
@@ -80,7 +82,11 @@ export const Collapsible = ({ title, children, defaultOpen = false }: Collapsibl
           margin-bottom: 0;
         }
       `}</style>
-      <details className="collapsible-container" open={defaultOpen}>
+      <details
+        className="collapsible-container"
+        open={isOpen}
+        onToggle={(e) => setIsOpen((e.target as HTMLDetailsElement).open)}
+      >
         <summary className="collapsible-summary">
           <span>{title}</span>
           <span className="collapsible-icon">
