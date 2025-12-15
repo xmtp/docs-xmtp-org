@@ -27,7 +27,7 @@ If your organization meets these standards, **[apply to operate](https://forms.g
 
 As an existing XMTP Testnet node operator, your participation in this phase will stress-test the network, first by migrating **150M+ real messages** that have been sent on XMTP's v3 network, then introducing tests that simulate real-world traffic conditions.
 
-## What to expect
+### What to expect
 
 1. **Testnet load test (now)**: Nodes must upgrade to 1.0.0 and complete the steps below to participate in the initial load test
 2. **Additional load tests (January)**: Subsequent tests will approximate more real-world traffic conditions
@@ -37,14 +37,54 @@ As an existing XMTP Testnet node operator, your participation in this phase will
 
 As an existing XMTP Testnet node operator, complete the following steps to participate in Testnet load testing and prepare for Mainnet.
 
-| **Requirement** | **Why** | **How** |
-| --- | --- | --- |
-| **1. Evaluate infrastructure setup** | Now is the time to consider moving off AWS/Kubernetes to simpler deployment models for Mainnet. | For example, see the [Systemd Guide](https://github.com/xmtp/xmtpd-infrastructure/tree/main/systemd). |
-| **2. Upgrade to xmtpd 1.0.0** | Required for Testnet load testing stage. Mainnet will require a subsequent release. | Update your deployment to pull the 1.0.0 release from [xmtpd releases](https://github.com/xmtp/xmtpd/releases).<br/>Upgrade again when Mainnet release is available. |
-| **3. Provide a public DNS** | Nodes must provide a publicly accessible DNS hostname so they can serve **gRPC traffic**, which **requires valid TLS certificates**. A stable domain with proper A/AAAA records is needed for certificate issuance and for other nodes and clients to discover and connect securely. | Register a domain, configure DNS A/AAAA records pointing to your load balancer or node IP, and ensure proper CORS header forwarding. |
-| **4. Get an Alchemy account + paid tier** | xmtpd requires reliable blockchain RPC access with sufficient rate limits for Mainnet traffic volumes. | [Sign up for Alchemy](https://docs.alchemy.com/docs/alchemy-quickstart-guide), select appropriate paid tier based on expected request volume, and configure RPC endpoint URL in xmtpd config. |
-| **5. Fund wallet with ETH** | Required to pay gas fees for node registration on the XMTP App Chain (L3) and interact with smart contracts. | Generate a secure private key, fund it with ETH on the appropriate chain, and store securely in secrets management. Use the [Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia) to get test ETH. ~$10 of ETH should last months. |
-| **6. Set up metrics/alerting (Prometheus)** | Monitor node health, resource usage, and errors. Detect issues proactively. | [Deploy Prometheus](https://github.com/xmtp/xmtpd-infrastructure/blob/main/doc/k8s-prometheus-monitoring.md) with xmtpd metrics scraping (OpenMetrics format) and set up Grafana dashboards and alerts. |
-| **7. Monitor ETH balance** | Ensure wallet never runs out of funds, preventing node from failing to submit transactions. | Set up alerting on wallet balance (e.g., via Prometheus + custom exporter, or third-party services like [Alchemy Notify](https://www.alchemy.com/dapps/alchemy-notify)) with thresholds for low balance warnings. |
-| **8. Register the node** | Register the node on the Nodes smart contract to participate in the Broadcast Network. | Generate your node's signing keypair and provide the **public key** to the XMTP team. XMTP will configure the registration for you. |
-| **9. Enable migration** | XMTP will enable a message migration service that acts as a load test for your node. | No action required yet. Instructions will be provided at a later date. |
+1. **Evaluate infrastructure setup**
+
+   Now is the time to consider moving off AWS/Kubernetes to simpler deployment models for Mainnet. For example, see the [Systemd Guide](https://github.com/xmtp/xmtpd-infrastructure/tree/main/systemd).
+
+2. **Upgrade to xmtpd 1.0.0**
+
+   Required for Testnet load testing stage. Mainnet will require a subsequent release.
+
+   To do this, update your deployment to pull the 1.0.0 release from [xmtpd releases](https://github.com/xmtp/xmtpd/releases). Upgrade again when the Mainnet release is available.
+
+3. **Provide a public DNS**
+
+   Nodes must provide a publicly accessible DNS hostname so they can serve **gRPC traffic**, which **requires valid TLS certificates**. A stable domain with proper A/AAAA records is needed for certificate issuance and for other nodes and clients to discover and connect securely.
+
+   To do this, register a domain, configure DNS A/AAAA records pointing to your load balancer or node IP, and ensure proper CORS header forwarding.
+
+4. **Get an Alchemy account + paid tier**
+
+   xmtpd requires reliable blockchain RPC access with sufficient rate limits for Mainnet traffic volumes.
+
+   To do this, [sign up for Alchemy](https://docs.alchemy.com/docs/alchemy-quickstart-guide), select an appropriate paid tier based on your expected request volume, and configure your RPC endpoint URL in your xmtpd config.
+
+5. **Fund wallet with ETH**
+
+   Required to pay gas fees for node registration on the XMTP App Chain (L3) and interact with smart contracts.
+
+   To do this, generate a secure private key, fund it with ETH on the appropriate chain, and store it securely in secrets management. Use the [Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia) to get test ETH. ~$10 of ETH should last months.
+
+6. **Set up metrics/alerting (Prometheus)**
+
+   Monitor node health, resource usage, and errors. Detect issues proactively.
+
+   To do this, [deploy Prometheus](https://github.com/xmtp/xmtpd-infrastructure/blob/main/doc/k8s-prometheus-monitoring.md) with xmtpd metrics scraping (OpenMetrics format) and set up Grafana dashboards and alerts.
+
+7. **Monitor ETH balance**
+
+   Ensure your wallet never runs out of funds to prevent your node from failing to submit transactions.
+
+   To do this, set up alerting on your wallet balance. You can do this using Prometheus + custom exporter or a third-party service like [Alchemy Notify](https://www.alchemy.com/dapps/alchemy-notify) with thresholds for low balance warnings.
+
+8. **Register the node**
+
+   Register the node on the Nodes smart contract to participate in the Broadcast Network.
+
+   To do this, generate your node's signing keypair and provide the **public key** to the XMTP team. XMTP will configure the registration for you.
+
+9. **Enable migration**
+
+   XMTP will enable a message migration service that acts as a load test for your node.
+
+   No action required yet. Instructions will be provided at a later date.
