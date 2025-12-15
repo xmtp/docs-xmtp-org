@@ -63,7 +63,9 @@ As an existing XMTP Testnet node operator, complete the following steps to parti
 
    Required to pay gas fees for node registration on the XMTP App Chain (L3) and interact with smart contracts.
 
-   To do this, generate a secure private key, fund it with ETH on the appropriate chain, and store it securely in secrets management. Use the [Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia) to get test ETH. ~$10 of ETH should last months.
+   To do this, generate a secure private key, fund it with ETH on the appropriate chain, and store it securely in secrets management. You can use the [Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia) to get test ETH. ~$10 of ETH should last months.
+
+   Note that this is the same wallet you'll use to register your node in a subsequent step.
 
 6. **Set up metrics/alerting (Prometheus)**
 
@@ -75,13 +77,13 @@ As an existing XMTP Testnet node operator, complete the following steps to parti
 
    Ensure your wallet never runs out of funds to prevent your node from failing to submit transactions.
 
-   To do this, set up alerting on your wallet balance. You can do this using Prometheus + custom exporter or a third-party service like [Alchemy Notify](https://www.alchemy.com/dapps/alchemy-notify) with thresholds for low balance warnings.
+   To do this, set up alerting on your wallet balance. This is the wallet you funded in a previous step. You can do this using Prometheus + custom exporter or a third-party service like [Alchemy Notify](https://www.alchemy.com/dapps/alchemy-notify) with thresholds for low balance warnings.
 
 8. **Register the node**
 
    Register the node on the Nodes smart contract to participate in the Broadcast Network.
 
-   To do this, generate your node's signing keypair and provide the **public key** to the XMTP team. XMTP will configure the registration for you.
+   To do this, send the **public key** of the wallet you funded in a previous step to the XMTP team. XMTP will configure the registration for you.
 
 9. **Enable migration**
 
