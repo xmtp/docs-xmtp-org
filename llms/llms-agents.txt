@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 07:39 PM UTC / December 12, 2025
+Generated at 10:48 PM UTC / December 16, 2025
 
 ## About this file
 
@@ -3617,7 +3617,7 @@ To get mxUSD, you must self-mint it.
 
    ```bash
     docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
-      funds mint --amount <1000> --to <receiving-address>
+      funds mint --amount <1000> --to <receiving-address> \
       --private-key <private-key> \
       --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
       --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
