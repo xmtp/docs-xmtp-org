@@ -206,7 +206,7 @@ To get mxUSD, you must self-mint it.
 
    ```bash
     docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
-      funds mint --amount <1000> --to <receiving-address>
+      funds mint --amount <1000> --to <receiving-address> \
       --private-key <private-key> \
       --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
       --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
