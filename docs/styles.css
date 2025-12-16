@@ -456,6 +456,11 @@ li ol ~ p {
   width: 100%;
 }
 
+.custom-homepage-sdk-grid--centered {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+  justify-content: center;
+}
+
 @media (max-width: 768px) {
   .custom-homepage-sdk-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -571,6 +576,16 @@ li ol ~ p {
   font-size: inherit;
   font-weight: inherit;
   color: inherit;
+}
+
+.custom-homepage-section-title:has(+ p) {
+  margin-bottom: 0.5rem;
+}
+
+.custom-homepage-section-title + p {
+  margin-top: 0;
+  text-align: center;
+  color: var(--vocs-color-text-secondary);
 }
 
 /* For smaller screens */

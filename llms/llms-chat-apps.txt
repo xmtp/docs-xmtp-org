@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 01:07 AM UTC / December 06, 2025
+Generated at 10:48 PM UTC / December 16, 2025
 
 ## About this file
 
@@ -235,6 +235,58 @@ const result2 = await client.debugInformation.uploadDebugArchive(
 | ----------------- | ----------------------------------------------------------------------------------------------------------- |
 | SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
 | SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations.      |
+
+## Get client version information
+
+You can retrieve version information from the XMTP client to help with debugging or ensuring compatibility.
+
+The `libxmtpVersion` property can be useful for debugging or ensuring compatibility with the underlying XMTP APIs. The `appVersion` returns the value that was set in the `appVersion` client option during [client creation](/chat-apps/core-messaging/create-a-client#configure-an-xmtp-client).
+
+### Get libxmtp version
+
+Get the version of the underlying libxmtp library used by the client:
+
+:::code-group
+
+```tsx [Browser]
+const libxmtpVersion = await client.libxmtpVersion();
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```tsx [Node]
+const libxmtpVersion = client.libxmtpVersion;
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```kotlin [Kotlin]
+val libxmtpVersion = client.libXMTPVersion
+println("libxmtp version: $libxmtpVersion")
+```
+
+```swift [Swift]
+let libxmtpVersion = client.libXMTPVersion
+print("libxmtp version:", libxmtpVersion)
+```
+
+:::
+
+### Get app version
+
+Get the app version that was configured when creating the client:
+
+:::code-group
+
+```tsx [Browser]
+const appVersion = await client.appVersion();
+console.log('App version:', appVersion);
+```
+
+```tsx [Node]
+const appVersion = client.appVersion;
+console.log('App version:', appVersion);
+```
+
+:::
 
 
 ## chat-apps/use-signatures.mdx
@@ -2626,6 +2678,12 @@ When you start streaming messages, the stream includes:
 
    All messages sent after your last sync, including messages that were missed when the client was offline. This catch-up behavior means you don't need to manually call `sync()` or query for messages before starting a stream. When the client comes back online or starts streaming, it will automatically receive any messages sent since the last sync, followed by new messages in real-time.
 
+:::tip[Stream only new messages]
+
+To stream only new real-time messages without catch-up messages, [sync with the network](/chat-apps/list-stream-sync/sync-and-syncall#sync-new-welcomes-conversations-with-unread-messages-and-preferences) before starting the stream.
+
+:::
+
 By default, `streamAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
 
 We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
@@ -3305,6 +3363,8 @@ A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use 
 See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
 
 ## Storage
+
+This section answers XMTP storage FAQ about where messages are stored, message retention policies, and storage and retrieval costs.
 
 ### Where are XMTP messages stored?
 
@@ -6814,6 +6874,8 @@ If you have an app and an agent, it's best to distinguish them from each other b
 
 The `appVersion` value is included with API requests to provide telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide you with app support, especially around communicating important SDK updates, deprecations, and required upgrades.
 
+To learn how to retrieve the client `appVersion` and `libxmtpVersion` values for debugging purposes, see [Get client version information](/chat-apps/debug-your-app#get-client-version-information).
+
 ### XMTP network environments
 
 XMTP provides `dev` and `production` network environments. These networks are completely separate and not interchangeable.
@@ -7548,7 +7610,7 @@ Disappearing messages are messages that are intended to be visible to users for 
 
 Disappearing message behavior is enforced by apps, meaning that apps are responsible for removing messages from their UIs and local storage based on conditions set at the conversation level. As a feature, disappearing messages doesn't delete messages from the XMTP network.
 
-Starting with XMTP mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
+Starting with XMTP Mainnet, the network will enforce message expiration to delete messages from the network after a retention period currently targeted at 6 months. This message expiration is a general condition of the network and is not related to the disappearing messages feature.
 
 To learn more, see [Message expiry](https://community.xmtp.org/t/xip-49-decentralized-backend-for-mls-messages/856) in XIP-49: Decentralized backend for MLS messages.
 
@@ -7560,12 +7622,21 @@ Conversation participants using apps that support disappearing messages will hav
 
 Messages abide by the disappearing message settings for the conversation.
 
-When creating or updating a conversation, only group admins and DM participants can set disappearing message expiration conditions.
+### Permissions for setting disappearing message conditions
 
-This includes setting the following conditions expressed in nanoseconds (ns):
+Who can set or change disappearing message settings depends on the conversation type:
+
+- **Group chats**: Only group admins can set or change disappearing message settings
+- **DMs**: Both participants can set or change disappearing message settings
+
+### Disappearing message settings
+
+Disappearing message expiration conditions are expressed in nanoseconds (ns):
 
 - `disappearStartingAtNs`: Starting timestamp from which the message lifespan is calculated
+  - In protocol messages, this appears as `message_disappear_from_ns`
 - `retentionDurationInNs`: Duration of time during which the message should remain visible to conversation participants
+  - In protocol messages, this appears as `message_disappear_in_ns`
 
 For example:
 
@@ -7573,11 +7644,9 @@ For example:
 2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
 3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
 
-To learn more see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
+To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
 
 ## Set disappearing message settings on conversation create
-
-For example:
 
 :::code-group
 
@@ -7685,7 +7754,10 @@ try await client.conversations.newGroup(
 
 ## Update disappearing message settings for an existing conversation
 
-For example:
+When you update disappearing message settings, the system changes each field separately under the hood. This means you'll receive two separate protocol messages when settings are updated:
+
+1. One message for `message_disappear_from_ns` (the `disappearStartingAtNs` field)
+2. One message for `message_disappear_in_ns` (the `retentionDurationInNs` field)
 
 :::code-group
 
@@ -7730,8 +7802,6 @@ try await conversation.clearDisappearingMessageSettings()
 
 ## Get the disappearing message settings for a conversation
 
-For example:
-
 :::code-group
 
 ```tsx [Browser]
@@ -7771,6 +7841,42 @@ try conversation.isDisappearingMessagesEnabled()
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
 To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+
+### Stream message deletions
+
+Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+
+:::code-group
+
+```tsx [Browser]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
+```tsx [Node]
+// Stream message deletions
+const stream = await client.conversations.streamMessageDeletions();
+
+// Listen for deleted message IDs
+for await (const messageId of stream) {
+  console.log('Message deleted:', messageId);
+  // Update your UI to remove the message with this ID
+}
+
+// When done, end the stream
+stream.end();
+```
+
+:::
 
 ## Automatic removal from UI
 
@@ -8790,7 +8896,11 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = await Client.inboxStateFromInboxIds([inboxId], "production");
+const inboxStates = await Client.inboxStateFromInboxIds(
+  [inboxId], 
+  "production",
+  "https://grpc.production.xmtp.network:443" // optional, gatewayHost - defaults to env default
+);
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
@@ -8799,6 +8909,7 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
+  "https://grpc.production.xmtp.network:443", // optional, gatewayHost - defaults to env default
   enableLogging: true, // optional, defaults to false
 );
 ```
@@ -8817,7 +8928,8 @@ await Client.revokeInstallations(
   signer,
   inboxId,
   toRevokeInstallationBytes,
-  'production' // optional, defaults to "dev"
+  'production', // optional, defaults to "dev"
+  'https://grpc.production.xmtp.network:443' // optional, gatewayHost - defaults to env default
 );
 ```
 
@@ -10239,10 +10351,11 @@ XMTP evolves through **[XMTP Improvement Proposals](/protocol/xips)** (XIPs), wh
 
 For a broader vision of XMTP's approach to core concepts, see the following topics on [xmtp.org](https://xmtp.org):
 
-- [Security](https://xmtp.org/vision/concepts/encryption)
-- [Identity](https://xmtp.org/vision/concepts/identity)
-- [Consent](https://xmtp.org/vision/concepts/consent)
-- [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp)
+- [Security](https://xmtp.org/security)
+- [Identity](https://xmtp.org/identity)
+- [Digital money](https://xmtp.org/digital-money)
+- [Consent](https://xmtp.org/consent)
+- [Decentralizing XMTP](https://xmtp.org/decentralization)
 
 
 ## protocol/security.mdx
@@ -10609,9 +10722,9 @@ A purple pin indicates that the node is operated by a non-profit organization.
 ## network/run-a-node.mdx
 # Run an XMTP network node
 
-A [testnet of the decentralized XMTP network](/network/network-nodes) was launched in early December 2024. The XMTP testnet is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power mainnet.
+The [XMTP Testnet](/network/network-nodes) is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power Mainnet.
 
-To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 ## Interested in becoming a registered XMTP node operator?
 
@@ -10647,7 +10760,7 @@ The testnet of the decentralized XMTP network includes two distributed systems:
 - The XMTP broadcast network
 - The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
 
@@ -11020,7 +11133,7 @@ To get mxUSD, you must self-mint it.
 
    ```bash
     docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
-      funds mint --amount <1000> --to <receiving-address>
+      funds mint --amount <1000> --to <receiving-address> \
       --private-key <private-key> \
       --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
       --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
