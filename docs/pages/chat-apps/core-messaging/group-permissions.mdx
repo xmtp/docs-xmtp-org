@@ -397,6 +397,25 @@ let isActive = try group.isActive() // Returns false
 
 :::
 
+#### Check if member is pending removal
+
+After a user calls `leaveGroup()`, you can check if their removal is still being processed using the `membershipState()` method. This is useful for showing appropriate UI while the group removal is being finalized.
+
+```kotlin [Kotlin]
+// After calling leaveGroup()
+group.leaveGroup()
+
+// Check if removal is still pending
+val state = group.membershipState()
+
+if (state == FfiGroupMembershipState.PENDING_REMOVE) {
+    // User has requested to leave, but removal not yet fully processed
+    println("Processing your departure from the group")
+}
+```
+
+The `PENDING_REMOVE` state indicates that the user has called `leaveGroup()` but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
+
 ### Get inbox IDs for members
 
 :::code-group

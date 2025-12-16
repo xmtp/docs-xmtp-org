@@ -336,46 +336,6 @@ try alix.conversations. findDmbyInboxId(bo.inboxId)
 
 :::
 
-## Check membership state
-
-You can check a user's current membership status in a conversation using the `membershipState()` method. This is useful for determining whether the user is still an active member before attempting operations, displaying pending invitations, or showing removal status.
-
-```kotlin [Kotlin]
-val conversation = client.conversations.findConversation(conversationId)
-val state = conversation.membershipState()
-
-when (state) {
-    FfiGroupMembershipState.ALLOWED -> {
-        // Active member with full access
-        println("You are an active member")
-    }
-    FfiGroupMembershipState.PENDING -> {
-        // Received welcome message but not yet fully processed
-        println("Processing invitation to conversation")
-    }
-    FfiGroupMembershipState.REJECTED -> {
-        // Explicitly denied membership
-        println("Your membership was rejected")
-    }
-    FfiGroupMembershipState.PENDING_REMOVE -> {
-        // Marked for removal, not yet processed
-        println("You are being removed from the conversation")
-    }
-    FfiGroupMembershipState.RESTORED -> {
-        // Previously removed, now restored
-        println("Your membership was restored")
-    }
-}
-```
-
-The `membershipState()` method returns one of the following states:
-
-- `ALLOWED`: Active member with full access to the conversation
-- `PENDING`: Invited to the conversation; the welcome message has been received but not yet fully processed by your client
-- `REJECTED`: Explicitly denied membership
-- `PENDING_REMOVE`: Marked for removal but not yet fully processed
-- `RESTORED`: Previously removed from the conversation but now restored
-
 ## Conversation union type
 
 Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
