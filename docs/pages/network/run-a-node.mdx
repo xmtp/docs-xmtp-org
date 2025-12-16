@@ -21,27 +21,29 @@ If your organization meets these standards, **[apply to operate](https://forms.g
 
 </Collapsible>
 
-## XMTP Testnet status and timeline
+## XMTP Testnet timeline
 
-### Current phase: Initial load testing of pre-seeded Testnet
+- **Early January 2026**: Migration testing
 
-[XMTP Testnet](/network/network-nodes) is currently running with **three registered node operators**.
+  These [three registered nodes](https://status.testnet.xmtp-partners.xyz/) are testing the processes that will migrate **150M+ real messages** from XMTP's V3 network to the decentralized XMTP Mainnet. These three nodes were the first to be on xmtpd v1.0.0.
 
-These initial three nodes are participating in the pre-seeding of **150M+ real messages** from XMTP's V3 network. Pre-seeding these messages to Testnet will provide initial load testing data to validate node performance.
+  Being able to migrate these messages ensures a smooth transition for app devs by making previously-published messages available on day 1 of the decentralized Mainnet.
 
-This pre-seeding phase is expected to complete in early January 2026.
+- **Late January 2026**: Load testing
 
-### Expanded load testing of pre-seeded Testnet
+  After migration testing is complete, an expanded group of [Testnet node operators](/network/network-nodes) will be able to migrate V3 messages and participate in expanded load testing.
 
-- **Late January 2026**: All other [nodes that participated in the early Testnet](/network/network-nodes) and that meet the requirements below can qualify to be added to the pre-seeded Testnet.
+  Existing registered node operators can qualify to participate in load testing by completing the steps in [Node requirements to participate in load testing](#node-requirements-to-participate-in-load-testing).
 
-- **Q1 2026**: Expanded Testnet load testing with real traffic patterns will be conducted as SDK and app capabilities develop and more node operators are onboarded.
+- **Q1 2026**: Expanded load testing with real traffic patterns
 
-## Node requirements to join the pre-seeded Testnet
+  After initial load testing is complete, expanded testing with real traffic patterns will be conducted as SDK and app capabilities develop.
 
-Nodes must meet the following requirements to be added to the pre-seeded Testnet.
+## Node requirements to participate in load testing
 
-Successfully participating in the pre-seeded Testnet is a **prerequisite** to be considered for the initial Mainnet node operator set.
+Existing registered node operators must meet the following requirements to participate in load testing.
+
+Successfully participating in Testnet load testing is a **prerequisite** to be considered for the initial Mainnet node operator set.
 
 1. **Run production-grade infrastructure**
 
@@ -97,6 +99,6 @@ Successfully participating in the pre-seeded Testnet is a **prerequisite** to be
    docker run ghcr.io/xmtp/xmtpd-cli --private-key <private key> keys get-public-key
    ```
 
-9. **Catch up with the pre-seeded Testnet**
+9. **Catch up with Testnet with migrated V3 messages**
 
-   Node must be fully caught up with the pre-seeded Testnet.
+   Node must be fully caught up with Testnet data that includes the migrated V3 messages.
