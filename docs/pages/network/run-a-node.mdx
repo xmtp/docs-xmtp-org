@@ -21,31 +21,37 @@ If your organization meets these standards, **[apply to operate](https://forms.g
 
 </Collapsible>
 
-## Participate in XMTP Testnet load testing
+## XMTP Testnet status and timeline
 
-[XMTP Testnet](/network/network-nodes) is entering the **load testing stage**—a critical milestone on the path to Mainnet.
+### Current phase: Initial load testing of pre-seeded Testnet
 
-As an existing XMTP Testnet node operator, your participation in this phase will stress-test the network, first by migrating **150M+ real messages** that have been sent on XMTP's v3 network, then introducing tests that simulate real-world traffic conditions.
+[XMTP Testnet](/network/network-nodes) is currently running with **three registered node operators**.
 
-### What to expect
+These initial three nodes are participating in the pre-seeding of **150M+ real messages** from XMTP's V3 network. Pre-seeding these messages to Testnet will provide initial load testing data to validate node performance.
 
-1. **Testnet load test (now)**: Nodes must upgrade to 1.0.0 and complete the steps below to participate in the initial load test
-2. **Additional load tests (January)**: Subsequent tests will approximate more real-world traffic conditions
-3. **Mainnet**: Successfully participating in the load test phase is a **prerequisite** to be considered for the initial Mainnet node operator set
+This pre-seeding phase is expected to complete in early January 2026.
 
-## Readiness checklist
+### Expanded load testing of pre-seeded Testnet
 
-As an existing XMTP Testnet node operator, complete the following steps to participate in Testnet load testing and prepare for Mainnet.
+- **Late January 2026**: All other [nodes that participated in the early Testnet](/network/network-nodes) and that meet the requirements below can qualify to be added to the pre-seeded Testnet.
 
-1. **Evaluate infrastructure setup**
+- **Q1 2026**: Expanded Testnet load testing with real traffic patterns will be conducted as SDK and app capabilities develop and more node operators are onboarded.
 
-   Now is the time to consider moving off AWS/Kubernetes to simpler deployment models for Mainnet. For example, see the [Systemd Guide](https://github.com/xmtp/xmtpd-infrastructure/tree/main/systemd).
+## Node requirements to join the pre-seeded Testnet
 
-2. **Upgrade to xmtpd 1.0.0**
+Nodes must meet the following requirements to be added to the pre-seeded Testnet.
 
-   Required for Testnet load testing stage. Mainnet will require a subsequent release.
+Successfully participating in the pre-seeded Testnet is a **prerequisite** to be considered for the initial Mainnet node operator set.
 
-   To do this, update your deployment to pull the 1.0.0 release from [xmtpd releases](https://github.com/xmtp/xmtpd/releases). Upgrade again when the Mainnet release is available.
+1. **Run production-grade infrastructure**
+
+   Nodes should run on production-grade infrastructure with strong operational control. Criteria include a preference for bare metal deployments and simpler deployment models over complex orchestration systems. For example, if you are running on AWS/Kubernetes, consider moving to a simpler deployment model for Mainnet.
+   
+   For example, see the [Systemd Guide](https://github.com/xmtp/xmtpd-infrastructure/tree/main/systemd).
+
+2. **Run xmtpd 1.0.0 or later**
+
+   Nodes must run xmtpd 1.0.0 or a later release. See [xmtpd releases](https://github.com/xmtp/xmtpd/releases) for the latest version.
 
 3. **Provide a public DNS**
 
@@ -91,8 +97,6 @@ As an existing XMTP Testnet node operator, complete the following steps to parti
    docker run ghcr.io/xmtp/xmtpd-cli --private-key <private key> keys get-public-key
    ```
 
-9. **Enable migration**
+9. **Catch up with the pre-seeded Testnet**
 
-   XMTP will enable a message migration service that acts as a load test for your node.
-
-   No action required yet. Instructions will be provided at a later date.
+   Node must be fully caught up with the pre-seeded Testnet.
