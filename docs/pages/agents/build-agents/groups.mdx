@@ -13,6 +13,7 @@ To learn more, see the [Gated group example](https://github.com/xmtplabs/xmtp-ag
 - `group_name`: The name of the group chat
 - `description`: A description of the group chat
 - `image_url`: A URL pointing to an image for the group chat
+- `app_data`: Custom app-specific data for the group chat (max 8192 bytes)
 
 ### Get and update metadata
 
@@ -21,11 +22,19 @@ To learn more, see the [Gated group example](https://github.com/xmtplabs/xmtp-ag
 const groupName = group.name;
 const groupDescription = group.description;
 const groupImageUrl = group.imageUrl;
+const appData = group.appData;
 
 // Update metadata
 await group.updateName('New Group Name');
 await group.updateDescription('New Group Description');
 await group.updateImageUrl('newurl.com');
+
+// Update app data
+const customData = JSON.stringify({
+  theme: 'dark',
+  settings: { notifications: true },
+});
+await group.updateAppData(customData);
 ```
 
 ## Group membership
@@ -119,4 +128,25 @@ await group.addAdmin(inboxId);
 await group.addSuperAdmin(inboxId);
 await group.removeAdmin(inboxId);
 await group.removeSuperAdmin(inboxId);
+```
+
+## Leave a group
+
+### Request to leave a group
+
+Request to leave the group chat:
+
+```js [Node]
+await group.requestRemoval();
+```
+
+### Check pending removal status
+
+Check if the current user has requested to leave the group:
+
+```js [Node]
+const isPending = group.isPendingRemoval;
+if (isPending) {
+  console.log('User has requested to leave this group');
+}
 ```
