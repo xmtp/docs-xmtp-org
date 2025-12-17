@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:48 PM UTC / December 16, 2025
+Generated at 12:04 AM UTC / December 17, 2025
 
 ## About this file
 
@@ -141,6 +141,65 @@ To use file logging, call the following static functions:
   - `clearXMTPLogs()`
 
 For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
+
+### Multi-process logging
+
+For apps with notification extensions or other background services, you can enable separate log files for each process type. This prevents log file conflicts and makes it easier to debug issues in notification services.
+
+When you call the logging functions, specify the process type:
+
+:::code-group
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.ProcessType
+
+// In your main application
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.MAIN
+)
+
+// In your notification extension/service
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.NOTIFICATION_EXTENSION
+)
+```
+
+```swift [Swift]
+import XMTP
+
+// In your main application
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .main
+)
+
+// In your notification extension
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .notificationExtension
+)
+```
+
+:::
+
+Log files are automatically named with the process type and process ID to avoid conflicts:
+- Format: `libxmtp-v{version}.{commit}.{process_type}.{pid}.log.{date}`
+- Main process example: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+- Notification extension example: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+
+This naming convention ensures that logs from different processes don't overwrite each other, making it easier to debug issues that occur in notification extensions or other background services.
 
 ## Network statistics
 
@@ -509,6 +568,43 @@ val envelope = getEnvelopeFromXMTP()
 val decodedMessage = conversation.decode(envelope)
 ```
 
+## Debug notification issues with multi-process logging
+
+When debugging notification-related issues, it's helpful to enable separate log files for your notification extension process. This prevents log file conflicts with your main app and makes it easier to trace issues that occur specifically in the notification service.
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.ProcessType
+import org.xmtp.android.library.Client
+
+class MyNotificationService : FirebaseMessagingService() {
+
+    override fun onCreate() {
+        super.onCreate()
+
+        // Enable logging for the notification extension process
+        Client.enterDebugWriter(
+            directory = File(filesDir, "xmtp_logs").absolutePath,
+            logLevel = FfiLogLevel.DEBUG,
+            rotation = FfiLogRotation.HOURLY,
+            maxFiles = 5u,
+            processType = ProcessType.NOTIFICATION_EXTENSION
+        )
+    }
+
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        // Your notification handling code
+        // Logs will be written to separate files with 'notif' in the filename
+    }
+}
+```
+
+Log files from your notification extension will have a distinct naming pattern:
+
+- Notification logs: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+- Main app logs: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+
+To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug-your-app#file-logging).
+
 
 ## chat-apps/push-notifs/ios-pn.mdx
 # Try push notifications with the iOS example XMTP app
@@ -557,11 +653,45 @@ For this tutorial, we'll use [Firebase Cloud Messaging](https://console.firebase
 2. Run the server  
    Start the server locally or deploy it to a hosting service.
 
-- Subscribe to push notifications in the app  
+- Subscribe to push notifications in the app
   When initializing the XMTP client in your app, subscribe to push notifications using the device token obtained during registration.
 
-- Decode a notification envelope  
+- Decode a notification envelope
   When you receive a push notification, you may want to decode the notification envelope to display a message preview or other information.
+
+## Debug notification issues with multi-process logging
+
+When debugging notification-related issues, it's helpful to enable separate log files for your notification extension process. This prevents log file conflicts with your main app and makes it easier to trace issues that occur specifically in the notification service.
+
+```swift [Swift]
+import XMTP
+
+class NotificationService: UNNotificationServiceExtension {
+
+    override func didReceive(
+        _ request: UNNotificationRequest,
+        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
+    ) {
+        // Enable logging for the notification extension process
+        try? await Client.activatePersistentLibXMTPLogWriter(
+            logLevel: .debug,
+            rotationSchedule: .hourly,
+            maxFiles: 5,
+            processType: .notificationExtension
+        )
+
+        // Your notification handling code
+        // Logs will be written to separate files with 'notif' in the filename
+    }
+}
+```
+
+Log files from your notification extension will have a distinct naming pattern:
+
+- Notification logs: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+- Main app logs: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+
+To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug-your-app#file-logging).
 
 
 ## chat-apps/push-notifs/pn-server.mdx
@@ -3422,6 +3552,10 @@ Have ideas about message deletion and editing? Post to the [XMTP Technical Forum
 ### Is XMTP more like email or chat?
 
 XMTP enables developers to implement messaging features and UX paradigms that best fit their needs. As a result, messages sent using apps built with XMTP might resemble many typical forms of communication, such as email, direct and group messaging, broadcasts, text messaging, push notifications, and more.
+
+### Can I send a message to any Ethereum wallet address?
+
+In theory, yes. However, a wallet address must first create an inbox ID on the XMTP network to be linked to it. This can be done through any app built using XMTP.
 
 ## What is XMTP Labs?
 
@@ -8514,6 +8648,25 @@ let isActive = try group.isActive() // Returns false
 ```
 
 :::
+
+#### Check if member is pending removal
+
+After a user calls `leaveGroup()`, you can check if their removal is still being processed using the `membershipState()` method. This is useful for showing appropriate UI while the group removal is being finalized.
+
+```kotlin [Kotlin]
+// After calling leaveGroup()
+group.leaveGroup()
+
+// Check if removal is still pending
+val state = group.membershipState()
+
+if (state == FfiGroupMembershipState.PENDING_REMOVE) {
+    // User has requested to leave, but removal not yet fully processed
+    println("Processing your departure from the group")
+}
+```
+
+The `PENDING_REMOVE` state indicates that the user has called `leaveGroup()` but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
 
 ### Get inbox IDs for members
 
