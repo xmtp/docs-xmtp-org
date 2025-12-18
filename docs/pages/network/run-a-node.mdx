@@ -23,15 +23,15 @@ If your organization meets these standards, **[apply to operate](https://forms.g
 
 ## XMTP Testnet timeline
 
-- **Early January 2026**: Migration testing
+- **Early January 2026**: Pre-seed testing
 
-  These [three registered nodes](https://status.testnet.xmtp-partners.xyz/) are testing the processes that will migrate **150M+ real messages** from XMTP's V3 network to the decentralized XMTP Mainnet. These three nodes were the first to be on xmtpd v1.0.0.
+  These [three registered nodes](https://status.testnet.xmtp-partners.xyz/) are testing the processes that will pre-seed **150M+ real messages** from XMTP's production network to the decentralized XMTP Testnet. These three nodes were the first to be on xmtpd v1.0.0.
 
-  Being able to migrate these messages ensures a smooth transition for app devs by making previously-published messages available on day 1 of the decentralized Mainnet.
+  Pre-seeding these messages to XMTP Testnet helps validate that we will be able to migrate these messages and more to XMTP Mainnet. This migration will provide a smooth transition for app devs by making previously-published messages available on day 1 of the decentralized Mainnet.
 
 - **Late January 2026**: Load testing
 
-  After migration testing is complete, an expanded group of [Testnet node operators](/network/network-nodes) will be able to migrate V3 messages and participate in expanded load testing.
+  After pre-seed testing is complete, an expanded group of [Testnet node operators](/network/network-nodes) will be able to pre-seed hte production network messages and participate in expanded load testing.
 
   Existing registered node operators can qualify to participate in load testing by completing the steps in [Node requirements to participate in load testing](#node-requirements-to-participate-in-load-testing).
 
@@ -59,7 +59,7 @@ Successfully participating in Testnet load testing is a **prerequisite** to be c
 
    Nodes must provide a publicly accessible DNS hostname so they can serve **gRPC traffic**, which **requires valid TLS certificates**. A stable domain with proper A/AAAA records is needed for certificate issuance and for other nodes and clients to discover and connect securely.
 
-   To do this, register a domain, configure DNS A/AAAA records pointing to your load balancer or node IP, and ensure proper CORS header forwarding.
+   To do this, register a domain, configure DNS A/AAAA records pointing to your load balancer or node IP, and ensure proper CORS header forwarding. To learn more, see [CORS and client routing](https://github.com/xmtp/xmtpd-infrastructure/blob/main/doc/cors-client-routing.md).
 
 4. **Get an Alchemy account + paid tier**
 
@@ -99,6 +99,6 @@ Successfully participating in Testnet load testing is a **prerequisite** to be c
    docker run ghcr.io/xmtp/xmtpd-cli --private-key <private key> keys get-public-key
    ```
 
-9. **Catch up with Testnet with migrated V3 messages**
+9. **Catch up with Testnet**
 
-   Node must be fully caught up with Testnet data that includes the migrated V3 messages.
+   Node must be fully caught up with Testnet data that includes the pre-seeded messages from the XMTP production network.
