@@ -397,57 +397,6 @@ struct ContentView: View {
 
 To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
 
-### Encrypt and decrypt attachments manually
-
-Use these attachment encryption and decryption methods to manually encrypt attachments before uploading and decrypt them after downloading. This is useful when you need fine-grained control over the encryption process or want to handle encryption separately from the send/receive flow.
-
-These methods use AES-256-GCM encryption with HKDF-SHA256 key derivation and include content integrity verification. The encryption ensures that attachments remain secure during storage and transit while maintaining end-to-end encryption guarantees.
-
-:::code-group
-
-```kotlin [Kotlin]
-import org.xmtp.android.library.codecs.Attachment
-import org.xmtp.android.library.codecs.EncryptedEncodedContent
-
-// Encrypt an attachment
-val attachment = Attachment(
-    filename = "document.pdf",
-    mimeType = "application/pdf",
-    data = pdfBytes,
-)
-
-val encryptedAttachment: EncryptedEncodedContent =
-    client.encryptAttachment(attachment)
-
-// Upload encryptedAttachment.payload to your storage provider
-val url = uploadToStorage(encryptedAttachment.payload)
-
-// Later, decrypt the attachment
-val downloadedBytes = downloadFromStorage(url)
-val decryptedAttachment: Attachment =
-    client.decryptAttachment(encryptedAttachment)
-```
-
-```swift [Swift]
-// Encrypt an attachment
-let attachment = Attachment(
-  filename: "document.pdf",
-  mimeType: "application/pdf",
-  data: pdfData
-)
-
-let encryptedAttachment = try client.encryptAttachment(attachment)
-
-// Upload encryptedAttachment.payload to your storage provider
-let url = uploadToStorage(encryptedAttachment.payload)
-
-// Later, decrypt the attachment
-let downloadedData = downloadFromStorage(url)
-let decryptedAttachment = try client.decryptAttachment(encryptedAttachment)
-```
-
-:::
-
 ## Support multiple remote attachments of any size
 
 Multiple remote attachments of any size can be sent in a single message using the `MultiRemoteAttachmentCodec` and a storage provider.
