@@ -241,42 +241,28 @@ To learn more about the background worker, see [disappearing_messages.rs](https:
 
 ## Access disappearing message expiration timestamps
 
-All disappearing messages include an expiration timestamp (`expiresAtNs`) in nanoseconds. You can use this to show when a message is scheduled to disappear.
+Disappearing message include an expiration timestamp (`expiresAtNs`) in nanoseconds. You can use this to show when a message is scheduled to disappear.
 
 :::code-group
 
 ```kotlin [Kotlin]
-// Access message expiration timestamp
 val messages = group.messages()
 
 messages.forEach { message ->
     message.expiresAtNs?.let { expiresAt ->
         val expirationTime = Instant.fromEpochMilliseconds(expiresAt / 1_000_000)
         println("Message expires at: $expirationTime")
-
-        // Check if message is expired
-        val now = Clock.System.now().toEpochMilliseconds() * 1_000_000
-        if (now > expiresAt) {
-            println("Message has expired")
-        }
     }
 }
 ```
 
 ```swift [Swift]
-// Access message expiration timestamp
 let messages = try await group.messages()
 
 for message in messages {
     if let expiresAt = message.expiresAtNs {
         let expirationTime = Date(timeIntervalSince1970: Double(expiresAt) / 1_000_000_000)
         print("Message expires at: \(expirationTime)")
-
-        // Check if message is expired
-        let now = UInt64(Date().timeIntervalSince1970 * 1_000_000_000)
-        if now > expiresAt {
-            print("Message has expired")
-        }
     }
 }
 ```
