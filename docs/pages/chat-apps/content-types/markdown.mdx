@@ -1,0 +1,219 @@
+# Support markdown in your app built with XMTP
+
+Use the markdown content type to send rich formatted text messages. Markdown allows you to include headers, lists, tables, code blocks, and other formatting elements to create more engaging and structured messages.
+
+## Install the package
+
+In some SDKs, the `MarkdownCodec` is already included in the SDK. If not, you can install the package using the following command:
+
+:::code-group
+
+```bash [npm]
+npm i @xmtp/content-type-markdown
+```
+
+```bash [yarn]
+yarn add @xmtp/content-type-markdown
+```
+
+```bash [pnpm]
+pnpm add @xmtp/content-type-markdown
+```
+
+:::
+
+## Configure the content type
+
+After importing the package, you can register the codec.
+
+:::code-group
+
+```jsx [Browser]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+// Create the XMTP client
+const xmtp = await Client.create(signer, {
+  env: 'dev',
+  codecs: [new ContentTypeMarkdown()],
+});
+```
+
+```jsx [React Native]
+const client = await Client.create(signer, {
+  env: 'production',
+  codecs: [new ContentTypeMarkdown()],
+});
+```
+
+```kotlin [Kotlin]
+// Built-in support - no additional registration required
+// The MarkdownCodec is included in Android SDK v4.7.0+
+```
+
+```swift [Swift]
+Client.register(ContentTypeMarkdown());
+```
+
+:::
+
+## Send markdown content
+
+With XMTP, markdown content is sent as a string containing markdown formatting.
+
+:::code-group
+
+```tsx [Browser]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
+const markdownContent = `## Welcome to XMTP
+
+This is a **bold** message with *italic* text and \`inline code\`.
+
+- Item 1
+- Item 2
+- Item 3`;
+
+await conversation.send(markdownContent, {
+  contentType: ContentTypeMarkdown,
+});
+```
+
+```tsx [Node]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
+const markdownContent = `## Welcome to XMTP
+
+This is a **bold** message with *italic* text and \`inline code\`.
+
+- Item 1
+- Item 2
+- Item 3`;
+
+await conversation.send(markdownContent, {
+  contentType: ContentTypeMarkdown,
+});
+```
+
+```jsx [React Native]
+await conversation.send({
+  markdown: markdownContent,
+});
+```
+
+```kotlin [Kotlin]
+val markdownContent = """
+## Welcome to XMTP
+
+This is a **bold** message with *italic* text and `inline code`.
+
+- Item 1
+- Item 2
+- Item 3
+""".trimIndent()
+
+conversation.sendMarkdown(text = markdownContent)
+```
+
+```swift [Swift]
+let markdownContent = """
+## Welcome to XMTP
+
+This is a **bold** message with *italic* text and `inline code`.
+
+- Item 1
+- Item 2
+- Item 3
+"""
+
+try await conversation.send(
+  content: markdownContent,
+  options: .init(contentType: ContentTypeMarkdown)
+)
+```
+
+:::
+
+### Supported markdown patterns
+
+The markdown content type supports standard markdown formatting patterns:
+
+#### Headers
+
+- `#` H1 headers
+- `##` H2 headers
+- `###` H3 headers
+- `####` H4 headers
+- `#####` H5 headers
+- `######` H6 headers
+
+#### Text formatting
+
+- `**bold text**` or `__bold text__`
+- `*italic text*` or `_italic text_`
+- `~~strikethrough text~~`
+- \`inline code\`
+- \`\`\`code block\`\`\`
+- > block quote
+- [link text](https://www.example.com)
+
+#### Lists
+
+- Unordered lists with `-`, `*`, or `+`
+- Ordered lists with numbers
+- Nested lists with proper indentation
+
+#### Tables
+
+- Standard markdown table syntax with `|` separators
+- Header rows with `---` separators
+
+## Receive markdown content
+
+Now that you can send markdown, you need a way to receive it.
+
+:::code-group
+
+```tsx [Browser]
+import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
+
+if (message.contentType.sameAs(ContentTypeMarkdown)) {
+  const markdownContent = message.content;
+  // Render the markdown in your UI
+}
+```
+
+```jsx [React Native]
+if (message.contentTypeId === 'xmtp.org/markdown:1.0') {
+  const markdownContent = message.content();
+  // Render the markdown in your UI
+}
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ContentTypeMarkdown
+
+if (message.contentType == ContentTypeMarkdown) {
+    val markdownContent: String = message.content()
+    // Render the markdown in your UI
+}
+```
+
+```swift [Swift]
+if message.contentType == ContentTypeMarkdown {
+  let markdownContent: String = try message.content()
+  // Render the markdown in your UI
+}
+```
+
+:::
+
+To handle unsupported content types, refer to the [fallback](/chat-apps/content-types/fallback) section.
+
+## Display markdown content
+
+How you render markdown in your app is up to you. You can use a markdown rendering library appropriate for your platform:
+
+- **Web**: Use libraries like `marked`, `react-markdown`, or `markdown-it`
+- **Android**: Use libraries like `Markwon` or `CommonMark`
+- **iOS**: Use libraries like `Down` or `MarkdownKit`
+
+Alternatively, you can display the raw markdown text if your app doesn't support rich text rendering.
