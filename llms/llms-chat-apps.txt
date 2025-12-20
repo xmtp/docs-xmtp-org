@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 10:02 PM UTC / December 17, 2025
+Generated at 02:08 AM UTC / December 20, 2025
 
 ## About this file
 
@@ -7975,6 +7975,37 @@ try conversation.isDisappearingMessagesEnabled()
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
 To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+
+
+## Access disappearing message expiration timestamps
+
+Disappearing messages include an expiration timestamp (`expiresAtNs`) in nanoseconds. You can use this to show when a message is scheduled to disappear.
+
+:::code-group
+
+```kotlin [Kotlin]
+val messages = group.messages()
+
+messages.forEach { message ->
+    message.expiresAtNs?.let { expiresAt ->
+        val expirationTime = Instant.fromEpochMilliseconds(expiresAt / 1_000_000)
+        println("Message expires at: $expirationTime")
+    }
+}
+```
+
+```swift [Swift]
+let messages = try await group.messages()
+
+for message in messages {
+    if let expiresAt = message.expiresAtNs {
+        let expirationTime = Date(timeIntervalSince1970: Double(expiresAt) / 1_000_000_000)
+        print("Message expires at: \(expirationTime)")
+    }
+}
+```
+
+:::
 
 ### Stream message deletions
 
