@@ -107,7 +107,66 @@ To use file logging, call the following static functions:
   - `readXMTPLogFile()`
   - `clearXMTPLogs()`
 
-For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/ephemeraHQ/convos-app/pull/6) to the Convos app, built with XMTP.
+For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
+
+### Multi-process logging
+
+For apps with notification extensions or other background services, you can enable separate log files for each process type. This prevents log file conflicts and makes it easier to debug issues in notification services.
+
+When you call the logging functions, specify the process type:
+
+:::code-group
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.ProcessType
+
+// In your main application
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.MAIN
+)
+
+// In your notification extension/service
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.NOTIFICATION_EXTENSION
+)
+```
+
+```swift [Swift]
+import XMTP
+
+// In your main application
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .main
+)
+
+// In your notification extension
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .notificationExtension
+)
+```
+
+:::
+
+Log files are automatically named with the process type and process ID to avoid conflicts:
+- Format: `libxmtp-v{version}.{commit}.{process_type}.{pid}.log.{date}`
+- Main process example: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+- Notification extension example: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+
+This naming convention ensures that logs from different processes don't overwrite each other, making it easier to debug issues that occur in notification extensions or other background services.
 
 ## Network statistics
 
@@ -203,3 +262,55 @@ const result2 = await client.debugInformation.uploadDebugArchive(
 | ----------------- | ----------------------------------------------------------------------------------------------------------- |
 | SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
 | SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations.      |
+
+## Get client version information
+
+You can retrieve version information from the XMTP client to help with debugging or ensuring compatibility.
+
+The `libxmtpVersion` property can be useful for debugging or ensuring compatibility with the underlying XMTP APIs. The `appVersion` returns the value that was set in the `appVersion` client option during [client creation](/chat-apps/core-messaging/create-a-client#configure-an-xmtp-client).
+
+### Get libxmtp version
+
+Get the version of the underlying libxmtp library used by the client:
+
+:::code-group
+
+```tsx [Browser]
+const libxmtpVersion = await client.libxmtpVersion();
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```tsx [Node]
+const libxmtpVersion = client.libxmtpVersion;
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```kotlin [Kotlin]
+val libxmtpVersion = client.libXMTPVersion
+println("libxmtp version: $libxmtpVersion")
+```
+
+```swift [Swift]
+let libxmtpVersion = client.libXMTPVersion
+print("libxmtp version:", libxmtpVersion)
+```
+
+:::
+
+### Get app version
+
+Get the app version that was configured when creating the client:
+
+:::code-group
+
+```tsx [Browser]
+const appVersion = await client.appVersion();
+console.log('App version:', appVersion);
+```
+
+```tsx [Node]
+const appVersion = client.appVersion;
+console.log('App version:', appVersion);
+```
+
+:::

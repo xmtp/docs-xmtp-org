@@ -3,7 +3,7 @@
 Use the reaction content type to support reactions with your agent. A reaction is a quick and often emoji-based way to respond to a message. Reactions are usually limited to a predefined set of emojis or symbols provided by the chat app.
 
 :::tip[Quickstart]
-To learn more, see the [Reaction example](https://github.com/ephemeraHQ/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
+To learn more, see the [Reaction example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
 :::
 
 ## Install the package
@@ -26,24 +26,13 @@ pnpm add @xmtp/content-type-reaction
 
 :::
 
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```jsx [Node]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-// Create the XMTP agent
-const agent = await Agent.create(signer, {
-  env: 'dev',
-  codecs: [new ReactionCodec()],
-});
-```
-
 ## Send a reaction
 
 With XMTP, reactions are represented as objects with the following keys:
 
 - `reference`: ID of the message being reacted to
+
+- `referenceInboxId`: (Optional) Inbox ID of the sender of the message being reacted to. This helps with message attribution in group conversations.
 
 - `action`: Action of the reaction (added or removed)
 
@@ -52,7 +41,25 @@ With XMTP, reactions are represented as objects with the following keys:
 - `schema`: Schema of the reaction (Unicode, shortcode, or custom)
 
 ```tsx [Node]
+// Simple
 await ctx.sendReaction('❤️');
+
+// With all fields
+import {
+  ContentTypeReaction,
+  type Reaction,
+} from '@xmtp/content-type-reaction';
+
+await ctx.conversation.send(
+  {
+    reference: ctx.message.id,
+    referenceInboxId: ctx.message.senderInboxId, // Optional: Inbox ID of the message sender
+    action: 'added',
+    content: '❤️',
+    schema: 'unicode',
+  } as Reaction,
+  ContentTypeReaction
+);
 ```
 
 ## Receive a reaction
@@ -70,6 +77,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
+import { ReactionCodec } from '@xmtp/content-type-reaction';
+import type { Reaction } from '@xmtp/content-type-reaction';
+
 if (ctx.usesCodec(ReactionCodec)) {
   // We've got a reaction.
   const reaction: Reaction = ctx.message.content;

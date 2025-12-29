@@ -65,6 +65,8 @@ XMTP implements quantum-resistant encryption to protect against "Harvest Now, De
 
 The quantum resistance is implemented by securing Welcome messages (the entry point for all conversations) with post-quantum key encapsulation. Since Welcome messages contain the group secrets needed to decrypt all messages in a conversation, protecting them with quantum-resistant encryption ensures the entire conversation remains secure against quantum attacks. Once inside a group, all messages maintain the same size and performance characteristics as before.
 
+To learn more about how XMTP achieves quantum resistance, see [XMTP and the Future of Privacy in a Quantum World](https://community.xmtp.org/t/xmtp-and-the-future-of-privacy-in-a-quantum-world/1079).
+
 ## User anonymity
 
 Ensures that outsiders can't deduce the participants of a group, users who have interacted with each other, or the sender or recipient of individual messages.

@@ -82,11 +82,11 @@ let orderFilteredConversations = try await client.conversations.list(consentStat
 
 // List just dms
 let conversations = try await alix.conversations.listDms()
-let orderFilteredConversations = try await client.conversations.listDms(consentState: .allowed)
+let orderFilteredConversations = try client.conversations.listDms(consentState: .allowed)
 
 //List just groups
 let conversations = try await alix.conversations.listGroups()
-let orderFilteredConversations = try await client.conversations.listGroups(consentState: .allowed)
+let orderFilteredConversations = try client.conversations.listGroups(consentState: .allowed)
 ```
 
 :::
@@ -98,52 +98,141 @@ The `isActive()` method determines whether the current user is still an active m
 - When a user is added to a group, `isActive()` returns `true` for that user
 - When a user is removed from a group, `isActive()` returns `false` for that user
 
+You can use a user's `isActive: true` value as a filter parameter when listing conversations. You can potentially have a separate section for "archived" or "inactive" conversations where you could use `isActive: false`.
+
+## Paginate the conversation list
+
+You can paginate the conversation list by using the `limit` parameter and either the `createdAtNs` or `lastActivityNs` parameters.
+
+By default, the conversation will be sorted by last activity (either when the last message was sent, or the group's creation time if no messages are found) in descending order.
+
+### Paginate by `createdAt`
+
+For most pagination use cases, use the `createdBeforeNs` parameter for filtering and set `orderBy` to `createdAt`. This enables you to paginate against a stably sorted list. You can then perform a final sort of conversations in your app.
+
 :::code-group
 
-```js [Browser]
-// Check if user is active in a specific conversation
-const isUserActive = await conversation.isActive();
-console.log('User is active:', isUserActive);
-
-// Filter active conversations
-const activeConversations = [];
-for (const conversation of allConversations) {
-  if (await conversation.isActive()) {
-    activeConversations.push(conversation);
-  }
-}
+```ts [Browser]
+const firstPage = await client.conversations.list({
+  limit: 10,
+  orderBy: 'createdAt',
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
+});
 ```
 
-```js [Node]
-// Check if user is active in a specific conversation
-const isUserActive = conversation.isActive;
-console.log('User is active:', isUserActive);
+```ts [Node]
+const firstPage = await client.conversations.list({
+  limit: 10,
+  orderBy: 'createdAt',
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  createdBeforeNs: firstPage[firstPage.length - 1].createdAtNs,
+});
+```
 
-// Filter active conversations (direct property access)
-const activeConversations = allConversations.filter(
-  (conversation) => conversation.isActive
+```ts [React Native]
+const firstPage = await client.conversations.list(
+  {},
+  10, // limit
+  undefined, // consentStates
+  undefined, // createdAfterNs
+  undefined, // createdBeforeNs
+  undefined, // lastActivityAfterNs
+  undefined, // lastActivityBeforeNs
+  'created_at' // orderBy
+);
+const secondPage = await client.conversations.list(
+  {},
+  10,
+  undefined,
+  undefined,
+  firstPage[firstPage.length - 1].createdAtNs, // createdBeforeNs
+  undefined,
+  undefined,
+  'created_at'
 );
 ```
 
-```tsx [React Native]
-// Check if user is active in a specific conversation
-const isUserActive = await conversation.isActive();
-console.log('User is active:', isUserActive);
+```kotlin [Kotlin]
+val firstPage = try client.conversations.list(limit = 10, orderBy = Conversations.ListConversationsOrderBy.CREATED_AT)
+val secondPage = try client.conversations.list(
+    limit = 10,
+    createdBeforeNs = firstPage.last().createdAtNs
+)
+```
 
-// Filter active conversations
-const activeConversations = [];
-for (const conversation of allConversations) {
-  if (await conversation.isActive()) {
-    activeConversations.push(conversation);
-  }
-}
-
-// Or filter conversations by active status when listing (simplified)
-const conversations = await alix.conversations.list({
-  isActive: true, // Only show active conversations
-});
+```swift [Swift]
+let firstPage = try await client.conversations.list(limit: 10, orderBy: .createdAt)
+let secondPage = try await client.conversations.list(createdBeforeNs: firstPage.last!.createdAtNs, limit: 10)
 ```
 
 :::
 
-You can use a user's active status to filter conversations and potentially have a separate section for "archived" or "inactive" conversations.
+### Edge case: Paginate by `lastActivityNs`
+
+In the edge case where your app doesn't use streaming, you can choose to sort conversations by `lastActivityNs` for pagination because it won't stream unexpected new messages in the conversations.
+
+Using `lastActivityNs` for pagination can work if the page size is very large and missing some conversations is tolerable.
+
+:::warning[Do not use with streaming]
+
+Do not sort by `lastActivityNs` for pagination in an app that uses streaming. This might cause conversations to "jump" between pages as new messages stream in, resulting in an unstable sort and an incomplete list of conversations.
+
+:::
+
+:::code-group
+
+```ts [Browser]
+const firstPage = await client.conversations.list({
+  limit: 10,
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs,
+});
+```
+
+```ts [Node]
+const firstPage = await client.conversations.list({
+  limit: 10,
+});
+const secondPage = await client.conversations.list({
+  limit: 10,
+  lastActivityBeforeNs: firstPage[firstPage.length - 1].lastActivityNs,
+});
+```
+
+```ts [React Native]
+const firstPage = await client.conversations.list(
+  {},
+  10 // limit
+);
+const secondPage = await client.conversations.list(
+  {},
+  10,
+  undefined,
+  undefined,
+  undefined,
+  undefined,
+  firstPage[firstPage.length - 1].lastActivityNs // lastActivityBeforeNs
+);
+```
+
+```kotlin [Kotlin]
+val firstPage = try client.conversations.list(limit = 10)
+val secondPage = try client.conversations.list(
+    limit = 10,
+    lastActivityBeforeNs = firstPage.last().lastActivityNs
+)
+```
+
+```swift [Swift]
+let firstPage = try await client.conversations.list(limit: 10)
+let secondPage = try await client.conversations.list(lastActivityBeforeNs: firstPage.last!.lastActivityAtNs, limit: 10)
+```
+
+:::

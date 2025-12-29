@@ -1,0 +1,718 @@
+# List messages
+
+Query messages from a conversation using filters including time ranges, delivery status, and content types. You can either retrieve the full message list or just get a message count for efficiency.
+
+## Method parameters
+
+All parameters are optional and can be combined to create precise filters and sorts:
+
+| Parameter                                      | Type                               | Description                                                                                                        |
+| ---------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `limit`                                        | `Int` / `Long` / `bigint`          | Maximum number of messages to return                                                                               |
+| `beforeNs` / `sentBeforeNs`                    | `Int64` / `Long` / `bigint`        | Filter messages sent before this timestamp (nanoseconds)                                                           |
+| `afterNs` / `sentAfterNs`                      | `Int64` / `Long` / `bigint`        | Filter messages sent after this timestamp (nanoseconds)                                                            |
+| `direction`                                    | `SortDirection` / `string`         | Sort order: `descending` (default, newest first) or `ascending` (oldest first)                                     |
+| `deliveryStatus`                               | `MessageDeliveryStatus` / `string` | Filter by delivery status: `all` (default), `published`, `unpublished`, or `failed`                                |
+| `excludeContentTypes` / `excludedContentTypes` | Array                              | Content types to exclude (e.g., reactions, read receipts).                                                         |
+| `excludeSenderInboxIds`                        | Array of strings                   | Inbox IDs whose messages should be excluded.                                                                       |
+| `insertedBeforeNs`                             | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database before this timestamp (nanoseconds)                               |
+| `insertedAfterNs`                              | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database after this timestamp (nanoseconds)                                |
+| `sortBy`                                       | `SortBy` / enum                    | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
+
+## List messages with enriched metadata
+
+The `enrichedMessages()` method retrieves messages from conversations with enriched metadata automatically included. This means reactions, replies, and other associated data are "baked in" to each message, eliminating the need for separate queries to fetch this information.
+
+You may want to use enriched messages by default. The `enrichedMessages()` method provides better performance and simpler code.
+
+Be sure to handle content types properly by using the generic `content<T>()` method with the appropriate type for reactions and replies.
+
+### List messages enriched with reaction metadata
+
+Use `reactions` to get a list of reaction messages associated with the message.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Retrieve messages with enriched data from a group
+val groupMessages = group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+val dmMessages = dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach { message ->
+  // Access the list of reactions
+  message.reactions.forEach { reaction ->
+    val reactionContent = reaction.content<Reaction>()
+    println("Reaction: ${reactionContent.content}")
+  }
+}
+```
+
+```swift [Swift]
+// Retrieve messages with enriched data from a group
+let groupMessages = try await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+let dmMessages = try await dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+for message in groupMessages {
+  // Access the list of reactions
+  for reaction in message.reactions {
+    let reactionContent: Reaction = try reaction.content()
+    print("Reaction: \(reactionContent.content)")
+  }
+}
+```
+
+:::
+
+### List messages enriched with reply metadata
+
+Messages returned by `enrichedMessages()` include reply information when a message is a reply to another message.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Retrieve messages with enriched data from a group
+val groupMessages = group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+val dmMessages = dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach { message ->
+  // Check if the message is a reply
+  if (message.contentType == ContentTypeReply) {
+    val replyContent = message.content<Reply>()
+
+    if (replyContent != null) {
+      println("This is a reply to message: ${replyContent.reference}")
+      println("Reply text: ${replyContent.content}")
+    }
+  }
+}
+```
+
+```swift [Swift]
+// Retrieve messages with enriched data from a group
+let groupMessages = try await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+let dmMessages = try await dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+for message in groupMessages {
+  // Check if the message is a reply
+  if message.contentType == ContentTypeReply {
+    let replyContent: Reply = try message.content()
+
+    if let inReplyTo = replyContent.inReplyTo {
+      let originalContent: String = try inReplyTo.content()
+      print("This is a reply to message: \(originalContent)")
+      print("Reply text: \(replyContent.content)")
+    }
+  }
+}
+```
+
+:::
+
+## List messages (unenriched)
+
+Retrieve messages from a conversation.
+
+:::code-group
+
+```tsx [Browser]
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10n });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936n;
+const newMessages = await group.messages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50n });
+```
+
+```tsx [Node]
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10n });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936n;
+const newMessages = await group.messages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50n });
+```
+
+```tsx [React Native]
+// Get all messages
+const messages = await group.messages();
+
+// Get the 10 most recent messages
+const recentMessages = await group.messages({ limit: 10 });
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+const lastCheckTimestamp = 1738620126404999936;
+const newMessages = await group.messages({
+  afterNs: lastCheckTimestamp,
+});
+
+// Get messages from a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmMessages = await dm.messages({ limit: 50 });
+```
+
+```kotlin [Kotlin]
+// Get all messages
+val messages = group.messages()
+
+// Get the 10 most recent messages
+val recentMessages = group.messages(limit = 10)
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+val lastCheckTimestamp: Long = 1738620126404999936
+val newMessages = group.messages(afterNs = lastCheckTimestamp)
+
+// Get messages from a DM conversation
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+val dmMessages = dm.messages(limit = 50)
+```
+
+```swift [Swift]
+// Get all messages
+let messages = try await group.messages()
+
+// Get the 10 most recent messages
+let recentMessages = try await group.messages(limit: 10)
+
+// Get messages after a specific time (e.g., for pagination or unread messages)
+let lastCheckTimestamp: Int64 = 1738620126404999936
+let newMessages = try await group.messages(afterNs: lastCheckTimestamp)
+
+// Get messages from a DM conversation
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+let dmMessages = try await dm.messages(limit: 50)
+```
+
+:::
+
+## Count messages in a conversation
+
+Get a count of messages without retrieving the full message list. This is more efficient when you only need the number, such as for unread message badges.
+
+:::code-group
+
+```tsx [Browser]
+// Get total message count
+const totalCount = await group.countMessages();
+
+// Get count of messages after last check (for unread badge)
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get count for a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmUnreadCount = await dm.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+```
+
+```tsx [Node]
+// Get total message count
+const totalCount = await group.countMessages();
+
+// Get count of messages after last check (for unread badge)
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+
+// Get count for a DM conversation
+const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dmUnreadCount = await dm.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+});
+```
+
+```tsx [React Native]
+// Not yet available in React Native
+```
+
+```kotlin [Kotlin]
+// Get total message count
+val totalCount = group.countMessages()
+
+// Get count of messages after last check (for unread badge)
+val lastCheckTimestamp: Long = 1738620126404999936
+val unreadCount = group.countMessages(afterNs = lastCheckTimestamp)
+
+// Get count for a DM conversation
+val dm = client.conversations.findOrCreateDm(recipientInboxId)
+val dmUnreadCount = dm.countMessages(afterNs = lastCheckTimestamp)
+```
+
+```swift [Swift]
+// Get total message count
+let totalCount = try group.countMessages()
+
+// Get count of messages after last check (for unread badge)
+let lastCheckTimestamp: Int64 = 1738620126404999936
+let unreadCount = try group.countMessages(afterNs: lastCheckTimestamp)
+
+// Get count for a DM conversation
+let dm = try await client.conversations.findOrCreateDm(with: recipientInboxId)
+let dmUnreadCount = try dm.countMessages(afterNs: lastCheckTimestamp)
+```
+
+:::
+
+### Count unread messages excluding reactions
+
+You can combine filters to count messages after the last check, excluding reactions, for example.
+
+:::code-group
+
+```tsx [Browser]
+// Get count of unread messages, excluding reactions
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+  excludeContentTypes: [ContentType.Reaction],
+});
+```
+
+```tsx [Node]
+// Get count of unread messages, excluding reactions
+const lastCheckTimestamp = 1738620126404999936n;
+const unreadCount = await group.countMessages({
+  sentAfterNs: lastCheckTimestamp,
+  excludeContentTypes: [ContentType.Reaction],
+});
+```
+
+```tsx [React Native]
+// Not yet available in React Native
+```
+
+```kotlin [Kotlin]
+// Get count of unread messages, excluding reactions
+val lastCheckTimestamp: Long = 1738620126404999936
+val reactionType = FfiContentType("xmtp.org", "reaction", 1, 0)
+val unreadCount = group.countMessages(
+  afterNs = lastCheckTimestamp,
+  excludedContentTypes = listOf(reactionType)
+)
+```
+
+```swift [Swift]
+// Get count of unread messages, excluding reactions
+let lastCheckTimestamp: Int64 = 1738620126404999936
+let unreadCount = try group.countMessages(
+  afterNs: lastCheckTimestamp,
+  excludeContentTypes: [.reaction]
+)
+```
+
+:::
+
+## Filter messages and message counts
+
+Apply the same filtering parameters to both retrieve filtered messages with `messages()` or get counts of filtered messages with `countMessages()`.
+
+:::code-group
+
+```tsx [Browser]
+// Using messages()
+const messages = await group.messages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: [ContentType.Reaction], // Exclude content types
+});
+
+// Using countMessages()
+const count = await group.countMessages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+```
+
+```tsx [Node]
+// Using messages()
+const messages = await group.messages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: [ContentType.Reaction], // Exclude content types
+});
+
+// Using countMessages()
+const count = await group.countMessages({
+  sentAfterNs: 1738620126404999936n, // Filter by time
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+```
+
+```tsx [React Native]
+// Using messages()
+const messages = await group.messages({
+  afterNs: 1738620126404999936, // Filter by time
+  deliveryStatus: 'published', // Filter by delivery status
+  excludeContentTypes: ['reaction'], // Exclude content types
+  excludeSenderInboxIds: ['inbox_id_1'], // Exclude senders
+});
+// React Native does not yet include countMessages()
+```
+
+```kotlin [Kotlin]
+// Using messages()
+val reactionType = FfiContentType("xmtp.org", "reaction", 1, 0)
+val messages = group.messages(
+    afterNs = 1738620126404999936, // Filter by time
+    deliveryStatus = DecodedMessage.MessageDeliveryStatus.PUBLISHED, // Filter by delivery status
+    excludedContentTypes = listOf(reactionType) // Exclude content types
+)
+
+// Using countMessages()
+val count = group.countMessages(
+    afterNs = 1738620126404999936, // Filter by time
+    excludeSenderInboxIds = listOf("inbox_id_1") // Exclude senders
+)
+```
+
+```swift [Swift]
+// Using messages()
+let messages = try await group.messages(
+    afterNs: 1738620126404999936, // Filter by time
+    deliveryStatus: .published, // Filter by delivery status
+    excludeContentTypes: [.reaction] // Exclude content types
+)
+
+// Using countMessages()
+let count = try group.countMessages(
+    afterNs: 1738620126404999936, // Filter by time
+    excludeSenderInboxIds: ["inbox_id_1"] // Exclude senders
+)
+```
+
+:::
+
+### Filter messages by insertion time
+
+You can filter messages using insertion time ranges with `insertedAfterNs` and `insertedBeforeNs`. This is useful when you need to query based on when messages were added to the local database rather than when they were sent.
+
+:::code-group
+
+```tsx [React Native]
+// Get messages inserted after a specific time
+const lastInsertionTime = 1738620126404999936;
+const newMessages = await group.messages({
+  insertedAfterNs: lastInsertionTime,
+  sortBy: 'INSERTED',
+});
+
+// Get messages inserted within a time range
+const messages = await group.messages({
+  insertedAfterNs: startTime,
+  insertedBeforeNs: endTime,
+  sortBy: 'INSERTED',
+});
+```
+
+```kotlin [Kotlin]
+// Get messages inserted after a specific time
+val lastInsertionTime: Long = 1738620126404999936
+val newMessages = group.messages(
+  insertedAfterNs = lastInsertionTime,
+  sortBy = SortBy.INSERTED_TIME
+)
+
+// Get messages inserted within a time range
+val messages = group.messages(
+  insertedAfterNs = startTime,
+  insertedBeforeNs = endTime,
+  sortBy = SortBy.INSERTED_TIME
+)
+```
+
+```swift [Swift]
+// Get messages inserted after a specific time
+let lastInsertionTime: Int64 = 1738620126404999936
+let newMessages = try await group.messages(
+  insertedAfterNs: lastInsertionTime,
+  sortBy: .insertedTime
+)
+
+// Get messages inserted within a time range
+let messages = try await group.messages(
+  insertedAfterNs: startTime,
+  insertedBeforeNs: endTime,
+  sortBy: .insertedTime
+)
+```
+
+:::
+
+## Sort messages by insertion time
+
+You can sort messages using `insertedAtNs`.
+
+:::code-group
+
+```tsx [React Native]
+// Sort by insertion time for reliable pagination
+const messages = await group.messages({
+  sortBy: 'INSERTED',
+  limit: 20,
+});
+
+// Each message has both timestamps available
+messages.forEach((message) => {
+  console.log(`Sent at: ${message.sentAtNs}`);
+  console.log(`Inserted at: ${message.insertedAtNs}`);
+});
+```
+
+```kotlin [Kotlin]
+// Sort by insertion time for reliable pagination
+val messages = group.messages(
+    sortBy = SortBy.INSERTED_TIME,
+    limit = 20
+)
+
+// Each message has both timestamps available
+messages.forEach { message ->
+    println("Sent at: ${message.sentAtNs}")
+    println("Inserted at: ${message.insertedAtNs}")
+}
+```
+
+```swift [Swift]
+// Sort by insertion time for reliable pagination
+let messages = try await group.messages(
+    sortBy: .insertedTime,
+    limit: 20
+)
+
+// Each message has both timestamps available
+for message in messages {
+    print("Sent at: \\(message.sentAtNs)")
+    print("Inserted at: \\(message.insertedAtNs)")
+}
+```
+
+:::
+
+## Paginate messages
+
+### Paginate by insertion time (recommended)
+
+By default, messages are sorted by their `sentAtNs` timestamp (time when the message was sent). When you sort by `sentAtNs`, messages might arrive out of order. For example, a message sent 5 minutes ago might arrive in the local database after a message sent 1 minute ago. This can cause pagination issues, where you might miss messages when loading the next page.
+
+Therefore, when paginating messages, it's more reliable to sort by `insertedAtNs` (time when the message was inserted into the local database). Sorting by `insertedAtNs` provides a totally ordered list because insertion timestamps are strictly sequential in the local database and are also deterministic and consistent.
+
+Here's how to implement reliable message pagination using insertion time:
+
+:::code-group
+
+```tsx [React Native]
+// First page
+const firstPage = await group.messages({
+  limit: 20,
+  sortBy: 'INSERTED',
+});
+
+// Next page
+const secondPage = await group.messages({
+  limit: 20,
+  insertedBeforeNs: firstPage[firstPage.length - 1].insertedAtNs,
+  sortBy: 'INSERTED',
+});
+```
+
+```kotlin [Kotlin]
+// First page
+val firstPage = group.messages(
+  limit = 20,
+  sortBy = SortBy.INSERTED_TIME
+)
+
+// Next page
+val secondPage = group.messages(
+  limit = 20,
+  insertedBeforeNs = firstPage.last().insertedAtNs,
+  sortBy = SortBy.INSERTED_TIME
+)
+```
+
+```swift [Swift]
+// First page
+let firstPage = try await group.messages(
+  limit: 20,
+  sortBy: .insertedTime
+)
+
+// Next page
+let secondPage = try await group.messages(
+  limit: 20,
+  insertedBeforeNs: firstPage.last?.insertedAtNs,
+  sortBy: .insertedTime
+)
+```
+
+:::
+
+### Paginate by sent time
+
+You can also paginate using the message sent time, though this may have ordering issues if messages arrive out of sequence:
+
+:::code-group
+
+```tsx [Browser]
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: BigInt(pageSize),
+    sentBeforeNs: oldestMessage?.sentAtNs,
+    direction: 'descending',
+  });
+}
+
+// Initial load
+let currentMessages = await group.messages({ limit: 20n });
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
+```tsx [Node]
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: BigInt(pageSize),
+    sentBeforeNs: oldestMessage?.sentAtNs,
+    direction: 'descending',
+  });
+}
+
+// Initial load
+let currentMessages = await group.messages({ limit: 20n });
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
+```tsx [React Native]
+// Initial load
+let currentMessages = await group.messages({ limit: 20 });
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+async function loadMoreMessages(
+  conversation: Conversation,
+  pageSize: number = 20
+): Promise<DecodedMessage[]> {
+  // Get the oldest message currently loaded from your tracked messages
+  const oldestMessage = currentMessages[currentMessages.length - 1];
+
+  // Load the next page of messages before the oldest one
+  return await conversation.messages({
+    limit: pageSize,
+    beforeNs: oldestMessage?.sentAtNs,
+    direction: 'DESCENDING',
+  });
+}
+
+// Load next page
+const nextPage = await loadMoreMessages(group);
+currentMessages = [...currentMessages, ...nextPage];
+```
+
+```kotlin [Kotlin]
+// Initial load
+var currentMessages = group.messages(limit = 20).toMutableList()
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+suspend fun loadMoreMessages(
+    conversation: Conversation,
+    pageSize: Int = 20
+): List<DecodedMessage> {
+    // Get the oldest message currently loaded from your tracked messages
+    val oldestMessage = currentMessages.lastOrNull()
+
+    // Load the next page of messages before the oldest one
+    return conversation.messages(
+        limit = pageSize,
+        beforeNs = oldestMessage?.sentAtNs,
+        direction = DecodedMessage.SortDirection.DESCENDING
+    )
+}
+
+// Load next page
+val nextPage = loadMoreMessages(group)
+currentMessages.addAll(nextPage)
+```
+
+```swift [Swift]
+// Initial load
+var currentMessages = try await group.messages(limit: 20)
+
+// Function to load more messages
+// Note: Assumes you're tracking currentMessages in your app state
+func loadMoreMessages(conversation: Conversation, pageSize: Int = 20) async throws -> [DecodedMessage] {
+    // Get the oldest message currently loaded from your tracked messages
+    let oldestMessage = currentMessages.last
+
+    // Load the next page of messages before the oldest one
+    let messages = try await conversation.messages(
+        limit: pageSize,
+        beforeNs: oldestMessage?.sentAtNs,
+        direction: .descending
+    )
+
+    return messages
+}
+
+// Load next page
+let nextPage = try await loadMoreMessages(conversation: group)
+currentMessages.append(contentsOf: nextPage)
+```
+
+:::

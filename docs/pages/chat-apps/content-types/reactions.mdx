@@ -70,6 +70,8 @@ With XMTP, reactions are represented as objects with the following keys:
 
 - `reference`: ID of the message being reacted to
 
+- `referenceInboxId`: (Optional) Inbox ID of the sender of the message being reacted to. This helps with message attribution in group conversations.
+
 - `action`: Action of the reaction (added or removed)
 
 - `content`: String representation of the reaction (smile, for example) to be interpreted by clients
@@ -81,8 +83,24 @@ With XMTP, reactions are represented as objects with the following keys:
 ```tsx [Browser]
 const reaction = {
   reference: someMessageID,
+  referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
   action: 'added',
   content: 'smile',
+  schema: 'shortcode',
+};
+
+await conversation.send(reaction, {
+  contentType: ContentTypeReaction,
+});
+```
+
+```tsx [Node]
+const reaction = {
+  reference: someMessageID,
+  referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
+  action: 'added',
+  content: 'smile',
+  schema: 'shortcode',
 };
 
 await conversation.send(reaction, {
@@ -95,6 +113,7 @@ await conversation.send(reaction, {
 const reactionContent = {
   reaction: {
     reference: messageId, // ID of the message you're reacting to
+    referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
     action: 'added', // Action can be 'added' or 'removed'
     schema: 'unicode', // Schema can be 'unicode', 'shortcode', or 'custom'
     content: '👍', // Content of the reaction
@@ -113,6 +132,7 @@ import org.xmtp.android.library.SendOptions
 
 val reaction = Reaction(
     reference = messageToReact.id, // the ID of the message you're reacting to
+    referenceInboxId = messageSenderInboxId, // Optional: Inbox ID of the message sender
     action = ReactionAction.Added, // the action of the reaction
     content = "U+1F603", // the content of the reaction
     schema = ReactionSchema.Unicode // the schema of the reaction
@@ -127,6 +147,7 @@ conversation.send(
 ```swift [Swift]
 let reaction = Reaction(
     reference: messageToReact.id,
+    referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
     action: .added,
     content: "U+1F603",
     schema: .unicode

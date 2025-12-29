@@ -16,7 +16,7 @@ Build with <img src="/x-mark-blue-lightmode.png" alt="XMTP" className="xmtp-logo
 
 <CustomHomePage.Subhead>
 
-The largest and most secure decentralized messaging network
+Securing the world’s freedom to communicate
 
 </CustomHomePage.Subhead>
 
@@ -40,31 +40,37 @@ The largest and most secure decentralized messaging network
 <CustomHomePage.Tile
   title="Quantum-resistant"
   description="Protection against 'harvest now, decrypt later' attacks through post-quantum cryptography"
+  href="/protocol/security#quantum-resistance"
 />
 
 <CustomHomePage.Tile
   title="End-to-end encrypted"
   description="Messages encrypted client-side and only recipients can decrypt them"
+  href="/protocol/overview#encryption"
 />
 
 <CustomHomePage.Tile
   title="Decentralized"
   description="Messages are distributed across a censorship-resistant network of nodes"
+  href="/network/run-a-node"
 />
 
 <CustomHomePage.Tile
   title="Flexible identities"
   description="Use any public DiD, like @ensdomains or @bluesky, or just a single device-bound passkey"
+  href="/protocol/identity"
 />
 
 <CustomHomePage.Tile
   title="Built-in consent"
   description="Chats are spam-free spaces for a user's chosen contacts only"
+  href="/chat-apps/user-consent/user-consent"
 />
 
 <CustomHomePage.Tile
   title="Rich content types"
   description="Send text, attachments, reactions, read receipts, onchain transactions, and more"
+  href="/chat-apps/content-types/content-types"
 />
 
 </CustomHomePage.TileGrid>
@@ -78,7 +84,15 @@ Start building today
 <CustomHomePage.SDKGrid>
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/browser"
+  href="/agents/get-started/build-an-agent"
+  lightSrc="/nodejsStackedDark.svg"
+  darkSrc="/nodejsStackedLight.svg"
+  alt="Node.js"
+  name="Agent SDK"
+/>
+
+<CustomHomePage.SDKTile
+  href="/chat-apps/sdks/browser"
   lightSrc="/ts-logo-128.svg"
   darkSrc="/ts-logo-128.svg"
   alt="TypeScript"
@@ -86,7 +100,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/node"
+  href="/chat-apps/sdks/node"
   lightSrc="/nodejsStackedDark.svg"
   darkSrc="/nodejsStackedLight.svg"
   alt="Node.js"
@@ -94,7 +108,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/react-native"
+  href="/chat-apps/sdks/react-native"
   lightSrc="/rn-header_logo.svg"
   darkSrc="/rn-header_logo.svg"
   alt="React Native"
@@ -102,7 +116,7 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/android"
+  href="/chat-apps/sdks/android"
   lightSrc="/Kotlin_Icon.svg"
   darkSrc="/Kotlin_Icon.svg"
   alt="Android/Kotlin"
@@ -110,11 +124,41 @@ Start building today
 />
 
 <CustomHomePage.SDKTile
-  href="chat-apps/sdks/ios"
+  href="/chat-apps/sdks/ios"
   lightSrc="/swift_logo_color.svg"
   darkSrc="/swift_logo_color.svg"
   alt="iOS/Swift"
   name="iOS SDK"
+/>
+
+</CustomHomePage.SDKGrid>
+
+<CustomHomePage.SectionTitle id="build-for-chat-clients">
+
+Build for chat apps
+
+</CustomHomePage.SectionTitle>
+
+<p>Build agents and mini apps that run in:</p>
+
+<CustomHomePage.SDKGrid centered>
+
+<CustomHomePage.SDKTile
+  href="https://docs.base.org/base-app/agents/chat-agents"
+  lightSrc="/Base_square_blue.svg"
+  darkSrc="/Base_square_blue.svg"
+  alt="Base App"
+  name="Base App"
+  isExternal
+/>
+
+<CustomHomePage.SDKTile
+  href="https://docs.world.org/mini-apps"
+  lightSrc="/World-Logomark-Black-RGB.svg"
+  darkSrc="/World-Logomark-White-RGB.svg"
+  alt="World App"
+  name="World App"
+  isExternal
 />
 
 </CustomHomePage.SDKGrid>

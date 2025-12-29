@@ -19,6 +19,13 @@ export const sidebarConfig = {
           text: "FAQ",
           link: "/agents/get-started/faq",
         },
+        {
+          text: "Cursor rules",
+          link: "https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc",
+        },
+        { text: 'Join the XMTP Dev Community',
+          link: 'https://forms.gle/hesZ55WGMjJnZ7sQA',
+        },
       ],
     },
     {
@@ -48,36 +55,6 @@ export const sidebarConfig = {
         {
           text: "Group permissions",
           link: "/agents/build-agents/group-permissions",
-        },
-      ],
-    },
-    {
-      text: "Fund an agent",
-      collapsed: false,
-      items: [
-        {
-          text: "Get started",
-          link: "/fund-agents-apps/get-started",
-        },
-        {
-          text: "Calculate fees",
-          link: "/fund-agents-apps/calculate-fees",
-        },
-        {
-          text: "Fund an agent",
-          link: "/fund-agents-apps/fund-your-app",
-        },
-        {
-          text: "Get your XMTP Gateway Service",
-          link: "/fund-agents-apps/run-gateway",
-        },
-        {
-          text: "Update your SDK",
-          link: "/fund-agents-apps/update-sdk",
-        },
-        {
-          text: "Glossary",
-          link: "/fund-agents-apps/glossary",
         },
       ],
     },
@@ -147,7 +124,7 @@ export const sidebarConfig = {
     },
     {
       text: "Examples",
-      link: "https://github.com/ephemeraHQ/xmtp-agent-examples",
+      link: "https://github.com/xmtplabs/xmtp-agent-examples",
       items: [],
     },
     {
@@ -280,19 +257,23 @@ export const sidebarConfig = {
       items: [
         {
           text: "Security",
-          link: "https://xmtp.org/vision/concepts/encryption",
+          link: "https://xmtp.org/security",
         },      
         {
           text: "Identity",
-          link: "https://xmtp.org/vision/concepts/identity",
+          link: "https://xmtp.org/identity",
         },     
         {
+          text: "Digital money",
+          link: "https://xmtp.org/digital-money",
+        }, 
+        {
           text: "Consent",
-          link: "https://xmtp.org/vision/concepts/consent",
+          link: "https://xmtp.org/consent",
         }, 
         {
           text: "Decentralization",
-          link: "https://xmtp.org/vision/concepts/decentralizing-xmtp",
+          link: "https://xmtp.org/decentralization",
         }, 
       ],
     },
@@ -325,6 +306,9 @@ export const sidebarConfig = {
         {
           text: "Roadmap",
           link: "https://github.com/orgs/xmtp/projects/34/views/1",
+        },
+        { text: 'Join the XMTP Dev Community',
+          link: 'https://forms.gle/hesZ55WGMjJnZ7sQA',
         },
       ],
     },
@@ -373,6 +357,10 @@ export const sidebarConfig = {
         {
           text: "Send messages",
           link: "/chat-apps/core-messaging/send-messages",
+        },
+        {
+          text: "Support disappearing messages",
+          link: "/chat-apps/core-messaging/disappearing-messages",
         },
         {
           text: "Manage group permissions",
@@ -433,6 +421,10 @@ export const sidebarConfig = {
         {
           text: "List conversations",
           link: "/chat-apps/list-stream-sync/list",
+        },
+        {
+          text: "List messages",
+          link: "/chat-apps/list-stream-sync/list-messages",
         },
         {
           text: "Stream conversations and messages",

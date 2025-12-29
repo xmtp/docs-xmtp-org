@@ -7,15 +7,18 @@ Create an XMTP agent that can use the signing capabilities provided by a signer.
 ```tsx [Node]
 import { Agent } from '@xmtp/agent-sdk';
 import { createSigner, createUser } from '@xmtp/agent-sdk/user';
-import { getRandomValues } from 'node:crypto';
+
+// Replace with your own wallet key and encryption key
+const walletKey = '0xprivateKey';
+const db_encryptionKey = '0xencryptionKey';
 
 // Option 1: Create a local user + signer
-const user = createUser('0xprivateKey');
-const signer = createSigner(user);
+const user = createUser(walletKey);
+const dbEncryptionKey = Buffer.from(db_encryptionKey).toString('hex');
 
 const agent = await Agent.create(signer, {
   env: 'dev', // or 'production'
-  dbEncryptionKey: `0x${getRandomValues(new Uint8Array(32))}`, // save it for later
+  dbEncryptionKey, // save it for later
 });
 ```
 
@@ -25,28 +28,28 @@ The XMTP Agent SDK allows you to use environment variables (`process.env`) for e
 
 **Available variables:**
 
-| Variable                 | Purpose                                                                              | Example                                 |
-| ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | Private key for wallet                                                               | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)                           | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex string with 0x prefix) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+| Variable                 | Purpose                                                        | Example                                 |
+| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
 
 Using the environment variables, you can setup your agent in just a few lines of code:
 
-### Generate random keys
+## Generate random keys
 
 ```tsx [Node]
 import { generatePrivateKey } from 'viem';
 import { getRandomValues } from 'node:crypto';
 
 const walletKey = generatePrivateKey();
-const encryptionKeyHex = `0x${getRandomValues(new Uint8Array(32))}`;
+const encryptionKeyHex = getRandomValues(new Uint8Array(32));
 
 console.log(`Wallet key: ${walletKey}`);
 console.log(`Encryption key: ${encryptionKeyHex}`);
 ```
 
-Use this [script to generate](https://github.com/ephemeraHQ/xmtp-agent-examples) random XMTP keys:
+Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
 
 ```bash
 yarn gen:keys
@@ -54,7 +57,7 @@ yarn gen:keys
 
 > Running the command will append keys to your existing .env file.
 
-### Use environment variables
+## Use environment variables
 
 ```tsx [Node]
 // Load variables from .env file
@@ -65,8 +68,6 @@ const agent = await Agent.createFromEnv();
 ```
 
 ## Configuration options
-
-### Configure an XMTP client
 
 You can configure an XMTP client with these options passed to `Agent.create`:
 
@@ -121,13 +122,9 @@ apiUrl?: string;
  */
 dbPath?: string | null | ((inboxId: string) => string);
 /**
- * Encryption key for the local DB (32 bytes)
- *
- * Accepts either:
- * - Uint8Array (32 bytes)
- * - Hex string with 0x prefix (64 hex characters representing 32 bytes)
+ * Encryption key for the local DB
  */
-dbEncryptionKey?: Uint8Array | `0x${string}`;
+dbEncryptionKey?: Uint8Array;
 /**
  * Allow configuring codecs for additional content types
  */

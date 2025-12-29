@@ -1,9 +1,5 @@
 # Sync conversations and messages
 
-:::tip[Note]
-Syncing does not refetch existing conversations and messages. It also does not fetch messages for group chats you are no longer a part of.
-:::
-
 ## 🎥 walkthrough: Syncing
 
 This video provides a walkthrough of key concepts required to implement syncing correctly.
@@ -75,17 +71,21 @@ try await client.conversations.sync()
 
 :::
 
-## Sync all new welcomes, conversations, messages, and preferences
+## Sync new welcomes, conversations with unread messages, and preferences
 
-Sync all new welcomes, group chat and DM conversations, messages, and [preference updates](/chat-apps/list-stream-sync/sync-preferences) from the network.
+Use `syncAll` to sync the following from the network:
 
-By default, `syncAll` streams only conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown.
+- New welcomes
+- Group chat and DM conversations with a [consent state](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set) of allowed or unknown that have unread messages
+- [Preference updates](/chat-apps/list-stream-sync/sync-preferences)
 
-We recommend streaming messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
+We recommend syncing messages for allowed conversations only. This ensures that spammy conversations with a consent state of unknown don't take up networking resources. This also ensures that unwanted spam messages aren't stored in the user's local database.
 
-To sync all conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
+To sync conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENIED]`.
 
 To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stream-sync/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
+
+The method returns a summary object that includes the total number of conversations eligible for syncing and the number of conversations that were actually synced.
 
 :::code-group
 
@@ -98,7 +98,12 @@ await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-await client.conversations.syncAllConversations(['allowed']);
+// Returns a summary object with sync statistics
+const syncSummary = await client.conversations.syncAllConversations([
+  'allowed',
+]);
+// syncSummary.numEligible - Total number of conversations eligible for syncing
+// syncSummary.numSynced - Number of conversations that were actually synced
 ```
 
 ```kotlin [Kotlin]

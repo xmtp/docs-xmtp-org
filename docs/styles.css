@@ -116,7 +116,7 @@ html body .custom-homepage-grid {
 }
 
 html body .custom-homepage-sdk-grid {
-  max-width: 1000px !important;
+  max-width: 1200px !important;
   margin-left: auto !important;
   margin-right: auto !important;
 }
@@ -328,7 +328,7 @@ html body .custom-homepage-sdk-grid {
   }
 }
 
-/* ========== SAVED INTERACTIVE TILE STYLES (COMMENTED OUT) ========== 
+/* Interactive tile styles */
 .custom-homepage-tile {
   position: relative;
   background: var(--vocs-color-bg-soft);
@@ -340,9 +340,10 @@ html body .custom-homepage-sdk-grid {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   overflow: hidden;
+  display: block;
 }
 
-.custom-homepage-tile::before {
+.custom-homepage-tile-link::before {
   content: '';
   position: absolute;
   top: 0;
@@ -354,27 +355,15 @@ html body .custom-homepage-sdk-grid {
   transition: opacity 0.3s ease;
 }
 
-.custom-homepage-tile:hover::before {
+.custom-homepage-tile-link:hover::before {
   opacity: 1;
 }
 
-.custom-homepage-tile:hover {
+.custom-homepage-tile-link:hover {
   transform: translateY(-1px);
   box-shadow: 0 20px 25px -5px rgba(86, 83, 198, 0.1), 0 10px 10px -5px rgba(86, 83, 198, 0.04);
   border-color: #5E80F6;
-}
-========== END SAVED INTERACTIVE TILE STYLES ========== */
-
-/* Non-interactive tile styles */
-.custom-homepage-tile {
-  position: relative;
-  background: var(--vocs-color-bg-soft);
-  border: 1px solid var(--vocs-color-border);
-  border-radius: 16px;
-  padding: 2rem;
-  color: var(--vocs-color-text);
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
-  display: block;
+  cursor: pointer;
 }
 
 .custom-homepage-tile-title {
@@ -460,11 +449,16 @@ li ol ~ p {
 /* Custom Homepage SDK grid */
 .custom-homepage-sdk-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 1.5rem;
   margin: 2rem auto 4rem auto;
-  max-width: 1000px;
+  max-width: 1200px;
   width: 100%;
+}
+
+.custom-homepage-sdk-grid--centered {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 150px));
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -582,6 +576,16 @@ li ol ~ p {
   font-size: inherit;
   font-weight: inherit;
   color: inherit;
+}
+
+.custom-homepage-section-title:has(+ p) {
+  margin-bottom: 0.5rem;
+}
+
+.custom-homepage-section-title + p {
+  margin-top: 0;
+  text-align: center;
+  color: var(--vocs-color-text-secondary);
 }
 
 /* For smaller screens */
