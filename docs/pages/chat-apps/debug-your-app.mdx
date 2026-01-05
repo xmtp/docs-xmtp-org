@@ -109,6 +109,65 @@ To use file logging, call the following static functions:
 
 For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
 
+### Multi-process logging
+
+For apps with notification extensions or other background services, you can enable separate log files for each process type. This prevents log file conflicts and makes it easier to debug issues in notification services.
+
+When you call the logging functions, specify the process type:
+
+:::code-group
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.ProcessType
+
+// In your main application
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.MAIN
+)
+
+// In your notification extension/service
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.NOTIFICATION_EXTENSION
+)
+```
+
+```swift [Swift]
+import XMTP
+
+// In your main application
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .main
+)
+
+// In your notification extension
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .notificationExtension
+)
+```
+
+:::
+
+Log files are automatically named with the process type and process ID to avoid conflicts:
+- Format: `libxmtp-v{version}.{commit}.{process_type}.{pid}.log.{date}`
+- Main process example: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+- Notification extension example: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+
+This naming convention ensures that logs from different processes don't overwrite each other, making it easier to debug issues that occur in notification extensions or other background services.
+
 ## Network statistics
 
 You can use these statistics to see which and how many API, identity, and streaming calls are going across the network, which can help you better manage network usage and debug potential rate limiting issues.

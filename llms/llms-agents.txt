@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 07:39 PM UTC / December 12, 2025
+Generated at 02:08 AM UTC / December 20, 2025
 
 ## About this file
 
@@ -3436,11 +3436,11 @@ For example, you might self-fund your payer wallet if it already has or can easi
 
 At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
 
-Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mxUSD (mock XMTP USD fee token).
+Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
-To learn how to get mxUSD, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+To learn how to get mUSD, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
 
-Currently, mxUSD balances on testnet-staging are unaffected by usage.
+Currently, mUSD balances on testnet-staging are unaffected by usage.
 
 <Tabs.Root defaultValue="self-fund">
   <Tabs.List>
@@ -3481,7 +3481,7 @@ Your payer wallet is now a payer in the Payer Registry smart contract.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
 
 :::
 
@@ -3567,7 +3567,7 @@ Your wallet can now fund the payer wallet.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
 
 :::
 
@@ -3603,21 +3603,21 @@ The payer wallet now has:
 </Tabs.Content>
 </Tabs.Root>
 
-## For use with testnet-staging only: Self-mint mxUSD
+## For use with testnet-staging only: Self-mint mUSD
 
-To fund your app on the testnet-staging deployment of the [XMTP Funding Portal](#access-the-xmtp-funding-portal), you must use mxUSD (mock XMTP USD fee token) instead of USDC.
+To fund your app on the testnet-staging deployment of the [XMTP Funding Portal](#access-the-xmtp-funding-portal), you must use mUSD (mock XMTP USD fee token) instead of USDC.
 
-To get mxUSD, you must self-mint it.
+To get mUSD, you must self-mint it.
 
-### Self-mint mxUSD
+### Self-mint mUSD
 
 1. Start [Docker Desktop](https://docs.docker.com/desktop/).
 
-2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mxUSD:
+2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mUSD:
 
    ```bash
     docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
-      funds mint --amount <1000> --to <receiving-address>
+      funds mint --amount <1000> --to <receiving-address> \
       --private-key <private-key> \
       --app-rpc-url https://xmtp-ropsten.g.alchemy.com/v2/<your-alchemy-api-key> \
       --settlement-rpc-url https://base-sepolia.g.alchemy.com/v2/<your-alchemy-api-key> \
@@ -3626,9 +3626,9 @@ To get mxUSD, you must self-mint it.
 
 Available parameters:
 
-- `--amount`: Amount of mxUSD to mint, in whole units. For example, `1000`.
+- `--amount`: Amount of mUSD to mint, in whole units. For example, `1000`.
 - `--to`: Receiving address (typically your payer wallet address)
-- `--private-key`: Private key of the address you want to use to pay the gas fee to mint the mxUSD
+- `--private-key`: Private key of the address you want to use to pay the gas fee to mint the mUSD
 - `--app-rpc-url`: Your Alchemy API endpoint for XMTP Ropsten
 - `--settlement-rpc-url`: Your Alchemy API endpoint for the Base Sepolia
 
@@ -3641,22 +3641,22 @@ INFO    funds-admin     tokens minted   {"settlement_chain_id": 84532, "app_chai
 INFO    successfully minted mock underlying fee token   {"to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
 ```
 
-Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mxUSD.
+Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mUSD.
 
-### Add mxUSD to MetaMask
+### Add mUSD to MetaMask
 
-After self-minting mxUSD, you'll need to add the token to MetaMask to view your balance:
+After self-minting mUSD, you'll need to add the token to MetaMask to view your balance:
 
 1. Open MetaMask and select the **Tokens** tab.
 2. Open the kebab menu and click **Import tokens**.
 3. Select the **Base Sepolia** network and enter these token details:
    - **Token contract address**: `0x2d7e0534183dAD09008C97f230d9F4f6425eE859`
-   - **Token symbol**: `mxUSD`
+   - **Token symbol**: `mUSD`
    - **Token decimal**: `6`
 4. Click **Next**.
 5. Click **Import** to confirm.
 
-Your mxUSD balance should now be visible in MetaMask.
+Your mUSD balance should now be visible in MetaMask.
 
 ## Troubleshooting
 
