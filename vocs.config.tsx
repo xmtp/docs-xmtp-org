@@ -54,10 +54,13 @@ export default defineConfig({
     // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
       <>
+        {/* Privacy-friendly analytics by Plausible */}
+        <script async src="https://plausible.io/js/pa-Ck_8Ax5131WKaGcJv5brM.js" />
         <script
-          src="https://plausible.io/js/script.outbound-links.js"
-          data-domain="docs.xmtp.org"
-          defer
+          dangerouslySetInnerHTML={{
+            __html: `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()`,
+          }}
         />
         <script src="/popup.js" async />
       </>
