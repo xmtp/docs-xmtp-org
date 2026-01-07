@@ -61,3 +61,9 @@ The database also uses a [plaintext header size](https://www.zetetic.net/sqlciph
 If you want to inspect the database visually, you can use [DB Browser for SQLite](https://sqlitebrowser.org/), an open source tool that supports SQLite and SQLCipher. In its **Custom** encryption settings, set the **Plaintext Header Size** to **_32_**, and use the full **Password** as a **Raw key**:
 
 ![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
+
+## Common errors
+
+> PRAGMA key or salt has incorrect value
+
+PRAGMA keys in SQLite are essential for encrypted databases because encryption is handled outside the core SQLite engine, making PRAGMA statements the main mechanism for configuring and verifying encryption. The error above commonly arises when attempting to decrypt the SQLite database with an incorrect encryption key. This typically happens when you're running an agent with an existing database but the `dbEncryptionKey` doesn't match the one originally used to encrypt it (for example, if environment variables were changed).
