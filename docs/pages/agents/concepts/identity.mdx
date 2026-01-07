@@ -66,4 +66,12 @@ If you want to inspect the database visually, you can use [DB Browser for SQLite
 
 > PRAGMA key or salt has incorrect value
 
-PRAGMA keys in SQLite are essential for encrypted databases because encryption is handled outside the core SQLite engine, making PRAGMA statements the main mechanism for configuring and verifying encryption. The error above commonly arises when attempting to decrypt the SQLite database with an incorrect encryption key. This typically happens when you're running an agent with an existing database but the `dbEncryptionKey` doesn't match the one originally used to encrypt it (for example, if environment variables were changed).
+PRAGMA keys in SQLite are essential for encrypted databases because encryption is handled outside the core SQLite engine, making PRAGMA statements the main mechanism for configuring and verifying encryption.
+
+Example:
+
+```sql
+PRAGMA key = 'my_secret_key';
+```
+
+The error above commonly arises when attempting to decrypt the SQLite database with an incorrect encryption key. This typically happens when you're running an agent with an existing database but the `dbEncryptionKey` doesn't match the one originally used to encrypt it (for example, if environment variables were changed).
