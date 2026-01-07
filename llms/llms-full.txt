@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 12:04 AM UTC / December 17, 2025
+Generated at 09:01 PM UTC / January 05, 2026
 
 ## About this file
 
@@ -7977,6 +7977,37 @@ A background worker runs every one second to clean up expired disappearing messa
 
 To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
 
+
+## Access disappearing message expiration timestamps
+
+Disappearing messages include an expiration timestamp (`expiresAtNs`) in nanoseconds. You can use this to show when a message is scheduled to disappear.
+
+:::code-group
+
+```kotlin [Kotlin]
+val messages = group.messages()
+
+messages.forEach { message ->
+    message.expiresAtNs?.let { expiresAt ->
+        val expirationTime = Instant.fromEpochMilliseconds(expiresAt / 1_000_000)
+        println("Message expires at: $expirationTime")
+    }
+}
+```
+
+```swift [Swift]
+let messages = try await group.messages()
+
+for message in messages {
+    if let expiresAt = message.expiresAtNs {
+        let expirationTime = Date(timeIntervalSince1970: Double(expiresAt) / 1_000_000_000)
+        print("Message expires at: \(expirationTime)")
+    }
+}
+```
+
+:::
+
 ### Stream message deletions
 
 Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
@@ -13260,11 +13291,51 @@ To learn more about XIPs and how to participate in the process, including author
 
 # Section: network
 
-## network/network-nodes.mdx
-# XMTP testnet nodes
+## network/faq.md
+# FAQ about the XMTP network
 
-For real-time statuses of nodes in the XMTP testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
-The following table lists the nodes currently registered to power the XMTP testnet.
+## Is the XMTP network decentralized?
+
+A testnet of the decentralized XMTP network was launched in early December 2024.
+
+All of the nodes in the `dev` and `production` XMTP network environments are still operated by [XMTP Labs](https://xmtplabs.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+
+These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
+
+- Cuba
+- Iran
+- North Korea
+- Syria
+- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
+
+## Is XMTP a blockchain?
+
+The Testnet of the decentralized XMTP network includes two distributed systems:
+
+- The XMTP Broadcast Network
+- The XMTP App Chain, which is an L3 blockchain securing all metadata that require strict ordering.
+
+To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+
+The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
+
+## Will I be able to run my own XMTP node?
+
+At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
+
+To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+
+## Does XMTP have a token?
+
+XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
+
+
+## network/network-nodes.mdx
+# XMTP Testnet nodes
+
+For real-time statuses of nodes in the XMTP Testnet, see [XMTP Node Status](https://status.testnet.xmtp-partners.xyz/).
+
+The following table lists nodes participating in the XMTP Testnet:
 
 |     | Node operator               | Node address                                  |
 | --- | --------------------------- | --------------------------------------------- |
@@ -13279,7 +13350,7 @@ The following table lists the nodes currently registered to power the XMTP testn
 | 9   | XMTP Labs                   | grpc.testnet.xmtp.network:443                 |
 | 10  | XMTP Labs                   | grpc2.testnet.xmtp.network:443                |
 
-Here is a map of node locations:
+Here is a map of these node locations:
 
 <div
   style={{
@@ -13308,59 +13379,110 @@ A purple pin indicates that the node is operated by a non-profit organization.
 
 
 ## network/run-a-node.mdx
+import { Collapsible } from '../../components/Collapsible';
+
 # Run an XMTP network node
 
+<Collapsible title="Want to be a registered XMTP node operator?">
+
+To start, the XMTP Network operates with a limited set of curated node operators to ensure maximum performance and censorship resistance.
 The [XMTP Testnet](/network/network-nodes) is powered by registered node operators running [xmtpd](https://github.com/xmtp/xmtpd), XMTP daemon software. xmtpd will also power Mainnet.
 
 To learn more about the decentralized network, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
-## Interested in becoming a registered XMTP node operator?
+* **Limited slots:** Initial cap of **7 node operators** to ensure low-latency, high-throughput messaging.
+* **Mandatory diversity:** Selection is heavily weighted toward operators offering **geographic, geopolitical, and industry diversity** to mitigate collusion and regulatory risk.
+* **Infrastructure control:** Preference for those with strong control over infrastructure, ideally **bare metal in censorship-resistant jurisdictions**, over cloud-only solutions.
+* **Excellence required:** Proven track record of **technical excellence, 24/7 operations, robust security protocols**, and a high community reputation.
+* **Censorship resistance:** Operators must explicitly align with XMTP's core values, prioritizing **censorship resistance and decentralized principles**.
 
-1. Review [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
-2. [Submit an application](https://docs.google.com/forms/d/e/1FAIpQLScBpJ0i962xBPpZZeI6q7-UMo5Bc2JkhvHR_v2rliLDoBkzXQ/viewform?usp=sharing) to become a registered node operator.
+For a complete understanding of the qualification criteria, selection process, and rationale, see [XIP-54: XMTP network node operator qualification criteria](https://github.com/xmtp/XIPs/blob/main/XIPs/xip-54-node-operator-qualifications.md).
 
-## Already a registered node operator?
+If your organization meets these standards, **[apply to operate](https://forms.gle/mJM5ynCAE6xzaUae9)** a registered XMTP network node.
 
-To get started, see the [xmtpd-infrastructure](https://github.com/xmtp/xmtpd-infrastructure) repository, which provides infrastructure-as-code examples and tooling to help node operators deploy and manage xmtpd nodes.
+</Collapsible>
 
-## FAQ about the XMTP network
+## XMTP Testnet timeline
 
-To follow and provide feedback on the engineering work covered in this FAQ, see the [Replication tracking task](https://github.com/xmtp/xmtpd/issues/118) in the [xmtpd repo](https://github.com/xmtp/xmtpd).
+- **Early January 2026**: Pre-seed testing
 
-### Is the XMTP network decentralized?
+  These [three registered nodes](https://status.testnet.xmtp-partners.xyz/) are testing the processes that will pre-seed **150M+ real messages** from XMTP's production network to the decentralized XMTP Testnet. These three nodes were the first to be on xmtpd v1.0.0.
 
-A testnet of the decentralized XMTP network was launched in early December 2024.
+  Pre-seeding these messages to XMTP Testnet helps validate that we will be able to migrate these messages and more to XMTP Mainnet. This migration will provide a smooth transition for app devs by making previously-published messages available on day 1 of the decentralized Mainnet.
 
-All of the nodes in the `dev` and `production` XMTP network environments are still operated by [XMTP Labs](https://xmtplabs.com/) (the company) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+- **Late January 2026**: Load testing
 
-These nodes in the `dev` and `production` XMTP network environments operate in US jurisdiction in compliance with Office of Foreign Assets Control (OFAC) sanctions and Committee on Foreign Investment in the United States (CFIUS) export compliance regulations. Accordingly, IP-based geoblocking is in place for the following countries/territories:
+  After pre-seed testing is complete, an expanded group of [Testnet node operators](/network/network-nodes) will be able to pre-seed hte production network messages and participate in expanded load testing.
 
-- Cuba
-- Iran
-- North Korea
-- Syria
-- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
+  Existing registered node operators can qualify to participate in load testing by completing the steps in [Node requirements to participate in load testing](#node-requirements-to-participate-in-load-testing).
 
-### Is XMTP a blockchain?
+- **Q1 2026**: Expanded load testing with real traffic patterns
 
-The testnet of the decentralized XMTP network includes two distributed systems:
+  After initial load testing is complete, expanded testing with real traffic patterns will be conducted as SDK and app capabilities develop.
 
-- The XMTP broadcast network
-- The XMTP appchain, which is an L3 blockchain securing all metadata that require strict ordering.
+## Node requirements to participate in load testing
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
+Existing registered node operators must meet the following requirements to participate in load testing.
 
-The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
+Successfully participating in Testnet load testing is a **prerequisite** to be considered for the initial Mainnet node operator set.
 
-### Will I be able to run my own XMTP node?
+1. **Run production-grade infrastructure**
 
-At this time, not everyone will be able to run an XMTP node in the production decentralized XMTP network.
+   Nodes should run on production-grade infrastructure with strong operational control. Criteria include a preference for bare metal deployments and simpler deployment models over complex orchestration systems. For example, if you are running on AWS/Kubernetes, consider moving to a simpler deployment model for Mainnet.
+   
+   For example, see the [Systemd Guide](https://github.com/xmtp/xmtpd-infrastructure/tree/main/systemd).
 
-To learn more, see [XIP-54: XMTP network node operator qualification criteria](https://community.xmtp.org/t/xip-54-xmtp-network-node-operator-qualification-criteria/868).
+2. **Run xmtpd 1.0.0 or later**
 
-### Does XMTP have a token?
+   Nodes must run xmtpd 1.0.0 or a later release. See [xmtpd releases](https://github.com/xmtp/xmtpd/releases) for the latest version.
 
-XMTP does not currently have a token. Disregard any information regarding airdrops or token sales. If and when an official token is introduced, announcements will be made exclusively through XMTP's official channels.
+3. **Provide a public DNS**
+
+   Nodes must provide a publicly accessible DNS hostname so they can serve **gRPC traffic**, which **requires valid TLS certificates**. A stable domain with proper A/AAAA records is needed for certificate issuance and for other nodes and clients to discover and connect securely.
+
+   To do this, register a domain, configure DNS A/AAAA records pointing to your load balancer or node IP, and ensure proper CORS header forwarding. To learn more, see [CORS and client routing](https://github.com/xmtp/xmtpd-infrastructure/blob/main/doc/cors-client-routing.md).
+
+4. **Get an Alchemy account + paid tier**
+
+   xmtpd requires reliable blockchain RPC access with sufficient rate limits for Mainnet traffic volumes.
+
+   To do this, [sign up for Alchemy](https://docs.alchemy.com/docs/alchemy-quickstart-guide), select an appropriate paid tier based on your expected request volume, and configure your RPC endpoint URL in your xmtpd config.
+
+5. **Fund wallet with ETH**
+
+   Required to pay gas fees for node registration on the XMTP App Chain (L3) and interact with smart contracts.
+
+   To do this, generate a secure private key, fund it with ETH on the appropriate chain, and store it securely in secrets management. You can use the [Base Sepolia faucet](https://www.alchemy.com/faucets/base-sepolia) to get test ETH. ~$10 of ETH should last months.
+
+   Note that this is the same wallet you'll use to register your node in a subsequent step.
+
+6. **Set up metrics/alerting (Prometheus)**
+
+   Monitor node health, resource usage, and errors. Detect issues proactively.
+
+   To do this, [deploy Prometheus](https://github.com/xmtp/xmtpd-infrastructure/blob/main/doc/k8s-prometheus-monitoring.md) with xmtpd metrics scraping (OpenMetrics format) and set up Grafana dashboards and alerts.
+
+7. **Monitor ETH balance**
+
+   Ensure your wallet never runs out of funds to prevent your node from failing to submit transactions.
+
+   To do this, set up alerting on your wallet balance. This is the wallet you funded in a previous step. You can do this using Prometheus + custom exporter or a third-party service like [Alchemy Notify](https://www.alchemy.com/dapps/alchemy-notify) with thresholds for low balance warnings.
+
+8. **Register the node**
+
+   Register the node on the Nodes smart contract to participate in the Broadcast Network.
+
+   To do this, send the **public key** of the wallet you funded in a previous step to the XMTP team. XMTP will configure the registration for you.
+
+   Here is a script you can use to get the public key:
+
+   ```bash
+   docker run ghcr.io/xmtp/xmtpd-cli --private-key <private key> keys get-public-key
+   ```
+
+9. **Catch up with Testnet**
+
+   Node must be fully caught up with Testnet data that includes the pre-seeded messages from the XMTP production network.
 
 
 # Section: fund-agents-apps
@@ -13540,11 +13662,11 @@ For example, you might self-fund your payer wallet if it already has or can easi
 
 At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
 
-Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mxUSD (mock XMTP USD fee token).
+Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
-To learn how to get mxUSD, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+To learn how to get mUSD, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
 
-Currently, mxUSD balances on testnet-staging are unaffected by usage.
+Currently, mUSD balances on testnet-staging are unaffected by usage.
 
 <Tabs.Root defaultValue="self-fund">
   <Tabs.List>
@@ -13585,7 +13707,7 @@ Your payer wallet is now a payer in the Payer Registry smart contract.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
 
 :::
 
@@ -13671,7 +13793,7 @@ Your wallet can now fund the payer wallet.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mxUSD, not USDC. To get mxUSD, you must self-mint it. To learn how, see [Self-mint mxUSD](#for-use-with-testnet-staging-only-self-mint-mxusd).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
 
 :::
 
@@ -13707,17 +13829,17 @@ The payer wallet now has:
 </Tabs.Content>
 </Tabs.Root>
 
-## For use with testnet-staging only: Self-mint mxUSD
+## For use with testnet-staging only: Self-mint mUSD
 
-To fund your app on the testnet-staging deployment of the [XMTP Funding Portal](#access-the-xmtp-funding-portal), you must use mxUSD (mock XMTP USD fee token) instead of USDC.
+To fund your app on the testnet-staging deployment of the [XMTP Funding Portal](#access-the-xmtp-funding-portal), you must use mUSD (mock XMTP USD fee token) instead of USDC.
 
-To get mxUSD, you must self-mint it.
+To get mUSD, you must self-mint it.
 
-### Self-mint mxUSD
+### Self-mint mUSD
 
 1. Start [Docker Desktop](https://docs.docker.com/desktop/).
 
-2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mxUSD:
+2. Use the `xmtpd-cli` Docker image with your relevant parameter values to self-mint mUSD:
 
    ```bash
     docker run --rm ghcr.io/xmtp/xmtpd-cli:main \
@@ -13730,9 +13852,9 @@ To get mxUSD, you must self-mint it.
 
 Available parameters:
 
-- `--amount`: Amount of mxUSD to mint, in whole units. For example, `1000`.
+- `--amount`: Amount of mUSD to mint, in whole units. For example, `1000`.
 - `--to`: Receiving address (typically your payer wallet address)
-- `--private-key`: Private key of the address you want to use to pay the gas fee to mint the mxUSD
+- `--private-key`: Private key of the address you want to use to pay the gas fee to mint the mUSD
 - `--app-rpc-url`: Your Alchemy API endpoint for XMTP Ropsten
 - `--settlement-rpc-url`: Your Alchemy API endpoint for the Base Sepolia
 
@@ -13745,22 +13867,22 @@ INFO    funds-admin     tokens minted   {"settlement_chain_id": 84532, "app_chai
 INFO    successfully minted mock underlying fee token   {"to": "0x132455a4306D362d7D051B7c2f2c96d9021D6a1c", "amount": "1000000000"}
 ```
 
-Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mxUSD.
+Note that the amount in the output is shown in the smallest unit with 6 decimal places, so `1000000000` equals 1000 mUSD.
 
-### Add mxUSD to MetaMask
+### Add mUSD to MetaMask
 
-After self-minting mxUSD, you'll need to add the token to MetaMask to view your balance:
+After self-minting mUSD, you'll need to add the token to MetaMask to view your balance:
 
 1. Open MetaMask and select the **Tokens** tab.
 2. Open the kebab menu and click **Import tokens**.
 3. Select the **Base Sepolia** network and enter these token details:
    - **Token contract address**: `0x2d7e0534183dAD09008C97f230d9F4f6425eE859`
-   - **Token symbol**: `mxUSD`
+   - **Token symbol**: `mUSD`
    - **Token decimal**: `6`
 4. Click **Next**.
 5. Click **Import** to confirm.
 
-Your mxUSD balance should now be visible in MetaMask.
+Your mUSD balance should now be visible in MetaMask.
 
 ## Troubleshooting
 
@@ -14494,4 +14616,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 89 files from 5 sections.
+This documentation contains 90 files from 5 sections.

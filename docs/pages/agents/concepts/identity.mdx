@@ -1,6 +1,16 @@
 # Create an XMTP client
 
-Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate EOA or SCW.
+Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate Externally Owned Account (EOA) or Smart Contract Wallet (SCW).
+
+## Wallet comparison
+
+| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
+| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
+| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
+| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
+| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
 
 ## Understand creating and building a client
 
@@ -61,3 +71,17 @@ The database also uses a [plaintext header size](https://www.zetetic.net/sqlciph
 If you want to inspect the database visually, you can use [DB Browser for SQLite](https://sqlitebrowser.org/), an open source tool that supports SQLite and SQLCipher. In its **Custom** encryption settings, set the **Plaintext Header Size** to **_32_**, and use the full **Password** as a **Raw key**:
 
 ![DB Browser for SQLite](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/db-browser-sqlite.png)
+
+## Common errors
+
+> PRAGMA key or salt has incorrect value
+
+[PRAGMA statements](https://sqlite.org/pragma.html) in SQLite are essential for encrypted databases because encryption is handled outside the core SQLite engine, making PRAGMAs the main mechanism for configuring and verifying encryption.
+
+Example:
+
+```sql
+PRAGMA key = 'my_secret_key';
+```
+
+The error above commonly arises when attempting to decrypt the SQLite database with an incorrect encryption key. This typically happens when you're running an agent with an existing database but the `dbEncryptionKey` doesn't match the one originally used to encrypt it (for example, if environment variables were changed).
