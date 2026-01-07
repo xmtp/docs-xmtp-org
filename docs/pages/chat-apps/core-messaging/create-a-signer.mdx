@@ -1,6 +1,16 @@
 # Create a EOA or SCW signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
+
+## Wallet comparison
+
+| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
+| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
+| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
+| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
+| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
 
 ## Create an Externally Owned Account signer
 
