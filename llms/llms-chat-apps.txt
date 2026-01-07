@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 09:01 PM UTC / January 05, 2026
+Generated at 11:49 PM UTC / January 07, 2026
 
 ## About this file
 
@@ -3339,23 +3339,41 @@ try await client.preferences.sync()
 ## chat-apps/intro/build-with-llms.mdx
 # Use XMTP documentation with AI coding assistants
 
-To make it easier for you to build with XMTP using LLMs and coding assistants, we offer the following AI-ready documentation files.
+To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions. Choose the one that best fits your workflow:
 
-If you're using an AI coding assistant that allows custom context, you can upload or point to the appropriate file to enhance your development experience with XMTP. Using the file focused on your builder use case (chat apps or agents) typically provides better AI performance.
+**Use the [documentation MCP (Model Context Protocol) server](#documentation-mcp-server) if:**
+- You're using MCP-compatible tools like Claude Code or Cursor, for example
+- You want dynamic, structured documentation querying while writing and debugging code
+- You're comfortable setting up and running a local server process
 
-## For building chat apps
+**Use [llms.txt files](#llmstxt-files) if:**
+- You're using AI tools that don't support MCP
+- You want zero-setup access to documentation
+- You prefer a simple copy-paste or URL reference approach
+
+## Documentation MCP server
+
+You can run a local XMTP documentation MCP server that you can use with Claude Code, Cursor, and other MCP-compatible AI coding assistants.
+
+To learn about how it's built and how to use it, see the [xmtp-docs-mcp repo](https://github.com/xmtp/xmtp-docs-mcp).
+
+## llms.txt files
+
+If you're using an AI coding assistant that allows custom context, you can upload or point to the appropriate file to enhance your development experience with XMTP. Using the file focused on your builder use case (chat apps or agents) typically provides better AI performance by narrowing the context.
+
+### For building chat apps
 
 Use `llms-chat-apps.txt`: [https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-chat-apps.txt](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-chat-apps.txt)
 
 Includes: Core messaging, content types, push notifications, user consent, protocol fundamentals, network operations, and funding information.
 
-## For building agents
+### For building agents
 
 Use `llms-agents.txt`: [https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-agents.txt](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-agents.txt)
 
 Includes: Agent concepts, building and deploying agents, agent-specific content types, protocol fundamentals, network operations, and funding information.
 
-## For comprehensive coverage
+### For comprehensive coverage
 
 Use `llms-full.txt`: [https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-full.txt](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/llms/llms-full.txt)
 
@@ -7133,7 +7151,7 @@ try await client.deleteLocalDatabase()
 ## chat-apps/core-messaging/create-a-signer.mdx
 # Create a EOA or SCW signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: Externally Owned Accounts (EOAs) and Smart Contract Wallets (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
 
 ## Create an Externally Owned Account signer
 
@@ -8242,6 +8260,14 @@ App data is custom app-specific data that can be stored with a group. This allow
 
 :::code-group
 
+```js [Browser]
+const appData = group.appData;
+```
+
+```js [Node]
+const appData = group.appData;
+```
+
 ```tsx [React Native]
 const appData = await group.appData();
 ```
@@ -8254,9 +8280,25 @@ val appData = group.appData
 
 ## Update group app data
 
-Update the custom application-specific data for a group. The data is stored as a string, so you'll need to serialize any objects (e.g., using JSON.stringify).
+Update the custom application-specific data for a group. The data is stored as a string, so you'll need to serialize any objects (e.g., using JSON.stringify). Maximum size is 8192 bytes.
 
 :::code-group
+
+```js [Browser]
+const customData = JSON.stringify({
+  theme: 'dark',
+  settings: { notifications: true },
+});
+await group.updateAppData(customData);
+```
+
+```js [Node]
+const customData = JSON.stringify({
+  theme: 'dark',
+  settings: { notifications: true },
+});
+await group.updateAppData(customData);
+```
 
 ```tsx [React Native]
 const customData = JSON.stringify({
