@@ -12,6 +12,10 @@ While this is a per-app decision, the best practice is to provide users with the
 
 ## Install the package
 
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the read receipt content type is built-in and does not require separate installation or codec registration.
+
+For other SDKs, you can install the package using the following command:
+
 :::code-group
 
 ```bash [npm]
@@ -30,16 +34,11 @@ pnpm add @xmtp/content-type-read-receipt
 
 ## Configure the content type
 
-:::code-group
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), read receipts are built-in and do not require codec registration. Skip this step for these SDKs.
 
-```js [Browser]
-import { ReadReceiptCodec } from '@xmtp/content-type-read-receipt';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReadReceiptCodec()],
-});
-```
+For other SDKs, register the codec:
+
+:::code-group
 
 ```js [React Native]
 const client = await Client.create(signer, {
@@ -66,9 +65,13 @@ Client.register(codec = ReadReceiptCodec())
 :::code-group
 
 ```js [Browser]
-// The content of a read receipt message must be an empty object.
+// Send a read receipt
+await conversation.sendReadReceipt();
+```
 
-await conversation.messages.send({}, ContentTypeReadReceipt);
+```js [Node]
+// Send a read receipt
+await conversation.sendReadReceipt();
 ```
 
 ```jsx [React Native]
@@ -110,6 +113,15 @@ Here's how you can receive a read receipt:
 
 ```js [Browser]
 if (message.contentType.sameAs(ContentTypeReadReceipt)) {
+  // The message is a read receipt
+  const timestamp = message.sent;
+}
+```
+
+```js [Node]
+import { contentTypeReadReceipt } from '@xmtp/node-sdk';
+
+if (message.contentType.sameAs(contentTypeReadReceipt())) {
   // The message is a read receipt
   const timestamp = message.sent;
 }

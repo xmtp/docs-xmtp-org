@@ -12,7 +12,9 @@ Use a local database to store reactions. This enables your app to performantly d
 
 ### Install the package
 
-In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the reaction content type is built-in and does not require separate installation or codec registration.
+
+For other SDKs where the `ReactionCodec` is not already included, you can install the package using the following command:
 
 :::code-group
 
@@ -32,18 +34,11 @@ pnpm add @xmtp/content-type-reaction
 
 ## Configure the content type
 
-After importing the package, you can register the codec.
+or Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), reactions are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```jsx [Browser]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReactionCodec()],
-});
-```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -89,9 +84,7 @@ const reaction = {
   schema: 'shortcode',
 };
 
-await conversation.send(reaction, {
-  contentType: ContentTypeReaction,
-});
+await conversation.sendReaction(reaction);
 ```
 
 ```tsx [Node]
@@ -103,9 +96,7 @@ const reaction = {
   schema: 'shortcode',
 };
 
-await conversation.send(reaction, {
-  contentType: ContentTypeReaction,
-});
+await conversation.sendReaction(reaction);
 ```
 
 ```jsx [React Native]

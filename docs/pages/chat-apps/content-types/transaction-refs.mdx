@@ -14,6 +14,10 @@ You're welcome to provide feedback by commenting on [XIP-21: Onchain transaction
 
 ## Install the package
 
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the transaction reference content type is built-in and does not require separate installation or codec registration.
+
+For other SDKs, you can install the package using the following command:
+
 :::code-group
 
 ```bash [npm]
@@ -32,21 +36,11 @@ pnpm add @xmtp/content-type-transaction-reference
 
 ## Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), transaction references are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```js [Browser]
-import {
-  ContentTypeTransactionReference,
-  TransactionReferenceCodec,
-} from '@xmtp/content-type-transaction-reference';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new TransactionReferenceCodec()],
-});
-```
 
 ```kotlin [Kotlin]
 import org.xmtp.android.library.Client
@@ -150,9 +144,7 @@ Once you have a transaction reference, you can send it as part of your conversat
 :::code-group
 
 ```js [Browser]
-await conversation.messages.send(transactionReference, {
-  contentType: ContentTypeTransactionReference,
-});
+await conversation.sendTransactionReference(transactionReference);
 ```
 
 ```kotlin [Kotlin]

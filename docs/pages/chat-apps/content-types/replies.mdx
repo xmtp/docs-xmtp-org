@@ -12,7 +12,9 @@ Use a local database to store replies. This will enable your app to performantly
 
 ### Install the package
 
-In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the reply content type is built-in and does not require separate installation or codec registration.
+
+For other SDKs where the `ReplyCodec` is not already included, you can install the package using the following command:
 
 :::code-group
 
@@ -32,18 +34,11 @@ pnpm add @xmtp/content-type-reply
 
 ## Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), replies are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```js [Browser]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReplyCodec()],
-});
-```
 
 ```js [React Native]
 const client = await Client.create(signer, {
@@ -75,19 +70,26 @@ Once you've created a reply, you can send it. Replies are represented as objects
 :::code-group
 
 ```ts [Browser]
-import { ContentTypeText } from '@xmtp/content-type-text';
-import { ContentTypeReply } from '@xmtp/content-type-reply';
 import type { Reply } from '@xmtp/content-type-reply';
 
 const reply: Reply = {
   reference: someMessageID,
-  contentType: ContentTypeText,
   content: 'I concur',
 };
 
-await conversation.send(reply, {
-  contentType: ContentTypeReply,
-});
+await conversation.sendReply(reply);
+```
+
+```ts [Node]
+import { encodeText } from '@xmtp/node-sdk';
+
+const reply = {
+  reference: someMessageID,
+  referenceInboxId: senderInboxId, // Inbox ID of the original message sender
+  content: encodeText('I concur'),
+};
+
+await conversation.sendReply(reply);
 ```
 
 ```js [React Native]
@@ -145,6 +147,22 @@ try await conversation.send(
 if (message.contentType.sameAs(ContentTypeReply)) {
   // We've got a reply.
   const reply: Reply = message.content;
+}
+```
+
+```ts [Node]
+import { contentTypeReply } from '@xmtp/node-sdk';
+
+if (message.contentType.sameAs(contentTypeReply())) {
+  // We've got a reply
+  const replyContent = message.content;
+
+  // Access the reply text
+  console.log('Reply:', replyContent);
+
+  // Access the original message being replied to
+  const originalMessage = message.inReplyTo?.content;
+  console.log('Original message:', originalMessage);
 }
 ```
 

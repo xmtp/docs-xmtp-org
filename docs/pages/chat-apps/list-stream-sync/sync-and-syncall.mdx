@@ -43,6 +43,22 @@ try await client.conversation.sync()
 
 :::
 
+## Manually request sync from other devices
+
+When a device installation comes online, it automatically sends a request to other devices on the network to sync conversations and messages. However, in scenarios where this automatic process is interrupted, you can manually trigger a sync request.
+
+:::code-group
+
+```js [Browser]
+await client.sendSyncRequest();
+```
+
+```js [Node]
+await client.sendSyncRequest();
+```
+
+:::
+
 ## Sync new conversations
 
 Get any new group chat or DM conversations from the network.
