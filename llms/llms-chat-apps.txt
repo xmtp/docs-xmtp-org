@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 11:49 PM UTC / January 07, 2026
+Generated at 12:37 PM UTC / January 14, 2026
 
 ## About this file
 
@@ -7151,7 +7151,11 @@ try await client.deleteLocalDatabase()
 ## chat-apps/core-messaging/create-a-signer.mdx
 # Create a EOA or SCW signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs).
+
+Smart contract wallets have addresses that are unique to the chain on which they are deployed, while EOAs share the same address across multiple EVM-compatible chains.
+
+All XMTP clients require a signer object (or instance) that provides a method for signing messages on behalf of the account.
 
 ## Create an Externally Owned Account signer
 
@@ -7253,16 +7257,23 @@ public struct EOAWallet: SigningKey {
 
 The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
 
-Here is a list of supported chain IDs:
+Here is a list of supported chain IDs for SCWs:
 
-- chain_rpc_1 = Ethereum Mainnet
-- chain_rpc_10 = Optimism
-- chain_rpc_137 = Polygon (formerly Matic)
-- chain_rpc_324 = zkSync Era
-- chain_rpc_480 = World Chain
-- chain_rpc_8453 = Base
-- chain_rpc_42161 = Arbitrum One
-- chain_rpc_59144 = Linea
+| Chain ID | Network          |
+| -------- | ---------------- |
+| 0        | Signifies an EOA |
+| 1        | Ethereum Mainnet |
+| 8453     | Base             |
+| 42161    | Arbitrum One     |
+| 10       | Optimism         |
+| 137      | Polygon          |
+| 324      | zkSync Era       |
+| 59144    | Linea            |
+| 480      | World Chain      |
+
+:::tip[Note]
+Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
+:::
 
 Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54).
 
@@ -7393,6 +7404,12 @@ public struct SCWallet: SigningKey {
 ```
 
 :::
+
+## Common errors
+
+> Wrong chain id. Initially added with X but now signing from Y
+
+This error occurs when there's a mismatch between the chain ID used when initially creating an XMTP identity and the chain ID being used for subsequent signing operations. The chain ID verification prevents [cross-chain signature attacks on smart contract wallets](https://github.com/xmtp/libxmtp/pull/1180). Double-check your chain configuration to ensure the chain ID is properly set (when using SCWs) and consistent across your application.
 
 
 ## chat-apps/core-messaging/create-conversations.mdx
@@ -11267,7 +11284,7 @@ For example, you might self-fund your payer wallet if it already has or can easi
 
 ## Access the XMTP Funding Portal
 
-At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
+At this time, you can access the XMTP Testnet Funding Portal: [https://testnet.fund.xmtp.org/](https://testnet.fund.xmtp.org/).
 
 Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
