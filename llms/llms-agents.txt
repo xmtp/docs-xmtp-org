@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 09:41 PM UTC / January 14, 2026
+Generated at 10:45 PM UTC / January 14, 2026
 
 ## About this file
 
@@ -1382,16 +1382,6 @@ To learn more about all available prebuilt filters, see [filter.ts](https://gith
 # Create an XMTP client
 
 Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate Externally Owned Account (EOA) or Smart Contract Wallet (SCW).
-
-## Wallet comparison
-
-| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
-| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
-| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
-| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
-| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
 
 ## Understand creating and building a client
 
