@@ -134,7 +134,7 @@ Here is a list of supported chain IDs for SCWs:
 Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
 :::
 
-Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54).
+Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -263,6 +263,21 @@ public struct SCWallet: SigningKey {
 ```
 
 :::
+
+## Retrieve your wallet's private key
+
+:::danger[Security Warning]
+Your private key and recovery phrase provide complete control over your wallet and all associated assets. Never share these with anyone, and store them securely. Exposing your private key can result in permanent loss of funds.
+:::
+
+MetaMask users can [export their account's private key](https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key/) to use with other applications. If your wallet provides a recovery phrase based on [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) instead, you can convert it to a private key using a BIP39 mnemonic converter. Follow these steps to convert your recovery phrase using [Ian Coleman's BIP39 Converter](https://iancoleman.io/bip39/):
+
+1. [Download the offline version](https://github.com/iancoleman/bip39/releases) of the converter to prevent potential security risks
+2. Enter your recovery phrase in the "BIP39 Mnemonic" field
+3. Set "Coin" to "ETH - Ethereum"
+4. Under "Derivation Path", select "BIP44"
+5. Find your wallet address in the "Derived Addresses" section
+6. Copy the corresponding "Private Key"
 
 ## Common errors
 
