@@ -251,3 +251,9 @@ public struct SCWallet: SigningKey {
 ```
 
 :::
+
+## Common errors
+
+> Wrong chain id. Initially added with X but now signing from Y
+
+This error occurs when there's a mismatch between the chain ID used when initially creating an XMTP identity and the chain ID being used for subsequent signing operations. The chain ID verification prevents [cross-chain signature attacks on smart contract wallets](https://github.com/xmtp/libxmtp/pull/1180). Double-check your chain configuration to ensure the chain ID is properly set (when using SCWs) and consistent across your application.
