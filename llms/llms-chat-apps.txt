@@ -11267,7 +11267,7 @@ For example, you might self-fund your payer wallet if it already has or can easi
 
 ## Access the XMTP Funding Portal
 
-At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
+At this time, you can access the XMTP Testnet Funding Portal: [https://testnet.fund.xmtp.org/](https://testnet.fund.xmtp.org/).
 
 Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
