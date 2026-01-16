@@ -2,15 +2,27 @@
 
 ## Overview
 
-When implementing PM2 process management for XMTP Agent SDK bots, follow these patterns to ensure proper restart behavior, logging, and error handling.
+XMTP sdks have a lot of guardrails in place to prevent crashes. However, long running processes are hard to guarantee 100% uptime, for that we recommend using a process manager like [PM2](https://pm2.io/) to ensure proper restart behavior and logging.
 
 ## Installation
 
 Install PM2 as a dependency:
 
-```bash
-yarn add pm2@^5.3.0
+::::code-group
+
+```bash [npm]
+npm i pm2
 ```
+
+```bash [yarn]
+yarn add pm2
+```
+
+```bash [pnpm]
+pnpm add pm2
+```
+
+::::
 
 ## Ecosystem Config File
 
