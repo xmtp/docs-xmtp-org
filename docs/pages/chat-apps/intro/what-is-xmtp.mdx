@@ -8,17 +8,19 @@ XMTP consists of two layers:
 
 - **The protocol** defines how messages are formatted, encrypted, and exchanged. It uses the [Messaging Layer Security (MLS)](https://www.rfc-editor.org/rfc/rfc9420.html) standard—a ratified IETF specification that provides end-to-end encryption with forward secrecy and post-compromise security.
 
-- **The broadcast network** is a decentralized infrastructure of nodes that store and relay encrypted messages. Messages are quantum-resistant encrypted and retained for 60 days by default, then automatically expire.
-
-To learn more about the path to decentralization, see [Decentralizing XMTP](https://xmtp.org/decentralization).
+- **The network** is the infrastructure that stores and relays encrypted messages between clients.
+  - **Today's network**: The `dev` and `production` network environments are operated by [XMTP Labs](https://www.xmtplabs.com/) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+  - **Decentralized network**: In parallel, a decentralized network of independent nodes is being built. The testnet launched a year ago, and mainnet is coming. Messages on the decentralized network are quantum-resistant encrypted and retained for 60 days before automatically expiring. To learn more about progress toward decentralization, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 ## Identity and inboxes
 
-Every user has a cryptographic **inbox** identified by an **InboxID**. Multiple identities can link to a single inbox through signed cryptographic associations:
+Every user has a cryptographic **inbox** identified by an **InboxID**. The following identities (blockchain wallet addresses) can link to a single inbox through signed cryptographic associations:
 
-- Blockchain wallets (EOAs, smart contract wallets, ERC-4337 accounts)
-- Social identities (ENS names, Base handles, Zora usernames)
-- Proof-of-personhood systems (World ID)
+- Externally owned accounts (EOAs)
+- Smart contract wallets
+- ERC-4337 accounts
+
+These identities may themselves be linked to social identifiers like ENS, Base, or Zora names, as well as proof-of-personhood systems like World ID.
 
 Each inbox designates a **recovery authority** that can revoke compromised associations or transfer control, preventing lockouts when credentials are lost. No email or phone number authentication is required.
 
@@ -26,15 +28,16 @@ To learn more, see [Manage XMTP inboxes, identities, and installations](/chat-ap
 
 ## Message types
 
-XMTP supports multiple conversation formats:
+XMTP supports two conversation formats:
 
-- **1:1 direct messages (DMs)**: Private conversations between two users
+- **1:1 direct messages (DMs)**: Conversations between two participants
 - **Group chats**: Multi-party conversations with configurable permissions and metadata
-- **Agent messaging**: Automated or AI-powered agents that can send and receive messages
+
+Both humans and agents can participate in DMs and group chats.
 
 ## Spam protection
 
-Spam protection is provided via consent preferences, which are stored on the XMTP network, not in individual apps. This enables users to maintain consistent contact preferences across all XMTP-compatible apps:
+Spam protection is provided via consent preferences, which are stored on-device and synced through [device sync](/chat-apps/list-stream-sync/history-sync). This enables users to maintain consistent contact preferences across all XMTP-compatible apps:
 
 - **Allowed**: Contacts whose messages appear in the main inbox
 - **Unknown**: New contacts requiring acceptance/rejection
@@ -86,9 +89,12 @@ Because XMTP is a protocol, not a platform:
 
 ## Platform support
 
-- Web SDKs for [Browser](/chat-apps/sdks/browser) and [Node.js](/chat-apps/sdks/node)
-- Mobile SDKs for [React Native](/chat-apps/sdks/react-native), [Android](/chat-apps/sdks/android), and [iOS](/chat-apps/sdks/ios)
-- [Agent SDK](/agents/get-started/build-an-agent)
+- [Browser SDK](/chat-apps/sdks/browser) for web apps
+- [Node SDK](/chat-apps/sdks/node) for servers
+- [Agent SDK](/agents/get-started/build-an-agent), built on the Node SDK
+- [React Native SDK](/chat-apps/sdks/react-native)
+- [Android SDK](/chat-apps/sdks/android)
+- [iOS SDK](/chat-apps/sdks/ios)
 
 ## Next steps
 
