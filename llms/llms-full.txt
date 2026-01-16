@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 11:49 PM UTC / January 07, 2026
+Generated at 10:45 PM UTC / January 14, 2026
 
 ## About this file
 
@@ -309,7 +309,7 @@ Get the version of the underlying libxmtp library used by the client:
 :::code-group
 
 ```tsx [Browser]
-const libxmtpVersion = await client.libxmtpVersion();
+const libxmtpVersion = client.libxmtpVersion;
 console.log('libxmtp version:', libxmtpVersion);
 ```
 
@@ -337,7 +337,7 @@ Get the app version that was configured when creating the client:
 :::code-group
 
 ```tsx [Browser]
-const appVersion = await client.appVersion();
+const appVersion = client.appVersion;
 console.log('App version:', appVersion);
 ```
 
@@ -7152,7 +7152,21 @@ try await client.deleteLocalDatabase()
 ## chat-apps/core-messaging/create-a-signer.mdx
 # Create a EOA or SCW signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs). All SDK clients accept a signer object (or instance), which provides a method for signing messages.
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs).
+
+Smart contract wallets have addresses that are unique to the chain on which they are deployed, while EOAs share the same address across multiple EVM-compatible chains.
+
+All XMTP clients require a signer object (or instance) that provides a method for signing messages on behalf of the account.
+
+## Wallet comparison
+
+| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
+| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
+| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
+| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
+| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
 
 ## Create an Externally Owned Account signer
 
@@ -7254,18 +7268,25 @@ public struct EOAWallet: SigningKey {
 
 The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
 
-Here is a list of supported chain IDs:
+Here is a list of supported chain IDs for SCWs:
 
-- chain_rpc_1 = Ethereum Mainnet
-- chain_rpc_10 = Optimism
-- chain_rpc_137 = Polygon (formerly Matic)
-- chain_rpc_324 = zkSync Era
-- chain_rpc_480 = World Chain
-- chain_rpc_8453 = Base
-- chain_rpc_42161 = Arbitrum One
-- chain_rpc_59144 = Linea
+| Chain ID | Network          |
+| -------- | ---------------- |
+| 0        | Signifies an EOA |
+| 1        | Ethereum Mainnet |
+| 10       | Optimism         |
+| 137      | Polygon          |
+| 324      | zkSync Era       |
+| 480      | World Chain      |
+| 8453     | Base             |
+| 42161    | Arbitrum One     |
+| 59144    | Linea            |
 
-Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54).
+:::tip[Note]
+Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
+:::
+
+Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -7394,6 +7415,35 @@ public struct SCWallet: SigningKey {
 ```
 
 :::
+
+## Retrieve your wallet's private key
+
+:::danger[Security Warning]
+Your private key and recovery phrase provide complete control over your wallet and all associated assets. Never share these with anyone, and store them securely. Exposing your private key can result in permanent loss of funds.
+:::
+
+MetaMask users can [export their account's private key](https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key/) to use with other applications. If your wallet provides a recovery phrase based on [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) instead, you can convert it to a private key using a BIP39 mnemonic converter. Follow these steps to convert your recovery phrase using [Ian Coleman's BIP39 Converter](https://iancoleman.io/bip39/):
+
+1. [Download the offline version](https://github.com/iancoleman/bip39/releases) of the converter to prevent potential security risks
+2. Enter your recovery phrase in the "BIP39 Mnemonic" field
+3. Set "Coin" to "ETH - Ethereum"
+4. Under "Derivation Path", select "BIP44"
+5. Find your wallet address in the "Derived Addresses" section
+6. Copy the corresponding "Private Key"
+
+## Common errors
+
+### AssociationError.ChainIdMismatch
+
+> Wrong chain id. Initially added with {0} but now signing from {1}
+
+This error occurs when there's a mismatch between the chain ID used when initially creating an XMTP identity and the chain ID being used for subsequent signing operations. The chain ID verification prevents [cross-chain signature attacks on smart contract wallets](https://github.com/xmtp/libxmtp/pull/1180). Double-check your chain configuration to ensure the chain ID is properly set (when using SCWs) and consistent across your application.
+
+### NotFound.InboxIdForAddress
+
+> inbox id for address {0} not found
+
+This typically happens when trying to create a DM with an address that hasn't been registered or associated with an XMTP inbox ID yet. You can only message wallet addresses that have been registered on the XMTP network. Registration occurs when a wallet is used with an XMTP-based chat app or one of our Client SDKs.
 
 
 ## chat-apps/core-messaging/create-conversations.mdx
@@ -11560,16 +11610,6 @@ To learn more about all available prebuilt filters, see [filter.ts](https://gith
 
 Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate Externally Owned Account (EOA) or Smart Contract Wallet (SCW).
 
-## Wallet comparison
-
-| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
-| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
-| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
-| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
-| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
-
 ## Understand creating and building a client
 
 This video provides a walkthrough of creating and building a client.
@@ -13726,7 +13766,7 @@ For example, you might self-fund your payer wallet if it already has or can easi
 
 ## Access the XMTP Funding Portal
 
-At this time, you can access the testnet-staging deployment of the XMTP Funding Portal: [https://funding-portal-testnet-staging.vercel.app/](https://funding-portal-testnet-staging.vercel.app/).
+At this time, you can access the XMTP Testnet Funding Portal: [https://testnet.fund.xmtp.org/](https://testnet.fund.xmtp.org/).
 
 Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
