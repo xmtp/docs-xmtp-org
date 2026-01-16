@@ -140,6 +140,10 @@ export const sidebarConfig = {
           link: "/agents/deploy/deploy-agent",
         },
         {
+          text: "PM2 process management",
+          link: "/agents/deploy/pm2-process-management",
+        },
+        {
           text: "Security",
           link: "/agents/deploy/agent-security",
         },
