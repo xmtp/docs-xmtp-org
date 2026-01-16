@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:45 PM UTC / January 14, 2026
+Generated at 07:29 PM UTC / January 16, 2026
 
 ## About this file
 
@@ -1283,7 +1283,7 @@ XMTP uses a two-level HMAC key system:
 
 #### Root HMAC key syncing across installations
 
-When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the sync group. Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
+When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the [sync group](/chat-apps/list-stream-sync/history-sync#sync-group). Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
 
 #### Effects of stale root HMAC keys
 
@@ -3304,7 +3304,7 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 
 Preferences sync handles HMAC keys in the same way.
 
-For example, when a new installation generates a root HMAC key and publishes it to the sync group, other installations will eventually replace their root HMAC keys with the last one posted. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets the latest root HMAC key message from the preferences group and ensures that all installations converge to use the same root HMAC key. This root key is then used to derive group-specific HMAC keys for each conversation.
+For example, when a new installation generates a root HMAC key and publishes it to the [sync group](/chat-apps/list-stream-sync/history-sync#sync-group), other installations will eventually replace their root HMAC keys with the last one posted. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets the latest root HMAC key message from the preferences group and ensures that all installations converge to use the same root HMAC key. This root key is then used to derive group-specific HMAC keys for each conversation.
 
 ## Sync preferences
 
@@ -7444,6 +7444,8 @@ This error occurs when there's a mismatch between the chain ID used when initial
 > inbox id for address {0} not found
 
 This typically happens when trying to create a DM with an address that hasn't been registered or associated with an XMTP inbox ID yet. You can only message wallet addresses that have been registered on the XMTP network. Registration occurs when a wallet is used with an XMTP-based chat app or one of our Client SDKs.
+
+This error may also occur if your client is connected to a different XMTP network environment than the target address. For example, your client might be using the dev network while the target address was registered on production.
 
 
 ## chat-apps/core-messaging/create-conversations.mdx
