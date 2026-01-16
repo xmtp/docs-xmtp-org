@@ -130,7 +130,7 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 
 Preferences sync handles HMAC keys in the same way.
 
-For example, when a new installation generates a root HMAC key and publishes it to the sync group, other installations will eventually replace their root HMAC keys with the last one posted. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets the latest root HMAC key message from the preferences group and ensures that all installations converge to use the same root HMAC key. This root key is then used to derive group-specific HMAC keys for each conversation.
+For example, when a new installation generates a root HMAC key and publishes it to the [sync group](/chat-apps/list-stream-sync/history-sync#sync-group), other installations will eventually replace their root HMAC keys with the last one posted. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets the latest root HMAC key message from the preferences group and ensures that all installations converge to use the same root HMAC key. This root key is then used to derive group-specific HMAC keys for each conversation.
 
 ## Sync preferences
 
