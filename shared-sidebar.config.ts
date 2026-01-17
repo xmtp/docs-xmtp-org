@@ -383,6 +383,10 @@ export const sidebarConfig = {
           link: "/chat-apps/core-messaging/manage-inboxes",
         },
         {
+          text: "Extend the identity model",
+          link: "/chat-apps/core-messaging/extend-id-model",
+        },
+        {
           text: "Observe rate limits",
           link: "/chat-apps/core-messaging/rate-limits",
         },
