@@ -4,34 +4,20 @@ When you build an app with XMTP, all messages are encoded with a content type to
 
 In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
 
-At a high level, there are three categories of content types with XMTP:
+At a high level, there are two categories of content types with XMTP:
 
-- Standard
-- Standards-track
-- Custom
+- [Standard](#standard-content-types)
+- [Custom](/chat-apps/content-types/custom)
 
 ## Standard content types
 
 A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
 
-Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their app.
+Once adopted, a standard content type is bundled in XMTP client SDKs. You can then import the standard content type from an SDK for use in your app.
 
-Here is the current standard content type:
+Here are the current standard content types:
 
-### Text content type
-
-An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don't need to perform any additional steps related to content types.
-
-```jsx [Node]
-await conversation.send('gm');
-```
-
-## Standards-track content types
-
-A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
-
-Here are standards-track content types that you can review, test, and adopt in your app today:
-
+- Text content type: An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don't need to perform any additional steps related to content types.
 - [Attachment content type](/chat-apps/content-types/attachments/#support-attachments-smaller-than-1mb): Use to send attachments smaller than 1MB.
 - [Remote attachment content type](/chat-apps/content-types/attachments): Use to send attachments of any size.
 - [Multiple remote attachments content type](/chat-apps/content-types/attachments#support-multiple-remote-attachments-of-any-size): Use to send attachments of any size.

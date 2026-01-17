@@ -65,13 +65,13 @@ const dbEncryptionKey = getRandomValues(new Uint8Array(32));
 const client = await Client.create(signer, { dbEncryptionKey });
 
 // 3. Start a new conversation
-const group = await client.conversations.newGroup(
+const group = await client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 
 // 4. Send messages
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 
 // 5. List, stream, and sync
 // List existing conversations
