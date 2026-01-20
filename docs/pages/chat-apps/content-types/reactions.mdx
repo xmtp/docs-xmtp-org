@@ -34,7 +34,7 @@ pnpm add @xmtp/content-type-reaction
 
 ## Configure the content type
 
-or Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), reactions are built-in and do not require codec registration. Skip this step for these SDKs.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), reactions are built-in and do not require codec registration. Skip this step for these SDKs.
 
 For other SDKs, register the codec:
 
@@ -76,24 +76,28 @@ With XMTP, reactions are represented as objects with the following keys:
 :::code-group
 
 ```tsx [Browser]
+import { ReactionAction, ReactionSchema } from '@xmtp/browser-sdk';
+
 const reaction = {
   reference: someMessageID,
   referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
-  action: 'added',
+  action: ReactionAction.Added,
   content: 'smile',
-  schema: 'shortcode',
+  schema: ReactionSchema.Shortcode,
 };
 
 await conversation.sendReaction(reaction);
 ```
 
 ```tsx [Node]
+import { ReactionAction, ReactionSchema } from '@xmtp/node-sdk';
+
 const reaction = {
   reference: someMessageID,
   referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
-  action: 'added',
+  action: ReactionAction.Added,
   content: 'smile',
-  schema: 'shortcode',
+  schema: ReactionSchema.Shortcode,
 };
 
 await conversation.sendReaction(reaction);
@@ -154,14 +158,41 @@ try await conversation.send(
 
 ## Receive a reaction
 
-Now that you can send a reaction, you need a way to receive a reaction. For example:
+Now that you can send a reaction, you need a way to receive reactions. For Browser SDK and Node SDK, reactions are accessed via the `reactions` property on a message, which returns an array of `DecodedMessage<Reaction>` objects.
 
 :::code-group
 
 ```tsx [Browser]
-if (message.contentType.sameAs(ContentTypeReaction)) {
-  // We've got a reaction.
-  const reaction: Reaction = message.content;
+import { ReactionAction, ReactionSchema } from '@xmtp/browser-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+// Access reactions on the message
+const reactions = message.reactions;
+
+for (const reactionMessage of reactions) {
+  const reaction = reactionMessage.content;
+  console.log(reaction.content); // e.g., "👍"
+  console.log(reaction.action);  // ReactionAction.Added or ReactionAction.Removed
+  console.log(reaction.schema);  // ReactionSchema.Unicode, ReactionSchema.Shortcode, or ReactionSchema.Custom
+}
+```
+
+```tsx [Node]
+import { ReactionAction, ReactionSchema } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+// Access reactions on the message
+const reactions = message.reactions;
+
+for (const reactionMessage of reactions) {
+  const reaction = reactionMessage.content;
+  console.log(reaction.content); // e.g., "👍"
+  console.log(reaction.action);  // ReactionAction.Added or ReactionAction.Removed
+  console.log(reaction.schema);  // ReactionSchema.Unicode, ReactionSchema.Shortcode, or ReactionSchema.Custom
 }
 ```
 
