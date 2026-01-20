@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 07:29 PM UTC / January 16, 2026
+Generated at 01:53 PM UTC / January 20, 2026
 
 ## About this file
 
@@ -11885,6 +11885,126 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
 
 
+## agents/deploy/pm2-process-management.mdx
+# Process management
+
+XMTP SDKs have a few guardrails in place to prevent crashes. However, it's difficult to guarantee 100% uptime for long-running processes. For that reason, we recommend using a process manager like [PM2](https://pm2.io/) to ensure proper restart behavior and logging.
+
+## Installation
+
+Install PM2 as a dependency:
+
+::::code-group
+
+```bash [npm]
+npm i pm2
+```
+
+```bash [yarn]
+yarn add pm2
+```
+
+```bash [pnpm]
+pnpm add pm2
+```
+
+::::
+
+## Ecosystem Config File
+
+Create `ecosystem.config.cjs` with the following structure:
+
+```jsx
+const path = require("path");
+
+const projectRoot = path.resolve(__dirname, "../../..");
+
+module.exports = {
+  apps: [
+    {
+      name: "<bot-name>",
+      script: "node_modules/.bin/tsx",
+      args: "src/index.ts",
+      cwd: projectRoot,
+      autorestart: true,
+      max_memory_restart: "1G",
+      error_file: "./logs/pm2-<bot-name>-error.log",
+      out_file: "./logs/pm2-<bot-name>-out.log",
+      restart_delay: 4000,
+      min_uptime: 1000,
+      unstable_restarts: 10000, // CRITICAL: Prevents PM2 from stopping restarts
+      env: {
+        NODE_ENV: "production",
+      },
+    },
+  ],
+};
+```
+
+### Critical Config Settings
+
+- **`unstable_restarts: 10000`** - REQUIRED. Without this, PM2 will stop restarting if it detects the process as "unstable" (crashing too quickly). This allows PM2 to keep restarting even during rapid crash cycles.
+- **`min_uptime: 1000`** - Process must run at least 1 second to be considered stable
+- **`restart_delay: 4000`** - Wait 4 seconds before restarting (prevents rapid restart loops)
+
+## Agent Code Pattern
+
+### 1. Restart Logging (FIRST THING)
+
+Add restart logging as the very first line of code, before any async operations:
+
+```tsx [Node]
+// Immediate synchronous log - FIRST THING that runs
+console.log(
+  `[RESTART] <Bot Name> bot starting - PID: ${process.pid} at ${new Date().toISOString()}`,
+);
+```
+
+This log appears immediately when PM2 restarts the process, making it easy to track restarts in logs.
+
+### 2. Error Handlers
+
+Add this error handler after agent creation but before `agent.start()`:
+
+```tsx [Node]
+// Handle agent-level unhandled errors
+agent.on("unhandledError", (error) => {
+  console.error("<Bot Name> bot fatal error:", error);
+  if (error instanceof Error) {
+    console.error("Error stack:", error.stack);
+  }
+  console.error("Exiting process - PM2 will restart");
+  process.exit(1);
+});
+```
+
+**Note**: Process-level handlers (`uncaughtException`, `unhandledRejection`) are typically commented out, as `agent.on("unhandledError")` handles most cases.
+
+## Troubleshooting
+
+### PM2 Shows "waiting restart" but Never Restarts
+
+**Symptom**: PM2 status shows "waiting restart" but no new process spawns.
+
+**Solution**: Add `unstable_restarts: 10000` to ecosystem config. PM2 is blocking restarts because it thinks the process is unstable.
+
+### No Restart Logs Appearing
+
+**Symptom**: Process crashes but `[RESTART]` logs never appear.
+
+**Solution**:
+
+1. Verify `[RESTART]` log is the very first line of code
+2. Check PM2 config has `unstable_restarts: 10000`
+3. Check PM2 logs: `pm2 logs <bot-name> --raw`
+
+### Process Restarts Too Quickly
+
+**Symptom**: Process restarts in a tight loop.
+
+**Solution**: Increase `restart_delay` to give the process time to initialize before allowing another restart.
+
+
 ## agents/deploy/rate-limits.mdx
 # Observe rate limits
 
@@ -14724,4 +14844,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 90 files from 5 sections.
+This documentation contains 91 files from 5 sections.
