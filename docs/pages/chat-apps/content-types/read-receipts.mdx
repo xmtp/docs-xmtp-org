@@ -10,28 +10,6 @@ Use the read receipt content type to support read receipts in your app. A read r
 
 While this is a per-app decision, the best practice is to provide users with the option to opt out of sending read receipts. If a user opts out, when they read a message, a read receipt will not be sent to the sender of the message.
 
-## Install the package
-
-For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the read receipt content type is built-in and does not require separate installation or codec registration.
-
-For other SDKs, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-read-receipt
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-read-receipt
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-read-receipt
-```
-
-:::
-
 ## Configure the content type
 
 For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), read receipts are built-in and do not require codec registration. Skip this step for these SDKs.
@@ -112,19 +90,22 @@ Here's how you can receive a read receipt:
 :::code-group
 
 ```js [Browser]
-if (message.contentType.sameAs(ContentTypeReadReceipt)) {
-  // The message is a read receipt
-  const timestamp = message.sent;
-}
+// the browser SDK does not return read receipts when reading messages
+// to see the last read timestamp for inboxes in a conversation, use the `lastReadTimes` method
+
+const lastReadTimes = await conversation.lastReadTimes();
+lastReadTimes.get(recipientInboxId); // the last read timestamp in nanoseconds for the inbox
+
+// note: if the last read timestamp is undefined, the inbox has not sent a read receipt yet
 ```
 
 ```js [Node]
-import { contentTypeReadReceipt } from '@xmtp/node-sdk';
+// the node SDK does not return read receipts when reading messages
+// to see the last read timestamp for inboxes in a conversation, use the `lastReadTimes` method
+const lastReadTimes = await conversation.lastReadTimes();
+lastReadTimes[recipientInboxId]; // the last read timestamp in nanoseconds for the inbox
 
-if (message.contentType.sameAs(contentTypeReadReceipt())) {
-  // The message is a read receipt
-  const timestamp = message.sent;
-}
+// note: if the last read timestamp is undefined, the inbox has not sent a read receipt yet
 ```
 
 ```js [React Native]
