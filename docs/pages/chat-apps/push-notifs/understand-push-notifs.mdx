@@ -106,7 +106,7 @@ XMTP uses a two-level HMAC key system:
 
 #### Root HMAC key syncing across installations
 
-When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the sync group. Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
+When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the [sync group](/chat-apps/list-stream-sync/history-sync#sync-group). Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
 
 #### Effects of stale root HMAC keys
 
