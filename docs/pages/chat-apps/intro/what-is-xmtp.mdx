@@ -35,6 +35,21 @@ XMTP supports two conversation formats:
 
 Both humans and agents can participate in DMs and group chats.
 
+## Content types
+
+XMTP uses content types to encode all message content, including:    
+
+- Text
+- Attachments (images, files, audio, video)
+- Onchain transactions
+- Onchain transaction references
+- Reactions
+- Replies
+- Read receipts
+- Custom content types defined by developers
+
+To learn more, see [Understand content types](/chat-apps/content-types/content-types).
+
 ## Spam protection
 
 Spam protection is provided via consent preferences, which are stored on-device and synced through [device sync](/chat-apps/list-stream-sync/history-sync). This enables users to maintain consistent contact preferences across all XMTP-compatible apps:
@@ -46,18 +61,6 @@ Spam protection is provided via consent preferences, which are stored on-device 
 Only the user can see their consent list—blocked contacts are never notified of their status.
 
 To learn more, see [Understand how user consent preferences support spam-free chats](/chat-apps/user-consent/user-consent).
-
-## Content types
-
-While XMTP handles text messages natively, it's extensible to support rich content:
-
-- Attachments (images, files, audio, video)
-- Reactions and replies
-- Read receipts
-- Onchain transaction messages and references
-- Custom content types defined by developers
-
-To learn more, see [Understand content types](/chat-apps/content-types/content-types).
 
 ## Security model
 
