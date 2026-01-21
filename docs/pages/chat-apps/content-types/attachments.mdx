@@ -556,10 +556,10 @@ let attachment2 = Attachment(
 ```ts [Browser]
 import {
   encryptAttachment,
-  type RemoteAttachmentInfo,
+  type RemoteAttachment,
 } from '@xmtp/browser-sdk';
 
-const remoteAttachments: RemoteAttachmentInfo[] = [];
+const remoteAttachments: RemoteAttachment[] = [];
 
 for (const attachment of [attachment1, attachment2]) {
   // Encrypt the attachment
@@ -584,9 +584,9 @@ for (const attachment of [attachment1, attachment2]) {
 ```
 
 ```ts [Node]
-import { encryptAttachment, type RemoteAttachmentInfo } from '@xmtp/node-sdk';
+import { encryptAttachment, type RemoteAttachment } from '@xmtp/node-sdk';
 
-const remoteAttachments: RemoteAttachmentInfo[] = [];
+const remoteAttachments: RemoteAttachment[] = [];
 
 for (const attachment of [attachment1, attachment2]) {
   // Encrypt the attachment
@@ -796,15 +796,15 @@ import { decryptAttachment, type Attachment } from '@xmtp/browser-sdk';
 
 const decryptedAttachments: Attachment[] = [];
 
-for (const attachmentInfo of multiRemoteAttachment.attachments) {
+for (const attachment of multiRemoteAttachment.attachments) {
   // Download the encrypted payload from the URL
   // (Integrator must supply download from URL functionality!)
-  const encryptedPayload = await downloadFromUrl(attachmentInfo.url);
+  const encryptedPayload = await downloadFromUrl(attachment.url);
 
   // Decrypt the attachment
   const decryptedAttachment = await decryptAttachment(
     encryptedPayload,
-    attachmentInfo
+    attachment
   );
   decryptedAttachments.push(decryptedAttachment);
 }
@@ -818,15 +818,15 @@ import { decryptAttachment, type Attachment } from '@xmtp/node-sdk';
 
 const decryptedAttachments: Attachment[] = [];
 
-for (const attachmentInfo of multiRemoteAttachment.attachments) {
+for (const attachment of multiRemoteAttachment.attachments) {
   // Download the encrypted payload from the URL
   // (Integrator must supply download from URL functionality!)
-  const encryptedPayload = await downloadFromUrl(attachmentInfo.url);
+  const encryptedPayload = await downloadFromUrl(attachment.url);
 
   // Decrypt the attachment
   const decryptedAttachment = decryptAttachment(
     encryptedPayload,
-    attachmentInfo
+    attachment
   );
   decryptedAttachments.push(decryptedAttachment);
 }
