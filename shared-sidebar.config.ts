@@ -292,8 +292,8 @@ export const sidebarConfig = {
       collapsed: false,
       items: [
         {
-          text: "Get started",
-          link: "/chat-apps/intro/get-started",
+          text: "What is XMTP?",
+          link: "/chat-apps/intro/what-is-xmtp",
         },
         {
           text: "Why XMTP?",
@@ -302,6 +302,10 @@ export const sidebarConfig = {
         {
           text: "FAQ",
           link: "/chat-apps/intro/faq",
+        },
+        {
+          text: "Get started",
+          link: "/chat-apps/intro/get-started",
         },
         {
           text: "Build with LLMs",

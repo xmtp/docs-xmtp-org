@@ -1,0 +1,106 @@
+# What is XMTP?
+
+XMTP (Extensible Message Transport Protocol) is an open protocol and decentralized network for secure, end-to-end encrypted messaging. It enables developers to build messaging experiences where users own their identity, conversations, and data.
+
+## Protocol and network
+
+XMTP consists of two layers:
+
+- **The protocol** defines how messages are formatted, encrypted, and exchanged. It uses the [Messaging Layer Security (MLS)](https://www.rfc-editor.org/rfc/rfc9420.html) standard—a ratified IETF specification that provides end-to-end encryption with forward secrecy and post-compromise security.
+
+- **The network** is the infrastructure that stores and relays encrypted messages between clients.
+  - **Today's network**: The `dev` and `production` network environments are operated by [XMTP Labs](https://www.xmtplabs.com/) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+  - **Decentralized network**: In parallel, a decentralized network of independent nodes is being built. The testnet launched a year ago, and mainnet is coming. Messages on the decentralized network are quantum-resistant encrypted and retained for 60 days before automatically expiring. To learn more about progress toward decentralization, see [Decentralizing XMTP](https://xmtp.org/decentralization).
+
+## Identity and inboxes
+
+Every user has a cryptographic **inbox** identified by an **InboxID**. The following identities (blockchain wallet addresses) can link to a single inbox through signed cryptographic associations:
+
+- Externally owned accounts (EOAs)
+- Smart contract wallets
+- ERC-4337 accounts
+
+These identities may themselves be linked to social identifiers like ENS, Base, or Zora names, as well as proof-of-personhood systems like World ID.
+
+Each inbox designates a **recovery authority** that can revoke compromised associations or transfer control, preventing lockouts when credentials are lost. No email or phone number authentication is required.
+
+To learn more, see [Manage XMTP inboxes, identities, and installations](/chat-apps/core-messaging/manage-inboxes).
+
+## Message types
+
+XMTP supports two conversation formats:
+
+- **1:1 direct messages (DMs)**: Conversations between two participants
+- **Group chats**: Multi-party conversations with configurable permissions and metadata
+
+Both humans and agents can participate in DMs and group chats.
+
+## Content types
+
+XMTP uses content types to encode all message content, including:    
+
+- Text
+- Attachments (images, files, audio, video)
+- Onchain transactions
+- Onchain transaction references
+- Reactions
+- Replies
+- Read receipts
+- Custom content types defined by developers
+
+To learn more, see [Understand content types](/chat-apps/content-types/content-types).
+
+## Spam protection
+
+Spam protection is provided via consent preferences, which are stored on-device and synced through [device sync](/chat-apps/list-stream-sync/history-sync). This enables users to maintain consistent contact preferences across all XMTP-compatible apps:
+
+- **Allowed**: Contacts whose messages appear in the main inbox
+- **Unknown**: New contacts requiring acceptance/rejection
+- **Denied**: Blocked contacts whose messages are filtered out
+
+Only the user can see their consent list—blocked contacts are never notified of their status.
+
+To learn more, see [Understand how user consent preferences support spam-free chats](/chat-apps/user-consent/user-consent).
+
+## Security model
+
+XMTP and MLS prioritize security, privacy, and message integrity through advanced cryptographic techniques, delivering end-to-end encryption for both 1:1 and group conversations.
+
+To learn more, see [Messaging security properties with XMTP](/protocol/security).
+
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by NCC Group in Dec 2024.
+
+See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
+
+## Crypto-native capabilities
+
+XMTP is built on blockchain rails, enabling native integration with:
+
+- Support for any blockchain or payment protocol
+- Transaction messages with embedded context
+- Agent-based automation for payments and fund management
+- Token-gated communities and features
+
+## Interoperability and ownership
+
+Because XMTP is a protocol, not a platform:
+
+- Users can access their messages from any app built with XMTP
+- Developers maintain full control without platform lock-in
+- The protocol is censorship-resistant and not controlled by a central authority
+- Apps and agents can interoperate seamlessly
+
+## Platform support
+
+- [Browser SDK](/chat-apps/sdks/browser) for web apps
+- [Node SDK](/chat-apps/sdks/node) for servers
+- [Agent SDK](/agents/get-started/build-an-agent), built on the Node SDK
+- [React Native SDK](/chat-apps/sdks/react-native)
+- [Android SDK](/chat-apps/sdks/android)
+- [iOS SDK](/chat-apps/sdks/ios)
+
+## Next steps
+
+- [Why build with XMTP?](/chat-apps/intro/why-xmtp) - Understand the benefits and use cases
+- [Try xmtp.chat](https://xmtp.chat) - Experience XMTP as a user before you build
+- [Get started building](/chat-apps/intro/get-started) - Jump into implementation with your chosen SDK
