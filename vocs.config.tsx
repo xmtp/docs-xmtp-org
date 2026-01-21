@@ -87,7 +87,11 @@ export default defineConfig({
     },
     { text: 'Protocol', link: '/protocol/overview' },
     { text: 'Network', link: '/network/run-a-node' },
-    { text: 'Join the XMTP Dev Community', link: 'https://forms.gle/hesZ55WGMjJnZ7sQA' },
+    {
+      text: '🚀 Try docs MCP server',
+      link: 'https://github.com/xmtp/xmtp-docs-mcp',
+    },
+    { text: 'Join dev community', link: 'https://forms.gle/hesZ55WGMjJnZ7sQA' },
   ],
   ogImageUrl: {
     '/': '/xmtp-og-card.jpeg',

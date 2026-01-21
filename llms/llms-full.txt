@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 09:41 PM UTC / January 14, 2026
+Generated at 09:54 PM UTC / January 20, 2026
 
 ## About this file
 
@@ -1283,7 +1283,7 @@ XMTP uses a two-level HMAC key system:
 
 #### Root HMAC key syncing across installations
 
-When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the sync group. Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
+When a new installation for an inbox is created, it generates a new root HMAC key and publishes it to the [sync group](/chat-apps/list-stream-sync/history-sync#sync-group). Other installations of the same inbox will eventually replace their root HMAC keys with the last one posted in the sync group. This means the root HMAC key eventually becomes the same across all installations for a given inbox.
 
 #### Effects of stale root HMAC keys
 
@@ -3304,7 +3304,7 @@ Now, let's describe how the preferences sync worker helps keep user consent pref
 
 Preferences sync handles HMAC keys in the same way.
 
-For example, when a new installation generates a root HMAC key and publishes it to the sync group, other installations will eventually replace their root HMAC keys with the last one posted. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets the latest root HMAC key message from the preferences group and ensures that all installations converge to use the same root HMAC key. This root key is then used to derive group-specific HMAC keys for each conversation.
+For example, when a new installation generates a root HMAC key and publishes it to the [sync group](/chat-apps/list-stream-sync/history-sync#sync-group), other installations will eventually replace their root HMAC keys with the last one posted. When Installation A and C call `preferences.sync` or `syncAll`, the sync worker gets the latest root HMAC key message from the preferences group and ensures that all installations converge to use the same root HMAC key. This root key is then used to derive group-specific HMAC keys for each conversation.
 
 ## Sync preferences
 
@@ -7158,6 +7158,16 @@ Smart contract wallets have addresses that are unique to the chain on which they
 
 All XMTP clients require a signer object (or instance) that provides a method for signing messages on behalf of the account.
 
+## Wallet comparison
+
+| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
+| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
+| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
+| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
+| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
+
 ## Create an Externally Owned Account signer
 
 The EOA signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
@@ -7264,19 +7274,22 @@ Here is a list of supported chain IDs for SCWs:
 | -------- | ---------------- |
 | 0        | Signifies an EOA |
 | 1        | Ethereum Mainnet |
+| 10       | Optimism         |
+| 100      | Gnosis           |
+| 137      | Polygon          |
+| 232      | Lens             |
+| 324      | zkSync Era       |
+| 480      | World            |
+| 2741     | Abstract         |
 | 8453     | Base             |
 | 42161    | Arbitrum One     |
-| 10       | Optimism         |
-| 137      | Polygon          |
-| 324      | zkSync Era       |
 | 59144    | Linea            |
-| 480      | World Chain      |
 
 :::tip[Note]
 Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
 :::
 
-Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54).
+Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -7406,11 +7419,36 @@ public struct SCWallet: SigningKey {
 
 :::
 
+## Retrieve your wallet's private key
+
+:::danger[Security Warning]
+Your private key and recovery phrase provide complete control over your wallet and all associated assets. Never share these with anyone, and store them securely. Exposing your private key can result in permanent loss of funds.
+:::
+
+MetaMask users can [export their account's private key](https://support.metamask.io/configure/accounts/how-to-export-an-accounts-private-key/) to use with other applications. If your wallet provides a recovery phrase based on [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) instead, you can convert it to a private key using a BIP39 mnemonic converter. Follow these steps to convert your recovery phrase using [Ian Coleman's BIP39 Converter](https://iancoleman.io/bip39/):
+
+1. [Download the offline version](https://github.com/iancoleman/bip39/releases) of the converter to prevent potential security risks
+2. Enter your recovery phrase in the "BIP39 Mnemonic" field
+3. Set "Coin" to "ETH - Ethereum"
+4. Under "Derivation Path", select "BIP44"
+5. Find your wallet address in the "Derived Addresses" section
+6. Copy the corresponding "Private Key"
+
 ## Common errors
 
-> Wrong chain id. Initially added with X but now signing from Y
+### AssociationError.ChainIdMismatch
+
+> Wrong chain id. Initially added with {0} but now signing from {1}
 
 This error occurs when there's a mismatch between the chain ID used when initially creating an XMTP identity and the chain ID being used for subsequent signing operations. The chain ID verification prevents [cross-chain signature attacks on smart contract wallets](https://github.com/xmtp/libxmtp/pull/1180). Double-check your chain configuration to ensure the chain ID is properly set (when using SCWs) and consistent across your application.
+
+### NotFound.InboxIdForAddress
+
+> inbox id for address {0} not found
+
+This typically happens when trying to create a DM with an address that hasn't been registered or associated with an XMTP inbox ID yet. You can only message wallet addresses that have been registered on the XMTP network. Registration occurs when a wallet is used with an XMTP-based chat app or one of our Client SDKs.
+
+This error may also occur if your client is connected to a different XMTP network environment than the target address. For example, your client might be using the dev network while the target address was registered on production.
 
 
 ## chat-apps/core-messaging/create-conversations.mdx
@@ -11577,16 +11615,6 @@ To learn more about all available prebuilt filters, see [filter.ts](https://gith
 
 Create an XMTP client that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the client to the appropriate Externally Owned Account (EOA) or Smart Contract Wallet (SCW).
 
-## Wallet comparison
-
-| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
-| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
-| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
-| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
-| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
-
 ## Understand creating and building a client
 
 This video provides a walkthrough of creating and building a client.
@@ -11858,6 +11886,126 @@ Consider registering an [ENS domain](https://ens.domains/) for your agent to mak
 ## Example Railway deployment
 
 For reference, here's an example Railway deployment of a [gm-bot](https://railway.com/deploy/UCyz5b) agent.
+
+
+## agents/deploy/pm2-process-management.mdx
+# Process management
+
+XMTP SDKs have a few guardrails in place to prevent crashes. However, it's difficult to guarantee 100% uptime for long-running processes. For that reason, we recommend using a process manager like [PM2](https://pm2.io/) to ensure proper restart behavior and logging.
+
+## Installation
+
+Install PM2 as a dependency:
+
+::::code-group
+
+```bash [npm]
+npm i pm2
+```
+
+```bash [yarn]
+yarn add pm2
+```
+
+```bash [pnpm]
+pnpm add pm2
+```
+
+::::
+
+## Ecosystem Config File
+
+Create `ecosystem.config.cjs` with the following structure:
+
+```jsx
+const path = require("path");
+
+const projectRoot = path.resolve(__dirname, "../../..");
+
+module.exports = {
+  apps: [
+    {
+      name: "<bot-name>",
+      script: "node_modules/.bin/tsx",
+      args: "src/index.ts",
+      cwd: projectRoot,
+      autorestart: true,
+      max_memory_restart: "1G",
+      error_file: "./logs/pm2-<bot-name>-error.log",
+      out_file: "./logs/pm2-<bot-name>-out.log",
+      restart_delay: 4000,
+      min_uptime: 1000,
+      unstable_restarts: 10000, // CRITICAL: Prevents PM2 from stopping restarts
+      env: {
+        NODE_ENV: "production",
+      },
+    },
+  ],
+};
+```
+
+### Critical Config Settings
+
+- **`unstable_restarts: 10000`** - REQUIRED. Without this, PM2 will stop restarting if it detects the process as "unstable" (crashing too quickly). This allows PM2 to keep restarting even during rapid crash cycles.
+- **`min_uptime: 1000`** - Process must run at least 1 second to be considered stable
+- **`restart_delay: 4000`** - Wait 4 seconds before restarting (prevents rapid restart loops)
+
+## Agent Code Pattern
+
+### 1. Restart Logging (FIRST THING)
+
+Add restart logging as the very first line of code, before any async operations:
+
+```tsx [Node]
+// Immediate synchronous log - FIRST THING that runs
+console.log(
+  `[RESTART] <Bot Name> bot starting - PID: ${process.pid} at ${new Date().toISOString()}`,
+);
+```
+
+This log appears immediately when PM2 restarts the process, making it easy to track restarts in logs.
+
+### 2. Error Handlers
+
+Add this error handler after agent creation but before `agent.start()`:
+
+```tsx [Node]
+// Handle agent-level unhandled errors
+agent.on("unhandledError", (error) => {
+  console.error("<Bot Name> bot fatal error:", error);
+  if (error instanceof Error) {
+    console.error("Error stack:", error.stack);
+  }
+  console.error("Exiting process - PM2 will restart");
+  process.exit(1);
+});
+```
+
+**Note**: Process-level handlers (`uncaughtException`, `unhandledRejection`) are typically commented out, as `agent.on("unhandledError")` handles most cases.
+
+## Troubleshooting
+
+### PM2 Shows "waiting restart" but Never Restarts
+
+**Symptom**: PM2 status shows "waiting restart" but no new process spawns.
+
+**Solution**: Add `unstable_restarts: 10000` to ecosystem config. PM2 is blocking restarts because it thinks the process is unstable.
+
+### No Restart Logs Appearing
+
+**Symptom**: Process crashes but `[RESTART]` logs never appear.
+
+**Solution**:
+
+1. Verify `[RESTART]` log is the very first line of code
+2. Check PM2 config has `unstable_restarts: 10000`
+3. Check PM2 logs: `pm2 logs <bot-name> --raw`
+
+### Process Restarts Too Quickly
+
+**Symptom**: Process restarts in a tight loop.
+
+**Solution**: Increase `restart_delay` to give the process time to initialize before allowing another restart.
 
 
 ## agents/deploy/rate-limits.mdx
@@ -14699,4 +14847,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 90 files from 5 sections.
+This documentation contains 91 files from 5 sections.
