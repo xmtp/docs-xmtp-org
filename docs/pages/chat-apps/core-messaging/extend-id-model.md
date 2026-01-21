@@ -31,13 +31,13 @@ To add a new identity type to XMTP:
 2. Implement a signature verifier to prove ownership of those identities
 3. Update wire formats to store the new identifiers and signatures
 
-### Define the identifier format
+### Define the identifier kind
 
 Every account on your target platform has a unique identifier (an address or public key). You need to define how this identifier will be represented in XMTP.
 
 You'll need to:
 
-1. Define the new identifier type in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
+1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
 2. Add a new variant to the `MemberIdentifier` protobuf message
 3. Add a new entry to the `IdentifierKind` enum
 
@@ -63,12 +63,20 @@ You'll need to:
 
 ### Implement signature verification
 
-To link an XMTP identity with an account on your target platform:
+To link an XMTP identity with an account on your target platform, you need to implement a signature verifier.
+
+Use the existing verifiers in [verified_signature.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/verified_signature.rs) as a reference.
+
+Your implementation should:
 
 1. Create a new signature type and corresponding [protobuf message types](https://github.com/xmtp/proto/blob/main/proto/identity/associations/signature.proto) in the XMTP proto repo so it can be used in identity updates
-2. Create a challenge (text summarizing the identity update)
-3. Collect proof that the owner of the identifier has approved the challenge
-4. Include the signature in an identity update so others can verify the association
+
+2. Collect proof that the owner of the identifier has approved the challenge
+
+The SDK handles:
+
+- Creating a challenge (text summarizing the identity update)
+- Including the signature in an identity update so others can verify the association
 
 ### Roll out the new identifier type
 
