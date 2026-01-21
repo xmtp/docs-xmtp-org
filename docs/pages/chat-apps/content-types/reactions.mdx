@@ -10,28 +10,6 @@ Use the reaction content type to support reactions in your app. A reaction is a 
 
 Use a local database to store reactions. This enables your app to performantly display a reaction with its [referenced message](#send-a-reaction) when rendering message lists.
 
-### Install the package
-
-For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the reaction content type is built-in and does not require separate installation or codec registration.
-
-For other SDKs where the `ReactionCodec` is not already included, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reaction
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reaction
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reaction
-```
-
-:::
-
 ## Configure the content type
 
 For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), reactions are built-in and do not require codec registration. Skip this step for these SDKs.

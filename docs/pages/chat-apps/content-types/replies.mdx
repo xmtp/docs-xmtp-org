@@ -10,28 +10,6 @@ Use the reply content type to support quote replies in your app. A reply is a me
 
 Use a local database to store replies. This will enable your app to performantly display a reply with its [referenced message](#send-a-reply) when rendering message lists.
 
-### Install the package
-
-For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the reply content type is built-in and does not require separate installation or codec registration.
-
-For other SDKs where the `ReplyCodec` is not already included, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reply
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reply
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reply
-```
-
-:::
-
 ## Configure the content type
 
 For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), replies are built-in and do not require codec registration. Skip this step for these SDKs.
