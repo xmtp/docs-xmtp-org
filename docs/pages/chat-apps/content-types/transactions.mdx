@@ -1,8 +1,8 @@
 # Support onchain transactions in your app built with XMTP
 
-This package provides an XMTP content type to support sending transactions to a wallet for execution.
+This content type supports sending transactions to a wallet for execution.
 
-Currently, this content type is supported in the Browser and Node SDKs only.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the wallet send calls content type is built-in and does not require separate installation or codec registration.
 
 For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
 
@@ -115,12 +115,13 @@ To receive and process a transaction request:
 :::code-group
 
 ```tsx [Browser]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
 import { contentTypeWalletSendCalls } from '@xmtp/browser-sdk';
 
 const messages = await conversation.messages();
 const message = messages[0];
 
-if (message.contentType.sameAs(await contentTypeWalletSendCalls())) {
+if (contentTypesAreEqual(message.contentType, await contentTypeWalletSendCalls())) {
   const walletSendCalls = message.content;
 
   // Process the transaction request
@@ -132,12 +133,13 @@ if (message.contentType.sameAs(await contentTypeWalletSendCalls())) {
 ```
 
 ```tsx [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
 import { contentTypeWalletSendCalls } from '@xmtp/node-sdk';
 
 const messages = await conversation.messages();
 const message = messages[0];
 
-if (message.contentType.sameAs(contentTypeWalletSendCalls())) {
+if (contentTypesAreEqual(message.contentType, contentTypeWalletSendCalls())) {
   const walletSendCalls = message.content;
 
   // Process the transaction request
