@@ -70,11 +70,12 @@ Once you've created a reply, you can send it. Replies are represented as objects
 :::code-group
 
 ```ts [Browser]
-import type { Reply } from '@xmtp/content-type-reply';
+import { encodeText } from '@xmtp/browser-sdk';
 
-const reply: Reply = {
+const reply = {
   reference: someMessageID,
-  content: 'I concur',
+  referenceInboxId: senderInboxId, // Inbox ID of the original message sender
+  content: await encodeText('I concur'),
 };
 
 await conversation.sendReply(reply);
@@ -144,25 +145,26 @@ try await conversation.send(
 :::code-group
 
 ```ts [Browser]
-if (message.contentType.sameAs(ContentTypeReply)) {
-  // We've got a reply.
-  const reply: Reply = message.content;
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeReply } from '@xmtp/browser-sdk';
+
+if (contentTypesAreEqual(message.contentType, await contentTypeReply())) {
+  const reply = message.content;
+
+  // Access the reply text
+  console.log('Reply:', reply.content);
 }
 ```
 
 ```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
 import { contentTypeReply } from '@xmtp/node-sdk';
 
-if (message.contentType.sameAs(contentTypeReply())) {
-  // We've got a reply
-  const replyContent = message.content;
+if (contentTypesAreEqual(message.contentType, contentTypeReply())) {
+  const reply = message.content;
 
   // Access the reply text
-  console.log('Reply:', replyContent);
-
-  // Access the original message being replied to
-  const originalMessage = message.inReplyTo?.content;
-  console.log('Original message:', originalMessage);
+  console.log('Reply:', reply.content);
 }
 ```
 
