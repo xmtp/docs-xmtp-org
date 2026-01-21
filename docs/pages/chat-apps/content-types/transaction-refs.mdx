@@ -74,30 +74,34 @@ With XMTP, a transaction reference is represented as an object with the followin
 :::code-group
 
 ```ts [Browser]
-const transactionReference: TransactionReference = {
-  /**
-   * Optional namespace for the networkId
-   */
+const transactionReference = {
   namespace: "eip155",
-  /**
-   * The networkId for the transaction, in decimal or hexadecimal format
-   */
-  networkId: 1;
-  /**
-   * The transaction hash
-   */
-  reference: "0x123...abc";
-  /**
-   * Optional metadata object
-   */
+  networkId: 1,
+  reference: "0x123...abc",
   metadata: {
     transactionType: "transfer",
     currency: "USDC",
-    amount: 100000, // In integer format, this represents 1 USDC (100000/10^6)
-    decimals: 6, // Specifies that the currency uses 6 decimal places
+    amount: 100000,
+    decimals: 6,
     fromAddress: "0x456...def",
     toAddress: "0x789...ghi"
-  };
+  }
+};
+```
+
+```ts [Node]
+const transactionReference = {
+  namespace: "eip155",
+  networkId: 1,
+  reference: "0x123...abc",
+  metadata: {
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100000,
+    decimals: 6,
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  }
 };
 ```
 
@@ -147,6 +151,10 @@ Once you have a transaction reference, you can send it as part of your conversat
 await conversation.sendTransactionReference(transactionReference);
 ```
 
+```js [Node]
+await conversation.sendTransactionReference(transactionReference);
+```
+
 ```kotlin [Kotlin]
 import kotlinx.coroutines.runBlocking
 import org.xmtp.android.library.SendOptions
@@ -178,16 +186,33 @@ To handle unsupported content types, refer to the [fallback](/chat-apps/content-
 :::code-group
 
 ```ts [Browser]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeTransactionReference } from '@xmtp/browser-sdk';
 
-if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
-  // Handle non-transaction reference message
-  return;
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, await contentTypeTransactionReference())) {
+  const transactionRef = message.content;
+  // Process the transaction reference here
+  console.log('Network:', transactionRef.networkId);
+  console.log('Transaction:', transactionRef.reference);
 }
+```
 
-const transactionRef: TransactionReference = message.content;
-// Process the transaction reference here
+```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeTransactionReference } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, contentTypeTransactionReference())) {
+  const transactionRef = message.content;
+  // Process the transaction reference here
+  console.log('Network:', transactionRef.networkId);
+  console.log('Transaction:', transactionRef.reference);
+}
 ```
 
 ```kotlin [Kotlin]
