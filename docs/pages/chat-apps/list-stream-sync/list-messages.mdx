@@ -346,10 +346,12 @@ Apply the same filtering parameters to both retrieve filtered messages with `mes
 :::code-group
 
 ```tsx [Browser]
+import { DeliveryStatus } from '@xmtp/browser-sdk';
+
 // Using messages()
 const messages = await group.messages({
   sentAfterNs: 1738620126404999936n, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
+  deliveryStatus: DeliveryStatus.Published, // Filter by delivery status
   excludeContentTypes: [ContentType.Reaction], // Exclude content types
 });
 
@@ -361,10 +363,12 @@ const count = await group.countMessages({
 ```
 
 ```tsx [Node]
+import { DeliveryStatus } from '@xmtp/node-sdk';
+
 // Using messages()
 const messages = await group.messages({
   sentAfterNs: 1738620126404999936n, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
+  deliveryStatus: DeliveryStatus.Published, // Filter by delivery status
   excludeContentTypes: [ContentType.Reaction], // Exclude content types
 });
 

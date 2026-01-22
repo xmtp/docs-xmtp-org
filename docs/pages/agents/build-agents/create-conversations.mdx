@@ -18,7 +18,7 @@ const group = await agent.createGroupWithAddresses(
 ### By inbox ID
 
 ```js [Node]
-const group = await agent.client.conversations.newGroup(
+const group = await agent.client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
@@ -38,7 +38,7 @@ const dm = await agent.createDmWithAddress(bo.accountAddress);
 ### By inbox ID
 
 ```js [Node]
-const dm = await agent.client.conversations.newDm(bo.inboxId);
+const dm = await agent.client.conversations.createDm(bo.inboxId);
 ```
 
 ### Get the address of the sender

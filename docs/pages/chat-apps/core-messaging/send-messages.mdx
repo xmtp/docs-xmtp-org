@@ -91,33 +91,11 @@ Send the message to the local database. This ensures that the message will be th
 ```tsx [Browser]
 // Optimistically send the message to the local database
 await conversation.sendText('Hello world', true);
-
-// For custom content types, encode the content and use send with optimistic parameter
-const customContent = { foo: 'bar' };
-const contentType = {
-  authorityId: 'example',
-  typeId: 'test',
-  versionMajor: 1,
-  versionMinor: 0,
-};
-const encodedContent = await conversation.encodeContent(customContent, contentType);
-await conversation.send(encodedContent, true);
 ```
 
 ```tsx [Node]
 // Optimistically send the message to the local database
 await conversation.sendText('Hello world', true);
-
-// For custom content types, encode the content and use send with optimistic parameter
-const customContent = { foo: 'bar' };
-const contentType = {
-  authorityId: 'example',
-  typeId: 'test',
-  versionMajor: 1,
-  versionMinor: 0,
-};
-const encodedContent = await conversation.encodeContent(customContent, contentType);
-await conversation.send(encodedContent, true);
 ```
 
 ```tsx [React Native]

@@ -48,7 +48,7 @@ To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/b
 
 ```js [Browser]
 // DM
-await client.conversations.newDm(inboxId, {
+await client.conversations.createDm(inboxId, {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936n,
     inNs: 1800000000000000n,
@@ -56,7 +56,7 @@ await client.conversations.newDm(inboxId, {
 });
 
 // Group
-await client.conversations.newGroup([inboxId], {
+await client.conversations.createGroup([inboxId], {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936n,
     inNs: 1800000000000000n,
@@ -66,7 +66,7 @@ await client.conversations.newGroup([inboxId], {
 
 ```js [Node]
 // DM
-await client.conversations.newDm(inboxId, {
+await client.conversations.createDm(inboxId, {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936,
     inNs: 1800000000000000,
@@ -74,7 +74,7 @@ await client.conversations.newDm(inboxId, {
 });
 
 // Group
-await client.conversations.newGroup([inboxId], {
+await client.conversations.createGroup([inboxId], {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936,
     inNs: 1800000000000000,
