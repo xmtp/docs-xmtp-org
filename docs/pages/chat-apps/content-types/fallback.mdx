@@ -13,24 +13,20 @@ However, some content types, especially those not meant for display (like read r
 :::code-group
 
 ```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
+// if message content is undefined, it means the content type is not supported
+// in this client
+if (message.content === undefined) {
+  // return the fallback text, which may also be undefined
+  return message.fallback;
 }
 ```
 
 ```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
+// if message content is undefined, it means the content type is not supported
+// in this client
+if (message.content === undefined) {
+  // return the fallback text, which may also be undefined
+  return message.fallback;
 }
 ```
 

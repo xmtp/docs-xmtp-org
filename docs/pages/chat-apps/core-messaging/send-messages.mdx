@@ -6,18 +6,18 @@ Once you have the group chat or DM conversation, you can send messages in the co
 
 ```tsx [Browser]
 // For a DM conversation
-await dm.send('Hello world');
+await dm.sendText('Hello world');
 
 // OR for a group chat
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 ```
 
 ```tsx [Node]
 // For a DM conversation
-await dm.send('Hello world');
+await dm.sendText('Hello world');
 
 // OR for a group chat
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 ```
 
 ```tsx [React Native]
@@ -90,32 +90,12 @@ Send the message to the local database. This ensures that the message will be th
 
 ```tsx [Browser]
 // Optimistically send the message to the local database
-conversation.sendOptimistic('Hello world');
-
-// For custom content types, specify the content type
-const customContent = { foo: 'bar' };
-const contentType = {
-  authorityId: 'example',
-  typeId: 'test',
-  versionMajor: 1,
-  versionMinor: 0,
-};
-conversation.sendOptimistic(customContent, contentType);
+await conversation.sendText('Hello world', true);
 ```
 
 ```tsx [Node]
 // Optimistically send the message to the local database
-conversation.sendOptimistic('Hello world');
-
-// For custom content types, specify the content type
-const customContent = { foo: 'bar' };
-const contentType = {
-  authorityId: 'example',
-  typeId: 'test',
-  versionMajor: 1,
-  versionMinor: 0,
-};
-conversation.sendOptimistic(customContent, contentType);
+await conversation.sendText('Hello world', true);
 ```
 
 ```tsx [React Native]
@@ -173,11 +153,11 @@ After optimistically sending a message, use `publishMessages` to publish the mes
 
 ```tsx [Browser]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using the optimistic parameter to send a message locally
 async function sendMessageWithOptimisticUI(conversation, messageText) {
   try {
-    // Add message to UI immediately
-    conversation.sendOptimistic(messageText);
+    // Add message to UI immediately (optimistic = true)
+    await conversation.sendText(messageText, true);
 
     // Actually send the message to the network
     await conversation.publishMessages();
@@ -191,11 +171,11 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 
 ```tsx [Node]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using the optimistic parameter to send a message locally
 async function sendMessageWithOptimisticUI(conversation, messageText) {
   try {
-    // Add message to UI immediately
-    conversation.sendOptimistic(messageText);
+    // Add message to UI immediately (optimistic = true)
+    await conversation.sendText(messageText, true);
 
     // Actually send the message to the network
     await conversation.publishMessages();
@@ -281,9 +261,13 @@ Each message is accompanied by a `fallback` property, which offers a descriptive
 :::code-group
 
 ```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
+// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
+// For unsupported custom content types, use the fallback
+try {
+  // Try to decode the message content
+  const content = message.content;
+} catch (error) {
+  // If decoding fails, it's an unsupported content type
   if (message.fallback !== undefined) {
     return message.fallback;
   }
@@ -292,9 +276,13 @@ if (!codec) {
 ```
 
 ```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
+// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
+// For unsupported custom content types, use the fallback
+try {
+  // Try to decode the message content
+  const content = message.content;
+} catch (error) {
+  // If decoding fails, it's an unsupported content type
   if (message.fallback !== undefined) {
     return message.fallback;
   }
