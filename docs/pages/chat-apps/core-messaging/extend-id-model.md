@@ -2,7 +2,24 @@
 
 XMTP is designed with a flexible identity model that can be extended over time without introducing breaking changes for existing apps.
 
-This document provides a general blueprint for how to extend XMTP to any platform where identities are controlled by public keys, such as Solana, Bitcoin, Zcash, and others.
+This document provides a general blueprint for how to extend XMTP to non-EVM platforms where identities are controlled by public keys, such as Solana, Bitcoin, Zcash, and others.
+
+### Why is extension needed for non-EVM chains?
+
+XMTP is designed to support EVM chains by default. EVMs all share the same address format and signature scheme.
+
+- **EOAs on EVM chain**: Work automatically. Signature verification is purely cryptographic (secp256k1 ECDSA), so no configuration is needed.
+- **SCWs on EVM chains**: Require adding the chain's RPC endpoint to the verifier config. See [Create a SCW signer](/chat-apps/core-messaging/create-a-signer#create-a-smart-contract-wallet-signer).
+- **Non-EVM chains**: Require implementing new identity types and signature verification, as described in this document.
+
+For example, see the different address formats, signature schemes, signature standards,and verification methods required by these chains:
+
+  | Aspect | Ethereum (EVM) | Solana | Bitcoin |
+  | --- | --- | --- | --- |
+  | **Address format** | Hex (`0x...`) | Base58 (`7EcD...LtV`) | Bech32 (`bc1...`) |
+  | **Signature scheme** | secp256k1 ECDSA | Ed25519 | secp256k1 ECDSA |
+  | **Signature standard** | EIP-191 / ERC-1271 | Solana-specific | BIP-137 or similar |
+  | **Verification** | Recover address from signature | Verify against public key | Varies by wallet |
 
 ## XMTP inboxes and identity updates
 
