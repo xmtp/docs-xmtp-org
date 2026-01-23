@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 07:10 PM UTC / January 23, 2026
+Generated at 09:44 PM UTC / January 23, 2026
 
 ## About this file
 
@@ -11307,20 +11307,6 @@ If you decide to change the recovery address, a **Sign this message?** window di
 ```
 
 Sign with the wallet address you want to set as the recovery address to change the recovery address.
-
-## Sign to consent to receive broadcast messages
-
-When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
-
-For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
-
-![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
-
-When you click **Sign**, you're consenting to receive broadcast messages from the publisher at your connected wallet address. You can see the publisher's sending address in the **Signature request** window.
-
-When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
-
-To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
 
 
 ## protocol/topics.mdx
