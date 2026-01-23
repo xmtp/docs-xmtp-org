@@ -53,33 +53,33 @@ With XMTP, a transaction reference is represented as an object with the followin
 
 ```ts [Browser]
 const transactionReference = {
-  namespace: 'eip155',
+  namespace: "eip155",
   networkId: 1,
-  reference: '0x123...abc',
+  reference: "0x123...abc",
   metadata: {
-    transactionType: 'transfer',
-    currency: 'USDC',
+    transactionType: "transfer",
+    currency: "USDC",
     amount: 100000,
     decimals: 6,
-    fromAddress: '0x456...def',
-    toAddress: '0x789...ghi',
-  },
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  }
 };
 ```
 
 ```ts [Node]
 const transactionReference = {
-  namespace: 'eip155',
+  namespace: "eip155",
   networkId: 1,
-  reference: '0x123...abc',
+  reference: "0x123...abc",
   metadata: {
-    transactionType: 'transfer',
-    currency: 'USDC',
+    transactionType: "transfer",
+    currency: "USDC",
     amount: 100000,
     decimals: 6,
-    fromAddress: '0x456...def',
-    toAddress: '0x789...ghi',
-  },
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  }
 };
 ```
 
@@ -170,12 +170,7 @@ import { contentTypeTransactionReference } from '@xmtp/browser-sdk';
 const messages = await conversation.messages();
 const message = messages[0];
 
-if (
-  contentTypesAreEqual(
-    message.contentType,
-    await contentTypeTransactionReference()
-  )
-) {
+if (contentTypesAreEqual(message.contentType, await contentTypeTransactionReference())) {
   const transactionRef = message.content;
   // Process the transaction reference here
   console.log('Network:', transactionRef.networkId);
@@ -190,9 +185,7 @@ import { contentTypeTransactionReference } from '@xmtp/node-sdk';
 const messages = await conversation.messages();
 const message = messages[0];
 
-if (
-  contentTypesAreEqual(message.contentType, contentTypeTransactionReference())
-) {
+if (contentTypesAreEqual(message.contentType, contentTypeTransactionReference())) {
   const transactionRef = message.content;
   // Process the transaction reference here
   console.log('Network:', transactionRef.networkId);

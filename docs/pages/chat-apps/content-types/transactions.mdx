@@ -121,9 +121,7 @@ import { contentTypeWalletSendCalls } from '@xmtp/browser-sdk';
 const messages = await conversation.messages();
 const message = messages[0];
 
-if (
-  contentTypesAreEqual(message.contentType, await contentTypeWalletSendCalls())
-) {
+if (contentTypesAreEqual(message.contentType, await contentTypeWalletSendCalls())) {
   const walletSendCalls = message.content;
 
   // Process the transaction request

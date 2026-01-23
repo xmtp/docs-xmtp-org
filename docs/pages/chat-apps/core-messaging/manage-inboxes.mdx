@@ -265,25 +265,23 @@ Here is how static installation revocation works behind the scenes:
 ```tsx [Browser]
 const inboxStates = await Client.fetchInboxStates(
   [inboxId],
-  'production' // optional, defaults to "dev"
+  "production", // optional, defaults to "dev"
 );
 
-const toRevokeInstallationBytes = inboxStates[0].installations.map(
-  (i) => i.bytes
-);
+const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
 
 await Client.revokeInstallations(
   signer,
   inboxId,
   toRevokeInstallationBytes,
-  'production' // optional, defaults to "dev"
+  "production", // optional, defaults to "dev"
 );
 ```
 
 ```tsx [Node]
 const inboxStates = await Client.fetchInboxStates(
   [inboxId],
-  'production' // optional, defaults to "dev"
+  'production', // optional, defaults to "dev"
 );
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map(
@@ -294,7 +292,7 @@ await Client.revokeInstallations(
   signer,
   inboxId,
   toRevokeInstallationBytes,
-  'production' // optional, defaults to "dev"
+  'production', // optional, defaults to "dev"
 );
 ```
 
