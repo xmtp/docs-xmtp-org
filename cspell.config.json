@@ -20,6 +20,7 @@
     "alix",
     "appchain",
     "autoplay",
+    "autorestart",
     "blobdecoded",
     "buildscript",
     "bufs",
@@ -52,9 +53,11 @@
     "Keccak",
     "kotlinx",
     "laminatedlabs",
+    "libxmtp",
     "lightmode",
     "llms",
     "Linea",
+    "Logomark",
     "Luhansk",
     "micropayment",
     "myagent",
@@ -62,12 +65,14 @@
     "nextnext",
     "Nodle",
     "nodleprotocol",
+    "notif",
     "offchain",
     "OFAC",
     "onchain",
     "performant",
     "performantly",
     "permissionless",
+    "personhood",
     "Preconfiguration",
     "println",
     "reconnections",
@@ -99,6 +104,7 @@
     "XWING",
     "yourdomain",
     "YOURFCMJSON",
-    "YOURFCMPROJECTID"
+    "YOURFCMPROJECTID",
+    "Zora"
   ]
 } 
