@@ -554,10 +554,7 @@ let attachment2 = Attachment(
 :::code-group
 
 ```ts [Browser]
-import {
-  encryptAttachment,
-  type RemoteAttachment,
-} from '@xmtp/browser-sdk';
+import { encryptAttachment, type RemoteAttachment } from '@xmtp/browser-sdk';
 
 const remoteAttachments: RemoteAttachment[] = [];
 
@@ -824,10 +821,7 @@ for (const attachment of multiRemoteAttachment.attachments) {
   const encryptedPayload = await downloadFromUrl(attachment.url);
 
   // Decrypt the attachment
-  const decryptedAttachment = decryptAttachment(
-    encryptedPayload,
-    attachment
-  );
+  const decryptedAttachment = decryptAttachment(encryptedPayload, attachment);
   decryptedAttachments.push(decryptedAttachment);
 }
 

@@ -27,26 +27,26 @@ pnpm add pm2
 Create `ecosystem.config.cjs` with the following structure:
 
 ```jsx
-const path = require("path");
+const path = require('path');
 
-const projectRoot = path.resolve(__dirname, "../../..");
+const projectRoot = path.resolve(__dirname, '../../..');
 
 module.exports = {
   apps: [
     {
-      name: "<bot-name>",
-      script: "node_modules/.bin/tsx",
-      args: "src/index.ts",
+      name: '<bot-name>',
+      script: 'node_modules/.bin/tsx',
+      args: 'src/index.ts',
       cwd: projectRoot,
       autorestart: true,
-      max_memory_restart: "1G",
-      error_file: "./logs/pm2-<bot-name>-error.log",
-      out_file: "./logs/pm2-<bot-name>-out.log",
+      max_memory_restart: '1G',
+      error_file: './logs/pm2-<bot-name>-error.log',
+      out_file: './logs/pm2-<bot-name>-out.log',
       restart_delay: 4000,
       min_uptime: 1000,
       unstable_restarts: 10000, // CRITICAL: Prevents PM2 from stopping restarts
       env: {
-        NODE_ENV: "production",
+        NODE_ENV: 'production',
       },
     },
   ],
@@ -68,7 +68,7 @@ Add restart logging as the very first line of code, before any async operations:
 ```tsx [Node]
 // Immediate synchronous log - FIRST THING that runs
 console.log(
-  `[RESTART] <Bot Name> bot starting - PID: ${process.pid} at ${new Date().toISOString()}`,
+  `[RESTART] <Bot Name> bot starting - PID: ${process.pid} at ${new Date().toISOString()}`
 );
 ```
 
@@ -80,12 +80,12 @@ Add this error handler after agent creation but before `agent.start()`:
 
 ```tsx [Node]
 // Handle agent-level unhandled errors
-agent.on("unhandledError", (error) => {
-  console.error("<Bot Name> bot fatal error:", error);
+agent.on('unhandledError', (error) => {
+  console.error('<Bot Name> bot fatal error:', error);
   if (error instanceof Error) {
-    console.error("Error stack:", error.stack);
+    console.error('Error stack:', error.stack);
   }
-  console.error("Exiting process - PM2 will restart");
+  console.error('Exiting process - PM2 will restart');
   process.exit(1);
 });
 ```

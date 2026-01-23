@@ -21,7 +21,7 @@ The Testnet of the decentralized XMTP network includes two distributed systems:
 - The XMTP Broadcast Network
 - The XMTP App Chain, which is an L3 blockchain securing all metadata that require strict ordering.
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
 
