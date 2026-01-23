@@ -1,8 +1,8 @@
 # Support onchain transactions in your app built with XMTP
 
-This package provides an XMTP content type to support sending transactions to a wallet for execution.
+This content type supports sending transactions to a wallet for execution.
 
-Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the wallet send calls content type is built-in and does not require separate installation or codec registration.
 
 For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
 
@@ -12,50 +12,22 @@ You are welcome to provide feedback on this implementation by commenting on [XIP
 
 :::
 
-## Install the package
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-wallet-send-calls
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-wallet-send-calls
-```
-
-```bash [pnpm]
-pnpm i @xmtp/content-type-wallet-send-calls
-```
-
-:::
-
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Browser]
-import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new WalletSendCallsCodec()],
-});
-```
-
 ## Create a transaction request
 
 With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
 
-```ts [TypeScript]
-const walletSendCalls: WalletSendCallsParams = {
+:::code-group
+
+```tsx [Browser]
+const walletSendCalls = {
   version: '1.0',
-  from: '0x123...abc',
-  chainId: '0x2105',
+  chainId: '1',
+  from: '0x1234567890',
   calls: [
     {
       to: '0x456...def',
       value: '0x5AF3107A4000',
+      data: '0x...',
       metadata: {
         description: 'Send 0.0001 ETH on base to 0x456...def',
         transactionType: 'transfer',
@@ -82,29 +54,100 @@ const walletSendCalls: WalletSendCallsParams = {
 };
 ```
 
+```tsx [Node]
+const walletSendCalls = {
+  version: '1.0',
+  chainId: '1',
+  from: '0x1234567890',
+  calls: [
+    {
+      to: '0x456...def',
+      value: '0x5AF3107A4000',
+      data: '0x...',
+      metadata: {
+        description: 'Send 0.0001 ETH on base to 0x456...def',
+        transactionType: 'transfer',
+        currency: 'ETH',
+        amount: 100000000000000,
+        decimals: 18,
+        toAddress: '0x456...def',
+      },
+    },
+    {
+      to: '0x789...cba',
+      data: '0xdead...beef',
+      metadata: {
+        description: 'Lend 10 USDC on base with Morpho @ 8.5% APY',
+        transactionType: 'lend',
+        currency: 'USDC',
+        amount: 10000000,
+        decimals: 6,
+        platform: 'morpho',
+        apy: '8.5',
+      },
+    },
+  ],
+};
+```
+
+:::
+
 ## Send a transaction request
 
-Once you have a transaction reference, you can send it as part of your conversation:
+Once you have a transaction request, you can send it as part of your conversation:
 
-```ts [TypeScript]
-await conversation.messages.send(walletSendCalls, {
-  contentType: ContentTypeWalletSendCalls,
-});
+:::code-group
+
+```tsx [Browser]
+await conversation.sendWalletSendCalls(walletSendCalls);
 ```
+
+```tsx [Node]
+await conversation.sendWalletSendCalls(walletSendCalls);
+```
+
+:::
 
 ## Receive a transaction request
 
 To receive and process a transaction request:
 
-```ts [TypeScript]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
+:::code-group
 
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
+```tsx [Browser]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeWalletSendCalls } from '@xmtp/browser-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, await contentTypeWalletSendCalls())) {
+  const walletSendCalls = message.content;
+
+  // Process the transaction request
+  console.log('Version:', walletSendCalls.version);
+  console.log('Chain ID:', walletSendCalls.chainId);
+  console.log('From:', walletSendCalls.from);
+  console.log('Calls:', walletSendCalls.calls);
 }
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
 ```
+
+```tsx [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeWalletSendCalls } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, contentTypeWalletSendCalls())) {
+  const walletSendCalls = message.content;
+
+  // Process the transaction request
+  console.log('Version:', walletSendCalls.version);
+  console.log('Chain ID:', walletSendCalls.chainId);
+  console.log('From:', walletSendCalls.from);
+  console.log('Calls:', walletSendCalls.calls);
+}
+```
+
+:::

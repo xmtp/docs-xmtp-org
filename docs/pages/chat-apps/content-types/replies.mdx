@@ -10,40 +10,13 @@ Use the reply content type to support quote replies in your app. A reply is a me
 
 Use a local database to store replies. This will enable your app to performantly display a reply with its [referenced message](#send-a-reply) when rendering message lists.
 
-### Install the package
-
-In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reply
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reply
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reply
-```
-
-:::
-
 ## Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), replies are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```js [Browser]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReplyCodec()],
-});
-```
 
 ```js [React Native]
 const client = await Client.create(signer, {
@@ -75,19 +48,27 @@ Once you've created a reply, you can send it. Replies are represented as objects
 :::code-group
 
 ```ts [Browser]
-import { ContentTypeText } from '@xmtp/content-type-text';
-import { ContentTypeReply } from '@xmtp/content-type-reply';
-import type { Reply } from '@xmtp/content-type-reply';
+import { encodeText } from '@xmtp/browser-sdk';
 
-const reply: Reply = {
+const reply = {
   reference: someMessageID,
-  contentType: ContentTypeText,
-  content: 'I concur',
+  referenceInboxId: senderInboxId, // Inbox ID of the original message sender
+  content: await encodeText('I concur'),
 };
 
-await conversation.send(reply, {
-  contentType: ContentTypeReply,
-});
+await conversation.sendReply(reply);
+```
+
+```ts [Node]
+import { encodeText } from '@xmtp/node-sdk';
+
+const reply = {
+  reference: someMessageID,
+  referenceInboxId: senderInboxId, // Inbox ID of the original message sender
+  content: encodeText('I concur'),
+};
+
+await conversation.sendReply(reply);
 ```
 
 ```js [React Native]
@@ -142,9 +123,26 @@ try await conversation.send(
 :::code-group
 
 ```ts [Browser]
-if (message.contentType.sameAs(ContentTypeReply)) {
-  // We've got a reply.
-  const reply: Reply = message.content;
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeReply } from '@xmtp/browser-sdk';
+
+if (contentTypesAreEqual(message.contentType, await contentTypeReply())) {
+  const reply = message.content;
+
+  // Access the reply text
+  console.log('Reply:', reply.content);
+}
+```
+
+```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeReply } from '@xmtp/node-sdk';
+
+if (contentTypesAreEqual(message.contentType, contentTypeReply())) {
+  const reply = message.content;
+
+  // Access the reply text
+  console.log('Reply:', reply.content);
 }
 ```
 

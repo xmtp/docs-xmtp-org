@@ -148,11 +148,11 @@ try group.isSuperAdmin(inboxid: inboxID)
 :::code-group
 
 ```js [Browser]
-const admins = group.admins;
+const admins = await group.listAdmins();
 ```
 
 ```js [Node]
-const admins = group.admins;
+const admins = group.listAdmins();
 ```
 
 ```tsx [React Native]
@@ -175,11 +175,11 @@ try group.listAdmins()
 :::code-group
 
 ```js [Browser]
-const superAdmins = group.superAdmins;
+const superAdmins = await group.listSuperAdmins();
 ```
 
 ```js [Node]
-const superAdmins = group.superAdmins;
+const superAdmins = group.listSuperAdmins();
 ```
 
 ```tsx [React Native]
