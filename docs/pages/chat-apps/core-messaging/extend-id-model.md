@@ -4,8 +4,6 @@ XMTP is designed with a flexible identity model that can be extended over time w
 
 This document provides a general blueprint for how to extend XMTP to non-EVM platforms where identities are controlled by public keys, such as Solana, Bitcoin, Zcash, and others.
 
-![Many IDs to one XMTP inbox](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/many-ids-to-one-inbox.png)
-
 ### Why is extension needed for non-EVM chains?
 
 XMTP is designed to support EVM chains by default. EVMs all share the same address format and signature scheme.
@@ -25,7 +23,11 @@ For example, see the different address formats, signature schemes, signature sta
 
 ## XMTP inboxes and identity updates
 
-An XMTP inbox groups together many identities into a single address (XMTP inbox ID) that can be reached on the network. Those identities might be wallets, passkeys, app installations, or any other identifier. This identity model is what allows you to sign in to multiple XMTP apps across different devices and platforms and see the same conversations and messages. XMTP enables portability at its core.
+An XMTP inbox groups together many identities into a single address (XMTP inbox ID) that can be reached on the network. Those identities might be wallets, passkeys, app installations, or any other identifier. 
+
+![Many IDs to one XMTP inbox](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/many-ids-to-one-inbox.png)
+
+This identity model is what allows you to sign in to multiple XMTP apps across different devices and platforms and see the same conversations and messages. XMTP enables portability at its core.
 
 Each XMTP inbox is constructed through a series of identity updates. Identity updates are special messages on the network that can add or remove identities from a given inbox. Anyone who wants to know "who is in this group chat with me?" or "how do I reach vitalik.eth?" will download all the *identity updates* for a given inbox, verify that each update has been correctly signed, and construct the state of that inbox by applying each valid update in order.
 
