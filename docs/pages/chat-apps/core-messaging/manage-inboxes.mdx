@@ -263,10 +263,9 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = await Client.inboxStateFromInboxIds(
-  [inboxId], 
-  "production",
-  "https://grpc.production.xmtp.network:443" // optional, gatewayHost - defaults to env default
+const inboxStates = await Client.fetchInboxStates(
+  [inboxId],
+  "production", // optional, defaults to "dev"
 );
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
@@ -276,15 +275,13 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
-  "https://grpc.production.xmtp.network:443", // optional, gatewayHost - defaults to env default
-  enableLogging: true, // optional, defaults to false
 );
 ```
 
 ```tsx [Node]
-const inboxStates = await Client.inboxStateFromInboxIds(
+const inboxStates = await Client.fetchInboxStates(
   [inboxId],
-  'production'
+  'production', // optional, defaults to "dev"
 );
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map(
@@ -296,7 +293,6 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   'production', // optional, defaults to "dev"
-  'https://grpc.production.xmtp.network:443' // optional, gatewayHost - defaults to env default
 );
 ```
 
@@ -376,19 +372,19 @@ View the state of any inbox to see the identities, installations, and other info
 :::code-group
 
 ```tsx [Browser]
-// the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds(
-  [inboxId, inboxId],
-  true
-);
+// fetch inbox states from the network
+const states = await client.preferences.fetchInboxStates([inboxId, inboxId]);
+
+// or get from local cache (doesn't refresh from network)
+const states = await client.preferences.getInboxStates([inboxId, inboxId]);
 ```
 
 ```tsx [Node]
-// the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds(
-  [inboxId, inboxId],
-  true
-);
+// fetch inbox states from the network
+const states = await client.preferences.fetchInboxStates([inboxId, inboxId]);
+
+// or get from local cache (doesn't refresh from network)
+const states = await client.preferences.getInboxStates([inboxId, inboxId]);
 ```
 
 ```jsx [React Native]

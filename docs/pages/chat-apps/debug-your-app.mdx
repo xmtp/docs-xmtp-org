@@ -220,20 +220,6 @@ To clear all API, identity, and stream statistics and set them to zero, run `cli
 
 This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
 
-### Upload an archive of network statistics
-
-With the Browser and Node SDKs, you can upload an archive of collected network statistics.
-
-```tsx [TypeScript]
-// Upload to default server (no serverUrl needed)
-const result1 = await client.debugInformation.uploadDebugArchive();
-
-// Upload to custom server (serverUrl provided)
-const result2 = await client.debugInformation.uploadDebugArchive(
-  'https://my-debug-server.com/api/upload'
-);
-```
-
 ### Statistic descriptions
 
 #### API statistics

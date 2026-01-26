@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 09:54 PM UTC / January 20, 2026
+Generated at 09:44 PM UTC / January 23, 2026
 
 ## About this file
 
@@ -251,20 +251,6 @@ For available individual statistics, see [Statistic descriptions](#statistic-des
 To clear all API, identity, and stream statistics and set them to zero, run `client.debugInformation.clearAllStatistics()`.
 
 This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
-
-### Upload an archive of network statistics
-
-With the Browser and Node SDKs, you can upload an archive of collected network statistics.
-
-```tsx [TypeScript]
-// Upload to default server (no serverUrl needed)
-const result1 = await client.debugInformation.uploadDebugArchive();
-
-// Upload to custom server (serverUrl provided)
-const result2 = await client.debugInformation.uploadDebugArchive(
-  'https://my-debug-server.com/api/upload'
-);
-```
 
 ### Statistic descriptions
 
@@ -1195,7 +1181,7 @@ Let's dive deeper into how the XMTP push notification server filters messages to
 ![XMTP push notification server filtering flow](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/pn-server-filtering.png)
 
 1. **Check if the server is subscribed to the message's topic**
-   - A topic is a way to organize messages, and each message has a topic. To support push notifications, your app must [subscribe the server to the topics](https://docs.xmtp.org/chat-apps/push-notifs/push-notifs#subscribe-to-topics) that are relevant to your users. For example, for a user Alix, you must subscribe to all topics associated with Alix's conversations. The XMTP push notification server has a list of these subscriptions. Your push notification server should expose functions to post the subscriptions to. The SDKs use protobufs as a universal language that allows the creation of these functions in any language. For example, [here are bufs](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/push) generated from the [XMTP example push notification server](/chat-apps/push-notifs/pn-server). You can use these directly if you clone and use the example server.
+   - A topic is a way to organize messages, and each message has a topic. To support push notifications, your app must [subscribe the server to the topics](/chat-apps/push-notifs/push-notifs#subscribe-to-topics) that are relevant to your users. For example, for a user Alix, you must subscribe to all topics associated with Alix's conversations. The XMTP push notification server has a list of these subscriptions. Your push notification server should expose functions to post the subscriptions to. The SDKs use protobufs as a universal language that allows the creation of these functions in any language. For example, [here are bufs](https://github.com/xmtp/xmtp-android/tree/main/library/src/main/java/org/xmtp/android/library/push) generated from the [XMTP example push notification server](/chat-apps/push-notifs/pn-server). You can use these directly if you clone and use the example server.
    - If the arriving message's topic is **not on the list**, the server ignores it.
    - If the arriving message's topic is **on the list**, the server proceeds to check the message with the next filter.
 2. **Check the `shouldPush` field value**
@@ -1309,7 +1295,7 @@ This video provides a walkthrough of direct message (DM) stitching, covering the
   allowFullScreen
 ></iframe>
 
-Consider a scenario where `alix.id` using an existing installation #1 to create a conversation with `bo.id` and sends them a DM. And then `alix.id` creates a new installation #2, and instead of waiting for [history sync](https://docs.xmtp.org/chat-apps/list-stream-sync/history-sync) to bring in their existing conversations, `alix.id` creates a new conversation with `bo.id` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of identities, `alix.id` and `bo.id`, resulting in a confusing DM UX like this one:
+Consider a scenario where `alix.id` using an existing installation #1 to create a conversation with `bo.id` and sends them a DM. And then `alix.id` creates a new installation #2, and instead of waiting for [history sync](/chat-apps/list-stream-sync/history-sync) to bring in their existing conversations, `alix.id` creates a new conversation with `bo.id` and sends them a DM. Under the hood, this results in two DM conversations (or two MLS groups) with the same pair of identities, `alix.id` and `bo.id`, resulting in a confusing DM UX like this one:
 
 ![No DM stitching](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/no-dm-stitching.png)
 
@@ -2094,10 +2080,12 @@ Apply the same filtering parameters to both retrieve filtered messages with `mes
 :::code-group
 
 ```tsx [Browser]
+import { DeliveryStatus } from '@xmtp/browser-sdk';
+
 // Using messages()
 const messages = await group.messages({
   sentAfterNs: 1738620126404999936n, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
+  deliveryStatus: DeliveryStatus.Published, // Filter by delivery status
   excludeContentTypes: [ContentType.Reaction], // Exclude content types
 });
 
@@ -2109,10 +2097,12 @@ const count = await group.countMessages({
 ```
 
 ```tsx [Node]
+import { DeliveryStatus } from '@xmtp/node-sdk';
+
 // Using messages()
 const messages = await group.messages({
   sentAfterNs: 1738620126404999936n, // Filter by time
-  deliveryStatus: 'published', // Filter by delivery status
+  deliveryStatus: DeliveryStatus.Published, // Filter by delivery status
   excludeContentTypes: [ContentType.Reaction], // Exclude content types
 });
 
@@ -3096,6 +3086,22 @@ try await client.conversation.sync()
 
 :::
 
+## Manually request sync from other devices
+
+When a device installation comes online, it automatically sends a request to other devices on the network to sync conversations and messages. However, in scenarios where this automatic process is interrupted, you can manually trigger a sync request.
+
+:::code-group
+
+```js [Browser]
+await client.sendSyncRequest();
+```
+
+```js [Node]
+await client.sendSyncRequest();
+```
+
+:::
+
 ## Sync new conversations
 
 Get any new group chat or DM conversations from the network.
@@ -3342,7 +3348,7 @@ try await client.preferences.sync()
 To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions. Choose the one that best fits your workflow:
 
 **Use the [documentation MCP (Model Context Protocol) server](#documentation-mcp-server) if:**
-- You're using MCP-compatible tools like Claude Code or Cursor, for example
+- You're using MCP-compatible tools like Claude Code, Cursor, or Copilot for example
 - You want dynamic, structured documentation querying while writing and debugging code
 - You're comfortable setting up and running a local server process
 
@@ -3353,7 +3359,7 @@ To make it easier for you to build with XMTP using LLMs and coding assistants, w
 
 ## Documentation MCP server
 
-You can run a local XMTP documentation MCP server that you can use with Claude Code, Cursor, and other MCP-compatible AI coding assistants.
+You can run a local XMTP documentation MCP server that you can use with Claude Code, Cursor, Copilot, and other MCP-compatible AI coding assistants.
 
 To learn about how it's built and how to use it, see the [xmtp-docs-mcp repo](https://github.com/xmtp/xmtp-docs-mcp).
 
@@ -3676,6 +3682,114 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 - Found a bug or need help? Contact [dev support](/chat-apps/intro/dev-support).
 
+
+## chat-apps/intro/what-is-xmtp.mdx
+# What is XMTP?
+
+XMTP (Extensible Message Transport Protocol) is an open protocol and decentralized network for secure, end-to-end encrypted messaging. It enables developers to build messaging experiences where users own their identity, conversations, and data.
+
+## Protocol and network
+
+XMTP consists of two layers:
+
+- **The protocol** defines how messages are formatted, encrypted, and exchanged. It uses the [Messaging Layer Security (MLS)](https://www.rfc-editor.org/rfc/rfc9420.html) standard—a ratified IETF specification that provides end-to-end encryption with forward secrecy and post-compromise security.
+
+- **The network** is the infrastructure that stores and relays encrypted messages between clients.
+  - **Today's network**: The `dev` and `production` network environments are operated by [XMTP Labs](https://www.xmtplabs.com/) and powered by [xmtp-node-go](https://github.com/xmtp/xmtp-node-go).
+  - **Decentralized network**: In parallel, a decentralized network of independent nodes is being built. The testnet launched a year ago, and mainnet is coming. Messages on the decentralized network are quantum-resistant encrypted and retained for 60 days before automatically expiring. To learn more about progress toward decentralization, see [Decentralizing XMTP](https://xmtp.org/decentralization).
+
+## Identity and inboxes
+
+Every user has a cryptographic **inbox** identified by an **InboxID**. The following identities (blockchain wallet addresses) can link to a single inbox through signed cryptographic associations:
+
+- Externally owned accounts (EOAs)
+- Smart contract wallets
+- ERC-4337 accounts
+
+These identities may themselves be linked to social identifiers like ENS, Base, or Zora names, as well as proof-of-personhood systems like World ID.
+
+Each inbox designates a **recovery authority** that can revoke compromised associations or transfer control, preventing lockouts when credentials are lost. No email or phone number authentication is required.
+
+To learn more, see [Manage XMTP inboxes, identities, and installations](/chat-apps/core-messaging/manage-inboxes).
+
+## Message types
+
+XMTP supports two conversation formats:
+
+- **1:1 direct messages (DMs)**: Conversations between two participants
+- **Group chats**: Multi-party conversations with configurable permissions and metadata
+
+Both humans and agents can participate in DMs and group chats.
+
+## Content types
+
+XMTP uses content types to encode all message content, including:    
+
+- Text
+- Attachments (images, files, audio, video)
+- Onchain transactions
+- Onchain transaction references
+- Reactions
+- Replies
+- Read receipts
+- Custom content types defined by developers
+
+To learn more, see [Understand content types](/chat-apps/content-types/content-types).
+
+## Spam protection
+
+Spam protection is provided via consent preferences, which are stored on-device and synced through [device sync](/chat-apps/list-stream-sync/history-sync). This enables users to maintain consistent contact preferences across all XMTP-compatible apps:
+
+- **Allowed**: Contacts whose messages appear in the main inbox
+- **Unknown**: New contacts requiring acceptance/rejection
+- **Denied**: Blocked contacts whose messages are filtered out
+
+Only the user can see their consent list—blocked contacts are never notified of their status.
+
+To learn more, see [Understand how user consent preferences support spam-free chats](/chat-apps/user-consent/user-consent).
+
+## Security model
+
+XMTP and MLS prioritize security, privacy, and message integrity through advanced cryptographic techniques, delivering end-to-end encryption for both 1:1 and group conversations.
+
+To learn more, see [Messaging security properties with XMTP](/protocol/security).
+
+A security assessment of [LibXMTP](https://github.com/xmtp/libxmtp) and its use of Messaging Layer Security (MLS) was completed by NCC Group in Dec 2024.
+
+See [Public Report: XMTP MLS Implementation Review](https://www.nccgroup.com/us/research-blog/public-report-xmtp-mls-implementation-review/).
+
+## Crypto-native capabilities
+
+XMTP is built on blockchain rails, enabling native integration with:
+
+- Support for any blockchain or payment protocol
+- Transaction messages with embedded context
+- Agent-based automation for payments and fund management
+- Token-gated communities and features
+
+## Interoperability and ownership
+
+Because XMTP is a protocol, not a platform:
+
+- Users can access their messages from any app built with XMTP
+- Developers maintain full control without platform lock-in
+- The protocol is censorship-resistant and not controlled by a central authority
+- Apps and agents can interoperate seamlessly
+
+## Platform support
+
+- [Browser SDK](/chat-apps/sdks/browser) for web apps
+- [Node SDK](/chat-apps/sdks/node) for servers
+- [Agent SDK](/agents/get-started/build-an-agent), built on the Node SDK
+- [React Native SDK](/chat-apps/sdks/react-native)
+- [Android SDK](/chat-apps/sdks/android)
+- [iOS SDK](/chat-apps/sdks/ios)
+
+## Next steps
+
+- [Why build with XMTP?](/chat-apps/intro/why-xmtp) - Understand the benefits and use cases
+- [Try xmtp.chat](https://xmtp.chat) - Experience XMTP as a user before you build
+- [Get started building](/chat-apps/intro/get-started) - Jump into implementation with your chosen SDK
 
 ## chat-apps/intro/why-xmtp.mdx
 # Why build with XMTP?
@@ -4348,13 +4462,13 @@ const client = await Client.create(signer, {
 });
 
 // 3. Start conversations
-const group = await client.conversations.newGroup(
+const group = await client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 
 // 4. Send messages
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 
 // 5. List, stream, and sync
 // List existing conversations
@@ -4519,13 +4633,13 @@ const dbEncryptionKey = getRandomValues(new Uint8Array(32));
 const client = await Client.create(signer, { dbEncryptionKey });
 
 // 3. Start a new conversation
-const group = await client.conversations.newGroup(
+const group = await client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 
 // 4. Send messages
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 
 // 5. List, stream, and sync
 // List existing conversations
@@ -4644,45 +4758,15 @@ One remote attachment of any size can be sent in a message using the `RemoteAtta
 
 To send multiple remote attachments of any size in a single message, see [Support multiple remote attachments of any size](#support-multiple-remote-attachments-of-any-size).
 
-### Install the package
-
-In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-remote-attachment
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-remote-attachment
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-remote-attachment
-```
-
-:::
-
 ### Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), attachments and remote attachments are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
 
-```jsx [Browser]
-import {
-  AttachmentCodec,
-  RemoteAttachmentCodec,
-} from '@xmtp/content-type-remote-attachment';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new AttachmentCodec(), new RemoteAttachmentCodec()],
-});
-```
-
-```jsx [React Native]
+```ts [React Native]
 const client = await Client.create(signer, {
   env: 'production',
   codecs: [new RemoteAttachmentCodec(), new StaticAttachmentCodec()],
@@ -4709,11 +4793,53 @@ Client.register(RemoteAttachmentCodec());
 
 :::code-group
 
+<div data-title="Node">
+
+```ts
+import { encryptAttachment } from '@xmtp/node-sdk';
+
+// create an attachment object
+const attachment = {
+  filename: 'test.txt',
+  mimeType: 'text/plain',
+  content: new Uint8Array([1, 2, 3]),
+};
+
+// encrypt the attachment
+const encryptedAttachment = encryptAttachment(attachment);
+// encryptedAttachment.payload is the encrypted bytes
+```
+
+Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
+
+<p>Now that you have a `url`, you can create a `RemoteAttachment`:</p>
+
+```ts
+// create remote attachment object
+const remoteAttachment = {
+  contentDigest: encryptedAttachment.digest,
+  contentLength: encryptedAttachment.contentLength,
+  filename: encryptedAttachment.filename,
+  nonce: encryptedAttachment.nonce,
+  salt: encryptedAttachment.salt,
+  scheme: 'https://',
+  secret: encryptedAttachment.secret,
+  url: url,
+};
+
+// send the remote attachment
+await conversation.sendRemoteAttachment(remoteAttachment);
+```
+
+</div>
+
 <div data-title="Browser">
 Load the file. This example uses a web browser to load the file:
 
-```jsx
-//image is the uploaded event.target.files[0];
+```ts
+import { encryptAttachment } from '@xmtp/browser-sdk';
+
+// image is the uploaded event.target.files[0];
 const data = await new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.onload = () => {
@@ -4725,51 +4851,50 @@ const data = await new Promise((resolve, reject) => {
   };
   reader.readAsArrayBuffer(image);
 });
-```
 
-Create an attachment object:
-
-```tsx
-// Local file details
+// create an attachment object
 const attachment = {
   filename: image?.name,
   mimeType: image?.type,
   data: new Uint8Array(data),
 };
-```
 
-Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+// encrypt the attachment
+const encryptedAttachment = await encryptAttachment(attachment);
+// encryptedAttachment.payload is the encrypted bytes
 
-```tsx
-const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
-  attachment,
-  new AttachmentCodec()
+// if necessary, convert the encrypted attachment to a File before uploading
+const encryptedBlob = new Blob(
+  [encryptedAttachment.payload as Uint8Array<ArrayBuffer>],
+  {
+    type: 'application/octet-stream',
+  }
 );
+
+const encryptedFile = new File([encryptedBlob], encryptedAttachment.filename, {
+  type: 'application/octet-stream',
+});
 ```
 
 Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
 
 <p>Now that you have a `url`, you can create a `RemoteAttachment`:</p>
 
-```jsx
+```ts
+// create remote attachment object
 const remoteAttachment = {
-  url: url,
-  contentDigest: encryptedEncoded.digest,
-  salt: encryptedEncoded.salt,
-  nonce: encryptedEncoded.nonce,
-  secret: encryptedEncoded.secret,
+  contentDigest: encryptedAttachment.digest,
+  contentLength: encryptedAttachment.contentLength,
+  filename: encryptedAttachment.filename,
+  nonce: encryptedAttachment.nonce,
+  salt: encryptedAttachment.salt,
   scheme: 'https://',
-  filename: attachment.filename,
-  contentLength: attachment.data.byteLength,
+  secret: encryptedAttachment.secret,
+  url: url,
 };
-```
 
-Now that you have a remote attachment, you can send it:
-
-```tsx
-await conversation.send(remoteAttachment, {
-  contentType: ContentTypeRemoteAttachment,
-});
+// send the remote attachment
+await conversation.sendRemoteAttachment(remoteAttachment);
 ```
 
 </div>
@@ -4778,7 +4903,7 @@ await conversation.send(remoteAttachment, {
 
 This method takes a `DecryptedLocalAttachment` object as an argument:
 
-```jsx
+```tsx
 const { encryptedLocalFileUri, metadata } = await alice.encryptAttachment({
   fileUri: `file://${file}`,
   mimeType: 'text/plain',
@@ -4787,13 +4912,13 @@ const { encryptedLocalFileUri, metadata } = await alice.encryptAttachment({
 
 Upload an encrypted file to a remote server:
 
-```jsx
+```tsx
 let url = await uploadFile(encryptedLocalFileUri);
 ```
 
 Send a remote attachment message:
 
-```jsx
+```tsx
 await convo.send({
   remoteAttachment: {
     ...metadata,
@@ -4921,25 +5046,48 @@ Now that you can send a remote attachment, you need a way to receive it. For exa
 
 :::code-group
 
-<div data-title="Browser">
+```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { decryptAttachment, contentTypeRemoteAttachment } from '@xmtp/node-sdk';
 
-```tsx
-import { ContentTypeRemoteAttachment } from '@xmtp/content-type-remote-attachment';
+if (contentTypesAreEqual(message.contentType, contentTypeRemoteAttachment())) {
+  const response = await fetch(message.content.url);
+  if (response.ok) {
+    const encryptedData = await response.arrayBuffer();
+    const attachment = decryptAttachment(encryptedData, message.content);
 
-if (message.contentType.sameAs(RemoteAttachmentContentType)) {
-  const attachment = await RemoteAttachmentCodec.load(message.content, client);
+    const filename = attachment.filename; // => "screenshot.png"
+    const mimeType = attachment.mimeType; // => "image/png",
+    const data = attachment.data; // => the image data
+  }
 }
 ```
 
-You now have the original attachment:
+<div data-title="Browser">
 
-```bash [Bash]
-attachment.filename // => "screenshot.png"
-attachment.mimeType // => "image/png",
-attachment.data // => [the PNG data]
+```ts
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import {
+  decryptAttachment,
+  contentTypeRemoteAttachment,
+} from '@xmtp/browser-sdk';
+
+if (
+  contentTypesAreEqual(message.contentType, await contentTypeRemoteAttachment())
+) {
+  const response = await fetch(message.content.url);
+  if (response.ok) {
+    const encryptedData = await response.arrayBuffer();
+    const attachment = await decryptAttachment(encryptedData, message.content);
+
+    const filename = attachment.filename; // => "screenshot.png"
+    const mimeType = attachment.mimeType; // => "image/png",
+    const data = attachment.data; // => the image data
+  }
+}
 ```
 
-Once you've created the attachment object, you can create a preview to show in the message input field before sending:
+Now, you can show it in the message feed:
 
 ```tsx
 const objectURL = URL.createObjectURL(
@@ -4959,13 +5107,13 @@ img.title = attachment.filename;
 
 On the receiving end, you can use the `decryptAttachment` method to decrypt the downloaded file. This method takes an `EncryptedLocalAttachment` object as an argument and returns a `DecryptedLocalAttachment` object.
 
-```jsx
-if (message.contentTypeId === "xmtp.org/remoteStaticAttachment:1.0") {
+```tsx
+if (message.contentTypeId === 'xmtp.org/remoteStaticAttachment:1.0') {
   // Now we can decrypt the downloaded file using the message metadata.
   const attached = await xmtp_client.decryptAttachment({
     encryptedLocalFileUri: downloadedFileUri,
     metadata: message.content() as RemoteAttachmentContent,
-  })
+  });
 
   //attached.filename
   //attached.mimeType
@@ -4975,7 +5123,7 @@ if (message.contentTypeId === "xmtp.org/remoteStaticAttachment:1.0") {
 
 Display the attachment:
 
-```jsx
+```tsx
 <Image source={{ uri: attached.fileUri }} />
 ```
 
@@ -5029,6 +5177,10 @@ Multiple remote attachments of any size can be sent in a single message using th
 
 ### Register necessary codecs
 
+**Note:** For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), multi remote attachments are built-in and do not require codec registration.
+
+For other SDKs, register the codecs:
+
 :::code-group
 
 ```tsx [React Native]
@@ -5058,6 +5210,40 @@ Client.register(codec: MultiRemoteAttachmentCodec())
 Each attachment in the attachments array contains a URL that points to an encrypted `EncodedContent` object. The content must be accessible by an HTTP `GET` request to the URL.
 
 :::code-group
+
+```tsx [Browser]
+// Load files (example using browser File API)
+const file1 = event.target.files[0]; // first file from input
+const file2 = event.target.files[1]; // second file from input
+
+const attachment1 = {
+  filename: file1.name,
+  mimeType: file1.type,
+  data: new Uint8Array(await file1.arrayBuffer()),
+};
+
+const attachment2 = {
+  filename: file2.name,
+  mimeType: file2.type,
+  data: new Uint8Array(await file2.arrayBuffer()),
+};
+```
+
+```tsx [Node]
+import { readFileSync } from 'fs';
+
+const attachment1 = {
+  filename: 'image-1.png',
+  mimeType: 'image/png',
+  data: new Uint8Array(readFileSync('path/to/image-1.png')),
+};
+
+const attachment2 = {
+  filename: 'image-2.png',
+  mimeType: 'image/png',
+  data: new Uint8Array(readFileSync('path/to/image-2.png')),
+};
+```
 
 ```ts [React Native]
 const attachment1: DecryptedLocalAttachment = {
@@ -5106,6 +5292,63 @@ let attachment2 = Attachment(
 ### Encrypt and upload multiple attachments to a remote server
 
 :::code-group
+
+```ts [Browser]
+import {
+  encryptAttachment,
+  type RemoteAttachment,
+} from '@xmtp/browser-sdk';
+
+const remoteAttachments: RemoteAttachment[] = [];
+
+for (const attachment of [attachment1, attachment2]) {
+  // Encrypt the attachment
+  const encryptedAttachment = await encryptAttachment(attachment);
+
+  // Upload encrypted payload to your storage provider
+  // (Integrator must supply upload functionality!)
+  const url = await uploadToStorage(encryptedAttachment.payload);
+
+  // Build the remote attachment info
+  remoteAttachments.push({
+    contentDigest: encryptedAttachment.digest,
+    contentLength: encryptedAttachment.contentLength,
+    filename: encryptedAttachment.filename,
+    nonce: encryptedAttachment.nonce,
+    salt: encryptedAttachment.salt,
+    scheme: 'https',
+    secret: encryptedAttachment.secret,
+    url,
+  });
+}
+```
+
+```ts [Node]
+import { encryptAttachment, type RemoteAttachment } from '@xmtp/node-sdk';
+
+const remoteAttachments: RemoteAttachment[] = [];
+
+for (const attachment of [attachment1, attachment2]) {
+  // Encrypt the attachment
+  const encryptedAttachment = encryptAttachment(attachment);
+
+  // Upload encrypted payload to your storage provider
+  // (Integrator must supply upload functionality!)
+  const url = await uploadToStorage(encryptedAttachment.payload);
+
+  // Build the remote attachment info
+  remoteAttachments.push({
+    contentDigest: encryptedAttachment.digest,
+    contentLength: encryptedAttachment.contentLength,
+    filename: encryptedAttachment.filename,
+    nonce: encryptedAttachment.nonce,
+    salt: encryptedAttachment.salt,
+    scheme: 'https',
+    secret: encryptedAttachment.secret,
+    url,
+  });
+}
+```
 
 ```ts [React Native]
 const remoteAttachments: RemoteAttachmentInfo[] = [];
@@ -5169,6 +5412,18 @@ for att in [attachment1, attachment2] {
 
 :::code-group
 
+```tsx [Browser]
+await conversation.sendMultiRemoteAttachment({
+  attachments: remoteAttachments,
+});
+```
+
+```tsx [Node]
+await conversation.sendMultiRemoteAttachment({
+  attachments: remoteAttachments,
+});
+```
+
 ```ts [React Native]
 await convo.send({
   multiRemoteAttachment: {
@@ -5199,6 +5454,43 @@ try await alixConversation.send(encodedContent: encodedContent)
 ### Recognize and decode a multi remote attachment
 
 :::code-group
+
+```tsx [Browser]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeMultiRemoteAttachment } from '@xmtp/browser-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (
+  contentTypesAreEqual(
+    message.contentType,
+    await contentTypeMultiRemoteAttachment()
+  )
+) {
+  // Decode the raw content back into a MultiRemoteAttachment
+  const multiRemoteAttachment = message.content;
+
+  // See next section to download and decrypt the attachments
+}
+```
+
+```tsx [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeMultiRemoteAttachment } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (
+  contentTypesAreEqual(message.contentType, contentTypeMultiRemoteAttachment())
+) {
+  // Decode the raw content back into a MultiRemoteAttachment
+  const multiRemoteAttachment = message.content;
+
+  // See next section to download and decrypt the attachments
+}
+```
 
 ```ts [React Native]
 const messages = await conversation.messages();
@@ -5238,6 +5530,50 @@ if messages.size > 0 && messages[0].encodedContent.type.id.equals(ContentTypeMul
 ### Decode, download, and decrypt the attachments
 
 :::code-group
+
+```tsx [Browser]
+import { decryptAttachment, type Attachment } from '@xmtp/browser-sdk';
+
+const decryptedAttachments: Attachment[] = [];
+
+for (const attachment of multiRemoteAttachment.attachments) {
+  // Download the encrypted payload from the URL
+  // (Integrator must supply download from URL functionality!)
+  const encryptedPayload = await downloadFromUrl(attachment.url);
+
+  // Decrypt the attachment
+  const decryptedAttachment = await decryptAttachment(
+    encryptedPayload,
+    attachment
+  );
+  decryptedAttachments.push(decryptedAttachment);
+}
+
+// Now you have the original attachments
+// decryptedAttachments[0].filename, decryptedAttachments[0].data, etc.
+```
+
+```tsx [Node]
+import { decryptAttachment, type Attachment } from '@xmtp/node-sdk';
+
+const decryptedAttachments: Attachment[] = [];
+
+for (const attachment of multiRemoteAttachment.attachments) {
+  // Download the encrypted payload from the URL
+  // (Integrator must supply download from URL functionality!)
+  const encryptedPayload = await downloadFromUrl(attachment.url);
+
+  // Decrypt the attachment
+  const decryptedAttachment = decryptAttachment(
+    encryptedPayload,
+    attachment
+  );
+  decryptedAttachments.push(decryptedAttachment);
+}
+
+// Now you have the original attachments
+// decryptedAttachments[0].filename, decryptedAttachments[0].data, etc.
+```
 
 ```ts [React Native]
 const decryptedAttachments: DecryptedLocalAttachment[] = [];
@@ -5332,9 +5668,41 @@ for remoteAttachmentInfo in multiRemoteAttachment.remoteAttachments {
 
 ### Accessing the unencrypted attachments
 
-Use the file URIs in the decrypted attachments objects to display the attachments.
+Use the decrypted attachments to access the original file data.
 
 :::code-group
+
+```tsx [Browser]
+// Example showing how to display decrypted attachments
+const attachment1 = decryptedAttachments[0];
+const attachment2 = decryptedAttachments[1];
+
+// Create object URLs for display (e.g., for images)
+const url1 = URL.createObjectURL(
+  new Blob([attachment1.data], { type: attachment1.mimeType })
+);
+const url2 = URL.createObjectURL(
+  new Blob([attachment2.data], { type: attachment2.mimeType })
+);
+
+// Use in img tags
+// <img src={url1} alt={attachment1.filename} />
+// <img src={url2} alt={attachment2.filename} />
+```
+
+```tsx [Node]
+// Example showing how to save decrypted attachments to files
+import { writeFileSync } from 'fs';
+
+const attachment1 = decryptedAttachments[0];
+const attachment2 = decryptedAttachments[1];
+
+// Save to disk
+writeFileSync(`downloads/${attachment1.filename}`, attachment1.data);
+writeFileSync(`downloads/${attachment2.filename}`, attachment2.data);
+
+console.log(`Saved ${attachment1.filename} and ${attachment2.filename}`);
+```
 
 ```ts [React Native]
 // Example showing displaying attachments if they represent images
@@ -5362,52 +5730,22 @@ XCTAssertEqual(decryptedAttachments[1].filename, "test2.txt")
 
 ## Support attachments smaller than 1MB
 
-Attachments smaller than 1MB can be sent using the `AttachmentCodec`. The codec will automatically encrypt the attachment and upload it to the XMTP network.
+Attachments smaller than 1MB can be sent using the `Attachment` content type.
 
 :::warning
 
 Unless a very specific use case we recommend using the [remote attachment content type](/chat-apps/content-types/attachments) instead since many attachments are larger than 1MB in a chat app.
 :::
 
-### Install the package
-
-In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-remote-attachment
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-remote-attachment
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-remote-attachment
-```
-
 :::
 
 ### Import and register
 
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), attachments are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
+
 :::code-group
-
-```jsx [Browser]
-import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new AttachmentCodec()],
-});
-```
-
-```jsx [React Native]
-const client = await Client.create(signer, {
-  env: 'production',
-  codecs: [new StaticAttachmentCodec()],
-});
-```
 
 ```kotlin [Kotlin]
 import org.xmtp.android.library.codecs.Attachment
@@ -5423,44 +5761,152 @@ Client.register(AttachmentCodec());
 
 :::
 
-### Load local file
+### Create an attachment
 
-```tsx
-// Read local file and extract its details
-const file = fs.readFileSync('xmtp.png');
-const filename = path.basename('xmtp.png');
-const extname = path.extname('xmtp.png');
-console.log(`Filename: ${filename}`);
-console.log(`File Type: ${extname}`);
+:::code-group
+
+```tsx [Browser]
+// Load file from browser file input
+const file = event.target.files[0]; // from <input type="file">
+
+const attachment = {
+  filename: file.name,
+  mimeType: file.type,
+  data: new Uint8Array(await file.arrayBuffer()),
+};
 ```
 
-### Send encrypted file
+```tsx [Node]
+import { readFileSync } from 'fs';
+import { basename, extname } from 'path';
 
-```tsx
-// Convert the file to a Uint8Array
-const blob = new Blob([file], { type: extname });
-let imgArray = new Uint8Array(await blob.arrayBuffer());
+// Read local file
+const fileData = readFileSync('xmtp.png');
+const filename = basename('xmtp.png');
+const mimeType = extname('xmtp.png');
 
 const attachment = {
   filename: filename,
-  mimeType: extname, //image, video or audio
-  data: imgArray,
+  mimeType: mimeType,
+  data: new Uint8Array(fileData),
 };
-
-console.log('Attachment created', attachment);
-await conversation.send(attachment, { contentType: ContentTypeAttachment });
 ```
 
-### Receive encrypted file
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.Attachment
 
-```jsx
-if (message.contentType.sameAs(ContentTypeAttachment)) {
-  const blobdecoded = new Blob([message.content.data], {
-    type: message.content.mimeType,
+val attachment = Attachment(
+  filename = "photo.jpg",
+  mimeType = "image/jpeg",
+  data = fileData.toByteString() // Your file data as ByteString
+)
+```
+
+```swift [Swift]
+import XMTP
+
+let attachment = Attachment(
+  filename: "photo.jpg",
+  mimeType: "image/jpeg",
+  data: fileData // Your file data as Data
+)
+```
+
+:::
+
+### Send the attachment
+
+:::code-group
+
+```tsx [Browser]
+await conversation.sendAttachment(attachment);
+```
+
+```tsx [Node]
+await conversation.sendAttachment(attachment);
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.ContentTypeAttachment
+import org.xmtp.android.library.messages.SendOptions
+
+conversation.send(
+  content = attachment,
+  options = SendOptions(contentType = ContentTypeAttachment)
+)
+```
+
+```swift [Swift]
+try await conversation.send(
+  content: attachment,
+  options: .init(contentType: ContentTypeAttachment)
+)
+```
+
+:::
+
+### Receive the attachment
+
+:::code-group
+
+```ts [Browser]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeAttachment } from '@xmtp/browser-sdk';
+
+if (contentTypesAreEqual(message.contentType, await contentTypeAttachment())) {
+  const attachment = message.content;
+
+  // Create a blob URL for display
+  const blob = new Blob([attachment.data], {
+    type: attachment.mimeType,
   });
-  const url = URL.createObjectURL(blobdecoded);
+  const url = URL.createObjectURL(blob);
+
+  // Use the URL in an img tag or download link
+  // <img src={url} alt={attachment.filename} />
 }
 ```
+
+```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeAttachment } from '@xmtp/node-sdk';
+import { writeFileSync } from 'fs';
+
+if (contentTypesAreEqual(message.contentType, contentTypeAttachment())) {
+  const attachment = message.content;
+
+  // Save to disk
+  writeFileSync(`downloads/${attachment.filename}`, attachment.data);
+  console.log(`Saved ${attachment.filename}`);
+}
+```
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.codecs.Attachment
+import org.xmtp.android.library.codecs.ContentTypeAttachment
+
+if (message.encodedContent.type == ContentTypeAttachment) {
+  val attachment: Attachment? = message.content()
+
+  // Access attachment properties
+  val filename = attachment?.filename
+  val mimeType = attachment?.mimeType
+  val data = attachment?.data
+}
+```
+
+```swift [Swift]
+if message.encodedContent.type == ContentTypeAttachment {
+  let attachment: Attachment = try message.content()
+
+  // Access attachment properties
+  let filename = attachment.filename
+  let mimeType = attachment.mimeType
+  let data = attachment.data
+}
+```
+
+:::
 
 
 ## chat-apps/content-types/content-types.mdx
@@ -5470,34 +5916,20 @@ When you build an app with XMTP, all messages are encoded with a content type to
 
 In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
 
-At a high level, there are three categories of content types with XMTP:
+At a high level, there are two categories of content types with XMTP:
 
-- Standard
-- Standards-track
-- Custom
+- [Standard](#standard-content-types)
+- [Custom](/chat-apps/content-types/custom)
 
 ## Standard content types
 
 A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
 
-Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their app.
+Once adopted, a standard content type is bundled in XMTP client SDKs. You can then import the standard content type from an SDK for use in your app.
 
-Here is the current standard content type:
+Here are the current standard content types:
 
-### Text content type
-
-An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don't need to perform any additional steps related to content types.
-
-```jsx [Node]
-await conversation.send('gm');
-```
-
-## Standards-track content types
-
-A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
-
-Here are standards-track content types that you can review, test, and adopt in your app today:
-
+- Text content type: An app built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your app is sending plain text messages only, you don't need to perform any additional steps related to content types.
 - [Attachment content type](/chat-apps/content-types/attachments/#support-attachments-smaller-than-1mb): Use to send attachments smaller than 1MB.
 - [Remote attachment content type](/chat-apps/content-types/attachments): Use to send attachments of any size.
 - [Multiple remote attachments content type](/chat-apps/content-types/attachments#support-multiple-remote-attachments-of-any-size): Use to send attachments of any size.
@@ -5552,24 +5984,20 @@ However, some content types, especially those not meant for display (like read r
 :::code-group
 
 ```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
+// if message content is undefined, it means the content type is not supported
+// in this client
+if (message.content === undefined) {
+  // return the fallback text, which may also be undefined
+  return message.fallback;
 }
 ```
 
 ```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
+// if message content is undefined, it means the content type is not supported
+// in this client
+if (message.content === undefined) {
+  // return the fallback text, which may also be undefined
+  return message.fallback;
 }
 ```
 
@@ -5623,40 +6051,13 @@ Use the reaction content type to support reactions in your app. A reaction is a 
 
 Use a local database to store reactions. This enables your app to performantly display a reaction with its [referenced message](#send-a-reaction) when rendering message lists.
 
-### Install the package
-
-In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reaction
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reaction
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reaction
-```
-
-:::
-
 ## Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), reactions are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```jsx [Browser]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReactionCodec()],
-});
-```
 
 ```jsx [React Native]
 const client = await Client.create(signer, {
@@ -5694,31 +6095,31 @@ With XMTP, reactions are represented as objects with the following keys:
 :::code-group
 
 ```tsx [Browser]
+import { ReactionAction, ReactionSchema } from '@xmtp/browser-sdk';
+
 const reaction = {
   reference: someMessageID,
   referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
-  action: 'added',
+  action: ReactionAction.Added,
   content: 'smile',
-  schema: 'shortcode',
+  schema: ReactionSchema.Shortcode,
 };
 
-await conversation.send(reaction, {
-  contentType: ContentTypeReaction,
-});
+await conversation.sendReaction(reaction);
 ```
 
 ```tsx [Node]
+import { ReactionAction, ReactionSchema } from '@xmtp/node-sdk';
+
 const reaction = {
   reference: someMessageID,
   referenceInboxId: messageSenderInboxId, // Optional: Inbox ID of the message sender
-  action: 'added',
+  action: ReactionAction.Added,
   content: 'smile',
-  schema: 'shortcode',
+  schema: ReactionSchema.Shortcode,
 };
 
-await conversation.send(reaction, {
-  contentType: ContentTypeReaction,
-});
+await conversation.sendReaction(reaction);
 ```
 
 ```jsx [React Native]
@@ -5776,14 +6177,41 @@ try await conversation.send(
 
 ## Receive a reaction
 
-Now that you can send a reaction, you need a way to receive a reaction. For example:
+Now that you can send a reaction, you need a way to receive reactions. For Browser SDK and Node SDK, reactions are accessed via the `reactions` property on a message, which returns an array of `DecodedMessage<Reaction>` objects.
 
 :::code-group
 
 ```tsx [Browser]
-if (message.contentType.sameAs(ContentTypeReaction)) {
-  // We've got a reaction.
-  const reaction: Reaction = message.content;
+import { ReactionAction, ReactionSchema } from '@xmtp/browser-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+// Access reactions on the message
+const reactions = message.reactions;
+
+for (const reactionMessage of reactions) {
+  const reaction = reactionMessage.content;
+  console.log(reaction.content); // e.g., "👍"
+  console.log(reaction.action);  // ReactionAction.Added or ReactionAction.Removed
+  console.log(reaction.schema);  // ReactionSchema.Unicode, ReactionSchema.Shortcode, or ReactionSchema.Custom
+}
+```
+
+```tsx [Node]
+import { ReactionAction, ReactionSchema } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+// Access reactions on the message
+const reactions = message.reactions;
+
+for (const reactionMessage of reactions) {
+  const reaction = reactionMessage.content;
+  console.log(reaction.content); // e.g., "👍"
+  console.log(reaction.action);  // ReactionAction.Added or ReactionAction.Removed
+  console.log(reaction.schema);  // ReactionSchema.Unicode, ReactionSchema.Shortcode, or ReactionSchema.Custom
 }
 ```
 
@@ -5834,36 +6262,13 @@ Use the read receipt content type to support read receipts in your app. A read r
 
 While this is a per-app decision, the best practice is to provide users with the option to opt out of sending read receipts. If a user opts out, when they read a message, a read receipt will not be sent to the sender of the message.
 
-## Install the package
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-read-receipt
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-read-receipt
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-read-receipt
-```
-
-:::
-
 ## Configure the content type
 
-:::code-group
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), read receipts are built-in and do not require codec registration. Skip this step for these SDKs.
 
-```js [Browser]
-import { ReadReceiptCodec } from '@xmtp/content-type-read-receipt';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReadReceiptCodec()],
-});
-```
+For other SDKs, register the codec:
+
+:::code-group
 
 ```js [React Native]
 const client = await Client.create(signer, {
@@ -5890,9 +6295,13 @@ Client.register(codec = ReadReceiptCodec())
 :::code-group
 
 ```js [Browser]
-// The content of a read receipt message must be an empty object.
+// Send a read receipt
+await conversation.sendReadReceipt();
+```
 
-await conversation.messages.send({}, ContentTypeReadReceipt);
+```js [Node]
+// Send a read receipt
+await conversation.sendReadReceipt();
 ```
 
 ```jsx [React Native]
@@ -5933,10 +6342,22 @@ Here's how you can receive a read receipt:
 :::code-group
 
 ```js [Browser]
-if (message.contentType.sameAs(ContentTypeReadReceipt)) {
-  // The message is a read receipt
-  const timestamp = message.sent;
-}
+// the browser SDK does not return read receipts when reading messages
+// to see the last read timestamp for inboxes in a conversation, use the `lastReadTimes` method
+
+const lastReadTimes = await conversation.lastReadTimes();
+lastReadTimes.get(recipientInboxId); // the last read timestamp in nanoseconds for the inbox
+
+// note: if the last read timestamp is undefined, the inbox has not sent a read receipt yet
+```
+
+```js [Node]
+// the node SDK does not return read receipts when reading messages
+// to see the last read timestamp for inboxes in a conversation, use the `lastReadTimes` method
+const lastReadTimes = await conversation.lastReadTimes();
+lastReadTimes[recipientInboxId]; // the last read timestamp in nanoseconds for the inbox
+
+// note: if the last read timestamp is undefined, the inbox has not sent a read receipt yet
 ```
 
 ```js [React Native]
@@ -5993,40 +6414,13 @@ Use the reply content type to support quote replies in your app. A reply is a me
 
 Use a local database to store replies. This will enable your app to performantly display a reply with its [referenced message](#send-a-reply) when rendering message lists.
 
-### Install the package
-
-In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reply
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reply
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reply
-```
-
-:::
-
 ## Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), replies are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```js [Browser]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new ReplyCodec()],
-});
-```
 
 ```js [React Native]
 const client = await Client.create(signer, {
@@ -6058,19 +6452,27 @@ Once you've created a reply, you can send it. Replies are represented as objects
 :::code-group
 
 ```ts [Browser]
-import { ContentTypeText } from '@xmtp/content-type-text';
-import { ContentTypeReply } from '@xmtp/content-type-reply';
-import type { Reply } from '@xmtp/content-type-reply';
+import { encodeText } from '@xmtp/browser-sdk';
 
-const reply: Reply = {
+const reply = {
   reference: someMessageID,
-  contentType: ContentTypeText,
-  content: 'I concur',
+  referenceInboxId: senderInboxId, // Inbox ID of the original message sender
+  content: await encodeText('I concur'),
 };
 
-await conversation.send(reply, {
-  contentType: ContentTypeReply,
-});
+await conversation.sendReply(reply);
+```
+
+```ts [Node]
+import { encodeText } from '@xmtp/node-sdk';
+
+const reply = {
+  reference: someMessageID,
+  referenceInboxId: senderInboxId, // Inbox ID of the original message sender
+  content: encodeText('I concur'),
+};
+
+await conversation.sendReply(reply);
 ```
 
 ```js [React Native]
@@ -6125,9 +6527,26 @@ try await conversation.send(
 :::code-group
 
 ```ts [Browser]
-if (message.contentType.sameAs(ContentTypeReply)) {
-  // We've got a reply.
-  const reply: Reply = message.content;
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeReply } from '@xmtp/browser-sdk';
+
+if (contentTypesAreEqual(message.contentType, await contentTypeReply())) {
+  const reply = message.content;
+
+  // Access the reply text
+  console.log('Reply:', reply.content);
+}
+```
+
+```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeReply } from '@xmtp/node-sdk';
+
+if (contentTypesAreEqual(message.contentType, contentTypeReply())) {
+  const reply = message.content;
+
+  // Access the reply text
+  console.log('Reply:', reply.content);
 }
 ```
 
@@ -6183,41 +6602,13 @@ You're welcome to provide feedback by commenting on [XIP-21: Onchain transaction
 
 :::
 
-## Install the package
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-transaction-reference
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-transaction-reference
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-transaction-reference
-```
-
-:::
-
 ## Configure the content type
 
-After importing the package, you can register the codec.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), transaction references are built-in and do not require codec registration. Skip this step for these SDKs.
+
+For other SDKs, register the codec:
 
 :::code-group
-
-```js [Browser]
-import {
-  ContentTypeTransactionReference,
-  TransactionReferenceCodec,
-} from '@xmtp/content-type-transaction-reference';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new TransactionReferenceCodec()],
-});
-```
 
 ```kotlin [Kotlin]
 import org.xmtp.android.library.Client
@@ -6251,30 +6642,34 @@ With XMTP, a transaction reference is represented as an object with the followin
 :::code-group
 
 ```ts [Browser]
-const transactionReference: TransactionReference = {
-  /**
-   * Optional namespace for the networkId
-   */
+const transactionReference = {
   namespace: "eip155",
-  /**
-   * The networkId for the transaction, in decimal or hexadecimal format
-   */
-  networkId: 1;
-  /**
-   * The transaction hash
-   */
-  reference: "0x123...abc";
-  /**
-   * Optional metadata object
-   */
+  networkId: 1,
+  reference: "0x123...abc",
   metadata: {
     transactionType: "transfer",
     currency: "USDC",
-    amount: 100000, // In integer format, this represents 1 USDC (100000/10^6)
-    decimals: 6, // Specifies that the currency uses 6 decimal places
+    amount: 100000,
+    decimals: 6,
     fromAddress: "0x456...def",
     toAddress: "0x789...ghi"
-  };
+  }
+};
+```
+
+```ts [Node]
+const transactionReference = {
+  namespace: "eip155",
+  networkId: 1,
+  reference: "0x123...abc",
+  metadata: {
+    transactionType: "transfer",
+    currency: "USDC",
+    amount: 100000,
+    decimals: 6,
+    fromAddress: "0x456...def",
+    toAddress: "0x789...ghi"
+  }
 };
 ```
 
@@ -6321,9 +6716,11 @@ Once you have a transaction reference, you can send it as part of your conversat
 :::code-group
 
 ```js [Browser]
-await conversation.messages.send(transactionReference, {
-  contentType: ContentTypeTransactionReference,
-});
+await conversation.sendTransactionReference(transactionReference);
+```
+
+```js [Node]
+await conversation.sendTransactionReference(transactionReference);
 ```
 
 ```kotlin [Kotlin]
@@ -6357,16 +6754,33 @@ To handle unsupported content types, refer to the [fallback](/chat-apps/content-
 :::code-group
 
 ```ts [Browser]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeTransactionReference } from '@xmtp/browser-sdk';
 
-if (!message.contentType.sameAs(ContentTypeTransactionReference)) {
-  // Handle non-transaction reference message
-  return;
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, await contentTypeTransactionReference())) {
+  const transactionRef = message.content;
+  // Process the transaction reference here
+  console.log('Network:', transactionRef.networkId);
+  console.log('Transaction:', transactionRef.reference);
 }
+```
 
-const transactionRef: TransactionReference = message.content;
-// Process the transaction reference here
+```ts [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeTransactionReference } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, contentTypeTransactionReference())) {
+  const transactionRef = message.content;
+  // Process the transaction reference here
+  console.log('Network:', transactionRef.networkId);
+  console.log('Transaction:', transactionRef.reference);
+}
 ```
 
 ```kotlin [Kotlin]
@@ -6395,9 +6809,9 @@ Displaying a transaction reference typically involves rendering details such as 
 ## chat-apps/content-types/transactions.mdx
 # Support onchain transactions in your app built with XMTP
 
-This package provides an XMTP content type to support sending transactions to a wallet for execution.
+This content type supports sending transactions to a wallet for execution.
 
-Currently, this content type is supported in the Browser, Node, and React Native SDKs only.
+For Browser SDK (v6.0.0+) and Node SDK (v5.0.0+), the wallet send calls content type is built-in and does not require separate installation or codec registration.
 
 For an example of an agent that implements the transaction content type, see [xmtp-transactions](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions).
 
@@ -6407,50 +6821,22 @@ You are welcome to provide feedback on this implementation by commenting on [XIP
 
 :::
 
-## Install the package
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-wallet-send-calls
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-wallet-send-calls
-```
-
-```bash [pnpm]
-pnpm i @xmtp/content-type-wallet-send-calls
-```
-
-:::
-
-## Configure the content type
-
-After importing the package, you can register the codec.
-
-```js [Browser]
-import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
-// Create the XMTP client
-const xmtp = await Client.create(signer, {
-  env: 'dev',
-  codecs: [new WalletSendCallsCodec()],
-});
-```
-
 ## Create a transaction request
 
 With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
 
-```ts [TypeScript]
-const walletSendCalls: WalletSendCallsParams = {
+:::code-group
+
+```tsx [Browser]
+const walletSendCalls = {
   version: '1.0',
-  from: '0x123...abc',
-  chainId: '0x2105',
+  chainId: '1',
+  from: '0x1234567890',
   calls: [
     {
       to: '0x456...def',
       value: '0x5AF3107A4000',
+      data: '0x...',
       metadata: {
         description: 'Send 0.0001 ETH on base to 0x456...def',
         transactionType: 'transfer',
@@ -6477,32 +6863,103 @@ const walletSendCalls: WalletSendCallsParams = {
 };
 ```
 
+```tsx [Node]
+const walletSendCalls = {
+  version: '1.0',
+  chainId: '1',
+  from: '0x1234567890',
+  calls: [
+    {
+      to: '0x456...def',
+      value: '0x5AF3107A4000',
+      data: '0x...',
+      metadata: {
+        description: 'Send 0.0001 ETH on base to 0x456...def',
+        transactionType: 'transfer',
+        currency: 'ETH',
+        amount: 100000000000000,
+        decimals: 18,
+        toAddress: '0x456...def',
+      },
+    },
+    {
+      to: '0x789...cba',
+      data: '0xdead...beef',
+      metadata: {
+        description: 'Lend 10 USDC on base with Morpho @ 8.5% APY',
+        transactionType: 'lend',
+        currency: 'USDC',
+        amount: 10000000,
+        decimals: 6,
+        platform: 'morpho',
+        apy: '8.5',
+      },
+    },
+  ],
+};
+```
+
+:::
+
 ## Send a transaction request
 
-Once you have a transaction reference, you can send it as part of your conversation:
+Once you have a transaction request, you can send it as part of your conversation:
 
-```ts [TypeScript]
-await conversation.messages.send(walletSendCalls, {
-  contentType: ContentTypeWalletSendCalls,
-});
+:::code-group
+
+```tsx [Browser]
+await conversation.sendWalletSendCalls(walletSendCalls);
 ```
+
+```tsx [Node]
+await conversation.sendWalletSendCalls(walletSendCalls);
+```
+
+:::
 
 ## Receive a transaction request
 
 To receive and process a transaction request:
 
-```ts [TypeScript]
-// Assume `loadLastMessage` is a thing you have
-const message: DecodedMessage = await loadLastMessage();
+:::code-group
 
-if (!message.contentType.sameAs(ContentTypeWalletSendCalls)) {
-  // Handle non-transaction request message
-  return;
+```tsx [Browser]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeWalletSendCalls } from '@xmtp/browser-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, await contentTypeWalletSendCalls())) {
+  const walletSendCalls = message.content;
+
+  // Process the transaction request
+  console.log('Version:', walletSendCalls.version);
+  console.log('Chain ID:', walletSendCalls.chainId);
+  console.log('From:', walletSendCalls.from);
+  console.log('Calls:', walletSendCalls.calls);
 }
-
-const walletSendCalls: WalletSendCallsParams = message.content;
-// Process the transaction request here
 ```
+
+```tsx [Node]
+import { contentTypesAreEqual } from '@xmtp/content-type-primitives';
+import { contentTypeWalletSendCalls } from '@xmtp/node-sdk';
+
+const messages = await conversation.messages();
+const message = messages[0];
+
+if (contentTypesAreEqual(message.contentType, contentTypeWalletSendCalls())) {
+  const walletSendCalls = message.content;
+
+  // Process the transaction request
+  console.log('Version:', walletSendCalls.version);
+  console.log('Chain ID:', walletSendCalls.chainId);
+  console.log('From:', walletSendCalls.from);
+  console.log('Calls:', walletSendCalls.calls);
+}
+```
+
+:::
 
 
 ## chat-apps/core-messaging/create-a-client.mdx
@@ -7542,14 +7999,14 @@ If you want to provide faster and offline group creation, consider using [optimi
 :::code-group
 
 ```js [Browser]
-const group = await client.conversations.newGroup(
+const group = await client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 ```
 
 ```js [Node]
-const group = await client.conversations.newGroup(
+const group = await client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
@@ -7620,10 +8077,10 @@ To learn more about optimistically sending messages using `prepareMessage()` and
 
 ```tsx [Browser]
 // create optimistic group (stays local)
-const optimisticGroup = await alixClient.conversations.newGroupOptimistic();
+const optimisticGroup = await alixClient.conversations.createGroupOptimistic();
 
 // send optimistic message (stays local)
-await optimisticGroup.sendOptimistic('gm');
+await optimisticGroup.sendText('gm', true);
 
 // later, sync the group by adding members
 await optimisticGroup.addMembers([boClient.inboxId]);
@@ -7633,10 +8090,10 @@ await optimisticGroup.publishMessages();
 
 ```ts [Node]
 // create optimistic group (stays local)
-const optimisticGroup = client.conversations.newGroupOptimistic();
+const optimisticGroup = client.conversations.createGroupOptimistic();
 
 // send optimistic message (stays local)
-optimisticGroup.sendOptimistic('gm');
+await optimisticGroup.sendText('gm', true);
 
 // later, sync the group by adding members
 await optimisticGroup.addMembers([boClient.inboxId]);
@@ -7688,11 +8145,11 @@ Once you have the verified identity, get its inbox ID and create a new DM:
 :::code-group
 
 ```js [Browser]
-const group = await client.conversations.newDm(bo.inboxId);
+const group = await client.conversations.createDm(bo.inboxId);
 ```
 
 ```js [Node]
-const group = await client.conversations.newDm(bo.inboxId);
+const group = await client.conversations.createDm(bo.inboxId);
 ```
 
 ```tsx [React Native]
@@ -7733,7 +8190,7 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
-const dmByIdentifier = await client.conversations.getDmByIdentifier({
+const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
   identifierKind: 'Ethereum',
 });
@@ -7751,7 +8208,7 @@ const messageById = await client.conversations.getMessageById(messageId);
 const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
-const dmByIdentifier = await client.conversations.getDmByIdentifier({
+const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
   identifierKind: IdentifierKind.Ethereum,
 });
@@ -7851,7 +8308,7 @@ For example:
 2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
 3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
 
-To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
+To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings/wasm/src/conversation.rs#L861).
 
 ## Set disappearing message settings on conversation create
 
@@ -7859,7 +8316,7 @@ To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/b
 
 ```js [Browser]
 // DM
-await client.conversations.newDm(inboxId, {
+await client.conversations.createDm(inboxId, {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936n,
     inNs: 1800000000000000n,
@@ -7867,7 +8324,7 @@ await client.conversations.newDm(inboxId, {
 });
 
 // Group
-await client.conversations.newGroup([inboxId], {
+await client.conversations.createGroup([inboxId], {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936n,
     inNs: 1800000000000000n,
@@ -7877,7 +8334,7 @@ await client.conversations.newGroup([inboxId], {
 
 ```js [Node]
 // DM
-await client.conversations.newDm(inboxId, {
+await client.conversations.createDm(inboxId, {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936,
     inNs: 1800000000000000,
@@ -7885,7 +8342,7 @@ await client.conversations.newDm(inboxId, {
 });
 
 // Group
-await client.conversations.newGroup([inboxId], {
+await client.conversations.createGroup([inboxId], {
   messageDisappearingSettings: {
     fromNs: 1738620126404999936,
     inNs: 1800000000000000,
@@ -8047,7 +8504,7 @@ try conversation.isDisappearingMessagesEnabled()
 
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
-To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_mls/src/groups/disappearing_messages.rs#L16).
 
 
 ## Access disappearing message expiration timestamps
@@ -8527,11 +8984,11 @@ try group.isSuperAdmin(inboxid: inboxID)
 :::code-group
 
 ```js [Browser]
-const admins = group.admins;
+const admins = await group.listAdmins();
 ```
 
 ```js [Node]
-const admins = group.admins;
+const admins = group.listAdmins();
 ```
 
 ```tsx [React Native]
@@ -8554,11 +9011,11 @@ try group.listAdmins()
 :::code-group
 
 ```js [Browser]
-const superAdmins = group.superAdmins;
+const superAdmins = await group.listSuperAdmins();
 ```
 
 ```js [Node]
-const superAdmins = group.superAdmins;
+const superAdmins = group.listSuperAdmins();
 ```
 
 ```tsx [React Native]
@@ -9177,10 +9634,9 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
-const inboxStates = await Client.inboxStateFromInboxIds(
-  [inboxId], 
-  "production",
-  "https://grpc.production.xmtp.network:443" // optional, gatewayHost - defaults to env default
+const inboxStates = await Client.fetchInboxStates(
+  [inboxId],
+  "production", // optional, defaults to "dev"
 );
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
@@ -9190,15 +9646,13 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   "production", // optional, defaults to "dev"
-  "https://grpc.production.xmtp.network:443", // optional, gatewayHost - defaults to env default
-  enableLogging: true, // optional, defaults to false
 );
 ```
 
 ```tsx [Node]
-const inboxStates = await Client.inboxStateFromInboxIds(
+const inboxStates = await Client.fetchInboxStates(
   [inboxId],
-  'production'
+  'production', // optional, defaults to "dev"
 );
 
 const toRevokeInstallationBytes = inboxStates[0].installations.map(
@@ -9210,7 +9664,6 @@ await Client.revokeInstallations(
   inboxId,
   toRevokeInstallationBytes,
   'production', // optional, defaults to "dev"
-  'https://grpc.production.xmtp.network:443' // optional, gatewayHost - defaults to env default
 );
 ```
 
@@ -9290,19 +9743,19 @@ View the state of any inbox to see the identities, installations, and other info
 :::code-group
 
 ```tsx [Browser]
-// the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds(
-  [inboxId, inboxId],
-  true
-);
+// fetch inbox states from the network
+const states = await client.preferences.fetchInboxStates([inboxId, inboxId]);
+
+// or get from local cache (doesn't refresh from network)
+const states = await client.preferences.getInboxStates([inboxId, inboxId]);
 ```
 
 ```tsx [Node]
-// the second argument is optional and refreshes the state from the network.
-const states = await client.preferences.inboxStateFromInboxIds(
-  [inboxId, inboxId],
-  true
-);
+// fetch inbox states from the network
+const states = await client.preferences.fetchInboxStates([inboxId, inboxId]);
+
+// or get from local cache (doesn't refresh from network)
+const states = await client.preferences.getInboxStates([inboxId, inboxId]);
 ```
 
 ```jsx [React Native]
@@ -9588,18 +10041,18 @@ Once you have the group chat or DM conversation, you can send messages in the co
 
 ```tsx [Browser]
 // For a DM conversation
-await dm.send('Hello world');
+await dm.sendText('Hello world');
 
 // OR for a group chat
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 ```
 
 ```tsx [Node]
 // For a DM conversation
-await dm.send('Hello world');
+await dm.sendText('Hello world');
 
 // OR for a group chat
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 ```
 
 ```tsx [React Native]
@@ -9672,32 +10125,12 @@ Send the message to the local database. This ensures that the message will be th
 
 ```tsx [Browser]
 // Optimistically send the message to the local database
-conversation.sendOptimistic('Hello world');
-
-// For custom content types, specify the content type
-const customContent = { foo: 'bar' };
-const contentType = {
-  authorityId: 'example',
-  typeId: 'test',
-  versionMajor: 1,
-  versionMinor: 0,
-};
-conversation.sendOptimistic(customContent, contentType);
+await conversation.sendText('Hello world', true);
 ```
 
 ```tsx [Node]
 // Optimistically send the message to the local database
-conversation.sendOptimistic('Hello world');
-
-// For custom content types, specify the content type
-const customContent = { foo: 'bar' };
-const contentType = {
-  authorityId: 'example',
-  typeId: 'test',
-  versionMajor: 1,
-  versionMinor: 0,
-};
-conversation.sendOptimistic(customContent, contentType);
+await conversation.sendText('Hello world', true);
 ```
 
 ```tsx [React Native]
@@ -9755,11 +10188,11 @@ After optimistically sending a message, use `publishMessages` to publish the mes
 
 ```tsx [Browser]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using the optimistic parameter to send a message locally
 async function sendMessageWithOptimisticUI(conversation, messageText) {
   try {
-    // Add message to UI immediately
-    conversation.sendOptimistic(messageText);
+    // Add message to UI immediately (optimistic = true)
+    await conversation.sendText(messageText, true);
 
     // Actually send the message to the network
     await conversation.publishMessages();
@@ -9773,11 +10206,11 @@ async function sendMessageWithOptimisticUI(conversation, messageText) {
 
 ```tsx [Node]
 // Publish all pending optimistically sent messages to the network
-// Call this only after using sendOptimistic to send a message locally
+// Call this only after using the optimistic parameter to send a message locally
 async function sendMessageWithOptimisticUI(conversation, messageText) {
   try {
-    // Add message to UI immediately
-    conversation.sendOptimistic(messageText);
+    // Add message to UI immediately (optimistic = true)
+    await conversation.sendText(messageText, true);
 
     // Actually send the message to the network
     await conversation.publishMessages();
@@ -9863,9 +10296,13 @@ Each message is accompanied by a `fallback` property, which offers a descriptive
 :::code-group
 
 ```js [Browser]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
+// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
+// For unsupported custom content types, use the fallback
+try {
+  // Try to decode the message content
+  const content = message.content;
+} catch (error) {
+  // If decoding fails, it's an unsupported content type
   if (message.fallback !== undefined) {
     return message.fallback;
   }
@@ -9874,9 +10311,13 @@ if (!codec) {
 ```
 
 ```js [Node]
-const codec = client.codecFor(content.contentType);
-if (!codec) {
-  /*Not supported content type*/
+// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
+// For unsupported custom content types, use the fallback
+try {
+  // Try to decode the message content
+  const content = message.content;
+} catch (error) {
+  // If decoding fails, it's an unsupported content type
   if (message.fallback !== undefined) {
     return message.fallback;
   }
@@ -10665,7 +11106,7 @@ This video provides a walkthrough of XMTP's implementation of MLS.
   allowFullScreen
 ></iframe>
 
-To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/xmtp_mls).
+To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/crates/xmtp_mls).
 
 ## A deep dive into messaging security properties
 
@@ -10867,20 +11308,6 @@ If you decide to change the recovery address, a **Sign this message?** window di
 
 Sign with the wallet address you want to set as the recovery address to change the recovery address.
 
-## Sign to consent to receive broadcast messages
-
-When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
-
-For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
-
-![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
-
-When you click **Sign**, you're consenting to receive broadcast messages from the publisher at your connected wallet address. You can see the publisher's sending address in the **Signature request** window.
-
-When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
-
-To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
-
 
 ## protocol/topics.mdx
 # Topics with XMTP
@@ -10977,7 +11404,7 @@ The Testnet of the decentralized XMTP network includes two distributed systems:
 - The XMTP Broadcast Network
 - The XMTP App Chain, which is an L3 blockchain securing all metadata that require strict ordering.
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
 
@@ -11326,7 +11753,7 @@ At this time, you can access the XMTP Testnet Funding Portal: [https://testnet.f
 
 Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
-To learn how to get mUSD, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
+To learn how to get mUSD, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-musd).
 
 Currently, mUSD balances on testnet-staging are unaffected by usage.
 
@@ -11369,7 +11796,7 @@ Your payer wallet is now a payer in the Payer Registry smart contract.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-musd).
 
 :::
 
@@ -11455,7 +11882,7 @@ Your wallet can now fund the payer wallet.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-musd).
 
 :::
 
@@ -12278,4 +12705,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 64 files from 4 sections.
+This documentation contains 65 files from 4 sections.

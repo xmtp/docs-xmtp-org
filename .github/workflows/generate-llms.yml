@@ -30,6 +30,7 @@ jobs:
         run: python llms/generate_llms_full.py
 
       - name: Create Pull Request
+        id: create-pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -45,3 +46,15 @@ jobs:
           branch: update-llms-docs
           base: main
           delete-branch: true
+
+      - name: Auto-approve PR
+        if: steps.create-pr.outputs.pull-request-number
+        run: gh pr review --approve "${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.LLMS_PAT }}
+
+      - name: Enable auto-merge
+        if: steps.create-pr.outputs.pull-request-number
+        run: gh pr merge --auto --squash "${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.LLMS_PAT }}

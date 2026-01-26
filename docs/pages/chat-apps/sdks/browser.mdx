@@ -58,13 +58,13 @@ const client = await Client.create(signer, {
 });
 
 // 3. Start conversations
-const group = await client.conversations.newGroup(
+const group = await client.conversations.createGroup(
   [bo.inboxId, caro.inboxId],
   createGroupOptions /* optional */
 );
 
 // 4. Send messages
-await group.send('Hello everyone');
+await group.sendText('Hello everyone');
 
 // 5. List, stream, and sync
 // List existing conversations
