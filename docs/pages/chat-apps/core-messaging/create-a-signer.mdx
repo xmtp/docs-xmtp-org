@@ -137,7 +137,7 @@ Here is a list of supported chain IDs for SCWs:
 Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
 :::
 
-Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/).
+To add SCW support for a new EVM chain, add the chain ID and a public RPC endpoint to [chain_urls_default.json](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/scw_verifier/chain_urls_default.json).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -266,6 +266,12 @@ public struct SCWallet: SigningKey {
 ```
 
 :::
+
+:::tip[Want support for a different chain ID?]
+
+Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
+
+ :::
 
 ## Retrieve your wallet's private key
 
