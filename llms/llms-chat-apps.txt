@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 05:06 PM UTC / January 22, 2026
+Generated at 09:44 PM UTC / January 23, 2026
 
 ## About this file
 
@@ -3348,7 +3348,7 @@ try await client.preferences.sync()
 To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions. Choose the one that best fits your workflow:
 
 **Use the [documentation MCP (Model Context Protocol) server](#documentation-mcp-server) if:**
-- You're using MCP-compatible tools like Claude Code or Cursor, for example
+- You're using MCP-compatible tools like Claude Code, Cursor, or Copilot for example
 - You want dynamic, structured documentation querying while writing and debugging code
 - You're comfortable setting up and running a local server process
 
@@ -3359,7 +3359,7 @@ To make it easier for you to build with XMTP using LLMs and coding assistants, w
 
 ## Documentation MCP server
 
-You can run a local XMTP documentation MCP server that you can use with Claude Code, Cursor, and other MCP-compatible AI coding assistants.
+You can run a local XMTP documentation MCP server that you can use with Claude Code, Cursor, Copilot, and other MCP-compatible AI coding assistants.
 
 To learn about how it's built and how to use it, see the [xmtp-docs-mcp repo](https://github.com/xmtp/xmtp-docs-mcp).
 
@@ -3790,7 +3790,6 @@ Because XMTP is a protocol, not a platform:
 - [Why build with XMTP?](/chat-apps/intro/why-xmtp) - Understand the benefits and use cases
 - [Try xmtp.chat](https://xmtp.chat) - Experience XMTP as a user before you build
 - [Get started building](/chat-apps/intro/get-started) - Jump into implementation with your chosen SDK
-
 
 ## chat-apps/intro/why-xmtp.mdx
 # Why build with XMTP?
@@ -8309,7 +8308,7 @@ For example:
 2. Set `retentionDurationInNs` to the message lifespan, such as 1800000000000000 (30 minutes).
 3. Use `disappearStartingAtNs` and `retentionDurationInNs` to calculate the message expiration time of `1738620126404999936 + 1800000000000000 = 1740420126404999936`.
 
-To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings_node/src/conversation.rs#L49).
+To learn more, see [conversation.rs](https://github.com/xmtp/libxmtp/blob/main/bindings/wasm/src/conversation.rs#L861).
 
 ## Set disappearing message settings on conversation create
 
@@ -8505,7 +8504,7 @@ try conversation.isDisappearingMessagesEnabled()
 
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
-To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_mls/src/groups/disappearing_messages.rs#L68).
+To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_mls/src/groups/disappearing_messages.rs#L16).
 
 
 ## Access disappearing message expiration timestamps
@@ -11107,7 +11106,7 @@ This video provides a walkthrough of XMTP's implementation of MLS.
   allowFullScreen
 ></iframe>
 
-To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/xmtp_mls).
+To dive deeper into how XMTP implements MLS, see the [XMTP MLS protocol specification](https://github.com/xmtp/libxmtp/tree/main/crates/xmtp_mls).
 
 ## A deep dive into messaging security properties
 
@@ -11309,20 +11308,6 @@ If you decide to change the recovery address, a **Sign this message?** window di
 
 Sign with the wallet address you want to set as the recovery address to change the recovery address.
 
-## Sign to consent to receive broadcast messages
-
-When you click a **Subscribe** button built with XMTP's consent standards, you're prompted to sign an **XMTP : Grant inbox consent to sender** message.
-
-For example, here's the MetaMask **Signature request** window that displays when clicking the **Subscribe** button on this [example subscription page](https://subscribe-broadcast.vercel.app/subscribe/button) connected to the XMTP `dev` network. You typically see **Subscribe** buttons like this on a web page or in a dapp.
-
-![MetaMask wallet browser extension Signature request window showing an "XMTP: Grant inbox consent to sender" message](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/main/docs/pages/img/consent-proof-sign.png)
-
-When you click **Sign**, you're consenting to receive broadcast messages from the publisher at your connected wallet address. You can see the publisher's sending address in the **Signature request** window.
-
-When you provide consent, you're adding the publisher's address to your personal XMTP allowed contacts list. This enables messages from the publisher to be displayed in your main inbox instead of being treated as a message from an unknown sender and placed in a secondary view.
-
-To learn about XMTP's consent standards, see [Understand how user consent preferences support spam-free inboxes](/chat-apps/user-consent/user-consent).
-
 
 ## protocol/topics.mdx
 # Topics with XMTP
@@ -11419,7 +11404,7 @@ The Testnet of the decentralized XMTP network includes two distributed systems:
 - The XMTP Broadcast Network
 - The XMTP App Chain, which is an L3 blockchain securing all metadata that require strict ordering.
 
-To learn more, see [Decentralizing XMTP](https://xmtp.org/vision/concepts/decentralizing-xmtp).
+To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
 The `dev` and `production` XMTP network environments do not use a blockchain. Nodes in these networks run software to store and transfer messages between blockchain accounts. For secure and reliable delivery of messages, the nodes participate in a consensus mechanism.
 
@@ -11768,7 +11753,7 @@ At this time, you can access the XMTP Testnet Funding Portal: [https://testnet.f
 
 Use this testnet-staging deployment to test fund and withdrawal flows using a mock token called mUSD (mock USD fee token).
 
-To learn how to get mUSD, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
+To learn how to get mUSD, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-musd).
 
 Currently, mUSD balances on testnet-staging are unaffected by usage.
 
@@ -11811,7 +11796,7 @@ Your payer wallet is now a payer in the Payer Registry smart contract.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-musd).
 
 :::
 
@@ -11897,7 +11882,7 @@ Your wallet can now fund the payer wallet.
 
 :::tip[Using testnet-staging?]
 
-If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-mUSD).
+If you are using the testnet-staging deployment of the XMTP Funding Portal, you must use mUSD, not USDC. To get mUSD, you must self-mint it. To learn how, see [Self-mint mUSD](#for-use-with-testnet-staging-only-self-mint-musd).
 
 :::
 

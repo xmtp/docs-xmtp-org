@@ -9,10 +9,6 @@ on:
       - 'docs/**/*.mdx'
       - '!llms/llms-*.txt'
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,8 +47,14 @@ jobs:
           base: main
           delete-branch: true
 
+      - name: Auto-approve PR
+        if: steps.create-pr.outputs.pull-request-number
+        run: gh pr review --approve "${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.LLMS_PAT }}
+
       - name: Enable auto-merge
         if: steps.create-pr.outputs.pull-request-number
         run: gh pr merge --auto --squash "${{ steps.create-pr.outputs.pull-request-number }}"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.LLMS_PAT }}
