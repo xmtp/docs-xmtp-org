@@ -2,55 +2,42 @@
 
 Use the reply content type to support quote replies with your agent. A reply is a method to directly respond to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 
-## Install the package
-
-In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reply
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reply
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reply
-```
-
-:::
+The reply content type is built into the Agent SDK. No installation is required.
 
 ## Send a reply
 
-Once you've created a reply, you can send it. Replies are represented as objects with two keys:
-
-- `reference`: ID of the message being replied to
-
-- `content`: String representation of the reply
+Once you've created a reply, you can send it. Replies include the original message being replied to, allowing you to display the parent message context without an additional lookup.
 
 ```ts [Node]
-import { ContentTypeText } from '@xmtp/content-type-text';
-import { ContentTypeReply } from '@xmtp/content-type-reply';
-import type { Reply } from '@xmtp/content-type-reply';
+import { encodeText } from '@xmtp/node-sdk';
 
-const reply: Reply = {
+// Simple helper method
+await ctx.sendTextReply('I concur');
+
+// Full reply object with reference
+await ctx.conversation.sendReply({
+  content: encodeText('I concur'),
   reference: someMessageID,
-  contentType: ContentTypeText,
-  content: 'I concur',
-};
-
-await ctx.sendTextReply(reply);
+  referenceInboxId: ctx.message.senderInboxId,
+});
 ```
 
 ## Receive a reply
 
+Replies now include enriched information, including the original message being replied to:
+
 ```tsx [Node]
+import type { EnrichedReply } from '@xmtp/node-sdk';
+
 agent.on('reply', async (ctx) => {
-  const message = ctx.message;
-  const replyContent = message.content;
-  console.log(`New reply: ${replyContent.content}`);
+  const reply: EnrichedReply = ctx.message.content;
+  console.log(`New reply: ${reply.content}`);
+  console.log(`Replying to message: ${reply.referenceId}`);
+  
+  // Access the original message being replied to
+  if (reply.inReplyTo) {
+    console.log(`Original message: ${reply.inReplyTo.content}`);
+  }
 });
 ```
 
@@ -59,11 +46,10 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-import type { Reply } from '@xmtp/content-type-reply';
+import type { EnrichedReply } from '@xmtp/node-sdk';
 
-if (ctx.usesCodec(ReplyCodec)) {
+if (ctx.isReply()) {
   // We've got a reply.
-  const reply: Reply = ctx.message.content;
+  const reply: EnrichedReply = ctx.message.content;
 }
 ```

@@ -2,33 +2,13 @@
 
 Use the markdown content type to send rich formatted text messages with your agent. Markdown allows you to include headers, lists, tables, code blocks, and other formatting elements to create more engaging and structured messages.
 
-## Install the package
-
-In some SDKs, the `MarkdownCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-markdown
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-markdown
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-markdown
-```
-
-:::
+The markdown content type is built into the Agent SDK. No installation is required.
 
 ## Send markdown content
 
 With XMTP, markdown content is sent as a string containing markdown formatting:
 
 ```tsx [Node]
-import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
-
 // Basic markdown message
 const markdownContent = `## Welcome to XMTP
 
@@ -38,7 +18,7 @@ This is a **bold** message with *italic* text and \`inline code\`.
 - Item 2
 - Item 3`;
 
-await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+await ctx.conversation.sendMarkdown(markdownContent);
 ```
 
 ## Supported markdown patterns
@@ -78,8 +58,6 @@ The markdown content type supports the following formatting patterns:
 ### Example usage
 
 ```tsx [Node]
-import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
-
 const content = `## Results Summary
 
 - **Total items:** ${count}
@@ -103,32 +81,26 @@ const agent = await Agent.create(signer, {
 });
 \`\`\``;
 
-await ctx.conversation.send(content, ContentTypeMarkdown);
+await ctx.conversation.sendMarkdown(content);
 ```
 
 ## Receive markdown content
 
 ```tsx [Node]
-import { MarkdownCodec } from '@xmtp/content-type-markdown';
+agent.on('markdown', async (ctx) => {
+  const markdownContent = ctx.message.content;
+  console.log('Received markdown:', markdownContent);
 
-agent.on('message', async (ctx) => {
-  if (ctx.usesCodec(MarkdownCodec)) {
-    const markdownContent = ctx.message.content;
-    console.log('Received markdown:', markdownContent);
-
-    // Process the markdown content
-    // You can parse it, extract data, or display it formatted
-  }
+  // Process the markdown content
+  // You can parse it, extract data, or display it formatted
 });
 ```
 
 ## Filter for markdown content
 
 ```tsx [Node]
-import { MarkdownCodec } from '@xmtp/content-type-markdown';
-
 // Check if the message contains markdown
-if (ctx.usesCodec(MarkdownCodec)) {
+if (ctx.isMarkdown()) {
   const markdown: string = ctx.message.content;
   // Handle markdown content
 }

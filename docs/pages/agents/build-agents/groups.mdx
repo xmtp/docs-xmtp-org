@@ -111,8 +111,8 @@ const isAdmin = group.isAdmin(inboxId);
 const isSuperAdmin = group.isSuperAdmin(inboxId);
 
 // List admins
-const admins = group.admins;
-const superAdmins = group.superAdmins;
+const admins = group.listAdmins();
+const superAdmins = group.listSuperAdmins();
 
 // Add/remove admin status
 await group.addAdmin(inboxId);

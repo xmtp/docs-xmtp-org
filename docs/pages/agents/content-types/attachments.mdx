@@ -6,25 +6,7 @@ Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage p
 To learn more, see the [Attachment example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
 ::::
 
-## Install the package
-
-In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-::::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-remote-attachment
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-remote-attachment
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-remote-attachment
-```
-
-::::
+The remote attachment content type is built into the Agent SDK. No installation is required.
 
 ## Send a remote attachment
 
@@ -56,15 +38,12 @@ const attachment = {
 };
 ```
 
-Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+Use `encryptAttachment` to encrypt an attachment:
 
 ```tsx [Node]
-import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
+import { encryptAttachment } from '@xmtp/node-sdk';
 
-const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
-  attachment,
-  new AttachmentCodec()
-);
+const encryptedAttachment = await encryptAttachment(attachment);
 ```
 
 Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
@@ -72,22 +51,24 @@ Upload an encrypted attachment to a location where it will be accessible via an 
 Now that you have a `url`, you can create a `RemoteAttachment`:
 
 ```tsx [Node]
-const remoteAttachment = {
+import type { RemoteAttachment } from '@xmtp/node-sdk';
+
+const remoteAttachment: RemoteAttachment = {
   url: url,
-  contentDigest: encryptedEncoded.digest,
-  salt: encryptedEncoded.salt,
-  nonce: encryptedEncoded.nonce,
-  secret: encryptedEncoded.secret,
+  contentDigest: encryptedAttachment.contentDigest,
+  salt: encryptedAttachment.salt,
+  nonce: encryptedAttachment.nonce,
+  secret: encryptedAttachment.secret,
   scheme: 'https://',
-  filename: attachment.filename,
-  contentLength: attachment.data.byteLength,
+  filename: encryptedAttachment.filename,
+  contentLength: encryptedAttachment.contentLength,
 };
 ```
 
 Now that you have a remote attachment, you can send it:
 
 ```tsx [Node]
-await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
+await ctx.conversation.sendRemoteAttachment(remoteAttachment);
 ```
 
 ## Receive, decode, and decrypt a remote attachment
@@ -95,16 +76,16 @@ await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```ts [Node]
-import {
-  AttachmentCodec,
-  ContentTypeRemoteAttachment,
-  RemoteAttachmentCodec,
-} from '@xmtp/content-type-remote-attachment';
+import { decryptAttachment } from '@xmtp/node-sdk';
+import type { RemoteAttachment } from '@xmtp/node-sdk';
 
-if (ctx.usesCodec(RemoteAttachmentCodec)) {
-  const attachment = await RemoteAttachmentCodec.load(
-    ctx.message.content,
-    client
+if (ctx.isRemoteAttachment()) {
+  const remoteAttachment: RemoteAttachment = ctx.message.content;
+  // Download encrypted bytes from remoteAttachment.url
+  const encryptedBytes = await fetch(remoteAttachment.url).then(r => r.arrayBuffer());
+  const attachment = await decryptAttachment(
+    new Uint8Array(encryptedBytes),
+    remoteAttachment
   );
 }
 ```
