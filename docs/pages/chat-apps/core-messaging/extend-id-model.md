@@ -4,6 +4,8 @@ XMTP is designed with a flexible identity model that can be extended over time w
 
 This document provides a general blueprint for how to extend XMTP to non-EVM platforms where identities are controlled by public keys, such as Solana, Bitcoin, Zcash, and others.
 
+![Many IDs to one XMTP inbox](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/many-ids-to-one-inbox.png)
+
 ### Why is extension needed for non-EVM chains?
 
 XMTP is designed to support EVM chains by default. EVMs all share the same address format and signature scheme.
@@ -19,7 +21,7 @@ For example, see the different address formats, signature schemes, signature sta
   | **Address format** | Hex (`0x...`) | Base58 (`7EcD...LtV`) | Bech32 (`bc1...`) |
   | **Signature scheme** | secp256k1 ECDSA | Ed25519 | secp256k1 ECDSA |
   | **Signature standard** | EIP-191 / ERC-1271 | Solana-specific | BIP-137 or similar |
-  | **Verification** | Recover address from signature | Verify against public key | Varies by wallet |
+  | **Verification** | Recover address from signature | Verify against public key | BIP-137 or similar |
 
 ## XMTP inboxes and identity updates
 
@@ -105,7 +107,7 @@ New identity types are designed to live inside an inbox created with a passkey o
 
 Two-way associations are possible: A member of a conversation can see which addresses are associated with a given inbox, and any user of the network can see which inbox is associated with an address.
 
-| **Action** | **Passkey** | **Ethereum Wallet** | **New identity type** | **Passkey + New identity type** |
+| **Action** | **Passkey** | **Ethereum wallet** | **New identity type** | **Passkey + new identity type** |
 | --- | --- | --- | --- | --- |
 | **Associate identifier with an inbox** | ❌ | ✅ | ✅ | ✅ |
 | **Resolve address to inbox ID** | ❌ | ✅ | ✅ | ✅ |
