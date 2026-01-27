@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 08:06 PM UTC / January 26, 2026
+Generated at 12:45 AM UTC / January 27, 2026
 
 ## About this file
 
@@ -8663,39 +8663,18 @@ Every account on your target platform has a unique identifier (an address or pub
 
 You'll need to:
 
-1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
-2. Add a new variant to the `MemberIdentifier` protobuf message
-3. Add a new entry to the `IdentifierKind` enum
-
-   ```proto
-   // The identifier for a member of an XID
-   message MemberIdentifier {
-     oneof kind {
-       string ethereum_address = 1;
-       bytes installation_public_key = 2;
-       Passkey passkey = 3;
-       // Add your new identifier type here
-     }
-   }
-
-   // List of identity kinds
-   enum IdentifierKind {
-     IDENTIFIER_KIND_UNSPECIFIED = 0;
-     IDENTIFIER_KIND_ETHEREUM = 1;
-     IDENTIFIER_KIND_PASSKEY = 2;
-     // Add your new identifier kind here
-   }
-   ```
+1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
+2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto). in the proto repo.
 
 ### Implement signature verification
 
 To link an XMTP identity with an account on your target platform, you need to implement a signature verifier.
 
-Use the existing verifiers in [verified_signature.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/verified_signature.rs) as a reference.
+Use the existing verifiers in [verified_signature.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/verified_signature.rs) as a reference.
 
 Your implementation should:
 
-1. Create a new signature type and corresponding [protobuf message types](https://github.com/xmtp/proto/blob/main/proto/identity/associations/signature.proto) in the XMTP proto repo so it can be used in identity updates
+1. Create a new signature type and corresponding [protobuf message types](https://github.com/xmtp/proto/blob/main/proto/identity/associations/signature.proto) in the proto repo so it can be used in identity updates
 
 2. Collect proof that the owner of the identifier has approved the challenge
 
