@@ -24,10 +24,11 @@ The EOA signer must have 3 properties: the account type, a function that returns
 
 ```tsx [Browser]
 import type { Signer, Identifier } from '@xmtp/browser-sdk';
+import { IdentifierKind } from '@xmtp/browser-sdk';
 
 const accountIdentifier: Identifier = {
   identifier: '0x...', // Ethereum address as the identifier
-  identifierKind: 'Ethereum', // Specifies the identity type
+  identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
@@ -158,6 +159,8 @@ The code snippets below are examples only and will need to be adapted based on y
 :::code-group
 
 ```tsx [Browser]
+import { IdentifierKind } from '@xmtp/browser-sdk';
+
 export const createSCWSigner = (
   address: `0x${string}`,
   walletClient: WalletClient,
@@ -167,7 +170,7 @@ export const createSCWSigner = (
     type: "SCW",
     getIdentifier: () => ({
       identifier: address.toLowerCase(),
-      identifierKind: "Ethereum",
+      identifierKind: IdentifierKind.Ethereum,
     }),
     signMessage: async (message: string) => {
       const signature = await walletClient.signMessage({

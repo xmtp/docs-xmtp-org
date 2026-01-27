@@ -468,9 +468,14 @@ await group.sync();
 // get group members
 const members = await group.members();
 
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
+// map inbox ID to account identifiers
+const inboxIdIdentifiersMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentifiers])
+);
+
+// find Ethereum address for a member
+const ethIdentifier = members[0].accountIdentifiers.find(
+  (id) => id.identifierKind === IdentifierKind.Ethereum
 );
 ```
 
@@ -481,9 +486,14 @@ await group.sync();
 // get group members
 const members = group.members;
 
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
+// map inbox ID to account identifiers
+const inboxIdIdentifiersMap = new Map(
+  members.map((member) => [member.inboxId, member.accountIdentifiers])
+);
+
+// find Ethereum address for a member
+const ethIdentifier = members[0].accountIdentifiers.find(
+  (id) => id.identifierKind === IdentifierKind.Ethereum
 );
 ```
 
