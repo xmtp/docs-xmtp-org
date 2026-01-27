@@ -41,7 +41,7 @@ const attachment = {
 Use `encryptAttachment` to encrypt an attachment:
 
 ```tsx [Node]
-import { encryptAttachment } from '@xmtp/node-sdk';
+import { encryptAttachment } from '@xmtp/agent-sdk';
 
 const encryptedAttachment = await encryptAttachment(attachment);
 ```
@@ -51,7 +51,7 @@ Upload an encrypted attachment to a location where it will be accessible via an 
 Now that you have a `url`, you can create a `RemoteAttachment`:
 
 ```tsx [Node]
-import type { RemoteAttachment } from '@xmtp/node-sdk';
+import type { RemoteAttachment } from '@xmtp/agent-sdk';
 
 const remoteAttachment: RemoteAttachment = {
   url: url,
@@ -76,8 +76,8 @@ await ctx.conversation.sendRemoteAttachment(remoteAttachment);
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```ts [Node]
-import { decryptAttachment } from '@xmtp/node-sdk';
-import type { RemoteAttachment } from '@xmtp/node-sdk';
+import { decryptAttachment } from '@xmtp/agent-sdk';
+import type { RemoteAttachment } from '@xmtp/agent-sdk';
 
 if (ctx.isRemoteAttachment()) {
   const remoteAttachment: RemoteAttachment = ctx.message.content;

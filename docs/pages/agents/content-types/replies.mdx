@@ -9,7 +9,7 @@ The reply content type is built into the Agent SDK. No installation is required.
 Once you've created a reply, you can send it. Replies include the original message being replied to, allowing you to display the parent message context without an additional lookup.
 
 ```ts [Node]
-import { encodeText } from '@xmtp/node-sdk';
+import { encodeText } from '@xmtp/agent-sdk';
 
 // Simple helper method
 await ctx.sendTextReply('I concur');
@@ -27,7 +27,7 @@ await ctx.conversation.sendReply({
 Replies now include enriched information, including the original message being replied to:
 
 ```tsx [Node]
-import type { EnrichedReply } from '@xmtp/node-sdk';
+import type { EnrichedReply } from '@xmtp/agent-sdk';
 
 agent.on('reply', async (ctx) => {
   const reply: EnrichedReply = ctx.message.content;
@@ -46,7 +46,7 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
-import type { EnrichedReply } from '@xmtp/node-sdk';
+import type { EnrichedReply } from '@xmtp/agent-sdk';
 
 if (ctx.isReply()) {
   // We've got a reply.

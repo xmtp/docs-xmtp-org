@@ -52,7 +52,7 @@ const walletSendCalls: WalletSendCallsParams = {
 Once you have a transaction request, you can send it as part of your conversation:
 
 ```ts [Node]
-import type { WalletSendCalls } from '@xmtp/node-sdk';
+import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
 await conversation.sendWalletSendCalls(walletSendCalls);
 ```
@@ -62,7 +62,7 @@ await conversation.sendWalletSendCalls(walletSendCalls);
 To receive and process a transaction request:
 
 ```ts [Node]
-import type { WalletSendCalls } from '@xmtp/node-sdk';
+import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
 if (ctx.isWalletSendCalls()) {
   const walletSendCalls: WalletSendCalls = ctx.message.content;

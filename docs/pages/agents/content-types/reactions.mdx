@@ -23,8 +23,7 @@ With XMTP, reactions are represented as objects with the following keys:
 - `schema`: Schema of the reaction (Unicode, shortcode, or custom)
 
 ```tsx [Node]
-import { ReactionAction, ReactionSchema } from '@xmtp/node-sdk';
-import type { Reaction } from '@xmtp/node-sdk';
+import { ReactionAction, ReactionSchema, type Reaction } from '@xmtp/agent-sdk';
 
 // Simple
 await ctx.sendReaction('❤️');
@@ -56,7 +55,7 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
-import type { Reaction } from '@xmtp/node-sdk';
+import type { Reaction } from '@xmtp/agent-sdk';
 
 if (ctx.isReaction()) {
   // We've got a reaction.

@@ -43,7 +43,7 @@ const transactionReference: TransactionReference = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-import type { TransactionReference } from '@xmtp/node-sdk';
+import type { TransactionReference } from '@xmtp/agent-sdk';
 
 await ctx.conversation.sendTransactionReference(transactionReference);
 ```
@@ -53,7 +53,7 @@ await ctx.conversation.sendTransactionReference(transactionReference);
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
-import type { TransactionReference } from '@xmtp/node-sdk';
+import type { TransactionReference } from '@xmtp/agent-sdk';
 
 if (ctx.isTransactionReference()) {
   const transactionRef: TransactionReference = ctx.message.content;
