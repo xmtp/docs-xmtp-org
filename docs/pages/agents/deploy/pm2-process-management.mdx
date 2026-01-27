@@ -22,7 +22,7 @@ pnpm add pm2
 
 ::::
 
-## Ecosystem Config File
+## Ecosystem config file
 
 Create `ecosystem.config.cjs` with the following structure:
 
@@ -53,15 +53,15 @@ module.exports = {
 };
 ```
 
-### Critical Config Settings
+### Critical config settings
 
 - **`unstable_restarts: 10000`** - REQUIRED. Without this, PM2 will stop restarting if it detects the process as "unstable" (crashing too quickly). This allows PM2 to keep restarting even during rapid crash cycles.
 - **`min_uptime: 1000`** - Process must run at least 1 second to be considered stable
 - **`restart_delay: 4000`** - Wait 4 seconds before restarting (prevents rapid restart loops)
 
-## Agent Code Pattern
+## Agent code pattern
 
-### 1. Restart Logging (FIRST THING)
+### 1. Restart logging (FIRST THING)
 
 Add restart logging as the very first line of code, before any async operations:
 
@@ -74,7 +74,7 @@ console.log(
 
 This log appears immediately when PM2 restarts the process, making it easy to track restarts in logs.
 
-### 2. Error Handlers
+### 2. Error handlers
 
 Add this error handler after agent creation but before `agent.start()`:
 
@@ -94,13 +94,13 @@ agent.on("unhandledError", (error) => {
 
 ## Troubleshooting
 
-### PM2 Shows "waiting restart" but Never Restarts
+### PM2 shows "waiting restart" but never restarts
 
 **Symptom**: PM2 status shows "waiting restart" but no new process spawns.
 
 **Solution**: Add `unstable_restarts: 10000` to ecosystem config. PM2 is blocking restarts because it thinks the process is unstable.
 
-### No Restart Logs Appearing
+### No restart logs appearing
 
 **Symptom**: Process crashes but `[RESTART]` logs never appear.
 
@@ -110,7 +110,7 @@ agent.on("unhandledError", (error) => {
 2. Check PM2 config has `unstable_restarts: 10000`
 3. Check PM2 logs: `pm2 logs <bot-name> --raw`
 
-### Process Restarts Too Quickly
+### Process restarts too quickly
 
 **Symptom**: Process restarts in a tight loop.
 

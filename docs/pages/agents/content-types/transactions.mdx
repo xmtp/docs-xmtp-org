@@ -6,23 +6,7 @@ This package provides an XMTP content type to support sending transactions to a 
 To learn more, see the [Transactions example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 ::::
 
-## Install the package
-
-::::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-wallet-send-calls
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-wallet-send-calls
-```
-
-```bash [pnpm]
-pnpm i @xmtp/content-type-wallet-send-calls
-```
-
-::::
+The wallet send calls content type is built into the Agent SDK. No installation is required.
 
 ## Create a transaction request
 
@@ -65,12 +49,12 @@ const walletSendCalls: WalletSendCallsParams = {
 
 ## Send a transaction request
 
-Once you have a transaction reference, you can send it as part of your conversation:
+Once you have a transaction request, you can send it as part of your conversation:
 
 ```ts [Node]
-import { ContentTypeWalletSendCalls } from '@xmtp/content-type-wallet-send-calls';
+import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
-await conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
+await conversation.sendWalletSendCalls(walletSendCalls);
 ```
 
 ## Receive a transaction request
@@ -78,9 +62,10 @@ await conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
 To receive and process a transaction request:
 
 ```ts [Node]
-import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
+import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(WalletSendCallsCodec)) {
+if (ctx.isWalletSendCalls()) {
+  const walletSendCalls: WalletSendCalls = ctx.message.content;
   // Process the transaction request here
 }
 ```
