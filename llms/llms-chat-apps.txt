@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 01:51 AM UTC / January 27, 2026
+Generated at 02:40 AM UTC / January 27, 2026
 
 ## About this file
 
@@ -8063,9 +8063,11 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. 
 
-Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
+For example, use optimistic group creation when your user creates a new group without any members listed.
+
+This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
 
 The group chat can be created with any number of [standard options](#create-a-new-group-chat), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
 
