@@ -252,6 +252,42 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
 
+### Control when a message is published
+
+For more control over when a prepared message is published, use the `noSend` parameter. When `noSend` is `true`, the message won't be published until you explicitly call `publishMessage(messageId)`. This is particularly useful for [remote attachments](/chat-apps/content-types/attachments) where an upload might fail.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Prepare message without auto-publishing
+val messageId = conversation.prepareMessage(
+    content = content,
+    noSend = true
+)
+
+// Later, publish the specific message
+conversation.publishMessage(messageId)
+
+// Or delete it locally if needed
+conversation.deleteMessageLocally(messageId)
+```
+
+```swift [Swift]
+// Prepare message without auto-publishing
+let messageId = try await conversation.prepareMessage(
+    content: content,
+    noSend: true
+)
+
+// Later, publish the specific message
+try await conversation.publishMessage(messageId: messageId)
+
+// Or delete it locally if needed
+try await conversation.deleteMessageLocally(messageId: messageId)
+```
+
+:::
+
 ## Handle unsupported content types
 
 As more [custom](/chat-apps/content-types/custom) and [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
