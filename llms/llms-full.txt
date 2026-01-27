@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 12:45 AM UTC / January 27, 2026
+Generated at 01:51 AM UTC / January 27, 2026
 
 ## About this file
 
@@ -10393,80 +10393,6 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
 - After optimistically sending a message, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
-
-## Handle unsupported content types
-
-As more [custom](/chat-apps/content-types/custom) and [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
-
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/chat-apps/content-types/custom).
-
-:::code-group
-
-```js [Browser]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-:::
 
 
 ## chat-apps/core-messaging/support-group-invite-links.mdx
