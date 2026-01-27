@@ -60,27 +60,6 @@ You'll need to:
 
 1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
 2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto). in the proto repo.
-3. Add a new entry to the `IdentifierKind` enum
-
-   ```proto
-   // The identifier for a member of an XID
-   message MemberIdentifier {
-     oneof kind {
-       string ethereum_address = 1;
-       bytes installation_public_key = 2;
-       Passkey passkey = 3;
-       // Add your new identifier type here
-     }
-   }
-
-   // List of identity kinds
-   enum IdentifierKind {
-     IDENTIFIER_KIND_UNSPECIFIED = 0;
-     IDENTIFIER_KIND_ETHEREUM = 1;
-     IDENTIFIER_KIND_PASSKEY = 2;
-     // Add your new identifier kind here
-   }
-   ```
 
 ### Implement signature verification
 
