@@ -1,0 +1,165 @@
+---
+description: Learn how to use the intent content type to respond to actions in your app built with XMTP
+---
+
+# Support intents in your app built with XMTP
+
+Use the intent content type to respond to [action messages](/chat-apps/content-types/actions). An intent represents a user's selection from an actions message, enabling interactive workflows within conversations.
+
+## How intents work
+
+When a user selects an option from an actions message, your app sends an intent to indicate their choice. The intent references the selected action by its ID and can include optional metadata.
+
+## Send an intent
+
+Intents are represented as objects with the following keys:
+
+- `id`: Unique identifier for the intent
+- `actionId`: ID of the selected action from the actions message
+- `metadata`: Optional object containing additional data (maximum 10KB)
+
+:::code-group
+
+```tsx [Browser]
+const intent = {
+  id: "intent-456",
+  actionId: "confirm", // ID of the action the user selected
+  metadata: {
+    timestamp: Date.now(),
+    source: "mobile",
+  },
+};
+
+await conversation.sendIntent(intent);
+```
+
+```tsx [Node]
+const intent = {
+  id: "intent-456",
+  actionId: "confirm", // ID of the action the user selected
+  metadata: {
+    timestamp: Date.now(),
+    source: "server",
+  },
+};
+
+await conversation.sendIntent(intent);
+```
+
+:::
+
+## Receive intents
+
+When receiving an intent, you can determine which action the user selected and access any metadata.
+
+:::code-group
+
+```tsx [Browser]
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (message.contentType.typeId === "intent") {
+    const intent = message.content;
+    console.log("User selected action:", intent.actionId);
+
+    if (intent.metadata) {
+      console.log("Metadata:", intent.metadata);
+    }
+  }
+}
+```
+
+```tsx [Node]
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (message.contentType.typeId === "intent") {
+    const intent = message.content;
+    console.log("User selected action:", intent.actionId);
+
+    if (intent.metadata) {
+      console.log("Metadata:", intent.metadata);
+    }
+  }
+}
+```
+
+:::
+
+## Example workflow
+
+Here's an example of a complete actions and intents workflow:
+
+:::code-group
+
+```tsx [Browser]
+// 1. Send an actions message
+const actions = {
+  id: "payment-confirmation",
+  description: "Confirm payment of 0.1 ETH?",
+  actions: [
+    { id: "approve", label: "Approve", style: "primary" },
+    { id: "reject", label: "Reject", style: "danger" },
+  ],
+};
+
+await conversation.sendActions(actions);
+
+// 2. When the recipient selects an option, they send an intent
+const intent = {
+  id: "response-789",
+  actionId: "approve",
+  metadata: {
+    confirmedAt: new Date().toISOString(),
+  },
+};
+
+await conversation.sendIntent(intent);
+
+// 3. The original sender receives the intent and processes it
+const messages = await conversation.messages();
+const intentMessage = messages.find((m) => m.contentType.typeId === "intent");
+
+if (intentMessage?.content.actionId === "approve") {
+  // Process the approved payment
+}
+```
+
+```tsx [Node]
+// 1. Send an actions message
+const actions = {
+  id: "payment-confirmation",
+  description: "Confirm payment of 0.1 ETH?",
+  actions: [
+    { id: "approve", label: "Approve", style: "primary" },
+    { id: "reject", label: "Reject", style: "danger" },
+  ],
+};
+
+await conversation.sendActions(actions);
+
+// 2. When the recipient selects an option, they send an intent
+const intent = {
+  id: "response-789",
+  actionId: "approve",
+  metadata: {
+    confirmedAt: new Date().toISOString(),
+  },
+};
+
+await conversation.sendIntent(intent);
+
+// 3. The original sender receives the intent and processes it
+const messages = await conversation.messages();
+const intentMessage = messages.find((m) => m.contentType.typeId === "intent");
+
+if (intentMessage?.content.actionId === "approve") {
+  // Process the approved payment
+}
+```
+
+:::
+
+## Notifications and intents
+
+Intents have `shouldPush` set to `true`, which means intents trigger push notifications.

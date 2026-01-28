@@ -1,0 +1,154 @@
+---
+description: Learn how to use the actions content type to support interactive action buttons in your app built with XMTP
+---
+
+# Support actions in your app built with XMTP
+
+Use the actions content type to send interactive messages with selectable options. Actions enable users to choose from a list of predefined options, making it easy to build interactive experiences like polls, confirmations, or multi-step workflows.
+
+## How actions work
+
+An action message displays a prompt with numbered options. Recipients can respond by selecting one of the options, which sends an [intent](/chat-apps/content-types/intents) back to indicate their selection.
+
+## Send actions
+
+Actions are represented as objects with the following keys:
+
+- `id`: Unique identifier for the action set
+- `description`: Prompt text displayed to users
+- `actions`: Array of action options (1-10 maximum)
+- `expiresAt`: Optional expiration timestamp (ISO 8601 format)
+
+Each action in the `actions` array has:
+
+- `id`: Unique identifier for the action (must be unique within the set)
+- `label`: Display text for the option
+- `imageUrl`: Optional URL for an image
+- `style`: Optional styling (`primary`, `secondary`, or `danger`)
+- `expiresAt`: Optional individual expiration timestamp
+
+:::code-group
+
+```tsx [Browser]
+const actions = {
+  id: "action-123",
+  description: "Would you like to proceed with the transaction?",
+  actions: [
+    {
+      id: "confirm",
+      label: "Confirm",
+      style: "primary",
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      style: "secondary",
+    },
+  ],
+};
+
+await conversation.sendActions(actions);
+```
+
+```tsx [Node]
+const actions = {
+  id: "action-123",
+  description: "Would you like to proceed with the transaction?",
+  actions: [
+    {
+      id: "confirm",
+      label: "Confirm",
+      style: "primary",
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      style: "secondary",
+    },
+  ],
+};
+
+await conversation.sendActions(actions);
+```
+
+:::
+
+## Receive actions
+
+When receiving an actions message, you can access its content to display the options to the user.
+
+:::code-group
+
+```tsx [Browser]
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (message.contentType.typeId === "actions") {
+    const actions = message.content;
+    console.log(actions.description);
+    for (const action of actions.actions) {
+      console.log(`[${action.id}] ${action.label}`);
+    }
+  }
+}
+```
+
+```tsx [Node]
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (message.contentType.typeId === "actions") {
+    const actions = message.content;
+    console.log(actions.description);
+    for (const action of actions.actions) {
+      console.log(`[${action.id}] ${action.label}`);
+    }
+  }
+}
+```
+
+:::
+
+## Handle action expiration
+
+Actions can have expiration timestamps at both the message level and individual action level. Check the `expiresAt` field before displaying options to users.
+
+:::code-group
+
+```tsx [Browser]
+const actions = message.content;
+
+// Check if the entire action set has expired
+if (actions.expiresAt && new Date(actions.expiresAt) < new Date()) {
+  console.log("This action has expired");
+  return;
+}
+
+// Filter out expired individual actions
+const validActions = actions.actions.filter((action) => {
+  if (!action.expiresAt) return true;
+  return new Date(action.expiresAt) > new Date();
+});
+```
+
+```tsx [Node]
+const actions = message.content;
+
+// Check if the entire action set has expired
+if (actions.expiresAt && new Date(actions.expiresAt) < new Date()) {
+  console.log("This action has expired");
+  return;
+}
+
+// Filter out expired individual actions
+const validActions = actions.actions.filter((action) => {
+  if (!action.expiresAt) return true;
+  return new Date(action.expiresAt) > new Date();
+});
+```
+
+:::
+
+## Respond to actions
+
+When a user selects an action, send an [intent](/chat-apps/content-types/intents) to indicate their choice.

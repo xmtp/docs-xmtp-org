@@ -497,6 +497,14 @@ export const sidebarConfig = {
           link: "/chat-apps/content-types/read-receipts",
         },
         {
+          text: "Actions",
+          link: "/chat-apps/content-types/actions",
+        },
+        {
+          text: "Intents",
+          link: "/chat-apps/content-types/intents",
+        },
+        {
           text: "Custom content",
           link: "/chat-apps/content-types/custom",
         },
