@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 08:06 PM UTC / January 26, 2026
+Generated at 02:40 AM UTC / January 27, 2026
 
 ## About this file
 
@@ -8064,9 +8064,11 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. 
 
-Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
+For example, use optimistic group creation when your user creates a new group without any members listed.
+
+This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
 
 The group chat can be created with any number of [standard options](#create-a-new-group-chat), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
 
@@ -8663,39 +8665,18 @@ Every account on your target platform has a unique identifier (an address or pub
 
 You'll need to:
 
-1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
-2. Add a new variant to the `MemberIdentifier` protobuf message
-3. Add a new entry to the `IdentifierKind` enum
-
-   ```proto
-   // The identifier for a member of an XID
-   message MemberIdentifier {
-     oneof kind {
-       string ethereum_address = 1;
-       bytes installation_public_key = 2;
-       Passkey passkey = 3;
-       // Add your new identifier type here
-     }
-   }
-
-   // List of identity kinds
-   enum IdentifierKind {
-     IDENTIFIER_KIND_UNSPECIFIED = 0;
-     IDENTIFIER_KIND_ETHEREUM = 1;
-     IDENTIFIER_KIND_PASSKEY = 2;
-     // Add your new identifier kind here
-   }
-   ```
+1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
+2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto). in the proto repo.
 
 ### Implement signature verification
 
 To link an XMTP identity with an account on your target platform, you need to implement a signature verifier.
 
-Use the existing verifiers in [verified_signature.rs](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/associations/verified_signature.rs) as a reference.
+Use the existing verifiers in [verified_signature.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/verified_signature.rs) as a reference.
 
 Your implementation should:
 
-1. Create a new signature type and corresponding [protobuf message types](https://github.com/xmtp/proto/blob/main/proto/identity/associations/signature.proto) in the XMTP proto repo so it can be used in identity updates
+1. Create a new signature type and corresponding [protobuf message types](https://github.com/xmtp/proto/blob/main/proto/identity/associations/signature.proto) in the proto repo so it can be used in identity updates
 
 2. Collect proof that the owner of the identifier has approved the challenge
 
@@ -10414,80 +10395,6 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
 - After optimistically sending a message, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
-
-## Handle unsupported content types
-
-As more [custom](/chat-apps/content-types/custom) and [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
-
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/chat-apps/content-types/custom).
-
-:::code-group
-
-```js [Browser]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-:::
 
 
 ## chat-apps/core-messaging/support-group-invite-links.mdx
