@@ -8,7 +8,7 @@ Use the actions content type to send interactive messages with selectable option
 
 ## How actions work
 
-An action message displays a prompt with numbered options. Recipients can respond by selecting one of the options, which sends an [intent](/chat-apps/content-types/intents) back to indicate their selection.
+An action message displays a prompt with options. Recipients can respond by selecting one of the options, which sends an [intent](/chat-apps/content-types/intents) back to indicate their selection.
 
 ## Send actions
 
@@ -30,19 +30,21 @@ Each action in the `actions` array has:
 :::code-group
 
 ```tsx [Browser]
-const actions = {
+import { type Actions, ActionStyle } from "@xmtp/browser-sdk";
+
+const actions: Actions = {
   id: "action-123",
   description: "Would you like to proceed with the transaction?",
   actions: [
     {
       id: "confirm",
       label: "Confirm",
-      style: "primary",
+      style: ActionStyle.Primary,
     },
     {
       id: "cancel",
       label: "Cancel",
-      style: "secondary",
+      style: ActionStyle.Secondary,
     },
   ],
 };
@@ -51,19 +53,21 @@ await conversation.sendActions(actions);
 ```
 
 ```tsx [Node]
-const actions = {
+import { type Actions, ActionStyle } from "@xmtp/node-sdk";
+
+const actions: Actions = {
   id: "action-123",
   description: "Would you like to proceed with the transaction?",
   actions: [
     {
       id: "confirm",
       label: "Confirm",
-      style: "primary",
+      style: ActionStyle.Primary,
     },
     {
       id: "cancel",
       label: "Cancel",
-      style: "secondary",
+      style: ActionStyle.Secondary,
     },
   ],
 };
