@@ -266,6 +266,17 @@ This is useful when sending [remote attachments](/chat-apps/content-types/attach
 
 :::code-group
 
+```tsx [React Native]
+// Prepare message without auto-publishing
+const messageId = await conversation.prepareMessage(content, { noSend: true });
+
+// Publish the specific message when ready
+await conversation.publishMessage(messageId);
+
+// Or delete it locally if needed
+await conversation.deleteMessageLocally(messageId);
+```
+
 ```kotlin [Kotlin]
 // Prepare message without auto-publishing
 val messageId = conversation.prepareMessage(content = content, noSend = true)
