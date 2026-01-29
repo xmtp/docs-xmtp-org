@@ -36,6 +36,11 @@ Attempting to delete these messages will throw an error.
 
 :::code-group
 
+```tsx [React Native]
+// Delete a message by its ID
+await conversation.deleteMessage(messageId);
+```
+
 ```kotlin [Kotlin]
 // Delete a message by its ID
 val deletionId = conversation.deleteMessage(messageId)
@@ -53,6 +58,15 @@ let deletionId = try await conversation.deleteMessage(messageId: messageId)
 The method throws an error if the deletion fails, such as when attempting to delete a message you didn't send (and you're not a super admin).
 
 :::code-group
+
+```tsx [React Native]
+try {
+  await conversation.deleteMessage(messageId);
+  // Message deleted successfully
+} catch (error) {
+  console.log(`Failed to delete message: ${error}`);
+}
+```
 
 ```kotlin [Kotlin]
 try {
@@ -96,6 +110,13 @@ const stream = await client.conversations.streamDeletedMessages();
 for await (const deletedMessageId of stream) {
   console.log("Message deleted:", deletedMessageId);
 }
+```
+
+```tsx [React Native]
+// Stream all message deletions
+await client.conversations.streamMessageDeletions(async (deletedMessage) => {
+  console.log("Message deleted:", deletedMessage.id);
+});
 ```
 
 ```kotlin [Kotlin]
