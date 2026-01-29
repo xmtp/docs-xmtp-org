@@ -269,14 +269,54 @@ for message in messages {
 
 :::
 
-### Stream message deletions
+### Stream deleted messages
 
-Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+Call `streamDeletedMessages` to return a stream of deleted messages. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
 
 :::code-group
 
 ```tsx [Browser]
-// Stream message deletions
+// Stream deleted messages
+const stream = await client.conversations.streamDeletedMessages();
+
+// Listen for deleted messages
+for await (const message of stream) {
+  console.log('Message deleted:', message.id, message.content);
+  // Update your UI to remove this message
+}
+
+// When done, end the stream
+stream.end();
+```
+
+```tsx [Node]
+// Stream deleted messages
+const stream = await client.conversations.streamDeletedMessages();
+
+// Listen for deleted messages
+for await (const message of stream) {
+  console.log('Message deleted:', message.id, message.content);
+  // Update your UI to remove this message
+}
+
+// When done, end the stream
+stream.end();
+```
+
+:::
+
+### Stream message deletion IDs (deprecated)
+
+:::warning[Deprecated]
+The `streamMessageDeletions` method is deprecated in favor of `streamDeletedMessages`. Use `streamDeletedMessages` for new implementations.
+:::
+
+For backwards compatibility, you can still use `streamMessageDeletions` to return a stream of deleted message IDs:
+
+:::code-group
+
+```tsx [Browser]
+// Stream message deletion IDs (deprecated)
 const stream = await client.conversations.streamMessageDeletions();
 
 // Listen for deleted message IDs
@@ -290,7 +330,7 @@ stream.end();
 ```
 
 ```tsx [Node]
-// Stream message deletions
+// Stream message deletion IDs (deprecated)
 const stream = await client.conversations.streamMessageDeletions();
 
 // Listen for deleted message IDs
