@@ -80,6 +80,24 @@ Use `streamMessageDeletions` to listen for message deletion events in real-time 
 
 :::code-group
 
+```tsx [Browser]
+// Stream all message deletions
+const stream = await client.conversations.streamDeletedMessages();
+
+for await (const deletedMessageId of stream) {
+  console.log("Message deleted:", deletedMessageId);
+}
+```
+
+```tsx [Node]
+// Stream all message deletions
+const stream = await client.conversations.streamDeletedMessages();
+
+for await (const deletedMessageId of stream) {
+  console.log("Message deleted:", deletedMessageId);
+}
+```
+
 ```kotlin [Kotlin]
 client.conversations.streamMessageDeletions().collect { deletedMessage ->
     println("Message deleted: ${deletedMessage.id}")
@@ -89,24 +107,6 @@ client.conversations.streamMessageDeletions().collect { deletedMessage ->
 ```swift [Swift]
 for try await deletedMessage in client.conversations.streamMessageDeletions() {
     print("Message deleted: \(deletedMessage.id)")
-}
-```
-
-```tsx [Browser]
-// Stream all message deletions
-const stream = await client.conversations.streamMessageDeletions();
-
-for await (const deletedMessageId of stream) {
-  console.log("Message deleted:", deletedMessageId);
-}
-```
-
-```tsx [Node]
-// Stream all message deletions
-const stream = await client.conversations.streamMessageDeletions();
-
-for await (const deletedMessageId of stream) {
-  console.log("Message deleted:", deletedMessageId);
 }
 ```
 
