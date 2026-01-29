@@ -271,36 +271,54 @@ for message in messages {
 
 ### Stream message deletions
 
-Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+Call `streamDeletedMessages` to return a stream of deleted messages. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+
+:::warning[Deprecated Method]
+The `streamMessageDeletions` method that returns message IDs is deprecated. Use `streamDeletedMessages` instead to get the full deleted message objects.
+:::
 
 :::code-group
 
 ```tsx [Browser]
-// Stream message deletions
-const stream = await client.conversations.streamMessageDeletions();
+// Stream deleted messages (recommended)
+const stream = await client.conversations.streamDeletedMessages();
 
-// Listen for deleted message IDs
-for await (const messageId of stream) {
-  console.log('Message deleted:', messageId);
-  // Update your UI to remove the message with this ID
+// Listen for deleted messages
+for await (const deletedMessage of stream) {
+  console.log('Message deleted:', deletedMessage.id);
+  console.log('Deleted message content:', deletedMessage.content);
+  // Update your UI to remove the message
 }
 
 // When done, end the stream
 stream.end();
+
+// Deprecated: Stream message deletion IDs only
+const idStream = await client.conversations.streamMessageDeletions();
+for await (const messageId of idStream) {
+  console.log('Message deleted:', messageId);
+}
 ```
 
 ```tsx [Node]
-// Stream message deletions
-const stream = await client.conversations.streamMessageDeletions();
+// Stream deleted messages (recommended)
+const stream = await client.conversations.streamDeletedMessages();
 
-// Listen for deleted message IDs
-for await (const messageId of stream) {
-  console.log('Message deleted:', messageId);
-  // Update your UI to remove the message with this ID
+// Listen for deleted messages
+for await (const deletedMessage of stream) {
+  console.log('Message deleted:', deletedMessage.id);
+  console.log('Deleted message content:', deletedMessage.content);
+  // Update your UI to remove the message
 }
 
 // When done, end the stream
 stream.end();
+
+// Deprecated: Stream message deletion IDs only
+const idStream = await client.conversations.streamMessageDeletions();
+for await (const messageId of idStream) {
+  console.log('Message deleted:', messageId);
+}
 ```
 
 :::
