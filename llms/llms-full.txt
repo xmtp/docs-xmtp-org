@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 01:33 AM UTC / January 29, 2026
+Generated at 08:00 AM UTC / January 29, 2026
 
 ## About this file
 
@@ -1879,7 +1879,7 @@ const newMessages = await group.messages({
 });
 
 // Get messages from a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmMessages = await dm.messages({ limit: 50n });
 ```
 
@@ -1897,7 +1897,7 @@ const newMessages = await group.messages({
 });
 
 // Get messages from a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmMessages = await dm.messages({ limit: 50n });
 ```
 
@@ -1970,7 +1970,7 @@ const unreadCount = await group.countMessages({
 });
 
 // Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });
@@ -1987,7 +1987,7 @@ const unreadCount = await group.countMessages({
 });
 
 // Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });
@@ -4443,12 +4443,13 @@ bun i @xmtp/browser-sdk
 // 1. Create an EOA or SCW signer.
 // Details depend on your app's wallet implementation.
 import type { Signer, Identifier } from '@xmtp/browser-sdk';
+import { IdentifierKind } from '@xmtp/browser-sdk';
 
 const signer: Signer = {
   type: 'EOA',
   getIdentifier: () => ({
     identifier: '0x...', // Ethereum address as the identifier
-    identifierKind: 'Ethereum',
+    identifierKind: IdentifierKind.Ethereum,
   }),
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -7513,11 +7514,11 @@ For React Native, Android, and iOS SDKs, when building a client with an existing
 :::code-group
 
 ```tsx [Browser]
-import { Client, type Identifier } from '@xmtp/browser-sdk';
+import { Client, IdentifierKind, type Identifier } from '@xmtp/browser-sdk';
 
 const identifier: Identifier = {
   identifier: '0x1234567890abcdef1234567890abcdef12345678',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 };
 const client = await Client.build(identifier, options);
 ```
@@ -7633,10 +7634,11 @@ The EOA signer must have 3 properties: the account type, a function that returns
 
 ```tsx [Browser]
 import type { Signer, Identifier } from '@xmtp/browser-sdk';
+import { IdentifierKind } from '@xmtp/browser-sdk';
 
 const accountIdentifier: Identifier = {
   identifier: '0x...', // Ethereum address as the identifier
-  identifierKind: 'Ethereum', // Specifies the identity type
+  identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
@@ -7767,6 +7769,8 @@ The code snippets below are examples only and will need to be adapted based on y
 :::code-group
 
 ```tsx [Browser]
+import { IdentifierKind } from '@xmtp/browser-sdk';
+
 export const createSCWSigner = (
   address: `0x${string}`,
   walletClient: WalletClient,
@@ -7776,7 +7780,7 @@ export const createSCWSigner = (
     type: "SCW",
     getIdentifier: () => ({
       identifier: address.toLowerCase(),
-      identifierKind: "Ethereum",
+      identifierKind: IdentifierKind.Ethereum,
     }),
     signMessage: async (message: string) => {
       const signature = await walletClient.signMessage({
@@ -7926,11 +7930,11 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client, type Identifier } from "@xmtp/browser-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/browser-sdk";
 
 const identifiers: Identifier[] = [
-  { identifier: "0xboAddress", identifierKind: "Ethereum" },
-  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -8188,6 +8192,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 :::code-group
 
 ```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
 // get a conversation by its ID
 const conversationById =
   await client.conversations.getConversationById(conversationId);
@@ -8201,7 +8207,7 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
 const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 });
 ```
 
@@ -9402,7 +9408,7 @@ try await client.inboxIdFromIdentity(identity: peerIdentity)
 
 :::
 
-### Get identities for members
+### Get members
 
 :::code-group
 
@@ -9412,11 +9418,6 @@ await group.sync();
 
 // get group members
 const members = await group.members();
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
 ```
 
 ```js [Node]
@@ -9425,21 +9426,14 @@ await group.sync();
 
 // get group members
 const members = group.members;
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
 ```
 
 ```tsx [React Native]
 const members = await group.members();
-const identities = members.map((member) => member.identities);
 ```
 
 ```kotlin [Kotlin]
 val members = group.members()
-val identities = members.map { it.identities }
 ```
 
 ```swift [Swift]
@@ -11889,7 +11883,8 @@ agent.on('text', async (ctx) => {
 
   // Check conversation type
   if (ctx.isDm()) {
-    console.log(`DM with: ${conversation.peerInboxId}`);
+    const peerInboxId = await conversation.peerInboxId();
+    console.log(`DM with: ${peerInboxId}`);
   } else if (ctx.isGroup()) {
     console.log(`Group conversation: ${conversation.name}`);
   }
