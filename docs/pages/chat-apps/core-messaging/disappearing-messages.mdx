@@ -271,12 +271,31 @@ for message in messages {
 
 ### Stream message deletions
 
-Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+XMTP provides two methods to stream message deletions:
+
+- `streamDeletedMessages()`: Returns a stream of the actual deleted messages (recommended)
+- `streamMessageDeletions()`: Returns a stream of deleted message IDs (deprecated)
+
+Both methods create a local stream that doesn't require network sync and will notify you when messages have been deleted from local storage.
 
 :::code-group
 
 ```tsx [Browser]
-// Stream message deletions
+// Stream deleted messages (recommended approach)
+const deletedStream = await client.conversations.streamDeletedMessages({
+  onValue: (message) => {
+    console.log('Message deleted:', message);
+    // Update your UI to remove the message
+  },
+});
+
+// Or use for-await loop
+for await (const deletedMessage of deletedStream) {
+  console.log('Deleted message:', deletedMessage);
+  // Update your UI to remove the message
+}
+
+// Legacy approach: Stream message deletion IDs (deprecated)
 const stream = await client.conversations.streamMessageDeletions();
 
 // Listen for deleted message IDs
@@ -290,7 +309,21 @@ stream.end();
 ```
 
 ```tsx [Node]
-// Stream message deletions
+// Stream deleted messages (recommended approach)
+const deletedStream = await client.conversations.streamDeletedMessages({
+  onValue: (message) => {
+    console.log('Message deleted:', message);
+    // Update your UI to remove the message
+  },
+});
+
+// Or use for-await loop
+for await (const deletedMessage of deletedStream) {
+  console.log('Deleted message:', deletedMessage);
+  // Update your UI to remove the message
+}
+
+// Legacy approach: Stream message deletion IDs (deprecated)
 const stream = await client.conversations.streamMessageDeletions();
 
 // Listen for deleted message IDs
