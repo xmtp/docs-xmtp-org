@@ -457,7 +457,7 @@ try await client.inboxIdFromIdentity(identity: peerIdentity)
 
 :::
 
-### Get identities for members
+### Get members
 
 :::code-group
 
@@ -467,11 +467,6 @@ await group.sync();
 
 // get group members
 const members = await group.members();
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
 ```
 
 ```js [Node]
@@ -480,21 +475,14 @@ await group.sync();
 
 // get group members
 const members = group.members;
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
 ```
 
 ```tsx [React Native]
 const members = await group.members();
-const identities = members.map((member) => member.identities);
 ```
 
 ```kotlin [Kotlin]
 val members = group.members()
-val identities = members.map { it.identities }
 ```
 
 ```swift [Swift]

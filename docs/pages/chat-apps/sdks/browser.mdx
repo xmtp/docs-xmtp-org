@@ -38,12 +38,13 @@ bun i @xmtp/browser-sdk
 // 1. Create an EOA or SCW signer.
 // Details depend on your app's wallet implementation.
 import type { Signer, Identifier } from '@xmtp/browser-sdk';
+import { IdentifierKind } from '@xmtp/browser-sdk';
 
 const signer: Signer = {
   type: 'EOA',
   getIdentifier: () => ({
     identifier: '0x...', // Ethereum address as the identifier
-    identifierKind: 'Ethereum',
+    identifierKind: IdentifierKind.Ethereum,
   }),
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string

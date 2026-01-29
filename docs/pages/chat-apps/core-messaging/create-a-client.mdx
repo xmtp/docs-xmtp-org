@@ -547,11 +547,11 @@ For React Native, Android, and iOS SDKs, when building a client with an existing
 :::code-group
 
 ```tsx [Browser]
-import { Client, type Identifier } from '@xmtp/browser-sdk';
+import { Client, IdentifierKind, type Identifier } from '@xmtp/browser-sdk';
 
 const identifier: Identifier = {
   identifier: '0x1234567890abcdef1234567890abcdef12345678',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 };
 const client = await Client.build(identifier, options);
 ```
