@@ -371,6 +371,10 @@ export const sidebarConfig = {
           link: "/chat-apps/core-messaging/send-messages",
         },
         {
+          text: "Delete messages",
+          link: "/chat-apps/core-messaging/delete-messages",
+        },
+        {
           text: "Support disappearing messages",
           link: "/chat-apps/core-messaging/disappearing-messages",
         },
