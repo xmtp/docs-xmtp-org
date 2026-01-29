@@ -9,11 +9,11 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client, type Identifier } from "@xmtp/browser-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/browser-sdk";
 
 const identifiers: Identifier[] = [
-  { identifier: "0xboAddress", identifierKind: "Ethereum" },
-  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -271,6 +271,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 :::code-group
 
 ```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
 // get a conversation by its ID
 const conversationById =
   await client.conversations.getConversationById(conversationId);
@@ -284,7 +286,7 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
 const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 });
 ```
 

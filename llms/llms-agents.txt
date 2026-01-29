@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 01:33 AM UTC / January 29, 2026
+Generated at 08:00 AM UTC / January 29, 2026
 
 ## About this file
 
@@ -1144,7 +1144,8 @@ agent.on('text', async (ctx) => {
 
   // Check conversation type
   if (ctx.isDm()) {
-    console.log(`DM with: ${conversation.peerInboxId}`);
+    const peerInboxId = await conversation.peerInboxId();
+    console.log(`DM with: ${peerInboxId}`);
   } else if (ctx.isGroup()) {
     console.log(`Group conversation: ${conversation.name}`);
   }
