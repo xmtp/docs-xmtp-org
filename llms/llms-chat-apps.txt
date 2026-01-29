@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 02:40 AM UTC / January 27, 2026
+Generated at 01:33 AM UTC / January 29, 2026
 
 ## About this file
 
@@ -10225,6 +10225,12 @@ There are two steps to optimistically send a message:
 1. Send the message to the local database so you can display it immediately in the sender's UI.
 2. Publish the message to the XMTP network so it can be delivered to the recipient.
 
+:::tip
+
+If you want finer control over when the prepared message gets published, you can use the `noSend` parameter. To learn more, see [Control publication of optimistic messages](#control-publication-of-optimistic-messages).
+
+:::
+
 ### 1. Optimistically send a message locally
 
 Send the message to the local database. This ensures that the message will be there when you query for messages and can immediately display the message in the sender's UI.
@@ -10342,7 +10348,7 @@ async function sendMessageWithOptimisticUI(
     await conversation.prepareMessage(messageText);
 
     // Actually send the message to the network
-    await conversation.publishMessages();
+    await conversation.publishPreparedMessages();
     return true;
   } catch (error) {
     console.error('Failed to send message:', error);
@@ -10394,6 +10400,38 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
 - After optimistically sending a message, show the user an indicator that the message is still being processed. After successfully sending the message, show the user a success indicator.
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
+
+### Control publication of optimistic messages
+
+By default, `publishMessages()` publishes all prepared messages. For more control, use the `noSend` parameter when preparing a message. The message won't be published until you explicitly call `publishMessage(messageId)`.
+
+This is useful when sending [remote attachments](/chat-apps/content-types/attachments). You can validate that the attachment upload succeeded before publishing. If the upload failed, you can choose to delete the local prepared message instead of publishing it.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Prepare message without auto-publishing
+val messageId = conversation.prepareMessage(content = content, noSend = true)
+
+// Publish the specific message when ready
+conversation.publishMessage(messageId)
+
+// Or delete it locally if needed
+conversation.deleteMessageLocally(messageId)
+```
+
+```swift [Swift]
+// Prepare message without auto-publishing
+let messageId = try await conversation.prepareMessage(content: content, noSend: true)
+
+// Publish the specific message when ready
+try await conversation.publishMessage(messageId: messageId)
+
+// Or delete it locally if needed
+try await conversation.deleteMessageLocally(messageId: messageId)
+```
+
+:::
 
 
 ## chat-apps/core-messaging/support-group-invite-links.mdx
