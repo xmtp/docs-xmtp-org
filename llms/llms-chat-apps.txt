@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 07:23 PM UTC / January 29, 2026
+Generated at 07:27 PM UTC / January 29, 2026
 
 ## About this file
 
@@ -3098,6 +3098,18 @@ await client.sendSyncRequest();
 
 ```js [Node]
 await client.sendSyncRequest();
+```
+
+```tsx [React Native]
+await client.sendSyncRequest();
+```
+
+```kotlin [Kotlin]
+client.sendSyncRequest()
+```
+
+```swift [Swift]
+try await client.sendSyncRequest()
 ```
 
 :::
