@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 07:27 PM UTC / January 29, 2026
+Generated at 12:39 AM UTC / January 30, 2026
 
 ## About this file
 
@@ -4752,6 +4752,171 @@ await client.conversations.syncAllConversations(['allowed']);
 ```
 
 
+## chat-apps/content-types/actions.mdx
+---
+description: Learn how to use the actions content type to support interactive action buttons in your app built with XMTP
+---
+
+# Support actions in your app built with XMTP
+
+Use the actions content type to send interactive messages with selectable options. Actions enable users to choose from a list of predefined options, making it easy to build interactive experiences like polls, confirmations, or multi-step workflows.
+
+## How actions work
+
+An action message displays a prompt with options. Recipients can respond by selecting one of the options, which sends an [intent](/chat-apps/content-types/intents) back to indicate their selection.
+
+## Send actions
+
+Actions are represented as objects with the following keys:
+
+- `id`: Unique identifier for the action set
+- `description`: Prompt text displayed to users
+- `actions`: Array of action options (1-10 maximum)
+- `expiresAt`: Optional expiration timestamp (ISO 8601 format)
+
+Each action in the `actions` array has:
+
+- `id`: Unique identifier for the action (must be unique within the set)
+- `label`: Display text for the option
+- `imageUrl`: Optional URL for an image
+- `style`: Optional styling (`primary`, `secondary`, or `danger`)
+- `expiresAt`: Optional individual expiration timestamp
+
+:::code-group
+
+```tsx [Browser]
+import { type Actions, ActionStyle } from "@xmtp/browser-sdk";
+
+const actions: Actions = {
+  id: "action-123",
+  description: "Would you like to proceed with the transaction?",
+  actions: [
+    {
+      id: "confirm",
+      label: "Confirm",
+      style: ActionStyle.Primary,
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      style: ActionStyle.Secondary,
+    },
+  ],
+};
+
+await conversation.sendActions(actions);
+```
+
+```tsx [Node]
+import { type Actions, ActionStyle } from "@xmtp/node-sdk";
+
+const actions: Actions = {
+  id: "action-123",
+  description: "Would you like to proceed with the transaction?",
+  actions: [
+    {
+      id: "confirm",
+      label: "Confirm",
+      style: ActionStyle.Primary,
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      style: ActionStyle.Secondary,
+    },
+  ],
+};
+
+await conversation.sendActions(actions);
+```
+
+:::
+
+## Receive actions
+
+When receiving an actions message, you can access its content to display the options to the user.
+
+:::code-group
+
+```tsx [Browser]
+import { isActions } from "@xmtp/browser-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isActions(message)) {
+    const actions = message.content;
+    console.log(actions.description);
+    for (const action of actions.actions) {
+      console.log(`[${action.id}] ${action.label}`);
+    }
+  }
+}
+```
+
+```tsx [Node]
+import { isActions } from "@xmtp/node-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isActions(message)) {
+    const actions = message.content;
+    console.log(actions.description);
+    for (const action of actions.actions) {
+      console.log(`[${action.id}] ${action.label}`);
+    }
+  }
+}
+```
+
+:::
+
+## Handle action expiration
+
+Actions can have expiration timestamps at both the message level and individual action level. Check the `expiresAt` field before displaying options to users.
+
+:::code-group
+
+```tsx [Browser]
+const actions = message.content;
+
+// Check if the entire action set has expired
+if (actions.expiresAt && new Date(actions.expiresAt) < new Date()) {
+  console.log("This action has expired");
+  return;
+}
+
+// Filter out expired individual actions
+const validActions = actions.actions.filter((action) => {
+  if (!action.expiresAt) return true;
+  return new Date(action.expiresAt) > new Date();
+});
+```
+
+```tsx [Node]
+const actions = message.content;
+
+// Check if the entire action set has expired
+if (actions.expiresAt && new Date(actions.expiresAt) < new Date()) {
+  console.log("This action has expired");
+  return;
+}
+
+// Filter out expired individual actions
+const validActions = actions.actions.filter((action) => {
+  if (!action.expiresAt) return true;
+  return new Date(action.expiresAt) > new Date();
+});
+```
+
+:::
+
+## Respond to actions
+
+When a user selects an action, send an [intent](/chat-apps/content-types/intents) to indicate their choice.
+
+
 ## chat-apps/content-types/attachments.mdx
 ---
 description: Learn how to use the remote attachment, multiple remote attachment, or attachment content types to support attachments in your app built with XMTP
@@ -6051,6 +6216,178 @@ if (!codec) {
 ```
 
 :::
+
+
+## chat-apps/content-types/intents.mdx
+---
+description: Learn how to use the intent content type to respond to actions in your app built with XMTP
+---
+
+# Support intents in your app built with XMTP
+
+Use the intent content type to respond to [action messages](/chat-apps/content-types/actions). An intent represents a user's selection from an actions message, enabling interactive workflows within conversations.
+
+## How intents work
+
+When a user selects an option from an actions message, your app sends an intent to indicate their choice. The intent references the selected action by its ID and can include optional metadata.
+
+## Send an intent
+
+Intents are represented as objects with the following keys:
+
+- `id`: Unique identifier for the intent
+- `actionId`: ID of the selected action from the actions message
+- `metadata`: Optional object containing additional data (maximum 10KB)
+
+:::code-group
+
+```tsx [Browser]
+const intent = {
+  id: "intent-456",
+  actionId: "confirm", // ID of the action the user selected
+  metadata: {
+    timestamp: Date.now(),
+    source: "mobile",
+  },
+};
+
+await conversation.sendIntent(intent);
+```
+
+```tsx [Node]
+const intent = {
+  id: "intent-456",
+  actionId: "confirm", // ID of the action the user selected
+  metadata: {
+    timestamp: Date.now(),
+    source: "server",
+  },
+};
+
+await conversation.sendIntent(intent);
+```
+
+:::
+
+## Receive intents
+
+When receiving an intent, you can determine which action the user selected and access any metadata.
+
+:::code-group
+
+```tsx [Browser]
+import { isIntent } from "@xmtp/browser-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isIntent(message)) {
+    const intent = message.content;
+    console.log("User selected action:", intent.actionId);
+
+    if (intent.metadata) {
+      console.log("Metadata:", intent.metadata);
+    }
+  }
+}
+```
+
+```tsx [Node]
+import { isIntent } from "@xmtp/node-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isIntent(message)) {
+    const intent = message.content;
+    console.log("User selected action:", intent.actionId);
+
+    if (intent.metadata) {
+      console.log("Metadata:", intent.metadata);
+    }
+  }
+}
+```
+
+:::
+
+## Example workflow
+
+Here's an example of a complete actions and intents workflow:
+
+:::code-group
+
+```tsx [Browser]
+// 1. Send an actions message
+const actions = {
+  id: "payment-confirmation",
+  description: "Confirm payment of 0.1 ETH?",
+  actions: [
+    { id: "approve", label: "Approve", style: "primary" },
+    { id: "reject", label: "Reject", style: "danger" },
+  ],
+};
+
+await conversation.sendActions(actions);
+
+// 2. When the recipient selects an option, they send an intent
+const intent = {
+  id: "response-789",
+  actionId: "approve",
+  metadata: {
+    confirmedAt: new Date().toISOString(),
+  },
+};
+
+await conversation.sendIntent(intent);
+
+// 3. The original sender receives the intent and processes it
+const messages = await conversation.messages();
+const intentMessage = messages.find((m) => isIntent(m));
+
+if (intentMessage?.content.actionId === "approve") {
+  // Process the approved payment
+}
+```
+
+```tsx [Node]
+// 1. Send an actions message
+const actions = {
+  id: "payment-confirmation",
+  description: "Confirm payment of 0.1 ETH?",
+  actions: [
+    { id: "approve", label: "Approve", style: "primary" },
+    { id: "reject", label: "Reject", style: "danger" },
+  ],
+};
+
+await conversation.sendActions(actions);
+
+// 2. When the recipient selects an option, they send an intent
+const intent = {
+  id: "response-789",
+  actionId: "approve",
+  metadata: {
+    confirmedAt: new Date().toISOString(),
+  },
+};
+
+await conversation.sendIntent(intent);
+
+// 3. The original sender receives the intent and processes it
+const messages = await conversation.messages();
+const intentMessage = messages.find((m) => isIntent(m));
+
+if (intentMessage?.content.actionId === "approve") {
+  // Process the approved payment
+}
+```
+
+:::
+
+## Notifications and intents
+
+Intents have `shouldPush` set to `true`, which means intents trigger push notifications.
 
 
 ## chat-apps/content-types/reactions.mdx
@@ -12922,4 +13259,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 67 files from 4 sections.
+This documentation contains 69 files from 4 sections.
