@@ -181,7 +181,7 @@ const newMessages = await group.messages({
 });
 
 // Get messages from a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmMessages = await dm.messages({ limit: 50n });
 ```
 
@@ -199,7 +199,7 @@ const newMessages = await group.messages({
 });
 
 // Get messages from a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmMessages = await dm.messages({ limit: 50n });
 ```
 
@@ -272,7 +272,7 @@ const unreadCount = await group.countMessages({
 });
 
 // Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });
@@ -289,7 +289,7 @@ const unreadCount = await group.countMessages({
 });
 
 // Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });

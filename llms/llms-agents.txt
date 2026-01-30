@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 02:40 AM UTC / January 27, 2026
+Generated at 04:53 PM UTC / January 30, 2026
 
 ## About this file
 
@@ -983,6 +983,8 @@ Yes. [NCC Group](https://www.nccgroup.com/) completed a security assessment of [
 
 
 ## agents/get-started/intro.mdx
+import ProjectsTable from '../../../snippets/projects-table.mdx';
+
 # Build XMTP agents
 
 ## Why build agents with XMTP?
@@ -997,21 +999,7 @@ XMTP agents are autonomous programs that can participate in secure, end-to-end e
 
 ## What can I build with XMTP?
 
-Here are a few examples of agents and miniapps built with XMTP:
-
-| Project | Type | Description |
-| ------- | ---- | ----------- |
-| [a0x](https://a0x.co/) | Agent | AI clones of industry leaders providing 24/7 mentorship across Base App, Telegram, and Farcaster |
-| [Alphie](https://www.builders.garden/) | Agent | Alpha insights agent by Builders Garden |
-| [Bankr](https://bankr.bot/) | Agent | DeFi trading companion with multichain swaps, limit orders, and portfolio management via natural language |
-| [Brian](https://www.brianknows.org/) | Agent | Execute blockchain transactions and retrieve on-chain data using natural language prompts |
-| [Charms](https://charms.gg/) | Agent | Agentic gaming with AI-powered game experiences |
-| [Flaunch](https://docs.flaunch.gg/) | Miniapp | Launch and trade tokens inside chats with automated buybacks and revenue sharing |
-| [Guild](https://guild.xyz/) | Miniapp | Token-gated communities with membership management across 60+ EVM chains |
-| [Mamo](https://mamo.bot/) | Agent | Automated yield optimization for USDC and cbBTC via Moonwell and Morpho on Base |
-| [Onit](https://www.onit.fun/) | Miniapp | Create and bet on prediction markets with automatic payouts |
-
-Want to add your agent or miniapp built with XMTP to this list? Share information about it in a comment below.
+<ProjectsTable />
 
 ## Get started
 
@@ -1144,7 +1132,8 @@ agent.on('text', async (ctx) => {
 
   // Check conversation type
   if (ctx.isDm()) {
-    console.log(`DM with: ${conversation.peerInboxId}`);
+    const peerInboxId = await conversation.peerInboxId();
+    console.log(`DM with: ${peerInboxId}`);
   } else if (ctx.isGroup()) {
     console.log(`Group conversation: ${conversation.name}`);
   }
