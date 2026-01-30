@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 12:39 AM UTC / January 30, 2026
+Generated at 12:52 AM UTC / January 30, 2026
 
 ## About this file
 
