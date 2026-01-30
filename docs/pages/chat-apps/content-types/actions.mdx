@@ -84,10 +84,12 @@ When receiving an actions message, you can access its content to display the opt
 :::code-group
 
 ```tsx [Browser]
+import { isActions } from "@xmtp/browser-sdk";
+
 const messages = await conversation.messages();
 
 for (const message of messages) {
-  if (message.contentType.typeId === "actions") {
+  if (isActions(message)) {
     const actions = message.content;
     console.log(actions.description);
     for (const action of actions.actions) {
@@ -98,10 +100,12 @@ for (const message of messages) {
 ```
 
 ```tsx [Node]
+import { isActions } from "@xmtp/node-sdk";
+
 const messages = await conversation.messages();
 
 for (const message of messages) {
-  if (message.contentType.typeId === "actions") {
+  if (isActions(message)) {
     const actions = message.content;
     console.log(actions.description);
     for (const action of actions.actions) {

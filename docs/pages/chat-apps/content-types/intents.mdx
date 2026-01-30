@@ -55,10 +55,12 @@ When receiving an intent, you can determine which action the user selected and a
 :::code-group
 
 ```tsx [Browser]
+import { isIntent } from "@xmtp/browser-sdk";
+
 const messages = await conversation.messages();
 
 for (const message of messages) {
-  if (message.contentType.typeId === "intent") {
+  if (isIntent(message)) {
     const intent = message.content;
     console.log("User selected action:", intent.actionId);
 
@@ -70,10 +72,12 @@ for (const message of messages) {
 ```
 
 ```tsx [Node]
+import { isIntent } from "@xmtp/node-sdk";
+
 const messages = await conversation.messages();
 
 for (const message of messages) {
-  if (message.contentType.typeId === "intent") {
+  if (isIntent(message)) {
     const intent = message.content;
     console.log("User selected action:", intent.actionId);
 
@@ -118,7 +122,7 @@ await conversation.sendIntent(intent);
 
 // 3. The original sender receives the intent and processes it
 const messages = await conversation.messages();
-const intentMessage = messages.find((m) => m.contentType.typeId === "intent");
+const intentMessage = messages.find((m) => isIntent(m));
 
 if (intentMessage?.content.actionId === "approve") {
   // Process the approved payment
@@ -151,7 +155,7 @@ await conversation.sendIntent(intent);
 
 // 3. The original sender receives the intent and processes it
 const messages = await conversation.messages();
-const intentMessage = messages.find((m) => m.contentType.typeId === "intent");
+const intentMessage = messages.find((m) => isIntent(m));
 
 if (intentMessage?.content.actionId === "approve") {
   // Process the approved payment
