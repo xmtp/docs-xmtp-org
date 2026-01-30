@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 04:53 PM UTC / January 30, 2026
+Generated at 07:18 PM UTC / January 30, 2026
 
 ## About this file
 
@@ -1768,6 +1768,24 @@ Use `reactions` to get a list of reaction messages associated with the message.
 
 :::code-group
 
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+for (const message of groupMessages) {
+  // Access the list of reactions
+  message.reactions.forEach((reaction) => {
+    const reactionContent = reaction.content() as { content: string }
+    console.log(`Reaction: ${reactionContent.content}`)
+  })
+}
+```
+
 ```kotlin [Kotlin]
 // Retrieve messages with enriched data from a group
 val groupMessages = group.enrichedMessages()
@@ -1811,6 +1829,25 @@ for message in groupMessages {
 Messages returned by `enrichedMessages()` include reply information when a message is a reply to another message.
 
 :::code-group
+
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+for (const message of groupMessages) {
+  // Check if the message is a reply
+  if (message.contentTypeId === 'xmtp.org/reply:1.0') {
+    const replyContent = message.content() as ReplyContent
+    console.log(`This is a reply to message: ${replyContent.reference}`)
+    console.log(`Reply text: ${replyContent.content}`)
+  }
+}
+```
 
 ```kotlin [Kotlin]
 // Retrieve messages with enriched data from a group
