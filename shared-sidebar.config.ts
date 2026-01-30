@@ -371,6 +371,10 @@ export const sidebarConfig = {
           link: "/chat-apps/core-messaging/send-messages",
         },
         {
+          text: "Delete messages",
+          link: "/chat-apps/core-messaging/delete-messages",
+        },
+        {
           text: "Support disappearing messages",
           link: "/chat-apps/core-messaging/disappearing-messages",
         },
@@ -495,6 +499,14 @@ export const sidebarConfig = {
         {
           text: "Read receipts",
           link: "/chat-apps/content-types/read-receipts",
+        },
+        {
+          text: "Actions",
+          link: "/chat-apps/content-types/actions",
+        },
+        {
+          text: "Intents",
+          link: "/chat-apps/content-types/intents",
         },
         {
           text: "Custom content",
