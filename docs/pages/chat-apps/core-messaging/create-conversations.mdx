@@ -9,11 +9,11 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client, type Identifier } from "@xmtp/browser-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/browser-sdk";
 
 const identifiers: Identifier[] = [
-  { identifier: "0xboAddress", identifierKind: "Ethereum" },
-  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -147,9 +147,11 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. 
 
-Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
+For example, use optimistic group creation when your user creates a new group without any members listed.
+
+This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
 
 The group chat can be created with any number of [standard options](#create-a-new-group-chat), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
 
@@ -269,6 +271,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 :::code-group
 
 ```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
 // get a conversation by its ID
 const conversationById =
   await client.conversations.getConversationById(conversationId);
@@ -282,7 +286,7 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
 const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 });
 ```
 

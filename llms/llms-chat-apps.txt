@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 09:44 PM UTC / January 23, 2026
+Generated at 12:52 AM UTC / January 30, 2026
 
 ## About this file
 
@@ -1878,7 +1878,7 @@ const newMessages = await group.messages({
 });
 
 // Get messages from a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmMessages = await dm.messages({ limit: 50n });
 ```
 
@@ -1896,7 +1896,7 @@ const newMessages = await group.messages({
 });
 
 // Get messages from a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmMessages = await dm.messages({ limit: 50n });
 ```
 
@@ -1969,7 +1969,7 @@ const unreadCount = await group.countMessages({
 });
 
 // Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });
@@ -1986,7 +1986,7 @@ const unreadCount = await group.countMessages({
 });
 
 // Get count for a DM conversation
-const dm = await client.conversations.findOrCreateDm(recipientInboxId);
+const dm = await client.conversations.createDm(recipientInboxId);
 const dmUnreadCount = await dm.countMessages({
   sentAfterNs: lastCheckTimestamp,
 });
@@ -3100,6 +3100,18 @@ await client.sendSyncRequest();
 await client.sendSyncRequest();
 ```
 
+```tsx [React Native]
+await client.sendSyncRequest();
+```
+
+```kotlin [Kotlin]
+client.sendSyncRequest()
+```
+
+```swift [Swift]
+try await client.sendSyncRequest()
+```
+
 :::
 
 ## Sync new conversations
@@ -3568,9 +3580,11 @@ For this reason, XMTP supports [remote attachments](/chat-apps/content-types/att
 
 ### Does XMTP support message deletion and editing?
 
-Not currently. However, XMTP Labs is exploring ways to support message deletion and editing.
+XMTP supports [message deletion](/chat-apps/core-messaging/delete-messages). 
 
-Have ideas about message deletion and editing? Post to the [XMTP Technical Forums](https://community.xmtp.org/c/development/ideas/54).
+Message editing is not currently supported, but XMTP Labs is exploring ways to add this feature.
+
+Have ideas about message editing? Post to the [XMTP Technical Forums](https://community.xmtp.org/c/development/ideas/54).
 
 ### Is XMTP more like email or chat?
 
@@ -4442,12 +4456,13 @@ bun i @xmtp/browser-sdk
 // 1. Create an EOA or SCW signer.
 // Details depend on your app's wallet implementation.
 import type { Signer, Identifier } from '@xmtp/browser-sdk';
+import { IdentifierKind } from '@xmtp/browser-sdk';
 
 const signer: Signer = {
   type: 'EOA',
   getIdentifier: () => ({
     identifier: '0x...', // Ethereum address as the identifier
-    identifierKind: 'Ethereum',
+    identifierKind: IdentifierKind.Ethereum,
   }),
   signMessage: async (message: string): Uint8Array => {
     // typically, signing methods return a hex string
@@ -4735,6 +4750,171 @@ await client.conversations.streamAllMessages(
 // and messages from allowed conversations
 await client.conversations.syncAllConversations(['allowed']);
 ```
+
+
+## chat-apps/content-types/actions.mdx
+---
+description: Learn how to use the actions content type to support interactive action buttons in your app built with XMTP
+---
+
+# Support actions in your app built with XMTP
+
+Use the actions content type to send interactive messages with selectable options. Actions enable users to choose from a list of predefined options, making it easy to build interactive experiences like polls, confirmations, or multi-step workflows.
+
+## How actions work
+
+An action message displays a prompt with options. Recipients can respond by selecting one of the options, which sends an [intent](/chat-apps/content-types/intents) back to indicate their selection.
+
+## Send actions
+
+Actions are represented as objects with the following keys:
+
+- `id`: Unique identifier for the action set
+- `description`: Prompt text displayed to users
+- `actions`: Array of action options (1-10 maximum)
+- `expiresAt`: Optional expiration timestamp (ISO 8601 format)
+
+Each action in the `actions` array has:
+
+- `id`: Unique identifier for the action (must be unique within the set)
+- `label`: Display text for the option
+- `imageUrl`: Optional URL for an image
+- `style`: Optional styling (`primary`, `secondary`, or `danger`)
+- `expiresAt`: Optional individual expiration timestamp
+
+:::code-group
+
+```tsx [Browser]
+import { type Actions, ActionStyle } from "@xmtp/browser-sdk";
+
+const actions: Actions = {
+  id: "action-123",
+  description: "Would you like to proceed with the transaction?",
+  actions: [
+    {
+      id: "confirm",
+      label: "Confirm",
+      style: ActionStyle.Primary,
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      style: ActionStyle.Secondary,
+    },
+  ],
+};
+
+await conversation.sendActions(actions);
+```
+
+```tsx [Node]
+import { type Actions, ActionStyle } from "@xmtp/node-sdk";
+
+const actions: Actions = {
+  id: "action-123",
+  description: "Would you like to proceed with the transaction?",
+  actions: [
+    {
+      id: "confirm",
+      label: "Confirm",
+      style: ActionStyle.Primary,
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      style: ActionStyle.Secondary,
+    },
+  ],
+};
+
+await conversation.sendActions(actions);
+```
+
+:::
+
+## Receive actions
+
+When receiving an actions message, you can access its content to display the options to the user.
+
+:::code-group
+
+```tsx [Browser]
+import { isActions } from "@xmtp/browser-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isActions(message)) {
+    const actions = message.content;
+    console.log(actions.description);
+    for (const action of actions.actions) {
+      console.log(`[${action.id}] ${action.label}`);
+    }
+  }
+}
+```
+
+```tsx [Node]
+import { isActions } from "@xmtp/node-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isActions(message)) {
+    const actions = message.content;
+    console.log(actions.description);
+    for (const action of actions.actions) {
+      console.log(`[${action.id}] ${action.label}`);
+    }
+  }
+}
+```
+
+:::
+
+## Handle action expiration
+
+Actions can have expiration timestamps at both the message level and individual action level. Check the `expiresAt` field before displaying options to users.
+
+:::code-group
+
+```tsx [Browser]
+const actions = message.content;
+
+// Check if the entire action set has expired
+if (actions.expiresAt && new Date(actions.expiresAt) < new Date()) {
+  console.log("This action has expired");
+  return;
+}
+
+// Filter out expired individual actions
+const validActions = actions.actions.filter((action) => {
+  if (!action.expiresAt) return true;
+  return new Date(action.expiresAt) > new Date();
+});
+```
+
+```tsx [Node]
+const actions = message.content;
+
+// Check if the entire action set has expired
+if (actions.expiresAt && new Date(actions.expiresAt) < new Date()) {
+  console.log("This action has expired");
+  return;
+}
+
+// Filter out expired individual actions
+const validActions = actions.actions.filter((action) => {
+  if (!action.expiresAt) return true;
+  return new Date(action.expiresAt) > new Date();
+});
+```
+
+:::
+
+## Respond to actions
+
+When a user selects an action, send an [intent](/chat-apps/content-types/intents) to indicate their choice.
 
 
 ## chat-apps/content-types/attachments.mdx
@@ -6036,6 +6216,178 @@ if (!codec) {
 ```
 
 :::
+
+
+## chat-apps/content-types/intents.mdx
+---
+description: Learn how to use the intent content type to respond to actions in your app built with XMTP
+---
+
+# Support intents in your app built with XMTP
+
+Use the intent content type to respond to [action messages](/chat-apps/content-types/actions). An intent represents a user's selection from an actions message, enabling interactive workflows within conversations.
+
+## How intents work
+
+When a user selects an option from an actions message, your app sends an intent to indicate their choice. The intent references the selected action by its ID and can include optional metadata.
+
+## Send an intent
+
+Intents are represented as objects with the following keys:
+
+- `id`: Unique identifier for the intent
+- `actionId`: ID of the selected action from the actions message
+- `metadata`: Optional object containing additional data (maximum 10KB)
+
+:::code-group
+
+```tsx [Browser]
+const intent = {
+  id: "intent-456",
+  actionId: "confirm", // ID of the action the user selected
+  metadata: {
+    timestamp: Date.now(),
+    source: "mobile",
+  },
+};
+
+await conversation.sendIntent(intent);
+```
+
+```tsx [Node]
+const intent = {
+  id: "intent-456",
+  actionId: "confirm", // ID of the action the user selected
+  metadata: {
+    timestamp: Date.now(),
+    source: "server",
+  },
+};
+
+await conversation.sendIntent(intent);
+```
+
+:::
+
+## Receive intents
+
+When receiving an intent, you can determine which action the user selected and access any metadata.
+
+:::code-group
+
+```tsx [Browser]
+import { isIntent } from "@xmtp/browser-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isIntent(message)) {
+    const intent = message.content;
+    console.log("User selected action:", intent.actionId);
+
+    if (intent.metadata) {
+      console.log("Metadata:", intent.metadata);
+    }
+  }
+}
+```
+
+```tsx [Node]
+import { isIntent } from "@xmtp/node-sdk";
+
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  if (isIntent(message)) {
+    const intent = message.content;
+    console.log("User selected action:", intent.actionId);
+
+    if (intent.metadata) {
+      console.log("Metadata:", intent.metadata);
+    }
+  }
+}
+```
+
+:::
+
+## Example workflow
+
+Here's an example of a complete actions and intents workflow:
+
+:::code-group
+
+```tsx [Browser]
+// 1. Send an actions message
+const actions = {
+  id: "payment-confirmation",
+  description: "Confirm payment of 0.1 ETH?",
+  actions: [
+    { id: "approve", label: "Approve", style: "primary" },
+    { id: "reject", label: "Reject", style: "danger" },
+  ],
+};
+
+await conversation.sendActions(actions);
+
+// 2. When the recipient selects an option, they send an intent
+const intent = {
+  id: "response-789",
+  actionId: "approve",
+  metadata: {
+    confirmedAt: new Date().toISOString(),
+  },
+};
+
+await conversation.sendIntent(intent);
+
+// 3. The original sender receives the intent and processes it
+const messages = await conversation.messages();
+const intentMessage = messages.find((m) => isIntent(m));
+
+if (intentMessage?.content.actionId === "approve") {
+  // Process the approved payment
+}
+```
+
+```tsx [Node]
+// 1. Send an actions message
+const actions = {
+  id: "payment-confirmation",
+  description: "Confirm payment of 0.1 ETH?",
+  actions: [
+    { id: "approve", label: "Approve", style: "primary" },
+    { id: "reject", label: "Reject", style: "danger" },
+  ],
+};
+
+await conversation.sendActions(actions);
+
+// 2. When the recipient selects an option, they send an intent
+const intent = {
+  id: "response-789",
+  actionId: "approve",
+  metadata: {
+    confirmedAt: new Date().toISOString(),
+  },
+};
+
+await conversation.sendIntent(intent);
+
+// 3. The original sender receives the intent and processes it
+const messages = await conversation.messages();
+const intentMessage = messages.find((m) => isIntent(m));
+
+if (intentMessage?.content.actionId === "approve") {
+  // Process the approved payment
+}
+```
+
+:::
+
+## Notifications and intents
+
+Intents have `shouldPush` set to `true`, which means intents trigger push notifications.
 
 
 ## chat-apps/content-types/reactions.mdx
@@ -7512,11 +7864,11 @@ For React Native, Android, and iOS SDKs, when building a client with an existing
 :::code-group
 
 ```tsx [Browser]
-import { Client, type Identifier } from '@xmtp/browser-sdk';
+import { Client, IdentifierKind, type Identifier } from '@xmtp/browser-sdk';
 
 const identifier: Identifier = {
   identifier: '0x1234567890abcdef1234567890abcdef12345678',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 };
 const client = await Client.build(identifier, options);
 ```
@@ -7632,10 +7984,11 @@ The EOA signer must have 3 properties: the account type, a function that returns
 
 ```tsx [Browser]
 import type { Signer, Identifier } from '@xmtp/browser-sdk';
+import { IdentifierKind } from '@xmtp/browser-sdk';
 
 const accountIdentifier: Identifier = {
   identifier: '0x...', // Ethereum address as the identifier
-  identifierKind: 'Ethereum', // Specifies the identity type
+  identifierKind: IdentifierKind.Ethereum, // Specifies the identity type
 };
 
 const signer: Signer = {
@@ -7745,7 +8098,7 @@ Here is a list of supported chain IDs for SCWs:
 Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
 :::
 
-Need support for a different chain ID? Please post your request to the [XMTP Technical Forums](https://community.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/).
+To add SCW support for a new EVM chain, add the chain ID and a public RPC endpoint to [chain_urls_default.json](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/scw_verifier/chain_urls_default.json).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -7766,6 +8119,8 @@ The code snippets below are examples only and will need to be adapted based on y
 :::code-group
 
 ```tsx [Browser]
+import { IdentifierKind } from '@xmtp/browser-sdk';
+
 export const createSCWSigner = (
   address: `0x${string}`,
   walletClient: WalletClient,
@@ -7775,7 +8130,7 @@ export const createSCWSigner = (
     type: "SCW",
     getIdentifier: () => ({
       identifier: address.toLowerCase(),
-      identifierKind: "Ethereum",
+      identifierKind: IdentifierKind.Ethereum,
     }),
     signMessage: async (message: string) => {
       const signature = await walletClient.signMessage({
@@ -7875,6 +8230,12 @@ public struct SCWallet: SigningKey {
 
 :::
 
+:::tip[Want support for a different chain ID?]
+
+Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
+
+ :::
+
 ## Retrieve your wallet's private key
 
 :::danger[Security Warning]
@@ -7919,11 +8280,11 @@ Once you have the verified identities, you can create a new conversation, whethe
 :::code-group
 
 ```js [Browser]
-import { Client, type Identifier } from "@xmtp/browser-sdk";
+import { Client, IdentifierKind, type Identifier } from "@xmtp/browser-sdk";
 
 const identifiers: Identifier[] = [
-  { identifier: "0xboAddress", identifierKind: "Ethereum" },
-  { identifier: "0xcaroAddress", identifierKind: "Ethereum" }
+  { identifier: "0xboAddress", identifierKind: IdentifierKind.Ethereum },
+  { identifier: "0xcaroAddress", identifierKind: IdentifierKind.Ethereum }
 ];
 
 // response is a Map of string (identifier) => boolean (is reachable)
@@ -8057,9 +8418,11 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. 
 
-Use this method to optimistically create a group chat, which enables a user to create a group chat now and add members later.
+For example, use optimistic group creation when your user creates a new group without any members listed.
+
+This approach prioritizes user experience by allowing immediate interaction with the group chat, while handling the network synchronization in the background when members are added.
 
 The group chat can be created with any number of [standard options](#create-a-new-group-chat), or no options. The group chat is stored only in the local storage of the app installation used to create it. In other words, the group chat is visible only to the creator and in the app installation they used to create it.
 
@@ -8179,6 +8542,8 @@ Use these helper methods to quickly locate and access specific conversations—w
 :::code-group
 
 ```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
 // get a conversation by its ID
 const conversationById =
   await client.conversations.getConversationById(conversationId);
@@ -8192,7 +8557,7 @@ const dmByInboxId = await client.conversations.getDmByInboxId(peerInboxId);
 // get a 1:1 conversation by a peer's identifier (e.g., Ethereum address)
 const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
-  identifierKind: 'Ethereum',
+  identifierKind: IdentifierKind.Ethereum,
 });
 ```
 
@@ -8263,6 +8628,143 @@ Represents a group chat conversation, providing methods to manage group-specific
 Represents a DM conversation, providing methods to manage one-on-one communications, such as sending messages, synchronizing state, and handling message streams.
 
 - React Native: [Dm.ts](https://github.com/xmtp/xmtp-react-native/blob/main/src/lib/Dm.ts)
+
+
+## chat-apps/core-messaging/delete-messages.mdx
+# Delete messages
+
+A user can delete messages they sent in a DM or group chat. In a group chat, the super admin role can delete any message in the group. 
+
+:::tip
+
+Message deletion is not a security or privacy feature. It provides a best-effort way to remove messages from conversation UIs, but does not guarantee the message content is permanently erased.
+
+:::
+
+## How message deletion works
+
+When a user deletes a message, a `DeleteMessage` content type containing the target message ID is sent to the conversation. Clients receiving this message validate the deletion request and filter the deleted message from queries.
+
+When you query messages, the client automatically:
+
+- Replaces deleted messages with a placeholder that indicates whether the sender or an admin deleted it
+- Filters out the `DeleteMessage` content type from message lists
+
+The deletion mechanism does NOT remove the original message from:
+
+- Local databases
+- Network nodes
+- Backup systems
+
+## What can't be deleted
+
+The following message types cannot be deleted:
+
+- Group membership changes (members added/removed)
+- Group update messages (name, description, image changes)
+
+Attempting to delete these messages will throw an error.
+
+## Delete a message
+
+:::code-group
+
+```tsx [React Native]
+// Delete a message by its ID
+await conversation.deleteMessage(messageId);
+```
+
+```kotlin [Kotlin]
+// Delete a message by its ID
+val deletionId = conversation.deleteMessage(messageId)
+```
+
+```swift [Swift]
+// Delete a message by its ID
+let deletionId = try await conversation.deleteMessage(messageId: messageId)
+```
+
+:::
+
+## Handle delete message errors
+
+The method throws an error if the deletion fails, such as when attempting to delete a message you didn't send (and you're not a super admin).
+
+:::code-group
+
+```tsx [React Native]
+try {
+  await conversation.deleteMessage(messageId);
+  // Message deleted successfully
+} catch (error) {
+  console.log(`Failed to delete message: ${error}`);
+}
+```
+
+```kotlin [Kotlin]
+try {
+    val deletionId = conversation.deleteMessage(messageId)
+    // Message deleted successfully
+} catch (e: XMTPException) {
+    println("Failed to delete message: ${e.message}")
+}
+```
+
+```swift [Swift]
+do {
+    let deletionId = try await conversation.deleteMessage(messageId: messageId)
+    // Message deleted successfully
+} catch {
+    print("Failed to delete message: \(error)")
+}
+```
+
+:::
+
+## Stream message deletions
+
+Listen for message deletion events in real-time across all conversations. This method is available on the `conversations` object.
+
+:::code-group
+
+```tsx [Browser]
+// Stream all message deletions
+const stream = await client.conversations.streamDeletedMessages();
+
+for await (const deletedMessageId of stream) {
+  console.log("Message deleted:", deletedMessageId);
+}
+```
+
+```tsx [Node]
+// Stream all message deletions
+const stream = await client.conversations.streamDeletedMessages();
+
+for await (const deletedMessageId of stream) {
+  console.log("Message deleted:", deletedMessageId);
+}
+```
+
+```tsx [React Native]
+// Stream all message deletions
+await client.conversations.streamMessageDeletions(async (deletedMessage) => {
+  console.log("Message deleted:", deletedMessage.id);
+});
+```
+
+```kotlin [Kotlin]
+client.conversations.streamMessageDeletions().collect { deletedMessage ->
+    println("Message deleted: ${deletedMessage.id}")
+}
+```
+
+```swift [Swift]
+for try await deletedMessage in client.conversations.streamMessageDeletions() {
+    print("Message deleted: \(deletedMessage.id)")
+}
+```
+
+:::
 
 
 ## chat-apps/core-messaging/disappearing-messages.mdx
@@ -8594,6 +9096,106 @@ To ensure that users understand which messages are disappearing messages and the
 - A distinct visual style: Style disappearing messages differently from regular messages (e.g., a different background color or icon) to indicate their temporary nature.
 - A clear indication of the message's temporary nature: Use a visual cue, such as a timestamp or a countdown, to inform users that the message will disappear after a certain period.
 
+
+## chat-apps/core-messaging/extend-id-model.md
+# Extend the XMTP identity model
+
+XMTP is designed with a flexible identity model that can be extended over time without introducing breaking changes for existing apps.
+
+This document provides a general blueprint for how to extend XMTP to non-EVM platforms where identities are controlled by public keys, such as Solana, Bitcoin, Zcash, and others.
+
+### Why is extension needed for non-EVM chains?
+
+XMTP is designed to support EVM chains by default. EVMs all share the same address format and signature scheme.
+
+- **EOAs on EVM chain**: Work automatically. Signature verification is purely cryptographic (secp256k1 ECDSA), so no configuration is needed.
+- **SCWs on EVM chains**: Require adding the chain's RPC endpoint to the verifier config. See [Create a SCW signer](/chat-apps/core-messaging/create-a-signer#create-a-smart-contract-wallet-signer).
+- **Non-EVM chains**: Require implementing new identity types and signature verification, as described in this document.
+
+For example, see the different address formats, signature schemes, signature standards,and verification methods required by these chains:
+
+  | Aspect | Ethereum (EVM) | Solana | Bitcoin |
+  | --- | --- | --- | --- |
+  | **Address format** | Hex (`0x...`) | Base58 (`7EcD...LtV`) | Bech32 (`bc1...`) |
+  | **Signature scheme** | secp256k1 ECDSA | Ed25519 | secp256k1 ECDSA |
+  | **Signature standard** | EIP-191 / ERC-1271 | Solana-specific | BIP-137 or similar |
+  | **Verification** | Recover address from signature | Verify against public key | BIP-137 or similar |
+
+## XMTP inboxes and identity updates
+
+An XMTP inbox groups together many identities into a single address (XMTP inbox ID) that can be reached on the network. Those identities might be wallets, passkeys, app installations, or any other identifier. 
+
+![Many IDs to one XMTP inbox](https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/many-ids-to-one-inbox.png)
+
+This identity model is what allows you to sign in to multiple XMTP apps across different devices and platforms and see the same conversations and messages. XMTP enables portability at its core.
+
+Each XMTP inbox is constructed through a series of identity updates. Identity updates are special messages on the network that can add or remove identities from a given inbox. Anyone who wants to know "who is in this group chat with me?" or "how do I reach vitalik.eth?" will download all the *identity updates* for a given inbox, verify that each update has been correctly signed, and construct the state of that inbox by applying each valid update in order.
+
+Identity updates are signed by an existing member of the inbox and any new members that are being added.
+
+To learn more, see [Identity with XMTP](https://xmtp.org/identity).
+
+### Identity types
+
+To add XMTP support for an eligible platform, you must create a new identity type in the protocol so clients can construct identity updates signed by the platform's accounts.
+
+Every identity type has two important jobs:
+
+1. It needs to provide a unique public identifier (an address or public key) others can use to reach the inbox
+2. It needs to provide a way to prove ownership of that identifier
+
+## Add a new identity type to XMTP
+
+To add a new identity type to XMTP:
+
+1. Define the identifier format for the new identity type
+2. Implement a signature verifier to prove ownership of those identities
+3. Update wire formats to store the new identifiers and signatures
+
+### Define the identifier kind
+
+Every account on your target platform has a unique identifier (an address or public key). You need to define how this identifier will be represented in XMTP.
+
+You'll need to:
+
+1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
+2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto). in the proto repo.
+
+### Implement signature verification
+
+To link an XMTP identity with an account on your target platform, you need to implement a signature verifier.
+
+Use the existing verifiers in [verified_signature.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/verified_signature.rs) as a reference.
+
+Your implementation should:
+
+1. Create a new signature type and corresponding [protobuf message types](https://github.com/xmtp/proto/blob/main/proto/identity/associations/signature.proto) in the proto repo so it can be used in identity updates
+
+2. Collect proof that the owner of the identifier has approved the challenge
+
+The SDK handles:
+
+- Creating a challenge (text summarizing the identity update)
+- Including the signature in an identity update so others can verify the association
+
+### Roll out the new identifier type
+
+New identifier types are safe to roll out as non-breaking changes. Clients with a newer SDK version that supports the new identity type will be able to resolve addresses to inboxes and see which addresses are associated with a given inbox. Older clients will discard identity updates referencing the new identity type until they upgrade to a version that can process them.
+
+## Permissions and rules
+
+New identity types are designed to live inside an inbox created with a passkey or an Ethereum wallet. When combined with a passkey, new identity types have full capabilities and can do everything the protocol supports.
+
+Two-way associations are possible: A member of a conversation can see which addresses are associated with a given inbox, and any user of the network can see which inbox is associated with an address.
+
+| **Action** | **Passkey** | **Ethereum wallet** | **New identity type** | **Passkey + new identity type** |
+| --- | --- | --- | --- | --- |
+| **Associate identifier with an inbox** | ❌ | ✅ | ✅ | ✅ |
+| **Resolve address to inbox ID** | ❌ | ✅ | ✅ | ✅ |
+| **Create a new inbox** | ✅ | ✅ | ❌ | ✅ |
+| **Add new installations to an inbox** | ✅ | ✅ | ❌ | ✅ |
+| **Add new identifiers to an inbox** | ✅ | ✅ | ❌ | ✅ |
+| **Act as recovery address** | ✅ | ✅ | ❌ | ✅ |
 
 ## chat-apps/core-messaging/group-metadata.mdx
 # Manage group chat metadata
@@ -9293,7 +9895,7 @@ try await client.inboxIdFromIdentity(identity: peerIdentity)
 
 :::
 
-### Get identities for members
+### Get members
 
 :::code-group
 
@@ -9303,11 +9905,6 @@ await group.sync();
 
 // get group members
 const members = await group.members();
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
 ```
 
 ```js [Node]
@@ -9316,21 +9913,14 @@ await group.sync();
 
 // get group members
 const members = group.members;
-
-// map inbox ID to account identity
-const inboxIdIdentityMap = new Map(
-  members.map((member) => [member.inboxId, member.accountIdentity])
-);
 ```
 
 ```tsx [React Native]
 const members = await group.members();
-const identities = members.map((member) => member.identities);
 ```
 
 ```kotlin [Kotlin]
 val members = group.members()
-val identities = members.map { it.identities }
 ```
 
 ```swift [Swift]
@@ -10117,6 +10707,12 @@ There are two steps to optimistically send a message:
 1. Send the message to the local database so you can display it immediately in the sender's UI.
 2. Publish the message to the XMTP network so it can be delivered to the recipient.
 
+:::tip
+
+If you want finer control over when the prepared message gets published, you can use the `noSend` parameter. To learn more, see [Control publication of optimistic messages](#control-publication-of-optimistic-messages).
+
+:::
+
 ### 1. Optimistically send a message locally
 
 Send the message to the local database. This ensures that the message will be there when you query for messages and can immediately display the message in the sender's UI.
@@ -10234,7 +10830,7 @@ async function sendMessageWithOptimisticUI(
     await conversation.prepareMessage(messageText);
 
     // Actually send the message to the network
-    await conversation.publishMessages();
+    await conversation.publishPreparedMessages();
     return true;
   } catch (error) {
     console.error('Failed to send message:', error);
@@ -10287,76 +10883,34 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
 
-## Handle unsupported content types
+### Control publication of optimistic messages
 
-As more [custom](/chat-apps/content-types/custom) and [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+By default, `publishMessages()` publishes all prepared messages. For more control, use the `noSend` parameter when preparing a message. The message won't be published until you explicitly call `publishMessage(messageId)`.
 
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/chat-apps/content-types/custom).
+This is useful when sending [remote attachments](/chat-apps/content-types/attachments). You can validate that the attachment upload succeeded before publishing. If the upload failed, you can choose to delete the local prepared message instead of publishing it.
 
 :::code-group
 
-```js [Browser]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
 ```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
+// Prepare message without auto-publishing
+val messageId = conversation.prepareMessage(content = content, noSend = true)
+
+// Publish the specific message when ready
+conversation.publishMessage(messageId)
+
+// Or delete it locally if needed
+conversation.deleteMessageLocally(messageId)
 ```
 
 ```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
+// Prepare message without auto-publishing
+let messageId = try await conversation.prepareMessage(content: content, noSend: true)
+
+// Publish the specific message when ready
+try await conversation.publishMessage(messageId: messageId)
+
+// Or delete it locally if needed
+try await conversation.deleteMessageLocally(messageId: messageId)
 ```
 
 :::
@@ -12705,4 +13259,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 65 files from 4 sections.
+This documentation contains 69 files from 4 sections.

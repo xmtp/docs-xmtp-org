@@ -82,6 +82,12 @@ There are two steps to optimistically send a message:
 1. Send the message to the local database so you can display it immediately in the sender's UI.
 2. Publish the message to the XMTP network so it can be delivered to the recipient.
 
+:::tip
+
+If you want finer control over when the prepared message gets published, you can use the `noSend` parameter. To learn more, see [Control publication of optimistic messages](#control-publication-of-optimistic-messages).
+
+:::
+
 ### 1. Optimistically send a message locally
 
 Send the message to the local database. This ensures that the message will be there when you query for messages and can immediately display the message in the sender's UI.
@@ -199,7 +205,7 @@ async function sendMessageWithOptimisticUI(
     await conversation.prepareMessage(messageText);
 
     // Actually send the message to the network
-    await conversation.publishMessages();
+    await conversation.publishPreparedMessages();
     return true;
   } catch (error) {
     console.error('Failed to send message:', error);
@@ -252,76 +258,34 @@ func sendMessageWithOptimisticUI(conversation: Conversation, messageText: String
   - An optimistically sent message initially has an `unpublished` status. Once published to the network, it has a `published` status. You can use this status to determine which indicator to display in the UI.
 - If an optimistically sent message fails to send it will have a `failed` status. In this case, be sure to give the user an option to retry sending the message or cancel sending. Use a try/catch block to intercept errors and allow the user to retry or cancel.
 
-## Handle unsupported content types
+### Control publication of optimistic messages
 
-As more [custom](/chat-apps/content-types/custom) and [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content types are introduced into the XMTP ecosystem, your app may encounter content types it does not support. This situation, if not handled properly, could lead to app crashes.
+By default, `publishMessages()` publishes all prepared messages. For more control, use the `noSend` parameter when preparing a message. The message won't be published until you explicitly call `publishMessage(messageId)`.
 
-Each message is accompanied by a `fallback` property, which offers a descriptive string representing the content type's expected value. It's important to note that fallbacks are immutable and are predefined in the content type specification. In instances where `fallback` is `undefined`, such as read receipts, it indicates that the content is not intended to be rendered. If you're venturing into creating custom content types, you're provided with the flexibility to specify a custom fallback string. For a deeper dive into this, see [Build custom content types](/chat-apps/content-types/custom).
+This is useful when sending [remote attachments](/chat-apps/content-types/attachments). You can validate that the attachment upload succeeded before publishing. If the upload failed, you can choose to delete the local prepared message instead of publishing it.
 
 :::code-group
 
-```js [Browser]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```js [Node]
-// Built-in content types (text, reactions, replies, attachments, etc.) are automatically supported
-// For unsupported custom content types, use the fallback
-try {
-  // Try to decode the message content
-  const content = message.content;
-} catch (error) {
-  // If decoding fails, it's an unsupported content type
-  if (message.fallback !== undefined) {
-    return message.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
-```jsx [React Native]
-//contentTypeID has the following structure `${contentType.authorityId}/${contentType.typeId}:${contentType.versionMajor}.${contentType.versionMinor}`;
-const isRegistered = message.contentTypeID in client.codecRegistry;
-if (!isRegistered) {
-  // Not supported content type
-  if (message?.fallback != null) {
-    return message?.fallback;
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
-```
-
 ```kotlin [Kotlin]
-val codec = client.codecRegistry.find(options?.contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
+// Prepare message without auto-publishing
+val messageId = conversation.prepareMessage(content = content, noSend = true)
+
+// Publish the specific message when ready
+conversation.publishMessage(messageId)
+
+// Or delete it locally if needed
+conversation.deleteMessageLocally(messageId)
 ```
 
 ```swift [Swift]
-let codec = client.codecRegistry.find(for: contentType)
-if (!codec) {
-  /*Not supported content type*/
-  if (message.fallback != null) {
-    return message.fallback
-  }
-  // Handle other types like ReadReceipts which are not meant to be displayed
-}
+// Prepare message without auto-publishing
+let messageId = try await conversation.prepareMessage(content: content, noSend: true)
+
+// Publish the specific message when ready
+try await conversation.publishMessage(messageId: messageId)
+
+// Or delete it locally if needed
+try await conversation.deleteMessageLocally(messageId: messageId)
 ```
 
 :::
