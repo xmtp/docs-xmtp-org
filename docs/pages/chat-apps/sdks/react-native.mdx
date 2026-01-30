@@ -2,11 +2,31 @@
 
 Use the [XMTP React Native SDK](https://github.com/xmtp/xmtp-react-native) to build secure, private, and decentralized messaging into your cross-platform mobile app.
 
+**Current version: v5.5.0**
+
 The guide provides some quickstart code, as well as a map to building a [secure chat app](/protocol/security) with XMTP, including support for:
 
 - End-to-end encrypted direct message and group chat conversations
 - Rich content types (attachments, reactions, replies, and more)
 - Spam-free chats using user consent preferences
+
+## Installation
+
+Install the latest version of the XMTP React Native SDK:
+
+```bash
+npm install @xmtp/react-native-sdk@^5.5.0
+# or
+yarn add @xmtp/react-native-sdk@^5.5.0
+```
+
+### Breaking changes in v5.5.0
+
+- `syncAllConversations()` now returns a `number` instead of `GroupSyncSummary`
+- `ffiRevokeAllOtherInstallationsSignatureText()` now returns `string` instead of `string | undefined`
+- Archive creation no longer supports `excludeDisappearingMessages` parameter
+- New enriched message types (`DecodedMessageV2`) with additional metadata
+- New codecs available: `DeleteMessageCodec` and `LeaveRequestCodec`
 
 ## Quickstart
 
@@ -61,6 +81,14 @@ await client.conversations.streamAllMessages(
   { consentState: ['allowed'] }
 );
 // Sync all new welcomes, preference updates, conversations,
-// and messages from allowed conversations
-await client.conversations.syncAllConversations(['allowed']);
+// and messages from allowed conversations (returns count in v5.5.0+)
+const syncedCount = await client.conversations.syncAllConversations(['allowed']);
+
+// 6. Get enriched messages with metadata (v5.5.0+)
+const enrichedMessages = await group.enrichedMessages();
+enrichedMessages.forEach((message) => {
+  console.log(`Message: ${message.content()}`);
+  console.log(`Reactions: ${message.reactionCount}`);
+  console.log(`Has reactions: ${message.hasReactions}`);
+});
 ```

@@ -113,7 +113,7 @@ To sync conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENI
 
 To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stream-sync/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
 
-The method returns a summary object that includes the total number of conversations eligible for syncing and the number of conversations that were actually synced.
+The method returns either a summary object (Browser/Node) or a count (React Native/Kotlin/Swift) indicating sync results.
 
 :::code-group
 
@@ -126,12 +126,11 @@ await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-// Returns a summary object with sync statistics
-const syncSummary = await client.conversations.syncAllConversations([
+// Returns the number of conversations that were synced (v5.5.0+)
+const syncedCount = await client.conversations.syncAllConversations([
   'allowed',
 ]);
-// syncSummary.numEligible - Total number of conversations eligible for syncing
-// syncSummary.numSynced - Number of conversations that were actually synced
+console.log(`Synced ${syncedCount} conversations`);
 ```
 
 ```kotlin [Kotlin]

@@ -114,8 +114,8 @@ for await (const deletedMessageId of stream) {
 
 ```tsx [React Native]
 // Stream all message deletions
-await client.conversations.streamMessageDeletions(async (deletedMessage) => {
-  console.log("Message deleted:", deletedMessage.id);
+await client.conversations.streamMessageDeletions(async (messageId, conversationId) => {
+  console.log(`Message deleted: ${messageId} in conversation: ${conversationId}`);
 });
 ```
 
