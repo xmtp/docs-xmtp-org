@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 12:39 AM UTC / January 30, 2026
+Generated at 12:52 AM UTC / January 30, 2026
 
 ## About this file
 
@@ -8724,7 +8724,7 @@ do {
 
 ## Stream message deletions
 
-Use `streamMessageDeletions` to listen for message deletion events in real-time across all conversations. This method is available on the `conversations` object.
+Listen for message deletion events in real-time across all conversations. This method is available on the `conversations` object.
 
 :::code-group
 
