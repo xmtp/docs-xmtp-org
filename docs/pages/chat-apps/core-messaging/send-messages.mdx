@@ -116,7 +116,14 @@ const contentType = new ContentTypeId({
   versionMajor: 1,
   versionMinor: 0,
 });
-await conversation.prepareMessage(customContent, contentType);
+await conversation.prepareMessage(customContent, { contentType });
+
+// Control publication timing with noSend parameter (v5.5.0+)
+// Prepare message without auto-publishing
+const messageId = await conversation.prepareMessage('Hello world', {}, true);
+
+// Publish the specific message when ready
+await conversation.publishMessage(messageId);
 ```
 
 ```kotlin [Kotlin]
@@ -265,6 +272,16 @@ By default, `publishMessages()` publishes all prepared messages. For more contro
 This is useful when sending [remote attachments](/chat-apps/content-types/attachments). You can validate that the attachment upload succeeded before publishing. If the upload failed, you can choose to delete the local prepared message instead of publishing it.
 
 :::code-group
+
+```tsx [React Native]
+// Prepare message without auto-publishing (v5.5.0+)
+const messageId = await conversation.prepareMessage('Hello world', {}, true);
+
+// Publish the specific message when ready
+await conversation.publishMessage(messageId);
+
+// Note: Local deletion functionality is not yet available in React Native
+```
 
 ```kotlin [Kotlin]
 // Prepare message without auto-publishing

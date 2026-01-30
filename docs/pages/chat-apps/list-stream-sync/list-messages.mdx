@@ -19,6 +19,22 @@ All parameters are optional and can be combined to create precise filters and so
 | `insertedAfterNs`                              | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database after this timestamp (nanoseconds)                                |
 | `sortBy`                                       | `SortBy` / enum                    | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
 
+## Enriched messages method parameters
+
+For `enrichedMessages()`, the available parameters are more limited but include new options:
+
+| Parameter           | Type                               | Description                                                                 |
+| ------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
+| `limit`             | `Int` / `Long` / `bigint`          | Maximum number of messages to return                                        |
+| `beforeNs`          | `Int64` / `Long` / `bigint`        | Filter messages sent before this timestamp (nanoseconds)                    |
+| `afterNs`           | `Int64` / `Long` / `bigint`        | Filter messages sent after this timestamp (nanoseconds)                     |
+| `direction`         | `SortDirection` / `string`         | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
+| `excludeSenderInboxIds` | Array of strings               | Inbox IDs whose messages should be excluded                                 |
+| `deliveryStatus`    | `EnrichedMessageDeliveryStatus`    | Filter by delivery status for enriched messages                             |
+| `insertedAfterNs`   | `Int64` / `Long` / `bigint`        | Filter messages inserted after this timestamp (nanoseconds)                 |
+| `insertedBeforeNs`  | `Int64` / `Long` / `bigint`        | Filter messages inserted before this timestamp (nanoseconds)                |
+| `sortBy`            | `EnrichedMessageSortBy`            | Sort by sent time or insertion time for enriched messages                   |
+
 ## List messages with enriched metadata
 
 The `enrichedMessages()` method retrieves messages from conversations with enriched metadata automatically included. This means reactions, replies, and other associated data are "baked in" to each message, eliminating the need for separate queries to fetch this information.
@@ -32,6 +48,24 @@ Be sure to handle content types properly by using the generic `content<T>()` met
 Use `reactions` to get a list of reaction messages associated with the message.
 
 :::code-group
+
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.enrichedMessages();
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach((message) => {
+  // Access the list of reactions
+  message.reactions.forEach((reaction) => {
+    const reactionContent = reaction.content();
+    console.log(`Reaction: ${reactionContent.content}`);
+  });
+});
+```
 
 ```kotlin [Kotlin]
 // Retrieve messages with enriched data from a group
@@ -76,6 +110,28 @@ for message in groupMessages {
 Messages returned by `enrichedMessages()` include reply information when a message is a reply to another message.
 
 :::code-group
+
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.enrichedMessages();
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+groupMessages.forEach((message) => {
+  // Check if the message is a reply
+  if (message.contentTypeId === 'xmtp.org/reply:1.0') {
+    const replyContent = message.content();
+
+    if (replyContent) {
+      console.log(`This is a reply to message: ${replyContent.reference}`);
+      console.log(`Reply text: ${replyContent.content}`);
+    }
+  }
+});
+```
 
 ```kotlin [Kotlin]
 // Retrieve messages with enriched data from a group
