@@ -365,6 +365,26 @@ A member who is the super admin of the group cannot leave the group. By default,
 
 :::code-group
 
+```js [Browser]
+await group.leaveGroup();
+
+// Sync to update group state
+await group.sync();
+
+// Verify the group is now inactive
+const isActive = await group.isActive(); // Returns false
+```
+
+```js [Node]
+await group.leaveGroup();
+
+// Sync to update group state
+await group.sync();
+
+// Verify the group is now inactive
+const isActive = group.isActive; // Returns false
+```
+
 ```tsx [React Native]
 await group.leaveGroup();
 
