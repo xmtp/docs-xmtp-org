@@ -143,6 +143,10 @@ if (contentTypesAreEqual(message.contentType, contentTypeReply())) {
 
   // Access the reply text
   console.log('Reply:', reply.content);
+  // Access the content type of the reply message (v5.3.0+)
+  console.log('Reply content type:', reply.contentType);
+  // Access the original message being replied to
+  console.log('Replying to:', reply.inReplyTo?.content);
 }
 ```
 
