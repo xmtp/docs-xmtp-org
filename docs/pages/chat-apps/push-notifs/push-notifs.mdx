@@ -79,7 +79,7 @@ Lists topics for a specific DM conversation.
 :::code-group
 
 ```tsx [React Native]
-conversation.getPushTopics()
+await conversation.getConversationPushTopics();
 ```
 
 ```kotlin [Kotlin]
@@ -103,7 +103,7 @@ To learn more, see [Understand DM stitching and push notifications](/chat-apps/p
 :::code-group
 
 ```tsx [React Native]
-conversations.allPushTopics()
+await client.conversations.getAllPushTopics();
 ```
 
 ```kotlin [Kotlin]
@@ -222,6 +222,20 @@ This is particularly useful for ensuring that push notifications work correctly 
 
 :::code-group
 
+```tsx [React Native]
+await client.preferences.streamPreferenceUpdates(
+  async (preferenceType) => {
+    if (preferenceType === 'hmac_keys') {
+      // HMAC keys updated - resubscribe to topics
+    }
+  },
+  () => console.log('Stream closed')
+);
+
+// To cancel the stream
+client.preferences.cancelStreamPreferenceUpdates();
+```
+
 ```kotlin [Kotlin]
 client.preferences.streamPreferenceUpdates().collect { preferenceType ->
     when (preferenceType) {
@@ -248,26 +262,78 @@ for try await preferenceType in client.preferences.streamPreferenceUpdates() {
 
 As soon as your app receives a user preference update event from [preferences.sync](/chat-apps/list-stream-sync/sync-preferences) or [preferences.streamPreferenceUpdates](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
 
+:::code-group
+
+```tsx [React Native]
+// Get all push topics and HMAC keys
+const topics = await client.conversations.getAllPushTopics();
+const hmacKeysResult = await client.conversations.getHmacKeys();
+
+// Build subscriptions for each topic with its HMAC keys
+const subscriptions = topics.map((topic) => {
+  const hmacKeys = hmacKeysResult.hmacKeys[topic]?.values || [];
+  return {
+    topic,
+    hmacKeys: hmacKeys.map((key) => ({
+      key: key.hmacKey,
+      thirtyDayPeriodsSinceEpoch: key.thirtyDayPeriodsSinceEpoch,
+    })),
+    isSilent: false,
+  };
+});
+
+// Subscribe with your push notification service
+await pushNotificationService.subscribeWithMetadata(subscriptions);
+```
+
 ```kotlin [Kotlin]
-conversations.allTopics.forEach { -> topic
+val topics = conversations.allPushTopics()
 val hmacKeysResult = conversations.getHmacKeys()
 val hmacKeys = hmacKeysResult.hmacKeysMap
-val result = hmacKeys[topic]?.valuesList?.map { hmacKey ->
-    Service.Subscription.HmacKey.newBuilder().also { sub_key ->
-        sub_key.key = hmacKey.hmacKey
-        sub_key.thirtyDayPeriodsSinceEpoch = hmacKey.thirtyDayPeriodsSinceEpoch
+
+topics.forEach { topic ->
+    val result = hmacKeys[topic]?.valuesList?.map { hmacKey ->
+        Service.Subscription.HmacKey.newBuilder().also { sub_key ->
+            sub_key.key = hmacKey.hmacKey
+            sub_key.thirtyDayPeriodsSinceEpoch = hmacKey.thirtyDayPeriodsSinceEpoch
+        }.build()
+    }
+
+    val subscription = Service.Subscription.newBuilder().also { sub ->
+        sub.addAllHmacKeys(result)
+        sub.topic = topic
+        sub.isSilent = false
     }.build()
-}
 
-val subscription = Service.Subscription.newBuilder().also { sub ->
-    sub.addAllHmacKeys(result)
-    sub.topic = topic
-    sub.isSilent = false
-}.build()
+    PushNotificationTokenManager.xmtpPush.subscribeWithMetadata(subscription)
 }
-
-PushNotificationTokenManager.xmtpPush.subscribeWithMetadata(subscription)
 ```
+
+```swift [Swift]
+// Get all push topics and HMAC keys
+let topics = try await client.conversations.allPushTopics()
+let hmacKeysResult = try client.conversations.getHmacKeys()
+
+// Build subscriptions for each topic with its HMAC keys
+for topic in topics {
+    var subscription = Notifications_V1_Subscription()
+    subscription.topic = topic
+    subscription.isSilent = false
+
+    if let keys = hmacKeysResult.hmacKeys[topic] {
+        subscription.hmacKeys = keys.values.map { keyData in
+            var hmacKey = Notifications_V1_Subscription.HmacKey()
+            hmacKey.key = keyData.hmacKey
+            hmacKey.thirtyDayPeriodsSinceEpoch = keyData.thirtyDayPeriodsSinceEpoch
+            return hmacKey
+        }
+    }
+
+    try await pushNotificationService.subscribeWithMetadata(subscription)
+}
+```
+
+:::
 
 This ensures that older installations (or your XMTP push notification server code) now know about and resubscribe to all conversations for all of the new HMAC keys.
 
@@ -284,7 +350,7 @@ To learn more, see [Understand DM stitching and push notifications](/chat-apps/p
 :::code-group
 
 ```tsx [React Native]
-conversation.getHmacKeys()
+await conversation.getConversationHmacKeys();
 ```
 
 ```kotlin [Kotlin]

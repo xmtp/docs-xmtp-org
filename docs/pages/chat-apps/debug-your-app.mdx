@@ -140,6 +140,22 @@ Conversations may be temporarily paused when a protocol upgrade is in progress. 
 
 :::code-group
 
+```tsx [React Native]
+// Check if conversation is paused for a protocol upgrade
+const pausedVersion = await conversation.pausedForVersion();
+
+if (pausedVersion) {
+  console.log('Conversation is paused waiting for version:', pausedVersion);
+  // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+  // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+const groupPausedVersion = await group.pausedForVersion();
+const dmPausedVersion = await dm.pausedForVersion();
+```
+
 ```kotlin [Kotlin]
 // Check if conversation is paused for a protocol upgrade
 val pausedVersion = conversation.pausedForVersion()
@@ -192,6 +208,32 @@ To use file logging, call the following static functions:
   - `clearXMTPLogs()`
 
 :::code-group
+
+```tsx [React Native]
+import { Client, LogLevel, LogRotation } from '@xmtp/react-native-sdk';
+
+// Activate persistent logging
+await Client.activatePersistentLibXMTPLogWriter(
+  LogLevel.DEBUG,
+  LogRotation.HOURLY,
+  10 // max files
+);
+
+// Get log file paths for sharing
+const logPaths = Client.getXMTPLogFilePaths();
+
+// Check if logging is active
+const isActive = Client.isLogWriterActive();
+
+// Read a specific log file
+const logContent = await Client.readXMTPLogFile(logPaths[0]);
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter();
+
+// Clear all log files
+const clearedCount = Client.clearXMTPLogs();
+```
 
 ```kotlin [Kotlin]
 // Get log file paths for sharing
@@ -317,6 +359,60 @@ SubscribeMessages        0
 SubscribeWelcomes       0
 ```
 
+:::code-group
+
+```tsx [React Native]
+// Get network debug information
+const debugInfo = await client.debugInformation.getNetworkDebugInformation();
+
+// Get aggregated statistics as formatted string
+console.log(debugInfo.aggregateStatistics);
+
+// Access individual API statistics
+console.log('Uploads:', debugInfo.apiStatistics.uploadKeyPackage);
+console.log('Fetches:', debugInfo.apiStatistics.fetchKeyPackage);
+console.log('Sent messages:', debugInfo.apiStatistics.sendGroupMessages);
+
+// Access identity statistics
+console.log('Identity updates:', debugInfo.identityStatistics.publishIdentityUpdate);
+console.log('Inbox ID lookups:', debugInfo.identityStatistics.getInboxIds);
+
+// Clear all statistics
+await client.debugInformation.clearAllStatistics();
+```
+
+```kotlin [Kotlin]
+// Get network debug information
+val debugInfo = client.debugInformation
+
+// Get aggregated statistics
+println(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+println("Uploads: ${debugInfo.apiStatistics.uploadKeyPackage}")
+println("Fetches: ${debugInfo.apiStatistics.fetchKeyPackage}")
+
+// Clear all statistics
+client.debugInformation.clearAllStatistics()
+```
+
+```swift [Swift]
+// Get network debug information
+let debugInfo = client.debugInformation
+
+// Get aggregated statistics
+print(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+print("Uploads: \(debugInfo.apiStatistics.uploadKeyPackage)")
+print("Fetches: \(debugInfo.apiStatistics.fetchKeyPackage)")
+
+// Clear all statistics
+try await client.debugInformation.clearAllStatistics()
+```
+
+:::
+
 ### Get an individual statistic
 
 To return an individual statistic as a number, run:
@@ -329,9 +425,9 @@ To return an individual statistic as a number, run:
   - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
   - `client.debugInformation.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
-- For React Native SDK:
-  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+- For React Native SDK (async - must call `getNetworkDebugInformation()` first):
+  - `debugInfo.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `debugInfo.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
 

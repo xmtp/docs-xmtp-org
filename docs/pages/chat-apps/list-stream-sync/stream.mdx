@@ -65,9 +65,17 @@ for await (const conversation of stream) {
 ```
 
 ```tsx [React Native]
-await alix.conversations.stream(async (conversation: Conversation<any>) => {
-  // Received a conversation
-});
+// Stream all conversations
+await client.conversations.stream(
+  async (conversation: Conversation<any>) => {
+    // Received a conversation
+  },
+  'all', // type: 'all' | 'groups' | 'dms'
+  () => console.log('Stream closed') // optional onClose callback
+);
+
+// To cancel the stream
+client.conversations.cancelStream();
 ```
 
 ```kotlin [Kotlin]
@@ -183,12 +191,18 @@ for await (const message of stream) {
 ```
 
 ```tsx [React Native]
-await alix.conversations.streamAllMessages(
+// Stream all messages from allowed conversations
+await client.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
-  { consentState: ['allowed'] }
+  'all', // type: 'all' | 'groups' | 'dms'
+  ['allowed'], // consentStates
+  () => console.log('Stream closed') // optional onClose callback
 );
+
+// To cancel the stream
+client.conversations.cancelStreamAllMessages();
 ```
 
 ```kotlin [Kotlin]
@@ -277,19 +291,24 @@ const [messages, setMessages] = useState<DecodedMessage[]>([]);
 const messageCallback = async (message: DecodedMessage<any>) => {
   setMessages((prev) => [...prev, message]);
 };
-const conversationFilterType: ConversationFilterType = 'all';
-const consentStates: ConsentState[] = ['allowed'];
+
 const onCloseCallback = () => {
   console.log('Message stream closed, handle retries here');
+  // Implement your own retry logic
 };
 
 const startMessageStream = async () => {
-  await alix.conversations.streamAllMessages(
+  await client.conversations.streamAllMessages(
     messageCallback,
-    conversationFilterType,
-    consentStates,
+    'all', // type: 'all' | 'groups' | 'dms'
+    ['allowed'], // consentStates
     onCloseCallback
   );
+};
+
+// To stop streaming
+const stopMessageStream = () => {
+  client.conversations.cancelStreamAllMessages();
 };
 ```
 

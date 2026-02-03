@@ -151,6 +151,14 @@ Instead of using inbox IDs, you can create groups directly using identities (EOA
 
 :::code-group
 
+```tsx [React Native]
+// Create a group using identities instead of inbox IDs
+const group = await client.conversations.newGroupWithIdentities(
+  [memberIdentity1, memberIdentity2],
+  { name: 'Group Name', description: 'Group description' }
+);
+```
+
 ```kotlin [Kotlin]
 // Create a group using identities instead of inbox IDs
 val group = client.conversations.newGroupWithIdentities(
@@ -296,6 +304,11 @@ You can also create a DM directly using an identity (EOA or SCW address) instead
 
 :::code-group
 
+```tsx [React Native]
+// Create or find a DM using an identity
+const dm = await client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity);
+```
+
 ```kotlin [Kotlin]
 // Create or find a DM using a identity
 val dm = client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity)
@@ -364,8 +377,12 @@ await alix.conversations.findConversation(conversation.id);
 await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
 await alix.conversations.findGroup(group.id);
-// Returns a DM
+// Returns a DM by inbox ID
+await alix.conversations.findDmByInboxId(bo.inboxId);
+// Returns a DM by identity
 await alix.conversations.findDmByIdentity(bo.identity);
+// Returns a specific message
+await alix.conversations.findMessage(messageId);
 ```
 
 ```kotlin [Kotlin]

@@ -160,6 +160,24 @@ Get the timestamp of when each participant last read the conversation:
 
 :::code-group
 
+```tsx [React Native]
+// React Native doesn't have a getLastReadTimes() convenience method.
+// Track read receipts manually by filtering messages:
+const messages = await conversation.messages();
+const readReceipts = messages.filter(
+  (msg) => msg.contentTypeId === 'xmtp.org/readReceipt:1.0'
+);
+
+// Build a map of last read times by sender
+const lastReadTimes = new Map<string, Date>();
+readReceipts.forEach((receipt) => {
+  const existing = lastReadTimes.get(receipt.senderInboxId);
+  if (!existing || receipt.sent > existing) {
+    lastReadTimes.set(receipt.senderInboxId, receipt.sent);
+  }
+});
+```
+
 ```kotlin [Kotlin]
 // Get last read times for a conversation
 val lastReadTimes = conversation.getLastReadTimes()

@@ -148,6 +148,34 @@ let group = try await client.conversations.newGroupCustomPermissions(
 )
 ```
 
+```tsx [React Native]
+// Define a custom permission policy set
+const customPermissions = {
+  addMemberPolicy: 'admin',
+  removeMemberPolicy: 'admin',
+  addAdminPolicy: 'superAdmin',
+  removeAdminPolicy: 'superAdmin',
+  updateGroupNamePolicy: 'allow',
+  updateGroupDescriptionPolicy: 'allow',
+  updateGroupImagePolicy: 'admin',
+  updateMessageDisappearingPolicy: 'superAdmin',
+};
+
+// Create a group with custom permissions using inbox IDs
+const group = await client.conversations.newGroupCustomPermissions(
+  [memberInboxId1, memberInboxId2],
+  customPermissions,
+  { name: 'Custom Group', description: 'A group with custom permissions' }
+);
+
+// Or create using identities instead of inbox IDs
+const groupWithIdentities = await client.conversations.newGroupCustomPermissionsWithIdentities(
+  [memberIdentity1, memberIdentity2],
+  customPermissions,
+  { name: 'Custom Group', description: 'A group with custom permissions' }
+);
+```
+
 :::
 
 ### Get the current permission policy set
@@ -155,6 +183,15 @@ let group = try await client.conversations.newGroupCustomPermissions(
 To retrieve the current permissions for a group:
 
 :::code-group
+
+```tsx [React Native]
+// Get the current permission policy set for a group
+const policySet = await group.permissionPolicySet();
+
+console.log('Add member policy:', policySet.addMemberPolicy);
+console.log('Remove member policy:', policySet.removeMemberPolicy);
+console.log('Update name policy:', policySet.updateGroupNamePolicy);
+```
 
 ```kotlin [Kotlin]
 // Get the current permission policy set for a group
@@ -184,6 +221,11 @@ Super admins can update individual permissions on an existing group. Each permis
 
 :::code-group
 
+```tsx [React Native]
+// Allow only admins to add members
+await group.updateAddMemberPermission('admin');
+```
+
 ```kotlin [Kotlin]
 // Allow only admins to add members
 group.updateAddMemberPermission(PermissionOption.Admin)
@@ -199,6 +241,11 @@ try await group.updateAddMemberPermission(newPermissionOption: .admin)
 ### Update remove member permission
 
 :::code-group
+
+```tsx [React Native]
+// Allow only admins to remove members
+await group.updateRemoveMemberPermission('admin');
+```
 
 ```kotlin [Kotlin]
 // Allow only admins to remove members
@@ -216,6 +263,11 @@ try await group.updateRemoveMemberPermission(newPermissionOption: .admin)
 
 :::code-group
 
+```tsx [React Native]
+// Only super admins can add admins
+await group.updateAddAdminPermission('super_admin');
+```
+
 ```kotlin [Kotlin]
 // Only super admins can add admins
 group.updateAddAdminPermission(PermissionOption.SuperAdmin)
@@ -231,6 +283,11 @@ try await group.updateAddAdminPermission(newPermissionOption: .superAdmin)
 ### Update remove admin permission
 
 :::code-group
+
+```tsx [React Native]
+// Only super admins can remove admins
+await group.updateRemoveAdminPermission('super_admin');
+```
 
 ```kotlin [Kotlin]
 // Only super admins can remove admins
@@ -248,6 +305,11 @@ try await group.updateRemoveAdminPermission(newPermissionOption: .superAdmin)
 
 :::code-group
 
+```tsx [React Native]
+// Allow all members to update the group name
+await group.updateNamePermission('allow');
+```
+
 ```kotlin [Kotlin]
 // Allow all members to update the group name
 group.updateNamePermission(PermissionOption.Allow)
@@ -264,6 +326,11 @@ try await group.updateNamePermission(newPermissionOption: .allow)
 
 :::code-group
 
+```tsx [React Native]
+// Allow only admins to update the description
+await group.updateDescriptionPermission('admin');
+```
+
 ```kotlin [Kotlin]
 // Allow only admins to update the description
 group.updateDescriptionPermission(PermissionOption.Admin)
@@ -279,6 +346,11 @@ try await group.updateDescriptionPermission(newPermissionOption: .admin)
 ### Update group image permission
 
 :::code-group
+
+```tsx [React Native]
+// Allow only admins to update the group image
+await group.updateImageUrlPermission('admin');
+```
 
 ```kotlin [Kotlin]
 // Allow only admins to update the group image
@@ -541,9 +613,19 @@ try await group.addMembers(inboxIds: [inboxId])
 
 ### Add members by identity
 
-You can add members using their identities instead of inbox IDs. This method returns a `GroupMembershipResult` with details about the operation.
+You can add members using their identities instead of inbox IDs. This method returns a `MembershipResult` with details about the operation.
 
 :::code-group
+
+```tsx [React Native]
+// Add members using identities
+const result = await group.addMembersByIdentity([memberIdentity1, memberIdentity2]);
+
+// MembershipResult contains:
+console.log('Added members:', result.addedMembers);        // InboxId[]
+console.log('Removed members:', result.removedMembers);    // InboxId[]
+console.log('Failed installations:', result.failedInstallationIds); // InstallationId[]
+```
 
 ```kotlin [Kotlin]
 // Add members using identities
@@ -598,6 +680,11 @@ try await group.removeMembers(inboxIds: [inboxId])
 ### Remove members by identity
 
 :::code-group
+
+```tsx [React Native]
+// Remove members using identities
+await group.removeMembersByIdentity([memberIdentity1, memberIdentity2]);
+```
 
 ```kotlin [Kotlin]
 // Remove members using identities
@@ -798,6 +885,11 @@ Get the inbox IDs of all other participants in a conversation (excluding the cur
 
 :::code-group
 
+```tsx [React Native]
+// Get the peer inbox ID in a DM
+const peerInboxId = await dm.peerInboxId();
+```
+
 ```kotlin [Kotlin]
 // Get peer inbox IDs in a group (excludes current user)
 val peerInboxIds = group.peerInboxIds()
@@ -845,6 +937,11 @@ let isDmCreator = try await dm.isCreator()
 Get the inbox ID of the user who created the conversation:
 
 :::code-group
+
+```tsx [React Native]
+// Get the creator's inbox ID for a group
+const creatorInboxId = await group.creatorInboxId();
+```
 
 ```kotlin [Kotlin]
 // Get the creator's inbox ID for a DM

@@ -179,7 +179,16 @@ for await (const updates of stream) {
 ```
 
 ```tsx [React Native]
-await client.preferences.streamConsent();
+// Stream consent updates with callback
+await client.preferences.streamConsent(
+  async (consent: ConsentRecord) => {
+    console.log('Consent updated:', consent.value, consent.state);
+  },
+  () => console.log('Stream closed') // optional onClose callback
+);
+
+// To cancel the stream
+client.preferences.cancelStreamConsent();
 ```
 
 ```kotlin [Kotlin]
@@ -232,9 +241,17 @@ await client.setConsentStates([
 ```
 
 ```tsx [React Native]
+// Set a single consent state
 await client.preferences.setConsentState(
   new ConsentRecord(inboxId, 'inbox_id', 'denied')
 );
+
+// Set multiple consent states at once
+await client.preferences.setConsentStates([
+  new ConsentRecord(inboxId1, 'inbox_id', 'allowed'),
+  new ConsentRecord(inboxId2, 'inbox_id', 'denied'),
+  new ConsentRecord(conversationId, 'conversation_id', 'allowed'),
+]);
 ```
 
 ```kotlin [Kotlin]

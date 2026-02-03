@@ -83,27 +83,24 @@ await client.conversations.createGroup([inboxId], {
 ```
 
 ```tsx [React Native]
-// DM
+import { DisappearingMessageSettings } from '@xmtp/react-native-sdk';
+
+// DM - DisappearingMessageSettings is passed directly as second parameter
 await client.conversations.newConversation(
   inboxId,
-  {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
-)
+  new DisappearingMessageSettings(1738620126404999936, 1800000000000000)
+);
 
-// Group
+// Group - DisappearingMessageSettings is passed in options object
 await client.conversations.newGroup(
   [inboxId],
   {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
+    disappearingMessageSettings: new DisappearingMessageSettings(
+      1738620126404999936,
+      1800000000000000
     )
   }
-)
+);
 ```
 
 ```kotlin [Kotlin]
@@ -256,6 +253,17 @@ messages.forEach { message ->
 }
 ```
 
+```tsx [React Native]
+const messages = await group.messages();
+
+messages.forEach((message) => {
+  if (message.expiresAtNs) {
+    const expirationTime = new Date(Number(message.expiresAtNs) / 1_000_000);
+    console.log('Message expires at:', expirationTime);
+  }
+});
+```
+
 ```swift [Swift]
 let messages = try await group.messages()
 
@@ -301,6 +309,20 @@ for await (const messageId of stream) {
 
 // When done, end the stream
 stream.end();
+```
+
+```tsx [React Native]
+// Stream message deletions
+await client.conversations.streamMessageDeletions(
+  async (deletedMessage) => {
+    console.log('Message deleted:', deletedMessage.id);
+    // Update your UI to remove the message
+  },
+  () => console.log('Stream closed') // optional onClose callback
+);
+
+// To cancel the stream
+await client.conversations.cancelStreamMessageDeletions();
 ```
 
 :::

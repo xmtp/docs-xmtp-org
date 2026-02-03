@@ -154,6 +154,11 @@ Temporarily release the connection to the local database:
 
 :::code-group
 
+```tsx [React Native]
+// Drop the local database connection
+await client.dropLocalDatabaseConnection();
+```
+
 ```kotlin [Kotlin]
 // Drop the local database connection
 client.dropLocalDatabaseConnection()
@@ -171,6 +176,11 @@ try client.dropLocalDatabaseConnection()
 Reconnect to the local database after dropping the connection:
 
 :::code-group
+
+```tsx [React Native]
+// Reconnect to the local database
+await client.reconnectLocalDatabase();
+```
 
 ```kotlin [Kotlin]
 // Reconnect to the local database
