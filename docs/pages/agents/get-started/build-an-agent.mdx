@@ -2,6 +2,28 @@
 
 Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
 
+## Prerequisites
+
+Install a Node.js LTS release and run the following commands to get started:
+
+```bash
+# create a folder for your Agent code
+mkdir my-agent
+cd my-agent
+
+# init npm module
+npm init --init-type=module -y
+
+# install typescript as dev dependency
+npm i -D typescript
+
+# install tsx to execute typescript code
+npm i -D tsx
+
+# install node.js typings to use features like "process.loadEnvFile"
+npm i -D @types/node
+```
+
 ## Installation
 
 Install `@xmtp/agent-sdk` as a dependency in your project.
