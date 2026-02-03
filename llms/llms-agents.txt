@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 07:23 PM UTC / January 30, 2026
+Generated at 01:24 AM UTC / February 03, 2026
 
 ## About this file
 
@@ -1000,6 +1000,8 @@ XMTP agents are autonomous programs that can participate in secure, end-to-end e
 ## What can I build with XMTP?
 
 <ProjectsTable />
+
+You can explore published open-source agents built with the XMTP Agent SDK by [browsing npm](https://www.npmjs.com/package/@xmtp/agent-sdk?activeTab=dependents) and [GitHub dependents](https://github.com/xmtp/xmtp-js/network/dependents).
 
 ## Get started
 
