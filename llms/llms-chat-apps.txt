@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 12:52 AM UTC / January 30, 2026
+Generated at 01:24 AM UTC / February 03, 2026
 
 ## About this file
 
@@ -1767,6 +1767,24 @@ Use `reactions` to get a list of reaction messages associated with the message.
 
 :::code-group
 
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.enrichedMessages()
+
+// Access reaction data for each message
+// Same enriched data is available for both groups and DMs
+for (const message of groupMessages) {
+  // Access the list of reactions
+  message.reactions.forEach((reaction) => {
+    const reactionContent = reaction.content() as { content: string }
+    console.log(`Reaction: ${reactionContent.content}`)
+  })
+}
+```
+
 ```kotlin [Kotlin]
 // Retrieve messages with enriched data from a group
 val groupMessages = group.enrichedMessages()
@@ -1810,6 +1828,25 @@ for message in groupMessages {
 Messages returned by `enrichedMessages()` include reply information when a message is a reply to another message.
 
 :::code-group
+
+```tsx [React Native]
+// Retrieve messages with enriched data from a group
+const groupMessages = await group.enrichedMessages()
+
+// Retrieve messages with enriched data from a DM
+const dmMessages = await dm.enrichedMessages()
+
+// Access reply data for each message
+// Same enriched data is available for both groups and DMs
+for (const message of groupMessages) {
+  // Check if the message is a reply
+  if (message.contentTypeId === 'xmtp.org/reply:1.0') {
+    const replyContent = message.content() as ReplyContent
+    console.log(`This is a reply to message: ${replyContent.reference}`)
+    console.log(`Reply text: ${replyContent.content}`)
+  }
+}
+```
 
 ```kotlin [Kotlin]
 // Retrieve messages with enriched data from a group
@@ -3698,6 +3735,8 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 
 ## chat-apps/intro/what-is-xmtp.mdx
+import ProjectsTable from '../../../snippets/projects-table.mdx';
+
 # What is XMTP?
 
 XMTP (Extensible Message Transport Protocol) is an open protocol and decentralized network for secure, end-to-end encrypted messaging. It enables developers to build messaging experiences where users own their identity, conversations, and data.
@@ -3789,6 +3828,10 @@ Because XMTP is a protocol, not a platform:
 - Developers maintain full control without platform lock-in
 - The protocol is censorship-resistant and not controlled by a central authority
 - Apps and agents can interoperate seamlessly
+
+## What can I build with XMTP?
+
+<ProjectsTable />  
 
 ## Platform support
 
@@ -10890,6 +10933,17 @@ By default, `publishMessages()` publishes all prepared messages. For more contro
 This is useful when sending [remote attachments](/chat-apps/content-types/attachments). You can validate that the attachment upload succeeded before publishing. If the upload failed, you can choose to delete the local prepared message instead of publishing it.
 
 :::code-group
+
+```tsx [React Native]
+// Prepare message without auto-publishing
+const messageId = await conversation.prepareMessage(content, { noSend: true });
+
+// Publish the specific message when ready
+await conversation.publishMessage(messageId);
+
+// Or delete it locally if needed
+await conversation.deleteMessageLocally(messageId);
+```
 
 ```kotlin [Kotlin]
 // Prepare message without auto-publishing
