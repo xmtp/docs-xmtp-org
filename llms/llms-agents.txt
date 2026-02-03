@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 01:24 AM UTC / February 03, 2026
+Generated at 06:07 PM UTC / February 03, 2026
 
 ## About this file
 
@@ -669,7 +669,33 @@ agent.on('unhandledError', (error) => {
 ## agents/get-started/build-an-agent.mdx
 # Build XMTP agents
 
-Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
+Use the [XMTP Agent SDK](https://www.npmjs.com/package/@xmtp/agent-sdk) to build agents that interact with the XMTP network.
+
+## Prerequisites
+
+Install a [Node.js LTS release](https://nodejs.org/) and run the following commands to get started:
+
+```bash
+# Create a folder for your agent code
+mkdir my-agent
+cd my-agent
+
+# Initialize a new project with ES module support
+npm init --init-type=module -y
+
+# Install TypeScript as development dependency (-D)
+npm i -D typescript
+
+# Install tsx to run TypeScript files directly
+# without a separate build step
+npm i -D tsx
+
+# Install Node.js type definitions
+# to enable TypeScript support for built-in APIs
+npm i -D @types/node
+```
+
+Once complete, you can run your TypeScript code using `tsx src/your-code.ts`.
 
 ## Installation
 
@@ -702,6 +728,11 @@ This example shows how to create an agent that sends a message when it receives 
 ```ts [Node]
 import { Agent } from '@xmtp/agent-sdk';
 import { getTestUrl } from '@xmtp/agent-sdk/debug';
+import { loadEnvFile } from 'node:process';
+
+// 1. Load environment variables (e.g., XMTP_WALLET_KEY)
+// from .env file
+loadEnvFile('.env');
 
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({
@@ -710,7 +741,7 @@ const agent = await Agent.createFromEnv({
 
 // 3. Respond to text messages
 agent.on('text', async (ctx) => {
-  await ctx.sendText('Hello from my XMTP Agent! 👋');
+  await ctx.conversation.sendText('Hello from my XMTP Agent! 👋');
 });
 
 // 4. Log when we're ready
