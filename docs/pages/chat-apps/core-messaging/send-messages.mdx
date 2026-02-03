@@ -57,7 +57,9 @@ try await group.send(content: "Hello everyone")
 
 ## Control message visibility and push notifications
 
-Use `MessageVisibilityOptions` to control whether a message triggers push notifications. This is useful for messages that shouldn't interrupt the recipient, such as typing indicators or read receipts.
+Use `MessageVisibilityOptions` to override the default `shouldPush` value for a message. This controls whether the message triggers push notifications on recipient devices. This is useful for messages that shouldn't interrupt the recipient, such as typing indicators or background updates.
+
+To learn more about how `shouldPush` is used in the push notification filtering flow, see [Understand message filtering](/chat-apps/push-notifs/understand-push-notifs#understand-message-filtering).
 
 :::code-group
 

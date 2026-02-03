@@ -127,24 +127,6 @@ val group = client.conversations.newGroupCustomPermissions(
 
 :::
 
-### Create a group with custom permissions using identities
-
-You can also create a group using public identities instead of inbox IDs:
-
-:::code-group
-
-```kotlin [Kotlin]
-// Create a group with custom permissions using public identities
-val group = client.conversations.newGroupCustomPermissionsWithIdentities(
-    identities = listOf(memberIdentity1, memberIdentity2),
-    permissionPolicySet = customPermissions,
-    name = "Custom Group",
-    description = "A group with custom permissions"
-)
-```
-
-:::
-
 ### Get the current permission policy set
 
 To retrieve the current permissions for a group:
@@ -490,6 +472,24 @@ try await group.addMembers(inboxIds: [inboxId])
 
 :::
 
+### Add members by identity
+
+You can add members using their identities instead of inbox IDs. This method returns a `GroupMembershipResult` with details about the operation.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Add members using identities
+val result = group.addMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
+:::
+
 ### Remove member by inbox ID
 
 :::code-group
@@ -516,30 +516,12 @@ try await group.removeMembers(inboxIds: [inboxId])
 
 :::
 
-### Add members by public identity
-
-You can add members using their public identities instead of inbox IDs. This method returns a `GroupMembershipResult` with details about the operation.
+### Remove members by identity
 
 :::code-group
 
 ```kotlin [Kotlin]
-// Add members using public identities
-val result = group.addMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
-
-// GroupMembershipResult contains information about:
-// - Successfully added members
-// - Members that failed to be added
-// - Members that were already in the group
-```
-
-:::
-
-### Remove members by public identity
-
-:::code-group
-
-```kotlin [Kotlin]
-// Remove members using public identities
+// Remove members using identities
 group.removeMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
 ```
 

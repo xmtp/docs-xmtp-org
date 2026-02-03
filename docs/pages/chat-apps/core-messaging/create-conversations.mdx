@@ -145,14 +145,14 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 :::
 
-### Create a group using public identities
+### Create a group chat using identities
 
-Instead of using inbox IDs, you can create groups directly using public identities. This is useful when you have wallet addresses but haven't yet resolved them to inbox IDs.
+Instead of using inbox IDs, you can create groups directly using identities (EOA or SCW addresses). This is useful when you have wallet addresses but haven't yet resolved them to inbox IDs.
 
 :::code-group
 
 ```kotlin [Kotlin]
-// Create a group using public identities instead of inbox IDs
+// Create a group using identities instead of inbox IDs
 val group = client.conversations.newGroupWithIdentities(
     identities = listOf(memberIdentity1, memberIdentity2),
     name = "Group Name",
@@ -281,14 +281,14 @@ let conversation = try await client.conversations.newConversation(inboxId)
 
 :::
 
-### Create a DM using public identity
+### Create a DM using an identity
 
-You can also create a DM directly using a public identity instead of an inbox ID:
+You can also create a DM directly using an identity (EOA or SCW address) instead of an inbox ID:
 
 :::code-group
 
 ```kotlin [Kotlin]
-// Create or find a DM using a public identity
+// Create or find a DM using a identity
 val dm = client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity)
 
 // Or use newConversationWithIdentity
@@ -359,7 +359,7 @@ alix.conversations.findConversationByTopic(conversation.topic)
 alix.conversations.findGroup(group.id)
 // Returns a DM by inbox ID
 alix.conversations.findDmByInboxId(bo.inboxId)
-// Returns a DM by public identity
+// Returns a DM by identity
 alix.conversations.findDmByIdentity(bo.publicIdentity)
 // Returns a specific message
 alix.conversations.findMessage(messageId)
@@ -373,8 +373,8 @@ try alix.conversations.findConversation(conversation.id)
 try alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 try alix.conversations.findGroup(group.id)
-// Returns a DM by inbox ID
-try alix.conversations.findDmByInboxId(bo.inboxId)
+// Returns a DM
+try alix.conversations. findDmbyInboxId(bo.inboxId)
 ```
 
 :::
