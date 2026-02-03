@@ -160,6 +160,15 @@ val group = client.conversations.newGroupWithIdentities(
 )
 ```
 
+```swift [Swift]
+// Create a group using identities instead of inbox IDs
+let group = try await client.conversations.newGroupWithIdentities(
+    with: [memberIdentity1, memberIdentity2],
+    name: "Group Name",
+    description: "Group description"
+)
+```
+
 :::
 
 ## Optimistically create a new group chat
@@ -295,6 +304,14 @@ val dm = client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity)
 val conversation = client.conversations.newConversationWithIdentity(peerPublicIdentity)
 ```
 
+```swift [Swift]
+// Create or find a DM using an identity
+let dm = try await client.conversations.findOrCreateDmWithIdentity(with: peerPublicIdentity)
+
+// Or use newConversationWithIdentity
+let conversation = try await client.conversations.newConversationWithIdentity(with: peerPublicIdentity)
+```
+
 :::
 
 ## Conversation helper methods
@@ -369,12 +386,18 @@ alix.conversations.findEnrichedMessage(messageId)
 
 ```swift [Swift]
 // Returns a ConversationContainer
-try alix.conversations.findConversation(conversation.id)
-try alix.conversations.findConversationByTopic(conversation.topic)
+try await alix.conversations.findConversation(conversationId: conversation.id)
+try await alix.conversations.findConversationByTopic(topic: conversation.topic)
 // Returns a Group
-try alix.conversations.findGroup(group.id)
-// Returns a DM
-try alix.conversations. findDmbyInboxId(bo.inboxId)
+try await alix.conversations.findGroup(groupId: group.id)
+// Returns a DM by inbox ID
+try await alix.conversations.findDmByInboxId(inboxId: bo.inboxId)
+// Returns a DM by identity
+try await alix.conversations.findDmByIdentity(publicIdentity: bo.publicIdentity)
+// Returns a specific message
+try alix.conversations.findMessage(messageId: messageId)
+// Returns a message with reactions
+try alix.conversations.findEnrichedMessage(messageId: messageId)
 ```
 
 :::

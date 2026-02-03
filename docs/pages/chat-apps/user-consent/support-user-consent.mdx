@@ -53,11 +53,19 @@ await conversation.consentState();
 ```
 
 ```kotlin [Kotlin]
+// Get consent state directly from a conversation
 conversation.consentState()
+
+// Or get consent state by conversation ID
+val consentState = client.preferences.conversationState(conversationId)
 ```
 
 ```swift [Swift]
+// Get consent state directly from a conversation
 try conversation.consentState()
+
+// Or get consent state by conversation ID
+let consentState = try await client.preferences.conversationState(conversationId: conversationId)
 ```
 
 :::

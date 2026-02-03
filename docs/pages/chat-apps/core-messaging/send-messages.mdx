@@ -81,6 +81,30 @@ conversation.prepareMessage(
 )
 ```
 
+```swift [Swift]
+// Send a message without triggering a push notification
+// First encode the content, then send with visibility options
+let (encodedContent, _) = try await conversation.encodeContent(
+    content: "Typing...",
+    options: nil
+)
+let visibilityOptions = MessageVisibilityOptions(shouldPush: false)
+try await conversation.send(
+    encodedContent: encodedContent,
+    visibilityOptions: visibilityOptions
+)
+
+// Using with prepareMessage
+let (encoded, _) = try await conversation.encodeContent(
+    content: "Background update",
+    options: nil
+)
+try await conversation.prepareMessage(
+    encodedContent: encoded,
+    visibilityOptions: MessageVisibilityOptions(shouldPush: false)
+)
+```
+
 :::
 
 | Option | Description |

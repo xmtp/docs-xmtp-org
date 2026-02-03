@@ -159,6 +159,11 @@ Temporarily release the connection to the local database:
 client.dropLocalDatabaseConnection()
 ```
 
+```swift [Swift]
+// Drop the local database connection
+try client.dropLocalDatabaseConnection()
+```
+
 :::
 
 ### Reconnect to the database
@@ -170,6 +175,11 @@ Reconnect to the local database after dropping the connection:
 ```kotlin [Kotlin]
 // Reconnect to the local database
 client.reconnectLocalDatabase()
+```
+
+```swift [Swift]
+// Reconnect to the local database
+try await client.reconnectLocalDatabase()
 ```
 
 :::

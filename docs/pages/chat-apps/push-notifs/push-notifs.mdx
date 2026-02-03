@@ -2,31 +2,6 @@
 
 With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
 
-## Topic class
-
-The `Topic` class provides methods to generate topic identifiers for push notification subscriptions. Topics are used to identify specific channels on the XMTP network.
-
-:::code-group
-
-```kotlin [Kotlin]
-import org.xmtp.android.library.Topic
-
-// Get the welcome topic for new conversations
-val welcomeTopic = Topic.userWelcome(client.installationId)
-println(welcomeTopic.description) // /xmtp/mls/1/w-$installationId/proto
-
-// Get the message topic for a specific group
-val messageTopic = Topic.groupMessage(groupId)
-println(messageTopic.description) // /xmtp/mls/1/g-$groupId/proto
-```
-
-:::
-
-| Method | Description |
-| ------ | ----------- |
-| `Topic.userWelcome(installationId)` | Topic for receiving notifications about new conversations |
-| `Topic.groupMessage(groupId)` | Topic for receiving notifications about messages in a specific conversation |
-
 ## Get a Welcome message topic ID
 
 Get the topic identifier for an app installation. This topic ID tells your app where to listen on the network for push notifications about any new group chat or DM conversations.
@@ -74,16 +49,22 @@ conversation.topic
 ```
 
 ```kotlin [Kotlin]
-// Request
+// From a conversation object
 conversation.topic
+
+// Or using the Topic class with a group ID
+Topic.groupMessage(groupId).description
 
 // Response
 /xmtp/mls/1/g-$conversationId/proto
 ```
 
 ```swift [Swift]
-// Request
+// From a conversation object
 conversation.topic
+
+// Or using the Topic class with a group ID
+Topic.groupMessage(groupId).description
 
 // Response
 /xmtp/mls/1/g-$conversationId/proto
@@ -204,7 +185,7 @@ Then determine whether it's for a new conversation or an existing one.
   ```
 
   ```swift [Swift]
-  let conversation = try await alix.conversations.fromWelcome(receivedBytes)
+  let conversation = try await alix.conversations.fromWelcome(envelopeBytes: receivedBytes)
   ```
 
   :::
@@ -226,9 +207,9 @@ Then determine whether it's for a new conversation or an existing one.
   ```
 
   ```swift [Swift]
-  let conversation = try alix.findConversationByTopic(received.topic)
-  try await conversation.sync()
-  let message = try await conversation.processMessage(receivedBytes)
+  let conversation = try await alix.conversations.findConversationByTopic(topic: received.topic)
+  try await conversation?.sync()
+  let message = try await conversation?.processMessage(messageBytes: receivedBytes)
   ```
 
   :::
@@ -247,6 +228,16 @@ client.preferences.streamPreferenceUpdates().collect { preferenceType ->
         PreferenceType.HMAC_KEYS -> {
             // HMAC keys updated - resubscribe to topics
         }
+    }
+}
+```
+
+```swift [Swift]
+for try await preferenceType in client.preferences.streamPreferenceUpdates() {
+    switch preferenceType {
+    case .hmac_keys:
+        // HMAC keys updated - resubscribe to topics
+        break
     }
 }
 ```

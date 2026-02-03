@@ -125,6 +125,29 @@ val group = client.conversations.newGroupCustomPermissions(
 )
 ```
 
+```swift [Swift]
+// Define a custom permission policy set
+let customPermissions = PermissionPolicySet(
+    addMemberPolicy: .admin,
+    removeMemberPolicy: .admin,
+    addAdminPolicy: .superAdmin,
+    removeAdminPolicy: .superAdmin,
+    updateGroupNamePolicy: .allow,
+    updateGroupDescriptionPolicy: .allow,
+    updateGroupImagePolicy: .admin,
+    updateMessageDisappearingPolicy: .superAdmin,
+    updateAppDataPolicy: .admin
+)
+
+// Create a group with custom permissions
+let group = try await client.conversations.newGroupCustomPermissions(
+    with: [memberInboxId1, memberInboxId2],
+    permissionPolicySet: customPermissions,
+    name: "Custom Group",
+    description: "A group with custom permissions"
+)
+```
+
 :::
 
 ### Get the current permission policy set
@@ -142,6 +165,15 @@ println("Remove member policy: ${policySet.removeMemberPolicy}")
 println("Update name policy: ${policySet.updateGroupNamePolicy}")
 ```
 
+```swift [Swift]
+// Get the current permission policy set for a group
+let policySet = try group.permissionPolicySet()
+
+print("Add member policy: \(policySet.addMemberPolicy)")
+print("Remove member policy: \(policySet.removeMemberPolicy)")
+print("Update name policy: \(policySet.updateGroupNamePolicy)")
+```
+
 :::
 
 ## Update individual permissions
@@ -157,6 +189,11 @@ Super admins can update individual permissions on an existing group. Each permis
 group.updateAddMemberPermission(PermissionOption.Admin)
 ```
 
+```swift [Swift]
+// Allow only admins to add members
+try await group.updateAddMemberPermission(newPermissionOption: .admin)
+```
+
 :::
 
 ### Update remove member permission
@@ -166,6 +203,11 @@ group.updateAddMemberPermission(PermissionOption.Admin)
 ```kotlin [Kotlin]
 // Allow only admins to remove members
 group.updateRemoveMemberPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to remove members
+try await group.updateRemoveMemberPermission(newPermissionOption: .admin)
 ```
 
 :::
@@ -179,6 +221,11 @@ group.updateRemoveMemberPermission(PermissionOption.Admin)
 group.updateAddAdminPermission(PermissionOption.SuperAdmin)
 ```
 
+```swift [Swift]
+// Only super admins can add admins
+try await group.updateAddAdminPermission(newPermissionOption: .superAdmin)
+```
+
 :::
 
 ### Update remove admin permission
@@ -188,6 +235,11 @@ group.updateAddAdminPermission(PermissionOption.SuperAdmin)
 ```kotlin [Kotlin]
 // Only super admins can remove admins
 group.updateRemoveAdminPermission(PermissionOption.SuperAdmin)
+```
+
+```swift [Swift]
+// Only super admins can remove admins
+try await group.updateRemoveAdminPermission(newPermissionOption: .superAdmin)
 ```
 
 :::
@@ -201,6 +253,11 @@ group.updateRemoveAdminPermission(PermissionOption.SuperAdmin)
 group.updateNamePermission(PermissionOption.Allow)
 ```
 
+```swift [Swift]
+// Allow all members to update the group name
+try await group.updateNamePermission(newPermissionOption: .allow)
+```
+
 :::
 
 ### Update group description permission
@@ -212,6 +269,11 @@ group.updateNamePermission(PermissionOption.Allow)
 group.updateDescriptionPermission(PermissionOption.Admin)
 ```
 
+```swift [Swift]
+// Allow only admins to update the description
+try await group.updateDescriptionPermission(newPermissionOption: .admin)
+```
+
 :::
 
 ### Update group image permission
@@ -221,6 +283,11 @@ group.updateDescriptionPermission(PermissionOption.Admin)
 ```kotlin [Kotlin]
 // Allow only admins to update the group image
 group.updateImageUrlPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to update the group image
+try await group.updateImageUrlPermission(newPermissionOption: .admin)
 ```
 
 :::
@@ -488,6 +555,18 @@ val result = group.addMembersByIdentity(listOf(memberIdentity1, memberIdentity2)
 // - Members that were already in the group
 ```
 
+```swift [Swift]
+// Add members using identities
+let result = try await group.addMembersByIdentity(
+    identities: [memberIdentity1, memberIdentity2]
+)
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
 :::
 
 ### Remove member by inbox ID
@@ -523,6 +602,13 @@ try await group.removeMembers(inboxIds: [inboxId])
 ```kotlin [Kotlin]
 // Remove members using identities
 group.removeMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+```
+
+```swift [Swift]
+// Remove members using identities
+try await group.removeMembersByIdentity(
+    identities: [memberIdentity1, memberIdentity2]
+)
 ```
 
 :::
@@ -571,6 +657,8 @@ let isActive = try group.isActive() // Returns false
 
 After a user calls `leaveGroup()`, you can check if their removal is still being processed using the `membershipState()` method. This is useful for showing appropriate UI while the group removal is being finalized.
 
+:::code-group
+
 ```kotlin [Kotlin]
 // After calling leaveGroup()
 group.leaveGroup()
@@ -583,6 +671,21 @@ if (state == FfiGroupMembershipState.PENDING_REMOVE) {
     println("Processing your departure from the group")
 }
 ```
+
+```swift [Swift]
+// After calling leaveGroup()
+try await group.leaveGroup()
+
+// Check if removal is still pending
+let state = try group.membershipState
+
+if state == .pendingRemove {
+    // User has requested to leave, but removal not yet fully processed
+    print("Processing your departure from the group")
+}
+```
+
+:::
 
 The `PENDING_REMOVE` state indicates that the user has called `leaveGroup()` but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
 
@@ -703,6 +806,14 @@ val peerInboxIds = group.peerInboxIds()
 val peerInboxId = dm.peerInboxId
 ```
 
+```swift [Swift]
+// Get peer inbox IDs in a group (excludes current user)
+let peerInboxIds = try await group.peerInboxIds
+
+// Get the peer inbox ID in a DM
+let peerInboxId = try dm.peerInboxId
+```
+
 :::
 
 ### Check if current user is the creator
@@ -719,6 +830,14 @@ val isGroupCreator = group.isCreator()
 val isDmCreator = dm.isCreator()
 ```
 
+```swift [Swift]
+// Check if current user created the group
+let isGroupCreator = try await group.isCreator()
+
+// Check if current user created the DM
+let isDmCreator = try await dm.isCreator()
+```
+
 :::
 
 ### Get the creator inbox ID
@@ -730,6 +849,14 @@ Get the inbox ID of the user who created the conversation:
 ```kotlin [Kotlin]
 // Get the creator's inbox ID for a DM
 val creatorInboxId = dm.creatorInboxId()
+```
+
+```swift [Swift]
+// Get the creator's inbox ID for a DM
+let creatorInboxId = try await dm.creatorInboxId()
+
+// Get the creator's inbox ID for a group
+let groupCreatorInboxId = try await group.creatorInboxId()
 ```
 
 :::

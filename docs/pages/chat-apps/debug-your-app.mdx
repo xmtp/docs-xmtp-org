@@ -156,6 +156,22 @@ val groupPausedVersion = group.pausedForVersion()
 val dmPausedVersion = dm.pausedForVersion()
 ```
 
+```swift [Swift]
+// Check if conversation is paused for a protocol upgrade
+let pausedVersion = try await conversation.pausedForVersion()
+
+if let pausedVersion = pausedVersion {
+    print("Conversation is paused waiting for version: \(pausedVersion)")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+let groupPausedVersion = try group.pausedForVersion()
+let dmPausedVersion = try dm.pausedForVersion()
+```
+
 :::
 
 ## File logging
@@ -189,6 +205,20 @@ Client.deactivatePersistentLibXMTPLogWriter()
 
 // Clear all log files
 Client.clearXMTPLogs(context)
+```
+
+```swift [Swift]
+// Get log file paths for sharing
+let logPaths = try Client.getXMTPLogFilePaths()
+
+// Check if logging is active
+let isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+try Client.clearXMTPLogs()
 ```
 
 :::
@@ -264,7 +294,8 @@ These statistics are maintained per client instance, so each app installation ha
 
 To return aggregated statistics, run:
 
-- For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For Browser and Node SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For iOS and Android SDKs: `client.debugInformation.aggregateStatistics`
 - For React Native SDK: `client.debugInformation.aggregateStatistics`
 
 ```text
@@ -290,9 +321,13 @@ SubscribeWelcomes       0
 
 To return an individual statistic as a number, run:
 
-- For Browser, Node, iOS, and Android SDKs:
+- For Browser and Node SDKs:
   - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
   - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For iOS and Android SDKs:
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 - For React Native SDK:
   - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example

@@ -137,8 +137,47 @@ if (message.encodedContent.type == ContentTypeReadReceipt) {
 ```
 
 ```swift [Swift]
+// Get the last read times for all participants in the conversation
+let lastReadTimes = try conversation.getLastReadTimes()
+
+// lastReadTimes is a [String: Int64] where:
+// - key is the inbox ID
+// - value is the timestamp in nanoseconds when they last read the conversation
+for (inboxId, timestamp) in lastReadTimes {
+    print("Inbox \(inboxId) last read at: \(timestamp)")
+}
+
+// Or check if a message was read by iterating through messages
 let content: ReadReceipt = try message.content()
 content.timestamp // "2019-09-26T07:58:30.996+0200"
+```
+
+:::
+
+## Get last read times
+
+Get the timestamp of when each participant last read the conversation:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Get last read times for a conversation
+val lastReadTimes = conversation.getLastReadTimes()
+
+// Returns Map<InboxId, Long> where value is timestamp in nanoseconds
+lastReadTimes.forEach { (inboxId, timestampNs) ->
+    println("$inboxId last read at $timestampNs")
+}
+```
+
+```swift [Swift]
+// Get last read times for a conversation
+let lastReadTimes = try conversation.getLastReadTimes()
+
+// Returns [String: Int64] where value is timestamp in nanoseconds
+for (inboxId, timestampNs) in lastReadTimes {
+    print("\(inboxId) last read at \(timestampNs)")
+}
 ```
 
 :::
