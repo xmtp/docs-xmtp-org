@@ -114,7 +114,9 @@ The only side effect of having a stale root HMAC key is that a user might receiv
 
 #### How installations learn about new root HMAC keys
 
-This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+
+To learn how to stream HMAC key updates, see [Stream HMAC key update events](/chat-apps/push-notifs/push-notifs#stream-hmac-key-update-events).
 
 ## Understand DM stitching and push notifications
 

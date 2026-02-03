@@ -3,7 +3,9 @@
 You can sync the following preference-related information across multiple existing app installations:
 
 - Conversation [consent preferences](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set)
+  - To stream consent updates in real-time, see [Stream consent preferences](/chat-apps/user-consent/support-user-consent#stream-consent-preferences-in-real-time).
 - Conversation HMAC keys (for [push notifications](/chat-apps/push-notifs/understand-push-notifs))
+  - To stream HMAC key updates for push notifications, see [Stream HMAC key update events](/chat-apps/push-notifs/push-notifs#stream-hmac-key-update-events).
 
 ## Databases used by preferences sync
 
@@ -158,51 +160,6 @@ client.preferences.sync()
 
 ```swift [Swift]
 try await client.preferences.sync()
-```
-
-:::
-
-## Stream preference updates
-
-Listen for real-time preference updates across installations. This is useful for keeping your UI in sync when preferences change on another device.
-
-:::code-group
-
-```kotlin [Kotlin]
-// Stream preference updates
-client.preferences.streamPreferenceUpdates().collect { preferenceType ->
-    when (preferenceType) {
-        PreferenceType.HMAC_KEYS -> {
-            println("HMAC keys updated")
-            // Refresh push notification configuration
-        }
-    }
-}
-```
-
-:::
-
-### PreferenceType values
-
-| Type | Description |
-| ---- | ----------- |
-| `HMAC_KEYS` | HMAC keys for push notification topic encryption were updated |
-
-## Get conversation consent state
-
-Get the consent state for a specific conversation by its group ID:
-
-:::code-group
-
-```kotlin [Kotlin]
-// Get the consent state for a specific conversation
-val consentState = client.preferences.conversationState(groupId)
-
-when (consentState) {
-    ConsentState.ALLOWED -> println("Conversation is allowed")
-    ConsentState.DENIED -> println("Conversation is denied")
-    ConsentState.UNKNOWN -> println("Consent state is unknown")
-}
 ```
 
 :::
