@@ -84,6 +84,165 @@ If you aren't opinionated and don't set any permissions and options, groups will
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
 
+## Create a group with custom permissions
+
+Beyond the preconfigured `ALL_MEMBERS` and `ADMIN_ONLY` permission sets, you can create groups with fully custom permission policies using `PermissionPolicySet`.
+
+### PermissionOption values
+
+When setting custom permissions, use these `PermissionOption` values:
+
+| Option | Description |
+| ------ | ----------- |
+| `Allow` | All members can perform the action |
+| `Deny` | No one can perform the action |
+| `Admin` | Only admins and super admins can perform the action |
+| `SuperAdmin` | Only super admins can perform the action |
+
+### Create a group with a custom permission policy set
+
+:::code-group
+
+```kotlin [Kotlin]
+// Define a custom permission policy set
+val customPermissions = PermissionPolicySet(
+    addMemberPolicy = PermissionOption.Admin,
+    removeMemberPolicy = PermissionOption.Admin,
+    addAdminPolicy = PermissionOption.SuperAdmin,
+    removeAdminPolicy = PermissionOption.SuperAdmin,
+    updateGroupNamePolicy = PermissionOption.Allow,
+    updateGroupDescriptionPolicy = PermissionOption.Allow,
+    updateGroupImagePolicy = PermissionOption.Admin,
+    updateMessageDisappearingPolicy = PermissionOption.SuperAdmin
+)
+
+// Create a group with custom permissions
+val group = client.conversations.newGroupCustomPermissions(
+    inboxIds = listOf(memberInboxId1, memberInboxId2),
+    permissionPolicySet = customPermissions,
+    name = "Custom Group",
+    description = "A group with custom permissions"
+)
+```
+
+:::
+
+### Create a group with custom permissions using identities
+
+You can also create a group using public identities instead of inbox IDs:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Create a group with custom permissions using public identities
+val group = client.conversations.newGroupCustomPermissionsWithIdentities(
+    identities = listOf(memberIdentity1, memberIdentity2),
+    permissionPolicySet = customPermissions,
+    name = "Custom Group",
+    description = "A group with custom permissions"
+)
+```
+
+:::
+
+### Get the current permission policy set
+
+To retrieve the current permissions for a group:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Get the current permission policy set for a group
+val policySet = group.permissionPolicySet()
+
+println("Add member policy: ${policySet.addMemberPolicy}")
+println("Remove member policy: ${policySet.removeMemberPolicy}")
+println("Update name policy: ${policySet.updateGroupNamePolicy}")
+```
+
+:::
+
+## Update individual permissions
+
+Super admins can update individual permissions on an existing group. Each permission can be updated independently.
+
+### Update add member permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Allow only admins to add members
+group.updateAddMemberPermission(PermissionOption.Admin)
+```
+
+:::
+
+### Update remove member permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Allow only admins to remove members
+group.updateRemoveMemberPermission(PermissionOption.Admin)
+```
+
+:::
+
+### Update add admin permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Only super admins can add admins
+group.updateAddAdminPermission(PermissionOption.SuperAdmin)
+```
+
+:::
+
+### Update remove admin permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Only super admins can remove admins
+group.updateRemoveAdminPermission(PermissionOption.SuperAdmin)
+```
+
+:::
+
+### Update group name permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Allow all members to update the group name
+group.updateNamePermission(PermissionOption.Allow)
+```
+
+:::
+
+### Update group description permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Allow only admins to update the description
+group.updateDescriptionPermission(PermissionOption.Admin)
+```
+
+:::
+
+### Update group image permission
+
+:::code-group
+
+```kotlin [Kotlin]
+// Allow only admins to update the group image
+group.updateImageUrlPermission(PermissionOption.Admin)
+```
+
+:::
+
 ## Manage group chat admins
 
 ### Check if inbox ID is an admin
@@ -357,6 +516,35 @@ try await group.removeMembers(inboxIds: [inboxId])
 
 :::
 
+### Add members by public identity
+
+You can add members using their public identities instead of inbox IDs. This method returns a `GroupMembershipResult` with details about the operation.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Add members using public identities
+val result = group.addMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
+:::
+
+### Remove members by public identity
+
+:::code-group
+
+```kotlin [Kotlin]
+// Remove members using public identities
+group.removeMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+```
+
+:::
+
 ### Leave a group
 
 A member can remove themselves from a group by calling `leaveGroup()`. After leaving, the group becomes inactive for that member.
@@ -515,6 +703,51 @@ val addedByInboxId = group.addedByInboxId();
 
 ```swift [Swift]
 try await group.addedByInboxId();
+```
+
+:::
+
+### Get peer inbox IDs
+
+Get the inbox IDs of all other participants in a conversation (excluding the current user):
+
+:::code-group
+
+```kotlin [Kotlin]
+// Get peer inbox IDs in a group (excludes current user)
+val peerInboxIds = group.peerInboxIds()
+
+// Get the peer inbox ID in a DM
+val peerInboxId = dm.peerInboxId
+```
+
+:::
+
+### Check if current user is the creator
+
+Check if the current user created the conversation:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Check if current user created the group
+val isGroupCreator = group.isCreator()
+
+// Check if current user created the DM
+val isDmCreator = dm.isCreator()
+```
+
+:::
+
+### Get the creator inbox ID
+
+Get the inbox ID of the user who created the conversation:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Get the creator's inbox ID for a DM
+val creatorInboxId = dm.creatorInboxId()
 ```
 
 :::

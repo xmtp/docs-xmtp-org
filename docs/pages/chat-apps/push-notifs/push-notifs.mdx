@@ -2,6 +2,31 @@
 
 With XMTP, you can enable real-time push notifications to keep users updated on new conversations and messages.
 
+## Topic class
+
+The `Topic` class provides methods to generate topic identifiers for push notification subscriptions. Topics are used to identify specific channels on the XMTP network.
+
+:::code-group
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.Topic
+
+// Get the welcome topic for new conversations
+val welcomeTopic = Topic.userWelcome(client.installationId)
+println(welcomeTopic.description) // /xmtp/mls/1/w-$installationId/proto
+
+// Get the message topic for a specific group
+val messageTopic = Topic.groupMessage(groupId)
+println(messageTopic.description) // /xmtp/mls/1/g-$groupId/proto
+```
+
+:::
+
+| Method | Description |
+| ------ | ----------- |
+| `Topic.userWelcome(installationId)` | Topic for receiving notifications about new conversations |
+| `Topic.groupMessage(groupId)` | Topic for receiving notifications about messages in a specific conversation |
+
 ## Get a Welcome message topic ID
 
 Get the topic identifier for an app installation. This topic ID tells your app where to listen on the network for push notifications about any new group chat or DM conversations.

@@ -124,6 +124,26 @@ for message in groupMessages {
 
 :::
 
+### Alternative: messagesWithReactions()
+
+The `messagesWithReactions()` method is an alternative to `enrichedMessages()` that focuses specifically on including reaction data. Use this when you only need reaction metadata and don't require reply information.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Retrieve messages with reaction data
+val messages = conversation.messagesWithReactions()
+
+messages.forEach { message ->
+    message.reactions.forEach { reaction ->
+        val reactionContent = reaction.content<Reaction>()
+        println("Reaction: ${reactionContent.content}")
+    }
+}
+```
+
+:::
+
 ## List messages (unenriched)
 
 Retrieve messages from a conversation.
@@ -717,6 +737,43 @@ func loadMoreMessages(conversation: Conversation, pageSize: Int = 20) async thro
 // Load next page
 let nextPage = try await loadMoreMessages(conversation: group)
 currentMessages.append(contentsOf: nextPage)
+```
+
+:::
+
+## Process raw message bytes
+
+These advanced methods are useful for processing encrypted message data received outside of normal streaming, such as from push notification payloads.
+
+### Process a message
+
+Process raw encrypted message bytes and return the decoded message:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Process raw message bytes (e.g., from a push notification payload)
+val decodedMessage = conversations.processMessage(encryptedMessageBytes)
+
+// Or process for a specific conversation
+val decodedMessage = conversation.processMessage(encryptedMessageBytes)
+
+// Also available on groups and DMs directly
+val groupMessage = group.processMessage(encryptedMessageBytes)
+val dmMessage = dm.processMessage(encryptedMessageBytes)
+```
+
+:::
+
+### Create a conversation from a welcome message
+
+When a user is added to a new conversation, they receive a "welcome" message. Use `fromWelcome` to create the conversation object from the welcome bytes:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Create a conversation from welcome message bytes
+val conversation = conversations.fromWelcome(welcomeEnvelopeBytes)
 ```
 
 :::

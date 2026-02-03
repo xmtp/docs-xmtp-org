@@ -132,3 +132,19 @@ for try await deletedMessage in client.conversations.streamMessageDeletions() {
 ```
 
 :::
+
+## Delete a message locally only
+
+Delete a message from the local database only without broadcasting the deletion to other participants. This is useful for cleaning up local state, such as removing failed or unpublished messages.
+
+:::code-group
+
+```kotlin [Kotlin]
+// Delete a message from local database only (does not notify other participants)
+conversations.deleteMessageLocally(messageId)
+
+// Also available on conversation objects
+conversation.deleteMessageLocally(messageId)
+```
+
+:::

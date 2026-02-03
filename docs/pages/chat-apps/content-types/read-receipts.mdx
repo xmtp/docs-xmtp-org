@@ -115,6 +115,17 @@ if (message.contentTypeId === 'xmtp.org/readReceipt:1.0') {
 ```
 
 ```kotlin [Kotlin]
+// Get the last read times for all participants in the conversation
+val lastReadTimes = conversation.getLastReadTimes()
+
+// lastReadTimes is a Map<String, Long> where:
+// - key is the inbox ID
+// - value is the timestamp in nanoseconds when they last read the conversation
+lastReadTimes.forEach { (inboxId, timestamp) ->
+    println("Inbox $inboxId last read at: $timestamp")
+}
+
+// Or check if a message was read by iterating through messages
 val message: DecodedMessage = conversation.messages().first()
 if (message.encodedContent.type == ContentTypeReadReceipt) {
     // The message is a ReadReceipt
