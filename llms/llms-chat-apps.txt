@@ -9090,17 +9090,17 @@ for message in messages {
 
 ### Stream message deletions
 
-Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+Call `streamDeletedMessages` to return a stream of deleted messages. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
 
 :::code-group
 
 ```tsx [Browser]
 // Stream message deletions
-const stream = await client.conversations.streamMessageDeletions();
+const stream = await client.conversations.streamDeletedMessages();
 
-// Listen for deleted message IDs
-for await (const messageId of stream) {
-  console.log('Message deleted:', messageId);
+// Listen for deleted messages
+for await (const deletedMessage of stream) {
+  console.log('Message deleted:', deletedMessage.id);
   // Update your UI to remove the message with this ID
 }
 
@@ -9110,11 +9110,11 @@ stream.end();
 
 ```tsx [Node]
 // Stream message deletions
-const stream = await client.conversations.streamMessageDeletions();
+const stream = await client.conversations.streamDeletedMessages();
 
-// Listen for deleted message IDs
-for await (const messageId of stream) {
-  console.log('Message deleted:', messageId);
+// Listen for deleted messages
+for await (const deletedMessage of stream) {
+  console.log('Message deleted:', deletedMessage.id);
   // Update your UI to remove the message with this ID
 }
 
