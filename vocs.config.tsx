@@ -91,7 +91,7 @@ export default defineConfig({
       text: '🚀 Try docs MCP server',
       link: 'https://github.com/xmtp/xmtp-docs-mcp',
     },
-    { text: 'Join dev community', link: 'https://forms.gle/hesZ55WGMjJnZ7sQA' },
+    { text: 'Join XMTP Switchboard Community', link: 'https://switchboard.xmtp.org/' },
   ],
   ogImageUrl: {
     '/': '/xmtp-og-card.jpeg',
