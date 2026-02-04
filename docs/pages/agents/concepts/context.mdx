@@ -76,7 +76,7 @@ agent.on('text', async (ctx) => {
 ### Get inbox ID by identifier
 
 ```typescript
-const inboxId = await ctx.client.getInboxIdByIdentifier({
+const inboxId = await ctx.client.fetchInboxIdByIdentifier({
   identifier: targetAddress,
   identifierKind: IdentifierKind.Ethereum,
 });
@@ -192,6 +192,8 @@ agent.on('text', async (ctx) => {
 ### address
 
 ```typescript
+import { getTestUrl } from '@xmtp/agent-sdk';
+
 agent.on('start', () => {
   console.log(`Waiting for messages...`);
   console.log(`Address: ${agent.address}`);

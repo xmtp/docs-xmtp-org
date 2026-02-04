@@ -57,13 +57,7 @@ bun i @xmtp/agent-sdk
 This example shows how to create an agent that sends a message when it receives a text message.
 
 ```ts [Node]
-import { Agent } from '@xmtp/agent-sdk';
-import { getTestUrl } from '@xmtp/agent-sdk/debug';
-import { loadEnvFile } from 'node:process';
-
-// 1. Load environment variables (e.g., XMTP_WALLET_KEY)
-// from .env file
-loadEnvFile('.env');
+import { Agent, getTestUrl } from '@xmtp/agent-sdk';
 
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({

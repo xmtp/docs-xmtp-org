@@ -6,25 +6,7 @@ Use the reaction content type to support reactions with your agent. A reaction i
 To learn more, see the [Reaction example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
 :::
 
-## Install the package
-
-In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reaction
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reaction
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reaction
-```
-
-:::
+The reaction content type is built into the Agent SDK. No installation is required.
 
 ## Send a reaction
 
@@ -41,25 +23,21 @@ With XMTP, reactions are represented as objects with the following keys:
 - `schema`: Schema of the reaction (Unicode, shortcode, or custom)
 
 ```tsx [Node]
+import { ReactionAction, ReactionSchema, type Reaction } from '@xmtp/agent-sdk';
+
 // Simple
 await ctx.sendReaction('❤️');
 
 // With all fields
-import {
-  ContentTypeReaction,
-  type Reaction,
-} from '@xmtp/content-type-reaction';
+const reaction: Reaction = {
+  reference: ctx.message.id,
+  referenceInboxId: ctx.message.senderInboxId, // Optional: Inbox ID of the message sender
+  action: ReactionAction.Added,
+  content: '❤️',
+  schema: ReactionSchema.Unicode,
+};
 
-await ctx.conversation.send(
-  {
-    reference: ctx.message.id,
-    referenceInboxId: ctx.message.senderInboxId, // Optional: Inbox ID of the message sender
-    action: 'added',
-    content: '❤️',
-    schema: 'unicode',
-  } as Reaction,
-  ContentTypeReaction
-);
+await ctx.conversation.sendReaction(reaction);
 ```
 
 ## Receive a reaction
@@ -77,10 +55,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-import type { Reaction } from '@xmtp/content-type-reaction';
+import type { Reaction } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(ReactionCodec)) {
+if (ctx.isReaction()) {
   // We've got a reaction.
   const reaction: Reaction = ctx.message.content;
 }

@@ -14,16 +14,14 @@ At a high level, there are three categories of content types with XMTP:
 
 A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
 
-Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their agent or app.
-
-Here is the current standard content type:
+Once adopted, a standard content type is bundled in XMTP client SDKs. All standard and standards-track content types are built into the Agent SDK—no installation or codec registration is required.
 
 ### Text content type
 
-An agent built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
+An agent built with XMTP uses the text content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
 
 ```jsx [Node]
-await sendText('gm');
+await ctx.sendText('gm');
 ```
 
 ## Receiving content types
@@ -41,11 +39,22 @@ agent.on('reaction', async (ctx) => {
 });
 
 agent.on('reply', async (ctx) => {
-  // Handle reply logic
+  // Handle reply logic - replies now include the original message
+  const reply = ctx.message.content;
+  if (reply.inReplyTo) {
+    console.log(`Replying to: ${reply.inReplyTo.content}`);
+  }
 });
 
-// For custom content types, you can access the content type directly
+// Use type guards for type-safe content access
 agent.on('message', async (ctx) => {
+  if (ctx.isText()) {
+    // ctx.message.content is typed as string
+  } else if (ctx.isReply()) {
+    // ctx.message.content is typed as EnrichedReply
+  }
+  
+  // For custom content types, access the content type directly
   const contentType = ctx.message.contentType;
   if (contentType?.typeId === 'my-custom-type') {
     // Handle custom content logic
@@ -53,19 +62,52 @@ agent.on('message', async (ctx) => {
 });
 ```
 
+## Enriched messages
+
+Messages now include additional context to make it easier to build rich messaging experiences:
+
+- **Reply count**: Each message includes `numReplies` showing how many replies it has received
+- **Reactions array**: Messages include a `reactions` array containing all reaction messages
+- **Parent message in replies**: Reply messages include the original message being replied to via `inReplyTo`
+- **Expiration timestamp**: For conversations with disappearing messages enabled, messages include an `expiresAtNs` timestamp
+
+```jsx [Node]
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  // Number of replies to a message
+  console.log(`Message ${message.id} has ${message.numReplies} replies`);
+  
+  // Array of reaction messages
+  console.log(`Message ${message.id} has ${message.reactions.length} reactions`);
+  
+  // Message expiration timestamp (for disappearing messages)
+  if (message.expiresAtNs !== undefined) {
+    const expiresAt = Number(message.expiresAtNs) / 1_000_000_000; // Convert nanoseconds to seconds
+    console.log(`Message expires at: ${new Date(expiresAt * 1000).toISOString()}`);
+  }
+  
+  // Reply messages include the original message
+  if (ctx.isReply()) {
+    const reply = ctx.message.content;
+    console.log(`Replying to: ${reply.inReplyTo?.content}`);
+  }
+}
+```
+
 ## Standards-track content types
 
 A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
 
-Here are standards-track content types that you can review, test, and adopt in your agent today:
+All standards-track content types are built into the Agent SDK and can be used with dedicated send methods:
 
 - [Group updates content type](/agents/content-types/group-updates): Use to send group updates, such as name, description, and members.
-- [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
-- [Markdown content type](/agents/content-types/markdown): Use to send rich formatted text messages with headers, lists, tables, and code blocks.
-- [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
-- [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
-- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
-- [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.
+- [Remote attachment content type](/agents/content-types/attachments): Use `sendRemoteAttachment()` to send attachments of any size.
+- [Markdown content type](/agents/content-types/markdown): Use `sendMarkdown()` to send rich formatted text messages with headers, lists, tables, and code blocks.
+- [Reaction content type](/agents/content-types/reactions): Use `sendReaction()` to send a quick and often emoji-based way to respond to a message.
+- [Reply content type](/agents/content-types/replies): Use `sendReply()` to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
+- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use `sendTransactionReference()` to send references to onchain transactions, such as crypto payments.
+- [Onchain transaction content type](/agents/content-types/transactions): Use `sendWalletSendCalls()` to support sending transactions to a wallet for execution.
 
 ## Custom content types
 
