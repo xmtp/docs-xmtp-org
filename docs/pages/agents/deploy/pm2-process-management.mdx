@@ -115,3 +115,15 @@ agent.on("unhandledError", (error) => {
 **Symptom**: Process restarts in a tight loop.
 
 **Solution**: Increase `restart_delay` to give the process time to initialize before allowing another restart.
+
+### Application exits early
+
+When PM2 runs in daemon mode, `pm2 start` exits right after launching the processes. In container or PaaS environments, this can make the platform think your app has finished and should shut down.
+
+To keep PM2 in the foreground, use `pm2-runtime` instead of `pm2 start`:
+
+```ts [Node]
+pm2-runtime ecosystem.config.cjs
+```
+
+This keeps the PM2 process alive in the foreground, which is what container-based platforms often expect.
