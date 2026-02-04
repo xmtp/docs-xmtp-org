@@ -274,7 +274,7 @@ public struct SCWallet: SigningKey {
 
 Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
 
- :::
+:::
 
 ## Retrieve your wallet's private key
 
@@ -306,3 +306,9 @@ This error occurs when there's a mismatch between the chain ID used when initial
 This typically happens when trying to create a DM with an address that hasn't been registered or associated with an XMTP inbox ID yet. You can only message wallet addresses that have been registered on the XMTP network. Registration occurs when a wallet is used with an XMTP-based chat app or one of our Client SDKs.
 
 This error may also occur if your client is connected to a different XMTP network environment than the target address. For example, your client might be using the dev network while the target address was registered on production.
+
+### SignatureError.Invalid
+
+> Signature validation failed
+
+This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base".

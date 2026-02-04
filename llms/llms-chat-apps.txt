@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 06:07 PM UTC / February 03, 2026
+Generated at 11:30 AM UTC / February 04, 2026
 
 ## About this file
 
@@ -8277,7 +8277,7 @@ public struct SCWallet: SigningKey {
 
 Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
 
- :::
+:::
 
 ## Retrieve your wallet's private key
 
@@ -8309,6 +8309,12 @@ This error occurs when there's a mismatch between the chain ID used when initial
 This typically happens when trying to create a DM with an address that hasn't been registered or associated with an XMTP inbox ID yet. You can only message wallet addresses that have been registered on the XMTP network. Registration occurs when a wallet is used with an XMTP-based chat app or one of our Client SDKs.
 
 This error may also occur if your client is connected to a different XMTP network environment than the target address. For example, your client might be using the dev network while the target address was registered on production.
+
+### SignatureError.Invalid
+
+> Signature validation failed
+
+This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base".
 
 
 ## chat-apps/core-messaging/create-conversations.mdx
@@ -9082,20 +9088,21 @@ for message in messages {
 
 :::
 
-### Stream message deletions
+### Stream deleted messages
 
-Call `streamMessageDeletions` to return a stream of disappearing message IDs that have been deleted. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
+Call `streamDeletedMessages` to return a stream of deleted messages. Use this stream to be notified when messages have been deleted. This is a local stream that doesn't require network sync.
 
 :::code-group
 
 ```tsx [Browser]
-// Stream message deletions
-const stream = await client.conversations.streamMessageDeletions();
+// Stream deleted messages
+const stream = await client.conversations.streamDeletedMessages();
 
-// Listen for deleted message IDs
-for await (const messageId of stream) {
-  console.log('Message deleted:', messageId);
+// Listen for deleted messages
+for await (const deletedMessage of stream) {
+  console.log('Message deleted:', deletedMessage.id);
   // Update your UI to remove the message with this ID
+  // You also have access to the full deleted message object
 }
 
 // When done, end the stream
@@ -9103,18 +9110,25 @@ stream.end();
 ```
 
 ```tsx [Node]
-// Stream message deletions
-const stream = await client.conversations.streamMessageDeletions();
+// Stream deleted messages
+const stream = await client.conversations.streamDeletedMessages();
 
-// Listen for deleted message IDs
-for await (const messageId of stream) {
-  console.log('Message deleted:', messageId);
+// Listen for deleted messages
+for await (const deletedMessage of stream) {
+  console.log('Message deleted:', deletedMessage.id);
   // Update your UI to remove the message with this ID
+  // You also have access to the full deleted message object
 }
 
 // When done, end the stream
 stream.end();
 ```
+
+:::
+
+:::warning[Deprecated API]
+
+The `streamMessageDeletions` method is deprecated and will be removed in a future release. Use `streamDeletedMessages` instead, which provides access to the full deleted message object rather than just the message ID.
 
 :::
 
