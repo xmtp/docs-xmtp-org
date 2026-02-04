@@ -126,4 +126,4 @@ To keep PM2 in the foreground, use `pm2-runtime` instead of `pm2 start`:
 pm2-runtime ecosystem.config.cjs
 ```
 
-This keeps the PM2 process alive in the foreground, which is what container-based platforms often expect.
+This keeps the PM2 process running in the foreground, which is typically required by PaaS platforms such as [Render](https://render.com/) or [Heroku](https://www.heroku.com/).
