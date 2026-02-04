@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 01:24 AM UTC / February 03, 2026
+Generated at 10:57 PM UTC / February 03, 2026
 
 ## About this file
 
@@ -8278,7 +8278,7 @@ public struct SCWallet: SigningKey {
 
 Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
 
- :::
+:::
 
 ## Retrieve your wallet's private key
 
@@ -8310,6 +8310,12 @@ This error occurs when there's a mismatch between the chain ID used when initial
 This typically happens when trying to create a DM with an address that hasn't been registered or associated with an XMTP inbox ID yet. You can only message wallet addresses that have been registered on the XMTP network. Registration occurs when a wallet is used with an XMTP-based chat app or one of our Client SDKs.
 
 This error may also occur if your client is connected to a different XMTP network environment than the target address. For example, your client might be using the dev network while the target address was registered on production.
+
+### SignatureError.Invalid
+
+> Signature validation failed
+
+This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base".
 
 
 ## chat-apps/core-messaging/create-conversations.mdx
@@ -11950,7 +11956,33 @@ agent.on('unhandledError', (error) => {
 ## agents/get-started/build-an-agent.mdx
 # Build XMTP agents
 
-Use the [XMTP Agent SDK](https://github.com/xmtp/xmtp-js/tree/main/sdks/agent-sdk) to build agents that interact with the XMTP network.
+Use the [XMTP Agent SDK](https://www.npmjs.com/package/@xmtp/agent-sdk) to build agents that interact with the XMTP network.
+
+## Prerequisites
+
+Install a [Node.js LTS release](https://nodejs.org/) and run the following commands to get started:
+
+```bash
+# Create a folder for your agent code
+mkdir my-agent
+cd my-agent
+
+# Initialize a new project with ES module support
+npm init --init-type=module -y
+
+# Install TypeScript as development dependency (-D)
+npm i -D typescript
+
+# Install tsx to run TypeScript files directly
+# without a separate build step
+npm i -D tsx
+
+# Install Node.js type definitions
+# to enable TypeScript support for built-in APIs
+npm i -D @types/node
+```
+
+Once complete, you can run your TypeScript code using `tsx src/your-code.ts`.
 
 ## Installation
 
@@ -11983,6 +12015,11 @@ This example shows how to create an agent that sends a message when it receives 
 ```ts [Node]
 import { Agent } from '@xmtp/agent-sdk';
 import { getTestUrl } from '@xmtp/agent-sdk/debug';
+import { loadEnvFile } from 'node:process';
+
+// 1. Load environment variables (e.g., XMTP_WALLET_KEY)
+// from .env file
+loadEnvFile('.env');
 
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({
@@ -11991,7 +12028,7 @@ const agent = await Agent.createFromEnv({
 
 // 3. Respond to text messages
 agent.on('text', async (ctx) => {
-  await ctx.sendText('Hello from my XMTP Agent! 👋');
+  await ctx.conversation.sendText('Hello from my XMTP Agent! 👋');
 });
 
 // 4. Log when we're ready
