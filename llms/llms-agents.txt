@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 11:30 AM UTC / February 04, 2026
+Generated at 08:52 PM UTC / February 04, 2026
 
 ## About this file
 
@@ -25,8 +25,7 @@ Create an XMTP agent that can use the signing capabilities provided by a signer.
 ## Create an EOA signer
 
 ```tsx [Node]
-import { Agent } from '@xmtp/agent-sdk';
-import { createSigner, createUser } from '@xmtp/agent-sdk/user';
+import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
 
 // Replace with your own wallet key and encryption key
 const walletKey = '0xprivateKey';
@@ -164,8 +163,7 @@ loggingLevel?: LogLevel;
 When working with smart contract wallets, you can create an XMTP agent using the wallet's seed or private key:
 
 ```tsx [Node]
-import { Agent } from '@xmtp/agent-sdk';
-import { createSigner, createUser } from '@xmtp/agent-sdk/user';
+import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
 
 const walletData = await initializeWallet('wallet.json');
 /* Create the signer using viem and parse the encryption key for the local db */
@@ -226,7 +224,7 @@ const dm = await agent.client.conversations.createDm(bo.inboxId);
 ### Get the address of the sender
 
 ```ts [Node]
-import { getTestUrl } from '@xmtp/agent-sdk/debug';
+import { getTestUrl } from '@xmtp/agent-sdk';
 
 agent.on('text', async (ctx) => {
   const senderAddress = ctx.getSenderAddress();
@@ -267,6 +265,18 @@ const response = await agent.client.canMessage([
     identifierKind: IdentifierKind.Ethereum,
   },
 ]);
+```
+
+## Last read times
+
+For conversations with read receipts enabled, you can query when each participant last read the conversation. This enables features like showing which messages are unread or displaying "seen by" indicators.
+
+```js [Node]
+// Returns an object keyed by inbox ID
+const lastReadTimes = await group.lastReadTimes();
+
+// Get the last read time of an inbox in nanoseconds
+const inboxLastReadTimeNs = lastReadTimes[inboxId];
 ```
 
 
@@ -477,8 +487,8 @@ const isAdmin = group.isAdmin(inboxId);
 const isSuperAdmin = group.isSuperAdmin(inboxId);
 
 // List admins
-const admins = group.admins;
-const superAdmins = group.superAdmins;
+const admins = group.listAdmins();
+const superAdmins = group.listSuperAdmins();
 
 // Add/remove admin status
 await group.addAdmin(inboxId);
@@ -726,13 +736,7 @@ bun i @xmtp/agent-sdk
 This example shows how to create an agent that sends a message when it receives a text message.
 
 ```ts [Node]
-import { Agent } from '@xmtp/agent-sdk';
-import { getTestUrl } from '@xmtp/agent-sdk/debug';
-import { loadEnvFile } from 'node:process';
-
-// 1. Load environment variables (e.g., XMTP_WALLET_KEY)
-// from .env file
-loadEnvFile('.env');
+import { Agent, getTestUrl } from '@xmtp/agent-sdk';
 
 // 2. Spin up the agent
 const agent = await Agent.createFromEnv({
@@ -1118,7 +1122,7 @@ agent.on('text', async (ctx) => {
 ### Get inbox ID by identifier
 
 ```typescript
-const inboxId = await ctx.client.getInboxIdByIdentifier({
+const inboxId = await ctx.client.fetchInboxIdByIdentifier({
   identifier: targetAddress,
   identifierKind: IdentifierKind.Ethereum,
 });
@@ -1234,6 +1238,8 @@ agent.on('text', async (ctx) => {
 ### address
 
 ```typescript
+import { getTestUrl } from '@xmtp/agent-sdk';
+
 agent.on('start', () => {
   console.log(`Waiting for messages...`);
   console.log(`Address: ${agent.address}`);
@@ -1371,26 +1377,42 @@ if (f.isText(ctx.message)) {
 }
 ```
 
+## Built-in content type filtering
+
+For built-in content types, use type guard methods on the context:
+
+```ts
+import { Agent } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Use type guard methods for built-in content types
+  if (ctx.isReaction()) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Action: ${ctx.message.content.action}`);
+  }
+  
+  if (ctx.isReply()) {
+    // ctx.message.content is now typed as EnrichedReply
+    console.log(`Reply: ${ctx.message.content.content}`);
+  }
+});
+```
+
 ## Custom content type filtering
 
 Use the `usesCodec` filter to check for custom content types with full TypeScript type inference:
 
 ```ts
 import { Agent, filter } from '@xmtp/agent-sdk';
-import { ReactionCodec } from '@xmtp/content-type-reaction';
 import { MyCustomCodec } from './my-custom-codec';
 
 const agent = await Agent.createFromEnv();
 
 agent.on('message', async (ctx) => {
-  // Check for specific codec with type safety
-  if (filter.usesCodec(ctx.message, ReactionCodec)) {
-    // ctx.message.content is now typed as Reaction
-    console.log(`Reaction: ${ctx.message.content.content}`);
-    console.log(`Action: ${ctx.message.content.action}`);
-  }
-
-  // Works with custom content types too
+  // Works with custom content types
   if (filter.usesCodec(ctx.message, MyCustomCodec)) {
     // ctx.message.content is now typed to MyCustomCodec's decoded type
     console.log('Received custom content:', ctx.message.content);
@@ -1721,7 +1743,7 @@ pnpm add pm2
 
 ::::
 
-## Ecosystem Config File
+## Ecosystem config file
 
 Create `ecosystem.config.cjs` with the following structure:
 
@@ -1752,15 +1774,15 @@ module.exports = {
 };
 ```
 
-### Critical Config Settings
+### Critical config settings
 
 - **`unstable_restarts: 10000`** - REQUIRED. Without this, PM2 will stop restarting if it detects the process as "unstable" (crashing too quickly). This allows PM2 to keep restarting even during rapid crash cycles.
 - **`min_uptime: 1000`** - Process must run at least 1 second to be considered stable
 - **`restart_delay: 4000`** - Wait 4 seconds before restarting (prevents rapid restart loops)
 
-## Agent Code Pattern
+## Agent code pattern
 
-### 1. Restart Logging (FIRST THING)
+### 1. Restart logging (FIRST THING)
 
 Add restart logging as the very first line of code, before any async operations:
 
@@ -1773,7 +1795,7 @@ console.log(
 
 This log appears immediately when PM2 restarts the process, making it easy to track restarts in logs.
 
-### 2. Error Handlers
+### 2. Error handlers
 
 Add this error handler after agent creation but before `agent.start()`:
 
@@ -1793,13 +1815,13 @@ agent.on("unhandledError", (error) => {
 
 ## Troubleshooting
 
-### PM2 Shows "waiting restart" but Never Restarts
+### PM2 shows "waiting restart" but never restarts
 
 **Symptom**: PM2 status shows "waiting restart" but no new process spawns.
 
 **Solution**: Add `unstable_restarts: 10000` to ecosystem config. PM2 is blocking restarts because it thinks the process is unstable.
 
-### No Restart Logs Appearing
+### No restart logs appearing
 
 **Symptom**: Process crashes but `[RESTART]` logs never appear.
 
@@ -1809,11 +1831,23 @@ agent.on("unhandledError", (error) => {
 2. Check PM2 config has `unstable_restarts: 10000`
 3. Check PM2 logs: `pm2 logs <bot-name> --raw`
 
-### Process Restarts Too Quickly
+### Process restarts too quickly
 
 **Symptom**: Process restarts in a tight loop.
 
 **Solution**: Increase `restart_delay` to give the process time to initialize before allowing another restart.
+
+### Application exits early
+
+When PM2 runs in daemon mode, `pm2 start` exits right after launching the processes. In container or PaaS environments, this can make the platform think your app has finished and should shut down.
+
+To keep PM2 in the foreground, use `pm2-runtime` instead of `pm2 start`:
+
+```ts [Node]
+pm2-runtime ecosystem.config.cjs
+```
+
+This keeps the PM2 process running in the foreground, which is typically required by PaaS platforms such as [Render](https://render.com/) or [Heroku](https://www.heroku.com/).
 
 
 ## agents/deploy/rate-limits.mdx
@@ -1851,25 +1885,7 @@ Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage p
 To learn more, see the [Attachment example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
 ::::
 
-## Install the package
-
-In some SDKs, the `AttachmentCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-::::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-remote-attachment
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-remote-attachment
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-remote-attachment
-```
-
-::::
+The remote attachment content type is built into the Agent SDK. No installation is required.
 
 ## Send a remote attachment
 
@@ -1901,15 +1917,12 @@ const attachment = {
 };
 ```
 
-Use `RemoteAttachmentCodec.encodeEncrypted` to encrypt an attachment:
+Use `encryptAttachment` to encrypt an attachment:
 
 ```tsx [Node]
-import { AttachmentCodec } from '@xmtp/content-type-remote-attachment';
+import { encryptAttachment } from '@xmtp/agent-sdk';
 
-const encryptedEncoded = await RemoteAttachmentCodec.encodeEncrypted(
-  attachment,
-  new AttachmentCodec()
-);
+const encryptedAttachment = await encryptAttachment(attachment);
 ```
 
 Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
@@ -1917,22 +1930,24 @@ Upload an encrypted attachment to a location where it will be accessible via an 
 Now that you have a `url`, you can create a `RemoteAttachment`:
 
 ```tsx [Node]
-const remoteAttachment = {
+import type { RemoteAttachment } from '@xmtp/agent-sdk';
+
+const remoteAttachment: RemoteAttachment = {
   url: url,
-  contentDigest: encryptedEncoded.digest,
-  salt: encryptedEncoded.salt,
-  nonce: encryptedEncoded.nonce,
-  secret: encryptedEncoded.secret,
+  contentDigest: encryptedAttachment.contentDigest,
+  salt: encryptedAttachment.salt,
+  nonce: encryptedAttachment.nonce,
+  secret: encryptedAttachment.secret,
   scheme: 'https://',
-  filename: attachment.filename,
-  contentLength: attachment.data.byteLength,
+  filename: encryptedAttachment.filename,
+  contentLength: encryptedAttachment.contentLength,
 };
 ```
 
 Now that you have a remote attachment, you can send it:
 
 ```tsx [Node]
-await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
+await ctx.conversation.sendRemoteAttachment(remoteAttachment);
 ```
 
 ## Receive, decode, and decrypt a remote attachment
@@ -1940,16 +1955,16 @@ await ctx.conversation.send(remoteAttachment, ContentTypeRemoteAttachment);
 Now that you can send a remote attachment, you need a way to receive it. For example:
 
 ```ts [Node]
-import {
-  AttachmentCodec,
-  ContentTypeRemoteAttachment,
-  RemoteAttachmentCodec,
-} from '@xmtp/content-type-remote-attachment';
+import { decryptAttachment } from '@xmtp/agent-sdk';
+import type { RemoteAttachment } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(RemoteAttachmentCodec)) {
-  const attachment = await RemoteAttachmentCodec.load(
-    ctx.message.content,
-    client
+if (ctx.isRemoteAttachment()) {
+  const remoteAttachment: RemoteAttachment = ctx.message.content;
+  // Download encrypted bytes from remoteAttachment.url
+  const encryptedBytes = await fetch(remoteAttachment.url).then(r => r.arrayBuffer());
+  const attachment = await decryptAttachment(
+    new Uint8Array(encryptedBytes),
+    remoteAttachment
   );
 }
 ```
@@ -1994,16 +2009,14 @@ At a high level, there are three categories of content types with XMTP:
 
 A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
 
-Once adopted, a standard content type is bundled in XMTP client SDKs. A developer can then import the standard content type from an SDK for use in their agent or app.
-
-Here is the current standard content type:
+Once adopted, a standard content type is bundled in XMTP client SDKs. All standard and standards-track content types are built into the Agent SDK—no installation or codec registration is required.
 
 ### Text content type
 
-An agent built with XMTP uses the `TextCodec` (plain text) standard content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
+An agent built with XMTP uses the text content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
 
 ```jsx [Node]
-await sendText('gm');
+await ctx.sendText('gm');
 ```
 
 ## Receiving content types
@@ -2021,11 +2034,22 @@ agent.on('reaction', async (ctx) => {
 });
 
 agent.on('reply', async (ctx) => {
-  // Handle reply logic
+  // Handle reply logic - replies now include the original message
+  const reply = ctx.message.content;
+  if (reply.inReplyTo) {
+    console.log(`Replying to: ${reply.inReplyTo.content}`);
+  }
 });
 
-// For custom content types, you can access the content type directly
+// Use type guards for type-safe content access
 agent.on('message', async (ctx) => {
+  if (ctx.isText()) {
+    // ctx.message.content is typed as string
+  } else if (ctx.isReply()) {
+    // ctx.message.content is typed as EnrichedReply
+  }
+  
+  // For custom content types, access the content type directly
   const contentType = ctx.message.contentType;
   if (contentType?.typeId === 'my-custom-type') {
     // Handle custom content logic
@@ -2033,19 +2057,52 @@ agent.on('message', async (ctx) => {
 });
 ```
 
+## Enriched messages
+
+Messages now include additional context to make it easier to build rich messaging experiences:
+
+- **Reply count**: Each message includes `numReplies` showing how many replies it has received
+- **Reactions array**: Messages include a `reactions` array containing all reaction messages
+- **Parent message in replies**: Reply messages include the original message being replied to via `inReplyTo`
+- **Expiration timestamp**: For conversations with disappearing messages enabled, messages include an `expiresAtNs` timestamp
+
+```jsx [Node]
+const messages = await conversation.messages();
+
+for (const message of messages) {
+  // Number of replies to a message
+  console.log(`Message ${message.id} has ${message.numReplies} replies`);
+  
+  // Array of reaction messages
+  console.log(`Message ${message.id} has ${message.reactions.length} reactions`);
+  
+  // Message expiration timestamp (for disappearing messages)
+  if (message.expiresAtNs !== undefined) {
+    const expiresAt = Number(message.expiresAtNs) / 1_000_000_000; // Convert nanoseconds to seconds
+    console.log(`Message expires at: ${new Date(expiresAt * 1000).toISOString()}`);
+  }
+  
+  // Reply messages include the original message
+  if (ctx.isReply()) {
+    const reply = ctx.message.content;
+    console.log(`Replying to: ${reply.inReplyTo?.content}`);
+  }
+}
+```
+
 ## Standards-track content types
 
 A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
 
-Here are standards-track content types that you can review, test, and adopt in your agent today:
+All standards-track content types are built into the Agent SDK and can be used with dedicated send methods:
 
 - [Group updates content type](/agents/content-types/group-updates): Use to send group updates, such as name, description, and members.
-- [Remote attachment content type](/agents/content-types/attachments): Use to send attachments of any size.
-- [Markdown content type](/agents/content-types/markdown): Use to send rich formatted text messages with headers, lists, tables, and code blocks.
-- [Reaction content type](/agents/content-types/reactions): Use a reaction to send a quick and often emoji-based way to respond to a message.
-- [Reply content type](/agents/content-types/replies): Use a reply to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
-- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use to send references to onchain transactions, such as crypto payments.
-- [Onchain transaction content type](/agents/content-types/transactions): Use to support sending transactions to a wallet for execution.
+- [Remote attachment content type](/agents/content-types/attachments): Use `sendRemoteAttachment()` to send attachments of any size.
+- [Markdown content type](/agents/content-types/markdown): Use `sendMarkdown()` to send rich formatted text messages with headers, lists, tables, and code blocks.
+- [Reaction content type](/agents/content-types/reactions): Use `sendReaction()` to send a quick and often emoji-based way to respond to a message.
+- [Reply content type](/agents/content-types/replies): Use `sendReply()` to send a direct response to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
+- [Onchain transaction reference content type](/agents/content-types/transaction-refs): Use `sendTransactionReference()` to send references to onchain transactions, such as crypto payments.
+- [Onchain transaction content type](/agents/content-types/transactions): Use `sendWalletSendCalls()` to support sending transactions to a wallet for execution.
 
 ## Custom content types
 
@@ -2152,33 +2209,13 @@ on('group-update', async (ctx) => {
 
 Use the markdown content type to send rich formatted text messages with your agent. Markdown allows you to include headers, lists, tables, code blocks, and other formatting elements to create more engaging and structured messages.
 
-## Install the package
-
-In some SDKs, the `MarkdownCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-markdown
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-markdown
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-markdown
-```
-
-:::
+The markdown content type is built into the Agent SDK. No installation is required.
 
 ## Send markdown content
 
 With XMTP, markdown content is sent as a string containing markdown formatting:
 
 ```tsx [Node]
-import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
-
 // Basic markdown message
 const markdownContent = `## Welcome to XMTP
 
@@ -2188,7 +2225,7 @@ This is a **bold** message with *italic* text and \`inline code\`.
 - Item 2
 - Item 3`;
 
-await ctx.conversation.send(markdownContent, ContentTypeMarkdown);
+await ctx.conversation.sendMarkdown(markdownContent);
 ```
 
 ## Supported markdown patterns
@@ -2228,8 +2265,6 @@ The markdown content type supports the following formatting patterns:
 ### Example usage
 
 ```tsx [Node]
-import { ContentTypeMarkdown } from '@xmtp/content-type-markdown';
-
 const content = `## Results Summary
 
 - **Total items:** ${count}
@@ -2253,32 +2288,26 @@ const agent = await Agent.create(signer, {
 });
 \`\`\``;
 
-await ctx.conversation.send(content, ContentTypeMarkdown);
+await ctx.conversation.sendMarkdown(content);
 ```
 
 ## Receive markdown content
 
 ```tsx [Node]
-import { MarkdownCodec } from '@xmtp/content-type-markdown';
+agent.on('markdown', async (ctx) => {
+  const markdownContent = ctx.message.content;
+  console.log('Received markdown:', markdownContent);
 
-agent.on('message', async (ctx) => {
-  if (ctx.usesCodec(MarkdownCodec)) {
-    const markdownContent = ctx.message.content;
-    console.log('Received markdown:', markdownContent);
-
-    // Process the markdown content
-    // You can parse it, extract data, or display it formatted
-  }
+  // Process the markdown content
+  // You can parse it, extract data, or display it formatted
 });
 ```
 
 ## Filter for markdown content
 
 ```tsx [Node]
-import { MarkdownCodec } from '@xmtp/content-type-markdown';
-
 // Check if the message contains markdown
-if (ctx.usesCodec(MarkdownCodec)) {
+if (ctx.isMarkdown()) {
   const markdown: string = ctx.message.content;
   // Handle markdown content
 }
@@ -2294,25 +2323,7 @@ Use the reaction content type to support reactions with your agent. A reaction i
 To learn more, see the [Reaction example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-thinking-reaction) in the xmtp-agents-examples repo.
 :::
 
-## Install the package
-
-In some SDKs, the `ReactionCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reaction
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reaction
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reaction
-```
-
-:::
+The reaction content type is built into the Agent SDK. No installation is required.
 
 ## Send a reaction
 
@@ -2329,25 +2340,21 @@ With XMTP, reactions are represented as objects with the following keys:
 - `schema`: Schema of the reaction (Unicode, shortcode, or custom)
 
 ```tsx [Node]
+import { ReactionAction, ReactionSchema, type Reaction } from '@xmtp/agent-sdk';
+
 // Simple
 await ctx.sendReaction('❤️');
 
 // With all fields
-import {
-  ContentTypeReaction,
-  type Reaction,
-} from '@xmtp/content-type-reaction';
+const reaction: Reaction = {
+  reference: ctx.message.id,
+  referenceInboxId: ctx.message.senderInboxId, // Optional: Inbox ID of the message sender
+  action: ReactionAction.Added,
+  content: '❤️',
+  schema: ReactionSchema.Unicode,
+};
 
-await ctx.conversation.send(
-  {
-    reference: ctx.message.id,
-    referenceInboxId: ctx.message.senderInboxId, // Optional: Inbox ID of the message sender
-    action: 'added',
-    content: '❤️',
-    schema: 'unicode',
-  } as Reaction,
-  ContentTypeReaction
-);
+await ctx.conversation.sendReaction(reaction);
 ```
 
 ## Receive a reaction
@@ -2365,10 +2372,9 @@ agent.on('reaction', async (ctx) => {
 Now that you can send a reaction, you need a way to receive a reaction. For example:
 
 ```tsx [Node]
-import { ReactionCodec } from '@xmtp/content-type-reaction';
-import type { Reaction } from '@xmtp/content-type-reaction';
+import type { Reaction } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(ReactionCodec)) {
+if (ctx.isReaction()) {
   // We've got a reaction.
   const reaction: Reaction = ctx.message.content;
 }
@@ -2380,55 +2386,42 @@ if (ctx.usesCodec(ReactionCodec)) {
 
 Use the reply content type to support quote replies with your agent. A reply is a method to directly respond to a specific message in a conversation. Users can select and reply to a particular message instead of sending a new one.
 
-## Install the package
-
-In some SDKs, the `ReplyCodec` is already included in the SDK. If not, you can install the package using the following command:
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-reply
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-reply
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-reply
-```
-
-:::
+The reply content type is built into the Agent SDK. No installation is required.
 
 ## Send a reply
 
-Once you've created a reply, you can send it. Replies are represented as objects with two keys:
-
-- `reference`: ID of the message being replied to
-
-- `content`: String representation of the reply
+Once you've created a reply, you can send it. Replies include the original message being replied to, allowing you to display the parent message context without an additional lookup.
 
 ```ts [Node]
-import { ContentTypeText } from '@xmtp/content-type-text';
-import { ContentTypeReply } from '@xmtp/content-type-reply';
-import type { Reply } from '@xmtp/content-type-reply';
+import { encodeText } from '@xmtp/agent-sdk';
 
-const reply: Reply = {
+// Simple helper method
+await ctx.sendTextReply('I concur');
+
+// Full reply object with reference
+await ctx.conversation.sendReply({
+  content: encodeText('I concur'),
   reference: someMessageID,
-  contentType: ContentTypeText,
-  content: 'I concur',
-};
-
-await ctx.sendTextReply(reply);
+  referenceInboxId: ctx.message.senderInboxId,
+});
 ```
 
 ## Receive a reply
 
+Replies now include enriched information, including the original message being replied to:
+
 ```tsx [Node]
+import type { EnrichedReply } from '@xmtp/agent-sdk';
+
 agent.on('reply', async (ctx) => {
-  const message = ctx.message;
-  const replyContent = message.content;
-  console.log(`New reply: ${replyContent.content}`);
+  const reply: EnrichedReply = ctx.message.content;
+  console.log(`New reply: ${reply.content}`);
+  console.log(`Replying to message: ${reply.referenceId}`);
+  
+  // Access the original message being replied to
+  if (reply.inReplyTo) {
+    console.log(`Original message: ${reply.inReplyTo.content}`);
+  }
 });
 ```
 
@@ -2437,12 +2430,11 @@ agent.on('reply', async (ctx) => {
 Now that you can send a reply, you need a way to receive a reply. For example:
 
 ```tsx [Node]
-import { ReplyCodec } from '@xmtp/content-type-reply';
-import type { Reply } from '@xmtp/content-type-reply';
+import type { EnrichedReply } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(ReplyCodec)) {
+if (ctx.isReply()) {
   // We've got a reply.
-  const reply: Reply = ctx.message.content;
+  const reply: EnrichedReply = ctx.message.content;
 }
 ```
 
@@ -2456,23 +2448,7 @@ This package provides an XMTP content type to support onchain transaction refere
 To learn more, see the [Transaction reference example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 :::
 
-## Install the package
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-transaction-reference
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-transaction-reference
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-transaction-reference
-```
-
-:::
+The transaction reference content type is built into the Agent SDK. No installation is required.
 
 ## Send a transaction reference
 
@@ -2509,12 +2485,9 @@ const transactionReference: TransactionReference = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
+import type { TransactionReference } from '@xmtp/agent-sdk';
 
-await ctx.conversation.send(
-  transactionReference,
-  ContentTypeTransactionReference
-);
+await ctx.conversation.sendTransactionReference(transactionReference);
 ```
 
 ## Receive a transaction reference
@@ -2522,9 +2495,10 @@ await ctx.conversation.send(
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
-import { TransactionReferenceCodec } from '@xmtp/content-type-transaction-reference';
+import type { TransactionReference } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(TransactionReferenceCodec)) {
+if (ctx.isTransactionReference()) {
+  const transactionRef: TransactionReference = ctx.message.content;
   // Process the transaction reference here
 }
 ```
@@ -2541,23 +2515,7 @@ This package provides an XMTP content type to support sending transactions to a 
 To learn more, see the [Transactions example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 ::::
 
-## Install the package
-
-::::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-wallet-send-calls
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-wallet-send-calls
-```
-
-```bash [pnpm]
-pnpm i @xmtp/content-type-wallet-send-calls
-```
-
-::::
+The wallet send calls content type is built into the Agent SDK. No installation is required.
 
 ## Create a transaction request
 
@@ -2600,12 +2558,12 @@ const walletSendCalls: WalletSendCallsParams = {
 
 ## Send a transaction request
 
-Once you have a transaction reference, you can send it as part of your conversation:
+Once you have a transaction request, you can send it as part of your conversation:
 
 ```ts [Node]
-import { ContentTypeWalletSendCalls } from '@xmtp/content-type-wallet-send-calls';
+import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
-await conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
+await conversation.sendWalletSendCalls(walletSendCalls);
 ```
 
 ## Receive a transaction request
@@ -2613,9 +2571,10 @@ await conversation.send(walletSendCalls, ContentTypeWalletSendCalls);
 To receive and process a transaction request:
 
 ```ts [Node]
-import { WalletSendCallsCodec } from '@xmtp/content-type-wallet-send-calls';
+import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(WalletSendCallsCodec)) {
+if (ctx.isWalletSendCalls()) {
+  const walletSendCalls: WalletSendCalls = ctx.message.content;
   // Process the transaction request here
 }
 ```
