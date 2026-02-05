@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 08:52 PM UTC / February 04, 2026
+Generated at 01:07 AM UTC / February 05, 2026
 
 ## About this file
 
@@ -73,7 +73,7 @@ console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
 console.log('Fork Details:', debugInfo.forkDetails);
 ```
 
-```typescript [React Native, Kotlin, Swift]
+```tsx [React Native]
 // Get detailed debug information for a conversation
 const debugInfo = await conversation?.getDebugInformation();
 
@@ -82,6 +82,28 @@ console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notFor
 console.log('Local Commit Log:', debugInfo.localCommitLog);
 console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
 console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+```kotlin [Kotlin]
+// Get detailed debug information for a conversation
+val debugInfo = conversation.getDebugInformation()
+
+println("Epoch: ${debugInfo.epoch}")
+println("Fork Status: ${debugInfo.commitLogForkStatus}") // FORKED, NOT_FORKED, or UNKNOWN
+println("Local Commit Log: ${debugInfo.localCommitLog}")
+println("Remote Commit Log: ${debugInfo.remoteCommitLog}")
+println("Fork Details: ${debugInfo.forkDetails}")
+```
+
+```swift [Swift]
+// Get detailed debug information for a conversation
+let debugInfo = try await conversation.getDebugInformation()
+
+print("Epoch: \(debugInfo.epoch)")
+print("Fork Status: \(debugInfo.commitLogForkStatus)") // .forked, .notForked, or .unknown
+print("Local Commit Log: \(debugInfo.localCommitLog)")
+print("Remote Commit Log: \(debugInfo.remoteCommitLog)")
+print("Fork Details: \(debugInfo.forkDetails)")
 ```
 
 :::
@@ -101,7 +123,7 @@ conversations.forEach((conversation) => {
 });
 ```
 
-```typescript [React Native, Kotlin, Swift]
+```tsx [React Native]
 // Check fork status when listing conversations
 const conversations = await client.conversations.list();
 
@@ -110,6 +132,28 @@ conversations.forEach((conversation) => {
     console.log(`Conversation ${conversation.id} is forked`);
   }
 });
+```
+
+```kotlin [Kotlin]
+// Check fork status when listing conversations
+val conversations = client.conversations.list()
+
+conversations.forEach { conversation ->
+    if (conversation.commitLogForkStatus == CommitLogForkStatus.FORKED) {
+        println("Conversation ${conversation.id} is forked")
+    }
+}
+```
+
+```swift [Swift]
+// Check fork status when listing conversations
+let conversations = try await client.conversations.list()
+
+for conversation in conversations {
+    if conversation.commitLogForkStatus == .forked {
+        print("Conversation \(conversation.id) is forked")
+    }
+}
 ```
 
 :::
@@ -122,6 +166,62 @@ Forked groups are not recoverable. Your options are to:
 
 - Remove all members from the forked group and then re-add them to the group.
 - Start a new group.
+
+## Check if conversation is paused for protocol upgrade
+
+Conversations may be temporarily paused when a protocol upgrade is in progress. Use `pausedForVersion()` to check if a conversation is paused and which version it's waiting for.
+
+:::code-group
+
+```tsx [React Native]
+// Check if conversation is paused for a protocol upgrade
+const pausedVersion = await conversation.pausedForVersion();
+
+if (pausedVersion) {
+  console.log('Conversation is paused waiting for version:', pausedVersion);
+  // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+  // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+const groupPausedVersion = await group.pausedForVersion();
+const dmPausedVersion = await dm.pausedForVersion();
+```
+
+```kotlin [Kotlin]
+// Check if conversation is paused for a protocol upgrade
+val pausedVersion = conversation.pausedForVersion()
+
+if (pausedVersion != null) {
+    println("Conversation is paused waiting for version: $pausedVersion")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+val groupPausedVersion = group.pausedForVersion()
+val dmPausedVersion = dm.pausedForVersion()
+```
+
+```swift [Swift]
+// Check if conversation is paused for a protocol upgrade
+let pausedVersion = try await conversation.pausedForVersion()
+
+if let pausedVersion = pausedVersion {
+    print("Conversation is paused waiting for version: \(pausedVersion)")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+let groupPausedVersion = try group.pausedForVersion()
+let dmPausedVersion = try dm.pausedForVersion()
+```
+
+:::
 
 ## File logging
 
@@ -139,6 +239,64 @@ To use file logging, call the following static functions:
   - `isLogWriterActive()`
   - `readXMTPLogFile()`
   - `clearXMTPLogs()`
+
+:::code-group
+
+```tsx [React Native]
+import { Client, LogLevel, LogRotation } from '@xmtp/react-native-sdk';
+
+// Activate persistent logging
+await Client.activatePersistentLibXMTPLogWriter(
+  LogLevel.DEBUG,
+  LogRotation.HOURLY,
+  10 // max files
+);
+
+// Get log file paths for sharing
+const logPaths = Client.getXMTPLogFilePaths();
+
+// Check if logging is active
+const isActive = Client.isLogWriterActive();
+
+// Read a specific log file
+const logContent = await Client.readXMTPLogFile(logPaths[0]);
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter();
+
+// Clear all log files
+const clearedCount = Client.clearXMTPLogs();
+```
+
+```kotlin [Kotlin]
+// Get log file paths for sharing
+val logPaths = Client.getXMTPLogFilePaths(context)
+
+// Check if logging is active
+val isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+Client.clearXMTPLogs(context)
+```
+
+```swift [Swift]
+// Get log file paths for sharing
+let logPaths = try Client.getXMTPLogFilePaths()
+
+// Check if logging is active
+let isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+try Client.clearXMTPLogs()
+```
+
+:::
 
 For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
 
@@ -211,7 +369,8 @@ These statistics are maintained per client instance, so each app installation ha
 
 To return aggregated statistics, run:
 
-- For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For Browser and Node SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For iOS and Android SDKs: `client.debugInformation.aggregateStatistics`
 - For React Native SDK: `client.debugInformation.aggregateStatistics`
 
 ```text
@@ -233,17 +392,75 @@ SubscribeMessages        0
 SubscribeWelcomes       0
 ```
 
+:::code-group
+
+```tsx [React Native]
+// Get network debug information
+const debugInfo = await client.debugInformation.getNetworkDebugInformation();
+
+// Get aggregated statistics as formatted string
+console.log(debugInfo.aggregateStatistics);
+
+// Access individual API statistics
+console.log('Uploads:', debugInfo.apiStatistics.uploadKeyPackage);
+console.log('Fetches:', debugInfo.apiStatistics.fetchKeyPackage);
+console.log('Sent messages:', debugInfo.apiStatistics.sendGroupMessages);
+
+// Access identity statistics
+console.log('Identity updates:', debugInfo.identityStatistics.publishIdentityUpdate);
+console.log('Inbox ID lookups:', debugInfo.identityStatistics.getInboxIds);
+
+// Clear all statistics
+await client.debugInformation.clearAllStatistics();
+```
+
+```kotlin [Kotlin]
+// Get network debug information
+val debugInfo = client.debugInformation
+
+// Get aggregated statistics
+println(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+println("Uploads: ${debugInfo.apiStatistics.uploadKeyPackage}")
+println("Fetches: ${debugInfo.apiStatistics.fetchKeyPackage}")
+
+// Clear all statistics
+client.debugInformation.clearAllStatistics()
+```
+
+```swift [Swift]
+// Get network debug information
+let debugInfo = client.debugInformation
+
+// Get aggregated statistics
+print(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+print("Uploads: \(debugInfo.apiStatistics.uploadKeyPackage)")
+print("Fetches: \(debugInfo.apiStatistics.fetchKeyPackage)")
+
+// Clear all statistics
+try await client.debugInformation.clearAllStatistics()
+```
+
+:::
+
 ### Get an individual statistic
 
 To return an individual statistic as a number, run:
 
-- For Browser, Node, iOS, and Android SDKs:
+- For Browser and Node SDKs:
   - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
   - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
-- For React Native SDK:
-  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+- For iOS and Android SDKs:
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For React Native SDK (async - must call `getNetworkDebugInformation()` first):
+  - `debugInfo.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `debugInfo.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
 
@@ -333,6 +550,7 @@ console.log('App version:', appVersion);
 ```
 
 :::
+
 
 
 ## chat-apps/use-signatures.mdx
@@ -900,16 +1118,22 @@ conversation.topic
 ```
 
 ```kotlin [Kotlin]
-// Request
+// From a conversation object
 conversation.topic
+
+// Or using the Topic class with a group ID
+Topic.groupMessage(groupId).description
 
 // Response
 /xmtp/mls/1/g-$conversationId/proto
 ```
 
 ```swift [Swift]
-// Request
+// From a conversation object
 conversation.topic
+
+// Or using the Topic class with a group ID
+Topic.groupMessage(groupId).description
 
 // Response
 /xmtp/mls/1/g-$conversationId/proto
@@ -924,7 +1148,7 @@ Lists topics for a specific DM conversation.
 :::code-group
 
 ```tsx [React Native]
-conversation.getPushTopics()
+await conversation.getConversationPushTopics();
 ```
 
 ```kotlin [Kotlin]
@@ -948,7 +1172,7 @@ To learn more, see [Understand DM stitching and push notifications](/chat-apps/p
 :::code-group
 
 ```tsx [React Native]
-conversations.allPushTopics()
+await client.conversations.getAllPushTopics();
 ```
 
 ```kotlin [Kotlin]
@@ -1030,7 +1254,7 @@ Then determine whether it's for a new conversation or an existing one.
   ```
 
   ```swift [Swift]
-  let conversation = try await alix.conversations.fromWelcome(receivedBytes)
+  let conversation = try await alix.conversations.fromWelcome(envelopeBytes: receivedBytes)
   ```
 
   :::
@@ -1052,37 +1276,52 @@ Then determine whether it's for a new conversation or an existing one.
   ```
 
   ```swift [Swift]
-  let conversation = try alix.findConversationByTopic(received.topic)
-  try await conversation.sync()
-  let message = try await conversation.processMessage(receivedBytes)
+  let conversation = try await alix.conversations.findConversationByTopic(topic: received.topic)
+  try await conversation?.sync()
+  let message = try await conversation?.processMessage(messageBytes: receivedBytes)
   ```
 
   :::
 
 ## Stream HMAC key update events
 
-Use `preferences.stream` to listen for events that indicate when a new HMAC key has been added, typically due to a new installation joining the network. This stream does not provide the actual HMAC keys but notifies you to refresh your HMAC keys accordingly by resubscribing to topics.
+Use `preferences.streamPreferenceUpdates` to listen for events that indicate when a new HMAC key has been added, typically due to a new installation joining the network. This stream does not provide the actual HMAC keys but notifies you to refresh your HMAC keys accordingly by resubscribing to topics.
 
 This is particularly useful for ensuring that push notifications work correctly across all installations by not missing updates from new installations.
 
 :::code-group
 
 ```tsx [React Native]
-await alix.preferences.stream((event: any) => {
-  // Received a preference update event
-  // Check if it indicates a new HMAC key and resubscribe if necessary
-});
+await client.preferences.streamPreferenceUpdates(
+  async (preferenceType) => {
+    if (preferenceType === 'hmac_keys') {
+      // HMAC keys updated - resubscribe to topics
+    }
+  },
+  () => console.log('Stream closed')
+);
+
+// To cancel the stream
+client.preferences.cancelStreamPreferenceUpdates();
 ```
 
 ```kotlin [Kotlin]
-alix.preferences.stream().collect { event ->
-  // Received a preference update event
+client.preferences.streamPreferenceUpdates().collect { preferenceType ->
+    when (preferenceType) {
+        PreferenceType.HMAC_KEYS -> {
+            // HMAC keys updated - resubscribe to topics
+        }
+    }
 }
 ```
 
 ```swift [Swift]
-for await event in try await alix.preferences.stream() {
-  // Received a preference update event
+for try await preferenceType in client.preferences.streamPreferenceUpdates() {
+    switch preferenceType {
+    case .hmac_keys:
+        // HMAC keys updated - resubscribe to topics
+        break
+    }
 }
 ```
 
@@ -1090,28 +1329,80 @@ for await event in try await alix.preferences.stream() {
 
 ## Resubscribe to topics to get new HMAC keys
 
-As soon as your app receives a user preference update event from [preferences.sync](/chat-apps/list-stream-sync/sync-preferences) or [preferences.stream](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
+As soon as your app receives a user preference update event from [preferences.sync](/chat-apps/list-stream-sync/sync-preferences) or [preferences.streamPreferenceUpdates](#stream-hmac-key-update-events) indicating new HMAC keys for a user, resubscribe to topics to get the new HMAC keys. For example:
+
+:::code-group
+
+```tsx [React Native]
+// Get all push topics and HMAC keys
+const topics = await client.conversations.getAllPushTopics();
+const hmacKeysResult = await client.conversations.getHmacKeys();
+
+// Build subscriptions for each topic with its HMAC keys
+const subscriptions = topics.map((topic) => {
+  const hmacKeys = hmacKeysResult.hmacKeys[topic]?.values || [];
+  return {
+    topic,
+    hmacKeys: hmacKeys.map((key) => ({
+      key: key.hmacKey,
+      thirtyDayPeriodsSinceEpoch: key.thirtyDayPeriodsSinceEpoch,
+    })),
+    isSilent: false,
+  };
+});
+
+// Subscribe with your push notification service
+await pushNotificationService.subscribeWithMetadata(subscriptions);
+```
 
 ```kotlin [Kotlin]
-conversations.allTopics.forEach { -> topic
+val topics = conversations.allPushTopics()
 val hmacKeysResult = conversations.getHmacKeys()
 val hmacKeys = hmacKeysResult.hmacKeysMap
-val result = hmacKeys[topic]?.valuesList?.map { hmacKey ->
-    Service.Subscription.HmacKey.newBuilder().also { sub_key ->
-        sub_key.key = hmacKey.hmacKey
-        sub_key.thirtyDayPeriodsSinceEpoch = hmacKey.thirtyDayPeriodsSinceEpoch
+
+topics.forEach { topic ->
+    val result = hmacKeys[topic]?.valuesList?.map { hmacKey ->
+        Service.Subscription.HmacKey.newBuilder().also { sub_key ->
+            sub_key.key = hmacKey.hmacKey
+            sub_key.thirtyDayPeriodsSinceEpoch = hmacKey.thirtyDayPeriodsSinceEpoch
+        }.build()
+    }
+
+    val subscription = Service.Subscription.newBuilder().also { sub ->
+        sub.addAllHmacKeys(result)
+        sub.topic = topic
+        sub.isSilent = false
     }.build()
-}
 
-val subscription = Service.Subscription.newBuilder().also { sub ->
-    sub.addAllHmacKeys(result)
-    sub.topic = topic
-    sub.isSilent = false
-}.build()
+    PushNotificationTokenManager.xmtpPush.subscribeWithMetadata(subscription)
 }
-
-PushNotificationTokenManager.xmtpPush.subscribeWithMetadata(subscription)
 ```
+
+```swift [Swift]
+// Get all push topics and HMAC keys
+let topics = try await client.conversations.allPushTopics()
+let hmacKeysResult = try client.conversations.getHmacKeys()
+
+// Build subscriptions for each topic with its HMAC keys
+for topic in topics {
+    var subscription = Notifications_V1_Subscription()
+    subscription.topic = topic
+    subscription.isSilent = false
+
+    if let keys = hmacKeysResult.hmacKeys[topic] {
+        subscription.hmacKeys = keys.values.map { keyData in
+            var hmacKey = Notifications_V1_Subscription.HmacKey()
+            hmacKey.key = keyData.hmacKey
+            hmacKey.thirtyDayPeriodsSinceEpoch = keyData.thirtyDayPeriodsSinceEpoch
+            return hmacKey
+        }
+    }
+
+    try await pushNotificationService.subscribeWithMetadata(subscription)
+}
+```
+
+:::
 
 This ensures that older installations (or your XMTP push notification server code) now know about and resubscribe to all conversations for all of the new HMAC keys.
 
@@ -1128,7 +1419,7 @@ To learn more, see [Understand DM stitching and push notifications](/chat-apps/p
 :::code-group
 
 ```tsx [React Native]
-conversation.getHmacKeys()
+await conversation.getConversationHmacKeys();
 ```
 
 ```kotlin [Kotlin]
@@ -1186,10 +1477,10 @@ Let's dive deeper into how the XMTP push notification server filters messages to
    - If the arriving message's topic is **not on the list**, the server ignores it.
    - If the arriving message's topic is **on the list**, the server proceeds to check the message with the next filter.
 2. **Check the `shouldPush` field value**
-   - Each [content type](/chat-apps/content-types/content-types), such as text, attachment, or reply, can have
-   - A `shouldPush` boolean value is set at the content type level for each content type, such as text, attachment, or reply, so it can't be overwritten on send. By default, this value is set to **_true_** for all content types except read receipts and reactions.
-   - If the message's content type `shouldPush` value is **_false_**, the server ignores the message.
-   - If the message's content type `shouldPush` value is **_true_**, the server proceeds to check the message with the next filter.
+   - Each [content type](/chat-apps/content-types/content-types), such as text, attachment, or reply, has a default `shouldPush` boolean value. By default, this value is set to **_true_** for all content types except read receipts and reactions.
+   - You can override the default `shouldPush` value per-message when sending. To learn how, see [Control message visibility and push notifications](/chat-apps/core-messaging/send-messages#control-message-visibility-and-push-notifications).
+   - If the message's `shouldPush` value is **_false_**, the server ignores the message.
+   - If the message's `shouldPush` value is **_true_**, the server proceeds to check the message with the next filter.
 3. **Check the message's HMAC key**
    - Each message sent with XMTP carries a single HMAC key. This key is updated with the encrypted message payload before being sent out.
    - If the message is signed by an HMAC key that **matches** the user's HMAC key, the push notification server ignores the message. This match means that the message was sent by the user themself, and they should not receive a push notification about a message they sent.
@@ -1277,7 +1568,9 @@ The only side effect of having a stale root HMAC key is that a user might receiv
 
 #### How installations learn about new root HMAC keys
 
-This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+
+To learn how to stream HMAC key updates, see [Stream HMAC key update events](/chat-apps/push-notifs/push-notifs#stream-hmac-key-update-events).
 
 ## Understand DM stitching and push notifications
 
@@ -1362,7 +1655,7 @@ To enable a user to create an archive:
 1. Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists.
 2. Generate a 32-byte array encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive file, and will persist after your app has been uninstalled. A common place to store this encryption key is the iCloud Keychain.
 3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
-   - Archive start and end time. If left blank, the archive will include all time.
+   - Archive start and end time in nanoseconds (`startNs` and `endNs`). If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
    - `excludeDisappearingMessages`: Set to `true` to exclude [disappearing messages](/chat-apps/core-messaging/disappearing-messages) from the backup. Defaults to `false` (disappearing messages are included).
 
@@ -1379,13 +1672,13 @@ To enable a user to create an archive:
 
    ```kotlin [Kotlin]
    // Create an archive backup
-   XMTPClient.createArchive(
+   client.createArchive(
        path = "/path/to/archive.xmtp",
        encryptionKey = encryptionKey,
-       options = ArchiveOptions(
-           startTime = startTime,
-           endTime = endTime,
-           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES),
+       opts = ArchiveOptions(
+           startNs = startNs,
+           endNs = endNs,
+           archiveElements = listOf(ArchiveElement.MESSAGES, ArchiveElement.CONSENT),
            excludeDisappearingMessages = false // Set to true to exclude disappearing messages
        )
    )
@@ -1393,13 +1686,13 @@ To enable a user to create an archive:
 
    ```swift [Swift]
    // Create an archive backup
-   try await xmtp.createArchive(
+   try await client.createArchive(
        path: "/path/to/archive.xmtp",
        encryptionKey: encryptionKey,
-       options: ArchiveOptions(
-           startTime: startTime,
-           endTime: endTime,
-           elements: [.consent, .messages],
+       opts: ArchiveOptions(
+           startNs: startNs,
+           endNs: endNs,
+           archiveElements: [.messages, .consent],
            excludeDisappearingMessages: false // Set to true to exclude disappearing messages
        )
    )
@@ -1423,29 +1716,29 @@ archiveMetadata(path: string, encryptionKey: string)
 
 ```kotlin [Kotlin]
 // Get archive metadata
-val metadata = XMTPClient.archiveMetadata(
+val metadata = client.archiveMetadata(
     path = "/path/to/archive.xmtp",
     encryptionKey = encryptionKey
 )
-// metadata.startTime, metadata.endTime, metadata.elements, metadata.createdAt
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
 ```
 
 ```swift [Swift]
 // Get archive metadata
-let metadata = try await xmtp.archiveMetadata(
+let metadata = try await client.archiveMetadata(
     path: "/path/to/archive.xmtp",
     encryptionKey: encryptionKey
 )
-// metadata.startTime, metadata.endTime, metadata.elements, metadata.createdAt
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
 ```
 
 :::
 
 This will return information that enables the user to better understand the archive(s) they want to import:
 
-- Start and end time of archived data
+- Start and end time of archived data (in nanoseconds via `startNs` and `endNs`)
 - Archived elements (messages and/or consent)
-- Archive creation date
+- Archive creation timestamp (in nanoseconds via `exportedAtNs`)
 
 You can get the archive file size from the file system.
 
@@ -1461,7 +1754,7 @@ importArchive(path: string, encryptionKey: string)
 
 ```kotlin [Kotlin]
 // Import an archive backup
-XMTPClient.importArchive(
+client.importArchive(
     path = "/path/to/archive.xmtp",
     encryptionKey = encryptionKey
 )
@@ -1469,7 +1762,7 @@ XMTPClient.importArchive(
 
 ```swift [Swift]
 // Import an archive backup
-try await xmtp.importArchive(
+try await client.importArchive(
     path: "/path/to/archive.xmtp",
     encryptionKey: encryptionKey
 )
@@ -1526,7 +1819,7 @@ if (conversation.isActive()) {
 
 ```swift [Swift]
 // Check if the conversation is active
-if conversation.isActive() {
+if try conversation.isActive() {
     // Conversation is active, safe to send or sync
 } else {
     // Conversation is inactive, show read-only UI
@@ -2803,9 +3096,17 @@ for await (const conversation of stream) {
 ```
 
 ```tsx [React Native]
-await alix.conversations.stream(async (conversation: Conversation<any>) => {
-  // Received a conversation
-});
+// Stream all conversations
+await client.conversations.stream(
+  async (conversation: Conversation<any>) => {
+    // Received a conversation
+  },
+  'all', // type: 'all' | 'groups' | 'dms'
+  () => console.log('Stream closed') // optional onClose callback
+);
+
+// To cancel the stream
+client.conversations.cancelStream();
 ```
 
 ```kotlin [Kotlin]
@@ -2921,12 +3222,18 @@ for await (const message of stream) {
 ```
 
 ```tsx [React Native]
-await alix.conversations.streamAllMessages(
+// Stream all messages from allowed conversations
+await client.conversations.streamAllMessages(
   async (message: DecodedMessage<any>) => {
     // Received a message
   },
-  { consentState: ['allowed'] }
+  'all', // type: 'all' | 'groups' | 'dms'
+  ['allowed'], // consentStates
+  () => console.log('Stream closed') // optional onClose callback
 );
+
+// To cancel the stream
+client.conversations.cancelStreamAllMessages();
 ```
 
 ```kotlin [Kotlin]
@@ -3015,19 +3322,24 @@ const [messages, setMessages] = useState<DecodedMessage[]>([]);
 const messageCallback = async (message: DecodedMessage<any>) => {
   setMessages((prev) => [...prev, message]);
 };
-const conversationFilterType: ConversationFilterType = 'all';
-const consentStates: ConsentState[] = ['allowed'];
+
 const onCloseCallback = () => {
   console.log('Message stream closed, handle retries here');
+  // Implement your own retry logic
 };
 
 const startMessageStream = async () => {
-  await alix.conversations.streamAllMessages(
+  await client.conversations.streamAllMessages(
     messageCallback,
-    conversationFilterType,
-    consentStates,
+    'all', // type: 'all' | 'groups' | 'dms'
+    ['allowed'], // consentStates
     onCloseCallback
   );
+};
+
+// To stop streaming
+const stopMessageStream = () => {
+  client.conversations.cancelStreamAllMessages();
 };
 ```
 
@@ -3225,6 +3537,60 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 
 :::
 
+## Manage database connections
+
+In some scenarios, you may need to temporarily release the local database connection, such as when performing database maintenance or when the app goes into the background for an extended period.
+
+### Drop the database connection
+
+Temporarily release the connection to the local database:
+
+:::code-group
+
+```tsx [React Native]
+// Drop the local database connection
+await client.dropLocalDatabaseConnection();
+```
+
+```kotlin [Kotlin]
+// Drop the local database connection
+client.dropLocalDatabaseConnection()
+```
+
+```swift [Swift]
+// Drop the local database connection
+try client.dropLocalDatabaseConnection()
+```
+
+:::
+
+### Reconnect to the database
+
+Reconnect to the local database after dropping the connection:
+
+:::code-group
+
+```tsx [React Native]
+// Reconnect to the local database
+await client.reconnectLocalDatabase();
+```
+
+```kotlin [Kotlin]
+// Reconnect to the local database
+client.reconnectLocalDatabase()
+```
+
+```swift [Swift]
+// Reconnect to the local database
+try await client.reconnectLocalDatabase()
+```
+
+:::
+
+:::warning
+After calling `dropLocalDatabaseConnection()`, any operations that require database access will fail until you call `reconnectLocalDatabase()`.
+:::
+
 
 ## chat-apps/list-stream-sync/sync-preferences.mdx
 # Sync preferences
@@ -3232,7 +3598,9 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 You can sync the following preference-related information across multiple existing app installations:
 
 - Conversation [consent preferences](/chat-apps/user-consent/user-consent#how-user-consent-preferences-are-set)
+  - To stream consent updates in real-time, see [Stream consent preferences](/chat-apps/user-consent/support-user-consent#stream-consent-preferences-in-real-time).
 - Conversation HMAC keys (for [push notifications](/chat-apps/push-notifs/understand-push-notifs))
+  - To stream HMAC key updates for push notifications, see [Stream HMAC key update events](/chat-apps/push-notifs/push-notifs#stream-hmac-key-update-events).
 
 ## Databases used by preferences sync
 
@@ -3947,11 +4315,19 @@ await conversation.consentState();
 ```
 
 ```kotlin [Kotlin]
+// Get consent state directly from a conversation
 conversation.consentState()
+
+// Or get consent state by conversation ID
+val consentState = client.preferences.conversationState(conversationId)
 ```
 
 ```swift [Swift]
+// Get consent state directly from a conversation
 try conversation.consentState()
+
+// Or get consent state by conversation ID
+let consentState = try await client.preferences.conversationState(conversationId: conversationId)
 ```
 
 :::
@@ -4065,7 +4441,16 @@ for await (const updates of stream) {
 ```
 
 ```tsx [React Native]
-await client.preferences.streamConsent();
+// Stream consent updates with callback
+await client.preferences.streamConsent(
+  async (consent: ConsentRecord) => {
+    console.log('Consent updated:', consent.value, consent.state);
+  },
+  () => console.log('Stream closed') // optional onClose callback
+);
+
+// To cancel the stream
+client.preferences.cancelStreamConsent();
 ```
 
 ```kotlin [Kotlin]
@@ -4118,9 +4503,17 @@ await client.setConsentStates([
 ```
 
 ```tsx [React Native]
+// Set a single consent state
 await client.preferences.setConsentState(
   new ConsentRecord(inboxId, 'inbox_id', 'denied')
 );
+
+// Set multiple consent states at once
+await client.preferences.setConsentStates([
+  new ConsentRecord(inboxId1, 'inbox_id', 'allowed'),
+  new ConsentRecord(inboxId2, 'inbox_id', 'denied'),
+  new ConsentRecord(conversationId, 'conversation_id', 'allowed'),
+]);
 ```
 
 ```kotlin [Kotlin]
@@ -6763,6 +7156,17 @@ if (message.contentTypeId === 'xmtp.org/readReceipt:1.0') {
 ```
 
 ```kotlin [Kotlin]
+// Get the last read times for all participants in the conversation
+val lastReadTimes = conversation.getLastReadTimes()
+
+// lastReadTimes is a Map<String, Long> where:
+// - key is the inbox ID
+// - value is the timestamp in nanoseconds when they last read the conversation
+lastReadTimes.forEach { (inboxId, timestamp) ->
+    println("Inbox $inboxId last read at: $timestamp")
+}
+
+// Or check if a message was read by iterating through messages
 val message: DecodedMessage = conversation.messages().first()
 if (message.encodedContent.type == ContentTypeReadReceipt) {
     // The message is a ReadReceipt
@@ -6774,8 +7178,65 @@ if (message.encodedContent.type == ContentTypeReadReceipt) {
 ```
 
 ```swift [Swift]
+// Get the last read times for all participants in the conversation
+let lastReadTimes = try conversation.getLastReadTimes()
+
+// lastReadTimes is a [String: Int64] where:
+// - key is the inbox ID
+// - value is the timestamp in nanoseconds when they last read the conversation
+for (inboxId, timestamp) in lastReadTimes {
+    print("Inbox \(inboxId) last read at: \(timestamp)")
+}
+
+// Or check if a message was read by iterating through messages
 let content: ReadReceipt = try message.content()
 content.timestamp // "2019-09-26T07:58:30.996+0200"
+```
+
+:::
+
+## Get last read times
+
+Get the timestamp of when each participant last read the conversation:
+
+:::code-group
+
+```tsx [React Native]
+// React Native doesn't have a getLastReadTimes() convenience method.
+// Track read receipts manually by filtering messages:
+const messages = await conversation.messages();
+const readReceipts = messages.filter(
+  (msg) => msg.contentTypeId === 'xmtp.org/readReceipt:1.0'
+);
+
+// Build a map of last read times by sender
+const lastReadTimes = new Map<string, Date>();
+readReceipts.forEach((receipt) => {
+  const existing = lastReadTimes.get(receipt.senderInboxId);
+  if (!existing || receipt.sent > existing) {
+    lastReadTimes.set(receipt.senderInboxId, receipt.sent);
+  }
+});
+```
+
+```kotlin [Kotlin]
+// Get last read times for a conversation
+val lastReadTimes = conversation.getLastReadTimes()
+
+// Returns Map<InboxId, Long> where value is timestamp in nanoseconds
+lastReadTimes.forEach { (inboxId, timestampNs) ->
+    println("$inboxId last read at $timestampNs")
+}
+```
+
+```swift [Swift]
+// Get last read times for a conversation
+let lastReadTimes = try conversation.getLastReadTimes()
+
+// Returns [String: Int64] where value is timestamp in nanoseconds
+for (inboxId, timestampNs) in lastReadTimes {
+    print("\(inboxId) last read at \(timestampNs)")
+}
 ```
 
 :::
@@ -8466,9 +8927,43 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 :::
 
+### Create a group chat using identities
+
+Instead of using inbox IDs, you can create groups directly using identities (EOA or SCW addresses). This is useful when you have wallet addresses but haven't yet resolved them to inbox IDs.
+
+:::code-group
+
+```tsx [React Native]
+// Create a group using identities instead of inbox IDs
+const group = await client.conversations.newGroupWithIdentities(
+  [memberIdentity1, memberIdentity2],
+  { name: 'Group Name', description: 'Group description' }
+);
+```
+
+```kotlin [Kotlin]
+// Create a group using identities instead of inbox IDs
+val group = client.conversations.newGroupWithIdentities(
+    identities = listOf(memberIdentity1, memberIdentity2),
+    name = "Group Name",
+    description = "Group description"
+)
+```
+
+```swift [Swift]
+// Create a group using identities instead of inbox IDs
+let group = try await client.conversations.newGroupWithIdentities(
+    with: [memberIdentity1, memberIdentity2],
+    name: "Group Name",
+    description: "Group description"
+)
+```
+
+:::
+
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. 
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline.
 
 For example, use optimistic group creation when your user creates a new group without any members listed.
 
@@ -8585,6 +9080,35 @@ let conversation = try await client.conversations.newConversation(inboxId)
 
 :::
 
+### Create a DM using an identity
+
+You can also create a DM directly using an identity (EOA or SCW address) instead of an inbox ID:
+
+:::code-group
+
+```tsx [React Native]
+// Create or find a DM using an identity
+const dm = await client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity);
+```
+
+```kotlin [Kotlin]
+// Create or find a DM using a identity
+val dm = client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity)
+
+// Or use newConversationWithIdentity
+val conversation = client.conversations.newConversationWithIdentity(peerPublicIdentity)
+```
+
+```swift [Swift]
+// Create or find a DM using an identity
+let dm = try await client.conversations.findOrCreateDmWithIdentity(with: peerPublicIdentity)
+
+// Or use newConversationWithIdentity
+let conversation = try await client.conversations.newConversationWithIdentity(with: peerPublicIdentity)
+```
+
+:::
+
 ## Conversation helper methods
 
 Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
@@ -8635,8 +9159,12 @@ await alix.conversations.findConversation(conversation.id);
 await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
 await alix.conversations.findGroup(group.id);
-// Returns a DM
+// Returns a DM by inbox ID
+await alix.conversations.findDmByInboxId(bo.inboxId);
+// Returns a DM by identity
 await alix.conversations.findDmByIdentity(bo.identity);
+// Returns a specific message
+await alix.conversations.findMessage(messageId);
 ```
 
 ```kotlin [Kotlin]
@@ -8645,18 +9173,30 @@ alix.conversations.findConversation(conversation.id)
 alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 alix.conversations.findGroup(group.id)
-// Returns a DM
-alix.conversations.findDmbyInboxId(bo.inboxId);
+// Returns a DM by inbox ID
+alix.conversations.findDmByInboxId(bo.inboxId)
+// Returns a DM by identity
+alix.conversations.findDmByIdentity(bo.publicIdentity)
+// Returns a specific message
+alix.conversations.findMessage(messageId)
+// Returns a message with reactions
+alix.conversations.findEnrichedMessage(messageId)
 ```
 
 ```swift [Swift]
 // Returns a ConversationContainer
-try alix.conversations.findConversation(conversation.id)
-try alix.conversations.findConversationByTopic(conversation.topic)
+try await alix.conversations.findConversation(conversationId: conversation.id)
+try await alix.conversations.findConversationByTopic(topic: conversation.topic)
 // Returns a Group
-try alix.conversations.findGroup(group.id)
-// Returns a DM
-try alix.conversations. findDmbyInboxId(bo.inboxId)
+try await alix.conversations.findGroup(groupId: group.id)
+// Returns a DM by inbox ID
+try await alix.conversations.findDmByInboxId(inboxId: bo.inboxId)
+// Returns a DM by identity
+try await alix.conversations.findDmByIdentity(publicIdentity: bo.publicIdentity)
+// Returns a specific message
+try alix.conversations.findMessage(messageId: messageId)
+// Returns a message with reactions
+try alix.conversations.findEnrichedMessage(messageId: messageId)
 ```
 
 :::
@@ -8903,27 +9443,24 @@ await client.conversations.createGroup([inboxId], {
 ```
 
 ```tsx [React Native]
-// DM
+import { DisappearingMessageSettings } from '@xmtp/react-native-sdk';
+
+// DM - DisappearingMessageSettings is passed directly as second parameter
 await client.conversations.newConversation(
   inboxId,
-  {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
-    )
-  }
-)
+  new DisappearingMessageSettings(1738620126404999936, 1800000000000000)
+);
 
-// Group
+// Group - DisappearingMessageSettings is passed in options object
 await client.conversations.newGroup(
   [inboxId],
   {
-    disappearingMessageSettings: DisappearingMessageSettings(
-      disappearStartingAtNs: 1738620126404999936,
-      retentionDurationInNs: 1800000000000000
+    disappearingMessageSettings: new DisappearingMessageSettings(
+      1738620126404999936,
+      1800000000000000
     )
   }
-)
+);
 ```
 
 ```kotlin [Kotlin]
@@ -9041,8 +9578,8 @@ conversation.isDisappearingMessagesEnabled();
 ```
 
 ```kotlin [Kotlin]
-conversation.disappearingMessageSettings
-conversation.isDisappearingMessagesEnabled
+val settings = conversation.disappearingMessageSettings()
+val isEnabled = conversation.isDisappearingMessagesEnabled()
 ```
 
 ```swift [Swift]
@@ -9074,6 +9611,17 @@ messages.forEach { message ->
         println("Message expires at: $expirationTime")
     }
 }
+```
+
+```tsx [React Native]
+const messages = await group.messages();
+
+messages.forEach((message) => {
+  if (message.expiresAtNs) {
+    const expirationTime = new Date(Number(message.expiresAtNs) / 1_000_000);
+    console.log('Message expires at:', expirationTime);
+  }
+});
 ```
 
 ```swift [Swift]
@@ -9123,6 +9671,20 @@ for await (const deletedMessage of stream) {
 
 // When done, end the stream
 stream.end();
+```
+
+```tsx [React Native]
+// Stream message deletions
+await client.conversations.streamMessageDeletions(
+  async (deletedMessage) => {
+    console.log('Message deleted:', deletedMessage.id);
+    // Update your UI to remove the message
+  },
+  () => console.log('Stream closed') // optional onClose callback
+);
+
+// To cancel the stream
+await client.conversations.cancelStreamMessageDeletions();
 ```
 
 :::
@@ -9287,7 +9849,7 @@ const groupName = await group.groupName();
 ```
 
 ```kotlin [Kotlin]
-group.name
+val groupName = group.name()
 ```
 
 ```swift [Swift]
@@ -9339,7 +9901,7 @@ const groupDescription = await group.groupDescription();
 ```
 
 ```kotlin [Kotlin]
-group.description
+val groupDescription = group.description()
 ```
 
 ```swift [Swift]
@@ -9391,7 +9953,7 @@ const groupName = await group.imageUrl();
 ```
 
 ```kotlin [Kotlin]
-group.imageURL
+val groupImageUrl = group.imageUrl()
 ```
 
 ```swift [Swift]
@@ -9445,7 +10007,7 @@ const appData = await group.appData();
 ```
 
 ```kotlin [Kotlin]
-val appData = group.appData
+val appData = group.appData()
 ```
 
 :::
@@ -9579,6 +10141,286 @@ If you aren't opinionated and don't set any permissions and options, groups will
 - Update group metadata - All members
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Create a group with custom permissions
+
+Beyond the preconfigured `ALL_MEMBERS` and `ADMIN_ONLY` permission sets, you can create groups with fully custom permission policies using `PermissionPolicySet`.
+
+### PermissionOption values
+
+When setting custom permissions, use these `PermissionOption` values:
+
+| Option | Description |
+| ------ | ----------- |
+| `Allow` | All members can perform the action |
+| `Deny` | No one can perform the action |
+| `Admin` | Only admins and super admins can perform the action |
+| `SuperAdmin` | Only super admins can perform the action |
+
+### Create a group with a custom permission policy set
+
+:::code-group
+
+```kotlin [Kotlin]
+// Define a custom permission policy set
+val customPermissions = PermissionPolicySet(
+    addMemberPolicy = PermissionOption.Admin,
+    removeMemberPolicy = PermissionOption.Admin,
+    addAdminPolicy = PermissionOption.SuperAdmin,
+    removeAdminPolicy = PermissionOption.SuperAdmin,
+    updateGroupNamePolicy = PermissionOption.Allow,
+    updateGroupDescriptionPolicy = PermissionOption.Allow,
+    updateGroupImagePolicy = PermissionOption.Admin,
+    updateMessageDisappearingPolicy = PermissionOption.SuperAdmin
+)
+
+// Create a group with custom permissions
+val group = client.conversations.newGroupCustomPermissions(
+    inboxIds = listOf(memberInboxId1, memberInboxId2),
+    permissionPolicySet = customPermissions,
+    name = "Custom Group",
+    description = "A group with custom permissions"
+)
+```
+
+```swift [Swift]
+// Define a custom permission policy set
+let customPermissions = PermissionPolicySet(
+    addMemberPolicy: .admin,
+    removeMemberPolicy: .admin,
+    addAdminPolicy: .superAdmin,
+    removeAdminPolicy: .superAdmin,
+    updateGroupNamePolicy: .allow,
+    updateGroupDescriptionPolicy: .allow,
+    updateGroupImagePolicy: .admin,
+    updateMessageDisappearingPolicy: .superAdmin,
+    updateAppDataPolicy: .admin
+)
+
+// Create a group with custom permissions
+let group = try await client.conversations.newGroupCustomPermissions(
+    with: [memberInboxId1, memberInboxId2],
+    permissionPolicySet: customPermissions,
+    name: "Custom Group",
+    description: "A group with custom permissions"
+)
+```
+
+```tsx [React Native]
+// Define a custom permission policy set
+const customPermissions = {
+  addMemberPolicy: 'admin',
+  removeMemberPolicy: 'admin',
+  addAdminPolicy: 'superAdmin',
+  removeAdminPolicy: 'superAdmin',
+  updateGroupNamePolicy: 'allow',
+  updateGroupDescriptionPolicy: 'allow',
+  updateGroupImagePolicy: 'admin',
+  updateMessageDisappearingPolicy: 'superAdmin',
+};
+
+// Create a group with custom permissions using inbox IDs
+const group = await client.conversations.newGroupCustomPermissions(
+  [memberInboxId1, memberInboxId2],
+  customPermissions,
+  { name: 'Custom Group', description: 'A group with custom permissions' }
+);
+
+// Or create using identities instead of inbox IDs
+const groupWithIdentities = await client.conversations.newGroupCustomPermissionsWithIdentities(
+  [memberIdentity1, memberIdentity2],
+  customPermissions,
+  { name: 'Custom Group', description: 'A group with custom permissions' }
+);
+```
+
+:::
+
+### Get the current permission policy set
+
+To retrieve the current permissions for a group:
+
+:::code-group
+
+```tsx [React Native]
+// Get the current permission policy set for a group
+const policySet = await group.permissionPolicySet();
+
+console.log('Add member policy:', policySet.addMemberPolicy);
+console.log('Remove member policy:', policySet.removeMemberPolicy);
+console.log('Update name policy:', policySet.updateGroupNamePolicy);
+```
+
+```kotlin [Kotlin]
+// Get the current permission policy set for a group
+val policySet = group.permissionPolicySet()
+
+println("Add member policy: ${policySet.addMemberPolicy}")
+println("Remove member policy: ${policySet.removeMemberPolicy}")
+println("Update name policy: ${policySet.updateGroupNamePolicy}")
+```
+
+```swift [Swift]
+// Get the current permission policy set for a group
+let policySet = try group.permissionPolicySet()
+
+print("Add member policy: \(policySet.addMemberPolicy)")
+print("Remove member policy: \(policySet.removeMemberPolicy)")
+print("Update name policy: \(policySet.updateGroupNamePolicy)")
+```
+
+:::
+
+## Update individual permissions
+
+Super admins can update individual permissions on an existing group. Each permission can be updated independently.
+
+### Update add member permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to add members
+await group.updateAddMemberPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to add members
+group.updateAddMemberPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to add members
+try await group.updateAddMemberPermission(newPermissionOption: .admin)
+```
+
+:::
+
+### Update remove member permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to remove members
+await group.updateRemoveMemberPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to remove members
+group.updateRemoveMemberPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to remove members
+try await group.updateRemoveMemberPermission(newPermissionOption: .admin)
+```
+
+:::
+
+### Update add admin permission
+
+:::code-group
+
+```tsx [React Native]
+// Only super admins can add admins
+await group.updateAddAdminPermission('super_admin');
+```
+
+```kotlin [Kotlin]
+// Only super admins can add admins
+group.updateAddAdminPermission(PermissionOption.SuperAdmin)
+```
+
+```swift [Swift]
+// Only super admins can add admins
+try await group.updateAddAdminPermission(newPermissionOption: .superAdmin)
+```
+
+:::
+
+### Update remove admin permission
+
+:::code-group
+
+```tsx [React Native]
+// Only super admins can remove admins
+await group.updateRemoveAdminPermission('super_admin');
+```
+
+```kotlin [Kotlin]
+// Only super admins can remove admins
+group.updateRemoveAdminPermission(PermissionOption.SuperAdmin)
+```
+
+```swift [Swift]
+// Only super admins can remove admins
+try await group.updateRemoveAdminPermission(newPermissionOption: .superAdmin)
+```
+
+:::
+
+### Update group name permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow all members to update the group name
+await group.updateNamePermission('allow');
+```
+
+```kotlin [Kotlin]
+// Allow all members to update the group name
+group.updateNamePermission(PermissionOption.Allow)
+```
+
+```swift [Swift]
+// Allow all members to update the group name
+try await group.updateNamePermission(newPermissionOption: .allow)
+```
+
+:::
+
+### Update group description permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to update the description
+await group.updateDescriptionPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to update the description
+group.updateDescriptionPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to update the description
+try await group.updateDescriptionPermission(newPermissionOption: .admin)
+```
+
+:::
+
+### Update group image permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to update the group image
+await group.updateImageUrlPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to update the group image
+group.updateImageUrlPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to update the group image
+try await group.updateImageUrlPermission(newPermissionOption: .admin)
+```
+
+:::
 
 ## Manage group chat admins
 
@@ -9827,6 +10669,46 @@ try await group.addMembers(inboxIds: [inboxId])
 
 :::
 
+### Add members by identity
+
+You can add members using their identities instead of inbox IDs. This method returns a `MembershipResult` with details about the operation.
+
+:::code-group
+
+```tsx [React Native]
+// Add members using identities
+const result = await group.addMembersByIdentity([memberIdentity1, memberIdentity2]);
+
+// MembershipResult contains:
+console.log('Added members:', result.addedMembers);        // InboxId[]
+console.log('Removed members:', result.removedMembers);    // InboxId[]
+console.log('Failed installations:', result.failedInstallationIds); // InstallationId[]
+```
+
+```kotlin [Kotlin]
+// Add members using identities
+val result = group.addMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
+```swift [Swift]
+// Add members using identities
+let result = try await group.addMembersByIdentity(
+    identities: [memberIdentity1, memberIdentity2]
+)
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
+:::
+
 ### Remove member by inbox ID
 
 :::code-group
@@ -9849,6 +10731,29 @@ group.removeMembers(listOf(inboxId))
 
 ```swift [Swift]
 try await group.removeMembers(inboxIds: [inboxId])
+```
+
+:::
+
+### Remove members by identity
+
+:::code-group
+
+```tsx [React Native]
+// Remove members using identities
+await group.removeMembersByIdentity([memberIdentity1, memberIdentity2]);
+```
+
+```kotlin [Kotlin]
+// Remove members using identities
+group.removeMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+```
+
+```swift [Swift]
+// Remove members using identities
+try await group.removeMembersByIdentity(
+    identities: [memberIdentity1, memberIdentity2]
+)
 ```
 
 :::
@@ -9897,6 +10802,8 @@ let isActive = try group.isActive() // Returns false
 
 After a user calls `leaveGroup()`, you can check if their removal is still being processed using the `membershipState()` method. This is useful for showing appropriate UI while the group removal is being finalized.
 
+:::code-group
+
 ```kotlin [Kotlin]
 // After calling leaveGroup()
 group.leaveGroup()
@@ -9909,6 +10816,21 @@ if (state == FfiGroupMembershipState.PENDING_REMOVE) {
     println("Processing your departure from the group")
 }
 ```
+
+```swift [Swift]
+// After calling leaveGroup()
+try await group.leaveGroup()
+
+// Check if removal is still pending
+let state = try group.membershipState
+
+if state == .pendingRemove {
+    // User has requested to leave, but removal not yet fully processed
+    print("Processing your departure from the group")
+}
+```
+
+:::
 
 The `PENDING_REMOVE` state indicates that the user has called `leaveGroup()` but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
 
@@ -10011,6 +10933,85 @@ val addedByInboxId = group.addedByInboxId();
 
 ```swift [Swift]
 try await group.addedByInboxId();
+```
+
+:::
+
+### Get peer inbox IDs
+
+Get the inbox IDs of all other participants in a conversation (excluding the current user):
+
+:::code-group
+
+```tsx [React Native]
+// Get the peer inbox ID in a DM
+const peerInboxId = await dm.peerInboxId();
+```
+
+```kotlin [Kotlin]
+// Get peer inbox IDs in a group (excludes current user)
+val peerInboxIds = group.peerInboxIds()
+
+// Get the peer inbox ID in a DM
+val peerInboxId = dm.peerInboxId
+```
+
+```swift [Swift]
+// Get peer inbox IDs in a group (excludes current user)
+let peerInboxIds = try await group.peerInboxIds
+
+// Get the peer inbox ID in a DM
+let peerInboxId = try dm.peerInboxId
+```
+
+:::
+
+### Check if current user is the creator
+
+Check if the current user created the conversation:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Check if current user created the group
+val isGroupCreator = group.isCreator()
+
+// Check if current user created the DM
+val isDmCreator = dm.isCreator()
+```
+
+```swift [Swift]
+// Check if current user created the group
+let isGroupCreator = try await group.isCreator()
+
+// Check if current user created the DM
+let isDmCreator = try await dm.isCreator()
+```
+
+:::
+
+### Get the creator inbox ID
+
+Get the inbox ID of the user who created the conversation:
+
+:::code-group
+
+```tsx [React Native]
+// Get the creator's inbox ID for a group
+const creatorInboxId = await group.creatorInboxId();
+```
+
+```kotlin [Kotlin]
+// Get the creator's inbox ID for a DM
+val creatorInboxId = dm.creatorInboxId()
+```
+
+```swift [Swift]
+// Get the creator's inbox ID for a DM
+let creatorInboxId = try await dm.creatorInboxId()
+
+// Get the creator's inbox ID for a group
+let groupCreatorInboxId = try await group.creatorInboxId()
 ```
 
 :::
@@ -10371,7 +11372,7 @@ const inboxState = await client.preferences.inboxState();
 ```
 
 ```jsx [React Native]
-const inboxId = await client.inboxIdFromIdentity(identity);
+const inboxId = await client.findInboxIdFromIdentity(identity);
 ```
 
 ```kotlin [Kotlin]
@@ -10737,6 +11738,62 @@ try await group.send(content: "Hello everyone")
 ```
 
 :::
+
+## Control message visibility and push notifications
+
+Use `MessageVisibilityOptions` to override the default `shouldPush` value for a message. This controls whether the message triggers push notifications on recipient devices. This is useful for messages that shouldn't interrupt the recipient, such as typing indicators or background updates.
+
+To learn more about how `shouldPush` is used in the push notification filtering flow, see [Understand message filtering](/chat-apps/push-notifs/understand-push-notifs#understand-message-filtering).
+
+:::code-group
+
+```kotlin [Kotlin]
+// Send a message without triggering a push notification
+val visibilityOptions = MessageVisibilityOptions(
+    shouldPush = false
+)
+
+conversation.send(
+    text = "Typing...",
+    visibilityOptions = visibilityOptions
+)
+
+// Using with prepareMessage
+conversation.prepareMessage(
+    content = "Background update",
+    visibilityOptions = MessageVisibilityOptions(shouldPush = false)
+)
+```
+
+```swift [Swift]
+// Send a message without triggering a push notification
+// First encode the content, then send with visibility options
+let (encodedContent, _) = try await conversation.encodeContent(
+    content: "Typing...",
+    options: nil
+)
+let visibilityOptions = MessageVisibilityOptions(shouldPush: false)
+try await conversation.send(
+    encodedContent: encodedContent,
+    visibilityOptions: visibilityOptions
+)
+
+// Using with prepareMessage
+let (encoded, _) = try await conversation.encodeContent(
+    content: "Background update",
+    options: nil
+)
+try await conversation.prepareMessage(
+    encodedContent: encoded,
+    visibilityOptions: MessageVisibilityOptions(shouldPush: false)
+)
+```
+
+:::
+
+| Option | Description |
+| ------ | ----------- |
+| `shouldPush` | When `false`, the message won't trigger push notifications on recipient devices. Defaults to `true`. |
 
 ## Optimistically send messages
 
