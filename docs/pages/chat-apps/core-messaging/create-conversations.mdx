@@ -151,6 +151,38 @@ Instead of using inbox IDs, you can create groups directly using identities (EOA
 
 :::code-group
 
+```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
+// Create identifiers for members
+const memberIdentifiers = [
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER1_ADDRESS" },
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER2_ADDRESS" },
+];
+
+// Create a group using identifiers instead of inbox IDs
+const group = await client.conversations.createGroupWithIdentifiers(
+  memberIdentifiers,
+  { name: "Group Name", description: "Group description" }
+);
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Create identifiers for members
+const memberIdentifiers = [
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER1_ADDRESS" },
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER2_ADDRESS" },
+];
+
+// Create a group using identifiers instead of inbox IDs
+const group = await client.conversations.createGroupWithIdentifiers(
+  memberIdentifiers,
+  { name: "Group Name", description: "Group description" }
+);
+```
+
 ```tsx [React Native]
 // Create a group using identities instead of inbox IDs
 const group = await client.conversations.newGroupWithIdentities(
@@ -304,6 +336,26 @@ You can also create a DM directly using an identity (EOA or SCW address) instead
 
 :::code-group
 
+```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
+// Create a DM using an identifier instead of inbox ID
+const dm = await client.conversations.createDmWithIdentifier({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xPEER_ADDRESS",
+});
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Create a DM using an identifier instead of inbox ID
+const dm = await client.conversations.createDmWithIdentifier({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xPEER_ADDRESS",
+});
+```
+
 ```tsx [React Native]
 // Create or find a DM using an identity
 const dm = await client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity);
@@ -415,6 +467,44 @@ try await alix.conversations.findDmByIdentity(publicIdentity: bo.publicIdentity)
 try alix.conversations.findMessage(messageId: messageId)
 // Returns a message with reactions
 try alix.conversations.findEnrichedMessage(messageId: messageId)
+```
+
+:::
+
+## Handle duplicate DMs
+
+In rare cases, duplicate DM conversations can be created (for example, if two users simultaneously initiate a DM with each other). Use `duplicateDms()` to detect and handle these duplicates.
+
+:::code-group
+
+```js [Browser]
+// Get all DMs
+const dms = await client.conversations.listDms();
+
+// Check each DM for duplicates
+for (const dm of dms) {
+  const duplicates = await dm.duplicateDms();
+  if (duplicates.length > 0) {
+    console.log(`Found ${duplicates.length} duplicate(s) for DM with ${dm.peerInboxId}`);
+    // Handle duplicates - typically you'd want to consolidate messages
+    // and archive or ignore the duplicate conversations
+  }
+}
+```
+
+```js [Node]
+// Get all DMs
+const dms = await client.conversations.listDms();
+
+// Check each DM for duplicates
+for (const dm of dms) {
+  const duplicates = await dm.duplicateDms();
+  if (duplicates.length > 0) {
+    console.log(`Found ${duplicates.length} duplicate(s) for DM with ${dm.peerInboxId}`);
+    // Handle duplicates - typically you'd want to consolidate messages
+    // and archive or ignore the duplicate conversations
+  }
+}
 ```
 
 :::

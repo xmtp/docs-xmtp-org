@@ -140,6 +140,38 @@ Conversations may be temporarily paused when a protocol upgrade is in progress. 
 
 :::code-group
 
+```js [Browser]
+// Check if conversation is paused for a protocol upgrade
+const pausedVersion = conversation.pausedForVersion;
+
+if (pausedVersion) {
+  console.log("Conversation is paused waiting for version:", pausedVersion);
+  // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+  // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+const groupPausedVersion = group.pausedForVersion;
+const dmPausedVersion = dm.pausedForVersion;
+```
+
+```js [Node]
+// Check if conversation is paused for a protocol upgrade
+const pausedVersion = conversation.pausedForVersion;
+
+if (pausedVersion) {
+  console.log("Conversation is paused waiting for version:", pausedVersion);
+  // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+  // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+const groupPausedVersion = group.pausedForVersion;
+const dmPausedVersion = dm.pausedForVersion;
+```
+
 ```tsx [React Native]
 // Check if conversation is paused for a protocol upgrade
 const pausedVersion = await conversation.pausedForVersion();
@@ -360,6 +392,46 @@ SubscribeWelcomes       0
 ```
 
 :::code-group
+
+```js [Browser]
+// Get aggregated statistics as formatted string
+const aggregateStats = await client.debugInformation.apiAggregateStatistics();
+console.log(aggregateStats);
+
+// Get individual API statistics
+const apiStats = await client.debugInformation.apiStatistics();
+console.log("Uploads:", apiStats.uploadKeyPackage);
+console.log("Fetches:", apiStats.fetchKeyPackage);
+console.log("Sent messages:", apiStats.sendGroupMessages);
+
+// Get identity statistics
+const identityStats = await client.debugInformation.apiIdentityStatistics();
+console.log("Identity updates:", identityStats.publishIdentityUpdate);
+console.log("Inbox ID lookups:", identityStats.getInboxIds);
+
+// Clear all statistics
+await client.debugInformation.clearAllStatistics();
+```
+
+```js [Node]
+// Get aggregated statistics as formatted string
+const aggregateStats = await client.debugInformation.apiAggregateStatistics();
+console.log(aggregateStats);
+
+// Get individual API statistics
+const apiStats = await client.debugInformation.apiStatistics();
+console.log("Uploads:", apiStats.uploadKeyPackage);
+console.log("Fetches:", apiStats.fetchKeyPackage);
+console.log("Sent messages:", apiStats.sendGroupMessages);
+
+// Get identity statistics
+const identityStats = await client.debugInformation.apiIdentityStatistics();
+console.log("Identity updates:", identityStats.publishIdentityUpdate);
+console.log("Inbox ID lookups:", identityStats.getInboxIds);
+
+// Clear all statistics
+await client.debugInformation.clearAllStatistics();
+```
 
 ```tsx [React Native]
 // Get network debug information

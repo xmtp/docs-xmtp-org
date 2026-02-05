@@ -337,6 +337,82 @@ await Client.revokeInstallations(
 
 :::
 
+### Check installation key package statuses
+
+For advanced debugging, you can check the key package status of installations. Key packages are cryptographic material used for secure message delivery. This is useful for diagnosing issues with message delivery to specific installations.
+
+:::code-group
+
+```js [Browser]
+// Get installation IDs from inbox state
+const inboxState = await client.preferences.fetchInboxState();
+const installationIds = inboxState.installations.map(i => i.id);
+
+// Check key package statuses for installations
+const statuses = await client.fetchKeyPackageStatuses(installationIds);
+
+for (const status of statuses) {
+  console.log("Installation:", status.installationId);
+  console.log("Key package valid:", status.isValid);
+  console.log("Lifetime remaining:", status.lifetimeNs);
+}
+```
+
+```js [Node]
+// Get installation IDs from inbox state
+const inboxState = await client.preferences.fetchInboxState();
+const installationIds = inboxState.installations.map(i => i.id);
+
+// Check key package statuses for installations
+const statuses = await client.fetchKeyPackageStatuses(installationIds);
+
+for (const status of statuses) {
+  console.log("Installation:", status.installationId);
+  console.log("Key package valid:", status.isValid);
+  console.log("Lifetime remaining:", status.lifetimeNs);
+}
+```
+
+:::
+
+### Verify address and installation authorization (Node SDK only)
+
+The Node SDK provides static methods to verify if an address or installation is authorized for a specific inbox without creating a client. These are useful for server-side validation.
+
+:::warning[Node SDK only]
+These methods are only available in the Node SDK, not in the Browser SDK.
+:::
+
+```js [Node]
+import { Client, IdentifierKind } from "@xmtp/node-sdk";
+
+// Check if an address is authorized for an inbox
+const isAddressAuthorized = await Client.isAddressAuthorized(
+  inboxId,
+  "0xADDRESS_TO_CHECK",
+  "production" // optional, defaults to "dev"
+);
+
+if (isAddressAuthorized) {
+  console.log("Address is authorized for this inbox");
+} else {
+  console.log("Address is NOT authorized for this inbox");
+}
+
+// Check if an installation is authorized for an inbox
+const isInstallationAuthorized = await Client.isInstallationAuthorized(
+  inboxId,
+  installationIdBytes, // Uint8Array
+  "production" // optional, defaults to "dev"
+);
+
+if (isInstallationAuthorized) {
+  console.log("Installation is authorized for this inbox");
+} else {
+  console.log("Installation is NOT authorized for this inbox");
+}
+```
+
 ## View the inbox state
 
 Find an `inboxId` for an identity:
@@ -430,6 +506,88 @@ InboxState
 }
 ```
 
+## Generate and look up inbox IDs
+
+These utility functions allow you to work with inbox IDs without requiring an active client instance.
+
+### Generate an inbox ID
+
+Generate the inbox ID that would be created for a given identifier. This is useful for predicting what inbox ID an identity will have before creating a client.
+
+:::code-group
+
+```js [Browser]
+import { generateInboxId, IdentifierKind } from "@xmtp/browser-sdk";
+
+// Generate the inbox ID for an Ethereum address
+const inboxId = await generateInboxId({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+});
+
+console.log("Inbox ID:", inboxId);
+```
+
+```js [Node]
+import { generateInboxId, IdentifierKind } from "@xmtp/node-sdk";
+
+// Generate the inbox ID for an Ethereum address
+const inboxId = await generateInboxId({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0x1234567890abcdef1234567890abcdef12345678",
+});
+
+console.log("Inbox ID:", inboxId);
+```
+
+:::
+
+### Look up an inbox ID by identifier
+
+Look up the inbox ID associated with an identifier on the network. Returns `undefined` if the identifier has not been registered with XMTP.
+
+:::code-group
+
+```js [Browser]
+import { getInboxIdForIdentifier, IdentifierKind } from "@xmtp/browser-sdk";
+
+// Look up the inbox ID for an Ethereum address
+const inboxId = await getInboxIdForIdentifier(
+  {
+    kind: IdentifierKind.Ethereum,
+    identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  },
+  "production" // optional, defaults to "dev"
+);
+
+if (inboxId) {
+  console.log("Found inbox ID:", inboxId);
+} else {
+  console.log("This address is not registered with XMTP");
+}
+```
+
+```js [Node]
+import { getInboxIdForIdentifier, IdentifierKind } from "@xmtp/node-sdk";
+
+// Look up the inbox ID for an Ethereum address
+const inboxId = await getInboxIdForIdentifier(
+  {
+    kind: IdentifierKind.Ethereum,
+    identifier: "0x1234567890abcdef1234567890abcdef12345678",
+  },
+  "production" // optional, defaults to "dev"
+);
+
+if (inboxId) {
+  console.log("Found inbox ID:", inboxId);
+} else {
+  console.log("This address is not registered with XMTP");
+}
+```
+
+:::
+
 ## Add an identity to an inbox
 
 :::warning[Warning]
@@ -488,6 +646,36 @@ client.removeAccount(recoveryIdentity, identityToRemove)
 
 ```swift [Swift]
 try await client.removeAccount(recoveryIdentity: recoveryIdentity, identityToRemove: identityToRemove)
+```
+
+:::
+
+## Change the recovery identity
+
+You can change which identity serves as the recovery identity for an inbox. The recovery identity is used to authorize important identity actions like removing identities and revoking installations.
+
+:::warning[Important]
+
+Only the current recovery identity can authorize this change. The new recovery identity must already be associated with the inbox before it can be designated as the recovery identity.
+
+:::
+
+:::code-group
+
+```js [Browser]
+// Change the recovery identity to another identity associated with this inbox
+await client.changeRecoveryIdentifier({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xNEW_RECOVERY_ADDRESS",
+});
+```
+
+```js [Node]
+// Change the recovery identity to another identity associated with this inbox
+await client.changeRecoveryIdentifier({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xNEW_RECOVERY_ADDRESS",
+});
 ```
 
 :::
@@ -633,3 +821,295 @@ If the identity is then added as an associated identity to inbox ID 1, the ident
 To enable the user of the identity with address 0xd0e4...DCe8 to log into inbox ID 2 again, you can use the recovery identity for inbox ID 2 to add a different identity to inbox ID 2 and have the user use that identity access it.
 
 If you are interested in providing this functionality in your app and want some guidance, post to the [XMTP Technical Forums](https://community.xmtp.org).
+
+## Advanced: Custom signature flows
+
+:::warning[Advanced use case]
+
+These methods are for advanced developers who need fine-grained control over the signature flow. Most applications should use the standard methods like `unsafe_addAccount()`, `removeAccount()`, `revokeInstallations()`, and `changeRecoveryIdentifier()` which handle signatures automatically.
+
+Use these methods only if you need to:
+- Integrate with wallets that can't provide signatures synchronously
+- Implement custom signature collection UIs
+- Handle signatures across different contexts or processes
+
+:::
+
+The custom signature flow differs slightly between Browser and Node SDKs:
+
+**Browser SDK:**
+1. Call `unsafe_*SignatureText()` to get `{signatureText, signatureRequestId}`
+2. Sign the text with your wallet
+3. Call `unsafe_applySignatureRequest(safeSigner, signatureRequestId)`
+
+**Node SDK:**
+1. Call `unsafe_*SignatureRequest()` to get a `SignatureRequestHandle`
+2. Sign the text and add the signature with `unsafe_addSignature(handle, signatureBytes)`
+3. Call `unsafe_applySignatureRequest(handle)`
+
+### Create inbox signature request
+
+Generate the signature request needed for creating a new inbox:
+
+:::code-group
+
+```js [Browser]
+import { toSafeSigner } from "@xmtp/browser-sdk";
+
+// Step 1: Generate the signature text
+const { signatureText, signatureRequestId } =
+  await client.unsafe_createInboxSignatureText();
+
+// Step 2: Sign with your wallet (example using a custom signer)
+const safeSigner = toSafeSigner(yourWalletSigner);
+
+// Step 3: Apply the signature
+await client.unsafe_applySignatureRequest(safeSigner, signatureRequestId);
+```
+
+```js [Node]
+// Step 1: Generate the signature request
+const signatureRequest = await client.unsafe_createInboxSignatureRequest();
+
+// Step 2: Get the signature text and sign it with your wallet
+const signatureText = signatureRequest.signatureText();
+const signatureBytes = await yourWallet.signMessage(signatureText);
+
+// Step 3: Add the signature to the request
+client.unsafe_addSignature(signatureRequest, signatureBytes);
+
+// Step 4: Apply the signature request
+await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+:::
+
+### Add account signature request
+
+Generate the signature request needed for adding an account to an inbox:
+
+:::code-group
+
+```js [Browser]
+import { IdentifierKind, toSafeSigner } from "@xmtp/browser-sdk";
+
+// Step 1: Generate the signature text for adding an account
+const { signatureText, signatureRequestId } =
+  await client.unsafe_addAccountSignatureText(
+    {
+      kind: IdentifierKind.Ethereum,
+      identifier: "0xNEW_ACCOUNT_ADDRESS",
+    },
+    false // allowInboxReassign - set to true to reassign from another inbox
+  );
+
+// Step 2: Sign with the NEW account's wallet
+const newAccountSafeSigner = toSafeSigner(newAccountWalletSigner);
+
+// Step 3: Apply the signature
+await client.unsafe_applySignatureRequest(newAccountSafeSigner, signatureRequestId);
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Step 1: Generate the signature request for adding an account
+const signatureRequest = await client.unsafe_addAccountSignatureRequest(
+  {
+    kind: IdentifierKind.Ethereum,
+    identifier: "0xNEW_ACCOUNT_ADDRESS",
+  },
+  false // allowInboxReassign - set to true to reassign from another inbox
+);
+
+// Step 2: Get the signature text and sign it with the NEW account's wallet
+const signatureText = signatureRequest.signatureText();
+const signatureBytes = await newAccountWallet.signMessage(signatureText);
+
+// Step 3: Add the signature to the request
+client.unsafe_addSignature(signatureRequest, signatureBytes);
+
+// Step 4: Apply the signature request
+await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+:::
+
+### Remove account signature request
+
+Generate the signature request needed for removing an account from an inbox:
+
+:::code-group
+
+```js [Browser]
+import { IdentifierKind, toSafeSigner } from "@xmtp/browser-sdk";
+
+// Step 1: Generate the signature text for removing an account
+const { signatureText, signatureRequestId } =
+  await client.unsafe_removeAccountSignatureText({
+    kind: IdentifierKind.Ethereum,
+    identifier: "0xACCOUNT_TO_REMOVE",
+  });
+
+// Step 2: Sign with the recovery account's wallet
+const recoverySafeSigner = toSafeSigner(recoveryWalletSigner);
+
+// Step 3: Apply the signature
+await client.unsafe_applySignatureRequest(recoverySafeSigner, signatureRequestId);
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Step 1: Generate the signature request for removing an account
+const signatureRequest = await client.unsafe_removeAccountSignatureRequest({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xACCOUNT_TO_REMOVE",
+});
+
+// Step 2: Get the signature text and sign it with the recovery account's wallet
+const signatureText = signatureRequest.signatureText();
+const signatureBytes = await recoveryWallet.signMessage(signatureText);
+
+// Step 3: Add the signature to the request
+client.unsafe_addSignature(signatureRequest, signatureBytes);
+
+// Step 4: Apply the signature request
+await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+:::
+
+### Revoke installations signature request
+
+Generate the signature request needed for revoking specific installations:
+
+:::code-group
+
+```js [Browser]
+import { toSafeSigner } from "@xmtp/browser-sdk";
+
+// Get installation IDs to revoke
+const inboxState = await client.preferences.fetchInboxState();
+const installationsToRevoke = inboxState.installations
+  .filter(i => /* your filter logic */)
+  .map(i => i.bytes);
+
+// Step 1: Generate the signature text
+const { signatureText, signatureRequestId } =
+  await client.unsafe_revokeInstallationsSignatureText(installationsToRevoke);
+
+// Step 2: Sign with your wallet
+const safeSigner = toSafeSigner(walletSigner);
+
+// Step 3: Apply the signature
+await client.unsafe_applySignatureRequest(safeSigner, signatureRequestId);
+```
+
+```js [Node]
+// Get installation IDs to revoke
+const inboxState = await client.preferences.fetchInboxState();
+const installationsToRevoke = inboxState.installations
+  .filter(i => /* your filter logic */)
+  .map(i => i.bytes);
+
+// Step 1: Generate the signature request
+const signatureRequest =
+  await client.unsafe_revokeInstallationsSignatureRequest(installationsToRevoke);
+
+// Step 2: Get the signature text and sign it with your wallet
+const signatureText = signatureRequest.signatureText();
+const signatureBytes = await yourWallet.signMessage(signatureText);
+
+// Step 3: Add the signature to the request
+client.unsafe_addSignature(signatureRequest, signatureBytes);
+
+// Step 4: Apply the signature request
+await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+:::
+
+### Revoke all other installations signature request
+
+Generate the signature request needed for revoking all installations except the current one:
+
+:::code-group
+
+```js [Browser]
+import { toSafeSigner } from "@xmtp/browser-sdk";
+
+// Step 1: Generate the signature text
+const { signatureText, signatureRequestId } =
+  await client.unsafe_revokeAllOtherInstallationsSignatureText();
+
+// Step 2: Sign with your wallet
+const safeSigner = toSafeSigner(walletSigner);
+
+// Step 3: Apply the signature
+await client.unsafe_applySignatureRequest(safeSigner, signatureRequestId);
+```
+
+```js [Node]
+// Step 1: Generate the signature request
+const signatureRequest =
+  await client.unsafe_revokeAllOtherInstallationsSignatureRequest();
+
+// Step 2: Get the signature text and sign it with your wallet
+const signatureText = signatureRequest.signatureText();
+const signatureBytes = await yourWallet.signMessage(signatureText);
+
+// Step 3: Add the signature to the request
+client.unsafe_addSignature(signatureRequest, signatureBytes);
+
+// Step 4: Apply the signature request
+await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+:::
+
+### Change recovery identifier signature request
+
+Generate the signature request needed for changing the recovery identifier:
+
+:::code-group
+
+```js [Browser]
+import { IdentifierKind, toSafeSigner } from "@xmtp/browser-sdk";
+
+// Step 1: Generate the signature text for changing recovery
+const { signatureText, signatureRequestId } =
+  await client.unsafe_changeRecoveryIdentifierSignatureText({
+    kind: IdentifierKind.Ethereum,
+    identifier: "0xNEW_RECOVERY_ADDRESS",
+  });
+
+// Step 2: Sign with the CURRENT recovery account's wallet
+const currentRecoverySafeSigner = toSafeSigner(currentRecoveryWalletSigner);
+
+// Step 3: Apply the signature
+await client.unsafe_applySignatureRequest(currentRecoverySafeSigner, signatureRequestId);
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Step 1: Generate the signature request for changing recovery
+const signatureRequest =
+  await client.unsafe_changeRecoveryIdentifierSignatureRequest({
+    kind: IdentifierKind.Ethereum,
+    identifier: "0xNEW_RECOVERY_ADDRESS",
+  });
+
+// Step 2: Get the signature text and sign it with the CURRENT recovery account's wallet
+const signatureText = signatureRequest.signatureText();
+const signatureBytes = await currentRecoveryWallet.signMessage(signatureText);
+
+// Step 3: Add the signature to the request
+client.unsafe_addSignature(signatureRequest, signatureBytes);
+
+// Step 4: Apply the signature request
+await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+:::
