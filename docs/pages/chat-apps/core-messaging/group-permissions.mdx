@@ -84,6 +84,286 @@ If you aren't opinionated and don't set any permissions and options, groups will
 
 To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
 
+## Create a group with custom permissions
+
+Beyond the preconfigured `ALL_MEMBERS` and `ADMIN_ONLY` permission sets, you can create groups with fully custom permission policies using `PermissionPolicySet`.
+
+### PermissionOption values
+
+When setting custom permissions, use these `PermissionOption` values:
+
+| Option | Description |
+| ------ | ----------- |
+| `Allow` | All members can perform the action |
+| `Deny` | No one can perform the action |
+| `Admin` | Only admins and super admins can perform the action |
+| `SuperAdmin` | Only super admins can perform the action |
+
+### Create a group with a custom permission policy set
+
+:::code-group
+
+```kotlin [Kotlin]
+// Define a custom permission policy set
+val customPermissions = PermissionPolicySet(
+    addMemberPolicy = PermissionOption.Admin,
+    removeMemberPolicy = PermissionOption.Admin,
+    addAdminPolicy = PermissionOption.SuperAdmin,
+    removeAdminPolicy = PermissionOption.SuperAdmin,
+    updateGroupNamePolicy = PermissionOption.Allow,
+    updateGroupDescriptionPolicy = PermissionOption.Allow,
+    updateGroupImagePolicy = PermissionOption.Admin,
+    updateMessageDisappearingPolicy = PermissionOption.SuperAdmin
+)
+
+// Create a group with custom permissions
+val group = client.conversations.newGroupCustomPermissions(
+    inboxIds = listOf(memberInboxId1, memberInboxId2),
+    permissionPolicySet = customPermissions,
+    name = "Custom Group",
+    description = "A group with custom permissions"
+)
+```
+
+```swift [Swift]
+// Define a custom permission policy set
+let customPermissions = PermissionPolicySet(
+    addMemberPolicy: .admin,
+    removeMemberPolicy: .admin,
+    addAdminPolicy: .superAdmin,
+    removeAdminPolicy: .superAdmin,
+    updateGroupNamePolicy: .allow,
+    updateGroupDescriptionPolicy: .allow,
+    updateGroupImagePolicy: .admin,
+    updateMessageDisappearingPolicy: .superAdmin,
+    updateAppDataPolicy: .admin
+)
+
+// Create a group with custom permissions
+let group = try await client.conversations.newGroupCustomPermissions(
+    with: [memberInboxId1, memberInboxId2],
+    permissionPolicySet: customPermissions,
+    name: "Custom Group",
+    description: "A group with custom permissions"
+)
+```
+
+```tsx [React Native]
+// Define a custom permission policy set
+const customPermissions = {
+  addMemberPolicy: 'admin',
+  removeMemberPolicy: 'admin',
+  addAdminPolicy: 'superAdmin',
+  removeAdminPolicy: 'superAdmin',
+  updateGroupNamePolicy: 'allow',
+  updateGroupDescriptionPolicy: 'allow',
+  updateGroupImagePolicy: 'admin',
+  updateMessageDisappearingPolicy: 'superAdmin',
+};
+
+// Create a group with custom permissions using inbox IDs
+const group = await client.conversations.newGroupCustomPermissions(
+  [memberInboxId1, memberInboxId2],
+  customPermissions,
+  { name: 'Custom Group', description: 'A group with custom permissions' }
+);
+
+// Or create using identities instead of inbox IDs
+const groupWithIdentities = await client.conversations.newGroupCustomPermissionsWithIdentities(
+  [memberIdentity1, memberIdentity2],
+  customPermissions,
+  { name: 'Custom Group', description: 'A group with custom permissions' }
+);
+```
+
+:::
+
+### Get the current permission policy set
+
+To retrieve the current permissions for a group:
+
+:::code-group
+
+```tsx [React Native]
+// Get the current permission policy set for a group
+const policySet = await group.permissionPolicySet();
+
+console.log('Add member policy:', policySet.addMemberPolicy);
+console.log('Remove member policy:', policySet.removeMemberPolicy);
+console.log('Update name policy:', policySet.updateGroupNamePolicy);
+```
+
+```kotlin [Kotlin]
+// Get the current permission policy set for a group
+val policySet = group.permissionPolicySet()
+
+println("Add member policy: ${policySet.addMemberPolicy}")
+println("Remove member policy: ${policySet.removeMemberPolicy}")
+println("Update name policy: ${policySet.updateGroupNamePolicy}")
+```
+
+```swift [Swift]
+// Get the current permission policy set for a group
+let policySet = try group.permissionPolicySet()
+
+print("Add member policy: \(policySet.addMemberPolicy)")
+print("Remove member policy: \(policySet.removeMemberPolicy)")
+print("Update name policy: \(policySet.updateGroupNamePolicy)")
+```
+
+:::
+
+## Update individual permissions
+
+Super admins can update individual permissions on an existing group. Each permission can be updated independently.
+
+### Update add member permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to add members
+await group.updateAddMemberPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to add members
+group.updateAddMemberPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to add members
+try await group.updateAddMemberPermission(newPermissionOption: .admin)
+```
+
+:::
+
+### Update remove member permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to remove members
+await group.updateRemoveMemberPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to remove members
+group.updateRemoveMemberPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to remove members
+try await group.updateRemoveMemberPermission(newPermissionOption: .admin)
+```
+
+:::
+
+### Update add admin permission
+
+:::code-group
+
+```tsx [React Native]
+// Only super admins can add admins
+await group.updateAddAdminPermission('super_admin');
+```
+
+```kotlin [Kotlin]
+// Only super admins can add admins
+group.updateAddAdminPermission(PermissionOption.SuperAdmin)
+```
+
+```swift [Swift]
+// Only super admins can add admins
+try await group.updateAddAdminPermission(newPermissionOption: .superAdmin)
+```
+
+:::
+
+### Update remove admin permission
+
+:::code-group
+
+```tsx [React Native]
+// Only super admins can remove admins
+await group.updateRemoveAdminPermission('super_admin');
+```
+
+```kotlin [Kotlin]
+// Only super admins can remove admins
+group.updateRemoveAdminPermission(PermissionOption.SuperAdmin)
+```
+
+```swift [Swift]
+// Only super admins can remove admins
+try await group.updateRemoveAdminPermission(newPermissionOption: .superAdmin)
+```
+
+:::
+
+### Update group name permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow all members to update the group name
+await group.updateNamePermission('allow');
+```
+
+```kotlin [Kotlin]
+// Allow all members to update the group name
+group.updateNamePermission(PermissionOption.Allow)
+```
+
+```swift [Swift]
+// Allow all members to update the group name
+try await group.updateNamePermission(newPermissionOption: .allow)
+```
+
+:::
+
+### Update group description permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to update the description
+await group.updateDescriptionPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to update the description
+group.updateDescriptionPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to update the description
+try await group.updateDescriptionPermission(newPermissionOption: .admin)
+```
+
+:::
+
+### Update group image permission
+
+:::code-group
+
+```tsx [React Native]
+// Allow only admins to update the group image
+await group.updateImageUrlPermission('admin');
+```
+
+```kotlin [Kotlin]
+// Allow only admins to update the group image
+group.updateImageUrlPermission(PermissionOption.Admin)
+```
+
+```swift [Swift]
+// Allow only admins to update the group image
+try await group.updateImageUrlPermission(newPermissionOption: .admin)
+```
+
+:::
+
 ## Manage group chat admins
 
 ### Check if inbox ID is an admin
@@ -331,6 +611,46 @@ try await group.addMembers(inboxIds: [inboxId])
 
 :::
 
+### Add members by identity
+
+You can add members using their identities instead of inbox IDs. This method returns a `MembershipResult` with details about the operation.
+
+:::code-group
+
+```tsx [React Native]
+// Add members using identities
+const result = await group.addMembersByIdentity([memberIdentity1, memberIdentity2]);
+
+// MembershipResult contains:
+console.log('Added members:', result.addedMembers);        // InboxId[]
+console.log('Removed members:', result.removedMembers);    // InboxId[]
+console.log('Failed installations:', result.failedInstallationIds); // InstallationId[]
+```
+
+```kotlin [Kotlin]
+// Add members using identities
+val result = group.addMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
+```swift [Swift]
+// Add members using identities
+let result = try await group.addMembersByIdentity(
+    identities: [memberIdentity1, memberIdentity2]
+)
+
+// GroupMembershipResult contains information about:
+// - Successfully added members
+// - Members that failed to be added
+// - Members that were already in the group
+```
+
+:::
+
 ### Remove member by inbox ID
 
 :::code-group
@@ -353,6 +673,29 @@ group.removeMembers(listOf(inboxId))
 
 ```swift [Swift]
 try await group.removeMembers(inboxIds: [inboxId])
+```
+
+:::
+
+### Remove members by identity
+
+:::code-group
+
+```tsx [React Native]
+// Remove members using identities
+await group.removeMembersByIdentity([memberIdentity1, memberIdentity2]);
+```
+
+```kotlin [Kotlin]
+// Remove members using identities
+group.removeMembersByIdentity(listOf(memberIdentity1, memberIdentity2))
+```
+
+```swift [Swift]
+// Remove members using identities
+try await group.removeMembersByIdentity(
+    identities: [memberIdentity1, memberIdentity2]
+)
 ```
 
 :::
@@ -401,6 +744,8 @@ let isActive = try group.isActive() // Returns false
 
 After a user calls `leaveGroup()`, you can check if their removal is still being processed using the `membershipState()` method. This is useful for showing appropriate UI while the group removal is being finalized.
 
+:::code-group
+
 ```kotlin [Kotlin]
 // After calling leaveGroup()
 group.leaveGroup()
@@ -413,6 +758,21 @@ if (state == FfiGroupMembershipState.PENDING_REMOVE) {
     println("Processing your departure from the group")
 }
 ```
+
+```swift [Swift]
+// After calling leaveGroup()
+try await group.leaveGroup()
+
+// Check if removal is still pending
+let state = try group.membershipState
+
+if state == .pendingRemove {
+    // User has requested to leave, but removal not yet fully processed
+    print("Processing your departure from the group")
+}
+```
+
+:::
 
 The `PENDING_REMOVE` state indicates that the user has called `leaveGroup()` but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
 
@@ -515,6 +875,85 @@ val addedByInboxId = group.addedByInboxId();
 
 ```swift [Swift]
 try await group.addedByInboxId();
+```
+
+:::
+
+### Get peer inbox IDs
+
+Get the inbox IDs of all other participants in a conversation (excluding the current user):
+
+:::code-group
+
+```tsx [React Native]
+// Get the peer inbox ID in a DM
+const peerInboxId = await dm.peerInboxId();
+```
+
+```kotlin [Kotlin]
+// Get peer inbox IDs in a group (excludes current user)
+val peerInboxIds = group.peerInboxIds()
+
+// Get the peer inbox ID in a DM
+val peerInboxId = dm.peerInboxId
+```
+
+```swift [Swift]
+// Get peer inbox IDs in a group (excludes current user)
+let peerInboxIds = try await group.peerInboxIds
+
+// Get the peer inbox ID in a DM
+let peerInboxId = try dm.peerInboxId
+```
+
+:::
+
+### Check if current user is the creator
+
+Check if the current user created the conversation:
+
+:::code-group
+
+```kotlin [Kotlin]
+// Check if current user created the group
+val isGroupCreator = group.isCreator()
+
+// Check if current user created the DM
+val isDmCreator = dm.isCreator()
+```
+
+```swift [Swift]
+// Check if current user created the group
+let isGroupCreator = try await group.isCreator()
+
+// Check if current user created the DM
+let isDmCreator = try await dm.isCreator()
+```
+
+:::
+
+### Get the creator inbox ID
+
+Get the inbox ID of the user who created the conversation:
+
+:::code-group
+
+```tsx [React Native]
+// Get the creator's inbox ID for a group
+const creatorInboxId = await group.creatorInboxId();
+```
+
+```kotlin [Kotlin]
+// Get the creator's inbox ID for a DM
+val creatorInboxId = dm.creatorInboxId()
+```
+
+```swift [Swift]
+// Get the creator's inbox ID for a DM
+let creatorInboxId = try await dm.creatorInboxId()
+
+// Get the creator's inbox ID for a group
+let groupCreatorInboxId = try await group.creatorInboxId()
 ```
 
 :::

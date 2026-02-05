@@ -23,10 +23,10 @@ Let's dive deeper into how the XMTP push notification server filters messages to
    - If the arriving message's topic is **not on the list**, the server ignores it.
    - If the arriving message's topic is **on the list**, the server proceeds to check the message with the next filter.
 2. **Check the `shouldPush` field value**
-   - Each [content type](/chat-apps/content-types/content-types), such as text, attachment, or reply, can have
-   - A `shouldPush` boolean value is set at the content type level for each content type, such as text, attachment, or reply, so it can't be overwritten on send. By default, this value is set to **_true_** for all content types except read receipts and reactions.
-   - If the message's content type `shouldPush` value is **_false_**, the server ignores the message.
-   - If the message's content type `shouldPush` value is **_true_**, the server proceeds to check the message with the next filter.
+   - Each [content type](/chat-apps/content-types/content-types), such as text, attachment, or reply, has a default `shouldPush` boolean value. By default, this value is set to **_true_** for all content types except read receipts and reactions.
+   - You can override the default `shouldPush` value per-message when sending. To learn how, see [Control message visibility and push notifications](/chat-apps/core-messaging/send-messages#control-message-visibility-and-push-notifications).
+   - If the message's `shouldPush` value is **_false_**, the server ignores the message.
+   - If the message's `shouldPush` value is **_true_**, the server proceeds to check the message with the next filter.
 3. **Check the message's HMAC key**
    - Each message sent with XMTP carries a single HMAC key. This key is updated with the encrypted message payload before being sent out.
    - If the message is signed by an HMAC key that **matches** the user's HMAC key, the push notification server ignores the message. This match means that the message was sent by the user themself, and they should not receive a push notification about a message they sent.
@@ -114,7 +114,9 @@ The only side effect of having a stale root HMAC key is that a user might receiv
 
 #### How installations learn about new root HMAC keys
 
-This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamAllPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+This is one of the jobs of the [history sync](/chat-apps/list-stream-sync/history-sync) feature. It listens for `preferences.streamPreferenceUpdates()`, which are user preferences that may include an enum with root HMAC keys for new installations. When a user's new installation publishes updated root HMAC key info, older installations can see that update and must [resubscribe to topics](/chat-apps/push-notifs/push-notifs#resubscribe-to-topics-to-get-new-hmac-keys) to get the new group HMAC keys derived from the updated root key.
+
+To learn how to stream HMAC key updates, see [Stream HMAC key update events](/chat-apps/push-notifs/push-notifs#stream-hmac-key-update-events).
 
 ## Understand DM stitching and push notifications
 

@@ -143,3 +143,57 @@ try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
 :::
+
+## Manage database connections
+
+In some scenarios, you may need to temporarily release the local database connection, such as when performing database maintenance or when the app goes into the background for an extended period.
+
+### Drop the database connection
+
+Temporarily release the connection to the local database:
+
+:::code-group
+
+```tsx [React Native]
+// Drop the local database connection
+await client.dropLocalDatabaseConnection();
+```
+
+```kotlin [Kotlin]
+// Drop the local database connection
+client.dropLocalDatabaseConnection()
+```
+
+```swift [Swift]
+// Drop the local database connection
+try client.dropLocalDatabaseConnection()
+```
+
+:::
+
+### Reconnect to the database
+
+Reconnect to the local database after dropping the connection:
+
+:::code-group
+
+```tsx [React Native]
+// Reconnect to the local database
+await client.reconnectLocalDatabase();
+```
+
+```kotlin [Kotlin]
+// Reconnect to the local database
+client.reconnectLocalDatabase()
+```
+
+```swift [Swift]
+// Reconnect to the local database
+try await client.reconnectLocalDatabase()
+```
+
+:::
+
+:::warning
+After calling `dropLocalDatabaseConnection()`, any operations that require database access will fail until you call `reconnectLocalDatabase()`.
+:::
