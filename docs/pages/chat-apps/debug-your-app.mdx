@@ -40,7 +40,7 @@ console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
 console.log('Fork Details:', debugInfo.forkDetails);
 ```
 
-```typescript [React Native, Kotlin, Swift]
+```tsx [React Native]
 // Get detailed debug information for a conversation
 const debugInfo = await conversation?.getDebugInformation();
 
@@ -49,6 +49,28 @@ console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notFor
 console.log('Local Commit Log:', debugInfo.localCommitLog);
 console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
 console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+```kotlin [Kotlin]
+// Get detailed debug information for a conversation
+val debugInfo = conversation.getDebugInformation()
+
+println("Epoch: ${debugInfo.epoch}")
+println("Fork Status: ${debugInfo.commitLogForkStatus}") // FORKED, NOT_FORKED, or UNKNOWN
+println("Local Commit Log: ${debugInfo.localCommitLog}")
+println("Remote Commit Log: ${debugInfo.remoteCommitLog}")
+println("Fork Details: ${debugInfo.forkDetails}")
+```
+
+```swift [Swift]
+// Get detailed debug information for a conversation
+let debugInfo = try await conversation.getDebugInformation()
+
+print("Epoch: \(debugInfo.epoch)")
+print("Fork Status: \(debugInfo.commitLogForkStatus)") // .forked, .notForked, or .unknown
+print("Local Commit Log: \(debugInfo.localCommitLog)")
+print("Remote Commit Log: \(debugInfo.remoteCommitLog)")
+print("Fork Details: \(debugInfo.forkDetails)")
 ```
 
 :::
@@ -68,7 +90,7 @@ conversations.forEach((conversation) => {
 });
 ```
 
-```typescript [React Native, Kotlin, Swift]
+```tsx [React Native]
 // Check fork status when listing conversations
 const conversations = await client.conversations.list();
 
@@ -77,6 +99,28 @@ conversations.forEach((conversation) => {
     console.log(`Conversation ${conversation.id} is forked`);
   }
 });
+```
+
+```kotlin [Kotlin]
+// Check fork status when listing conversations
+val conversations = client.conversations.list()
+
+conversations.forEach { conversation ->
+    if (conversation.commitLogForkStatus == CommitLogForkStatus.FORKED) {
+        println("Conversation ${conversation.id} is forked")
+    }
+}
+```
+
+```swift [Swift]
+// Check fork status when listing conversations
+let conversations = try await client.conversations.list()
+
+for conversation in conversations {
+    if conversation.commitLogForkStatus == .forked {
+        print("Conversation \(conversation.id) is forked")
+    }
+}
 ```
 
 :::
@@ -89,6 +133,62 @@ Forked groups are not recoverable. Your options are to:
 
 - Remove all members from the forked group and then re-add them to the group.
 - Start a new group.
+
+## Check if conversation is paused for protocol upgrade
+
+Conversations may be temporarily paused when a protocol upgrade is in progress. Use `pausedForVersion()` to check if a conversation is paused and which version it's waiting for.
+
+:::code-group
+
+```tsx [React Native]
+// Check if conversation is paused for a protocol upgrade
+const pausedVersion = await conversation.pausedForVersion();
+
+if (pausedVersion) {
+  console.log('Conversation is paused waiting for version:', pausedVersion);
+  // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+  // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+const groupPausedVersion = await group.pausedForVersion();
+const dmPausedVersion = await dm.pausedForVersion();
+```
+
+```kotlin [Kotlin]
+// Check if conversation is paused for a protocol upgrade
+val pausedVersion = conversation.pausedForVersion()
+
+if (pausedVersion != null) {
+    println("Conversation is paused waiting for version: $pausedVersion")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+val groupPausedVersion = group.pausedForVersion()
+val dmPausedVersion = dm.pausedForVersion()
+```
+
+```swift [Swift]
+// Check if conversation is paused for a protocol upgrade
+let pausedVersion = try await conversation.pausedForVersion()
+
+if let pausedVersion = pausedVersion {
+    print("Conversation is paused waiting for version: \(pausedVersion)")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+let groupPausedVersion = try group.pausedForVersion()
+let dmPausedVersion = try dm.pausedForVersion()
+```
+
+:::
 
 ## File logging
 
@@ -106,6 +206,64 @@ To use file logging, call the following static functions:
   - `isLogWriterActive()`
   - `readXMTPLogFile()`
   - `clearXMTPLogs()`
+
+:::code-group
+
+```tsx [React Native]
+import { Client, LogLevel, LogRotation } from '@xmtp/react-native-sdk';
+
+// Activate persistent logging
+await Client.activatePersistentLibXMTPLogWriter(
+  LogLevel.DEBUG,
+  LogRotation.HOURLY,
+  10 // max files
+);
+
+// Get log file paths for sharing
+const logPaths = Client.getXMTPLogFilePaths();
+
+// Check if logging is active
+const isActive = Client.isLogWriterActive();
+
+// Read a specific log file
+const logContent = await Client.readXMTPLogFile(logPaths[0]);
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter();
+
+// Clear all log files
+const clearedCount = Client.clearXMTPLogs();
+```
+
+```kotlin [Kotlin]
+// Get log file paths for sharing
+val logPaths = Client.getXMTPLogFilePaths(context)
+
+// Check if logging is active
+val isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+Client.clearXMTPLogs(context)
+```
+
+```swift [Swift]
+// Get log file paths for sharing
+let logPaths = try Client.getXMTPLogFilePaths()
+
+// Check if logging is active
+let isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+try Client.clearXMTPLogs()
+```
+
+:::
 
 For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
 
@@ -178,7 +336,8 @@ These statistics are maintained per client instance, so each app installation ha
 
 To return aggregated statistics, run:
 
-- For Browser, Node, iOS, and Android SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For Browser and Node SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For iOS and Android SDKs: `client.debugInformation.aggregateStatistics`
 - For React Native SDK: `client.debugInformation.aggregateStatistics`
 
 ```text
@@ -200,17 +359,75 @@ SubscribeMessages        0
 SubscribeWelcomes       0
 ```
 
+:::code-group
+
+```tsx [React Native]
+// Get network debug information
+const debugInfo = await client.debugInformation.getNetworkDebugInformation();
+
+// Get aggregated statistics as formatted string
+console.log(debugInfo.aggregateStatistics);
+
+// Access individual API statistics
+console.log('Uploads:', debugInfo.apiStatistics.uploadKeyPackage);
+console.log('Fetches:', debugInfo.apiStatistics.fetchKeyPackage);
+console.log('Sent messages:', debugInfo.apiStatistics.sendGroupMessages);
+
+// Access identity statistics
+console.log('Identity updates:', debugInfo.identityStatistics.publishIdentityUpdate);
+console.log('Inbox ID lookups:', debugInfo.identityStatistics.getInboxIds);
+
+// Clear all statistics
+await client.debugInformation.clearAllStatistics();
+```
+
+```kotlin [Kotlin]
+// Get network debug information
+val debugInfo = client.debugInformation
+
+// Get aggregated statistics
+println(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+println("Uploads: ${debugInfo.apiStatistics.uploadKeyPackage}")
+println("Fetches: ${debugInfo.apiStatistics.fetchKeyPackage}")
+
+// Clear all statistics
+client.debugInformation.clearAllStatistics()
+```
+
+```swift [Swift]
+// Get network debug information
+let debugInfo = client.debugInformation
+
+// Get aggregated statistics
+print(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+print("Uploads: \(debugInfo.apiStatistics.uploadKeyPackage)")
+print("Fetches: \(debugInfo.apiStatistics.fetchKeyPackage)")
+
+// Clear all statistics
+try await client.debugInformation.clearAllStatistics()
+```
+
+:::
+
 ### Get an individual statistic
 
 To return an individual statistic as a number, run:
 
-- For Browser, Node, iOS, and Android SDKs:
+- For Browser and Node SDKs:
   - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
   - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
-- For React Native SDK:
-  - `client.debugInformation.Statistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `client.debugInformation.IdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+- For iOS and Android SDKs:
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For React Native SDK (async - must call `getNetworkDebugInformation()` first):
+  - `debugInfo.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `debugInfo.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
 
 For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
 
@@ -300,3 +517,4 @@ console.log('App version:', appVersion);
 ```
 
 :::
+

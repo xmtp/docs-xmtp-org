@@ -6,23 +6,7 @@ This package provides an XMTP content type to support onchain transaction refere
 To learn more, see the [Transaction reference example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-transactions) in the xmtp-agent-examples repo.
 :::
 
-## Install the package
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/content-type-transaction-reference
-```
-
-```bash [yarn]
-yarn add @xmtp/content-type-transaction-reference
-```
-
-```bash [pnpm]
-pnpm add @xmtp/content-type-transaction-reference
-```
-
-:::
+The transaction reference content type is built into the Agent SDK. No installation is required.
 
 ## Send a transaction reference
 
@@ -59,12 +43,9 @@ const transactionReference: TransactionReference = {
 Once you have a transaction reference, you can send it as part of your conversation:
 
 ```js [Node]
-import { ContentTypeTransactionReference } from '@xmtp/content-type-transaction-reference';
+import type { TransactionReference } from '@xmtp/agent-sdk';
 
-await ctx.conversation.send(
-  transactionReference,
-  ContentTypeTransactionReference
-);
+await ctx.conversation.sendTransactionReference(transactionReference);
 ```
 
 ## Receive a transaction reference
@@ -72,9 +53,10 @@ await ctx.conversation.send(
 To receive and process a transaction reference, you can use the following code samples.
 
 ```ts [Node]
-import { TransactionReferenceCodec } from '@xmtp/content-type-transaction-reference';
+import type { TransactionReference } from '@xmtp/agent-sdk';
 
-if (ctx.usesCodec(TransactionReferenceCodec)) {
+if (ctx.isTransactionReference()) {
+  const transactionRef: TransactionReference = ctx.message.content;
   // Process the transaction reference here
 }
 ```

@@ -55,6 +55,62 @@ try await group.send(content: "Hello everyone")
 
 :::
 
+## Control message visibility and push notifications
+
+Use `MessageVisibilityOptions` to override the default `shouldPush` value for a message. This controls whether the message triggers push notifications on recipient devices. This is useful for messages that shouldn't interrupt the recipient, such as typing indicators or background updates.
+
+To learn more about how `shouldPush` is used in the push notification filtering flow, see [Understand message filtering](/chat-apps/push-notifs/understand-push-notifs#understand-message-filtering).
+
+:::code-group
+
+```kotlin [Kotlin]
+// Send a message without triggering a push notification
+val visibilityOptions = MessageVisibilityOptions(
+    shouldPush = false
+)
+
+conversation.send(
+    text = "Typing...",
+    visibilityOptions = visibilityOptions
+)
+
+// Using with prepareMessage
+conversation.prepareMessage(
+    content = "Background update",
+    visibilityOptions = MessageVisibilityOptions(shouldPush = false)
+)
+```
+
+```swift [Swift]
+// Send a message without triggering a push notification
+// First encode the content, then send with visibility options
+let (encodedContent, _) = try await conversation.encodeContent(
+    content: "Typing...",
+    options: nil
+)
+let visibilityOptions = MessageVisibilityOptions(shouldPush: false)
+try await conversation.send(
+    encodedContent: encodedContent,
+    visibilityOptions: visibilityOptions
+)
+
+// Using with prepareMessage
+let (encoded, _) = try await conversation.encodeContent(
+    content: "Background update",
+    options: nil
+)
+try await conversation.prepareMessage(
+    encodedContent: encoded,
+    visibilityOptions: MessageVisibilityOptions(shouldPush: false)
+)
+```
+
+:::
+
+| Option | Description |
+| ------ | ----------- |
+| `shouldPush` | When `false`, the message won't trigger push notifications on recipient devices. Defaults to `true`. |
+
 ## Optimistically send messages
 
 When a user sends a message with XMTP, they might experience a slight delay between sending the message and seeing their sent message display in their app UI.

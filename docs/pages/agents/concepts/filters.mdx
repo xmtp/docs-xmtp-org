@@ -40,26 +40,42 @@ if (f.isText(ctx.message)) {
 }
 ```
 
+## Built-in content type filtering
+
+For built-in content types, use type guard methods on the context:
+
+```ts
+import { Agent } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Use type guard methods for built-in content types
+  if (ctx.isReaction()) {
+    // ctx.message.content is now typed as Reaction
+    console.log(`Reaction: ${ctx.message.content.content}`);
+    console.log(`Action: ${ctx.message.content.action}`);
+  }
+  
+  if (ctx.isReply()) {
+    // ctx.message.content is now typed as EnrichedReply
+    console.log(`Reply: ${ctx.message.content.content}`);
+  }
+});
+```
+
 ## Custom content type filtering
 
 Use the `usesCodec` filter to check for custom content types with full TypeScript type inference:
 
 ```ts
 import { Agent, filter } from '@xmtp/agent-sdk';
-import { ReactionCodec } from '@xmtp/content-type-reaction';
 import { MyCustomCodec } from './my-custom-codec';
 
 const agent = await Agent.createFromEnv();
 
 agent.on('message', async (ctx) => {
-  // Check for specific codec with type safety
-  if (filter.usesCodec(ctx.message, ReactionCodec)) {
-    // ctx.message.content is now typed as Reaction
-    console.log(`Reaction: ${ctx.message.content.content}`);
-    console.log(`Action: ${ctx.message.content.action}`);
-  }
-
-  // Works with custom content types too
+  // Works with custom content types
   if (filter.usesCodec(ctx.message, MyCustomCodec)) {
     // ctx.message.content is now typed to MyCustomCodec's decoded type
     console.log('Received custom content:', ctx.message.content);
