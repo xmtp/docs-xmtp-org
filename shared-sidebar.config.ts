@@ -466,6 +466,10 @@ export const sidebarConfig = {
           text: "History sync",
           link: "/chat-apps/list-stream-sync/history-sync",
         },
+        {
+          text: "Manage browser storage",
+          link: "/chat-apps/list-stream-sync/browser-storage",
+        },
       ],
     },
     {
