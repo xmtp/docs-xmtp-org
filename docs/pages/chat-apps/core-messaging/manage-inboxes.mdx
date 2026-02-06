@@ -373,15 +373,62 @@ for (const status of statuses) {
 }
 ```
 
+```tsx [React Native]
+// Get installation IDs from inbox state
+const inboxState = await client.inboxState(true);
+const installationIds = inboxState.installations.map(i => i.id);
+
+// Check key package statuses for installations
+const statuses = await client.debugInformation.getKeyPackageStatuses(installationIds);
+
+for (const [installationId, status] of statuses.statuses) {
+  console.log('Installation:', installationId);
+  console.log('Lifetime:', status.lifetime);
+  console.log('Validation error:', status.validationError);
+}
+```
+
+```kotlin [Kotlin]
+// Get installation IDs from inbox state
+val inboxState = client.inboxState(true)
+val installationIds = inboxState.installations.map { it.id }
+
+// Check key package statuses for installations (static method)
+val statuses = Client.keyPackageStatusesForInstallationIds(
+    installationIds.map { it.toByteArray() },
+    client.getXmtpApiClient()
+)
+
+statuses.forEach { (installationId, status) ->
+    println("Installation: $installationId")
+    println("Lifetime: ${status.lifetime}")
+    println("Validation error: ${status.validationError}")
+}
+```
+
+```swift [Swift]
+// Get installation IDs from inbox state
+let inboxState = try await client.inboxState(refreshFromNetwork: true)
+let installationIds = inboxState.installations.map { $0.id }
+
+// Check key package statuses for installations (static method)
+let statuses = try await Client.keyPackageStatusesForInstallationIds(
+    installationIds: installationIds.map { Data(hexString: $0) },
+    env: .production
+)
+
+for (installationId, status) in statuses {
+    print("Installation: \(installationId)")
+    print("Lifetime: \(status.lifetime)")
+    print("Validation error: \(status.validationError ?? "none")")
+}
+```
+
 :::
 
 ### Verify address and installation authorization (Node SDK only)
 
 The Node SDK provides static methods to verify if an address or installation is authorized for a specific inbox without creating a client. These are useful for server-side validation.
-
-:::warning[Node SDK only]
-These methods are only available in the Node SDK, not in the Browser SDK.
-:::
 
 ```js [Node]
 import { Client, IdentifierKind } from "@xmtp/node-sdk";
@@ -835,7 +882,7 @@ Use these methods only if you need to:
 
 :::
 
-The custom signature flow differs slightly between Browser and Node SDKs:
+The custom signature flow differs between SDKs:
 
 **Browser SDK:**
 1. Call `unsafe_*SignatureText()` to get `{signatureText, signatureRequestId}`
@@ -846,6 +893,11 @@ The custom signature flow differs slightly between Browser and Node SDKs:
 1. Call `unsafe_*SignatureRequest()` to get a `SignatureRequestHandle`
 2. Sign the text and add the signature with `unsafe_addSignature(handle, signatureBytes)`
 3. Call `unsafe_applySignatureRequest(handle)`
+
+**Mobile SDKs (React Native, Kotlin, Swift):**
+1. Call `ffi*SignatureText()` or `ffiSignatureRequest()` to get signature text
+2. Sign with ECDSA or SCW and call `ffiAddEcdsaSignature()` or `ffiAddScwSignature()`
+3. Call `ffiApplySignature()` or `ffiApplySignatureRequest()`
 
 ### Create inbox signature request
 
@@ -880,6 +932,47 @@ client.unsafe_addSignature(signatureRequest, signatureBytes);
 
 // Step 4: Apply the signature request
 await client.unsafe_applySignatureRequest(signatureRequest);
+```
+
+```tsx [React Native]
+// Step 1: Generate the signature text
+const signatureText = await client.ffiCreateSignatureText();
+
+// Step 2: Sign with your wallet (ECDSA example)
+const signatureBytes = await yourWallet.signMessage(signatureText);
+
+// Step 3: Add the ECDSA signature
+await client.ffiAddEcdsaSignature(signatureBytes);
+
+// Step 4: Apply the signature
+await client.ffiApplySignature();
+```
+
+```kotlin [Kotlin]
+// Step 1: Get the signature request
+val signatureRequest = client.ffiSignatureRequest()
+
+// Step 2: Handle the signature with your signing key
+if (signatureRequest != null) {
+    client.handleSignature(signatureRequest, signingKey)
+
+    // Step 3: Apply the signature request
+    client.ffiApplySignatureRequest(signatureRequest)
+}
+```
+
+```swift [Swift]
+// Step 1: Get the signature request
+if let signatureRequest = client.ffiSignatureRequest() {
+    // Step 2: Handle the signature with your signing key
+    try await client.handleSignature(
+        for: signatureRequest.ffiSignatureRequest,
+        signingKey: signingKey
+    )
+
+    // Step 3: Apply the signature request
+    try await client.ffiApplySignatureRequest(signatureRequest: signatureRequest)
+}
 ```
 
 :::

@@ -134,6 +134,62 @@ Forked groups are not recoverable. Your options are to:
 - Remove all members from the forked group and then re-add them to the group.
 - Start a new group.
 
+## Inspect duplicate DMs
+
+XMTP automatically stitches duplicate DM conversations together at the protocol level. When two users simultaneously create a DM with each other, or when a user creates a new DM from a different installation before history sync completes, multiple underlying MLS groups can exist for the same pair of identities.
+
+The SDK handles this transparently:
+
+- **Listing**: When you call `list()` or `listDms()`, duplicate DMs are automatically filtered out. You only see one DM per peer.
+- **Messages**: When you fetch messages from a DM, the SDK returns messages from all underlying MLS groups for that DM pair, so no messages are lost.
+- **Sending**: All installations eventually converge to sending messages through the same underlying MLS group.
+
+To learn more about how DM stitching works and its implications for push notifications, see [Understand DM stitching and push notifications](/chat-apps/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications).
+
+### When to use `duplicateDms()`
+
+The `duplicateDms()` method lets you inspect the duplicate DM conversations that exist under the hood but are normally hidden by automatic stitching. This is useful for:
+
+- **Debugging**: Investigating unexpected message delivery behavior in DMs
+- **Diagnostics**: Understanding how many underlying MLS groups exist for a DM pair
+- **Push notification troubleshooting**: Verifying that all underlying topics are being subscribed to
+
+The `duplicateDms()` method is currently only exposed as a public API in the Browser and Node SDKs. The iOS and Android SDKs use the equivalent `findDuplicateDms()` internally for push notification topic management, but don't expose it as a developer-facing method.
+
+:::code-group
+
+```js [Browser]
+// Get all DMs
+const dms = await client.conversations.listDms();
+
+// Inspect underlying duplicate DMs for each conversation
+for (const dm of dms) {
+  const duplicates = await dm.duplicateDms();
+  if (duplicates.length > 0) {
+    console.log(`DM with ${dm.peerInboxId} has ${duplicates.length} underlying duplicate(s)`);
+    // These duplicates are automatically stitched together by the SDK.
+    // Messages from all duplicates already appear in the main DM.
+  }
+}
+```
+
+```js [Node]
+// Get all DMs
+const dms = await client.conversations.listDms();
+
+// Inspect underlying duplicate DMs for each conversation
+for (const dm of dms) {
+  const duplicates = await dm.duplicateDms();
+  if (duplicates.length > 0) {
+    console.log(`DM with ${dm.peerInboxId} has ${duplicates.length} underlying duplicate(s)`);
+    // These duplicates are automatically stitched together by the SDK.
+    // Messages from all duplicates already appear in the main DM.
+  }
+}
+```
+
+:::
+
 ## Check if conversation is paused for protocol upgrade
 
 Conversations may be temporarily paused when a protocol upgrade is in progress. Use `pausedForVersion()` to check if a conversation is paused and which version it's waiting for.

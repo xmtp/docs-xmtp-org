@@ -471,44 +471,6 @@ try alix.conversations.findEnrichedMessage(messageId: messageId)
 
 :::
 
-## Handle duplicate DMs
-
-In rare cases, duplicate DM conversations can be created (for example, if two users simultaneously initiate a DM with each other). Use `duplicateDms()` to detect and handle these duplicates.
-
-:::code-group
-
-```js [Browser]
-// Get all DMs
-const dms = await client.conversations.listDms();
-
-// Check each DM for duplicates
-for (const dm of dms) {
-  const duplicates = await dm.duplicateDms();
-  if (duplicates.length > 0) {
-    console.log(`Found ${duplicates.length} duplicate(s) for DM with ${dm.peerInboxId}`);
-    // Handle duplicates - typically you'd want to consolidate messages
-    // and archive or ignore the duplicate conversations
-  }
-}
-```
-
-```js [Node]
-// Get all DMs
-const dms = await client.conversations.listDms();
-
-// Check each DM for duplicates
-for (const dm of dms) {
-  const duplicates = await dm.duplicateDms();
-  if (duplicates.length > 0) {
-    console.log(`Found ${duplicates.length} duplicate(s) for DM with ${dm.peerInboxId}`);
-    // Handle duplicates - typically you'd want to consolidate messages
-    // and archive or ignore the duplicate conversations
-  }
-}
-```
-
-:::
-
 ## Conversation union type
 
 Serves as a unified structure for managing both group chats and DMs. It provides a consistent set of properties and methods to seamlessly handle various conversation types.
