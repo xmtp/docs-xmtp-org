@@ -65,8 +65,8 @@ XMTP_ENV=dev # the XMTP network: local, dev, production
 - **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your local database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
 
 - **`XMTP_ENV`**: The XMTP network your agent connects to:
-  - `local` — For running against a local XMTP backend.
-  - `dev` — For using the XMTP test network.
+  - `local` — For running against a local XMTP backend (i.e. Docker container)
+  - `dev` — For using the XMTP test network
   - `production` — For making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/)
 
 ## Usage
