@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 01:07 AM UTC / February 05, 2026
+Generated at 11:02 PM UTC / February 09, 2026
 
 ## About this file
 
@@ -677,9 +677,13 @@ agent.on('unhandledError', (error) => {
 
 
 ## agents/get-started/build-an-agent.mdx
+import { KeyGenerator } from '../../../components/KeyGenerator';
+
 # Build XMTP agents
 
 Use the [XMTP Agent SDK](https://www.npmjs.com/package/@xmtp/agent-sdk) to build agents that interact with the XMTP network.
+
+The following instructions walk you through setting up a project from scratch. If you'd prefer to skip the setup, you can start directly from the [agent-sdk-starter](https://github.com/xmtp/agent-sdk-starter) template.
 
 ## Prerequisites
 
@@ -731,17 +735,37 @@ bun i @xmtp/agent-sdk
 
 :::
 
+## Environment variables
+
+To run an example XMTP agent, you must create a `.env` file with the following [environment variables](https://nodejs.org/api/environment_variables.html):
+
+```bash
+XMTP_ENV=dev # the XMTP network: local, dev, production
+XMTP_WALLET_KEY=0x # the private key of your wallet
+XMTP_DB_ENCRYPTION_KEY=0x # encryption key for your local database
+```
+
+- **`XMTP_ENV`**: The XMTP network your agent connects to. Use `local` for running against a local XMTP backend (i.e. Docker container), `dev` for using the XMTP test network, or `production` for making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/).
+
+- **`XMTP_WALLET_KEY`**: The private key of your [EOA wallet address](/chat-apps/core-messaging/create-a-signer#create-a-eoa-or-scw-signer). If you don't have a wallet or simply want one for testing, you can generate keys using the generator below.
+
+- **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your agent's local SQLite database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
+
+### Local key generator
+
+The following keys are generated in your browser using the [Web Crypto API](https://developer.mozilla.org/docs/Web/API/Web_Crypto_API) and nothing is sent to any server. These keys work for both testing and production. For production agents, it's recommended to use an existing wallet, but for a quickstart these are perfectly fine.
+
+<KeyGenerator />
+
 ## Usage
 
-This example shows how to create an agent that sends a message when it receives a text message.
+This example shows how to create an agent based on your `.env` file that sends a message when it receives a text message.
 
 ```ts [Node]
 import { Agent, getTestUrl } from '@xmtp/agent-sdk';
 
 // 2. Spin up the agent
-const agent = await Agent.createFromEnv({
-  env: 'dev', // or 'production'
-});
+const agent = await Agent.createFromEnv();
 
 // 3. Respond to text messages
 agent.on('text', async (ctx) => {
@@ -768,17 +792,7 @@ To learn more, see [Manage agent local database files and installations](/agents
 
 :::
 
-XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
-
-### Set environment variables
-
-To run an example XMTP agent, you must create a `.env` file with the following variables:
-
-```bash
-XMTP_WALLET_KEY=0x # the private key of the wallet
-XMTP_DB_ENCRYPTION_KEY=0x # encryption key for the local database
-XMTP_ENV=dev # local, dev, production
-```
+XMTP creates local database files in the `dbPath` (default is `'./'`) directory. These files store your device identity and message history. Persist these files across restarts and deployments. Losing them means your agent will be registered as a new installation.
 
 ## Vibe coding
 
