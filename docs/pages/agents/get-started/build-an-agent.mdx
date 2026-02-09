@@ -50,11 +50,28 @@ yarn add @xmtp/agent-sdk
 bun i @xmtp/agent-sdk
 ```
 
-:::
+## Environment variables
+
+To run an example XMTP agent, you must create a `.env` file with the following [environment variables](https://nodejs.org/api/environment_variables.html):
+
+```bash
+XMTP_WALLET_KEY=0x # the private key of your wallet
+XMTP_DB_ENCRYPTION_KEY=0x # encryption key for your local database
+XMTP_ENV=dev # the XMTP network: local, dev, production
+```
+
+- **`XMTP_WALLET_KEY`**: The private key of your [EOA wallet address](/chat-apps/core-messaging/create-a-signer#create-a-eoa-or-scw-signer). If you don't have a wallet or simply want one for testing, you can generate keys here: [Agent SDK Starter](https://xmtp.github.io/agent-sdk-starter/).
+
+- **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your local database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
+
+- **`XMTP_ENV`**: The XMTP network your agent connects to:
+  - `local` — For running against a local XMTP backend.
+  - `dev` — For using the XMTP test network.
+  - `production` — For making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/)
 
 ## Usage
 
-This example shows how to create an agent that sends a message when it receives a text message.
+This example shows how to create an agent based on your `.env` file that sends a message when it receives a text message.
 
 ```ts [Node]
 import { Agent, getTestUrl } from '@xmtp/agent-sdk';
@@ -90,16 +107,6 @@ To learn more, see [Manage agent local database files and installations](/agents
 :::
 
 XMTP creates local database files in the `dbPath` (default is `'/'`) directory. These files store your device identity and message history.
-
-### Set environment variables
-
-To run an example XMTP agent, you must create a `.env` file with the following variables:
-
-```bash
-XMTP_WALLET_KEY=0x # the private key of the wallet
-XMTP_DB_ENCRYPTION_KEY=0x # encryption key for the local database
-XMTP_ENV=dev # local, dev, production
-```
 
 ## Vibe coding
 
