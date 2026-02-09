@@ -62,12 +62,9 @@ XMTP_ENV=dev # the XMTP network: local, dev, production
 
 - **`XMTP_WALLET_KEY`**: The private key of your [EOA wallet address](/chat-apps/core-messaging/create-a-signer#create-a-eoa-or-scw-signer). If you don't have a wallet or simply want one for testing, you can generate keys here: [Agent SDK Starter](https://xmtp.github.io/agent-sdk-starter/).
 
-- **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your local database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
+- **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your agent's local SQLite database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
 
-- **`XMTP_ENV`**: The XMTP network your agent connects to:
-  - `local` — For running against a local XMTP backend (i.e. Docker container)
-  - `dev` — For using the XMTP test network
-  - `production` — For making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/)
+- **`XMTP_ENV`**: The XMTP network your agent connects to. Use `local` for running against a local XMTP backend (i.e. Docker container), `dev` for using the XMTP test network, or `production` for making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/).
 
 ## Usage
 
