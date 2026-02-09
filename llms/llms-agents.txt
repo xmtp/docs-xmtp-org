@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 11:02 PM UTC / February 09, 2026
+Generated at 11:41 PM UTC / February 09, 2026
 
 ## About this file
 
@@ -796,11 +796,12 @@ XMTP creates local database files in the `dbPath` (default is `'./'`) directory.
 
 ## Vibe coding
 
-See these [Cursor rules](https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc) for vibe coding agents with XMTP using best practices.
+To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions:
 
-```bash
-Prompt: lets create an example that gets a number and returns its 2x multiple (use claude max)
-```
+- A docs MCP server
+- Use case-based llms.txt files
+
+To learn more, see [Use XMTP documentation with AI coding assistants](/agents/get-started/build-with-llms).
 
 ## Talk to your agent
 
@@ -820,6 +821,11 @@ To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
 
 Visit the [examples](https://github.com/xmtplabs/xmtp-agent-examples) repository for more agent examples.
 
+
+## agents/get-started/build-with-llms.mdx
+import BuildWithLlms from '../../../snippets/build-with-llms.mdx';
+
+<BuildWithLlms />
 
 ## agents/get-started/faq.mdx
 # FAQ about XMTP agents
@@ -4614,4 +4620,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 46 files from 4 sections.
+This documentation contains 47 files from 4 sections.
