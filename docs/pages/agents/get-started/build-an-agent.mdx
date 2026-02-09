@@ -61,16 +61,16 @@ bun i @xmtp/agent-sdk
 To run an example XMTP agent, you must create a `.env` file with the following [environment variables](https://nodejs.org/api/environment_variables.html):
 
 ```bash
+XMTP_ENV=dev # the XMTP network: local, dev, production
 XMTP_WALLET_KEY=0x # the private key of your wallet
 XMTP_DB_ENCRYPTION_KEY=0x # encryption key for your local database
-XMTP_ENV=dev # the XMTP network: local, dev, production
 ```
+
+- **`XMTP_ENV`**: The XMTP network your agent connects to. Use `local` for running against a local XMTP backend (i.e. Docker container), `dev` for using the XMTP test network, or `production` for making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/).
 
 - **`XMTP_WALLET_KEY`**: The private key of your [EOA wallet address](/chat-apps/core-messaging/create-a-signer#create-a-eoa-or-scw-signer). If you don't have a wallet or simply want one for testing, you can generate keys using the generator below.
 
 - **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your agent's local SQLite database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
-
-- **`XMTP_ENV`**: The XMTP network your agent connects to. Use `local` for running against a local XMTP backend (i.e. Docker container), `dev` for using the XMTP test network, or `production` for making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/).
 
 ### Local Key Generator
 
