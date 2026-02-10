@@ -289,6 +289,10 @@ const stream = await client.conversations.streamAllMessages({
 const [messages, setMessages] = useState<DecodedMessage[]>([]);
 
 const messageCallback = async (message: DecodedMessage<any>) => {
+  // Each message now includes both sent and insertion timestamps
+  console.log(`Message sent at: ${message.sentNs}`);
+  console.log(`Message inserted at: ${message.insertedAtNs}`);
+  
   setMessages((prev) => [...prev, message]);
 };
 

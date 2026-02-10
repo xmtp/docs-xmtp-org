@@ -118,28 +118,42 @@ The method returns a summary object that includes the total number of conversati
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```js [Node]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-// Returns a summary object with sync statistics
+// Returns a GroupSyncSummary object with detailed sync statistics
 const syncSummary = await client.conversations.syncAllConversations([
   'allowed',
 ]);
-// syncSummary.numEligible - Total number of conversations eligible for syncing
-// syncSummary.numSynced - Number of conversations that were actually synced
+
+// Access the sync statistics
+console.log(`Eligible conversations: ${syncSummary.numEligible}`);
+console.log(`Successfully synced: ${syncSummary.numSynced}`);
+
+// You can also use the summary to determine sync completion rate
+const completionRate = (syncSummary.numSynced / syncSummary.numEligible) * 100;
+console.log(`Sync completion rate: ${completionRate.toFixed(1)}%`);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+// Returns a GroupSyncSummary object with sync statistics
+val syncSummary = client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+println("Eligible conversations: ${syncSummary.numEligible}")
+println("Successfully synced: ${syncSummary.numSynced}")
 ```
 
 ```swift [Swift]
-try await client.conversations.syncAllConversations(consentState: [.allowed])
+// Returns a GroupSyncSummary object with sync statistics
+let syncSummary = try await client.conversations.syncAllConversations(consentState: [.allowed])
+print("Eligible conversations: \(syncSummary.numEligible)")
+print("Successfully synced: \(syncSummary.numSynced)")
 ```
 
 :::

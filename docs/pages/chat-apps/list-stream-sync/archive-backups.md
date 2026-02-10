@@ -28,12 +28,22 @@ To enable a user to create an archive:
    :::code-group
 
    ```tsx [React Native]
-   createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
-     startTime?: Date,
-     endTime?: Date,
-     elements?: ("Consent" | "Messages")[],
-     excludeDisappearingMessages?: boolean
-   })
+   // Create a basic archive backup
+   await client.createArchive('/path/to/archive.xmtp', encryptionKey);
+
+   // Create an archive with options
+   await client.createArchive('/path/to/archive.xmtp', encryptionKey, {
+     startTime: new Date('2024-01-01'),
+     endTime: new Date('2024-12-31'),
+     elements: ['Messages', 'Consent'],
+     excludeDisappearingMessages: true // Exclude disappearing messages from backup
+   });
+
+   // Archive only messages, excluding disappearing messages
+   await client.createArchive('/path/to/archive.xmtp', encryptionKey, {
+     elements: ['Messages'],
+     excludeDisappearingMessages: true
+   });
    ```
 
    ```kotlin [Kotlin]
