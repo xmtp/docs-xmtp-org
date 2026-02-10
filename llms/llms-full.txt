@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 11:41 PM UTC / February 09, 2026
+Generated at 09:12 PM UTC / February 10, 2026
 
 ## About this file
 
@@ -12337,7 +12337,7 @@ You can have the invite link creator mark an invite as approved or rejected. For
 ## agents/build-agents/create-a-client.mdx
 # Create an XMTP agent
 
-Create an XMTP agent that can use the signing capabilities provided by a signer. This signer links the agent to the appropriate EOA or SCW.
+Create an XMTP agent that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the agent to the appropriate EOA or SCW.
 
 ## Create an EOA signer
 
