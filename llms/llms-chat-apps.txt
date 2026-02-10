@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 09:12 PM UTC / February 10, 2026
+Generated at 09:18 PM UTC / February 10, 2026
 
 ## About this file
 
