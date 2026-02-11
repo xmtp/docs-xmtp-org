@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 09:19 PM UTC / February 11, 2026
+Generated at 09:56 PM UTC / February 11, 2026
 
 ## About this file
 
@@ -10730,6 +10730,26 @@ A member can remove themselves from a group by calling `leaveGroup()`. After lea
 A member who is the super admin of the group cannot leave the group. By default, the group creator is a super admin.
 
 :::code-group
+
+```js [Browser]
+await group.leaveGroup();
+
+// Sync to update group state
+await group.sync();
+
+// Verify the group is now inactive
+const isActive = await group.isActive(); // Returns false
+```
+
+```js [Node]
+await group.leaveGroup();
+
+// Sync to update group state
+await group.sync();
+
+// Verify the group is now inactive
+const isActive = group.isActive; // Returns false
+```
 
 ```tsx [React Native]
 await group.leaveGroup();
