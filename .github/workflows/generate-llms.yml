@@ -7,7 +7,7 @@ on:
     paths:
       - 'docs/**/*.md'
       - 'docs/**/*.mdx'
-      - '!llms/llms-*.txt'
+      - '!docs/public/llms/llms-*.txt'
 
 jobs:
   build:
@@ -28,6 +28,9 @@ jobs:
 
       - name: Run generate_llms_full.py
         run: python llms/generate_llms_full.py
+
+      - name: Stage generated files
+        run: git add -f docs/public/llms/llms-*.txt
 
       - name: Create Pull Request
         id: create-pr

@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # Configuration for chat apps documentation
     chat_apps_config = {
         'subdirectories': ['chat-apps'] + shared_sections,
-        'output_file': 'llms/llms-chat-apps.txt',
+        'output_file': 'docs/public/llms/llms-chat-apps.txt',
         'title': 'XMTP Documentation for Building Chat Applications',
         'description': 'This documentation is tailored for developers building chat apps with XMTP. It includes guides on core messaging, content types, push notifications, user consent, and more, along with protocol fundamentals, network operations, and funding information.'
     }
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # Configuration for agents documentation
     agents_config = {
         'subdirectories': ['agents'] + shared_sections,
-        'output_file': 'llms/llms-agents.txt',
+        'output_file': 'docs/public/llms/llms-agents.txt',
         'title': 'XMTP Documentation for Building Agents',
         'description': 'This documentation is tailored for developers building agents with XMTP. It includes guides on agent concepts, building and deploying agents, content types, and integration patterns, along with protocol fundamentals, network operations, and funding information.'
     }
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     # Configuration for full documentation (everything)
     full_docs_config = {
         'subdirectories': ['chat-apps', 'agents'] + shared_sections,
-        'output_file': 'llms/llms-full.txt',
+        'output_file': 'docs/public/llms/llms-full.txt',
         'title': 'XMTP Full Documentation',
         'description': 'This is the complete XMTP documentation including guides for building both chat apps and agents, along with protocol fundamentals, network operations, and funding information.'
     }

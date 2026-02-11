@@ -16,12 +16,12 @@ export const sidebarConfig = {
           link: "/agents/get-started/build-an-agent",
         },
         {
-          text: "FAQ",
-          link: "/agents/get-started/faq",
+          text: "Build with LLMs",
+          link: "/agents/get-started/build-with-llms",
         },
         {
-          text: "Cursor rules",
-          link: "https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc",
+          text: "FAQ",
+          link: "/agents/get-started/faq",
         },
         { text: 'Join the XMTP Dev Community',
           link: 'https://forms.gle/hesZ55WGMjJnZ7sQA',

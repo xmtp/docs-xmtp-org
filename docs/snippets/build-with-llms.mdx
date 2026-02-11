@@ -1,0 +1,41 @@
+# Use XMTP documentation with AI coding assistants
+
+To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions. Choose the one that best fits your workflow:
+
+**Use the [documentation MCP (Model Context Protocol) server](#documentation-mcp-server) if:**
+- You're using MCP-compatible tools like Claude Code, Cursor, or Copilot for example
+- You want dynamic, structured documentation querying while writing and debugging code
+- You're comfortable setting up and running a local server process
+
+**Use [llms.txt files](#llmstxt-files) if:**
+- You're using AI tools that don't support MCP
+- You want zero-setup access to documentation
+- You prefer a simple copy-paste or URL reference approach
+
+## Documentation MCP server
+
+You can run a local XMTP documentation MCP server that you can use with Claude Code, Cursor, Copilot, and other MCP-compatible AI coding assistants.
+
+To learn about how it's built and how to use it, see the [xmtp-docs-mcp repo](https://github.com/xmtp/xmtp-docs-mcp).
+
+## llms.txt files
+
+If you're using an AI coding assistant that allows custom context, you can upload or point to the appropriate file to enhance your development experience with XMTP. Using the file focused on your builder use case (chat apps or agents) typically provides better AI performance by narrowing the context.
+
+### For building chat apps
+
+Use `llms-chat-apps.txt`: [https://docs.xmtp.org/llms/llms-chat-apps.txt](https://docs.xmtp.org/llms/llms-chat-apps.txt)
+
+Includes: Core messaging, content types, push notifications, user consent, protocol fundamentals, network operations, and funding information.
+
+### For building agents
+
+Use `llms-agents.txt`: [https://docs.xmtp.org/llms/llms-agents.txt](https://docs.xmtp.org/llms/llms-agents.txt)
+
+Includes: Agent concepts, building and deploying agents, agent-specific content types, protocol fundamentals, network operations, and funding information.
+
+### For comprehensive coverage
+
+Use `llms-full.txt`: [https://docs.xmtp.org/llms/llms-full.txt](https://docs.xmtp.org/llms/llms-full.txt)
+
+Includes: All documentation for chat apps, agents, protocol fundamentals, network operations, and funding information.
