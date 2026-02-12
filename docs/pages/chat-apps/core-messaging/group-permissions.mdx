@@ -878,7 +878,7 @@ A member who is the super admin of the group cannot leave the group. By default,
 
 ```js [Browser]
 // Request to leave the group
-await group.requestRemoval();
+await group.leaveGroup();
 
 // Sync to update group state
 await group.sync();
@@ -888,8 +888,7 @@ const isActive = group.isActive; // Returns false
 ```
 
 ```js [Node]
-// Request to leave the group
-await group.requestRemoval();
+await group.leaveGroup();
 
 // Sync to update group state
 await group.sync();
