@@ -8,6 +8,30 @@ To learn more, see the [Transactions example](https://github.com/xmtplabs/xmtp-a
 
 The wallet send calls content type is built into the Agent SDK. No installation is required.
 
+## How token transactions work
+
+Before diving into the code, it helps to understand how token transactions work under the hood.
+
+Tokens on EVM-compatible chains follow the [ERC-20 standard](https://eips.ethereum.org/EIPS/eip-20). Every token lives as its own smart contract on a specific chain. To work with a token, you'll need three pieces of information:
+
+1. **The chain** your token lives on (e.g., Base)
+2. **The token's contract address** on that chain (you can look these up on token trackers like [Basescan Tokens](https://basescan.org/tokens))
+3. **The token's decimal places** which tell you how to convert between raw values and human-readable amounts
+
+Take USDC on Base as an example: its contract address is [0x833589fcd6edb6e08f4c7c32d4f71b54bda02913](https://basescan.org/token/0x833589fcd6edb6e08f4c7c32d4f71b54bda02913) and it uses 6 decimals. So when you see a raw value of `1000000`, that's actually 1 USDC.
+
+The [ERC-20 ABI](https://eips.ethereum.org/EIPS/eip-20#methods) gives you a few essential methods to interact with any token:
+
+- **balanceOf**: Check how many tokens a given address holds.
+- **decimals**: Query this on any ERC-20 contract to find out how many decimal places it uses.
+- **transfer**: Move tokens from one address to another.
+
+The good news is that the XMTP Agent SDK handles most of this for you, so you don't need to deal with raw contract calls yourself.
+
+## Read the number of decimals
+
+...
+
 ## Create a transaction request
 
 With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
