@@ -28,70 +28,104 @@ The [ERC-20 ABI](https://eips.ethereum.org/EIPS/eip-20#methods) gives you a few 
 
 The good news is that the XMTP Agent SDK handles most of this for you, so you don't need to deal with raw contract calls yourself.
 
-## Read the number of decimals
+## Set up your token configuration
 
-...
+All the examples below share the same setup. You define the chain you're working with, the token contract address, and query the token's decimals:
+
+```ts
+import { validHex } from '@xmtp/node-sdk';
+import { formatUnits, hexToNumber, parseUnits } from 'viem';
+import { base } from 'viem/chains';
+import { Agent } from '@/core/index';
+import {
+  createERC20TransferCalls,
+  getERC20Balance,
+  getERC20Decimals,
+} from '@/util/TransactionUtil';
+
+const CHAIN = base;
+const USDC_TOKEN_CONTRACT =
+  '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
+const USDC_DECIMALS = await getERC20Decimals({
+  chain: CHAIN,
+  tokenAddress: USDC_TOKEN_CONTRACT,
+}).catch(() => 6);
+```
+
+The `getERC20Decimals` helper calls the token contract's `decimals` method for you. The `.catch(() => 6)` provides a fallback in case the call fails as "6" is the known decimal count for USDC.
+
+## Check a token balance
+
+Use `getERC20Balance` to look up how many tokens an address holds. Here's an example that checks the sender's USDC balance:
+
+```ts
+const senderAddress = await ctx.getSenderAddress();
+const senderBalance = await getERC20Balance({
+  chain: CHAIN,
+  tokenAddress: USDC_TOKEN_CONTRACT,
+  address: validHex(senderAddress),
+});
+await ctx.conversation.sendText(
+  `Your USDC balance is: ${formatUnits(senderBalance, USDC_DECIMALS)}`
+);
+```
+
+The `formatUnits` utility from [viem](https://viem.sh/) converts the raw token amount into a human-readable value.
 
 ## Create a transaction request
 
-With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
+Use `createERC20TransferCalls` to build a transaction request for an ERC-20 token transfer:
 
-```ts [Node]
-const walletSendCalls: WalletSendCallsParams = {
-  version: '1.0',
-  from: '0x123...abc',
-  chainId: '0x2105',
-  calls: [
-    {
-      to: '0x456...def',
-      value: '0x5AF3107A4000',
-      metadata: {
-        description: 'Send 0.0001 ETH on base to 0x456...def',
-        transactionType: 'transfer',
-        currency: 'ETH',
-        amount: 100000000000000,
-        decimals: 18,
-        toAddress: '0x456...def',
-      },
-    },
-    {
-      to: '0x789...cba',
-      data: '0xdead...beef',
-      metadata: {
-        description: 'Lend 10 USDC on base with Morpho @ 8.5% APY',
-        transactionType: 'lend',
-        currency: 'USDC',
-        amount: 10000000,
-        decimals: 6,
-        platform: 'morpho',
-        apy: '8.5',
-      },
-    },
-  ],
-};
+```ts
+const senderAddress = await ctx.getSenderAddress();
+const receiverAddress = agent.address;
+const amount = parseUnits('0.1', USDC_DECIMALS);
+
+const walletSendCalls = createERC20TransferCalls({
+  chain: CHAIN,
+  tokenAddress: USDC_TOKEN_CONTRACT,
+  from: validHex(senderAddress),
+  to: validHex(receiverAddress),
+  amount,
+  description: `Transfer "0.1 USDC" on chain "${CHAIN.name}" to address "${receiverAddress}".`,
+});
 ```
+
+The `parseUnits` function does the opposite of `formatUnits`: it converts a human-readable amount (like `"0.1"`) into the raw token value (`100000`) based on the token's decimals.
 
 ## Send a transaction request
 
-Once you have a transaction request, you can send it as part of your conversation:
+Once you've built the transaction request, send it to the conversation. The receiving wallet will be prompted to approve and execute it:
 
-```ts [Node]
-import type { WalletSendCalls } from '@xmtp/agent-sdk';
-
-await conversation.sendWalletSendCalls(walletSendCalls);
+```ts
+await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 ```
 
 ## Receive a transaction request
 
-To receive and process a transaction request:
+If your agent needs to handle incoming transaction requests from other participants, you can check for them like this:
 
-```ts [Node]
-import type { WalletSendCalls } from '@xmtp/agent-sdk';
-
+```ts
 if (ctx.isWalletSendCalls()) {
   const walletSendCalls: WalletSendCalls = ctx.message.content;
   // Process the transaction request here
 }
+```
+
+## Handle transaction confirmations
+
+After a transaction has been confirmed onchain, you'll receive a `transaction-reference` event. You can use it to notify the user with a link to the block explorer:
+
+```ts
+agent.on('transaction-reference', async (ctx) => {
+  const { networkId, reference } = ctx.message.content;
+  const networkIdDecimal = hexToNumber(validHex(networkId));
+  await ctx.conversation.sendMarkdown(
+    `Transaction confirmed!\n` +
+      `Chain ID: [${networkIdDecimal}](https://chainlist.org/chain/${networkIdDecimal})\n` +
+      `Transaction Hash: [${reference}](https://basescan.org/tx/${reference})`
+  );
+});
 ```
 
 You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
