@@ -22,9 +22,9 @@ Take USDC on Base as an example: its contract address is [0x833589fcd6edb6e08f4c
 
 The [ERC-20 ABI](https://eips.ethereum.org/EIPS/eip-20#methods) gives you a few essential methods to interact with any token:
 
-- **balanceOf**: Check how many tokens a given address holds.
-- **decimals**: Query this on any ERC-20 contract to find out how many decimal places it uses.
-- **transfer**: Move tokens from one address to another.
+- `balanceOf` to check how many tokens a given address holds
+- `decimals` to query any ERC-20 contract to find out how many decimal places it uses
+- `transfer` to move tokens from one address to another
 
 The good news is that the XMTP Agent SDK handles most of this for you, so you don't need to deal with raw contract calls yourself.
 
