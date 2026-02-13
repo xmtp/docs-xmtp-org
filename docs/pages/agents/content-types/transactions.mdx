@@ -8,9 +8,64 @@ To learn more, see the [Transactions example](https://github.com/xmtplabs/xmtp-a
 
 The wallet send calls content type is built into the Agent SDK. No installation is required.
 
-## Create a transaction request
+## Transaction utility functions
 
-With XMTP, a transaction request is represented using `wallet_sendCalls` with additional metadata for display.
+The Agent SDK v2.2.0+ includes utility functions to simplify creating transaction requests for common operations:
+
+### ERC-20 token transfers
+
+```ts [Node]
+import { createERC20TransferCalls } from '@xmtp/agent-sdk';
+import { baseSepolia } from 'viem/chains';
+
+const walletSendCalls = createERC20TransferCalls({
+  chain: baseSepolia,
+  tokenAddress: '0x036CbD53842c5426634e7929541eC2318f3dCF7e', // USDC on Base Sepolia
+  from: '0x123...abc',
+  to: '0x456...def',
+  amount: BigInt(1000000), // 1 USDC (6 decimals)
+  description: 'Send 1 USDC to recipient',
+});
+```
+
+### Native token transfers
+
+```ts [Node]
+import { createNativeTransferCalls } from '@xmtp/agent-sdk';
+import { baseSepolia } from 'viem/chains';
+
+const walletSendCalls = createNativeTransferCalls({
+  chain: baseSepolia,
+  from: '0x123...abc',
+  to: '0x456...def',
+  amount: BigInt(100000000000000), // 0.0001 ETH (18 decimals)
+  description: 'Send 0.0001 ETH to recipient',
+});
+```
+
+### Query ERC-20 token information
+
+```ts [Node]
+import { getERC20Balance, getERC20Decimals } from '@xmtp/agent-sdk';
+import { baseSepolia } from 'viem/chains';
+
+// Get token balance
+const balance = await getERC20Balance({
+  chain: baseSepolia,
+  tokenAddress: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+  address: '0x123...abc',
+});
+
+// Get token decimals
+const decimals = await getERC20Decimals({
+  chain: baseSepolia,
+  tokenAddress: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+});
+```
+
+## Create a transaction request manually
+
+You can also create transaction requests manually using the `wallet_sendCalls` format with additional metadata for display.
 
 ```ts [Node]
 const walletSendCalls: WalletSendCallsParams = {
@@ -54,7 +109,7 @@ Once you have a transaction request, you can send it as part of your conversatio
 ```ts [Node]
 import type { WalletSendCalls } from '@xmtp/agent-sdk';
 
-await conversation.sendWalletSendCalls(walletSendCalls);
+await ctx.conversation.sendWalletSendCalls(walletSendCalls);
 ```
 
 ## Receive a transaction request
