@@ -1,0 +1,43 @@
+import { AgentCodeWizard } from '../../../components/AgentCodeWizard';
+
+# 5 minutes to chat
+
+The fastest way to get an XMTP agent running. This wizard generates a self-contained script with ephemeral keys — just copy, paste, and run.
+
+:::warning
+
+This script uses `dbPath: null` for in-memory storage. Messages and identity are **not persisted** — every restart creates a new agent. For production agents, see the full [Quickstart](/agents/get-started/build-an-agent).
+
+:::
+
+## Prerequisites
+
+Install a [Node.js LTS release](https://nodejs.org/) and set up a project:
+
+```bash
+mkdir my-agent && cd my-agent
+npm init -y
+npm i @xmtp/agent-sdk tsx
+```
+
+## Generate your agent script
+
+Save the generated code below as `agent.ts` in your project. Click **Regenerate** for fresh keys or switch the **Network** to target a different XMTP environment.
+
+<AgentCodeWizard />
+
+## Run
+
+```bash
+npx tsx agent.ts
+```
+
+## Talk to your agent
+
+Open [xmtp.chat](https://xmtp.chat), start a new conversation with your agent's address (printed in the console), and send a message. You should see a reply instantly.
+
+## Next steps
+
+- [Quickstart](/agents/get-started/build-an-agent) — persistent agent with `.env` configuration and local database
+- [Events](/agents/concepts/event-driven) — handle different message types and lifecycle events
+- [Deploy](/agents/deploy/deploy-agent) — take your agent to production

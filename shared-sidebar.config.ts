@@ -12,6 +12,10 @@ export const sidebarConfig = {
           link: "/agents/get-started/intro",
         },
         {
+          text: "5 minutes to chat",
+          link: "/agents/get-started/five-minutes-to-chat",
+        },
+        {
           text: "Quickstart",
           link: "/agents/get-started/build-an-agent",
         },
