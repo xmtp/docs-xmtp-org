@@ -14,7 +14,7 @@ Before diving into the code, it helps to understand how token transactions work 
 
 Tokens on EVM-compatible chains follow the [ERC-20 standard](https://eips.ethereum.org/EIPS/eip-20). Every token lives as its own smart contract on a specific chain. To work with a token, you'll need three pieces of information:
 
-1. **The chain** your token lives on (e.g., Base)
+1. **The chain** your token lives on (e.g., [Base](https://www.base.org/))
 2. **The token's contract address** on that chain (you can look these up on token trackers like [Basescan Tokens](https://basescan.org/tokens))
 3. **The token's decimal places** which tell you how to convert between raw values and human-readable amounts
 
@@ -23,7 +23,7 @@ Take USDC on Base as an example: its contract address is [0x833589fcd6edb6e08f4c
 The [ERC-20 ABI](https://eips.ethereum.org/EIPS/eip-20#methods) gives you a few essential methods to interact with any token:
 
 - `balanceOf` to check how many tokens a given address holds
-- `decimals` to query any ERC-20 contract to find out how many decimal places it uses
+- `decimals` to find out how many decimal places it uses
 - `transfer` to move tokens from one address to another
 
 The good news is that the XMTP Agent SDK handles most of this for you, so you don't need to deal with raw contract calls yourself.
@@ -33,15 +33,15 @@ The good news is that the XMTP Agent SDK handles most of this for you, so you do
 All the examples below share the same setup. You define the chain you're working with, the token contract address, and query the token's decimals:
 
 ```ts
-import { validHex } from '@xmtp/node-sdk';
 import { formatUnits, hexToNumber, parseUnits } from 'viem';
 import { base } from 'viem/chains';
-import { Agent } from '@/core/index';
 import {
+  Agent,
   createERC20TransferCalls,
   getERC20Balance,
   getERC20Decimals,
-} from '@/util/TransactionUtil';
+  validHex,
+} from '@xmtp/agent-sdk';
 
 const CHAIN = base;
 const USDC_TOKEN_CONTRACT =
@@ -49,10 +49,8 @@ const USDC_TOKEN_CONTRACT =
 const USDC_DECIMALS = await getERC20Decimals({
   chain: CHAIN,
   tokenAddress: USDC_TOKEN_CONTRACT,
-}).catch(() => 6);
+});
 ```
-
-The `getERC20Decimals` helper calls the token contract's `decimals` method for you. The `.catch(() => 6)` provides a fallback in case the call fails as "6" is the known decimal count for USDC.
 
 ## Check a token balance
 
@@ -87,7 +85,7 @@ const walletSendCalls = createERC20TransferCalls({
   from: validHex(senderAddress),
   to: validHex(receiverAddress),
   amount,
-  description: `Transfer "0.1 USDC" on chain "${CHAIN.name}" to address "${receiverAddress}".`,
+  description: `Transfer "0.1 USDC" on chain "${CHAIN.name}".`,
 });
 ```
 
@@ -99,17 +97,6 @@ Once you've built the transaction request, send it to the conversation. The rece
 
 ```ts
 await ctx.conversation.sendWalletSendCalls(walletSendCalls);
-```
-
-## Receive a transaction request
-
-If your agent needs to handle incoming transaction requests from other participants, you can check for them like this:
-
-```ts
-if (ctx.isWalletSendCalls()) {
-  const walletSendCalls: WalletSendCalls = ctx.message.content;
-  // Process the transaction request here
-}
 ```
 
 ## Handle transaction confirmations
