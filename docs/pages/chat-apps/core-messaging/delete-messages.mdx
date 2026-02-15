@@ -36,6 +36,16 @@ Attempting to delete these messages will throw an error.
 
 :::code-group
 
+```js [Browser]
+// Delete a message by its ID
+await conversation.deleteMessage(messageId);
+```
+
+```js [Node]
+// Delete a message by its ID
+await conversation.deleteMessage(messageId);
+```
+
 ```tsx [React Native]
 // Delete a message by its ID
 await conversation.deleteMessage(messageId);
@@ -58,6 +68,24 @@ let deletionId = try await conversation.deleteMessage(messageId: messageId)
 The method throws an error if the deletion fails, such as when attempting to delete a message you didn't send (and you're not a super admin).
 
 :::code-group
+
+```js [Browser]
+try {
+  await conversation.deleteMessage(messageId);
+  // Message deleted successfully
+} catch (error) {
+  console.log(`Failed to delete message: ${error}`);
+}
+```
+
+```js [Node]
+try {
+  await conversation.deleteMessage(messageId);
+  // Message deleted successfully
+} catch (error) {
+  console.log(`Failed to delete message: ${error}`);
+}
+```
 
 ```tsx [React Native]
 try {
