@@ -14,19 +14,19 @@ This approach keeps messages lightweight while supporting files of any size. To 
 
 1. **A file** to attach (image, document, etc.)
 2. **A storage provider** to host the encrypted file (any service that supports HTTPS GET requests)
-3. **An upload callback** that tells the SDK how to upload the encrypted bytes and return a URL
+3. **An upload callback** that tells the SDK how to upload the encrypted bytes and return a download URL
 
 ### IPFS as a storage provider
 
-[IPFS](https://ipfs.tech/) (InterPlanetary File System) is a decentralized storage network that's a natural fit for XMTP attachments. Instead of relying on a single server, IPFS distributes files across a peer-to-peer network. In IPFS, every file receives a unique content identifier (CID) derived from its contents. This ensures data integrity, enables decentralized serving across multiple nodes, and guarantees availability as long as at least one node pins the file.
+[IPFS](https://en.wikipedia.org/wiki/InterPlanetary_File_System) (InterPlanetary File System) is a decentralized storage network that's a natural fit for XMTP attachments. Instead of relying on a single server, IPFS distributes files across a peer-to-peer network. In IPFS, every file receives a unique [content identifier](https://docs.pinata.cloud/ipfs-101/what-are-cids) (CID) derived from its contents. This ensures data integrity, enables decentralized serving across multiple nodes, and guarantees availability as long as at least one node pins the file.
 
-In practice, most developers use an **IPFS pinning service** like [Pinata](https://pinata.cloud/) rather than running their own IPFS node. Pinning services provide a simple API to upload files and a reliable gateway to serve them over HTTPS, which is exactly what the XMTP remote attachment flow needs.
+In practice, most developers use an **IPFS pinning service** like [Pinata](https://pinata.cloud/) or [Filebase](https://filebase.com/) rather than running their own IPFS node. Pinning services provide a simple API to upload files and a reliable gateway to serve them over HTTPS, which is exactly what the XMTP remote attachment flow needs.
 
-The good news is that the XMTP Agent SDK handles the encryption, metadata, and decryption for you. You just have to provide a callback that uploads the encrypted file and returns a URL.
+The good news is that the XMTP Agent SDK handles the encryption, metadata, and decryption for you. You just have to provide a callback that uploads the encrypted file and returns a download URL.
 
 ## Set up Pinata as your storage provider
 
-All the examples below use [Pinata](https://pinata.cloud/) as the IPFS storage provider. First, install the Pinata SDK:
+All the examples below use [Pinata](https://pinata.cloud/) as the IPFS storage provider. First, install the [Pinata SDK](https://www.npmjs.com/package/pinata):
 
 ```bash
 npm install pinata
@@ -39,7 +39,7 @@ You'll need two environment variables from your [Pinata dashboard](https://app.p
 
 ## Create a file to send
 
-You can send any file as an attachment. Here's an example that programmatically creates a PNG image using the `canvas` library:
+You can send any file as an attachment. Here's an example that programmatically creates a PNG image using the [canvas](https://www.npmjs.com/package/canvas) library:
 
 ```bash
 npm install canvas
