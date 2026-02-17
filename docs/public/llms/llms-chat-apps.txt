@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 10:17 AM UTC / February 17, 2026
+Generated at 04:35 PM UTC / February 17, 2026
 
 ## About this file
 
@@ -32,7 +32,7 @@ Ensure that you select the correct code block to avoid compatibility issues.
 ## chat-apps/debug-your-app.mdx
 # Debug your chat app
 
-This document covers tools and features available for debugging building with XMTP, including stress testing, group chat diagnostics, logging, and network monitoring capabilities.
+This document covers tools and features available for debugging apps built with XMTP, including stress testing, group chat diagnostics, logging, and network monitoring capabilities.
 
 ## XMTP Debug
 
