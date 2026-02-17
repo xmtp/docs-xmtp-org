@@ -1,6 +1,6 @@
 # Support attachments with your agent built with XMTP
 
-Use the remote attachment content type (`RemoteAttachmentCodec`) and a storage provider to send one remote attachment of any size.
+This package provides an XMTP content type to support sending file attachments through conversations.
 
 ::::tip[Quickstart]
 To learn more, see the [Attachment example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-attachments) in the xmtp-agent-examples repo.
@@ -8,106 +8,130 @@ To learn more, see the [Attachment example](https://github.com/xmtplabs/xmtp-age
 
 The remote attachment content type is built into the Agent SDK. No installation is required.
 
+## How remote attachments work
+
+XMTP messages have a [maximum size limit](/chat-apps/intro/faq#does-xmtp-have-a-maximum-message-size). Files that exceed this limit can't be sent inline and are instead handled as **remote attachments**. For this, the file is encrypted, uploaded to an external storage provider, and a reference URL is sent in the message. The recipient then downloads and decrypts the file using the metadata from the message.
+
+This approach keeps messages lightweight while supporting files of any size. To send an attachment, you need three things:
+
+1. **A file** to attach (image, document, etc.)
+2. **A storage provider** to host the encrypted file (any service that supports HTTPS GET requests)
+3. **An upload callback** that tells the SDK how to upload the encrypted bytes and return a URL
+
+### IPFS as a storage provider
+
+[IPFS](https://ipfs.tech/) (InterPlanetary File System) is a decentralized storage network that's a natural fit for XMTP attachments. Instead of relying on a single server, IPFS distributes files across a peer-to-peer network. In IPFS, every file receives a unique content identifier (CID) derived from its contents. This ensures data integrity, enables decentralized serving across multiple nodes, and guarantees availability as long as at least one node pins the file.
+
+In practice, most developers use an **IPFS pinning service** like [Pinata](https://pinata.cloud/) rather than running their own IPFS node. Pinning services provide a simple API to upload files and a reliable gateway to serve them over HTTPS, which is exactly what the XMTP remote attachment flow needs.
+
+The good news is that the XMTP Agent SDK handles the encryption, metadata, and decryption for you. You just have to provide a callback that uploads the encrypted file and returns a URL.
+
+## Set up Pinata as your storage provider
+
+All the examples below use [Pinata](https://pinata.cloud/) as the IPFS storage provider. First, install the Pinata SDK:
+
+```bash
+npm install pinata
+```
+
+You'll need two environment variables from your [Pinata dashboard](https://app.pinata.cloud/):
+
+1. `PINATA_JWT` — your API authentication token
+2. `PINATA_GATEWAY` — your dedicated gateway URL (e.g., `your-gateway.mypinata.cloud`)
+
+## Create a file to send
+
+You can send any file as an attachment. Here's an example that programmatically creates a PNG image using the `canvas` library:
+
+```bash
+npm install canvas
+```
+
+```ts
+import { createCanvas } from 'canvas';
+
+const createImageFile = () => {
+  const canvas = createCanvas(400, 300);
+  const canvasCtx = canvas.getContext('2d');
+
+  canvasCtx.fillStyle = 'blue';
+  canvasCtx.fillRect(0, 0, 400, 300);
+  canvasCtx.fillStyle = 'white';
+  canvasCtx.font = '30px Arial';
+  canvasCtx.fillText('Hello XMTP!', 100, 150);
+
+  const buffer = canvas.toBuffer('image/png');
+  return new File([new Uint8Array(buffer)], 'hello-xmtp.png', {
+    type: 'image/png',
+  });
+};
+```
+
+This produces a simple blue image with white text. In a real application, this would be any [File](https://developer.mozilla.org/docs/Web/API/File) object.
+
 ## Send a remote attachment
 
-Load the file. This example uses a web browser to load the file:
+Use `ctx.sendRemoteAttachment` to send a file as an encrypted remote attachment. You provide the file and an upload callback that handles storing the encrypted bytes:
 
-```tsx [Node]
-//image is the uploaded event.target.files[0];
-const data = await new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => {
-    if (reader.result instanceof ArrayBuffer) {
-      resolve(reader.result);
-    } else {
-      reject(new Error('Not an ArrayBuffer'));
-    }
+```ts
+import { CommandRouter, type AttachmentUploadCallback } from '@xmtp/agent-sdk';
+import { PinataSDK } from 'pinata';
+
+const router = new CommandRouter();
+
+router.command('/send-image', async (ctx) => {
+  const file = createImageFile();
+
+  const uploadCallback: AttachmentUploadCallback = async (attachment) => {
+    const pinata = new PinataSDK({
+      pinataJwt: `${process.env.PINATA_JWT}`,
+      pinataGateway: `${process.env.PINATA_GATEWAY}`,
+    });
+
+    const mimeType = 'application/octet-stream';
+    const encryptedBlob = new Blob([Buffer.from(attachment.payload)], {
+      type: mimeType,
+    });
+    const encryptedFile = new File(
+      [encryptedBlob],
+      attachment.filename || 'untitled',
+      {
+        type: mimeType,
+      }
+    );
+    const upload = await pinata.upload.public.file(encryptedFile);
+
+    return pinata.gateways.public.convert(`${upload.cid}`);
   };
-  reader.readAsArrayBuffer(image);
+
+  await ctx.sendRemoteAttachment(file, uploadCallback);
 });
 ```
 
-Create an attachment object:
+Here's what happens under the hood when you call `sendRemoteAttachment`:
 
-```tsx [Node]
-// Local file details
-const attachment = {
-  filename: image?.name,
-  mimeType: image?.type,
-  data: new Uint8Array(data),
-};
-```
+1. The SDK encrypts the file contents
+2. Your `uploadCallback` receives the encrypted payload and uploads it to Pinata's IPFS network
+3. Pinata returns a CID, which is converted to a gateway URL
+4. The SDK sends a message containing the URL and decryption metadata (salt, nonce, secret, content digest)
 
-Use `encryptAttachment` to encrypt an attachment:
+The `attachment.payload` contains the already-encrypted bytes, so what gets stored on IPFS is unreadable without the decryption keys, which are only shared within the XMTP message.
 
-```tsx [Node]
-import { encryptAttachment } from '@xmtp/agent-sdk';
+## Receive and decrypt a remote attachment
 
-const encryptedAttachment = await encryptAttachment(attachment);
-```
+When your agent receives an attachment, use `downloadRemoteAttachment` to download and decrypt it in one step:
 
-Upload an encrypted attachment to a location where it will be accessible via an HTTPS GET request. This location will depend on which storage provider you use based on your needs.
+```ts
+import { downloadRemoteAttachment } from '@xmtp/agent-sdk/util';
 
-Now that you have a `url`, you can create a `RemoteAttachment`:
-
-```tsx [Node]
-import type { RemoteAttachment } from '@xmtp/agent-sdk';
-
-const remoteAttachment: RemoteAttachment = {
-  url: url,
-  contentDigest: encryptedAttachment.contentDigest,
-  salt: encryptedAttachment.salt,
-  nonce: encryptedAttachment.nonce,
-  secret: encryptedAttachment.secret,
-  scheme: 'https://',
-  filename: encryptedAttachment.filename,
-  contentLength: encryptedAttachment.contentLength,
-};
-```
-
-Now that you have a remote attachment, you can send it:
-
-```tsx [Node]
-await ctx.conversation.sendRemoteAttachment(remoteAttachment);
-```
-
-## Receive, decode, and decrypt a remote attachment
-
-Now that you can send a remote attachment, you need a way to receive it. For example:
-
-```ts [Node]
-import { decryptAttachment } from '@xmtp/agent-sdk';
-import type { RemoteAttachment } from '@xmtp/agent-sdk';
-
-if (ctx.isRemoteAttachment()) {
-  const remoteAttachment: RemoteAttachment = ctx.message.content;
-  // Download encrypted bytes from remoteAttachment.url
-  const encryptedBytes = await fetch(remoteAttachment.url).then(r => r.arrayBuffer());
-  const attachment = await decryptAttachment(
-    new Uint8Array(encryptedBytes),
-    remoteAttachment
+agent.on('attachment', async (ctx) => {
+  const receivedAttachment = await downloadRemoteAttachment(
+    ctx.message.content
   );
-}
+  console.log(`Received: ${receivedAttachment.filename}`);
+  console.log(`Type: ${receivedAttachment.mimeType}`);
+  // receivedAttachment.content contains the decrypted file bytes
+});
 ```
 
-You now have the original attachment:
-
-```ts [Node]
-attachment.filename; // => "screenshot.png"
-attachment.mimeType; // => "image/png",
-attachment.data; // => [the PNG data]
-```
-
-Once you've created the attachment object, you can create a preview to show in the message input field before sending:
-
-```tsx [Node]
-const objectURL = URL.createObjectURL(
-  new Blob([Buffer.from(attachment.data)], {
-    type: attachment.mimeType,
-  })
-);
-
-const img = document.createElement('img');
-img.src = objectURL;
-img.title = attachment.filename;
-```
+The `downloadRemoteAttachment` utility handles fetching the encrypted bytes from the remote URL and decrypting them using the metadata from the message. You get back the original file with its filename, MIME type, and data.
