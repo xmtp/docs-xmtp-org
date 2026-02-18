@@ -48,17 +48,4 @@ import type { TransactionReference } from '@xmtp/agent-sdk';
 await ctx.conversation.sendTransactionReference(transactionReference);
 ```
 
-## Receive a transaction reference
-
-To receive and process a transaction reference, you can use the following code samples.
-
-```ts [Node]
-import type { TransactionReference } from '@xmtp/agent-sdk';
-
-if (ctx.isTransactionReference()) {
-  const transactionRef: TransactionReference = ctx.message.content;
-  // Process the transaction reference here
-}
-```
-
 > You are welcome to provide feedback on this implementation by commenting on [XIP-59: Trigger on-chain calls via wallet_sendCalls](https://community.xmtp.org/t/xip-59-trigger-on-chain-calls-via-wallet-sendcalls/889).
