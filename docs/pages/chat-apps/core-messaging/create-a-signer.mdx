@@ -1,6 +1,6 @@
 # Create a EOA or SCW signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs).
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271) compatible **Smart Contract Wallets** (SCWs).
 
 Smart contract wallets have addresses that are unique to the chain on which they are deployed, while EOAs share the same address across multiple EVM-compatible chains.
 
@@ -311,4 +311,4 @@ This error may also occur if your client is connected to a different XMTP networ
 
 > Signature validation failed
 
-This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base".
+This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base". The error can also occur when trying to connect an Externally Owned Account (EOA) with a SCW signature setting.
