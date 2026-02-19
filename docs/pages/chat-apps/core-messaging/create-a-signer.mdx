@@ -1,6 +1,6 @@
 # Create a EOA or SCW signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and **Smart Contract Wallets** (SCWs).
+XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271) compatible **Smart Contract Wallets** (SCWs).
 
 Smart contract wallets have addresses that are unique to the chain on which they are deployed, while EOAs share the same address across multiple EVM-compatible chains.
 
@@ -13,8 +13,51 @@ All XMTP clients require a signer object (or instance) that provides a method fo
 | On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
 | Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
 | Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
-| Gas payment    | User pays native gas                                                                          | Relayer can pay (e.g. [Base](https://www.base.org/))                                                                     |
+| Gas payment    | User pays native gas                                                                          | Relayer (e.g. [Base](https://www.base.org/)) can pay                                                                     |
 | Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
+
+## How do I know if I have a SCW?
+
+Your wallet is most likely a smart contract wallet if it shows several of these traits:
+
+- It lets you sign in with email, social logins, or passkeys rather than a seed phrase
+- It never reveals a private key or recovery phrase
+- Transaction fees are sponsored or relayed (you can transact without holding native gas tokens)
+- A block explorer for the relevant chain (e.g., [Basescan](https://basescan.org/), [Abstract Explorer](https://abscan.org/)) displays a "Contract" tab for your wallet address
+
+The most reliable way to verify is by calling [eth_getCode(address)](https://ethereum.org/developers/docs/apis/json-rpc/#eth_getcode) on any Ethereum-compatible RPC endpoint. A return value of `undefined` means the address is an EOA, while any non-empty bytecode confirms it is a smart contract account.
+
+```ts
+import { createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
+
+// RPC endpoint for the target chain
+// Update this to match your chain
+const chainRpcUrl = 'https://base-mainnet.g.alchemy.com/v2';
+
+// Alchemy API key
+// https://www.alchemy.com/docs/create-an-api-key
+const apiKey = 'secret';
+
+// Create a client to interact with the blockchain
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(`${chainRpcUrl}/${apiKey}`),
+});
+
+// The address to check
+const address = '0x...';
+
+// Retrieve the bytecode deployed at the address.
+const code = await client.getCode({ address });
+
+// EOAs have no bytecode, while smart contracts do.
+if (code === undefined) {
+  console.log('This address is an EOA (no contract code).');
+} else {
+  console.log('This address has contract code (smart contract account).');
+}
+```
 
 ## Create an Externally Owned Account signer
 
@@ -311,4 +354,4 @@ This error may also occur if your client is connected to a different XMTP networ
 
 > Signature validation failed
 
-This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base".
+This error occurs when attempting to connect a Smart Contract Wallet (SCW) using an incorrect chain. For example, selecting "Ethereum" as the chain for an SCW that is deployed on "Base". The error can also occur when trying to connect an Externally Owned Account (EOA) with a SCW signature setting.
