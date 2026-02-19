@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 07:56 PM UTC / February 18, 2026
+Generated at 09:33 PM UTC / February 19, 2026
 
 ## About this file
 
@@ -16,6 +16,665 @@ This documentation is tailored for developers building agents with XMTP. It incl
 ---
 
 # Section: agents
+
+## agents/build-agents/create-a-client.mdx
+# Create an XMTP agent
+
+Create an XMTP agent that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the agent to the appropriate EOA or SCW.
+
+## Create an EOA signer
+
+```tsx [Node]
+import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
+
+// Replace with your own wallet key and encryption key
+const walletKey = '0xprivateKey';
+const db_encryptionKey = '0xencryptionKey';
+
+// Option 1: Create a local user + signer
+const user = createUser(walletKey);
+const dbEncryptionKey = Buffer.from(db_encryptionKey).toString('hex');
+
+const agent = await Agent.create(signer, {
+  env: 'dev', // or 'production'
+  dbEncryptionKey, // save it for later
+});
+```
+
+## Environment variables
+
+The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code.
+
+**Available variables:**
+
+| Variable                 | Purpose                                                        | Example                                 |
+| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
+| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
+| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
+| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
+
+Using the environment variables, you can setup your agent in just a few lines of code:
+
+## Generate random keys
+
+```tsx [Node]
+import { generatePrivateKey } from 'viem';
+import { getRandomValues } from 'node:crypto';
+
+const walletKey = generatePrivateKey();
+const encryptionKeyHex = getRandomValues(new Uint8Array(32));
+
+console.log(`Wallet key: ${walletKey}`);
+console.log(`Encryption key: ${encryptionKeyHex}`);
+```
+
+Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
+
+```bash
+yarn gen:keys
+```
+
+> Running the command will append keys to your existing .env file.
+
+## Use environment variables
+
+```tsx [Node]
+// Load variables from .env file
+process.loadEnvFile('.env');
+
+// Create agent using environment variables
+const agent = await Agent.createFromEnv();
+```
+
+## Configuration options
+
+You can configure an XMTP client with these options passed to `Agent.create`:
+
+```tsx [Node]
+/**
+ * Specify which XMTP environment to connect to. (default: `dev`)
+ */
+env?: 'local' | 'dev' | 'production';
+/**
+ * Add a client app version identifier that's included with API requests.
+ * Production apps are strongly encouraged to set this value.
+ *
+ * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
+ * For example, `appVersion: 'alix/2.x'`
+ *
+ * If you have an agent and an app, it's best to distinguish them from each other by
+ * adding `-agent` and `-app` to the names. For example:
+ * - Agent: `appVersion: 'alix-agent/2.x'`
+ * - App: `appVersion: 'alix-app/3.x'`
+ *
+ * Setting this value provides telemetry that shows which agents are using the
+ * XMTP client SDK. This information can help XMTP core developers provide you with agent
+ * support, especially around communicating important SDK updates, including
+ * deprecations and required upgrades.
+ */
+appVersion?: string;
+/**
+ * apiUrl can be used to override the `env` flag and connect to a
+ * specific endpoint
+ */
+apiUrl?: string;
+/**
+ * Path to the local DB
+ *
+ * There are 4 value types that can be used to specify the database path:
+ *
+ * - `undefined` (or excluded from the client options)
+ *    The database will be created in the current working directory and is based on
+ *    the XMTP environment and client inbox ID.
+ *    Example: `xmtp-dev-<inbox-id>.db3`
+ *
+ * - `null`
+ *    No database will be created and all data will be lost once the client disconnects.
+ *
+ * - `string`
+ *    The given path will be used to create the database.
+ *    Example: `./my-db.db3`
+ *
+ * - `function`
+ *    A callback function that receives the inbox ID and returns a string path.
+ *    Example: `(inboxId) => string`
+ */
+dbPath?: string | null | ((inboxId: string) => string);
+/**
+ * Encryption key for the local DB
+ */
+dbEncryptionKey?: Uint8Array;
+/**
+ * Allow configuring codecs for additional content types
+ */
+codecs?: ContentCodec[];
+/**
+ * Enable structured JSON logging
+ */
+structuredLogging?: boolean;
+/**
+ * Logging level
+ */
+loggingLevel?: LogLevel;
+```
+
+## Create a smart contract wallet (SCW) signer
+
+When working with smart contract wallets, you can create an XMTP agent using the wallet's seed or private key:
+
+```tsx [Node]
+import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
+
+const walletData = await initializeWallet('wallet.json');
+/* Create the signer using viem and parse the encryption key for the local db */
+const user = createUser(walletData.seed as `0x${string}`);
+const signer = createSigner(user);
+
+// Create agent with SCW signer
+const agent = await Agent.create(signer);
+
+/* Add your own business logic here */
+```
+
+
+## agents/build-agents/create-conversations.mdx
+# Create conversations
+
+With your agent, you can create a new conversation, whether it's a group chat or direct message (DM).
+
+## Create a new group chat
+
+Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
+
+### By Ethereum address
+
+```js [Node]
+const group = await agent.createGroupWithAddresses(
+  [bo.address, caro.address],
+  createGroupOptions /* optional */
+);
+```
+
+### By inbox ID
+
+```js [Node]
+const group = await agent.client.conversations.createGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+```
+
+## Create a new DM
+
+Once you have the verified identity, get its inbox ID and create a new DM:
+
+### By Ethereum address
+
+```js [Node]
+// by Ethereum address
+const dm = await agent.createDmWithAddress(bo.accountAddress);
+```
+
+### By inbox ID
+
+```js [Node]
+const dm = await agent.client.conversations.createDm(bo.inboxId);
+```
+
+### Get the address of the sender
+
+```ts [Node]
+import { getTestUrl } from '@xmtp/agent-sdk';
+
+agent.on('text', async (ctx) => {
+  const senderAddress = ctx.getSenderAddress();
+  console.log(`Message from: ${senderAddress}`);
+});
+```
+
+## Conversation helper methods
+
+Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
+
+```js [Node]
+// get a conversation by its ID
+const conversationById =
+  await agent.client.conversations.getConversationById(conversationId);
+
+// get a message by its ID
+const messageById = await agent.client.conversations.getMessageById(messageId);
+
+// get a 1:1 conversation by a peer's inbox ID
+const dmByInboxId =
+  await agent.client.conversations.getDmByInboxId(peerInboxId);
+```
+
+## Check if an identity is reachable
+
+The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
+
+```js [Node]
+import { Agent, IdentifierKind } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+// response is a Map of string (identifier) => boolean (is reachable)
+const response = await agent.client.canMessage([
+  {
+    identifier: '0xcaroAddress',
+    identifierKind: IdentifierKind.Ethereum,
+  },
+]);
+```
+
+## Last read times
+
+For conversations with read receipts enabled, you can query when each participant last read the conversation. This enables features like showing which messages are unread or displaying "seen by" indicators.
+
+```js [Node]
+// Returns an object keyed by inbox ID
+const lastReadTimes = await group.lastReadTimes();
+
+// Get the last read time of an inbox in nanoseconds
+const inboxLastReadTimeNs = lastReadTimes[inboxId];
+```
+
+
+## agents/build-agents/group-permissions.mdx
+# Understand group permissions
+
+The group permissions system controls what actions different members can take in a group chat. This guide explains how the system works conceptually. For practical code examples of managing roles and permissions, see [Manage group chats](/agents/build-agents/groups).
+
+## Member statuses
+
+Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat:
+
+- **Member** - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level with full control over the group
+
+## Options
+
+Use options to assign a role to a permission. These are the available options:
+
+- All members
+- Admin only
+  - Includes super admins
+- Super admin only
+
+## Permissions
+
+Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
+
+- Grant admin status to a member
+- Remove admin status from a member
+- Add a member to the group
+- Remove a member from the group
+- Update group metadata, such as group name, description, and image
+- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission`. To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
+
+The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
+
+- Grant super admin status to a member
+- Remove super admin status from a member
+- Update group permissions
+
+## How the group permissions system works
+
+When a group is created, all groups have the same initial member "roles" set:
+
+- There is one super admin, and it is the group creator
+- There are no admins
+- Each user added to the group starts out as a member
+
+The super admin has all of the [available permissions](#permissions) and can use them to adjust the group's permissions and options.
+
+The app's developer can provide a UI that enables group participants to make further adjustments. For example, they can give the super admin the following permission options for group members when creating the group:
+
+- Add members
+- Update group metadata
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png"
+    width="300px"
+    alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings"
+  />
+</div>
+
+You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
+
+| Permission               | Allow all | Deny all | Admin only | Super admin only |
+| ------------------------ | --------- | -------- | ---------- | ---------------- |
+| Add member               | ✅        | ✅       | ✅         | ✅               |
+| Remove member            | ✅        | ✅       | ✅         | ✅               |
+| Add admin                | ❌        | ✅       | ✅         | ✅               |
+| Remove admin             | ❌        | ✅       | ✅         | ✅               |
+| Update group permissions | ❌        | ❌       | ❌         | ✅               |
+| Update group metadata    | ✅        | ✅       | ✅         | ✅               |
+
+If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
+
+- Add member - All members
+- Remove member - Admin only
+- Add admin - Super admin only
+- Remove admin - Super admin only
+- Update group permissions - Super admin only
+- Update group metadata - All members
+
+To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
+
+## Next steps
+
+Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
+
+- Adding and removing members
+- Assigning roles
+- Managing group metadata
+
+
+## agents/build-agents/groups.mdx
+# Manage group chats
+
+Group chats can have metadata like names, descriptions, and images to help users identify them. You can set metadata when [creating a group chat](/agents/build-agents/create-conversations) or update it later.
+
+:::tip[Quickstart]
+To learn more, see the [Gated group example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
+:::
+
+## Group metadata
+
+### Available metadata fields
+
+- `group_name`: The name of the group chat
+- `description`: A description of the group chat
+- `image_url`: A URL pointing to an image for the group chat
+
+### Get and update metadata
+
+```js [Node]
+// Get metadata
+const groupName = group.name;
+const groupDescription = group.description;
+const groupImageUrl = group.imageUrl;
+
+// Update metadata
+await group.updateName('New Group Name');
+await group.updateDescription('New Group Description');
+await group.updateImageUrl('newurl.com');
+```
+
+## Group membership
+
+The maximum group chat size is 250 members.
+
+### Add members
+
+Add members directly by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Add members by Ethereum address
+await ctx.addMembersWithAddresses(group, [address1, address2]);
+
+// Add members using inbox IDs
+await group.addMembers([inboxId]);
+```
+
+### Remove members
+
+Remove members from the group by their Ethereum addresses or by their inbox IDs:
+
+```js [Node]
+// Remove members by address
+await ctx.removeMembersWithAddresses(group, [address1, address2]);
+
+// Remove members by inbox ID
+await group.removeMembers([inboxId]);
+```
+
+### Get member information
+
+Retrieve and work with member data:
+
+```js [Node]
+// Sync group data to get latest member information
+await group.sync();
+
+// Get all members
+const members = await group.members();
+```
+
+Get detailed information about group members:
+
+```typescript
+agent.on('text', async (ctx) => {
+  const members = await group.members();
+
+  for (const member of members) {
+    console.log(`Member inbox ID: ${member.inboxId}`);
+    console.log(`Permission level: ${member.permissionLevel}`);
+    console.log(`Consent state: ${member.consentState}`);
+
+    // Get Ethereum address
+    const ethIdentifier = member.accountIdentifiers.find(
+      (id) => id.identifierKind === IdentifierKind.Ethereum
+    );
+
+    if (ethIdentifier) {
+      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
+    }
+  }
+});
+```
+
+## Group roles
+
+Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
+
+### Available roles
+
+- **Member** - Default role for all group participants
+- **Admin** - Members with elevated permissions
+- **Super admin** - Highest permission level (creator starts as super admin)
+
+### Manage roles
+
+Check and assign roles to group members:
+
+```js [Node]
+// Check admin status
+const isAdmin = group.isAdmin(inboxId);
+const isSuperAdmin = group.isSuperAdmin(inboxId);
+
+// List admins
+const admins = group.listAdmins();
+const superAdmins = group.listSuperAdmins();
+
+// Add/remove admin status
+await group.addAdmin(inboxId);
+await group.addSuperAdmin(inboxId);
+await group.removeAdmin(inboxId);
+await group.removeSuperAdmin(inboxId);
+```
+
+
+## agents/build-agents/local-database.mdx
+# Manage agent local database files and installations
+
+Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
+
+:::danger[CRITICAL FOR PRODUCTION]
+
+Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
+
+:::
+
+## Installation limits and revocation rules
+
+Understanding XMTP's installation and inbox limits is critical for production deployments:
+
+- Installation limit per inbox: Each inbox supports up to 10 active installations. Once you reach this limit, you must [revoke an existing installation](/chat-apps/core-messaging/manage-inboxes#revoke-a-specific-installation) before adding a new one.
+
+- Update limit per inbox: Every installation addition or revocation counts toward a cumulative limit of 256 [inbox updates](/chat-apps/core-messaging/manage-inboxes#inbox-update-limits). Exceeding this threshold requires [inbox rotation](/chat-apps/core-messaging/manage-inboxes#rotate-an-inbox-id), which permanently removes access to all historical conversations for that inbox.
+
+These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
+
+## Understand local database files
+
+The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
+
+**Database file naming:**
+
+Database files follow this pattern: `xmtp-{environment}-{inbox-id}.db3`
+
+Example:
+
+```bash
+xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688.db3
+```
+
+- `xmtp-production`: Environment prefix
+- `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
+- `.db3`: SQLite database file extension
+
+## Understand installations
+
+With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
+
+When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
+
+For example, consider deploying your agent to these platforms:
+
+- Local development: Creates an installation
+- Railway: Creates another installation
+- Production server: Creates another installation
+
+Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
+
+For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
+
+- Local development: `local` network
+- Railway: `dev` network
+- Production server: `production` network
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png"
+    width="500px"
+    alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each"
+  />
+</div>
+
+If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
+
+- Local development: `production` network
+- Railway: `production` network
+- Production server: `production` network
+
+<div>
+  <img
+    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png"
+    width="500px"
+    alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations"
+  />
+</div>
+
+## Revoke agent installations
+
+When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database. Your agent can still run from any active installations on other deployment platforms.
+
+:::danger[Important]
+Revoking an installation is permanent. You cannot recover access to a revoked installation.
+:::
+
+1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
+2. CLI script: [revokeInstallations.ts](https://github.com/xmtplabs/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
+
+```bash
+yarn revoke <inbox-id> <installations-to-exclude>
+```
+
+
+## agents/build-agents/stream.mdx
+# Stream conversations and messages
+
+## Stream messages
+
+With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
+
+```js [Node]
+// Listen for text messages
+agent.on('text', async (ctx) => {
+  console.log(`New text message: ${ctx.message.content}`);
+  await ctx.sendText('Got your message!');
+});
+
+// Listen for reactions
+agent.on('reaction', async (ctx) => {
+  console.log(`New reaction: ${ctx.message.content}`);
+});
+
+// Listen for replies
+agent.on('reply', async (ctx) => {
+  console.log(`New reply: ${ctx.message.content}`);
+});
+```
+
+## Stream all messages
+
+```js [Node]
+import { filter } from '@xmtp/agent-sdk';
+
+const agent = await Agent.createFromEnv();
+
+agent.on('message', async (ctx) => {
+  // Filter for specific message types
+  if (filter.isText(ctx.message)) {
+    await ctx.sendText(`Echo: ${ctx.message.content}`);
+  }
+});
+
+// Listen for unknown messages
+agent.on('unknownMessage', (ctx) => {
+  // handle the unknown message
+});
+```
+
+:::warning
+
+The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
+
+:::
+
+## Stream conversations
+
+You can listen to new conversations using the `dm` and `group` events.
+
+```js [Node]
+// Listen to new conversations
+agent.on('dm', async (ctx) => {
+  // received when you create a new dm
+  console.log('New dm created:', ctx.conversation.id);
+});
+
+agent.on('group', async (ctx) => {
+  // received when you create a new group
+  console.log('Added to group:', ctx.conversation.id);
+});
+```
+
+## Handle errors and failures
+
+The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
+
+```js [Node]
+// Handle uncaught errors
+agent.on('unhandledError', (error) => {
+  console.error(`Agent error: ${error}`);
+  // Handle the error appropriately
+});
+```
+
 
 ## agents/get-started/build-an-agent.mdx
 import { KeyGenerator } from '../../../components/KeyGenerator';
@@ -1235,665 +1894,6 @@ When you reach either rate limit, your API calls will be rejected with a 429 (To
 - Adding and revoking installations
 - Adding and removing group members
 - Updating group metadata
-
-
-## agents/build-agents/create-a-client.mdx
-# Create an XMTP agent
-
-Create an XMTP agent that can use the signing capabilities provided by the [signer](/chat-apps/core-messaging/create-a-signer). This signer links the agent to the appropriate EOA or SCW.
-
-## Create an EOA signer
-
-```tsx [Node]
-import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
-
-// Replace with your own wallet key and encryption key
-const walletKey = '0xprivateKey';
-const db_encryptionKey = '0xencryptionKey';
-
-// Option 1: Create a local user + signer
-const user = createUser(walletKey);
-const dbEncryptionKey = Buffer.from(db_encryptionKey).toString('hex');
-
-const agent = await Agent.create(signer, {
-  env: 'dev', // or 'production'
-  dbEncryptionKey, // save it for later
-});
-```
-
-## Environment variables
-
-The XMTP Agent SDK allows you to use environment variables (`process.env`) for easier configuration without modifying code.
-
-**Available variables:**
-
-| Variable                 | Purpose                                                        | Example                                 |
-| ------------------------ | -------------------------------------------------------------- | --------------------------------------- |
-| `XMTP_WALLET_KEY`        | Private key for wallet                                         | `XMTP_WALLET_KEY=0x1234...abcd`         |
-| `XMTP_ENV`               | XMTP network environment (`local`, `dev`, or `production`)     | `XMTP_ENV=dev` or `XMTP_ENV=production` |
-| `XMTP_DB_ENCRYPTION_KEY` | Database encryption key for the local database (32 bytes, hex) | `XMTP_DB_ENCRYPTION_KEY=0xabcd...1234`  |
-
-Using the environment variables, you can setup your agent in just a few lines of code:
-
-## Generate random keys
-
-```tsx [Node]
-import { generatePrivateKey } from 'viem';
-import { getRandomValues } from 'node:crypto';
-
-const walletKey = generatePrivateKey();
-const encryptionKeyHex = getRandomValues(new Uint8Array(32));
-
-console.log(`Wallet key: ${walletKey}`);
-console.log(`Encryption key: ${encryptionKeyHex}`);
-```
-
-Use this [script to generate](https://github.com/xmtplabs/xmtp-agent-examples) random XMTP keys:
-
-```bash
-yarn gen:keys
-```
-
-> Running the command will append keys to your existing .env file.
-
-## Use environment variables
-
-```tsx [Node]
-// Load variables from .env file
-process.loadEnvFile('.env');
-
-// Create agent using environment variables
-const agent = await Agent.createFromEnv();
-```
-
-## Configuration options
-
-You can configure an XMTP client with these options passed to `Agent.create`:
-
-```tsx [Node]
-/**
- * Specify which XMTP environment to connect to. (default: `dev`)
- */
-env?: 'local' | 'dev' | 'production';
-/**
- * Add a client app version identifier that's included with API requests.
- * Production apps are strongly encouraged to set this value.
- *
- * You can use the following format: `appVersion: 'AGENT_NAME/AGENT_VERSION'`.
- * For example, `appVersion: 'alix/2.x'`
- *
- * If you have an agent and an app, it's best to distinguish them from each other by
- * adding `-agent` and `-app` to the names. For example:
- * - Agent: `appVersion: 'alix-agent/2.x'`
- * - App: `appVersion: 'alix-app/3.x'`
- *
- * Setting this value provides telemetry that shows which agents are using the
- * XMTP client SDK. This information can help XMTP core developers provide you with agent
- * support, especially around communicating important SDK updates, including
- * deprecations and required upgrades.
- */
-appVersion?: string;
-/**
- * apiUrl can be used to override the `env` flag and connect to a
- * specific endpoint
- */
-apiUrl?: string;
-/**
- * Path to the local DB
- *
- * There are 4 value types that can be used to specify the database path:
- *
- * - `undefined` (or excluded from the client options)
- *    The database will be created in the current working directory and is based on
- *    the XMTP environment and client inbox ID.
- *    Example: `xmtp-dev-<inbox-id>.db3`
- *
- * - `null`
- *    No database will be created and all data will be lost once the client disconnects.
- *
- * - `string`
- *    The given path will be used to create the database.
- *    Example: `./my-db.db3`
- *
- * - `function`
- *    A callback function that receives the inbox ID and returns a string path.
- *    Example: `(inboxId) => string`
- */
-dbPath?: string | null | ((inboxId: string) => string);
-/**
- * Encryption key for the local DB
- */
-dbEncryptionKey?: Uint8Array;
-/**
- * Allow configuring codecs for additional content types
- */
-codecs?: ContentCodec[];
-/**
- * Enable structured JSON logging
- */
-structuredLogging?: boolean;
-/**
- * Logging level
- */
-loggingLevel?: LogLevel;
-```
-
-## Create a smart contract wallet (SCW) signer
-
-When working with smart contract wallets, you can create an XMTP agent using the wallet's seed or private key:
-
-```tsx [Node]
-import { Agent, createSigner, createUser } from '@xmtp/agent-sdk';
-
-const walletData = await initializeWallet('wallet.json');
-/* Create the signer using viem and parse the encryption key for the local db */
-const user = createUser(walletData.seed as `0x${string}`);
-const signer = createSigner(user);
-
-// Create agent with SCW signer
-const agent = await Agent.create(signer);
-
-/* Add your own business logic here */
-```
-
-
-## agents/build-agents/create-conversations.mdx
-# Create conversations
-
-With your agent, you can create a new conversation, whether it's a group chat or direct message (DM).
-
-## Create a new group chat
-
-Once you have the verified identities, create a new group chat. The maximum group chat size is 250 members.
-
-### By Ethereum address
-
-```js [Node]
-const group = await agent.createGroupWithAddresses(
-  [bo.address, caro.address],
-  createGroupOptions /* optional */
-);
-```
-
-### By inbox ID
-
-```js [Node]
-const group = await agent.client.conversations.createGroup(
-  [bo.inboxId, caro.inboxId],
-  createGroupOptions /* optional */
-);
-```
-
-## Create a new DM
-
-Once you have the verified identity, get its inbox ID and create a new DM:
-
-### By Ethereum address
-
-```js [Node]
-// by Ethereum address
-const dm = await agent.createDmWithAddress(bo.accountAddress);
-```
-
-### By inbox ID
-
-```js [Node]
-const dm = await agent.client.conversations.createDm(bo.inboxId);
-```
-
-### Get the address of the sender
-
-```ts [Node]
-import { getTestUrl } from '@xmtp/agent-sdk';
-
-agent.on('text', async (ctx) => {
-  const senderAddress = ctx.getSenderAddress();
-  console.log(`Message from: ${senderAddress}`);
-});
-```
-
-## Conversation helper methods
-
-Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
-
-```js [Node]
-// get a conversation by its ID
-const conversationById =
-  await agent.client.conversations.getConversationById(conversationId);
-
-// get a message by its ID
-const messageById = await agent.client.conversations.getMessageById(messageId);
-
-// get a 1:1 conversation by a peer's inbox ID
-const dmByInboxId =
-  await agent.client.conversations.getDmByInboxId(peerInboxId);
-```
-
-## Check if an identity is reachable
-
-The first step to creating a conversation is to verify that participants' identities are reachable on XMTP. The `canMessage` method checks each identity's compatibility, returning a response indicating whether each identity can receive messages.
-
-```js [Node]
-import { Agent, IdentifierKind } from '@xmtp/agent-sdk';
-
-const agent = await Agent.createFromEnv();
-
-// response is a Map of string (identifier) => boolean (is reachable)
-const response = await agent.client.canMessage([
-  {
-    identifier: '0xcaroAddress',
-    identifierKind: IdentifierKind.Ethereum,
-  },
-]);
-```
-
-## Last read times
-
-For conversations with read receipts enabled, you can query when each participant last read the conversation. This enables features like showing which messages are unread or displaying "seen by" indicators.
-
-```js [Node]
-// Returns an object keyed by inbox ID
-const lastReadTimes = await group.lastReadTimes();
-
-// Get the last read time of an inbox in nanoseconds
-const inboxLastReadTimeNs = lastReadTimes[inboxId];
-```
-
-
-## agents/build-agents/group-permissions.mdx
-# Understand group permissions
-
-The group permissions system controls what actions different members can take in a group chat. This guide explains how the system works conceptually. For practical code examples of managing roles and permissions, see [Manage group chats](/agents/build-agents/groups).
-
-## Member statuses
-
-Member statuses are the roles that can be assigned to each participant (inbox ID) in a group chat:
-
-- **Member** - Everyone in a group chat is a member. A member can be granted admin or super admin status. If a member's admin or super admin status is removed, they are still a member of the group.
-- **Admin** - Members with elevated permissions
-- **Super admin** - Highest permission level with full control over the group
-
-## Options
-
-Use options to assign a role to a permission. These are the available options:
-
-- All members
-- Admin only
-  - Includes super admins
-- Super admin only
-
-## Permissions
-
-Permissions are the actions a group chat participant can be allowed to take. These are the available permissions:
-
-- Grant admin status to a member
-- Remove admin status from a member
-- Add a member to the group
-- Remove a member from the group
-- Update group metadata, such as group name, description, and image
-- Update group permissions on an item-by-item basis, such as calling `updateNamePermission` or `updateAddMemberPermission`. To learn more, see [Group.kt](https://github.com/xmtp/xmtp-android/blob/main/library/src/main/java/org/xmtp/android/library/Group.kt#L251-L313) in the xmtp-android SDK repo.
-
-The following permissions can be assigned by super admins only. This helps ensure that a “regular” admin cannot remove the super admin or otherwise destroy a group.
-
-- Grant super admin status to a member
-- Remove super admin status from a member
-- Update group permissions
-
-## How the group permissions system works
-
-When a group is created, all groups have the same initial member "roles" set:
-
-- There is one super admin, and it is the group creator
-- There are no admins
-- Each user added to the group starts out as a member
-
-The super admin has all of the [available permissions](#permissions) and can use them to adjust the group's permissions and options.
-
-The app's developer can provide a UI that enables group participants to make further adjustments. For example, they can give the super admin the following permission options for group members when creating the group:
-
-- Add members
-- Update group metadata
-
-<div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/group-perm-toggles.png"
-    width="300px"
-    alt="UI screenshot showing group permission toggle options including Add members and Edit group info settings"
-  />
-</div>
-
-You can use member statuses, options, and permissions to create a custom policy set. The following table represents the valid policy options for each of the permissions:
-
-| Permission               | Allow all | Deny all | Admin only | Super admin only |
-| ------------------------ | --------- | -------- | ---------- | ---------------- |
-| Add member               | ✅        | ✅       | ✅         | ✅               |
-| Remove member            | ✅        | ✅       | ✅         | ✅               |
-| Add admin                | ❌        | ✅       | ✅         | ✅               |
-| Remove admin             | ❌        | ✅       | ✅         | ✅               |
-| Update group permissions | ❌        | ❌       | ❌         | ✅               |
-| Update group metadata    | ✅        | ✅       | ✅         | ✅               |
-
-If you aren't opinionated and don't set any permissions and options, groups will default to using the delivered `All_Members` policy set, which applies the following permissions and options:
-
-- Add member - All members
-- Remove member - Admin only
-- Add admin - Super admin only
-- Remove admin - Super admin only
-- Update group permissions - Super admin only
-- Update group metadata - All members
-
-To learn more about the `All_Members` and `Admin_Only` policy sets, see [group_permissions.rs](https://github.com/xmtp/libxmtp/blob/85dd6d36f46db1ed74fe98273eea6871fea2e078/xmtp_mls/src/groups/group_permissions.rs#L1192-L1226) in the LibXMTP repo.
-
-## Next steps
-
-Now that you understand how the permission system works, see [Manage group chats](/agents/build-agents/groups) for practical code examples of:
-
-- Adding and removing members
-- Assigning roles
-- Managing group metadata
-
-
-## agents/build-agents/groups.mdx
-# Manage group chats
-
-Group chats can have metadata like names, descriptions, and images to help users identify them. You can set metadata when [creating a group chat](/agents/build-agents/create-conversations) or update it later.
-
-:::tip[Quickstart]
-To learn more, see the [Gated group example](https://github.com/xmtplabs/xmtp-agent-examples/tree/main/examples/xmtp-gated-group) in the xmtp-agents-examples repo.
-:::
-
-## Group metadata
-
-### Available metadata fields
-
-- `group_name`: The name of the group chat
-- `description`: A description of the group chat
-- `image_url`: A URL pointing to an image for the group chat
-
-### Get and update metadata
-
-```js [Node]
-// Get metadata
-const groupName = group.name;
-const groupDescription = group.description;
-const groupImageUrl = group.imageUrl;
-
-// Update metadata
-await group.updateName('New Group Name');
-await group.updateDescription('New Group Description');
-await group.updateImageUrl('newurl.com');
-```
-
-## Group membership
-
-The maximum group chat size is 250 members.
-
-### Add members
-
-Add members directly by their Ethereum addresses or by their inbox IDs:
-
-```js [Node]
-// Add members by Ethereum address
-await ctx.addMembersWithAddresses(group, [address1, address2]);
-
-// Add members using inbox IDs
-await group.addMembers([inboxId]);
-```
-
-### Remove members
-
-Remove members from the group by their Ethereum addresses or by their inbox IDs:
-
-```js [Node]
-// Remove members by address
-await ctx.removeMembersWithAddresses(group, [address1, address2]);
-
-// Remove members by inbox ID
-await group.removeMembers([inboxId]);
-```
-
-### Get member information
-
-Retrieve and work with member data:
-
-```js [Node]
-// Sync group data to get latest member information
-await group.sync();
-
-// Get all members
-const members = await group.members();
-```
-
-Get detailed information about group members:
-
-```typescript
-agent.on('text', async (ctx) => {
-  const members = await group.members();
-
-  for (const member of members) {
-    console.log(`Member inbox ID: ${member.inboxId}`);
-    console.log(`Permission level: ${member.permissionLevel}`);
-    console.log(`Consent state: ${member.consentState}`);
-
-    // Get Ethereum address
-    const ethIdentifier = member.accountIdentifiers.find(
-      (id) => id.identifierKind === IdentifierKind.Ethereum
-    );
-
-    if (ethIdentifier) {
-      console.log(`Ethereum address: ${ethIdentifier.identifier}`);
-    }
-  }
-});
-```
-
-## Group roles
-
-Members can be assigned different roles with varying permission levels. To learn more about how the permission system works, see [Understand group permissions](/agents/build-agents/group-permissions).
-
-### Available roles
-
-- **Member** - Default role for all group participants
-- **Admin** - Members with elevated permissions
-- **Super admin** - Highest permission level (creator starts as super admin)
-
-### Manage roles
-
-Check and assign roles to group members:
-
-```js [Node]
-// Check admin status
-const isAdmin = group.isAdmin(inboxId);
-const isSuperAdmin = group.isSuperAdmin(inboxId);
-
-// List admins
-const admins = group.listAdmins();
-const superAdmins = group.listSuperAdmins();
-
-// Add/remove admin status
-await group.addAdmin(inboxId);
-await group.addSuperAdmin(inboxId);
-await group.removeAdmin(inboxId);
-await group.removeSuperAdmin(inboxId);
-```
-
-
-## agents/build-agents/local-database.mdx
-# Manage agent local database files and installations
-
-Each XMTP agent installation maintains its own local database containing message history, conversation state, and cryptographic material. When you delete this database (or use an in-memory database), you create a new installation that counts toward your [installation limits](/chat-apps/core-messaging/manage-inboxes#inbox-update-and-installation-limits).
-
-:::danger[CRITICAL FOR PRODUCTION]
-
-Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
-
-:::
-
-## Installation limits and revocation rules
-
-Understanding XMTP's installation and inbox limits is critical for production deployments:
-
-- Installation limit per inbox: Each inbox supports up to 10 active installations. Once you reach this limit, you must [revoke an existing installation](/chat-apps/core-messaging/manage-inboxes#revoke-a-specific-installation) before adding a new one.
-
-- Update limit per inbox: Every installation addition or revocation counts toward a cumulative limit of 256 [inbox updates](/chat-apps/core-messaging/manage-inboxes#inbox-update-limits). Exceeding this threshold requires [inbox rotation](/chat-apps/core-messaging/manage-inboxes#rotate-an-inbox-id), which permanently removes access to all historical conversations for that inbox.
-
-These limits protect inbox integrity and prevent unbounded key state growth across devices. For production environments, always use persistent volumes to back up and preserve your database across agent restarts.
-
-## Understand local database files
-
-The Agent SDK creates database files in the `dbPath` directory (default is `'/'`). These files store your agent's identity and message history.
-
-**Database file naming:**
-
-Database files follow this pattern: `xmtp-{environment}-{inbox-id}.db3`
-
-Example:
-
-```bash
-xmtp-production-62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688.db3
-```
-
-- `xmtp-production`: Environment prefix
-- `62ff7c82fa2e8c9a0a0c9e58e7247704d102c41e5ceb4dc3573792d7d7a1c688`: Inbox ID (Your xmtp identity)
-- `.db3`: SQLite database file extension
-
-## Understand installations
-
-With XMTP, your agent has an inbox that you use to access its messages. An inbox can have multiple identities associated with it. Your agent's identity has a kind (such as EOA or SCW) and a string, which in the case of an EOA or SCW, is an Ethereum address. All messages associated with your agent's identity flow through the one inbox ID.
-
-When you deploy your agent to a platform, you create an XMTP client for your agent. The client creates an inbox ID and installation ID associated with your agent's identity. Each time you deploy your agent to a new platform, it creates a new installation for the same inbox ID. The installation represents your agent running on that specific platform.
-
-For example, consider deploying your agent to these platforms:
-
-- Local development: Creates an installation
-- Railway: Creates another installation
-- Production server: Creates another installation
-
-Your agent can have **up to 10 active installations** before you need to revoke one to add another. Installations only accumulate for agent deployments using the same XMTP network environment, such as `local`, `dev`, or `production`.
-
-For example, if you deploy your agent across these network environments, you will have 3 inboxes, each with 1 installation:
-
-- Local development: `local` network
-- Railway: `dev` network
-- Production server: `production` network
-
-<div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install-sep.png"
-    width="500px"
-    alt="Diagram showing agent deployments across different network environments (local, dev, production) creating separate inboxes with one installation each"
-  />
-</div>
-
-If you deploy your agent to this same network environment, you have 1 inbox with 3 installations:
-
-- Local development: `production` network
-- Railway: `production` network
-- Production server: `production` network
-
-<div>
-  <img
-    src="https://raw.githubusercontent.com/xmtp/docs-xmtp-org/refs/heads/main/docs/pages/img/agent-install.png"
-    width="500px"
-    alt="Diagram showing agent deployments to the same production network environment creating one inbox with three installations"
-  />
-</div>
-
-## Revoke agent installations
-
-When you revoke an agent installation, it can no longer send or receive messages. However, you can still access the local database. Your agent can still run from any active installations on other deployment platforms.
-
-:::danger[Important]
-Revoking an installation is permanent. You cannot recover access to a revoked installation.
-:::
-
-1. Web tool: [xmtp.chat/inbox-tools](https://xmtp.chat/inbox-tools)
-2. CLI script: [revokeInstallations.ts](https://github.com/xmtplabs/xmtp-agent-examples/blob/eb1dc17e99570b77de906ba0d58094586a4af844/scripts/revokeInstallations.ts) in the xmtp-agent-examples repo
-
-```bash
-yarn revoke <inbox-id> <installations-to-exclude>
-```
-
-
-## agents/build-agents/stream.mdx
-# Stream conversations and messages
-
-## Stream messages
-
-With the agent-sdk, you can listen for different types of messages using event handlers. The agent automatically handles streaming and provides simple event-based APIs.
-
-```js [Node]
-// Listen for text messages
-agent.on('text', async (ctx) => {
-  console.log(`New text message: ${ctx.message.content}`);
-  await ctx.sendText('Got your message!');
-});
-
-// Listen for reactions
-agent.on('reaction', async (ctx) => {
-  console.log(`New reaction: ${ctx.message.content}`);
-});
-
-// Listen for replies
-agent.on('reply', async (ctx) => {
-  console.log(`New reply: ${ctx.message.content}`);
-});
-```
-
-## Stream all messages
-
-```js [Node]
-import { filter } from '@xmtp/agent-sdk';
-
-const agent = await Agent.createFromEnv();
-
-agent.on('message', async (ctx) => {
-  // Filter for specific message types
-  if (filter.isText(ctx.message)) {
-    await ctx.sendText(`Echo: ${ctx.message.content}`);
-  }
-});
-
-// Listen for unknown messages
-agent.on('unknownMessage', (ctx) => {
-  // handle the unknown message
-});
-```
-
-:::warning
-
-The `message` event fires for every incoming message, regardless of type. When using the "message" event, always filter message types to prevent infinite loops. Without proper filtering, your agent might respond to its own messages or react to system messages like read receipts.
-
-:::
-
-## Stream conversations
-
-You can listen to new conversations using the `dm` and `group` events.
-
-```js [Node]
-// Listen to new conversations
-agent.on('dm', async (ctx) => {
-  // received when you create a new dm
-  console.log('New dm created:', ctx.conversation.id);
-});
-
-agent.on('group', async (ctx) => {
-  // received when you create a new group
-  console.log('Added to group:', ctx.conversation.id);
-});
-```
-
-## Handle errors and failures
-
-The agent-sdk automatically handles connection failures and reconnections. You can listen for errors using the error handler:
-
-```js [Node]
-// Handle uncaught errors
-agent.on('unhandledError', (error) => {
-  console.error(`Agent error: ${error}`);
-  // Handle the error appropriately
-});
-```
 
 
 ## agents/content-types/attachments.mdx
