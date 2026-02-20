@@ -4,6 +4,7 @@ import { sidebarConfig } from './shared-sidebar.config';
 // console.log('Loading Vocs config...')
 
 export default defineConfig({
+  aiCta: false,
   theme: {
     accentColor: {
       // Primary indigo button colors
