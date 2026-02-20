@@ -90,6 +90,7 @@ export const TerminalQuickstart = () => {
     setMounted(true);
     return () => {
       mountedRef.current = false;
+      clientRef.current?.close?.();
     };
   }, []);
 

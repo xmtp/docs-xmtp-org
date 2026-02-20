@@ -77,6 +77,7 @@ export const InteractiveQuickstart = () => {
     setMounted(true);
     return () => {
       mountedRef.current = false;
+      clientRef.current?.close?.();
     };
   }, []);
 
