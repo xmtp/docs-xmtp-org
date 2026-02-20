@@ -76,7 +76,7 @@ async function think(input: string): Promise<string> {
     messages: [{ role: "user", content: input }],
   });
   const block = response.content[0];
-  return block.type === "text" ? block.text : "I couldn't generate a response.";
+  return block?.type === "text" ? block.text : "I couldn't generate a response.";
 }
 
 // 2. MESSAGING FRAMEWORK — connects your agent to XMTP
