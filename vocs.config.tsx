@@ -4,6 +4,16 @@ import { sidebarConfig } from './shared-sidebar.config';
 // console.log('Loading Vocs config...')
 
 export default defineConfig({
+  vite: {
+    optimizeDeps: {
+      exclude: ['@xmtp/browser-sdk', '@xmtp/wasm-bindings'],
+    },
+    server: {
+      fs: {
+        strict: false,
+      },
+    },
+  },
   theme: {
     accentColor: {
       // Primary indigo button colors

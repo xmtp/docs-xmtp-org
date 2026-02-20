@@ -1,0 +1,181 @@
+import { Tabs } from '../../components/Tabs';
+import { Collapsible } from '../../components/Collapsible';
+import { InteractiveQuickstart } from '../../components/InteractiveQuickstart';
+
+# Quickstart
+
+Send your first XMTP message and get a reply from an agent in under 5 minutes.
+
+This quickstart connects your app to an agent running on the XMTP `production` network. You send a message, the agent replies.
+
+<Tabs.Root defaultValue="browser">
+  <Tabs.List>
+    <Tabs.Trigger value="browser">Browser</Tabs.Trigger>
+    <Tabs.Trigger value="node">Node</Tabs.Trigger>
+    <Tabs.Trigger value="react-native">React Native</Tabs.Trigger>
+    <Tabs.Trigger value="android">Android</Tabs.Trigger>
+    <Tabs.Trigger value="ios">iOS</Tabs.Trigger>
+  </Tabs.List>
+
+  <Tabs.Content value="browser">
+
+## Try it now
+
+Click each step to run it right here in your browser. No setup required.
+
+<InteractiveQuickstart />
+
+<Collapsible title="Run it locally">
+
+### Scaffold a project
+
+```bash
+npm create vite@latest my-xmtp-app -- --template vanilla-ts
+cd my-xmtp-app
+npm install @xmtp/browser-sdk viem
+```
+
+### Replace `src/main.ts`
+
+Delete the contents of `src/main.ts` and replace with:
+
+```ts
+import { Client, IdentifierKind } from "@xmtp/browser-sdk";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { toBytes } from "viem";
+
+// An agent on the production network
+const AGENT_ADDRESS = "0x458dd9C5bf4d4E8f80Ba88923E3b94FD028CEe38";
+
+const output = document.getElementById("output")!;
+function log(msg: string) {
+  output.textContent += msg + "\n";
+}
+
+async function main() {
+  log("Creating ephemeral wallet...");
+
+  // Generate a throwaway wallet — no MetaMask needed
+  const key = generatePrivateKey();
+  const account = privateKeyToAccount(key);
+
+  // Create a signer for XMTP
+  const signer = {
+    type: "EOA" as const,
+    getIdentifier: () => ({
+      identifier: account.address.toLowerCase(),
+      identifierKind: IdentifierKind.Ethereum,
+    }),
+    signMessage: async (message: string) => {
+      const signature = await account.signMessage({ message });
+      return toBytes(signature);
+    },
+  };
+
+  log("Connecting to XMTP production network...");
+
+  // Create client with in-memory database (no OPFS needed)
+  const client = await Client.create(signer, {
+    env: "production",
+    dbPath: null,
+  });
+
+  log(`Connected as ${account.address}`);
+  log(`Creating conversation with agent...`);
+
+  // Create a DM with the agent
+  const dm = await client.conversations.createDmWithIdentifier({
+    identifier: AGENT_ADDRESS,
+    identifierKind: IdentifierKind.Ethereum,
+  });
+
+  // Start streaming messages before sending
+  const stream = await dm.stream();
+
+  // Send a message
+  await dm.sendText("gm");
+  log(`You: gm`);
+  log(`Waiting for reply...`);
+
+  // Listen for the agent's reply
+  for await (const message of stream) {
+    if (message?.senderInboxId !== client.inboxId) {
+      log(`Agent: ${message?.content}`);
+      break;
+    }
+  }
+
+  log(`\nDone! You just sent and received an XMTP message.`);
+}
+
+main().catch((e) => log(`Error: ${e.message}`));
+```
+
+### Update `index.html`
+
+Replace the contents of the `<body>` tag in `index.html`:
+
+```html
+<body>
+  <pre id="output"></pre>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+```
+
+### Run it
+
+```bash
+npm run dev
+```
+
+Open the URL shown in your terminal (usually `http://localhost:5173`). You should see:
+
+```
+Creating ephemeral wallet...
+Connecting to XMTP production network...
+Connected as 0x...
+Creating conversation with agent...
+You: gm
+Waiting for reply...
+Agent: gm
+
+Done! You just sent and received an XMTP message.
+```
+
+</Collapsible>
+
+  </Tabs.Content>
+
+  <Tabs.Content value="node">
+
+## Node SDK
+
+Coming soon.
+
+  </Tabs.Content>
+
+  <Tabs.Content value="react-native">
+
+## React Native SDK
+
+Coming soon.
+
+  </Tabs.Content>
+
+  <Tabs.Content value="android">
+
+## Android SDK
+
+Coming soon.
+
+  </Tabs.Content>
+
+  <Tabs.Content value="ios">
+
+## iOS SDK
+
+Coming soon.
+
+  </Tabs.Content>
+
+</Tabs.Root>

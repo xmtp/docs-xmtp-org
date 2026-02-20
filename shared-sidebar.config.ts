@@ -296,6 +296,10 @@ export const sidebarConfig = {
           link: "/chat-apps/intro/what-is-xmtp",
         },
         {
+          text: "Quickstart",
+          link: "/chat-apps/quickstart",
+        },
+        {
           text: "Why XMTP?",
           link: "/chat-apps/intro/why-xmtp",
         },
