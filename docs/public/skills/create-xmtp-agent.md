@@ -43,7 +43,7 @@ project/
 ```
 
 **Install dependencies:**
-- `@xmtp/agent-sdk` + `dotenv` (always)
+- `@xmtp/agent-sdk` + `dotenv` + `tsx` (always)
 - `@anthropic-ai/sdk` (Claude brain)
 - `openai` (OpenAI brain)
 
@@ -150,7 +150,7 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 WORKDIR /app
 
 COPY package.json package-lock.json* yarn.lock* ./
-RUN npm install --production || yarn install --immutable
+RUN npm install || yarn install --immutable
 
 COPY src ./src
 COPY tsconfig.json ./

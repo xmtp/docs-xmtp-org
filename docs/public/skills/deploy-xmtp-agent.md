@@ -18,7 +18,7 @@ FROM node:22-slim
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json package-lock.json* yarn.lock* .yarnrc.yml* ./
-RUN npm install --production || yarn install --immutable
+RUN npm install || yarn install --immutable
 COPY src ./src
 COPY tsconfig.json ./
 CMD ["npm", "start"]
