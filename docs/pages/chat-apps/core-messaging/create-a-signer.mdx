@@ -317,6 +317,15 @@ public struct SCWallet: SigningKey {
 
 Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
 
+## Bring your own chain
+
+If you want to test XMTP with a Blockchain that isn't in our list of supported chains, you can do the following:
+
+1. Clone https://github.com/xmtp/libxmtp
+2. Add your RPC urls (like in this PR https://github.com/xmtp/libxmtp/pull/3021/changes)
+3. Run the local backend
+4. Test your signatur or login to xmtp.chat to try
+
 :::
 
 ## Retrieve your wallet's private key
