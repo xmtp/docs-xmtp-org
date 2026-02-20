@@ -8,25 +8,30 @@ type StepStatus = 'idle' | 'running' | 'done' | 'error';
 // These code strings are displayed in the UI to show users what each step does.
 // They mirror the actual runtime code in the runStep functions below.
 
-const CODE_STEP_1 = `import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+const CODE_STEP_1 = `import { secp256k1 } from "@noble/curves/secp256k1";
+import { keccak_256 } from "@noble/hashes/sha3";
 
 // Generate an ephemeral wallet — no wallet extension needed
-const key = generatePrivateKey();
-const account = privateKeyToAccount(key);`;
+const privateKey = crypto.getRandomValues(new Uint8Array(32));
+const publicKey = secp256k1.getPublicKey(privateKey, false);
+const addressBytes = keccak_256(publicKey.slice(1)).slice(-20);
+const address = "0x" + Array.from(addressBytes, b =>
+  b.toString(16).padStart(2, "0")).join("");`;
 
 const CODE_STEP_2 = `import { Client, IdentifierKind } from "@xmtp/browser-sdk";
-import { toBytes } from "viem";
 
 // Create a signer that XMTP uses to authenticate your wallet
 const signer = {
   type: "EOA",
   getIdentifier: () => ({
-    identifier: account.address.toLowerCase(),
+    identifier: address.toLowerCase(),
     identifierKind: IdentifierKind.Ethereum,
   }),
   signMessage: async (message) => {
-    const signature = await account.signMessage({ message });
-    return toBytes(signature);
+    const prefix = "\\x19Ethereum Signed Message:\\n" + message.length;
+    const hash = keccak_256(new TextEncoder().encode(prefix + message));
+    const sig = secp256k1.sign(hash, privateKey);
+    return new Uint8Array([...sig.toCompactRawBytes(), sig.recovery + 27]);
   },
 };
 
@@ -77,19 +82,26 @@ export const InteractiveQuickstart = () => {
 
   if (!mounted) return null;
 
-  // Step 1: Generate a throwaway wallet using viem.
+  // Step 1: Generate a throwaway wallet using noble-crypto.
   // No network call — instant.
   const runStep1 = async () => {
     setStep1Status('running');
     setStep1Output('');
     try {
-      const { generatePrivateKey, privateKeyToAccount } = await import(
-        'viem/accounts'
-      );
-      const key = generatePrivateKey();
-      const account = privateKeyToAccount(key);
-      walletRef.current = account;
-      setStep1Output(`Wallet created: ${account.address}`);
+      const { secp256k1 } = await import('@noble/curves/secp256k1');
+      const { keccak_256 } = await import('@noble/hashes/sha3');
+
+      const privateKey = crypto.getRandomValues(new Uint8Array(32));
+      const publicKey = secp256k1.getPublicKey(privateKey, false);
+      const addressBytes = keccak_256(publicKey.slice(1)).slice(-20);
+      const address =
+        '0x' +
+        Array.from(addressBytes, (b: number) =>
+          b.toString(16).padStart(2, '0'),
+        ).join('');
+
+      walletRef.current = { privateKey, address, secp256k1, keccak_256 };
+      setStep1Output(`Wallet created: ${address}`);
       setStep1Status('done');
     } catch (e: any) {
       setStep1Output(`Error: ${e.message}`);
@@ -105,18 +117,24 @@ export const InteractiveQuickstart = () => {
     setStep2Output('');
     try {
       const { Client, IdentifierKind } = await import('@xmtp/browser-sdk');
-      const { toBytes } = await import('viem');
-      const account = walletRef.current;
+      const { privateKey, address, secp256k1, keccak_256 } =
+        walletRef.current;
 
       const signer = {
         type: 'EOA' as const,
         getIdentifier: () => ({
-          identifier: account.address.toLowerCase(),
+          identifier: address.toLowerCase(),
           identifierKind: IdentifierKind.Ethereum,
         }),
         signMessage: async (message: string) => {
-          const signature = await account.signMessage({ message });
-          return toBytes(signature);
+          const prefix = `\x19Ethereum Signed Message:\n${message.length}`;
+          const prefixed = new TextEncoder().encode(prefix + message);
+          const hash = keccak_256(prefixed);
+          const sig = secp256k1.sign(hash, privateKey);
+          return new Uint8Array([
+            ...sig.toCompactRawBytes(),
+            sig.recovery + 27,
+          ]);
         },
       };
 
@@ -128,7 +146,7 @@ export const InteractiveQuickstart = () => {
       });
 
       clientRef.current = client;
-      setStep2Output(`Connected as ${account.address}`);
+      setStep2Output(`Connected as ${address}`);
       setStep2Status('done');
     } catch (e: any) {
       setStep2Output(`Error: ${e.message}`);
