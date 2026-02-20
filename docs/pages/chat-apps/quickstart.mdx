@@ -9,14 +9,78 @@ Send your first XMTP message and get a reply from an agent in under 5 minutes.
 
 This quickstart connects your app to a "gm" agent running on the XMTP `dev` network. You send a message, the agent replies "gm".
 
-<Tabs.Root defaultValue="browser">
+<Tabs.Root defaultValue="cli">
   <Tabs.List>
+    <Tabs.Trigger value="cli">CLI</Tabs.Trigger>
     <Tabs.Trigger value="browser">Browser</Tabs.Trigger>
     <Tabs.Trigger value="node">Node</Tabs.Trigger>
     <Tabs.Trigger value="react-native">React Native</Tabs.Trigger>
     <Tabs.Trigger value="android">Android</Tabs.Trigger>
     <Tabs.Trigger value="ios">iOS</Tabs.Trigger>
   </Tabs.List>
+
+  <Tabs.Content value="cli">
+
+## Install the CLI
+
+```bash
+npm install -g @xmtp/cli
+```
+
+## Generate your keys
+
+```bash
+xmtp init
+```
+
+This creates a wallet key, database encryption key, and saves them to `~/.xmtp/.env`:
+
+```
+XMTP_WALLET_KEY=0x...
+XMTP_DB_ENCRYPTION_KEY=...
+XMTP_ENV=dev
+```
+
+## Check your client
+
+```bash
+xmtp client info
+```
+
+You should see your address, inbox ID, and connection status.
+
+## Start a conversation with the gm agent
+
+```bash
+xmtp conversations create-dm 0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc
+```
+
+Copy the `id` from the output — you'll need it for the next steps.
+
+## Send a message
+
+Replace `<id>` with the conversation id from the previous step.
+
+```bash
+xmtp conversation send-text <id> "gm"
+```
+
+## Check for the reply
+
+```bash
+xmtp conversation messages <id> --sync
+```
+
+You should see your message and the agent's reply:
+
+```
+senderInboxId   content  sentAt
+--------------  -------  -------------------
+a1b2c3d4e5f6…   gm       2026-02-20 12:00:00
+f6e5d4c3b2a1…   gm       2026-02-20 12:00:01
+```
+
+  </Tabs.Content>
 
   <Tabs.Content value="browser">
 
