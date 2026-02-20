@@ -55,9 +55,13 @@ export const InteractiveQuickstart = () => {
 
   const walletRef = React.useRef<any>(null);
   const clientRef = React.useRef<any>(null);
+  const mountedRef = React.useRef(true);
 
   React.useEffect(() => {
     setMounted(true);
+    return () => {
+      mountedRef.current = false;
+    };
   }, []);
 
   if (!mounted) return null;
@@ -137,18 +141,22 @@ export const InteractiveQuickstart = () => {
       const maxAttempts = 20;
       for (let i = 0; i < maxAttempts; i++) {
         await new Promise((r) => setTimeout(r, 2000));
+        if (!mountedRef.current) return;
         await dm.sync();
         const messages = await dm.messages();
         const reply = messages.find(
           (m: any) => m.senderInboxId !== client.inboxId,
         );
         if (reply) {
-          setStep3Output(`You: gm\nAgent: ${reply.content}`);
-          setStep3Status('done');
+          if (mountedRef.current) {
+            setStep3Output(`You: gm\nAgent: ${reply.content}`);
+            setStep3Status('done');
+          }
           return;
         }
       }
 
+      if (!mountedRef.current) return;
       setStep3Output(
         'You: gm\nMessage sent successfully, but the agent hasn\'t replied yet.\nThe agent may be temporarily offline. Your message was delivered to the XMTP network.',
       );
