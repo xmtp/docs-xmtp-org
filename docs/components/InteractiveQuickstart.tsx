@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const AGENT_ADDRESS = '0x458dd9C5bf4d4E8f80Ba88923E3b94FD028CEe38';
+const AGENT_ADDRESS = '0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc';
 
 type StepStatus = 'idle' | 'running' | 'done' | 'error';
 
@@ -25,7 +25,7 @@ const signer = {
 };
 
 const client = await Client.create(signer, {
-  env: "production",
+  env: "dev",
   dbPath: null,
 });`;
 
@@ -100,10 +100,10 @@ export const InteractiveQuickstart = () => {
         },
       };
 
-      setStep2Output('Connecting to XMTP production network...');
+      setStep2Output('Connecting to XMTP dev network...');
 
       const client = await Client.create(signer, {
-        env: 'production',
+        env: 'dev',
         dbPath: null,
       });
 
@@ -123,7 +123,7 @@ export const InteractiveQuickstart = () => {
       const { IdentifierKind } = await import('@xmtp/browser-sdk');
       const client = clientRef.current;
 
-      setStep3Output('Creating conversation with agent...');
+      setStep3Output('Creating conversation with gm agent...');
 
       const dm = await client.conversations.createDmWithIdentifier({
         identifier: AGENT_ADDRESS,

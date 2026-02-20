@@ -6,7 +6,7 @@ import { InteractiveQuickstart } from '../../components/InteractiveQuickstart';
 
 Send your first XMTP message and get a reply from an agent in under 5 minutes.
 
-This quickstart connects your app to an agent running on the XMTP `production` network. You send a message, the agent replies.
+This quickstart connects your app to a "gm" agent running on the XMTP `dev` network. You send a message, the agent replies "gm".
 
 <Tabs.Root defaultValue="browser">
   <Tabs.List>
@@ -44,8 +44,8 @@ import { Client, IdentifierKind } from "@xmtp/browser-sdk";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { toBytes } from "viem";
 
-// An agent on the production network
-const AGENT_ADDRESS = "0x458dd9C5bf4d4E8f80Ba88923E3b94FD028CEe38";
+// The "gm" agent on the dev network
+const AGENT_ADDRESS = "0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc";
 
 const output = document.getElementById("output")!;
 function log(msg: string) {
@@ -72,18 +72,18 @@ async function main() {
     },
   };
 
-  log("Connecting to XMTP production network...");
+  log("Connecting to XMTP dev network...");
 
   // Create client with in-memory database (no OPFS needed)
   const client = await Client.create(signer, {
-    env: "production",
+    env: "dev",
     dbPath: null,
   });
 
   log(`Connected as ${account.address}`);
-  log(`Creating conversation with agent...`);
+  log(`Creating conversation with gm agent...`);
 
-  // Create a DM with the agent
+  // Create a DM with the gm agent
   const dm = await client.conversations.createDmWithIdentifier({
     identifier: AGENT_ADDRESS,
     identifierKind: IdentifierKind.Ethereum,
@@ -132,9 +132,9 @@ Open the URL shown in your terminal (usually `http://localhost:5173`). You shoul
 
 ```
 Creating ephemeral wallet...
-Connecting to XMTP production network...
+Connecting to XMTP dev network...
 Connected as 0x...
-Creating conversation with agent...
+Creating conversation with gm agent...
 You: gm
 Waiting for reply...
 Agent: gm
