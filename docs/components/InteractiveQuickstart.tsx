@@ -1,17 +1,23 @@
 import * as React from 'react';
 
+// The gm agent on the dev network — source at agents/hello-world/index.ts
 const AGENT_ADDRESS = '0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc';
 
 type StepStatus = 'idle' | 'running' | 'done' | 'error';
 
+// These code strings are displayed in the UI to show users what each step does.
+// They mirror the actual runtime code in the runStep functions below.
+
 const CODE_STEP_1 = `import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 
+// Generate an ephemeral wallet — no wallet extension needed
 const key = generatePrivateKey();
 const account = privateKeyToAccount(key);`;
 
 const CODE_STEP_2 = `import { Client, IdentifierKind } from "@xmtp/browser-sdk";
 import { toBytes } from "viem";
 
+// Create a signer that XMTP uses to authenticate your wallet
 const signer = {
   type: "EOA",
   getIdentifier: () => ({
@@ -24,19 +30,21 @@ const signer = {
   },
 };
 
+// Connect to XMTP with an in-memory database (no persistence needed for a demo)
 const client = await Client.create(signer, {
   env: "dev",
   dbPath: null,
 });`;
 
-const CODE_STEP_3 = `const dm = await client.conversations.createDmWithIdentifier({
+const CODE_STEP_3 = `// Start a DM conversation with the agent
+const dm = await client.conversations.createDmWithIdentifier({
   identifier: "${AGENT_ADDRESS}",
   identifierKind: IdentifierKind.Ethereum,
 });
 
 await dm.sendText("gm");
 
-// Poll for the agent's reply
+// Sync the conversation and check for new messages
 await dm.sync();
 const messages = await dm.messages();
 const reply = messages.find((m) => m.senderInboxId !== client.inboxId);
@@ -53,10 +61,13 @@ export const InteractiveQuickstart = () => {
   const [step2Output, setStep2Output] = React.useState('');
   const [step3Output, setStep3Output] = React.useState('');
 
+  // Refs persist across steps so step 2 can use the wallet from step 1, etc.
   const walletRef = React.useRef<any>(null);
   const clientRef = React.useRef<any>(null);
   const mountedRef = React.useRef(true);
 
+  // Mounted gate: render nothing on the server, only on the client.
+  // This avoids SSR issues with browser-only APIs (crypto, Web Workers).
   React.useEffect(() => {
     setMounted(true);
     return () => {
@@ -66,6 +77,8 @@ export const InteractiveQuickstart = () => {
 
   if (!mounted) return null;
 
+  // Step 1: Generate a throwaway wallet using viem.
+  // No network call — instant.
   const runStep1 = async () => {
     setStep1Status('running');
     setStep1Output('');
@@ -84,6 +97,9 @@ export const InteractiveQuickstart = () => {
     }
   };
 
+  // Step 2: Create an XMTP client using the wallet from step 1.
+  // This loads the browser SDK (Web Worker + WASM), creates a signer,
+  // and connects to the XMTP dev network. Takes a few seconds.
   const runStep2 = async () => {
     setStep2Status('running');
     setStep2Output('');
@@ -108,7 +124,7 @@ export const InteractiveQuickstart = () => {
 
       const client = await Client.create(signer, {
         env: 'dev',
-        dbPath: null,
+        dbPath: null, // In-memory database — no OPFS needed
       });
 
       clientRef.current = client;
@@ -120,6 +136,9 @@ export const InteractiveQuickstart = () => {
     }
   };
 
+  // Step 3: Send "gm" to the agent and poll for a reply.
+  // Creates a DM conversation, sends the message, then polls every 2s
+  // (up to 40s total) for the agent's response.
   const runStep3 = async () => {
     setStep3Status('running');
     setStep3Output('');
@@ -137,7 +156,7 @@ export const InteractiveQuickstart = () => {
       await dm.sendText('gm');
       setStep3Output('You: gm\nWaiting for reply...');
 
-      // Poll for the agent's reply
+      // Poll for the agent's reply (sync + check messages each iteration)
       const maxAttempts = 20;
       for (let i = 0; i < maxAttempts; i++) {
         await new Promise((r) => setTimeout(r, 2000));
@@ -307,6 +326,7 @@ export const InteractiveQuickstart = () => {
   );
 };
 
+// Renders a single step: header, code block, run button, and output.
 function Step({
   number,
   title,
