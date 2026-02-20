@@ -14,6 +14,7 @@ export default defineConfig({
       },
     },
   },
+  aiCta: false,
   theme: {
     accentColor: {
       // Primary indigo button colors
