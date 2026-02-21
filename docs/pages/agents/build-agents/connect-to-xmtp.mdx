@@ -1,3 +1,5 @@
+import { KeyGenerator } from '../../../components/KeyGenerator';
+
 # Connect your agent to XMTP
 
 You have an agent, or an idea for one. Maybe it's powered by Claude, maybe it's a rules engine, maybe it's a trading algorithm. This tutorial shows you how to connect your agent to the XMTP network so that anyone can message it from any XMTP-compatible app.
@@ -50,10 +52,10 @@ This separation matters. Swapping the brain (say, from a Q&A assistant to a trad
 - **Node.js 22+** (required by the XMTP Agent SDK)
 - **An Anthropic API key** from [console.anthropic.com](https://console.anthropic.com/)
 - **Basic TypeScript knowledge** (we will explain the XMTP-specific parts)
-- **An Ethereum wallet private key** — the agent needs an identity on the network. Any hex private key works. Don't have one? Use the [local key generator](/agents/get-started/build-an-agent#local-key-generator) to create one in your browser.
+- **An Ethereum wallet private key** — the agent needs an identity on the network. Any hex private key works. You'll generate one in Step 1.
 
 :::tip
-Using Claude Code or another AI coding assistant? The XMTP Agent SDK has [Claude Code skills](/agents/get-started/build-with-llms#claude-code-skills) that can scaffold, deploy, and troubleshoot your agent project directly from your IDE.
+Using Claude Code or another AI coding assistant? The XMTP Agent SDK has [Claude Code skills](/agents/get-started/build-with-llms#claude-code-skills) that can scaffold, deploy, and troubleshoot your agent project directly from your terminal.
 :::
 
 ## Step 1: Scaffold the project
@@ -66,10 +68,7 @@ cd my-xmtp-agent
 git init
 ```
 
-Create `package.json`. Two fields to note:
-
-- `"type": "module"`: Tells Node.js to treat files as ES modules so `import`/`export` syntax works. Without it, Node defaults to CommonJS (`require`/`module.exports`) and the Agent SDK won't load.
-- `"engines": { "node": ">=22" }`: The Agent SDK depends on Node 22+ features.
+Create `package.json`. Note the `"engines"` field. The Agent SDK requires Node 22+.
 
 ```json
 {
@@ -131,6 +130,19 @@ XMTP_DB_ENCRYPTION_KEY=...    # A 32-byte hex key for encrypting the local datab
 XMTP_ENV=dev                  # dev, production, or local
 ANTHROPIC_API_KEY=sk-ant-...  # Your Claude API key
 ```
+
+Generate your keys and copy them into `.env`:
+
+<KeyGenerator />
+
+Or generate them from the command line:
+
+```bash
+node -e "console.log('XMTP_WALLET_KEY=0x' + require('crypto').randomBytes(32).toString('hex'))"
+node -e "console.log('XMTP_DB_ENCRYPTION_KEY=0x' + require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Both approaches do the same thing: generate 32 cryptographically random bytes and format them as a hex string with a `0x` prefix.
 
 Make sure `.env` is in your `.gitignore` so you don't accidentally commit secrets.
 
@@ -195,7 +207,7 @@ That is the entire brain. It takes an input string, sends it to Claude with your
 Now add the XMTP layer — the part that lets your agent send and receive messages. This section has nothing to do with AI. It is pure messaging infrastructure.
 
 ```tsx
-import { Agent, CommandRouter } from "@xmtp/agent-sdk";
+import { Agent } from "@xmtp/agent-sdk";
 
 // ---------------------------------------------------------------------------
 // 2. THE MESSAGING FRAMEWORK -- XMTP Agent SDK
@@ -213,29 +225,6 @@ That single line does a lot of work:
 - Reads `XMTP_ENV` to know which XMTP network to connect to
 - Creates the local database directory if needed
 - Sets up the XMTP client with proper authentication
-
-Next, set up a command router. This is middleware that intercepts messages starting with `/` and handles them before they reach your main message handler:
-
-```tsx
-const router = new CommandRouter({ helpCommand: "/help" });
-
-router.command("/help", "Show help message", async (ctx) => {
-  await ctx.conversation.sendText(
-    `[REPLACE: Your agent name]
-
-[REPLACE: A short description of what your agent does.]
-
-Commands:
-  /help - this message
-
-Powered by XMTP`,
-  );
-});
-
-agent.use(router.middleware());
-```
-
-The `CommandRouter` is optional but useful. It intercepts slash commands before they reach your agent's brain. When someone sends `/help`, the router handles it directly. All other messages pass through to the next handler.
 
 ## Step 4: Wire them together (the glue)
 
@@ -295,7 +284,7 @@ Here is the entire `src/index.ts`:
 ```tsx
 import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
-import { Agent, CommandRouter } from "@xmtp/agent-sdk";
+import { Agent } from "@xmtp/agent-sdk";
 
 // ---------------------------------------------------------------------------
 // 1. THE BRAIN -- Your AI logic
@@ -329,23 +318,6 @@ async function think(input: string): Promise<string> {
 // ---------------------------------------------------------------------------
 
 const agent = await Agent.createFromEnv();
-
-const router = new CommandRouter({ helpCommand: "/help" });
-
-router.command("/help", "Show help message", async (ctx) => {
-  await ctx.conversation.sendText(
-    `[REPLACE: Your agent name]
-
-[REPLACE: A short description of what your agent does.]
-
-Commands:
-  /help - this message
-
-Powered by XMTP`,
-  );
-});
-
-agent.use(router.middleware());
 
 // ---------------------------------------------------------------------------
 // 3. THE GLUE -- Connect incoming messages to the brain, send responses back
@@ -391,8 +363,6 @@ Agent is online
 ```
 
 Open the chat link in your browser (or use any XMTP-compatible app) and send a message. You should get a response based on your system prompt.
-
-Try sending `/help` to test the command router.
 
 During development, you can use watch mode to auto-restart on changes:
 
@@ -481,7 +451,25 @@ railway up
 
 NOTE: Use `XMTP_ENV=production` when you want the agent to be reachable from production XMTP apps (xmtp.chat, etc.). The `dev` network is a separate network for testing.
 
-Railway preserves the filesystem across redeploys by default, which means the XMTP database persists. This is important. See the troubleshooting section on persistent storage.
+### Configure persistent storage
+
+Railway's filesystem is ephemeral by default — without a volume, the XMTP database is lost on every redeploy, and each restart creates a new installation (you're limited to 10 per inbox).
+
+Add a volume and point the agent at it:
+
+```bash
+# Add a volume mounted at /app/data inside the container
+railway volume add --mount-path /app/data
+
+# Tell the agent to store its database there
+railway variables set XMTP_DB_DIRECTORY=/app/data
+```
+
+Redeploy to pick up the changes:
+
+```bash
+railway up
+```
 
 ## Tips and troubleshooting
 
@@ -522,25 +510,23 @@ You won't lose message. Message history lives on the XMTP network and will sync 
 
 ### Docker needs ca-certificates
 
-The `node:22-slim` Docker image does not include CA certificates. Without them, gRPC/TLS connections to the XMTP network fail silently with an unhelpful error:
+The `node:22-slim` Docker image does not include CA certificates. Without them, gRPC/TLS connections to the XMTP network fail with:
 
 ```
 [Error: transport error] { code: 'GenericFailure' }
 ```
 
-The fix is a single line in the Dockerfile:
+This means the container can't verify TLS certificates for the XMTP network. The fix is a single line in the Dockerfile:
 
 ```dockerfile
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 ```
 
-If you see `transport error` or `GenericFailure` in a Docker environment, check CA certificates first.
-
 ### Persistent storage is critical
 
 Every time the agent starts without its previous database files, it creates a new XMTP installation. You are limited to **10 installations per inbox**. If you exceed that limit by redeploying without persistence, the agent will stop working.
 
-- **Railway**: Data persists across redeploys by default. You are fine out of the box.
+- **Railway**: Configure a volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/data`).
 - **Fly.io**: Use a mounted volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/data`).
 - **Other platforms**: Make sure the directory containing `xmtp-*.db3*` files survives restarts and redeploys.
 

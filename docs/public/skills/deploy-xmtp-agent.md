@@ -48,7 +48,7 @@ Check logs with `railway service logs`. A successful start shows the agent addre
 
 ## Persistent storage
 
-Each new XMTP installation counts toward a 10-installation-per-inbox limit. Railway preserves data across redeploys by default. Other platforms may require manual volume configuration and setting `XMTP_DB_DIRECTORY`.
+Each new XMTP installation counts toward a 10-installation-per-inbox limit. Railway's filesystem is ephemeral by default — configure a volume and set `XMTP_DB_DIRECTORY` to the mount path so the database persists across redeploys. The same applies to other platforms like Fly.io.
 
 ## Troubleshooting
 
