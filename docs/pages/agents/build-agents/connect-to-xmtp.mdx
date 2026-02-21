@@ -92,10 +92,10 @@ Install the dependencies:
 
 ```bash
 # Runtime dependencies
-yarn add @xmtp/agent-sdk @anthropic-ai/sdk dotenv
+npm install @xmtp/agent-sdk @anthropic-ai/sdk dotenv
 
 # Dev tools (not needed at runtime)
-yarn add -D typescript tsx @types/node
+npm install -D typescript tsx @types/node
 ```
 
 - `@xmtp/agent-sdk`: Connects your agent to the XMTP network for messaging
@@ -367,7 +367,7 @@ Open the chat link in your browser (or use any XMTP-compatible app) and send a m
 During development, you can use watch mode to auto-restart on changes:
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 ## Step 6: Deploy to Railway
@@ -526,8 +526,8 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 
 Every time the agent starts without its previous database files, it creates a new XMTP installation. You are limited to **10 installations per inbox**. If you exceed that limit by redeploying without persistence, the agent will stop working.
 
-- **Railway**: Configure a volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/data`).
-- **Fly.io**: Use a mounted volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/data`).
+- **Railway**: Configure a volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/app/data`).
+- **Fly.io**: Use a mounted volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/app/data`).
 - **Other platforms**: Make sure the directory containing `xmtp-*.db3*` files survives restarts and redeploys.
 
 Also make sure you keep the same `XMTP_DB_ENCRYPTION_KEY` across deploys. A new encryption key means the agent cannot read its existing database, which forces a new installation.
