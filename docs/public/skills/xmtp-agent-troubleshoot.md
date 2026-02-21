@@ -27,6 +27,10 @@ Encryption key mismatch with existing database. Either keep `XMTP_DB_ENCRYPTION_
 
 Limit is 10 installations per inbox. Set `XMTP_DB_DIRECTORY` to a persistent path per deployment environment. Revoke extras via `Client.revokeInstallations()`.
 
+## Association error: Missing identity update
+
+Caused by switching `XMTP_ENV` (e.g., dev → production) without clearing the database. The dev and production networks have separate identity registries. Fix: delete `xmtp-*.db3*` files or use a separate `XMTP_DB_DIRECTORY` per environment.
+
 ## Infinite loops (raw SDK)
 
 Filter self-messages manually:

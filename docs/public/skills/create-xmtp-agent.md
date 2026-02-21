@@ -43,9 +43,16 @@ project/
 ```
 
 **Install dependencies:**
-- `@xmtp/agent-sdk` + `dotenv` + `tsx` (always)
-- `@anthropic-ai/sdk` (Claude brain)
-- `openai` (OpenAI brain)
+
+```bash
+# Always needed
+npm install @xmtp/agent-sdk dotenv
+npm install -D typescript tsx @types/node
+
+# Add one of these depending on the brain:
+npm install @anthropic-ai/sdk    # Claude brain
+npm install openai               # OpenAI brain
+```
 
 ## .env.example
 
@@ -62,7 +69,7 @@ XMTP_DB_DIRECTORY=
 ```typescript
 import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
-import { Agent, CommandRouter } from "@xmtp/agent-sdk";
+import { Agent } from "@xmtp/agent-sdk";
 
 // 1. BRAIN — your agent's logic
 const anthropic = new Anthropic();
@@ -81,11 +88,6 @@ async function think(input: string): Promise<string> {
 
 // 2. MESSAGING FRAMEWORK — connects your agent to XMTP
 const agent = await Agent.createFromEnv();
-const router = new CommandRouter({ helpCommand: "/help" });
-router.command("/help", "Show help", async (ctx) => {
-  await ctx.conversation.sendText("[REPLACE: Your help message here]");
-});
-agent.use(router.middleware());
 
 // 3. GLUE — wires messages to the brain and back
 agent.on("text", async (ctx) => {
@@ -132,7 +134,6 @@ Replace the brain section with:
 ```typescript
 function think(input: string): string {
   const lower = input.toLowerCase().trim();
-  if (lower.startsWith("/")) return `Unknown command: ${lower}`;
   // [REPLACE: Add your rules/logic here]
   return "I received your message.";
 }
@@ -149,8 +150,8 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 
 WORKDIR /app
 
-COPY package.json package-lock.json* yarn.lock* ./
-RUN npm install || yarn install --immutable
+COPY package.json package-lock.json* ./
+RUN npm install
 
 COPY src ./src
 COPY tsconfig.json ./
