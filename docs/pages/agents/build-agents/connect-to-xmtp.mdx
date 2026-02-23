@@ -1,0 +1,645 @@
+import { KeyGenerator } from '../../../components/KeyGenerator';
+
+# Connect your agent to XMTP
+
+You have an agent, or an idea for one. Maybe it's powered by Claude, maybe it's a rules engine, maybe it's a trading algorithm. This tutorial shows you how to connect your agent to the XMTP network so that anyone can message it from any XMTP-compatible app.
+
+The XMTP Agent SDK is not an agent framework. It doesn't make decisions, call APIs, or manage state. It is a messaging framework that gives your agent the ability to send and receive encrypted messages over XMTP.
+
+Your agent provides the brain. The SDK provides the network connection.
+
+By the end, you will have a working agent deployed to the cloud that receives messages over XMTP, processes them with your chosen brain (here, Claude), and sends responses back.
+
+## Three-layer architecture
+
+Every agent that communicates over XMTP has the same basic structure:
+
+1. **The brain** is your agent, the logic that determines what it says and does. Here, it is Claude with a system prompt. It could just as easily be OpenAI, a rules engine, or a trading algorithm. The brain doesn't need to know anything about messaging.
+2. **The messaging framework** is provided by the XMTP Agent SDK. It connects your agent to the XMTP network so it can exchange secure, encrypted messages with users, whether they are humans or other agents. The SDK knows nothing about AI or your agent's logic.
+3. **The glue** is the small amount of code you write to connect the brain and the messaging framework.
+
+```
+┌─────────────────────────────────────────────┐
+│                YOUR AGENT                   │
+│                                             │
+│  ┌───────────────────────────────────────┐  │
+│  │            1. THE BRAIN               │  │
+│  │  Your AI / logic                      │  │
+│  │  (decides what to say)                │  │
+│  └─────────────────▲─────────────────────┘  │
+│                    │                        │
+│  ┌─────────────────▼─────────────────────┐  │
+│  │           3. THE GLUE                 │  │
+│  │  a. Get message from XMTP             │  │
+│  │  b. Send message to brain             │  │
+│  │  c. Get response from brain           │  │
+│  │  d. Send response back to XMTP        │  │
+│  └─────────────────▲─────────────────────┘  │
+│                    │                        │
+│  ┌─────────────────▼─────────────────────┐  │
+│  │      2. THE MESSAGING FRAMEWORK       │  │
+│  │  XMTP Agent SDK                       │  │
+│  │  (encrypted send/receive over XMTP)   │  │
+│  └───────────────────────────────────────┘  │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+This separation matters. Swapping the brain (say, from a Q&A assistant to a trading advisor) doesn't require changing the messaging layer. The SDK doesn't know what your agent does. It just delivers messages securely.
+
+## Prerequisites
+
+- **Node.js 22+** (required by the XMTP Agent SDK)
+- **An Anthropic API key** from [console.anthropic.com](https://console.anthropic.com/)
+- **Basic TypeScript knowledge** (we will explain the XMTP-specific parts)
+- **An Ethereum wallet private key** — the agent needs an identity on the network. Any hex private key works. You'll generate one in Step 1.
+
+:::tip
+Using Claude Code or another AI coding assistant? The XMTP Agent SDK has [Claude Code skills](/agents/get-started/build-with-llms#claude-code-skills) that can help scaffold, deploy, and troubleshoot your agent project directly from your terminal.
+:::
+
+## Step 1: Scaffold the project
+
+Create a new directory and initialize the project:
+
+```bash
+mkdir my-xmtp-agent
+cd my-xmtp-agent
+git init
+```
+
+Create `package.json`. Note the `"engines"` field. The Agent SDK requires Node 22+.
+
+```json
+{
+  "name": "my-xmtp-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx --watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
+```
+
+Install the dependencies:
+
+```bash
+# Runtime dependencies
+npm install @xmtp/agent-sdk @anthropic-ai/sdk dotenv
+
+# Dev tools (not needed at runtime)
+npm install -D typescript tsx @types/node
+```
+
+- `@xmtp/agent-sdk`: Connects your agent to the XMTP network for messaging
+- `@anthropic-ai/sdk`: Your agent's brain (Claude)
+- `dotenv`: Loads environment variables from a `.env` file
+- `tsx`: Runs TypeScript files directly
+
+Create `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "ESNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts"]
+}
+```
+
+Now create the `.env` file. This holds the secrets the agent needs at runtime:
+
+```
+# .env
+XMTP_WALLET_KEY=0x...         # Your agent's Ethereum private key (must have 0x prefix)
+XMTP_DB_ENCRYPTION_KEY=0x...  # A 32-byte hex key for encrypting the local database (must have 0x prefix)
+XMTP_ENV=dev                  # dev, production, or local
+ANTHROPIC_API_KEY=sk-ant-...  # Your Claude API key
+```
+
+Generate your keys and copy them into `.env`:
+
+<KeyGenerator />
+
+Or generate them from the command line:
+
+```bash
+node -e "console.log('XMTP_WALLET_KEY=0x' + require('crypto').randomBytes(32).toString('hex'))"
+node -e "console.log('XMTP_DB_ENCRYPTION_KEY=0x' + require('crypto').randomBytes(32).toString('hex'))"
+```
+
+Both approaches do the same thing: generate 32 cryptographically random bytes and format them as a hex string with a `0x` prefix.
+
+Make sure `.env` is in your `.gitignore` so you don't accidentally commit secrets.
+
+Finally, create the source directory:
+
+```bash
+mkdir src
+```
+
+## Step 2: Build the brain
+
+Open `src/index.ts` and start with the brain—your agent's actual logic. This section has nothing to do with XMTP. It is pure AI.
+
+```tsx
+import "dotenv/config";
+import Anthropic from "@anthropic-ai/sdk";
+
+// ---------------------------------------------------------------------------
+// 1. THE BRAIN -- Your AI logic
+// ---------------------------------------------------------------------------
+
+const anthropic = new Anthropic();
+```
+
+The Anthropic SDK reads `ANTHROPIC_API_KEY` from the environment automatically. No configuration needed.
+
+Next, define the system prompt. This is the personality file for your agent. Everything about how your agent behaves is controlled here:
+
+```tsx
+const SYSTEM_PROMPT = `[REPLACE: Your agent's personality and instructions go here.
+
+For example:
+- A customer service agent: "You are a helpful support agent for Acme Corp..."
+- A language tutor: "You are a patient French tutor..."
+- A trading advisor: "You are a cryptocurrency analyst..."
+
+Be specific about the tone, constraints, and format of responses.]`;
+```
+
+The system prompt is the most important part of the agent's identity. Want a different kind of agent? Change the system prompt. The rest of the code stays the same.
+
+Now write the function that sends a message to Claude and gets back a response:
+
+```tsx
+async function think(input: string): Promise<string> {
+  const response = await anthropic.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1024,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: "user", content: input }],
+  });
+
+  const block = response.content[0];
+  return block?.type === "text" ? block.text : "Sorry, I couldn't process that.";
+}
+```
+
+That is the entire brain. It takes an input string, sends it to Claude with your system prompt, and returns the response. If something unexpected happens with the response format, it returns a fallback message.
+
+## Step 3: Connect to XMTP
+
+Now add the XMTP layer. This is the part that lets your agent send and receive messages. This section has nothing to do with AI. It is pure messaging infrastructure.
+
+```tsx
+import { Agent } from "@xmtp/agent-sdk";
+
+// ---------------------------------------------------------------------------
+// 2. THE MESSAGING FRAMEWORK -- XMTP Agent SDK
+// ---------------------------------------------------------------------------
+
+// createFromEnv() reads XMTP_WALLET_KEY, XMTP_DB_ENCRYPTION_KEY, and XMTP_ENV
+// from process.env and handles all key format normalization automatically.
+const agent = await Agent.createFromEnv();
+```
+
+That single line does a lot of work:
+
+- Reads `XMTP_WALLET_KEY` from the environment and normalizes the hex format
+- Reads `XMTP_DB_ENCRYPTION_KEY` for local database encryption
+- Reads `XMTP_ENV` to know which XMTP network to connect to
+- Creates the local database directory if needed
+- Sets up the XMTP client with proper authentication
+- **Registers the agent's identity on the XMTP network** if it doesn't already exist
+
+That last point is important. Before an address can send or receive messages on XMTP, it must be registered on the network. For human users, this happens when they open an XMTP app and sign with their wallet. For agents, `createFromEnv()` handles this automatically — it uses the private key to sign programmatically, no human interaction needed.
+
+This means you can't message your agent's address until the agent has started at least once. If you try to message a fresh address before starting the agent, the address won't be found on the network.
+
+## Step 4: Wire them together (the glue)
+
+This is the smallest section, and that is the point. When the brain and messaging framework are properly separated, the glue is trivial:
+
+```tsx
+// ---------------------------------------------------------------------------
+// 3. THE GLUE -- Connect incoming messages to the brain, send responses back
+// ---------------------------------------------------------------------------
+
+agent.on("text", async (ctx) => {
+  const input = ctx.message.content;
+  console.log(`Received: "${input}"`);
+
+  const response = await think(input);
+  console.log(`Response: "${response}"`);
+
+  await ctx.conversation.sendText(response);
+});
+```
+
+Three lines of actual logic:
+
+1. Get the incoming message from the messaging framework via `ctx.message.content`
+2. Pass it to the brain via `think()`
+3. Send the brain's response back through the messaging framework via `ctx.conversation.sendText()`
+
+The `agent.on("text", ...)` handler fires for every incoming text message. The SDK handles several things automatically so your brain doesn't have to deal with them:
+
+- **Self-message filtering**: The agent will not respond to its own messages
+- **Content type routing**: `"text"` only fires for text messages, not reactions or other types
+- **Conversation lookup**: `ctx.conversation` is already resolved and ready to use
+- **Decryption**: Messages arrive already decrypted
+
+Finally, add event handlers for lifecycle events and start the agent:
+
+```tsx
+agent.on("start", () => {
+  console.log("Agent is online");
+  console.log(`  Address: ${agent.address}`);
+  console.log(`  Chat: http://xmtp.chat/dm/${agent.address}`);
+});
+
+agent.on("unhandledError", (error) => {
+  console.error("Error:", error);
+});
+
+await agent.start();
+```
+
+The `"start"` event fires once the agent is connected to the XMTP network and listening for messages. We log the agent's address and a direct link to chat with it. The `"unhandledError"` event catches any errors that are not handled elsewhere.
+
+## The complete file
+
+Here is the entire `src/index.ts`:
+
+```tsx
+import "dotenv/config";
+import Anthropic from "@anthropic-ai/sdk";
+import { Agent } from "@xmtp/agent-sdk";
+
+// ---------------------------------------------------------------------------
+// 1. THE BRAIN -- Your AI logic
+// ---------------------------------------------------------------------------
+
+const anthropic = new Anthropic();
+
+const SYSTEM_PROMPT = `[REPLACE: Your agent's personality and instructions go here.
+
+For example:
+- A customer service agent: "You are a helpful support agent for Acme Corp..."
+- A language tutor: "You are a patient French tutor..."
+- A trading advisor: "You are a cryptocurrency analyst..."
+
+Be specific about the tone, constraints, and format of responses.]`;
+
+async function think(input: string): Promise<string> {
+  const response = await anthropic.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1024,
+    system: SYSTEM_PROMPT,
+    messages: [{ role: "user", content: input }],
+  });
+
+  const block = response.content[0];
+  return block?.type === "text" ? block.text : "Sorry, I couldn't process that.";
+}
+
+// ---------------------------------------------------------------------------
+// 2. THE MESSAGING FRAMEWORK -- XMTP Agent SDK
+// ---------------------------------------------------------------------------
+
+const agent = await Agent.createFromEnv();
+
+// ---------------------------------------------------------------------------
+// 3. THE GLUE -- Connect incoming messages to the brain, send responses back
+// ---------------------------------------------------------------------------
+
+agent.on("text", async (ctx) => {
+  const input = ctx.message.content;
+  console.log(`Received: "${input}"`);
+
+  const response = await think(input);
+  console.log(`Response: "${response}"`);
+
+  await ctx.conversation.sendText(response);
+});
+
+agent.on("start", () => {
+  console.log("Agent is online");
+  console.log(`  Address: ${agent.address}`);
+  console.log(`  Chat: http://xmtp.chat/dm/${agent.address}`);
+});
+
+agent.on("unhandledError", (error) => {
+  console.error("Error:", error);
+});
+
+await agent.start();
+```
+
+## Step 5: Test locally
+
+Start the agent:
+
+```bash
+npx tsx src/index.ts
+```
+
+You should see output like:
+
+```
+Agent is online
+  Address: 0x1234...abcd
+  Chat: http://xmtp.chat/dm/0x1234...abcd
+```
+
+Open the chat link in your browser (or use any XMTP-compatible app) and send a message. You should get a response based on your system prompt.
+
+During development, you can use watch mode to auto-restart on changes:
+
+```bash
+npm run dev
+```
+
+## Step 6: Deploy to Railway
+
+The agent is a long-running process (not a web server), so you need a platform that supports worker services. Railway is one option that works well for this.
+
+### Create the Dockerfile
+
+```dockerfile
+FROM node:22-slim
+
+# Install CA certificates for TLS/gRPC connections
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy source
+COPY src ./src
+COPY tsconfig.json ./
+
+# The agent is a long-running process, not a web server
+CMD ["npm", "start"]
+```
+
+The `ca-certificates` line is critical. See the troubleshooting section below for why.
+
+### Create .dockerignore
+
+Keep the Docker build context clean:
+
+```
+node_modules
+*.db3*
+old_db_backup
+.env
+```
+
+### Create railway.json
+
+```json
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile",
+    "buildCommand": null
+  },
+  "deploy": {
+    "startCommand": null,
+    "healthcheckPath": null,
+    "healthcheckTimeout": null,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
+```
+
+### Deploy
+
+```bash
+# Install Railway CLI if you haven't
+npm install -g @railway/cli
+
+# Log in and initialize
+railway login
+railway init
+
+# Deploy (this creates the service)
+railway up
+```
+
+The first deploy creates the service but it will crash because there are no environment variables yet. That's expected. Now link to the service and configure it:
+
+```bash
+# Link to the service so you can set variables
+railway link
+
+# Set the environment variables
+railway variables set XMTP_WALLET_KEY=0x...
+railway variables set XMTP_DB_ENCRYPTION_KEY=0x...
+railway variables set XMTP_ENV=production
+railway variables set ANTHROPIC_API_KEY=sk-ant-...
+
+# Add persistent storage (see below for why this matters)
+railway volume add --mount-path /app/data
+railway variables set XMTP_DB_DIRECTORY=/app/data
+
+# Redeploy with the new configuration
+railway up
+```
+
+:::tip
+Use `XMTP_ENV=production` when you want the agent to be reachable from production XMTP apps (xmtp.chat, etc.). The `dev` network is a separate network for testing.
+:::
+
+### Why persistent storage matters
+
+Railway's filesystem is ephemeral by default. Without a volume, the XMTP database is lost on every redeploy, and each restart creates a new installation (you're limited to 10 per inbox).
+
+Redeploy to pick up the changes:
+
+```bash
+railway up
+```
+
+## Tips and troubleshooting
+
+### Wallet key must have 0x prefix
+
+`Agent.createFromEnv()` requires the wallet private key in hex format with the `0x` prefix. Without it, you will see:
+
+```
+AgentError: XMTP_WALLET_KEY env is not in hex (0x) format
+```
+
+Make sure the `XMTP_WALLET_KEY` looks like `0xabc123...`, not just `abc123...`.
+
+### Use createFromEnv(), not manual setup
+
+The `Agent.createFromEnv()` factory method handles several things you would otherwise need to do yourself:
+
+- Key format normalization (hex parsing, `0x` prefix handling)
+- Encryption key parsing from environment variables
+- Environment variable reading with proper defaults
+- Database directory creation
+
+Do not manually wire `Agent.create()` unless you have a specific reason. `createFromEnv()` is the happy path.
+
+### Delete old database files when upgrading SDK versions
+
+If you upgrade from one major version of `@xmtp/agent-sdk` to another (e.g., v1.x to v2.x), the local database format may be incompatible. You will get errors on startup.
+
+The fix: delete all `xmtp-*.db3*` files and start fresh:
+
+```bash
+rm -f xmtp-*.db3*
+```
+
+You won't lose messages. Message history lives on the XMTP network and will sync back down. However, deleting the database forces a new XMTP installation, which counts against the limit of 10 per inbox (see the next two tips). Only delete when necessary, like after a major SDK upgrade.
+
+### Switching between dev and production requires a fresh database
+
+The dev and production XMTP networks have completely separate identity registries. A database created on dev won't work on production. If you switch `XMTP_ENV` without clearing the database, you'll see:
+
+```
+[Error: Association error: Missing identity update] { code: 'GenericFailure' }
+```
+
+The fix: use a separate database directory per environment, or delete the old database files before switching:
+
+```bash
+rm -f xmtp-*.db3*
+```
+
+If you're using `XMTP_DB_DIRECTORY` on a deployment platform, point it at a different path (e.g., `/app/data/production` vs `/app/data/dev`).
+
+### Docker needs ca-certificates
+
+The `node:22-slim` Docker image does not include CA certificates. Without them, gRPC/TLS connections to the XMTP network fail with:
+
+```
+[Error: transport error] { code: 'GenericFailure' }
+```
+
+This means the container can't verify TLS certificates for the XMTP network. The fix is a single line in the Dockerfile:
+
+```dockerfile
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+```
+
+### Persistent storage is critical
+
+Every time the agent starts without its previous database files, it creates a new XMTP installation. You are limited to **10 installations per inbox**. If you exceed that limit by redeploying without persistence, the agent will stop working.
+
+- **Railway**: Configure a volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/app/data`).
+- **Fly.io**: Use a mounted volume and set `XMTP_DB_DIRECTORY` to the mount path (e.g., `/app/data`).
+- **Other platforms**: Make sure the directory containing `xmtp-*.db3*` files survives restarts and redeploys.
+
+Also make sure you keep the same `XMTP_DB_ENCRYPTION_KEY` across deploys. A new encryption key means the agent cannot read its existing database, which forces a new installation.
+
+### Installation limit warnings
+
+If you see messages like "You have N installations" in the logs, it means the agent has been creating new XMTP installations instead of reusing its existing one. This happens when:
+
+- Database files are deleted between deploys
+- The encryption key changes
+- You deploy to a new environment without migrating the database
+
+Fix: Ensure the database directory and encryption key persist across deploys.
+
+### The system prompt is your agent
+
+The most impactful change you can make is changing the system prompt. That is where your agent lives. The XMTP connection and Claude API calls stay identical regardless of what the agent does.
+
+A customer service agent:
+
+```tsx
+const SYSTEM_PROMPT = `You are a helpful customer service representative for Acme Corp...`;
+```
+
+A trading advisor:
+
+```tsx
+const SYSTEM_PROMPT = `You are a cryptocurrency trading analyst. Given a token name, provide a brief risk assessment...`;
+```
+
+A language tutor:
+
+```tsx
+const SYSTEM_PROMPT = `You are a patient French tutor. Respond in French with English translations...`;
+```
+
+Same messaging framework, same glue, different brain.
+
+## Next steps: Change the brain
+
+The simplest customization is changing the system prompt. But you can also swap out the entire brain.
+
+To use OpenAI instead of Claude, replace the `think` function:
+
+```tsx
+import OpenAI from "openai";
+
+const openai = new OpenAI();
+
+async function think(input: string): Promise<string> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: input },
+    ],
+  });
+  return response.choices[0].message.content ?? "Sorry, I couldn't process that.";
+}
+```
+
+Or skip AI entirely and use simple rules:
+
+```tsx
+async function think(input: string): Promise<string> {
+  const lower = input.toLowerCase();
+  if (lower.includes("hello") || lower.includes("hi")) {
+    return "Hello! How can I help you today?";
+  }
+  if (lower.includes("help")) {
+    return "I can answer questions about our product. What would you like to know?";
+  }
+  return "I'm not sure how to help with that. Try asking a specific question.";
+}
+```
+
+The XMTP connection and glue stay the same. Only the brain changes. The Agent SDK is just the messaging layer.
+
+## Vibe coding
+
+To make it easier for you to build with XMTP using LLMs and coding assistants, we offer a docs MCP server and use case-based llms.txt files. To learn more, see [Use XMTP documentation with AI coding assistants](/agents/get-started/build-with-llms).
+
+## Debug and deploy
+
+- [Debug an agent](/agents/deploy/debug-agents)
+- [Deploy an agent](/agents/deploy/deploy-agent)
+
+## Agent examples
+
+Visit the [examples](https://github.com/xmtplabs/xmtp-agent-examples) repository for more agent examples.
