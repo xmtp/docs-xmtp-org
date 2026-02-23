@@ -18,7 +18,10 @@
     "spell": "cspell"
   },
   "dependencies": {
+    "@noble/curves": "^1.9.0",
+    "@noble/hashes": "^1.8.0",
     "@radix-ui/react-tabs": "^1.1.13",
+    "@xmtp/browser-sdk": "^6.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "mermaid": "^11.9.0",
     "react": "^19.0.0",

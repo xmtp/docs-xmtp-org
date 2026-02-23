@@ -1,143 +1,15 @@
-import { KeyGenerator } from '../../../components/KeyGenerator';
+import { InteractiveAgentDemo } from '../../../components/InteractiveAgentDemo';
 
-# Build XMTP agents
+# Try an agent
 
-Use the [XMTP Agent SDK](https://www.npmjs.com/package/@xmtp/agent-sdk) to build agents that interact with the XMTP network.
+Chat with Agent Frostbeard, an agent powered by Claude AI. The messages you exchange with the agent are end-to-end encrypted using the IETF-standard MLS (Messaging Layer Security).
 
-The following instructions walk you through setting up a project from scratch. If you'd prefer to skip the setup, you can start directly from the [agent-sdk-starter](https://github.com/xmtp/agent-sdk-starter) template.
+<InteractiveAgentDemo />
 
-## Prerequisites
+By building with XMTP, you automatically get the security and privacy guarantees of a messaging standard trusted by Google, AWS, and Wire, to name a few other adopters.
 
-Install a [Node.js LTS release](https://nodejs.org/) and run the following commands to get started:
+## Build your own
 
-```bash
-# Create a folder for your agent code
-mkdir my-agent
-cd my-agent
+Ready to build an agent like this? Follow the step-by-step tutorial to connect your own AI agent to XMTP from scaffolding to deployment.
 
-# Initialize a new project with ES module support
-npm init --init-type=module -y
-
-# Install TypeScript as development dependency (-D)
-npm i -D typescript
-
-# Install tsx to run TypeScript files directly
-# without a separate build step
-npm i -D tsx
-
-# Install Node.js type definitions
-# to enable TypeScript support for built-in APIs
-npm i -D @types/node
-```
-
-Once complete, you can run your TypeScript code using `tsx src/your-code.ts`.
-
-## Installation
-
-Install `@xmtp/agent-sdk` as a dependency in your project.
-
-:::code-group
-
-```bash [npm]
-npm i @xmtp/agent-sdk
-```
-
-```bash [pnpm]
-pnpm i @xmtp/agent-sdk
-```
-
-```bash [yarn]
-yarn add @xmtp/agent-sdk
-```
-
-```bash [bun]
-bun i @xmtp/agent-sdk
-```
-
-:::
-
-## Environment variables
-
-To run an example XMTP agent, you must create a `.env` file with the following [environment variables](https://nodejs.org/api/environment_variables.html):
-
-```bash
-XMTP_ENV=dev # the XMTP network: local, dev, production
-XMTP_WALLET_KEY=0x # the private key of your wallet
-XMTP_DB_ENCRYPTION_KEY=0x # encryption key for your local database
-```
-
-- **`XMTP_ENV`**: The XMTP network your agent connects to. Use `local` for running against a local XMTP backend (i.e. Docker container), `dev` for using the XMTP test network, or `production` for making your agent discoverable on production apps like [Base](https://base.app/) or [World](https://world.org/).
-
-- **`XMTP_WALLET_KEY`**: The private key of your [EOA wallet address](/chat-apps/core-messaging/create-a-signer#create-a-eoa-or-scw-signer). If you don't have a wallet or simply want one for testing, you can generate keys using the generator below.
-
-- **`XMTP_DB_ENCRYPTION_KEY`**: A key used to encrypt your agent's local SQLite database. You can choose any value, but it must be exactly 64 hex characters (32 bytes).
-
-### Local key generator
-
-The following keys are generated in your browser using the [Web Crypto API](https://developer.mozilla.org/docs/Web/API/Web_Crypto_API) and nothing is sent to any server. These keys work for both testing and production. For production agents, it's recommended to use an existing wallet, but for a quickstart these are perfectly fine.
-
-<KeyGenerator />
-
-## Usage
-
-This example shows how to create an agent based on your `.env` file that sends a message when it receives a text message.
-
-```ts [Node]
-import { Agent, getTestUrl } from '@xmtp/agent-sdk';
-
-// 2. Spin up the agent
-const agent = await Agent.createFromEnv();
-
-// 3. Respond to text messages
-agent.on('text', async (ctx) => {
-  await ctx.conversation.sendText('Hello from my XMTP Agent! 👋');
-});
-
-// 4. Log when we're ready
-agent.on('start', () => {
-  console.log(`Waiting for messages...`);
-  console.log(`Address: ${agent.address}`);
-  console.log(`🔗 ${getTestUrl(agent.client)}`);
-});
-
-await agent.start();
-```
-
-### Local database
-
-:::danger
-
-Each time you run your agent, XMTP creates local database files that must be **kept between restarts and between deployments**. Without persistent volumes, each restart creates a new installation and you're **limited to 10 installations per inbox**.
-
-To learn more, see [Manage agent local database files and installations](/agents/build-agents/local-database).
-
-:::
-
-XMTP creates local database files in the `dbPath` (default is `'./'`) directory. These files store your device identity and message history. Persist these files across restarts and deployments. Losing them means your agent will be registered as a new installation.
-
-## Vibe coding
-
-To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions:
-
-- A docs MCP server
-- Use case-based llms.txt files
-
-To learn more, see [Use XMTP documentation with AI coding assistants](/agents/get-started/build-with-llms).
-
-## Talk to your agent
-
-Try out your agents using [xmtp.chat](https://xmtp.chat), the official playground for agents. Start a new conversation by entering your agent's address (`agent.address`) and send a message.
-
-![xmtp.chat DM screenshot](https://github.com/xmtplabs/xmtp-agent-examples/raw/main/examples/xmtp-gm/screenshot.png)
-
-## Debug an agent
-
-To learn more, see [Debug an agent](/agents/deploy/debug-agents).
-
-## Deploy an agent
-
-To learn more, see [Deploy an agent](/agents/deploy/deploy-agent).
-
-## Agent examples
-
-Visit the [examples](https://github.com/xmtplabs/xmtp-agent-examples) repository for more agent examples.
+<a href="/agents/build-agents/connect-to-xmtp" onClick={() => window.plausible?.('Demo: Build Your Own Clicked')}>Connect your agent to XMTP</a>
