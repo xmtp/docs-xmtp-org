@@ -232,14 +232,35 @@ export const InteractiveQuickstart = () => {
 
         .iq-code {
           margin: 0;
-          padding: 1rem;
-          background-color: var(--vocs-color_background3);
-          font-family: var(--vocs-fontFamily_mono);
-          font-size: var(--vocs-fontSize_13);
-          line-height: 1.7;
-          color: var(--vocs-color_text);
-          white-space: pre;
+          padding: 0;
           overflow-x: auto;
+        }
+
+        .iq-code pre {
+          margin: 0 !important;
+          padding: 1rem !important;
+          font-family: var(--vocs-fontFamily_mono) !important;
+          font-size: var(--vocs-fontSize_13) !important;
+          line-height: 1.7 !important;
+          white-space: pre !important;
+          overflow-x: auto !important;
+        }
+
+        .iq-code pre code {
+          font-size: inherit !important;
+          line-height: inherit !important;
+        }
+
+        .iq-code .shiki {
+          background-color: var(--vocs-color_background3) !important;
+        }
+
+        .shiki span {
+          color: var(--shiki-light);
+        }
+
+        html.dark .shiki span {
+          color: var(--shiki-dark);
         }
 
         .iq-actions {
@@ -345,7 +366,7 @@ export const InteractiveQuickstart = () => {
   );
 };
 
-// Renders a single step: header, code block, run button, and output.
+// Renders a single step: header, syntax-highlighted code block, run button, and output.
 function Step({
   number,
   title,
@@ -363,6 +384,17 @@ function Step({
   onRun: () => void;
   disabled: boolean;
 }) {
+  const [highlightedHtml, setHighlightedHtml] = React.useState('');
+
+  React.useEffect(() => {
+    import('shiki').then(({ codeToHtml }) =>
+      codeToHtml(code, {
+        lang: 'typescript',
+        themes: { light: 'github-light', dark: 'github-dark' },
+      }).then(setHighlightedHtml),
+    );
+  }, [code]);
+
   const buttonLabel =
     status === 'running'
       ? 'Running...'
@@ -382,7 +414,22 @@ function Step({
           Step {number}: {title}
         </span>
       </div>
-      <pre className="iq-code">{code}</pre>
+      {highlightedHtml ? (
+        <div
+          className="iq-code"
+          dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+        />
+      ) : (
+        <pre className="iq-code" style={{
+          padding: '1rem',
+          fontFamily: 'var(--vocs-fontFamily_mono)',
+          fontSize: 'var(--vocs-fontSize_13)',
+          lineHeight: 1.7,
+          backgroundColor: 'var(--vocs-color_background3)',
+          color: 'var(--vocs-color_text)',
+          whiteSpace: 'pre',
+        }}>{code}</pre>
+      )}
       <div className="iq-actions">
         <button
           className={buttonClass}
