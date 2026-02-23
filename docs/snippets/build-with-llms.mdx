@@ -1,9 +1,14 @@
 # Use XMTP documentation with AI coding assistants
 
-To make it easier for you to build with XMTP using LLMs and coding assistants, we offer two AI-ready solutions. Choose the one that best fits your workflow:
+To make it easier for you to build with XMTP using LLMs and coding assistants, we offer three AI-ready solutions. Choose the ones that best fit your workflow:
 
-**Use the [documentation MCP (Model Context Protocol) server](#documentation-mcp-server) if:**
-- You're using MCP-compatible tools like Claude Code, Cursor, or Copilot for example
+**Use [Claude Code skills](#claude-code-skills) if:**
+- You're using Claude Code to build XMTP agents
+- You want to scaffold, deploy, and troubleshoot agent projects with slash commands
+- You prefer hands-on automation over reading docs
+
+**Use the [documentation MCP server](#documentation-mcp-server) if:**
+- You're using MCP-compatible tools like Claude Code, Cursor, or Copilot
 - You want dynamic, structured documentation querying while writing and debugging code
 - You're comfortable setting up and running a local server process
 
@@ -11,6 +16,34 @@ To make it easier for you to build with XMTP using LLMs and coding assistants, w
 - You're using AI tools that don't support MCP
 - You want zero-setup access to documentation
 - You prefer a simple copy-paste or URL reference approach
+
+## Claude Code skills
+
+If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), you can add XMTP-specific skills to your agent project. Skills are instruction files that teach Claude Code how to perform tasks like scaffolding a new agent, deploying to Railway, or diagnosing common errors.
+
+### Install the skills
+
+Copy the skills into your project's `.claude/skills/` directory:
+
+```bash
+# From your agent project root
+mkdir -p .claude/skills
+curl -sL https://docs.xmtp.org/skills/create-xmtp-agent.md -o .claude/skills/create-xmtp-agent.md
+curl -sL https://docs.xmtp.org/skills/deploy-xmtp-agent.md -o .claude/skills/deploy-xmtp-agent.md
+curl -sL https://docs.xmtp.org/skills/xmtp-agent-troubleshoot.md -o .claude/skills/xmtp-agent-troubleshoot.md
+```
+
+Once installed, Claude Code auto-discovers them in your project.
+
+### Available skills
+
+| Skill | What it does |
+|---|---|
+| `create-xmtp-agent` | Scaffolds a new agent project with your choice of brain (Claude, OpenAI, or rules-based) and the XMTP Agent SDK for messaging |
+| `deploy-xmtp-agent` | Deploys your agent to Railway with the correct Dockerfile, environment variables, and persistent storage |
+| `xmtp-agent-troubleshoot` | Diagnoses common errors like `transport error`, wallet key format issues, and installation limit warnings |
+
+These skills follow the same [three-layer architecture](/agents/build-agents/connect-to-xmtp#three-layer-architecture) described in the tutorial: your brain, the XMTP messaging framework, and the glue that connects them.
 
 ## Documentation MCP server
 

@@ -12,8 +12,12 @@ export const sidebarConfig = {
           link: "/agents/get-started/intro",
         },
         {
-          text: "Quickstart",
+          text: "Try an agent",
           link: "/agents/get-started/build-an-agent",
+        },
+        {
+          text: "Connect to XMTP",
+          link: "/agents/build-agents/connect-to-xmtp",
         },
         {
           text: "Build with LLMs",
@@ -29,7 +33,7 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Build agents",
+      text: "Agent messaging",
       collapsed: false,
       items: [
         {
