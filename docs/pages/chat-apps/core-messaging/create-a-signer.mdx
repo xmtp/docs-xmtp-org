@@ -181,7 +181,7 @@ Here is a list of supported chain IDs for SCWs:
 Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox was registered via an EOA rather than a Smart Contract Wallet. Standard EOA signatures can be used for inboxes registered by EOAs that support [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702), which enables smart-wallet functionality on demand.
 :::
 
-To add SCW support for a new EVM chain, add the chain ID and a public RPC endpoint to [chain_urls_default.json](https://github.com/xmtp/libxmtp/blob/main/xmtp_id/src/scw_verifier/chain_urls_default.json).
+To add SCW support for a new EVM chain, add the chain ID and a public RPC endpoint to [chain_urls_default.json](https://github.com/xmtp/libxmtp/pull/3021/changes).
 
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
@@ -317,6 +317,26 @@ public struct SCWallet: SigningKey {
 
 Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/general/ideas/54). To look up chain IDs, see [ChainList](https://chainlist.org/). For an overview of the process for adding a non-EVM chain, see [Extend the XMTP identity model](/chat-apps/core-messaging/extend-id-model).
 
+:::
+
+## Add and test a custom chain
+
+To test a blockchain that is not part of the supported chain list, check out [libxmtp](https://github.com/xmtp/libxmtp/) locally and add it for testing:
+
+1. Add the chain URL (see [here](https://github.com/xmtp/libxmtp/pull/3021/changes)). This is the only change needed to register a new chain, as it maps a chain ID to an RPC endpoint for smart contract wallet verification.
+2. Rebuild the `xmtp_id` Rust crate. Since the chain URLs are embedded at compile time, a rebuild is required for the new URL to take effect.
+3. Start the local backend using Docker (`dev/docker/up`).
+
+You can then test using your own client code or a local version of [xmtp.chat](https://github.com/xmtp/xmtp-js) configured to allow your chain ([see this PR for reference](https://github.com/xmtp/xmtp-js/pull/1673/changes)).
+
+When testing with the local xmtp.chat instance:
+
+1. Select **Smart contract wallet** as your login method, then select the appropriate chain ID.
+2. Ensure the required browser extension is installed. Based on the extension you’re using, select either **WalletConnect** or **Browser Injected** (the latter requires the extension to populate the `window.ethereum` namespace).
+3. Select the **Local** network to connect to your locally running XMTP backend.
+
+:::tip
+Disable any conflicting browser extensions, as one provider's extension may overwrite the `window.ethereum` namespace set by another.
 :::
 
 ## Retrieve your wallet's private key
