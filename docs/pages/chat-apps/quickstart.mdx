@@ -1,267 +1,33 @@
-import { Tabs } from '../../components/Tabs';
-import { Collapsible } from '../../components/Collapsible';
-import { InteractiveQuickstart } from '../../components/InteractiveQuickstart';
-import { TerminalQuickstart } from '../../components/TerminalQuickstart';
+import { QuickstartProvider, QuickstartStep } from '../../components/QuickstartSteps';
 
 # Quickstart
 
-Send your first XMTP message and get a reply from an agent in under 5 minutes.
+Send your first XMTP message in under 5 minutes. This quickstart connects you to a "gm" agent on the XMTP `dev` network — you send a message, the agent replies "gm".
 
-This quickstart connects your app to a "gm" agent running on the XMTP `dev` network. You send a message, the agent replies "gm".
+<QuickstartProvider>
 
-<Tabs.Root defaultValue="cli">
-  <Tabs.List>
-    <Tabs.Trigger value="cli">CLI</Tabs.Trigger>
-    <Tabs.Trigger value="browser">Browser</Tabs.Trigger>
-    <Tabs.Trigger value="node">Node</Tabs.Trigger>
-    <Tabs.Trigger value="react-native">React Native</Tabs.Trigger>
-    <Tabs.Trigger value="android">Android</Tabs.Trigger>
-    <Tabs.Trigger value="ios">iOS</Tabs.Trigger>
-  </Tabs.List>
+## Install
 
-  <Tabs.Content value="cli">
-
-## Install the CLI
-
-```bash
-npm install -g @xmtp/cli
-```
+<QuickstartStep step="install" />
 
 ## Generate your keys
 
-```bash
-xmtp init
-```
+<QuickstartStep step="wallet" />
 
-This creates a wallet key, database encryption key, and saves them to `~/.xmtp/.env`:
+## Connect to XMTP
 
-```
-XMTP_WALLET_KEY=0x...
-XMTP_DB_ENCRYPTION_KEY=...
-XMTP_ENV=dev
-```
+<QuickstartStep step="connect" />
 
-## Check your client
+## Start a conversation
 
-```bash
-xmtp client info
-```
-
-You should see your address, inbox ID, and connection status.
-
-## Start a conversation with the gm agent
-
-```bash
-xmtp conversations create-dm 0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc --json
-```
-
-Copy the `id` from the output — you'll need it for the next steps.
-
-```json
-{
-  "id": "526b9e9c81eb5297d8fa580e05701d65",
-  "peerInboxId": "f17715bb36446c4e..."
-}
-```
+<QuickstartStep step="conversation" />
 
 ## Send a message
 
-Replace `<id>` with the conversation id from the previous step.
-
-```bash
-xmtp conversation send-text <id> "gm"
-```
+<QuickstartStep step="send" />
 
 ## Check for the reply
 
-```bash
-xmtp conversation messages <id> --sync --json
-```
+<QuickstartStep step="reply" />
 
-You should see your message and the agent's reply:
-
-```json
-[
-  {
-    "senderInboxId": "a1b2c3d4...",
-    "content": "gm",
-    "sentAt": "2026-02-20T12:00:00.000Z"
-  },
-  {
-    "senderInboxId": "f6e5d4c3...",
-    "content": "gm",
-    "sentAt": "2026-02-20T12:00:01.000Z"
-  }
-]
-```
-
-  </Tabs.Content>
-
-  <Tabs.Content value="browser">
-
-## Try it now
-
-Click each step to run it right here in your browser. No setup required.
-
-<InteractiveQuickstart />
-
-## Try the CLI
-
-Type XMTP CLI commands directly in your browser. Same commands you'd use with `npx @xmtp/cli`.
-
-<TerminalQuickstart />
-
-<Collapsible title="Run it locally">
-
-### Scaffold a project
-
-```bash
-npm create vite@latest my-xmtp-app -- --template vanilla-ts
-cd my-xmtp-app
-npm install @xmtp/browser-sdk viem
-```
-
-### Replace `src/main.ts`
-
-Delete the contents of `src/main.ts` and replace with:
-
-```ts
-import { Client, IdentifierKind } from "@xmtp/browser-sdk";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { toBytes } from "viem";
-
-// The "gm" agent on the dev network
-const AGENT_ADDRESS = "0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc";
-
-const output = document.getElementById("output")!;
-function log(msg: string) {
-  output.textContent += msg + "\n";
-}
-
-async function main() {
-  log("Creating ephemeral wallet...");
-
-  // Generate a throwaway wallet — no MetaMask needed
-  const key = generatePrivateKey();
-  const account = privateKeyToAccount(key);
-
-  // Create a signer for XMTP
-  const signer = {
-    type: "EOA" as const,
-    getIdentifier: () => ({
-      identifier: account.address.toLowerCase(),
-      identifierKind: IdentifierKind.Ethereum,
-    }),
-    signMessage: async (message: string) => {
-      const signature = await account.signMessage({ message });
-      return toBytes(signature);
-    },
-  };
-
-  log("Connecting to XMTP dev network...");
-
-  // Create client with in-memory database (no OPFS needed)
-  const client = await Client.create(signer, {
-    env: "dev",
-    dbPath: null,
-  });
-
-  log(`Connected as ${account.address}`);
-  log(`Creating conversation with gm agent...`);
-
-  // Create a DM with the gm agent
-  const dm = await client.conversations.createDmWithIdentifier({
-    identifier: AGENT_ADDRESS,
-    identifierKind: IdentifierKind.Ethereum,
-  });
-
-  // Start streaming messages before sending
-  const stream = await dm.stream();
-
-  // Send a message
-  await dm.sendText("gm");
-  log(`You: gm`);
-  log(`Waiting for reply...`);
-
-  // Listen for the agent's reply
-  for await (const message of stream) {
-    if (message?.senderInboxId !== client.inboxId) {
-      log(`Agent: ${message?.content}`);
-      break;
-    }
-  }
-
-  log(`\nDone! You just sent and received an XMTP message.`);
-}
-
-main().catch((e) => log(`Error: ${e.message}`));
-```
-
-### Update `index.html`
-
-Replace the contents of the `<body>` tag in `index.html`:
-
-```html
-<body>
-  <pre id="output"></pre>
-  <script type="module" src="/src/main.ts"></script>
-</body>
-```
-
-### Run it
-
-```bash
-npm run dev
-```
-
-Open the URL shown in your terminal (usually `http://localhost:5173`). You should see:
-
-```
-Creating ephemeral wallet...
-Connecting to XMTP dev network...
-Connected as 0x...
-Creating conversation with gm agent...
-You: gm
-Waiting for reply...
-Agent: gm
-
-Done! You just sent and received an XMTP message.
-```
-
-</Collapsible>
-
-  </Tabs.Content>
-
-  <Tabs.Content value="node">
-
-## Node SDK
-
-Coming soon.
-
-  </Tabs.Content>
-
-  <Tabs.Content value="react-native">
-
-## React Native SDK
-
-Coming soon.
-
-  </Tabs.Content>
-
-  <Tabs.Content value="android">
-
-## Android SDK
-
-Coming soon.
-
-  </Tabs.Content>
-
-  <Tabs.Content value="ios">
-
-## iOS SDK
-
-Coming soon.
-
-  </Tabs.Content>
-
-</Tabs.Root>
+</QuickstartProvider>
