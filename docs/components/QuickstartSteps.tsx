@@ -39,6 +39,7 @@ const address = "0x" + Array.from(addressBytes, b =>
   b.toString(16).padStart(2, "0")).join("");`,
   connect: `import { Client, IdentifierKind } from "@xmtp/browser-sdk";
 
+// XMTP authenticates via a signer — wraps your wallet's sign function
 const signer = {
   type: "EOA",
   getIdentifier: () => ({
@@ -53,6 +54,7 @@ const signer = {
   },
 };
 
+// Connect to the dev network with an in-memory database
 const client = await Client.create(signer, {
   env: "dev",
   dbPath: null,
