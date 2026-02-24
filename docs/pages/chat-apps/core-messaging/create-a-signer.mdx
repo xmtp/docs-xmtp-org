@@ -319,9 +319,9 @@ Post your request to the [XMTP Improvement Forum](https://improve.xmtp.org/c/gen
 
 :::
 
-## Add and test a custom chain
+## Add and test a custom EVM chain
 
-To test a blockchain that is not part of the supported chain list, check out [libxmtp](https://github.com/xmtp/libxmtp/) locally and add it for testing:
+To test an EVM-compatible chain that is not part of the supported chain list, check out [libxmtp](https://github.com/xmtp/libxmtp/) locally and add it for testing:
 
 1. Add the chain URL (see [here](https://github.com/xmtp/libxmtp/pull/3021/changes)). This is the only change needed to register a new chain, as it maps a chain ID to an RPC endpoint for smart contract wallet verification.
 2. Rebuild the `xmtp_id` Rust crate. Since the chain URLs are embedded at compile time, a rebuild is required for the new URL to take effect.
