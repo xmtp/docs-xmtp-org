@@ -5,7 +5,7 @@ To connect to XMTP, your app needs a **signer**, an object that identifies a use
 There are three ways to create a signer:
 
 - **Key pair**: Generate or provide a secp256k1 private key directly. No wallet or blockchain needed.
-- **Externally Owned Account (EOA)**: Use an existing Ethereum wallet.
+- **Externally Owned Account (EOA)**: Use an Ethereum wallet.
 - **Smart Contract Wallet (SCW)**: Use an [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271) compatible smart contract wallet.
 
 All three produce the same signer interface, so the rest of your XMTP integration is identical regardless of which you choose.
@@ -94,7 +94,7 @@ To keep the same XMTP identity across sessions, save the private key and reload 
 
 ## Create a signer from an EOA
 
-If your users already have Ethereum wallets (MetaMask, Coinbase Wallet, etc.), you can create a signer from their Externally Owned Account. The signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
+If your users already have Ethereum wallets, you can create a signer from their Externally Owned Account. The signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
 
 :::code-group
 
@@ -191,7 +191,7 @@ public struct EOAWallet: SigningKey {
 
 ## Create a signer from a SCW
 
-If your users have ERC-1271 compatible smart contract wallets (Safe, Coinbase Smart Wallet, etc.), the SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
+If your users have ERC-1271 compatible smart contract wallets, the SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
 
 ### EOA vs SCW
 
