@@ -355,7 +355,7 @@ export const sidebarConfig = {
       collapsed: false,
       items: [
         {
-          text: "Create an EOA or SCW signer",
+          text: "Create a signer",
           link: "/chat-apps/core-messaging/create-a-signer",
         },
         {
