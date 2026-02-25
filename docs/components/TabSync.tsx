@@ -33,7 +33,11 @@ function savePref(label: string, siblings: string[]) {
   );
   prefs.unshift({ label, siblings });
   if (prefs.length > 10) prefs.length = 10;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch {
+    // Ignore storage errors (e.g., quota exceeded or disabled storage)
+  }
 }
 
 /** Activate a Radix tab trigger — Radix listens on mousedown, not click. */
