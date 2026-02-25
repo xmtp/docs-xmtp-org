@@ -296,16 +296,12 @@ export const sidebarConfig = {
           link: "/chat-apps/intro/what-is-xmtp",
         },
         {
-          text: "Quickstart",
-          link: "/chat-apps/quickstart",
-        },
-        {
           text: "Why XMTP?",
           link: "/chat-apps/intro/why-xmtp",
         },
         {
-          text: "FAQ",
-          link: "/chat-apps/intro/faq",
+          text: "Build a quickstart app",
+          link: "/chat-apps/quickstart",
         },
         {
           text: "Get started",
@@ -314,6 +310,10 @@ export const sidebarConfig = {
         {
           text: "Build with LLMs",
           link: "/chat-apps/intro/build-with-llms",
+        },
+        {
+          text: "FAQ",
+          link: "/chat-apps/intro/faq",
         },
         {
           text: "Dev support",

@@ -195,7 +195,6 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
 
   const clientRef = React.useRef<any>(null);
   const dmRef = React.useRef<any>(null);
-  const mountedRef = React.useRef(true);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   // Auto-scroll messages
@@ -206,7 +205,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
 
   // Initialize XMTP client + self-DM + stream
   React.useEffect(() => {
-    mountedRef.current = true;
+    let mounted = true;
     let streamCleanup: (() => void) | null = null;
 
     (async () => {
@@ -224,7 +223,8 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
             identifierKind: IdentifierKind.Ethereum,
           }),
           signMessage: async (message: string) => {
-            const prefix = `\x19Ethereum Signed Message:\n${message.length}`;
+            const msgBytes = new TextEncoder().encode(message);
+            const prefix = `\x19Ethereum Signed Message:\n${msgBytes.length}`;
             const prefixed = new TextEncoder().encode(prefix + message);
             const hash = keccak_256(prefixed);
             const sig = secp256k1.sign(hash, identity.privateKey);
@@ -239,7 +239,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
           env: 'dev',
           dbPath: null,
         });
-        if (!mountedRef.current) {
+        if (!mounted) {
           client.close();
           return;
         }
@@ -255,7 +255,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
           });
         dmRef.current = dm;
 
-        if (!mountedRef.current) return;
+        if (!mounted) return;
         setStatus('connected');
 
         // Stream all messages
@@ -263,7 +263,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
         streamCleanup = () => stream.return();
 
         for await (const message of stream) {
-          if (!mountedRef.current) break;
+          if (!mounted) break;
           if (!message?.content || typeof message.content !== 'string')
             continue;
 
@@ -281,12 +281,12 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
         }
       } catch (e: any) {
         console.error('QuickstartInbox error:', e);
-        if (mountedRef.current) setStatus('error');
+        if (mounted) setStatus('error');
       }
     })();
 
     return () => {
-      mountedRef.current = false;
+      mounted = false;
       streamCleanup?.();
       clientRef.current?.close?.();
     };
@@ -317,7 +317,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
       <style>{INBOX_STYLES}</style>
       <div className="qi-card">
         <div className="qi-header">
-          <div className="qi-title">Live Inbox</div>
+          <div className="qi-title">XMTP Live Inbox</div>
           <div className="qi-field">
             <span className="qi-field-label">Address:</span>
             <span>{truncate(identity.address, 14)}</span>

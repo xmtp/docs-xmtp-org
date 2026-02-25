@@ -1,22 +1,37 @@
 import { QuickstartProvider, QuickstartStep } from '../../components/QuickstartSteps';
 
-# Quickstart
+# Build a quickstart chat app
 
-Build a chat app that talks to this page. The widget in the sidebar
-is a live XMTP inbox — you'll build a Vite app that sends messages
-to it using the same identity.
+Follow this tutorial to build a quickstart chat app with XMTP.
+
+Your quickstart chat app and the **XMTP Live Inbox** in the sidebar of this page will share an inbox ID. This means you can use your chat app to send messages to the XMTP Live Inbox and vice versa.
+
+:::tip
+Refreshing this page generates a new **address** and **inbox ID** for the XMTP Live Inbox. If you refresh this page while building your quickstart app, be sure to update the `privateKey` and `address` in your `src/main.js` to match the values in [2. Add the starter code](#2-add-the-starter-code).
+:::
 
 <QuickstartProvider>
 
 ## 1. Set up your project
 
-Create a new Vite project and install XMTP. Select **no** when Vite
-asks to install and start:
+Create a Vite project with the vanilla template. 
 
-<QuickstartStep step="install" />
+:::tip
+When Vite prompts you with **Install with npm and start now?**, select ***No***.
+:::
 
-The XMTP SDK uses WASM, which requires a Vite config change.
-Add `vite.config.js` to your project root:
+```bash
+npm create vite@latest my-xmtp-app -- --template vanilla
+```
+
+Then move into the project and install the XMTP SDK and key generation libraries:
+
+```bash
+cd my-xmtp-app
+npm install @xmtp/browser-sdk @noble/curves @noble/hashes
+```
+
+The XMTP SDK uses WASM, which requires a Vite config change. Add `vite.config.js` to your project root:
 
 ```javascript
 import { defineConfig } from "vite";
@@ -28,10 +43,9 @@ export default defineConfig({
 });
 ```
 
-## 2. Add the baseline code
+## 2. Add the starter code
 
-Replace `src/main.js` with the code below. It includes the private key
-from the sidebar widget so your Vite app shares the same XMTP identity.
+In your project, replace `src/main.js` with the code below. The code includes the private key from the XMTP Live Inbox widget. This means your quickstart chat app and XMTP Live Inbox share the same XMTP inbox ID. By the end of this tutorial, when you send a message from your quickstart chat app, it will display in the XMTP Live Inbox, and vice versa.
 
 <QuickstartStep step="identity" />
 
@@ -46,24 +60,30 @@ Then replace the contents of `<body>` in your `index.html` with:
 
 ## 3. Connect to XMTP
 
-Replace `// Step 3 goes here` in `main()` with the code below.
-Run `npm run dev` — you should see your Inbox ID appear on the page.
+In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Then run `npm run dev`. Your quickstart app should display: `Connected! Inbox ID: <Inbox ID matching the one in the XMTP Live Inbox>`
 
 <QuickstartStep step="connect" />
 
 ## 4. Send a message
 
 Replace `// Step 4 goes here` in `main()` with the code below.
-Type a message in your Vite app and press Send — it appears in the
-sidebar widget on this page.
+
+Type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not yet in your quickstart app.
+
+With XMTP, sending a message delivers it to the network, but doesn't automatically update the local UI (unless you use [optimistic sending](/chat-apps/core-messaging/send-messages#optimistically-send-messages)). The XMTP Live Inbox displays the message because it already has a stream listening for new messages. You'll add streaming to your quickstart app in the next step.
 
 <QuickstartStep step="send" />
 
 ## 5. Stream messages
 
-Replace `// Step 5 goes here` in `main()` with the code below.
-Now messages sent from the sidebar widget appear in your Vite app too.
+Replace `// Step 5 goes here` in `main()` with the code below. Now messages sent from your quickstart app display there. Additionally, messages sent from the XMTP Live Inbox appear in your quickstart app.
 
 <QuickstartStep step="stream" />
 
 </QuickstartProvider>
+
+## Next steps
+
+Ready to build a full-fledged chat app with XMTP?
+
+[Get started](/chat-apps/intro/get-started)

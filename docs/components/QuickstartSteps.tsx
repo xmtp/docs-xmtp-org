@@ -6,7 +6,7 @@ import * as RadixTabs from '@radix-ui/react-tabs';
 // Types
 // ---------------------------------------------------------------------------
 
-type StepName = 'install' | 'identity' | 'connect' | 'send' | 'stream';
+type StepName = 'identity' | 'connect' | 'send' | 'stream';
 type TabVariant = 'cli' | 'browser';
 
 type Identity = {
@@ -20,8 +20,6 @@ type Identity = {
 // ---------------------------------------------------------------------------
 
 const BROWSER_CODE = {
-  install: () =>
-    `npm create vite@latest my-xmtp-app -- --template vanilla && cd my-xmtp-app && npm install @xmtp/browser-sdk @noble/curves @noble/hashes`,
 
   identity: (identity: Identity) => {
     const bytes = Array.from(identity.privateKey).join(', ');
@@ -91,7 +89,7 @@ for await (const message of stream) {
 };
 
 const CLI_CODE = {
-  install: () => BROWSER_CODE.install(),
+
   identity: (identity: Identity) => BROWSER_CODE.identity(identity),
   connect: () => BROWSER_CODE.connect(),
   send: () => BROWSER_CODE.send(),
@@ -356,28 +354,24 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
   const [mainHtml, setMainHtml] = React.useState('');
   const [copied, setCopied] = React.useState(false);
 
-  const isStatic = step === 'install';
-
-  // Generate code strings from identity (or static for install)
   const code = React.useMemo(() => {
-    if (isStatic) return BROWSER_CODE[step]();
     if (!ctx?.identity) return '';
     const gen =
       ctx.activeTab === 'cli' ? CLI_CODE[step] : BROWSER_CODE[step];
     return (gen as (id: Identity) => string)(ctx.identity);
-  }, [step, ctx?.identity, ctx?.activeTab, isStatic]);
+  }, [step, ctx?.identity, ctx?.activeTab]);
 
   // Highlight with Shiki
   React.useEffect(() => {
     if (!ctx?.mounted || !code) return;
     import('shiki').then(({ codeToHtml }) => {
-      const lang = isStatic ? 'bash' : 'javascript';
+      const lang = 'javascript';
       codeToHtml(code, {
         lang,
         themes: { light: 'github-light', dark: 'github-dark' },
       }).then(setMainHtml);
     });
-  }, [ctx?.mounted, code, step, isStatic]);
+  }, [ctx?.mounted, code, step]);
 
   if (!ctx?.mounted) return null;
 
