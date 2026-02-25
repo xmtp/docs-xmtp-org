@@ -15,12 +15,30 @@ function getPrefs(): Pref[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    // Handle migration from old string[] format
-    if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === "string") {
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    // Handle migration from old string[] format (validate entire array)
+    if (parsed.length > 0 && parsed.every((item) => typeof item === "string")) {
       localStorage.removeItem(STORAGE_KEY);
       return [];
     }
-    return parsed;
+
+    // Validate that parsed is an array of Pref objects
+    const isValidPrefArray = parsed.every((item) => {
+      if (!item || typeof item !== "object") return false;
+      const maybePref = item as { label?: unknown; siblings?: unknown };
+      if (typeof maybePref.label !== "string") return false;
+      if (!Array.isArray(maybePref.siblings)) return false;
+      return maybePref.siblings.every((s) => typeof s === "string");
+    });
+
+    if (!isValidPrefArray) {
+      return [];
+    }
+
+    return parsed as Pref[];
   } catch {
     return [];
   }
@@ -33,7 +51,11 @@ function savePref(label: string, siblings: string[]) {
   );
   prefs.unshift({ label, siblings });
   if (prefs.length > 10) prefs.length = 10;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch {
+    // Ignore storage errors (e.g., quota exceeded or disabled storage)
+  }
 }
 
 /** Activate a Radix tab trigger — Radix listens on mousedown, not click. */
@@ -43,9 +65,9 @@ function activateTab(tab: HTMLElement) {
 }
 
 function getTabLabels(tablist: Element): string[] {
-  return Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]')).map(
-    (t) => t.textContent?.trim() || ""
-  );
+  return Array.from(tablist.querySelectorAll<HTMLElement>('[role="tab"]'))
+    .map((t) => t.textContent?.trim() || "")
+    .filter((label) => label !== "");
 }
 
 function applyPrefsToTablist(tablist: Element, prefs: Pref[]) {
@@ -135,38 +157,64 @@ export default function TabSync() {
 
     // MutationObserver for new tablists (SPA navigation or lazy rendering).
     // WeakSet prevents re-processing → no loops.
-    let debounceTimer: ReturnType<typeof setTimeout>;
+    let debounceTimer: ReturnType<typeof setTimeout> | undefined;
     const observer = new MutationObserver(() => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(applyPrefsToNewTablists, 80);
     });
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Catch SPA navigation via popstate + pushState/replaceState
+    // Catch SPA navigation via a custom navigation event emitted from a
+    // single, shared history patch.
     function onNav() {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(applyPrefsToNewTablists, 150);
     }
-    window.addEventListener("popstate", onNav);
 
-    const origPush = history.pushState.bind(history);
-    const origReplace = history.replaceState.bind(history);
-    history.pushState = function (...args) {
-      origPush(...args);
-      onNav();
-    };
-    history.replaceState = function (...args) {
-      origReplace(...args);
-      onNav();
-    };
+    window.addEventListener("xmtp:nav", onNav);
+    ensureHistoryPatched();
+
+    function ensureHistoryPatched() {
+      interface WindowWithTabSync extends Window {
+        __tabSyncHistoryPatched?: boolean;
+      }
+      const win = window as WindowWithTabSync;
+      if (win.__tabSyncHistoryPatched) {
+        return;
+      }
+
+      const originalPushState = history.pushState.bind(history);
+      const originalReplaceState = history.replaceState.bind(history);
+
+      function dispatchNavEvent() {
+        window.dispatchEvent(new Event("xmtp:nav"));
+      }
+
+      history.pushState = function (...args: Parameters<typeof originalPushState>) {
+        originalPushState(...args);
+        dispatchNavEvent();
+      };
+
+      history.replaceState = function (
+        ...args: Parameters<typeof originalReplaceState>
+      ) {
+        originalReplaceState(...args);
+        dispatchNavEvent();
+      };
+
+      // popstate and the history patches are intentionally left global for the
+      // lifetime of the page — they dispatch the "xmtp:nav" custom event that
+      // each TabSync instance subscribes to and cleans up individually.
+      window.addEventListener("popstate", dispatchNavEvent);
+
+      win.__tabSyncHistoryPatched = true;
+    }
 
     return () => {
       document.removeEventListener("mousedown", handleMouseDown, true);
       observer.disconnect();
       clearTimeout(debounceTimer);
-      window.removeEventListener("popstate", onNav);
-      history.pushState = origPush;
-      history.replaceState = origReplace;
+      window.removeEventListener("xmtp:nav", onNav);
     };
   }, []);
 
