@@ -59,7 +59,7 @@ Every account on your target platform has a unique identifier (an address or pub
 You'll need to:
 
 1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
-2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto). in the proto repo.
+2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto) in the proto repo.
 
 ### Implement signature verification
 
