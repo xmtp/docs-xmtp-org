@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 10:30 PM UTC / February 25, 2026
+Generated at 11:45 PM UTC / February 25, 2026
 
 ## About this file
 
@@ -1896,6 +1896,74 @@ agent.on('unhandledError', (error) => {
 ```
 
 
+## agents/content-types/actions.mdx
+# Send actions and handle intents
+
+Actions let your agent send a message with tappable buttons. When the user picks one, the agent gets an intent event with the selected button's ID. This works well for confirmations, payment flows, menu navigation, and polls.
+
+:::note
+Buttons only render in apps that support this content type, such as the [Base](https://base.org) app. Other clients show a numbered text fallback.
+:::
+
+## Send actions
+
+```ts [Node]
+await ctx.conversation.sendActions({
+  id: `actions-${Date.now()}`,
+  description: 'Would you like to proceed?',
+  actions: [
+    { id: 'action-yes', label: 'Yes', style: 'primary' },
+    { id: 'action-no', label: 'No', style: 'secondary' },
+  ],
+});
+```
+
+Each action button has the following fields:
+
+- `id`: Returned as `actionId` in the intent when tapped
+- `label`: The button text
+- `style` (optional): `"primary"`, `"secondary"`, or `"danger"`
+- `imageUrl` (optional): An image to show alongside the button
+- `expiresAt` (optional): ISO 8601 timestamp after which the button expires
+
+Set a top-level `expiresAt` to expire the entire prompt.
+
+### Payment example
+
+```ts [Node]
+await ctx.conversation.sendActions({
+  id: 'payment_alice_123',
+  description: 'Choose amount to send',
+  actions: [
+    { id: 'send_10', label: 'Send $10', style: 'primary' },
+    { id: 'send_20', label: 'Send $20', style: 'primary' },
+  ],
+});
+```
+
+## Receive an intent
+
+When a user taps a button, the SDK fires an `"intent"` event. Match on `actionId` to know which button was pressed.
+
+```ts [Node]
+agent.on('intent', async (ctx) => {
+  const { actionId } = ctx.message.content;
+
+  if (actionId === 'send_10') {
+    await ctx.conversation.sendText('Sending $10...');
+  } else if (actionId === 'send_20') {
+    await ctx.conversation.sendText('Sending $20...');
+  }
+});
+```
+
+The intent payload has three fields:
+
+- `id`: The ID of the original action prompt
+- `actionId`: The ID of the button that was tapped
+- `metadata` (optional): Key-value context sent by the client
+
+
 ## agents/content-types/attachments.mdx
 # Support attachments with your agent built with XMTP
 
@@ -2138,6 +2206,7 @@ A standards-track content type is one that's being actively reviewed for adoptio
 
 All standards-track content types are built into the Agent SDK and can be used with dedicated send methods:
 
+- [Actions content type](/agents/content-types/actions): Use `sendActions()` to send interactive button prompts.
 - [Group updates content type](/agents/content-types/group-updates): Use to send group updates, such as name, description, and members.
 - [Remote attachment content type](/agents/content-types/attachments): Use `sendRemoteAttachment()` to send attachments of any size.
 - [Markdown content type](/agents/content-types/markdown): Use `sendMarkdown()` to send rich formatted text messages with headers, lists, tables, and code blocks.
@@ -4674,4 +4743,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 47 files from 4 sections.
+This documentation contains 48 files from 4 sections.
