@@ -4,10 +4,10 @@ import { QuickstartProvider, QuickstartStep } from '../../components/QuickstartS
 
 Follow this tutorial to build a quickstart chat app with XMTP.
 
-Your quickstart chat app and the **XMTP Live Inbox** in the sidebar of this page will share an inbox ID. This means you can use your chat app to send messages to the XMTP Live Inbox and vice versa.
+Your quickstart app and the **XMTP Live Inbox** in the sidebar of this page will share an inbox ID. This means you can use your quickstart app to send messages to the XMTP Live Inbox and vice versa.
 
-:::tip
-Refreshing this page generates a new **address** and **inbox ID** for the XMTP Live Inbox. If you refresh this page while building your quickstart app, be sure to update the `privateKey` and `address` in your `src/main.js` to match the values in [2. Add the starter code](#2-add-the-starter-code).
+:::tip[Not seeing the sidebar and the XMTP Live Inbox?]
+Display your browser window at full width (at least 1280px).
 :::
 
 <QuickstartProvider>
@@ -45,7 +45,11 @@ export default defineConfig({
 
 ## 2. Add the starter code
 
-In your project, replace `src/main.js` with the code below. The code includes the private key from the XMTP Live Inbox widget. This means your quickstart chat app and XMTP Live Inbox share the same XMTP inbox ID. By the end of this tutorial, when you send a message from your quickstart chat app, it will display in the XMTP Live Inbox, and vice versa.
+In your project, replace `src/main.js` with the code below. The code includes the private key from the XMTP Live Inbox widget. This means your quickstart app and XMTP Live Inbox share the same XMTP inbox ID. By the end of this tutorial, when you send a message from your quickstart app, it will display in the XMTP Live Inbox, and vice versa.
+
+:::tip
+Refreshing this page generates a new **address** and **inbox ID** for the XMTP Live Inbox. If you refresh this page while building your quickstart app, be sure to update the `privateKey` and `address` in your `src/main.js` to match the values in the code below.
+:::
 
 <QuickstartStep step="identity" />
 
@@ -68,7 +72,7 @@ In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below.
 
 Replace `// Step 4 goes here` in `main()` with the code below.
 
-Type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not yet in your quickstart app.
+Then, type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not yet in your quickstart app.
 
 With XMTP, sending a message delivers it to the network, but doesn't automatically update the local UI (unless you use [optimistic sending](/chat-apps/core-messaging/send-messages#optimistically-send-messages)). The XMTP Live Inbox displays the message because it already has a stream listening for new messages. You'll add streaming to your quickstart app in the next step.
 
