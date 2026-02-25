@@ -115,6 +115,7 @@ export default defineConfig({
       link: 'https://github.com/xmtp',
     },
   ],
+  outlineFooter: <div id="qs-inbox-mount" />,
   sidebar: sidebarConfig,
   editLink: {
     pattern: 'https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path',

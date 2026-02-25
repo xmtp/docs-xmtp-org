@@ -1,45 +1,39 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import * as RadixTabs from '@radix-ui/react-tabs';
 
-const AGENT_ADDRESS = '0xf9244662f952d6ef83bd0719ddb5a27fbb2fe1bc';
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
-type StepName =
-  | 'install'
-  | 'wallet'
-  | 'connect'
-  | 'conversation'
-  | 'send'
-  | 'reply';
-type StepStatus = 'idle' | 'running' | 'done' | 'error';
+type StepName = 'install' | 'identity' | 'connect' | 'send' | 'stream';
 type TabVariant = 'cli' | 'browser';
 
-// ---------------------------------------------------------------------------
-// Code constants — displayed in the UI. CLI shows bash, Browser shows TS.
-// ---------------------------------------------------------------------------
-
-const CLI_CODE: Record<StepName, string> = {
-  install: 'npm install -g @xmtp/cli',
-  wallet: 'xmtp init',
-  connect: 'xmtp client info',
-  conversation: `xmtp conversations create-dm ${AGENT_ADDRESS} --json`,
-  send: 'xmtp conversation send-text <conversation-id> "gm"',
-  reply: 'xmtp conversation messages <conversation-id> --sync --json',
+type Identity = {
+  privateKey: Uint8Array;
+  address: string;
+  privateKeyHex: string;
 };
 
-const BROWSER_CODE: Record<StepName, string> = {
-  install: 'npm install @xmtp/browser-sdk @noble/curves @noble/hashes',
-  wallet: `import { secp256k1 } from "@noble/curves/secp256k1";
-import { keccak_256 } from "@noble/hashes/sha3";
+// ---------------------------------------------------------------------------
+// Code generators — return interpolated code strings with real key bytes
+// ---------------------------------------------------------------------------
 
-// Generate an ephemeral wallet — no wallet extension needed
-const privateKey = crypto.getRandomValues(new Uint8Array(32));
-const publicKey = secp256k1.getPublicKey(privateKey, false);
-const addressBytes = keccak_256(publicKey.slice(1)).slice(-20);
-const address = "0x" + Array.from(addressBytes, b =>
-  b.toString(16).padStart(2, "0")).join("");`,
-  connect: `import { Client, IdentifierKind } from "@xmtp/browser-sdk";
+const BROWSER_CODE = {
+  install: () =>
+    `npm create vite@latest my-xmtp-app -- --template vanilla && cd my-xmtp-app && npm install @xmtp/browser-sdk @noble/curves @noble/hashes`,
 
-// XMTP authenticates via a signer — wraps your wallet's sign function
+  identity: (identity: Identity) => {
+    const bytes = Array.from(identity.privateKey).join(', ');
+    return `import { Client, IdentifierKind } from "@xmtp/browser-sdk";
+import { secp256k1 } from "@noble/curves/secp256k1.js";
+import { keccak_256 } from "@noble/hashes/sha3.js";
+
+// Private key and address from the docs page widget (ephemeral — dev only)
+const privateKey = new Uint8Array([${bytes}]);
+const address = "${identity.address}";
+
+// Create an XMTP-compatible signer
 const signer = {
   type: "EOA",
   getIdentifier: () => ({
@@ -49,35 +43,59 @@ const signer = {
   signMessage: async (message) => {
     const prefix = "\\x19Ethereum Signed Message:\\n" + message.length;
     const hash = keccak_256(new TextEncoder().encode(prefix + message));
-    const sig = secp256k1.sign(hash, privateKey);
-    return new Uint8Array([...sig.toCompactRawBytes(), sig.recovery + 27]);
+    const sig = secp256k1.sign(hash, privateKey, { prehash: false, format: "recovered" });
+    return new Uint8Array([...sig.slice(1), sig[0] + 27]);
   },
 };
 
-// Connect to the dev network with an in-memory database
-const client = await Client.create(signer, {
+async function main() {
+  // Step 3 goes here
+  // Step 4 goes here
+  // Step 5 goes here
+}
+
+main().catch((e) => {
+  document.getElementById("messages").innerText = "Error: " + e.message;
+});`;
+  },
+
+  connect: () =>
+    `const client = await Client.create(signer, {
   env: "dev",
   dbPath: null,
-});`,
-  conversation: `const dm = await client.conversations.createDmWithIdentifier({
-  identifier: "${AGENT_ADDRESS}",
+});
+document.getElementById("messages").innerText = "Connected! Inbox ID: " + client.inboxId;`,
+
+  send: () =>
+    `const dm = await client.conversations.createDmWithIdentifier({
+  identifier: address,
   identifierKind: IdentifierKind.Ethereum,
+});
+
+document.getElementById("send")?.addEventListener("click", async () => {
+  const input = document.getElementById("message");
+  if (!input.value) return;
+  await dm.sendText(input.value);
+  input.value = "";
 });`,
-  send: 'await dm.sendText("gm");',
-  reply: `await dm.sync();
-const messages = await dm.messages();
-const reply = messages.find(m => m.senderInboxId !== client.inboxId);
-console.log("Agent:", reply.content);`,
+
+  stream: () =>
+    `const stream = await dm.stream();
+for await (const message of stream) {
+  if (message?.content) {
+    const el = document.createElement("p");
+    el.textContent = \`\${message.senderInboxId === client.inboxId ? "You" : "Them"}: \${message.content}\`;
+    document.getElementById("messages")?.appendChild(el);
+  }
+}`,
 };
 
-// Step N's Run is disabled until PREV_STEP[N] is 'done'.
-const PREV_STEP: Record<StepName, StepName | null> = {
-  install: null,
-  wallet: null, // first runnable step — always available
-  connect: 'wallet',
-  conversation: 'connect',
-  send: 'conversation',
-  reply: 'send',
+const CLI_CODE = {
+  install: () => BROWSER_CODE.install(),
+  identity: (identity: Identity) => BROWSER_CODE.identity(identity),
+  connect: () => BROWSER_CODE.connect(),
+  send: () => BROWSER_CODE.send(),
+  stream: () => BROWSER_CODE.stream(),
 };
 
 // ---------------------------------------------------------------------------
@@ -88,9 +106,7 @@ type QuickstartContextType = {
   mounted: boolean;
   activeTab: TabVariant;
   setActiveTab: (tab: TabVariant) => void;
-  statuses: Record<StepName, StepStatus>;
-  outputs: Record<StepName, string>;
-  run: (step: StepName) => void;
+  identity: Identity | null;
 };
 
 const QuickstartContext = React.createContext<QuickstartContextType | null>(
@@ -190,79 +206,10 @@ const STYLES = `
   html.dark .shiki span {
     color: var(--shiki-dark);
   }
-
-  .qs-actions {
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--vocs-color_border);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .qs-btn {
-    all: unset;
-    font-family: inherit;
-    font-size: var(--vocs-fontSize_14);
-    font-weight: 500;
-    padding: 0.4rem 1rem;
-    border-radius: var(--vocs-borderRadius_4);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    color: var(--vocs-color_background);
-    background-color: var(--vocs-color_text);
-  }
-
-  .qs-btn:hover:not(:disabled) {
-    opacity: 0.85;
-  }
-
-  .qs-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  .qs-btn-done {
-    color: var(--vocs-color_successText);
-    background-color: var(--vocs-color_successBackground);
-    cursor: default;
-  }
-
-  .qs-btn-done:hover {
-    opacity: 1;
-  }
-
-  .qs-output {
-    margin: 0;
-    padding: 0.75rem 1rem;
-    border-top: 1px solid var(--vocs-color_border);
-    background-color: var(--vocs-color_background);
-    font-family: var(--vocs-fontFamily_mono);
-    font-size: var(--vocs-fontSize_13);
-    line-height: 1.7;
-    color: var(--vocs-color_text2);
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-
-  .qs-spinner {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    border: 2px solid var(--vocs-color_text3);
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: qs-spin 0.6s linear infinite;
-    vertical-align: middle;
-  }
-
-  @keyframes qs-spin {
-    to { transform: rotate(360deg); }
-  }
 `;
 
 // ---------------------------------------------------------------------------
-// Provider — holds shared refs (wallet, client, dm) and runner functions
+// Provider — generates identity on mount, shares via context
 // ---------------------------------------------------------------------------
 
 export const QuickstartProvider = ({
@@ -272,227 +219,96 @@ export const QuickstartProvider = ({
 }) => {
   const [mounted, setMounted] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<TabVariant>('browser');
-  const [statuses, setStatuses] = React.useState<
-    Record<StepName, StepStatus>
-  >({
-    install: 'idle',
-    wallet: 'idle',
-    connect: 'idle',
-    conversation: 'idle',
-    send: 'idle',
-    reply: 'idle',
-  });
-  const [outputs, setOutputs] = React.useState<Record<StepName, string>>({
-    install: '',
-    wallet: '',
-    connect: '',
-    conversation: '',
-    send: '',
-    reply: '',
-  });
-
-  const walletRef = React.useRef<any>(null);
-  const clientRef = React.useRef<any>(null);
-  const dmRef = React.useRef<any>(null);
-  const mountedRef = React.useRef(true);
+  const [identity, setIdentity] = React.useState<Identity | null>(null);
+  const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(
+    null,
+  );
 
   React.useEffect(() => {
     setMounted(true);
+
+    // Generate identity
+    (async () => {
+      const { secp256k1 } = await import('@noble/curves/secp256k1');
+      const { keccak_256 } = await import('@noble/hashes/sha3');
+      const privateKey = crypto.getRandomValues(new Uint8Array(32));
+      const publicKey = secp256k1.getPublicKey(privateKey, false);
+      const addressBytes = keccak_256(publicKey.slice(1)).slice(-20);
+      const address =
+        '0x' +
+        Array.from(addressBytes, (b: number) =>
+          b.toString(16).padStart(2, '0'),
+        ).join('');
+      const privateKeyHex =
+        '0x' +
+        Array.from(privateKey, (b: number) =>
+          b.toString(16).padStart(2, '0'),
+        ).join('');
+      setIdentity({ privateKey, address, privateKeyHex });
+    })();
+
+    // Keep portal target in sync — vocs may re-render the outline sidebar,
+    // replacing the DOM node. Poll briefly then observe for changes.
+    const findTarget = () => document.getElementById('qs-inbox-mount');
+
+    const syncTarget = () => {
+      const el = findTarget();
+      setPortalTarget((prev) => (el && el !== prev ? el : prev ?? el));
+    };
+
+    syncTarget();
+
+    // Poll a few times in case the sidebar renders after us
+    const timers = [100, 500, 1500].map((ms) => setTimeout(syncTarget, ms));
+
+    // Watch for the mount point being replaced
+    const observer = new MutationObserver(syncTarget);
+    observer.observe(document.body, { childList: true, subtree: true });
+
     return () => {
-      mountedRef.current = false;
-      clientRef.current?.close?.();
+      timers.forEach(clearTimeout);
+      observer.disconnect();
     };
   }, []);
 
-  const setStepStatus = (step: StepName, status: StepStatus) => {
-    if (mountedRef.current)
-      setStatuses((prev) => ({ ...prev, [step]: status }));
-  };
-
-  const setStepOutput = (step: StepName, output: string) => {
-    if (mountedRef.current)
-      setOutputs((prev) => ({ ...prev, [step]: output }));
-  };
-
-  const run = async (step: StepName) => {
-    switch (step) {
-      case 'wallet': {
-        setStepStatus('wallet', 'running');
-        setStepOutput('wallet', '');
-        try {
-          const { secp256k1 } = await import(
-            '@noble/curves/secp256k1'
-          );
-          const { keccak_256 } = await import(
-            '@noble/hashes/sha3'
-          );
-          const privateKey = crypto.getRandomValues(
-            new Uint8Array(32),
-          );
-          const publicKey = secp256k1.getPublicKey(
-            privateKey,
-            false,
-          );
-          const addressBytes = keccak_256(publicKey.slice(1)).slice(
-            -20,
-          );
-          const address =
-            '0x' +
-            Array.from(addressBytes, (b: number) =>
-              b.toString(16).padStart(2, '0'),
-            ).join('');
-          walletRef.current = {
-            privateKey,
-            address,
-            secp256k1,
-            keccak_256,
-          };
-          setStepOutput('wallet', `Wallet created: ${address}`);
-          setStepStatus('wallet', 'done');
-        } catch (e: any) {
-          setStepOutput('wallet', `Error: ${e.message}`);
-          setStepStatus('wallet', 'error');
-        }
-        break;
-      }
-
-      case 'connect': {
-        setStepStatus('connect', 'running');
-        setStepOutput(
-          'connect',
-          'Connecting to XMTP dev network...',
-        );
-        try {
-          const { Client, IdentifierKind } = await import(
-            '@xmtp/browser-sdk'
-          );
-          const { privateKey, address, secp256k1, keccak_256 } =
-            walletRef.current;
-          const signer = {
-            type: 'EOA' as const,
-            getIdentifier: () => ({
-              identifier: address.toLowerCase(),
-              identifierKind: IdentifierKind.Ethereum,
-            }),
-            signMessage: async (message: string) => {
-              const prefix = `\x19Ethereum Signed Message:\n${message.length}`;
-              const prefixed = new TextEncoder().encode(
-                prefix + message,
-              );
-              const hash = keccak_256(prefixed);
-              const sig = secp256k1.sign(hash, privateKey);
-              return new Uint8Array([
-                ...sig.toCompactRawBytes(),
-                sig.recovery + 27,
-              ]);
-            },
-          };
-          const client = await Client.create(signer, {
-            env: 'dev',
-            dbPath: null,
-          });
-          clientRef.current = client;
-          setStepOutput('connect', `Connected as ${address}`);
-          setStepStatus('connect', 'done');
-        } catch (e: any) {
-          setStepOutput('connect', `Error: ${e.message}`);
-          setStepStatus('connect', 'error');
-        }
-        break;
-      }
-
-      case 'conversation': {
-        setStepStatus('conversation', 'running');
-        setStepOutput(
-          'conversation',
-          'Creating conversation with gm agent...',
-        );
-        try {
-          const { IdentifierKind } = await import(
-            '@xmtp/browser-sdk'
-          );
-          const dm =
-            await clientRef.current.conversations.createDmWithIdentifier(
-              {
-                identifier: AGENT_ADDRESS,
-                identifierKind: IdentifierKind.Ethereum,
-              },
-            );
-          dmRef.current = dm;
-          setStepOutput(
-            'conversation',
-            `Conversation created: ${dm.id}`,
-          );
-          setStepStatus('conversation', 'done');
-        } catch (e: any) {
-          setStepOutput('conversation', `Error: ${e.message}`);
-          setStepStatus('conversation', 'error');
-        }
-        break;
-      }
-
-      case 'send': {
-        setStepStatus('send', 'running');
-        setStepOutput('send', '');
-        try {
-          await dmRef.current.sendText('gm');
-          setStepOutput('send', 'You: gm');
-          setStepStatus('send', 'done');
-        } catch (e: any) {
-          setStepOutput('send', `Error: ${e.message}`);
-          setStepStatus('send', 'error');
-        }
-        break;
-      }
-
-      case 'reply': {
-        setStepStatus('reply', 'running');
-        setStepOutput('reply', 'Waiting for reply...');
-        try {
-          const dm = dmRef.current;
-          const client = clientRef.current;
-          for (let i = 0; i < 20; i++) {
-            await new Promise((r) => setTimeout(r, 2000));
-            if (!mountedRef.current) return;
-            await dm.sync();
-            const messages = await dm.messages();
-            const reply = messages.find(
-              (m: any) => m.senderInboxId !== client.inboxId,
-            );
-            if (reply) {
-              setStepOutput('reply', `Agent: ${reply.content}`);
-              setStepStatus('reply', 'done');
-              return;
-            }
-          }
-          setStepOutput(
-            'reply',
-            "Message sent, but the agent hasn't replied yet.\nThe agent may be temporarily offline.",
-          );
-          setStepStatus('reply', 'done');
-        } catch (e: any) {
-          setStepOutput('reply', `Error: ${e.message}`);
-          setStepStatus('reply', 'error');
-        }
-        break;
-      }
-    }
-  };
-
   return (
     <QuickstartContext.Provider
-      value={{
-        mounted,
-        activeTab,
-        setActiveTab,
-        statuses,
-        outputs,
-        run,
-      }}
+      value={{ mounted, activeTab, setActiveTab, identity }}
     >
       <style>{STYLES}</style>
       {children}
+      {mounted && identity && portalTarget && (
+        <InboxPortal target={portalTarget} identity={identity} />
+      )}
     </QuickstartContext.Provider>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Portal wrapper — lazy-loads QuickstartInbox into the sidebar mount point
+// ---------------------------------------------------------------------------
+
+const InboxPortal = ({
+  target,
+  identity,
+}: {
+  target: HTMLElement;
+  identity: Identity;
+}) => {
+  const [InboxComponent, setInboxComponent] =
+    React.useState<React.ComponentType<{ identity: Identity }> | null>(null);
+
+  React.useEffect(() => {
+    import('./QuickstartInbox').then((mod) => {
+      setInboxComponent(() => mod.QuickstartInbox);
+    });
+  }, []);
+
+  if (!InboxComponent) return null;
+
+  return ReactDOM.createPortal(
+    <InboxComponent identity={identity} />,
+    target,
   );
 };
 
@@ -532,67 +348,46 @@ const CheckIcon = () => (
 );
 
 // ---------------------------------------------------------------------------
-// Step widget — tabbed code block + copy + run + output
+// Step widget — tabbed code block + copy (no run button)
 // ---------------------------------------------------------------------------
 
 export const QuickstartStep = ({ step }: { step: StepName }) => {
   const ctx = React.useContext(QuickstartContext);
-  const [cliHtml, setCliHtml] = React.useState('');
-  const [browserHtml, setBrowserHtml] = React.useState('');
+  const [mainHtml, setMainHtml] = React.useState('');
   const [copied, setCopied] = React.useState(false);
 
-  const cliCode = CLI_CODE[step];
-  const browserCode = BROWSER_CODE[step];
+  const isStatic = step === 'install';
 
+  // Generate code strings from identity (or static for install)
+  const code = React.useMemo(() => {
+    if (isStatic) return BROWSER_CODE[step]();
+    if (!ctx?.identity) return '';
+    const gen =
+      ctx.activeTab === 'cli' ? CLI_CODE[step] : BROWSER_CODE[step];
+    return (gen as (id: Identity) => string)(ctx.identity);
+  }, [step, ctx?.identity, ctx?.activeTab, isStatic]);
+
+  // Highlight with Shiki
   React.useEffect(() => {
-    if (!ctx?.mounted) return;
+    if (!ctx?.mounted || !code) return;
     import('shiki').then(({ codeToHtml }) => {
-      const browserLang =
-        step === 'install' ? 'bash' : 'typescript';
-      codeToHtml(cliCode, {
-        lang: 'bash',
+      const lang = isStatic ? 'bash' : 'javascript';
+      codeToHtml(code, {
+        lang,
         themes: { light: 'github-light', dark: 'github-dark' },
-      }).then(setCliHtml);
-      codeToHtml(browserCode, {
-        lang: browserLang,
-        themes: { light: 'github-light', dark: 'github-dark' },
-      }).then(setBrowserHtml);
+      }).then(setMainHtml);
     });
-  }, [ctx?.mounted, cliCode, browserCode, step]);
+  }, [ctx?.mounted, code, step, isStatic]);
 
   if (!ctx?.mounted) return null;
 
-  const { activeTab, setActiveTab, statuses, outputs, run } = ctx;
-  const status = statuses[step];
-  const output = outputs[step];
-  const isInstall = step === 'install';
-
-  const prevStep = PREV_STEP[step];
-  const isRunDisabled =
-    isInstall ||
-    status === 'running' ||
-    status === 'done' ||
-    (prevStep !== null && statuses[prevStep] !== 'done');
-
-  const activeCode =
-    activeTab === 'cli' ? cliCode : browserCode;
-  const activeHtml =
-    activeTab === 'cli' ? cliHtml : browserHtml;
+  const { activeTab, setActiveTab } = ctx;
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(activeCode);
+    navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
-
-  const buttonLabel =
-    status === 'running'
-      ? 'Running...'
-      : status === 'done'
-        ? 'Done'
-        : status === 'error'
-          ? 'Retry'
-          : 'Run';
 
   return (
     <div className="qs-step">
@@ -624,12 +419,9 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
           </button>
         </div>
       </RadixTabs.Root>
-
       <div className="qs-code">
-        {activeHtml ? (
-          <div
-            dangerouslySetInnerHTML={{ __html: activeHtml }}
-          />
+        {mainHtml ? (
+          <div dangerouslySetInnerHTML={{ __html: mainHtml }} />
         ) : (
           <pre
             style={{
@@ -643,33 +435,10 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
               whiteSpace: 'pre',
             }}
           >
-            {activeCode}
+            {code}
           </pre>
         )}
       </div>
-
-      {!isInstall && (
-        <div className="qs-actions">
-          <button
-            className={
-              status === 'done'
-                ? 'qs-btn qs-btn-done'
-                : 'qs-btn'
-            }
-            onClick={() => run(step)}
-            disabled={isRunDisabled}
-          >
-            {status === 'running' && (
-              <>
-                <span className="qs-spinner" />{' '}
-              </>
-            )}
-            {buttonLabel}
-          </button>
-        </div>
-      )}
-
-      {output && <pre className="qs-output">{output}</pre>}
     </div>
   );
 };

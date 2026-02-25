@@ -2,32 +2,68 @@ import { QuickstartProvider, QuickstartStep } from '../../components/QuickstartS
 
 # Quickstart
 
-Send your first XMTP message in under 5 minutes. This quickstart connects you to a "gm" agent on the XMTP `dev` network — you send a message, the agent replies "gm".
+Build a chat app that talks to this page. The widget in the sidebar
+is a live XMTP inbox — you'll build a Vite app that sends messages
+to it using the same identity.
 
 <QuickstartProvider>
 
-## Install
+## 1. Set up your project
+
+Create a new Vite project and install XMTP. Select **no** when Vite
+asks to install and start:
 
 <QuickstartStep step="install" />
 
-## Generate your keys
+The XMTP SDK uses WASM, which requires a Vite config change.
+Add `vite.config.js` to your project root:
 
-<QuickstartStep step="wallet" />
+```javascript
+import { defineConfig } from "vite";
 
-## Connect to XMTP
+export default defineConfig({
+  optimizeDeps: {
+    exclude: ["@xmtp/browser-sdk", "@xmtp/wasm-bindings"],
+  },
+});
+```
+
+## 2. Add the baseline code
+
+Replace `src/main.js` with the code below. It includes the private key
+from the sidebar widget so your Vite app shares the same XMTP identity.
+
+<QuickstartStep step="identity" />
+
+Then replace the contents of `<body>` in your `index.html` with:
+
+```html
+<input id="message" type="text" placeholder="Type a message..." />
+<button id="send">Send</button>
+<div id="messages"></div>
+<script type="module" src="/src/main.js"></script>
+```
+
+## 3. Connect to XMTP
+
+Replace `// Step 3 goes here` in `main()` with the code below.
+Run `npm run dev` — you should see your Inbox ID appear on the page.
 
 <QuickstartStep step="connect" />
 
-## Start a conversation
+## 4. Send a message
 
-<QuickstartStep step="conversation" />
-
-## Send a message
+Replace `// Step 4 goes here` in `main()` with the code below.
+Type a message in your Vite app and press Send — it appears in the
+sidebar widget on this page.
 
 <QuickstartStep step="send" />
 
-## Check for the reply
+## 5. Stream messages
 
-<QuickstartStep step="reply" />
+Replace `// Step 5 goes here` in `main()` with the code below.
+Now messages sent from the sidebar widget appear in your Vite app too.
+
+<QuickstartStep step="stream" />
 
 </QuickstartProvider>
