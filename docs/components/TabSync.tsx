@@ -93,13 +93,8 @@ export default function TabSync() {
       });
     }
 
-    function handleMouseDown(e: MouseEvent) {
+    function handleTabActivated(target: HTMLElement) {
       if (syncing) return;
-
-      const target = (e.target as HTMLElement)?.closest?.(
-        '[role="tab"]'
-      ) as HTMLElement | null;
-      if (!target) return;
 
       const tablist = target.closest('[role="tablist"]');
       if (!tablist) return;
@@ -132,45 +127,52 @@ export default function TabSync() {
       }
     }
 
-    document.addEventListener("mousedown", handleMouseDown, true);
-
     // Apply on mount
     applyPrefsToNewTablists();
 
-    // MutationObserver for new tablists (SPA navigation or lazy rendering).
-    // WeakSet prevents re-processing → no loops.
+    // Single MutationObserver handles both:
+    // - attribute mutations: detect tab activation (data-state="active") for syncing
+    // - childList mutations: apply prefs to newly rendered tablists
     let debounceTimer: ReturnType<typeof setTimeout>;
-    const observer = new MutationObserver(() => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(applyPrefsToNewTablists, 80);
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    const observer = new MutationObserver((mutations) => {
+      let hasChildListChanges = false;
 
-    // Catch SPA navigation via popstate + pushState/replaceState
+      for (const m of mutations) {
+        if (
+          m.type === "attributes" &&
+          m.target instanceof HTMLElement &&
+          m.target.getAttribute("role") === "tab" &&
+          m.target.getAttribute("data-state") === "active"
+        ) {
+          handleTabActivated(m.target);
+        } else if (m.type === "childList") {
+          hasChildListChanges = true;
+        }
+      }
+
+      if (hasChildListChanges) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(applyPrefsToNewTablists, 80);
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-state"],
+    });
+
+    // Catch back/forward navigation
     function onNav() {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(applyPrefsToNewTablists, 150);
     }
     window.addEventListener("popstate", onNav);
 
-    const origPush = history.pushState.bind(history);
-    const origReplace = history.replaceState.bind(history);
-    history.pushState = function (...args) {
-      origPush(...args);
-      onNav();
-    };
-    history.replaceState = function (...args) {
-      origReplace(...args);
-      onNav();
-    };
-
     return () => {
-      document.removeEventListener("mousedown", handleMouseDown, true);
       observer.disconnect();
       clearTimeout(debounceTimer);
       window.removeEventListener("popstate", onNav);
-      history.pushState = origPush;
-      history.replaceState = origReplace;
     };
   }, []);
 
