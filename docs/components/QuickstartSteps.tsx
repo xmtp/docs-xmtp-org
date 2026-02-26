@@ -380,6 +380,7 @@ export const QuickstartStep = ({ step, label }: { step: StepName; label?: string
   // Highlight with Shiki
   React.useEffect(() => {
     if (!ctx?.mounted || !code) return;
+    setMainHtml('');
     let stale = false;
     import('shiki').then(({ codeToHtml }) => {
       codeToHtml(code, {
