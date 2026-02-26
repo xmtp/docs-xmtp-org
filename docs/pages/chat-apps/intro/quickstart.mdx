@@ -4,7 +4,7 @@ import { QuickstartProvider, QuickstartStep, CopyableCode, STATIC_CODE } from '.
 
 Follow this tutorial to build a quickstart chat app with XMTP.
 
-Your quickstart app and the **XMTP Live Inbox** in the sidebar are two separate XMTP inboxes. By the end of this tutorial, they can send messages to each other.
+Your quickstart app and the **XMTP Live Inbox** in the sidebar are two separate XMTP inboxes. By the end of this tutorial, they'll be able to message each other.
 
 :::tip[Not seeing the sidebar and the XMTP Live Inbox?]
 Display your browser window at full width (at least 1280px).
@@ -37,7 +37,7 @@ The XMTP SDK uses WASM, which requires a Vite config change. Add `vite.config.js
 
 ## 2. Add the starter code
 
-In your project, replace `src/main.js` with the code below. The code includes a private key for your quickstart app and the address of the XMTP Live Inbox. These are the two sides of the conversation.
+In your project, replace `src/main.js` with the code below. `privateKey` and `address` are for your quickstart app. `otherAddress` is the address of the XMTP Live Inbox. These are the two sides of the conversation.
 
 :::tip
 Refreshing this page generates new identities. If you refresh, update the `privateKey`, `address`, and `otherAddress` in your `src/main.js` to match the values in the code below.
@@ -53,7 +53,8 @@ Run `npm run dev` to start your app. You should see the UI with a text input and
 
 ## 3. Connect to XMTP
 
-In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Your quickstart app should display its own Inbox ID.
+In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Your quickstart app should display its own Inbox ID. For example: `
+Connected! Inbox ID: 89cd9d2dbb077080842102655f7ab3bced74e837769a239c6ec888708cb93b26`
 
 <QuickstartStep step="connect" label="src/main.js" />
 
@@ -61,7 +62,7 @@ In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below.
 
 Replace `// Step 4 goes here` in `main()` with the code below.
 
-Then, type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not yet in your quickstart app.
+Then type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not in your quickstart app.
 
 With XMTP, sending a message delivers it to the network, but doesn't automatically update the local UI (unless you use [optimistic sending](/chat-apps/core-messaging/send-messages#optimistically-send-messages)). The XMTP Live Inbox displays the message because it already has a stream listening for new messages. You'll add streaming to your quickstart app in the next step.
 
@@ -77,6 +78,6 @@ Replace `// Step 5 goes here` in `main()` with the code below. Now messages sent
 
 ## Next steps
 
-Ready to build a full-fledged chat app with XMTP?
+- Try the [xmtp.chat](https://xmtp.chat/) web app for more development and debugging tools.
 
-[Get started](/chat-apps/intro/get-started)
+- Ready to build a full-fledged chat app with XMTP? See [Get started](/chat-apps/intro/get-started).
