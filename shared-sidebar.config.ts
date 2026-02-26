@@ -305,7 +305,7 @@ export const sidebarConfig = {
         },
         {
           text: "Build a quickstart app",
-          link: "/chat-apps/quickstart",
+          link: "/chat-apps/intro/quickstart",
         },
         {
           text: "Get started",

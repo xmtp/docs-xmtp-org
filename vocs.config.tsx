@@ -93,7 +93,7 @@ export default defineConfig({
     },
     {
       text: 'Build chat apps',
-      link: '/chat-apps/intro/get-started',
+      link: '/chat-apps/intro/quickstart',
       match: '/chat-apps',
     },
     { text: 'Protocol', link: '/protocol/overview' },
