@@ -21,6 +21,27 @@ type Identity = {
 };
 
 // ---------------------------------------------------------------------------
+// Static code snippets
+// ---------------------------------------------------------------------------
+
+export const STATIC_CODE = {
+  viteConfig: `import { defineConfig } from "vite";
+
+export default defineConfig({
+  optimizeDeps: {
+    exclude: ["@xmtp/browser-sdk", "@xmtp/wasm-bindings"],
+  },
+});`,
+
+  indexHtml: `<h1>&nbsp;&nbsp;&nbsp;XMTP Quickstart</h1>
+<div class="card">
+  <input id="message" type="text" placeholder="Type a message..." />
+  <button id="send">Send</button>
+</div>
+<div id="messages"></div>`,
+};
+
+// ---------------------------------------------------------------------------
 // Code generators — return interpolated code strings with real key bytes
 // ---------------------------------------------------------------------------
 
@@ -150,6 +171,14 @@ const STYLES = `
 
   .qs-copy-btn:hover {
     color: var(--vocs-color_text);
+  }
+
+  .qs-label {
+    font-family: var(--vocs-fontFamily_mono);
+    font-size: var(--vocs-fontSize_13);
+    color: var(--vocs-color_text3);
+    padding-left: 0.75rem;
+    flex: 1;
   }
 
   .qs-code {
@@ -335,7 +364,7 @@ const CheckIcon = () => (
 // Step widget — tabbed code block + copy (no run button)
 // ---------------------------------------------------------------------------
 
-export const QuickstartStep = ({ step }: { step: StepName }) => {
+export const QuickstartStep = ({ step, label }: { step: StepName; label?: string }) => {
   const ctx = React.useContext(QuickstartContext);
   const [mainHtml, setMainHtml] = React.useState('');
   const [copied, setCopied] = React.useState(false);
@@ -372,7 +401,8 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
 
   return (
     <div className="qs-step">
-      <div className="qs-header" style={{ justifyContent: 'flex-end' }}>
+      <div className="qs-header">
+        {label && <span className="qs-label">{label}</span>}
         <button
           className="qs-copy-btn"
           onClick={handleCopy}
@@ -413,10 +443,12 @@ export const CopyableCode = ({
   code,
   lang = 'javascript',
   analyticsStep,
+  label,
 }: {
   code: string;
   lang?: string;
   analyticsStep: string;
+  label?: string;
 }) => {
   const [html, setHtml] = React.useState('');
   const [copied, setCopied] = React.useState(false);
@@ -445,7 +477,8 @@ export const CopyableCode = ({
 
   return (
     <div className="qs-step">
-      <div className="qs-header" style={{ justifyContent: 'flex-end' }}>
+      <div className="qs-header">
+        {label && <span className="qs-label">{label}</span>}
         <button
           className="qs-copy-btn"
           onClick={handleCopy}

@@ -190,7 +190,7 @@ export const QuickstartInbox = ({ inboxIdentity, appIdentity }: { inboxIdentity:
   >('connecting');
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [inputVal, setInputVal] = React.useState('');
-  const [copiedAddr, setCopiedKey] = React.useState(false);
+  const [copiedAddr, setCopiedAddr] = React.useState(false);
   const [inboxId, setInboxId] = React.useState('');
 
   const clientRef = React.useRef<any>(null);
@@ -313,8 +313,8 @@ export const QuickstartInbox = ({ inboxIdentity, appIdentity }: { inboxIdentity:
 
   const handleCopyAddress = () => {
     navigator.clipboard?.writeText(inboxIdentity.address);
-    setCopiedKey(true);
-    setTimeout(() => setCopiedKey(false), 1500);
+    setCopiedAddr(true);
+    setTimeout(() => setCopiedAddr(false), 1500);
   };
 
   const truncate = (s: string, n: number) =>
