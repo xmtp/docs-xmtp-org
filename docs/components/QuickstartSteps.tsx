@@ -361,7 +361,7 @@ const CheckIcon = () => (
 );
 
 // ---------------------------------------------------------------------------
-// Step widget — tabbed code block + copy (no run button)
+// Step widget — code block + copy button
 // ---------------------------------------------------------------------------
 
 export const QuickstartStep = ({ step, label }: { step: StepName; label?: string }) => {
