@@ -93,6 +93,10 @@ export const sidebarConfig = {
           link: "/agents/content-types/content-types",
         },
         {
+          text: "Actions",
+          link: "/agents/content-types/actions",
+        },
+        {
           text: "Reactions",
           link: "/agents/content-types/reactions",
         },
