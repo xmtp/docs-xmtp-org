@@ -291,6 +291,8 @@ export const QuickstartInbox = ({ inboxIdentity, appIdentity }: { inboxIdentity:
 
     return () => {
       mounted = false;
+      dmRef.current = null;
+      getOrCreateDmRef.current = null;
       streamCleanup?.();
       clientRef.current?.close?.();
     };

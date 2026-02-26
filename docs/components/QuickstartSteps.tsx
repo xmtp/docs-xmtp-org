@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as RadixTabs from '@radix-ui/react-tabs';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,7 +13,6 @@ const STEP_ANALYTICS: Record<StepName, string> = {
   send: '4-send',
   stream: '5-stream',
 };
-type TabVariant = 'cli' | 'browser';
 
 type Identity = {
   privateKey: Uint8Array;
@@ -104,22 +102,12 @@ for await (const message of stream) {
 }`,
 };
 
-const CLI_CODE = {
-
-  identity: (appIdentity: Identity, inboxIdentity: Identity) => BROWSER_CODE.identity(appIdentity, inboxIdentity),
-  connect: () => BROWSER_CODE.connect(),
-  send: () => BROWSER_CODE.send(),
-  stream: () => BROWSER_CODE.stream(),
-};
-
 // ---------------------------------------------------------------------------
 // Context
 // ---------------------------------------------------------------------------
 
 type QuickstartContextType = {
   mounted: boolean;
-  activeTab: TabVariant;
-  setActiveTab: (tab: TabVariant) => void;
   appIdentity: Identity | null;
   inboxIdentity: Identity | null;
 };
@@ -147,33 +135,6 @@ const STYLES = `
     border-bottom: 1px solid var(--vocs-color_border);
   }
 
-  .qs-tab-list {
-    display: flex;
-    flex: 1;
-  }
-
-  .qs-tab-trigger {
-    all: unset;
-    font-family: inherit;
-    font-size: var(--vocs-fontSize_14);
-    font-weight: 400;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    color: var(--vocs-color_text3);
-    border-bottom: 2px solid transparent;
-    transition: color 0.15s, border-color 0.15s;
-    user-select: none;
-  }
-
-  .qs-tab-trigger:hover {
-    color: var(--vocs-color_text);
-  }
-
-  .qs-tab-trigger[data-state="active"] {
-    color: var(--vocs-color_text);
-    font-weight: 500;
-    border-bottom-color: var(--vocs-color_link);
-  }
 
   .qs-copy-btn {
     all: unset;
@@ -233,7 +194,6 @@ export const QuickstartProvider = ({
   children: React.ReactNode;
 }) => {
   const [mounted, setMounted] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<TabVariant>('browser');
   const [appIdentity, setAppIdentity] = React.useState<Identity | null>(null);
   const [inboxIdentity, setInboxIdentity] = React.useState<Identity | null>(null);
   const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(
@@ -295,7 +255,7 @@ export const QuickstartProvider = ({
 
   return (
     <QuickstartContext.Provider
-      value={{ mounted, activeTab, setActiveTab, appIdentity, inboxIdentity }}
+      value={{ mounted, appIdentity, inboxIdentity }}
     >
       <style>{STYLES}</style>
       {children}
@@ -382,29 +342,26 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
 
   const code = React.useMemo(() => {
     if (!ctx?.appIdentity || !ctx?.inboxIdentity) return '';
-    const gen =
-      ctx.activeTab === 'cli' ? CLI_CODE[step] : BROWSER_CODE[step];
     if (step === 'identity') {
-      return (gen as (app: Identity, inbox: Identity) => string)(ctx.appIdentity, ctx.inboxIdentity);
+      return BROWSER_CODE.identity(ctx.appIdentity, ctx.inboxIdentity);
     }
-    return (gen as () => string)();
-  }, [step, ctx?.appIdentity, ctx?.inboxIdentity, ctx?.activeTab]);
+    return (BROWSER_CODE[step] as () => string)();
+  }, [step, ctx?.appIdentity, ctx?.inboxIdentity]);
 
   // Highlight with Shiki
   React.useEffect(() => {
     if (!ctx?.mounted || !code) return;
+    let stale = false;
     import('shiki').then(({ codeToHtml }) => {
-      const lang = 'javascript';
       codeToHtml(code, {
-        lang,
+        lang: 'javascript',
         themes: { light: 'github-light', dark: 'github-dark' },
-      }).then(setMainHtml);
+      }).then((html) => { if (!stale) setMainHtml(html); });
     });
+    return () => { stale = true; };
   }, [ctx?.mounted, code, step]);
 
   if (!ctx?.mounted) return null;
-
-  const { activeTab, setActiveTab } = ctx;
 
   const handleCopy = () => {
     navigator.clipboard?.writeText(code);
@@ -415,34 +372,15 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
 
   return (
     <div className="qs-step">
-      <RadixTabs.Root
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as TabVariant)}
-      >
-        <div className="qs-header">
-          <RadixTabs.List className="qs-tab-list">
-            <RadixTabs.Trigger
-              value="browser"
-              className="qs-tab-trigger"
-            >
-              Browser
-            </RadixTabs.Trigger>
-            <RadixTabs.Trigger
-              value="cli"
-              className="qs-tab-trigger"
-            >
-              CLI
-            </RadixTabs.Trigger>
-          </RadixTabs.List>
-          <button
-            className="qs-copy-btn"
-            onClick={handleCopy}
-            title={copied ? 'Copied!' : 'Copy code'}
-          >
-            {copied ? <CheckIcon /> : <CopyIcon />}
-          </button>
-        </div>
-      </RadixTabs.Root>
+      <div className="qs-header" style={{ justifyContent: 'flex-end' }}>
+        <button
+          className="qs-copy-btn"
+          onClick={handleCopy}
+          title={copied ? 'Copied!' : 'Copy code'}
+        >
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </button>
+      </div>
       <div className="qs-code">
         {mainHtml ? (
           <div dangerouslySetInnerHTML={{ __html: mainHtml }} />
