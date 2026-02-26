@@ -184,17 +184,18 @@ const INBOX_STYLES = `
 // Component
 // ---------------------------------------------------------------------------
 
-export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
+export const QuickstartInbox = ({ inboxIdentity, appIdentity }: { inboxIdentity: Identity; appIdentity: Identity }) => {
   const [status, setStatus] = React.useState<
     'connecting' | 'connected' | 'error'
   >('connecting');
   const [messages, setMessages] = React.useState<Message[]>([]);
   const [inputVal, setInputVal] = React.useState('');
-  const [copiedKey, setCopiedKey] = React.useState(false);
+  const [copiedAddr, setCopiedKey] = React.useState(false);
   const [inboxId, setInboxId] = React.useState('');
 
   const clientRef = React.useRef<any>(null);
   const dmRef = React.useRef<any>(null);
+  const getOrCreateDmRef = React.useRef<(() => Promise<any>) | null>(null);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   // Auto-scroll messages
@@ -203,7 +204,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
-  // Initialize XMTP client + self-DM + stream
+  // Initialize XMTP client + DM with quickstart app + stream
   React.useEffect(() => {
     let mounted = true;
     let streamCleanup: (() => void) | null = null;
@@ -219,7 +220,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
         const signer = {
           type: 'EOA' as const,
           getIdentifier: () => ({
-            identifier: identity.address.toLowerCase(),
+            identifier: inboxIdentity.address.toLowerCase(),
             identifierKind: IdentifierKind.Ethereum,
           }),
           signMessage: async (message: string) => {
@@ -227,7 +228,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
             const prefix = `\x19Ethereum Signed Message:\n${msgBytes.length}`;
             const prefixed = new TextEncoder().encode(prefix + message);
             const hash = keccak_256(prefixed);
-            const sig = secp256k1.sign(hash, identity.privateKey);
+            const sig = secp256k1.sign(hash, inboxIdentity.privateKey);
             return new Uint8Array([
               ...sig.toCompactRawBytes(),
               sig.recovery + 27,
@@ -247,13 +248,16 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
         clientRef.current = client;
         setInboxId(client.inboxId ?? '');
 
-        // Create self-DM conversation
-        const dm =
-          await client.conversations.createDmWithIdentifier({
-            identifier: identity.address.toLowerCase(),
+        // Store a helper to lazily create the DM when the quickstart app is registered
+        getOrCreateDmRef.current = async () => {
+          if (dmRef.current) return dmRef.current;
+          const dm = await client.conversations.createDmWithIdentifier({
+            identifier: appIdentity.address.toLowerCase(),
             identifierKind: IdentifierKind.Ethereum,
           });
-        dmRef.current = dm;
+          dmRef.current = dm;
+          return dm;
+        };
 
         if (!mounted) return;
         setStatus('connected');
@@ -290,21 +294,23 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
       streamCleanup?.();
       clientRef.current?.close?.();
     };
-  }, [identity]);
+  }, [inboxIdentity, appIdentity]);
 
   const handleSend = async () => {
     const text = inputVal.trim();
-    if (!text || !dmRef.current) return;
+    if (!text || !getOrCreateDmRef.current) return;
     setInputVal('');
     try {
-      await dmRef.current.sendText(text);
+      const dm = await getOrCreateDmRef.current();
+      await dm.sendText(text);
+      (window as any).plausible?.('Quickstart: Message Sent');
     } catch (e) {
       console.error('Send failed:', e);
     }
   };
 
-  const handleCopyKey = () => {
-    navigator.clipboard.writeText(identity.privateKeyHex);
+  const handleCopyAddress = () => {
+    navigator.clipboard?.writeText(inboxIdentity.address);
     setCopiedKey(true);
     setTimeout(() => setCopiedKey(false), 1500);
   };
@@ -320,7 +326,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
           <div className="qi-title">XMTP Live Inbox</div>
           <div className="qi-field">
             <span className="qi-field-label">Address:</span>
-            <span>{truncate(identity.address, 14)}</span>
+            <span>{truncate(inboxIdentity.address, 14)}</span>
           </div>
           {inboxId && (
             <div className="qi-field">
@@ -329,8 +335,8 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
             </div>
           )}
           <div style={{ marginTop: '0.375rem' }}>
-            <button className="qi-copy-btn" onClick={handleCopyKey}>
-              {copiedKey ? 'Copied!' : 'Copy private key'}
+            <button className="qi-copy-btn" onClick={handleCopyAddress}>
+              {copiedAddr ? 'Copied!' : 'Copy address'}
             </button>
           </div>
           <div className="qi-status">
@@ -359,7 +365,7 @@ export const QuickstartInbox = ({ identity }: { identity: Identity }) => {
                 className={`qi-msg qi-msg-${msg.sender}`}
               >
                 <span className="qi-msg-label">
-                  {msg.sender === 'self' ? 'You:' : 'Vite app:'}
+                  {msg.sender === 'self' ? 'Live Inbox:' : 'Quickstart App:'}
                 </span>
                 {msg.text}
               </div>

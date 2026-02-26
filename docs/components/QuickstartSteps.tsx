@@ -7,6 +7,13 @@ import * as RadixTabs from '@radix-ui/react-tabs';
 // ---------------------------------------------------------------------------
 
 type StepName = 'identity' | 'connect' | 'send' | 'stream';
+
+const STEP_ANALYTICS: Record<StepName, string> = {
+  identity: '2-starter-code',
+  connect: '3-connect',
+  send: '4-send',
+  stream: '5-stream',
+};
 type TabVariant = 'cli' | 'browser';
 
 type Identity = {
@@ -21,15 +28,19 @@ type Identity = {
 
 const BROWSER_CODE = {
 
-  identity: (identity: Identity) => {
-    const bytes = Array.from(identity.privateKey).join(', ');
-    return `import { Client, IdentifierKind } from "@xmtp/browser-sdk";
+  identity: (appIdentity: Identity, inboxIdentity: Identity) => {
+    const hex = appIdentity.privateKeyHex.replace(/^0x/, '');
+    return `import "./style.css";
+import { Client, IdentifierKind } from "@xmtp/browser-sdk";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 
-// Private key and address from the docs page widget (ephemeral — dev only)
-const privateKey = new Uint8Array([${bytes}]);
-const address = "${identity.address}";
+// Your app's private key and address (ephemeral — dev only)
+const privateKey = Uint8Array.fromHex("${hex}");
+const address = "${appIdentity.address}";
+
+// The XMTP Live Inbox address (the other side of the conversation)
+const otherAddress = "${inboxIdentity.address}";
 
 // Create an XMTP-compatible signer
 const signer = {
@@ -66,15 +77,20 @@ document.getElementById("messages").innerText = "Connected! Inbox ID: " + client
 
   send: () =>
     `const dm = await client.conversations.createDmWithIdentifier({
-  identifier: address,
+  identifier: otherAddress,
   identifierKind: IdentifierKind.Ethereum,
 });
 
-document.getElementById("send")?.addEventListener("click", async () => {
+const sendMessage = async () => {
   const input = document.getElementById("message");
   if (!input.value) return;
   await dm.sendText(input.value);
   input.value = "";
+};
+
+document.getElementById("send")?.addEventListener("click", sendMessage);
+document.getElementById("message")?.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessage();
 });`,
 
   stream: () =>
@@ -82,7 +98,7 @@ document.getElementById("send")?.addEventListener("click", async () => {
 for await (const message of stream) {
   if (message?.content) {
     const el = document.createElement("p");
-    el.textContent = \`\${message.senderInboxId === client.inboxId ? "You" : "Them"}: \${message.content}\`;
+    el.textContent = \`\${message.senderInboxId === client.inboxId ? "Quickstart App" : "Live Inbox"}: \${message.content}\`;
     document.getElementById("messages")?.appendChild(el);
   }
 }`,
@@ -90,7 +106,7 @@ for await (const message of stream) {
 
 const CLI_CODE = {
 
-  identity: (identity: Identity) => BROWSER_CODE.identity(identity),
+  identity: (appIdentity: Identity, inboxIdentity: Identity) => BROWSER_CODE.identity(appIdentity, inboxIdentity),
   connect: () => BROWSER_CODE.connect(),
   send: () => BROWSER_CODE.send(),
   stream: () => BROWSER_CODE.stream(),
@@ -104,7 +120,8 @@ type QuickstartContextType = {
   mounted: boolean;
   activeTab: TabVariant;
   setActiveTab: (tab: TabVariant) => void;
-  identity: Identity | null;
+  appIdentity: Identity | null;
+  inboxIdentity: Identity | null;
 };
 
 const QuickstartContext = React.createContext<QuickstartContextType | null>(
@@ -217,7 +234,8 @@ export const QuickstartProvider = ({
 }) => {
   const [mounted, setMounted] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<TabVariant>('browser');
-  const [identity, setIdentity] = React.useState<Identity | null>(null);
+  const [appIdentity, setAppIdentity] = React.useState<Identity | null>(null);
+  const [inboxIdentity, setInboxIdentity] = React.useState<Identity | null>(null);
   const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(
     null,
   );
@@ -225,8 +243,8 @@ export const QuickstartProvider = ({
   React.useEffect(() => {
     setMounted(true);
 
-    // Generate identity
-    (async () => {
+    // Generate two identities: one for the quickstart app, one for the Live Inbox
+    const generateIdentity = async () => {
       const { secp256k1 } = await import('@noble/curves/secp256k1');
       const { keccak_256 } = await import('@noble/hashes/sha3');
       const privateKey = crypto.getRandomValues(new Uint8Array(32));
@@ -242,7 +260,13 @@ export const QuickstartProvider = ({
         Array.from(privateKey, (b: number) =>
           b.toString(16).padStart(2, '0'),
         ).join('');
-      setIdentity({ privateKey, address, privateKeyHex });
+      return { privateKey, address, privateKeyHex } as Identity;
+    };
+
+    (async () => {
+      const [app, inbox] = await Promise.all([generateIdentity(), generateIdentity()]);
+      setAppIdentity(app);
+      setInboxIdentity(inbox);
     })();
 
     // Keep portal target in sync — vocs may re-render the outline sidebar,
@@ -271,12 +295,12 @@ export const QuickstartProvider = ({
 
   return (
     <QuickstartContext.Provider
-      value={{ mounted, activeTab, setActiveTab, identity }}
+      value={{ mounted, activeTab, setActiveTab, appIdentity, inboxIdentity }}
     >
       <style>{STYLES}</style>
       {children}
-      {mounted && identity && portalTarget && (
-        <InboxPortal target={portalTarget} identity={identity} />
+      {mounted && appIdentity && inboxIdentity && portalTarget && (
+        <InboxPortal target={portalTarget} inboxIdentity={inboxIdentity} appIdentity={appIdentity} />
       )}
     </QuickstartContext.Provider>
   );
@@ -288,13 +312,15 @@ export const QuickstartProvider = ({
 
 const InboxPortal = ({
   target,
-  identity,
+  inboxIdentity,
+  appIdentity,
 }: {
   target: HTMLElement;
-  identity: Identity;
+  inboxIdentity: Identity;
+  appIdentity: Identity;
 }) => {
   const [InboxComponent, setInboxComponent] =
-    React.useState<React.ComponentType<{ identity: Identity }> | null>(null);
+    React.useState<React.ComponentType<{ inboxIdentity: Identity; appIdentity: Identity }> | null>(null);
 
   React.useEffect(() => {
     import('./QuickstartInbox').then((mod) => {
@@ -305,7 +331,7 @@ const InboxPortal = ({
   if (!InboxComponent) return null;
 
   return ReactDOM.createPortal(
-    <InboxComponent identity={identity} />,
+    <InboxComponent inboxIdentity={inboxIdentity} appIdentity={appIdentity} />,
     target,
   );
 };
@@ -355,11 +381,14 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
   const [copied, setCopied] = React.useState(false);
 
   const code = React.useMemo(() => {
-    if (!ctx?.identity) return '';
+    if (!ctx?.appIdentity || !ctx?.inboxIdentity) return '';
     const gen =
       ctx.activeTab === 'cli' ? CLI_CODE[step] : BROWSER_CODE[step];
-    return (gen as (id: Identity) => string)(ctx.identity);
-  }, [step, ctx?.identity, ctx?.activeTab]);
+    if (step === 'identity') {
+      return (gen as (app: Identity, inbox: Identity) => string)(ctx.appIdentity, ctx.inboxIdentity);
+    }
+    return (gen as () => string)();
+  }, [step, ctx?.appIdentity, ctx?.inboxIdentity, ctx?.activeTab]);
 
   // Highlight with Shiki
   React.useEffect(() => {
@@ -381,6 +410,7 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
     navigator.clipboard?.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+    (window as any).plausible?.('Quickstart: Code Copied', { props: { step: STEP_ANALYTICS[step] } });
   };
 
   return (
@@ -416,6 +446,79 @@ export const QuickstartStep = ({ step }: { step: StepName }) => {
       <div className="qs-code">
         {mainHtml ? (
           <div dangerouslySetInnerHTML={{ __html: mainHtml }} />
+        ) : (
+          <pre
+            style={{
+              margin: 0,
+              padding: '1rem',
+              fontFamily: 'var(--vocs-fontFamily_mono)',
+              fontSize: 'var(--vocs-fontSize_13)',
+              lineHeight: 1.7,
+              backgroundColor: 'var(--vocs-color_background3)',
+              color: 'var(--vocs-color_text)',
+              whiteSpace: 'pre',
+            }}
+          >
+            {code}
+          </pre>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Copyable code block — static code with copy button + analytics
+// ---------------------------------------------------------------------------
+
+export const CopyableCode = ({
+  code,
+  lang = 'javascript',
+  analyticsStep,
+}: {
+  code: string;
+  lang?: string;
+  analyticsStep: string;
+}) => {
+  const [html, setHtml] = React.useState('');
+  const [copied, setCopied] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => setMounted(true), []);
+
+  React.useEffect(() => {
+    if (!mounted) return;
+    import('shiki').then(({ codeToHtml }) => {
+      codeToHtml(code, {
+        lang,
+        themes: { light: 'github-light', dark: 'github-dark' },
+      }).then(setHtml);
+    });
+  }, [mounted, code, lang]);
+
+  if (!mounted) return null;
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+    (window as any).plausible?.('Quickstart: Code Copied', { props: { step: analyticsStep } });
+  };
+
+  return (
+    <div className="qs-step">
+      <div className="qs-header" style={{ justifyContent: 'flex-end' }}>
+        <button
+          className="qs-copy-btn"
+          onClick={handleCopy}
+          title={copied ? 'Copied!' : 'Copy code'}
+        >
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </button>
+      </div>
+      <div className="qs-code">
+        {html ? (
+          <div dangerouslySetInnerHTML={{ __html: html }} />
         ) : (
           <pre
             style={{
