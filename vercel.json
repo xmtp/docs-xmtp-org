@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api-ref/ios/:path*",
+      "destination": "https://xmtp-ios-docs-five.vercel.app/api-ref/ios/:path*"
+    }
+  ]
+}
