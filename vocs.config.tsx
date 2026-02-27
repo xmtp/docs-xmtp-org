@@ -4,6 +4,16 @@ import { sidebarConfig } from './shared-sidebar.config';
 // console.log('Loading Vocs config...')
 
 export default defineConfig({
+  vite: {
+    optimizeDeps: {
+      exclude: ['@xmtp/browser-sdk', '@xmtp/wasm-bindings'],
+    },
+    server: {
+      fs: {
+        strict: false,
+      },
+    },
+  },
   aiCta: false,
   theme: {
     accentColor: {
@@ -83,7 +93,7 @@ export default defineConfig({
     },
     {
       text: 'Build chat apps',
-      link: '/chat-apps/intro/get-started',
+      link: '/chat-apps/intro/quickstart',
       match: '/chat-apps',
     },
     { text: 'Protocol', link: '/protocol/overview' },
@@ -105,6 +115,7 @@ export default defineConfig({
       link: 'https://github.com/xmtp',
     },
   ],
+  outlineFooter: <div id="qs-inbox-mount" />,
   sidebar: sidebarConfig,
   editLink: {
     pattern: 'https://github.com/xmtp/docs-xmtp-org/edit/main/docs/pages/:path',
