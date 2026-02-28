@@ -1,0 +1,267 @@
+# Manage browser storage
+
+The Browser SDK stores XMTP data using the browser's [Origin Private File System](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) (OPFS). The `Opfs` class provides utilities to manage this storage, including listing databases, exporting backups, importing data, and clearing storage.
+
+:::warning[Browser SDK only]
+
+The `Opfs` class is only available in the Browser SDK. For Node.js, database files are stored directly on the file system and can be managed using standard file operations.
+
+:::
+
+## Create an Opfs instance
+
+Before using any storage management methods, create an `Opfs` instance:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+// Create and initialize an Opfs instance
+const opfs = await Opfs.create();
+
+// Optionally enable logging for debugging
+const opfsWithLogging = await Opfs.create(true);
+
+// When done, close the instance
+opfs.close();
+```
+
+## List stored databases
+
+List all XMTP database files stored in the browser:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+const opfs = await Opfs.create();
+
+// List all database files
+const files = await opfs.listFiles();
+console.log('Stored databases:', files);
+// Example output: ['./xmtp-dev-abc123.db3', './xmtp-production-def456.db3']
+
+// Get the total count of files
+const count = await opfs.fileCount();
+console.log('Total databases:', count);
+
+// Check if a specific database exists
+const exists = await opfs.fileExists('./xmtp-dev-abc123.db3');
+console.log('Database exists:', exists);
+
+opfs.close();
+```
+
+## Export a database
+
+Export a user's XMTP database for backup purposes. The exported data is a `Uint8Array` containing the complete database:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+const opfs = await Opfs.create();
+
+// Export a database to a Uint8Array
+const dbPath = './xmtp-dev-abc123.db3';
+const exportedData = await opfs.exportDb(dbPath);
+
+// You can then save this data however you prefer
+// For example, create a downloadable file:
+const blob = new Blob([exportedData], { type: 'application/octet-stream' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'xmtp-backup.db3';
+a.click();
+URL.revokeObjectURL(url);
+
+opfs.close();
+```
+
+## Import a database
+
+Restore a previously exported database:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+const opfs = await Opfs.create();
+
+// Assume you have backup data from a file input or other source
+const backupData: Uint8Array = /* ... */;
+
+// Import the database to a new path
+const newDbPath = './xmtp-restored.db3';
+await opfs.importDb(newDbPath, backupData);
+
+// Verify the import
+const exists = await opfs.fileExists(newDbPath);
+console.log('Database imported:', exists);
+
+opfs.close();
+```
+
+### Full backup and restore example
+
+Here's a complete example showing how to implement backup and restore functionality:
+
+```tsx [Browser]
+import { Opfs, Client, type Signer } from '@xmtp/browser-sdk';
+
+// Backup function
+async function backupXmtpDatabase(dbPath: string): Promise<Uint8Array> {
+  const opfs = await Opfs.create();
+  try {
+    const data = await opfs.exportDb(dbPath);
+    return data;
+  } finally {
+    opfs.close();
+  }
+}
+
+// Restore function
+async function restoreXmtpDatabase(
+  dbPath: string,
+  backupData: Uint8Array
+): Promise<void> {
+  const opfs = await Opfs.create();
+  try {
+    await opfs.importDb(dbPath, backupData);
+  } finally {
+    opfs.close();
+  }
+}
+
+// Example usage: backup current database before clearing
+async function backupAndClear(client: Client) {
+  const dbPath = `./xmtp-${client.inboxId}.db3`;
+
+  // Create backup
+  const backup = await backupXmtpDatabase(dbPath);
+  console.log('Backup created, size:', backup.length, 'bytes');
+
+  // Store backup somewhere safe (localStorage, IndexedDB, download, etc.)
+  // ...
+
+  return backup;
+}
+```
+
+## Delete a database
+
+Delete a specific database file:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+const opfs = await Opfs.create();
+
+// Delete a specific database
+const dbPath = './xmtp-dev-abc123.db3';
+const deleted = await opfs.deleteFile(dbPath);
+
+if (deleted) {
+  console.log('Database deleted successfully');
+} else {
+  console.log('Database not found');
+}
+
+opfs.close();
+```
+
+## Clear all storage
+
+Remove all XMTP databases from browser storage:
+
+:::danger[Irreversible action]
+This permanently deletes all XMTP data stored in the browser. The user will lose all message history and will need to sync from another device or start fresh.
+:::
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+const opfs = await Opfs.create();
+
+// List files before clearing (for confirmation UI)
+const filesBefore = await opfs.listFiles();
+console.log('Databases to be deleted:', filesBefore);
+
+// Clear all XMTP storage
+await opfs.clearAll();
+
+// Verify
+const filesAfter = await opfs.listFiles();
+console.log('Remaining databases:', filesAfter.length); // 0
+
+opfs.close();
+```
+
+## Check storage capacity
+
+Check the OPFS pool capacity:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+const opfs = await Opfs.create();
+
+// Get the pool capacity (number of concurrent file handles)
+const capacity = await opfs.poolCapacity();
+console.log('Pool capacity:', capacity);
+
+opfs.close();
+```
+
+## Use cases
+
+### Account switching
+
+When your app supports multiple accounts, use `Opfs` to manage databases for each account:
+
+```tsx [Browser]
+import { Opfs, Client, type Signer } from '@xmtp/browser-sdk';
+
+async function listUserAccounts(): Promise<string[]> {
+  const opfs = await Opfs.create();
+  try {
+    const files = await opfs.listFiles();
+    // Extract inbox IDs from database filenames
+    return files
+      .filter(f => f.endsWith('.db3'))
+      .map(f => f.replace('./xmtp-', '').replace('.db3', ''));
+  } finally {
+    opfs.close();
+  }
+}
+
+async function deleteAccount(inboxId: string): Promise<boolean> {
+  const opfs = await Opfs.create();
+  try {
+    const dbPath = `./xmtp-${inboxId}.db3`;
+    return await opfs.deleteFile(dbPath);
+  } finally {
+    opfs.close();
+  }
+}
+```
+
+### Storage management UI
+
+Display storage usage to users:
+
+```tsx [Browser]
+import { Opfs } from '@xmtp/browser-sdk';
+
+async function getStorageInfo() {
+  const opfs = await Opfs.create();
+  try {
+    const files = await opfs.listFiles();
+    const count = await opfs.fileCount();
+
+    return {
+      databases: files,
+      totalCount: count,
+    };
+  } finally {
+    opfs.close();
+  }
+}
+```

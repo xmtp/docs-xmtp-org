@@ -151,6 +151,38 @@ Instead of using inbox IDs, you can create groups directly using identities (EOA
 
 :::code-group
 
+```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
+// Create identifiers for members
+const memberIdentifiers = [
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER1_ADDRESS" },
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER2_ADDRESS" },
+];
+
+// Create a group using identifiers instead of inbox IDs
+const group = await client.conversations.createGroupWithIdentifiers(
+  memberIdentifiers,
+  { name: "Group Name", description: "Group description" }
+);
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Create identifiers for members
+const memberIdentifiers = [
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER1_ADDRESS" },
+  { kind: IdentifierKind.Ethereum, identifier: "0xMEMBER2_ADDRESS" },
+];
+
+// Create a group using identifiers instead of inbox IDs
+const group = await client.conversations.createGroupWithIdentifiers(
+  memberIdentifiers,
+  { name: "Group Name", description: "Group description" }
+);
+```
+
 ```tsx [React Native]
 // Create a group using identities instead of inbox IDs
 const group = await client.conversations.newGroupWithIdentities(
@@ -303,6 +335,26 @@ let conversation = try await client.conversations.newConversation(inboxId)
 You can also create a DM directly using an identity (EOA or SCW address) instead of an inbox ID:
 
 :::code-group
+
+```js [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+
+// Create a DM using an identifier instead of inbox ID
+const dm = await client.conversations.createDmWithIdentifier({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xPEER_ADDRESS",
+});
+```
+
+```js [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+
+// Create a DM using an identifier instead of inbox ID
+const dm = await client.conversations.createDmWithIdentifier({
+  kind: IdentifierKind.Ethereum,
+  identifier: "0xPEER_ADDRESS",
+});
+```
 
 ```tsx [React Native]
 // Create or find a DM using an identity

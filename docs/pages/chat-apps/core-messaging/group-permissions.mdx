@@ -103,6 +103,58 @@ When setting custom permissions, use these `PermissionOption` values:
 
 :::code-group
 
+```js [Browser]
+import {
+  PermissionPolicy,
+  type PermissionPolicySet,
+} from "@xmtp/browser-sdk";
+
+// Define a custom permission policy set
+const customPermissions: PermissionPolicySet = {
+  addMemberPolicy: PermissionPolicy.Admin,
+  removeMemberPolicy: PermissionPolicy.Admin,
+  addAdminPolicy: PermissionPolicy.SuperAdmin,
+  removeAdminPolicy: PermissionPolicy.SuperAdmin,
+  updateGroupNamePolicy: PermissionPolicy.Allow,
+  updateGroupDescriptionPolicy: PermissionPolicy.Allow,
+  updateGroupImagePolicy: PermissionPolicy.Admin,
+  updateMessageDisappearingPolicy: PermissionPolicy.SuperAdmin,
+};
+
+// Create a group with custom permissions
+const group = await client.conversations.createGroup([memberInboxId1, memberInboxId2], {
+  permissionPolicySet: customPermissions,
+  name: "Custom Group",
+  description: "A group with custom permissions",
+});
+```
+
+```js [Node]
+import {
+  PermissionPolicy,
+  type PermissionPolicySet,
+} from "@xmtp/node-sdk";
+
+// Define a custom permission policy set
+const customPermissions: PermissionPolicySet = {
+  addMemberPolicy: PermissionPolicy.Admin,
+  removeMemberPolicy: PermissionPolicy.Admin,
+  addAdminPolicy: PermissionPolicy.SuperAdmin,
+  removeAdminPolicy: PermissionPolicy.SuperAdmin,
+  updateGroupNamePolicy: PermissionPolicy.Allow,
+  updateGroupDescriptionPolicy: PermissionPolicy.Allow,
+  updateGroupImagePolicy: PermissionPolicy.Admin,
+  updateMessageDisappearingPolicy: PermissionPolicy.SuperAdmin,
+};
+
+// Create a group with custom permissions
+const group = await client.conversations.createGroup([memberInboxId1, memberInboxId2], {
+  permissionPolicySet: customPermissions,
+  name: "Custom Group",
+  description: "A group with custom permissions",
+});
+```
+
 ```kotlin [Kotlin]
 // Define a custom permission policy set
 val customPermissions = PermissionPolicySet(
@@ -184,6 +236,24 @@ To retrieve the current permissions for a group:
 
 :::code-group
 
+```js [Browser]
+// Get the current permission policy set for a group
+const policySet = group.permissionPolicySet;
+
+console.log("Add member policy:", policySet.addMemberPolicy);
+console.log("Remove member policy:", policySet.removeMemberPolicy);
+console.log("Update name policy:", policySet.updateGroupNamePolicy);
+```
+
+```js [Node]
+// Get the current permission policy set for a group
+const policySet = group.permissionPolicySet;
+
+console.log("Add member policy:", policySet.addMemberPolicy);
+console.log("Remove member policy:", policySet.removeMemberPolicy);
+console.log("Update name policy:", policySet.updateGroupNamePolicy);
+```
+
 ```tsx [React Native]
 // Get the current permission policy set for a group
 const policySet = await group.permissionPolicySet();
@@ -221,6 +291,20 @@ Super admins can update individual permissions on an existing group. Each permis
 
 :::code-group
 
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Allow only admins to add members
+await group.updatePermission(PermissionUpdateType.AddMember, PermissionPolicy.Admin);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Allow only admins to add members
+await group.updatePermission(PermissionUpdateType.AddMember, PermissionPolicy.Admin);
+```
+
 ```tsx [React Native]
 // Allow only admins to add members
 await group.updateAddMemberPermission('admin');
@@ -241,6 +325,20 @@ try await group.updateAddMemberPermission(newPermissionOption: .admin)
 ### Update remove member permission
 
 :::code-group
+
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Allow only admins to remove members
+await group.updatePermission(PermissionUpdateType.RemoveMember, PermissionPolicy.Admin);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Allow only admins to remove members
+await group.updatePermission(PermissionUpdateType.RemoveMember, PermissionPolicy.Admin);
+```
 
 ```tsx [React Native]
 // Allow only admins to remove members
@@ -263,6 +361,20 @@ try await group.updateRemoveMemberPermission(newPermissionOption: .admin)
 
 :::code-group
 
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Only super admins can add admins
+await group.updatePermission(PermissionUpdateType.AddAdmin, PermissionPolicy.SuperAdmin);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Only super admins can add admins
+await group.updatePermission(PermissionUpdateType.AddAdmin, PermissionPolicy.SuperAdmin);
+```
+
 ```tsx [React Native]
 // Only super admins can add admins
 await group.updateAddAdminPermission('super_admin');
@@ -283,6 +395,20 @@ try await group.updateAddAdminPermission(newPermissionOption: .superAdmin)
 ### Update remove admin permission
 
 :::code-group
+
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Only super admins can remove admins
+await group.updatePermission(PermissionUpdateType.RemoveAdmin, PermissionPolicy.SuperAdmin);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Only super admins can remove admins
+await group.updatePermission(PermissionUpdateType.RemoveAdmin, PermissionPolicy.SuperAdmin);
+```
 
 ```tsx [React Native]
 // Only super admins can remove admins
@@ -305,6 +431,20 @@ try await group.updateRemoveAdminPermission(newPermissionOption: .superAdmin)
 
 :::code-group
 
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Allow all members to update the group name
+await group.updatePermission(PermissionUpdateType.UpdateGroupName, PermissionPolicy.Allow);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Allow all members to update the group name
+await group.updatePermission(PermissionUpdateType.UpdateGroupName, PermissionPolicy.Allow);
+```
+
 ```tsx [React Native]
 // Allow all members to update the group name
 await group.updateNamePermission('allow');
@@ -326,6 +466,20 @@ try await group.updateNamePermission(newPermissionOption: .allow)
 
 :::code-group
 
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Allow only admins to update the description
+await group.updatePermission(PermissionUpdateType.UpdateGroupDescription, PermissionPolicy.Admin);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Allow only admins to update the description
+await group.updatePermission(PermissionUpdateType.UpdateGroupDescription, PermissionPolicy.Admin);
+```
+
 ```tsx [React Native]
 // Allow only admins to update the description
 await group.updateDescriptionPermission('admin');
@@ -346,6 +500,20 @@ try await group.updateDescriptionPermission(newPermissionOption: .admin)
 ### Update group image permission
 
 :::code-group
+
+```js [Browser]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+
+// Allow only admins to update the group image
+await group.updatePermission(PermissionUpdateType.UpdateGroupImageUrl, PermissionPolicy.Admin);
+```
+
+```js [Node]
+import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+
+// Allow only admins to update the group image
+await group.updatePermission(PermissionUpdateType.UpdateGroupImageUrl, PermissionPolicy.Admin);
+```
 
 ```tsx [React Native]
 // Allow only admins to update the group image
@@ -702,20 +870,21 @@ try await group.removeMembersByIdentity(
 
 ### Leave a group
 
-A member can remove themselves from a group by calling `leaveGroup()`. After leaving, the group becomes inactive for that member.
+A member can remove themselves from a group. After leaving, the group becomes inactive for that member.
 
 A member who is the super admin of the group cannot leave the group. By default, the group creator is a super admin.
 
 :::code-group
 
 ```js [Browser]
+// Request to leave the group
 await group.leaveGroup();
 
 // Sync to update group state
 await group.sync();
 
 // Verify the group is now inactive
-const isActive = await group.isActive(); // Returns false
+const isActive = group.isActive; // Returns false
 ```
 
 ```js [Node]
@@ -762,9 +931,35 @@ let isActive = try group.isActive() // Returns false
 
 #### Check if member is pending removal
 
-After a user calls `leaveGroup()`, you can check if their removal is still being processed using the `membershipState()` method. This is useful for showing appropriate UI while the group removal is being finalized.
+After a user requests to leave a group, you can check if their removal is still being processed. This is useful for showing appropriate UI while the group removal is being finalized.
 
 :::code-group
+
+```js [Browser]
+// After calling requestRemoval()
+await group.requestRemoval();
+
+// Check if removal is still pending
+const isPending = await group.isPendingRemoval();
+
+if (isPending) {
+  // User has requested to leave, but removal not yet fully processed
+  console.log("Processing your departure from the group");
+}
+```
+
+```js [Node]
+// After calling requestRemoval()
+await group.requestRemoval();
+
+// Check if removal is still pending
+const isPending = await group.isPendingRemoval();
+
+if (isPending) {
+  // User has requested to leave, but removal not yet fully processed
+  console.log("Processing your departure from the group");
+}
+```
 
 ```kotlin [Kotlin]
 // After calling leaveGroup()
@@ -794,7 +989,7 @@ if state == .pendingRemove {
 
 :::
 
-The `PENDING_REMOVE` state indicates that the user has called `leaveGroup()` but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
+The pending removal state indicates that the user has requested to leave the group but the removal has not yet been fully processed by the client. After syncing and processing completes, the group will become inactive.
 
 ### Get inbox IDs for members
 
@@ -905,6 +1100,16 @@ Get the inbox IDs of all other participants in a conversation (excluding the cur
 
 :::code-group
 
+```js [Browser]
+// Get the peer inbox ID in a DM
+const peerInboxId = dm.peerInboxId;
+```
+
+```js [Node]
+// Get the peer inbox ID in a DM
+const peerInboxId = dm.peerInboxId;
+```
+
 ```tsx [React Native]
 // Get the peer inbox ID in a DM
 const peerInboxId = await dm.peerInboxId();
@@ -934,6 +1139,22 @@ Check if the current user created the conversation:
 
 :::code-group
 
+```js [Browser]
+// Check if current user created the group
+const isGroupCreator = group.isCreator;
+
+// Check if current user created the DM
+const isDmCreator = dm.isCreator;
+```
+
+```js [Node]
+// Check if current user created the group
+const isGroupCreator = group.isCreator;
+
+// Check if current user created the DM
+const isDmCreator = dm.isCreator;
+```
+
 ```kotlin [Kotlin]
 // Check if current user created the group
 val isGroupCreator = group.isCreator()
@@ -957,6 +1178,22 @@ let isDmCreator = try await dm.isCreator()
 Get the inbox ID of the user who created the conversation:
 
 :::code-group
+
+```js [Browser]
+// Get the creator's inbox ID for a group
+const groupCreatorInboxId = group.creatorInboxId;
+
+// Get the creator's inbox ID for a DM
+const dmCreatorInboxId = dm.creatorInboxId;
+```
+
+```js [Node]
+// Get the creator's inbox ID for a group
+const groupCreatorInboxId = group.creatorInboxId;
+
+// Get the creator's inbox ID for a DM
+const dmCreatorInboxId = dm.creatorInboxId;
+```
 
 ```tsx [React Native]
 // Get the creator's inbox ID for a group

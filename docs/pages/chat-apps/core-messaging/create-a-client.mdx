@@ -598,6 +598,34 @@ let client = try await Client.build(
 
 :::
 
+## Check if client is registered
+
+Check if the client is registered with the XMTP network. This is useful when using `disableAutoRegister: true` in [client options](#configure-an-xmtp-client) to manually control the registration process.
+
+:::code-group
+
+```js [Browser]
+// Check if the client is registered
+const registered = await client.isRegistered();
+
+if (!registered) {
+  // Register the client manually
+  await client.register();
+}
+```
+
+```js [Node]
+// Check if the client is registered
+const registered = await client.isRegistered();
+
+if (!registered) {
+  // Register the client manually
+  await client.register();
+}
+```
+
+:::
+
 ## Log out a client
 
 When you log a user out of your app, you can give them the option to delete their local database.
