@@ -26,7 +26,7 @@ The group message topic is used to send and receive messages within a specific c
 - **Format**: `/xmtp/mls/1/g-$conversationId/proto`
 - **Envelope**: [Group message envelope](/protocol/envelope-types#group-message-envelope)
 - **Purpose**: Carries all ongoing communication for a conversation, including [application messages](/protocol/envelope-types#application-messages) (text, reactions, etc.) and [commit messages](/protocol/envelope-types#commit-messages) that modify the group state.
-- **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value.
+- **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value (available in Node SDK v5.4.0+ and Browser SDK v6.4.0+).
 
 > \*\*Note on [DM stitching](/chat-apps/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications): For direct messages, multiple underlying conversations might be "stitched" together in the UI. For push notifications to be reliable, an app must subscribe to the group message topic for each of these underlying conversations.
 
@@ -37,7 +37,7 @@ The welcome message topic is used to deliver a `Welcome` message to a new member
 - **Format**: `/xmtp/mls/1/w-$installationId/proto`
 - **Envelope**: [Welcome message envelope](/protocol/envelope-types#welcome-message-envelope)
 - **Purpose**: To notify a specific app installation that it has been added to a new conversation.
-- **Usage**: A push notification server subscribes to an installation's welcome topic to be notified when that installation is invited to a new group chat or DM. The SDKs provide this via methods like `client.welcomeTopic()`.
+- **Usage**: A push notification server subscribes to an installation's welcome topic to be notified when that installation is invited to a new group chat or DM. The SDKs provide this via the `client.conversations.topic` property (available in Node SDK v5.4.0+ and Browser SDK v6.4.0+).
 
 ## How other envelopes are handled
 

@@ -97,4 +97,11 @@ for await (const message of stream) {
 // Sync all new welcomes, preference updates, conversations,
 // and messages from allowed conversations
 await client.conversations.syncAll(['allowed']);
+
+// 6. Access conversation topics for advanced use cases
+// Get the welcome topic for subscribing to new conversation invitations
+console.log('Welcome topic:', client.conversations.topic);
+
+// Get a specific conversation's topic for subscribing to its messages
+console.log('Conversation topic:', group.topic);
 ```
