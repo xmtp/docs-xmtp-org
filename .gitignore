@@ -19,3 +19,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# Generated LLM documentation (updated only by CI)
+/docs/public/llms/llms-*.txt

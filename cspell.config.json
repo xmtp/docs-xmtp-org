@@ -24,6 +24,7 @@
     "autoplay",
     "autorestart",
     "Bankr",
+    "Bech",
     "blobdecoded",
     "buildscript",
     "bufs",
@@ -88,6 +89,7 @@
     "reconnections",
     "retryable",
     "scammy",
+    "Solana",
     "spammy",
     "sqlcipher",
     "sqlitecipher",
@@ -100,6 +102,7 @@
     "typealias",
     "usernotifications",
     "viem",
+    "vitalik",
     "vocs",
     "wagmi",
     "xcaro",
@@ -115,6 +118,7 @@
     "yourdomain",
     "YOURFCMJSON",
     "YOURFCMPROJECTID",
+    "Zcash",
     "Zora"
   ]
 } 

@@ -44,7 +44,7 @@ const dm = await agent.client.conversations.createDm(bo.inboxId);
 ### Get the address of the sender
 
 ```ts [Node]
-import { getTestUrl } from '@xmtp/agent-sdk/debug';
+import { getTestUrl } from '@xmtp/agent-sdk';
 
 agent.on('text', async (ctx) => {
   const senderAddress = ctx.getSenderAddress();
@@ -85,4 +85,16 @@ const response = await agent.client.canMessage([
     identifierKind: IdentifierKind.Ethereum,
   },
 ]);
+```
+
+## Last read times
+
+For conversations with read receipts enabled, you can query when each participant last read the conversation. This enables features like showing which messages are unread or displaying "seen by" indicators.
+
+```js [Node]
+// Returns an object keyed by inbox ID
+const lastReadTimes = await group.lastReadTimes();
+
+// Get the last read time of an inbox in nanoseconds
+const inboxLastReadTimeNs = lastReadTimes[inboxId];
 ```

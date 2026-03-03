@@ -16,12 +16,12 @@ export const sidebarConfig = {
           link: "/agents/get-started/build-an-agent",
         },
         {
-          text: "FAQ",
-          link: "/agents/get-started/faq",
+          text: "Build with LLMs",
+          link: "/agents/get-started/build-with-llms",
         },
         {
-          text: "Cursor rules",
-          link: "https://github.com/xmtplabs/xmtp-agent-examples/blob/main/.cursor/rules/xmtp.mdc",
+          text: "FAQ",
+          link: "/agents/get-started/faq",
         },
         { text: 'Join the XMTP Dev Community',
           link: 'https://forms.gle/hesZ55WGMjJnZ7sQA',
@@ -91,6 +91,10 @@ export const sidebarConfig = {
         {
           text: "Understand content types",
           link: "/agents/content-types/content-types",
+        },
+        {
+          text: "Actions",
+          link: "/agents/content-types/actions",
         },
         {
           text: "Reactions",
@@ -371,6 +375,10 @@ export const sidebarConfig = {
           link: "/chat-apps/core-messaging/send-messages",
         },
         {
+          text: "Delete messages",
+          link: "/chat-apps/core-messaging/delete-messages",
+        },
+        {
           text: "Support disappearing messages",
           link: "/chat-apps/core-messaging/disappearing-messages",
         },
@@ -495,6 +503,14 @@ export const sidebarConfig = {
         {
           text: "Read receipts",
           link: "/chat-apps/content-types/read-receipts",
+        },
+        {
+          text: "Actions",
+          link: "/chat-apps/content-types/actions",
+        },
+        {
+          text: "Intents",
+          link: "/chat-apps/content-types/intents",
         },
         {
           text: "Custom content",

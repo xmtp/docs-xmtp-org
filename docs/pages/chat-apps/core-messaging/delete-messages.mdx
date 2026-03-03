@@ -1,0 +1,134 @@
+# Delete messages
+
+A user can delete messages they sent in a DM or group chat. In a group chat, the super admin role can delete any message in the group. 
+
+:::tip
+
+Message deletion is not a security or privacy feature. It provides a best-effort way to remove messages from conversation UIs, but does not guarantee the message content is permanently erased.
+
+:::
+
+## How message deletion works
+
+When a user deletes a message, a `DeleteMessage` content type containing the target message ID is sent to the conversation. Clients receiving this message validate the deletion request and filter the deleted message from queries.
+
+When you query messages, the client automatically:
+
+- Replaces deleted messages with a placeholder that indicates whether the sender or an admin deleted it
+- Filters out the `DeleteMessage` content type from message lists
+
+The deletion mechanism does NOT remove the original message from:
+
+- Local databases
+- Network nodes
+- Backup systems
+
+## What can't be deleted
+
+The following message types cannot be deleted:
+
+- Group membership changes (members added/removed)
+- Group update messages (name, description, image changes)
+
+Attempting to delete these messages will throw an error.
+
+## Delete a message
+
+:::code-group
+
+```tsx [React Native]
+// Delete a message by its ID
+await conversation.deleteMessage(messageId);
+```
+
+```kotlin [Kotlin]
+// Delete a message by its ID
+val deletionId = conversation.deleteMessage(messageId)
+```
+
+```swift [Swift]
+// Delete a message by its ID
+let deletionId = try await conversation.deleteMessage(messageId: messageId)
+```
+
+:::
+
+## Handle delete message errors
+
+The method throws an error if the deletion fails, such as when attempting to delete a message you didn't send (and you're not a super admin).
+
+:::code-group
+
+```tsx [React Native]
+try {
+  await conversation.deleteMessage(messageId);
+  // Message deleted successfully
+} catch (error) {
+  console.log(`Failed to delete message: ${error}`);
+}
+```
+
+```kotlin [Kotlin]
+try {
+    val deletionId = conversation.deleteMessage(messageId)
+    // Message deleted successfully
+} catch (e: XMTPException) {
+    println("Failed to delete message: ${e.message}")
+}
+```
+
+```swift [Swift]
+do {
+    let deletionId = try await conversation.deleteMessage(messageId: messageId)
+    // Message deleted successfully
+} catch {
+    print("Failed to delete message: \(error)")
+}
+```
+
+:::
+
+## Stream message deletions
+
+Listen for message deletion events in real-time across all conversations. This method is available on the `conversations` object.
+
+:::code-group
+
+```tsx [Browser]
+// Stream all message deletions
+const stream = await client.conversations.streamDeletedMessages();
+
+for await (const deletedMessageId of stream) {
+  console.log("Message deleted:", deletedMessageId);
+}
+```
+
+```tsx [Node]
+// Stream all message deletions
+const stream = await client.conversations.streamDeletedMessages();
+
+for await (const deletedMessageId of stream) {
+  console.log("Message deleted:", deletedMessageId);
+}
+```
+
+```tsx [React Native]
+// Stream all message deletions
+await client.conversations.streamMessageDeletions(async (deletedMessage) => {
+  console.log("Message deleted:", deletedMessage.id);
+});
+```
+
+```kotlin [Kotlin]
+client.conversations.streamMessageDeletions().collect { deletedMessage ->
+    println("Message deleted: ${deletedMessage.id}")
+}
+```
+
+```swift [Swift]
+for try await deletedMessage in client.conversations.streamMessageDeletions() {
+    print("Message deleted: \(deletedMessage.id)")
+}
+```
+
+:::
