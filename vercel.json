@@ -6,6 +6,10 @@
       "destination": "https://xmtp-ios-docs-five.vercel.app/ios/"
     },
     {
+      "source": "/ios/",
+      "destination": "https://xmtp-ios-docs-five.vercel.app/ios/"
+    },
+    {
       "source": "/ios/:path*",
       "destination": "https://xmtp-ios-docs-five.vercel.app/ios/:path*"
     }
