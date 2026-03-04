@@ -1,15 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "redirects": [
-    {
-      "source": "/ios/documentation/:path*",
-      "destination": "/ios/latest/documentation/:path*",
-      "permanent": false
-    }
-  ],
   "rewrites": [
     {
       "source": "/ios",
+      "destination": "https://xmtp-ios-docs-five.vercel.app/ios/"
+    },
+    {
+      "source": "/ios/",
       "destination": "https://xmtp-ios-docs-five.vercel.app/ios/"
     },
     {
