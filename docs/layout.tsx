@@ -1,5 +1,6 @@
 import { MDXProvider, useMDXComponents } from 'vocs/mdx-react';
 import PageActions from './components/PageActions';
+import TabSync from './components/TabSync';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const parentComponents = useMDXComponents();
@@ -16,6 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <MDXProvider components={{ h1: H1WithActions }}>
+      <TabSync />
       {children}
     </MDXProvider>
   );
