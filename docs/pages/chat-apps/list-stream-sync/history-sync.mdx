@@ -74,6 +74,23 @@ A history server acts as a bucket that holds encrypted sync archives. The URL lo
 
 Use these methods to manage the sync flow.
 
+### Archive options
+
+The following methods accept an `ArchiveOptions` parameter that controls what data is included in the sync archive:
+
+- [`sendSyncRequest`](#send-a-sync-request)
+- [`sendSyncArchive`](#send-a-sync-archive)
+- [`createArchive`](/chat-apps/list-stream-sync/archive-backups)
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `startNs` | `nil`/`null` | Start timestamp in nanoseconds to filter the archive to a time range |
+| `endNs` | `nil`/`null` | End timestamp in nanoseconds to filter the archive to a time range |
+| `archiveElements` | `[messages, consent]` | What to include in the archive: `messages`, `consent`, or both |
+| `excludeDisappearingMessages` | `false` | Whether to exclude disappearing messages from the archive |
+
+Using `ArchiveOptions()` with no arguments includes all messages and consent data.
+
 ### Send a sync request
 
 Send a request to other installations to sync conversations and messages to the current installation. Call this after creating a client on a new installation to pull in historical data.
@@ -93,11 +110,25 @@ await client.sendSyncRequest();
 ```
 
 ```kotlin [Kotlin]
+// With default options
 client.sendSyncRequest()
+
+// With custom options
+client.sendSyncRequest(
+    opts = ArchiveOptions(),
+    serverUrl = "https://your-history-sync-server.example.com/"
+)
 ```
 
 ```swift [Swift]
+// With default options
 try await client.sendSyncRequest()
+
+// With custom options
+try await client.sendSyncRequest(
+    opts: ArchiveOptions(),
+    serverUrl: "https://your-history-sync-server.example.com/"
+)
 ```
 
 :::
@@ -109,11 +140,25 @@ Send an archive to the sync group without waiting for a request from another ins
 :::code-group
 
 ```kotlin [Kotlin]
+// With default options
 client.sendSyncArchive(pin = "my-pin")
+
+// With custom options
+client.sendSyncArchive(
+    pin = "my-pin",
+    opts = ArchiveOptions(archiveElements = listOf(ArchiveElement.CONSENT))
+)
 ```
 
 ```swift [Swift]
+// With default options
 try await client.sendSyncArchive(pin: "my-pin")
+
+// With custom options
+try await client.sendSyncArchive(
+    pin: "my-pin",
+    opts: ArchiveOptions(archiveElements: [.consent])
+)
 ```
 
 :::
