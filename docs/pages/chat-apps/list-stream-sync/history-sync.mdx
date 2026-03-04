@@ -98,11 +98,11 @@ Send a request to other installations to sync conversations and messages to the 
 :::code-group
 
 ```js [Browser]
-await client.sendSyncRequest();
+await client.sendSyncRequest(options, serverUrl);
 ```
 
 ```js [Node]
-await client.sendSyncRequest();
+await client.sendSyncRequest(options, serverUrl);
 ```
 
 ```tsx [React Native]
