@@ -43,9 +43,11 @@ try await client.conversation.sync()
 
 :::
 
-## Manually request sync from other devices
+## Send a sync request
 
-When a device installation comes online, it automatically sends a request to other devices on the network to sync conversations and messages. However, in scenarios where this automatic process is interrupted, you can manually trigger a sync request.
+Send a request to other devices on the network to sync conversations and messages to the current installation. Call this after creating a client on a new installation to pull in historical data from existing installations.
+
+To learn more, see [History sync](/chat-apps/list-stream-sync/history-sync).
 
 :::code-group
 
