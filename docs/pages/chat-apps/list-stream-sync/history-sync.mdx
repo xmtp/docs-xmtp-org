@@ -1,11 +1,5 @@
 # Enable history sync for apps built with XMTP
 
-:::warning[This feature is in beta] 
- 
-History sync is still in active development as we work on its reliability and performance. To provide feedback on this feature, please post to [Ideas & Improvements](https://improve.xmtp.org/c/general/ideas/54) in the XMTP Improvement Forum. 
- 
-::: 
-
 Enable the history sync feature to give your users a way to sync an archive (decrypted historical data) from an existing app installation to a new app installation.
 
 This historical data includes:
@@ -16,21 +10,6 @@ This historical data includes:
 - HMAC keys (for push notifications)
 
 History sync enables your users pick up conversations where they left off, regardless of the app installation they use. All they need is a pre-existing and online app installation to provide the archive.
-
-## 🎥 walkthrough: History sync
-
-This video provides a walkthrough of history sync, covering the key ideas discussed in this doc. After watching, feel free to continue reading for more details.
-
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/_FtNqtjk-ls?si=uZ_Mnh9phF6y2h-O"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
 
 ## Enable history sync
 
@@ -125,12 +104,16 @@ try await client.sendSyncRequest()
 
 ### Send a sync archive
 
-Send an archive to the sync group without waiting for a request from another installation.
+Send an archive to the sync group without waiting for a request from another installation. The `pin` is used as a reference when importing the archive on another installation.
 
 :::code-group
 
-```tsx [React Native]
-// Coming soon
+```kotlin [Kotlin]
+client.sendSyncArchive(pin = "my-pin")
+```
+
+```swift [Swift]
+try await client.sendSyncArchive(pin: "my-pin")
 ```
 
 :::
@@ -141,32 +124,54 @@ Sync all device sync groups from the network.
 
 :::code-group
 
-```tsx [React Native]
-// Coming soon
+```kotlin [Kotlin]
+val summary = client.syncAllDeviceSyncGroups()
+```
+
+```swift [Swift]
+let summary = try await client.syncAllDeviceSyncGroups()
 ```
 
 :::
 
 ### List available archives
 
-Get a list of archives available for download from other installations. This method reads from the local database only and does not sync from the network. If you believe your data may be out of date, call `syncAllDeviceSyncGroups()` first to pull the latest state.
+Get a list of archives available for import from the sync group. This method reads from the local database only and does not sync from the network. If you believe your data may be out of date, call `syncAllDeviceSyncGroups()` first to pull the latest state.
 
 :::code-group
 
-```tsx [React Native]
-// Coming soon
+```kotlin [Kotlin]
+// List archives from the last 30 days
+val archives = client.listAvailableArchives(daysCutoff = 30)
+```
+
+```swift [Swift]
+// List archives from the last 30 days
+let archives = try client.listAvailableArchives(daysCutoff: 30)
 ```
 
 :::
 
 ### Process a sync archive
 
-Manually process an available archive from the sync group.
+Process an available archive from the sync group. If no pin is provided, it processes the last archive sent.
 
 :::code-group
 
-```tsx [React Native]
-// Coming soon
+```kotlin [Kotlin]
+// Process a specific archive by pin
+client.processSyncArchive(archivePin = "my-pin")
+
+// Process the last archive sent
+client.processSyncArchive()
+```
+
+```swift [Swift]
+// Process a specific archive by pin
+try await client.processSyncArchive(archivePin: "my-pin")
+
+// Process the last archive sent
+try await client.processSyncArchive()
 ```
 
 :::
