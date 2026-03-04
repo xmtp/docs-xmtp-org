@@ -45,33 +45,9 @@ try await client.conversation.sync()
 
 ## Send a sync request
 
-Send a request to other devices on the network to sync conversations and messages to the current installation. Call this after creating a client on a new installation to pull in historical data from existing installations.
+Send a history sync request to other installations. Call this after creating a client on a new installation to pull in historical data. 
 
-To learn more, see [History sync](/chat-apps/list-stream-sync/history-sync).
-
-:::code-group
-
-```js [Browser]
-await client.sendSyncRequest();
-```
-
-```js [Node]
-await client.sendSyncRequest();
-```
-
-```tsx [React Native]
-await client.sendSyncRequest();
-```
-
-```kotlin [Kotlin]
-client.sendSyncRequest()
-```
-
-```swift [Swift]
-try await client.sendSyncRequest()
-```
-
-:::
+See [Send a sync request](/chat-apps/list-stream-sync/history-sync#send-a-sync-request) for details and code examples.
 
 ## Sync new conversations
 

@@ -1,10 +1,10 @@
 # Enable history sync for apps built with XMTP
 
-:::warning[This feature is in beta]
-
-History sync is still in active development as we work on its reliability and performance. To provide feedback on this feature, please post to [Ideas & Improvements](https://improve.xmtp.org/c/general/ideas/54) in the XMTP Improvement Forum.
-
-:::
+:::warning[This feature is in beta] 
+ 
+History sync is still in active development as we work on its reliability and performance. To provide feedback on this feature, please post to [Ideas & Improvements](https://improve.xmtp.org/c/general/ideas/54) in the XMTP Improvement Forum. 
+ 
+::: 
 
 Enable the history sync feature to give your users a way to sync an archive (decrypted historical data) from an existing app installation to a new app installation.
 
@@ -47,7 +47,7 @@ If needed, you can turn off history sync by setting the `historySyncUrl` client 
 
 ## How history sync works
 
-When a sync request is sent (via [`sendSyncRequest()`](/chat-apps/list-stream-sync/sync-and-syncall#send-a-sync-request)) and a `historySyncUrl` client option is present, the receiving installation creates an encrypted archive.
+When you send a sync request (via [`sendSyncRequest()`](/chat-apps/list-stream-sync/sync-and-syncall#send-a-sync-request)) and a `historySyncUrl` client option is present, the receiving installation creates an encrypted archive.
 
 <div>
   <img
@@ -97,9 +97,31 @@ Use these methods to manage the sync flow.
 
 ### Send a sync request
 
-Send a request to other installations to sync conversations and messages to the current installation. You should call this after creating a client on a new installation to pull in historical data.
+Send a request to other installations to sync conversations and messages to the current installation. Call this after creating a client on a new installation to pull in historical data.
 
-See [Send a sync request](/chat-apps/list-stream-sync/sync-and-syncall#send-a-sync-request) for code examples.
+:::code-group
+
+```js [Browser]
+await client.sendSyncRequest();
+```
+
+```js [Node]
+await client.sendSyncRequest();
+```
+
+```tsx [React Native]
+await client.sendSyncRequest();
+```
+
+```kotlin [Kotlin]
+client.sendSyncRequest()
+```
+
+```swift [Swift]
+try await client.sendSyncRequest()
+```
+
+:::
 
 ### Send a sync archive
 
