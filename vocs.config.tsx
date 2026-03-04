@@ -5,6 +5,16 @@ import { sidebarConfig } from './shared-sidebar.config';
 
 export default defineConfig({
   aiCta: false,
+  vite: {
+    optimizeDeps: {
+      exclude: ['@xmtp/browser-sdk', '@xmtp/wasm-bindings'],
+    },
+    server: {
+      fs: {
+        strict: false,
+      },
+    },
+  },
   theme: {
     accentColor: {
       // Primary indigo button colors
