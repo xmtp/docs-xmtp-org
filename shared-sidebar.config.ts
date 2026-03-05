@@ -17,7 +17,7 @@ export const sidebarConfig = {
         },
         {
           text: "Connect to XMTP",
-          link: "/agents/build-agents/connect-to-xmtp",
+          link: "/agents/get-started/connect-to-xmtp",
         },
         {
           text: "Build with LLMs",
@@ -33,10 +33,10 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Agent messaging",
+      text: "Build agents",
       collapsed: false,
       items: [
-      {
+        {
           text: "Create a client",
           link: "/agents/build-agents/create-a-client",
         },
