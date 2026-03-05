@@ -2,50 +2,11 @@ import { KeyGenerator } from '../../../components/KeyGenerator';
 
 # Connect your agent to XMTP
 
-You have an agent, or an idea for one. Maybe it's powered by Claude, maybe it's a rules engine, maybe it's a trading algorithm. This tutorial shows you how to connect your agent to the XMTP network so that anyone can message it from any XMTP-compatible app.
+This tutorial walks you through connecting an agent to the XMTP network, step by step. By the end, you will have a working agent deployed to the cloud that receives messages over XMTP, processes them with Claude, and sends responses back.
 
-The XMTP Agent SDK is not an agent framework. It doesn't make decisions, call APIs, or manage state. It is a messaging framework that gives your agent the ability to send and receive encrypted messages over XMTP.
+The XMTP Agent SDK is not an agent framework. It doesn't make decisions, call APIs, or manage state. It provides the messaging rails: The ability to send and receive encrypted messages over XMTP. Your agent provides the brain. The SDK provides the rails.
 
-Your agent provides the brain. The SDK provides the network connection.
-
-By the end, you will have a working agent deployed to the cloud that receives messages over XMTP, processes them with your chosen brain (here, Claude), and sends responses back.
-
-## Three-layer architecture
-
-Every agent that communicates over XMTP has the same basic structure:
-
-1. **The brain** is your agent, the logic that determines what it says and does. Here, it is Claude with a system prompt. It could just as easily be OpenAI, a rules engine, or a trading algorithm. The brain doesn't need to know anything about messaging.
-2. **The messaging framework** is provided by the XMTP Agent SDK. It connects your agent to the XMTP network so it can exchange secure, encrypted messages with users, whether they are humans or other agents. The SDK knows nothing about AI or your agent's logic.
-3. **The glue** is the small amount of code you write to connect the brain and the messaging framework.
-
-```
-┌─────────────────────────────────────────────┐
-│                YOUR AGENT                   │
-│                                             │
-│  ┌───────────────────────────────────────┐  │
-│  │            1. THE BRAIN               │  │
-│  │  Your AI / logic                      │  │
-│  │  (decides what to say)                │  │
-│  └─────────────────▲─────────────────────┘  │
-│                    │                        │
-│  ┌─────────────────▼─────────────────────┐  │
-│  │           3. THE GLUE                 │  │
-│  │  a. Get message from XMTP             │  │
-│  │  b. Send message to brain             │  │
-│  │  c. Get response from brain           │  │
-│  │  d. Send response back to XMTP        │  │
-│  └─────────────────▲─────────────────────┘  │
-│                    │                        │
-│  ┌─────────────────▼─────────────────────┐  │
-│  │      2. THE MESSAGING FRAMEWORK       │  │
-│  │  XMTP Agent SDK                       │  │
-│  │  (encrypted send/receive over XMTP)   │  │
-│  └───────────────────────────────────────┘  │
-│                                             │
-└─────────────────────────────────────────────┘
-```
-
-This separation matters. Swapping the brain (say, from a Q&A assistant to a trading advisor) doesn't require changing the messaging layer. The SDK doesn't know what your agent does. It just delivers messages securely.
+For more on the conceptual architecture behind this pattern, see [Building a Magic 8 Ball Bot with XMTP](TBD BLOG-POST).
 
 ## Prerequisites
 
@@ -53,10 +14,6 @@ This separation matters. Swapping the brain (say, from a Q&A assistant to a trad
 - **An Anthropic API key** from [console.anthropic.com](https://console.anthropic.com/)
 - **Basic TypeScript knowledge** (we will explain the XMTP-specific parts)
 - **An Ethereum wallet private key** — the agent needs an identity on the network. Any hex private key works. You'll generate one in Step 1.
-
-:::tip
-Using Claude Code or another AI coding assistant? The XMTP Agent SDK has [Claude Code skills](/agents/get-started/build-with-llms#claude-code-skills) that can help scaffold, deploy, and troubleshoot your agent project directly from your terminal.
-:::
 
 ## Step 1: Scaffold the project
 
@@ -161,7 +118,7 @@ import "dotenv/config";
 import Anthropic from "@anthropic-ai/sdk";
 
 // ---------------------------------------------------------------------------
-// 1. THE BRAIN -- Your AI logic
+// THE BRAIN: Your logic (i.e., AI or rules engine)
 // ---------------------------------------------------------------------------
 
 const anthropic = new Anthropic();
@@ -210,7 +167,7 @@ Now add the XMTP layer. This is the part that lets your agent send and receive m
 import { Agent } from "@xmtp/agent-sdk";
 
 // ---------------------------------------------------------------------------
-// 2. THE MESSAGING FRAMEWORK -- XMTP Agent SDK
+// THE MESSAGING RAILS: XMTP Agent SDK
 // ---------------------------------------------------------------------------
 
 // createFromEnv() reads XMTP_WALLET_KEY, XMTP_DB_ENCRYPTION_KEY, and XMTP_ENV
@@ -233,11 +190,11 @@ This means you can't message your agent's address until the agent has started at
 
 ## Step 4: Wire them together (the glue)
 
-This is the smallest section, and that is the point. When the brain and messaging framework are properly separated, the glue is trivial:
+This is the smallest section, and that is the point. When the brain and messaging rails are properly separated, the glue is trivial:
 
 ```tsx
 // ---------------------------------------------------------------------------
-// 3. THE GLUE -- Connect incoming messages to the brain, send responses back
+// THE GLUE: Route messages between XMTP and the brain (i.e., AI API, rules engine)
 // ---------------------------------------------------------------------------
 
 agent.on("text", async (ctx) => {
@@ -253,9 +210,9 @@ agent.on("text", async (ctx) => {
 
 Three lines of actual logic:
 
-1. Get the incoming message from the messaging framework via `ctx.message.content`
+1. Get the incoming message from the messaging rails via `ctx.message.content`
 2. Pass it to the brain via `think()`
-3. Send the brain's response back through the messaging framework via `ctx.conversation.sendText()`
+3. Send the brain's response back through the messaging rails via `ctx.conversation.sendText()`
 
 The `agent.on("text", ...)` handler fires for every incoming text message. The SDK handles several things automatically so your brain doesn't have to deal with them:
 
@@ -292,7 +249,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { Agent } from "@xmtp/agent-sdk";
 
 // ---------------------------------------------------------------------------
-// 1. THE BRAIN -- Your AI logic
+// THE BRAIN -- Your AI logic
 // ---------------------------------------------------------------------------
 
 const anthropic = new Anthropic();
@@ -319,13 +276,13 @@ async function think(input: string): Promise<string> {
 }
 
 // ---------------------------------------------------------------------------
-// 2. THE MESSAGING FRAMEWORK -- XMTP Agent SDK
+// THE MESSAGING RAILS -- XMTP Agent SDK (send/receive messages with users)
 // ---------------------------------------------------------------------------
 
 const agent = await Agent.createFromEnv();
 
 // ---------------------------------------------------------------------------
-// 3. THE GLUE -- Connect incoming messages to the brain, send responses back
+// THE GLUE: Route messages between XMTP and the brain (i.e., AI API, rules engine)
 // ---------------------------------------------------------------------------
 
 agent.on("text", async (ctx) => {
@@ -361,7 +318,7 @@ npx tsx src/index.ts
 
 You should see output like:
 
-```
+```text
 Agent is online
   Address: 0x1234...abcd
   Chat: http://xmtp.chat/dm/0x1234...abcd
@@ -589,7 +546,7 @@ A language tutor:
 const SYSTEM_PROMPT = `You are a patient French tutor. Respond in French with English translations...`;
 ```
 
-Same messaging framework, same glue, different brain.
+Same messaging rails, same glue, different brain.
 
 ## Next steps: Change the brain
 
@@ -630,10 +587,6 @@ async function think(input: string): Promise<string> {
 ```
 
 The XMTP connection and glue stay the same. Only the brain changes. The Agent SDK is just the messaging layer.
-
-## Vibe coding
-
-To make it easier for you to build with XMTP using LLMs and coding assistants, we offer a docs MCP server and use case-based llms.txt files. To learn more, see [Use XMTP documentation with AI coding assistants](/agents/get-started/build-with-llms).
 
 ## Debug and deploy
 
