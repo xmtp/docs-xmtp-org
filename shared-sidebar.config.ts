@@ -12,7 +12,7 @@ export const sidebarConfig = {
           link: "/agents/get-started/intro",
         },
         {
-          text: "Try an agent",
+          text: "Quickstart",
           link: "/agents/get-started/build-an-agent",
         },
         {
@@ -36,7 +36,7 @@ export const sidebarConfig = {
       text: "Agent messaging",
       collapsed: false,
       items: [
-        {
+      {
           text: "Create a client",
           link: "/agents/build-agents/create-a-client",
         },
