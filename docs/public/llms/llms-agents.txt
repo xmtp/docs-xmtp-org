@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Agents
 
-Generated at 11:45 PM UTC / February 25, 2026
+Generated at 09:12 PM UTC / March 04, 2026
 
 ## About this file
 
@@ -2109,102 +2109,16 @@ When you build an agent with XMTP, all messages are encoded with a content type 
 
 In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
 
-At a high level, there are three categories of content types with XMTP:
+At a high level, there are these categories of content types with XMTP:
 
 - Standard
-- Standards-track
 - Custom
 
 ## Standard content types
 
 A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
 
-Once adopted, a standard content type is bundled in XMTP client SDKs. All standard and standards-track content types are built into the Agent SDK—no installation or codec registration is required.
-
-### Text content type
-
-An agent built with XMTP uses the text content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
-
-```jsx [Node]
-await ctx.sendText('gm');
-```
-
-## Receiving content types
-
-When your agent receives messages with different content types, use event handlers to handle them appropriately:
-
-```jsx [Node]
-// Listen for specific content types
-agent.on('attachment', async (ctx) => {
-  // Handle attachment logic
-});
-
-agent.on('reaction', async (ctx) => {
-  // Handle reaction logic
-});
-
-agent.on('reply', async (ctx) => {
-  // Handle reply logic - replies now include the original message
-  const reply = ctx.message.content;
-  if (reply.inReplyTo) {
-    console.log(`Replying to: ${reply.inReplyTo.content}`);
-  }
-});
-
-// Use type guards for type-safe content access
-agent.on('message', async (ctx) => {
-  if (ctx.isText()) {
-    // ctx.message.content is typed as string
-  } else if (ctx.isReply()) {
-    // ctx.message.content is typed as EnrichedReply
-  }
-  
-  // For custom content types, access the content type directly
-  const contentType = ctx.message.contentType;
-  if (contentType?.typeId === 'my-custom-type') {
-    // Handle custom content logic
-  }
-});
-```
-
-## Enriched messages
-
-Messages now include additional context to make it easier to build rich messaging experiences:
-
-- **Reply count**: Each message includes `numReplies` showing how many replies it has received
-- **Reactions array**: Messages include a `reactions` array containing all reaction messages
-- **Parent message in replies**: Reply messages include the original message being replied to via `inReplyTo`
-- **Expiration timestamp**: For conversations with disappearing messages enabled, messages include an `expiresAtNs` timestamp
-
-```jsx [Node]
-const messages = await conversation.messages();
-
-for (const message of messages) {
-  // Number of replies to a message
-  console.log(`Message ${message.id} has ${message.numReplies} replies`);
-  
-  // Array of reaction messages
-  console.log(`Message ${message.id} has ${message.reactions.length} reactions`);
-  
-  // Message expiration timestamp (for disappearing messages)
-  if (message.expiresAtNs !== undefined) {
-    const expiresAt = Number(message.expiresAtNs) / 1_000_000_000; // Convert nanoseconds to seconds
-    console.log(`Message expires at: ${new Date(expiresAt * 1000).toISOString()}`);
-  }
-  
-  // Reply messages include the original message
-  if (ctx.isReply()) {
-    const reply = ctx.message.content;
-    console.log(`Replying to: ${reply.inReplyTo?.content}`);
-  }
-}
-```
-
-## Standards-track content types
-
-A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
-
-All standards-track content types are built into the Agent SDK and can be used with dedicated send methods:
+All [standard content types](/chat-apps/content-types/content-types#standard-content-types) are built into the Agent SDK and can be used with dedicated send methods:
 
 - [Actions content type](/agents/content-types/actions): Use `sendActions()` to send interactive button prompts.
 - [Group updates content type](/agents/content-types/group-updates): Use to send group updates, such as name, description, and members.
@@ -2217,7 +2131,88 @@ All standards-track content types are built into the Agent SDK and can be used w
 
 ## Custom content types
 
-Custom content types allow you to define your own schemas for messages that go beyond what is covered by standard or standards-track types. These are useful for experiments, domain-specific features, or app-specific behaviors.
+Custom content types allow you to define your own schemas for messages that go beyond what is covered by standard content types. These are useful for experiments, domain-specific features, or app-specific behaviors.
+
+### Writing custom codecs
+
+A content type needs a codec which must satisfy the `ContentCodec` interface from `@xmtp/content-type-primitives`.
+
+Example:
+
+```ts
+import type {
+  ContentCodec,
+  ContentTypeId,
+  EncodedContent,
+} from '@xmtp/content-type-primitives';
+
+// Define the content type identifier
+export const CustomContentType: ContentTypeId = {
+  authorityId: 'your-domain.com',
+  typeId: 'your-custom-id',
+  versionMajor: 1,
+  versionMinor: 0,
+};
+
+// Implement the codec as a class
+export class CustomCodec implements ContentCodec<string> {
+  contentType = CustomContentType;
+
+  encode(content: string): EncodedContent {
+    return {
+      type: this.contentType,
+      parameters: {},
+      content: new TextEncoder().encode(content),
+    };
+  }
+
+  decode(content: EncodedContent): string {
+    return new TextDecoder().decode(content.content);
+  }
+
+  fallback(content: string): string | undefined {
+    return content;
+  }
+
+  shouldPush(): boolean {
+    return false;
+  }
+}
+```
+
+### Registering custom codecs
+
+Pass codec instances to `Agent.create()`:
+
+```ts
+import { Agent } from '@xmtp/agent-sdk';
+
+const client = await Agent.create(signer, {
+  codecs: [new CustomCodec()],
+});
+```
+
+### Sending custom content
+
+Encode the content using your codec, then pass the encoded bytes to `send()`:
+
+```ts
+const codec = new CustomCodec();
+await conversation.send(codec.encode('Hello from custom type'));
+```
+
+### Receiving custom content
+
+The SDK automatically decodes incoming messages using the registered codecs. Access the decoded content via `message.content`:
+
+```ts
+const messages = await conversation.messages();
+for (const message of messages) {
+  if (message.type.sameAs(CustomContentType)) {
+    console.log(message.content); // decoded type
+  }
+}
+```
 
 
 ## agents/content-types/group-updates.mdx
