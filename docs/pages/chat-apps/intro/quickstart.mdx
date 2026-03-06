@@ -4,7 +4,11 @@ import { QuickstartProvider, QuickstartStep, CopyableCode, STATIC_CODE } from '.
 
 Follow this tutorial to build a quickstart chat app with XMTP.
 
-Your quickstart app and the **XMTP Live Inbox** in the sidebar are two separate XMTP inboxes. By the end of this tutorial, they'll be able to message each other.
+When you build your quickstart app, you will use a key pair to create an identity and register it with XMTP. This gives you an inbox ID, which is a stable identifier that serves as the destination for your messages.
+  
+Separately, the **XMTP Live Inbox** in the sidebar also has a key pair that we already used to create an XMTP inbox ID you can send messages to.
+
+By the end of this tutorial, you'll be able to use the quickstart chat app and XMTP Live Inbox to message each other.
 
 :::tip[Not seeing the sidebar and the XMTP Live Inbox?]
 Display your browser window at full width (at least 1280px).
@@ -16,7 +20,7 @@ Display your browser window at full width (at least 1280px).
 
 Create a Vite project with the vanilla template. 
 
-:::tip
+:::warning
 When Vite prompts you with **Install with npm and start now?**, select ***No***.
 :::
 
@@ -37,10 +41,10 @@ The XMTP SDK uses WASM, which requires a Vite config change. Add `vite.config.js
 
 ## 2. Add the starter code
 
-In your project, replace `src/main.js` with the code below. `privateKey` and `address` are for your quickstart app. `otherAddress` is the address of the XMTP Live Inbox. These are the two sides of the conversation.
+In your project, replace `src/main.js` with the code below. `yourAddress` and `yourPrivateKey` are the key pair for the identity you'll register with XMTP to get an inbox ID. You can compare the `yourAddress` to an email address and the `yourPrivateKey` to an email password. `theirAddress` is the address of the identity used by the XMTP Live Inbox. These are the two sides of the conversation.
 
 :::tip
-Refreshing this page generates new identities. If you refresh, update the `privateKey`, `address`, and `otherAddress` in your `src/main.js` to match the values in the code below.
+Refreshing this page generates new identities. If you refresh, update `yourPrivateKey`, `yourAddress`, and `theirAddress` in your `src/main.js` to match the values in the code below.
 :::
 
 <QuickstartStep step="identity" label="src/main.js" />
@@ -49,12 +53,11 @@ Then replace the contents of `<div id="app">` in your `index.html` with:
 
 <CopyableCode analyticsStep="2-index-html" label="index.html" lang="html" code={STATIC_CODE.indexHtml} />
 
-Run `npm run dev` to start your app. You should see the UI with a text input and Send button.
+Run `npm run dev` to start your app. You should see the UI with a text input and **Send** button.
 
 ## 3. Connect to XMTP
 
-In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Your quickstart app should display its own Inbox ID. For example: `
-Connected! Inbox ID: 89cd9d2dbb077080842102655f7ab3bced74e837769a239c6ec888708cb93b26`
+In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Your quickstart app should display its own Inbox ID. For example: `Connected! Your inbox ID: 89cd9d2dbb077080842102655f7ab3bced74e837769a239c6ec888708cb93b26`
 
 <QuickstartStep step="connect" label="src/main.js" />
 
@@ -70,7 +73,7 @@ With XMTP, sending a message delivers it to the network, but doesn't automatical
 
 ## 5. Stream messages
 
-Replace `// Step 5 goes here` in `main()` with the code below. Now messages sent from your quickstart app display there. Additionally, messages sent from the XMTP Live Inbox appear in your quickstart app.
+Replace `// Step 5 goes here` in `main()` with the code below. Now messages you send from the quickstart app display there. Additionally, messages you send from the XMTP Live Inbox appear in the quickstart app.
 
 <QuickstartStep step="stream" label="src/main.js" />
 

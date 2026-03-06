@@ -54,24 +54,24 @@ import { Client, IdentifierKind } from "@xmtp/browser-sdk";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3.js";
 
-// Your app's private key and address (ephemeral — dev only)
-const privateKey = Uint8Array.fromHex("${hex}");
-const address = "${appIdentity.address}";
+// Your private key and address (ephemeral — dev only)
+const yourPrivateKey = Uint8Array.fromHex("${hex}");
+const yourAddress = "${appIdentity.address}";
 
-// The XMTP Live Inbox address (the other side of the conversation)
-const otherAddress = "${inboxIdentity.address}";
+// The address of the XMTP Live Inbox user
+const theirAddress = "${inboxIdentity.address}";
 
 // Create an XMTP-compatible signer
 const signer = {
   type: "EOA",
   getIdentifier: () => ({
-    identifier: address.toLowerCase(),
+    identifier: yourAddress.toLowerCase(),
     identifierKind: IdentifierKind.Ethereum,
   }),
   signMessage: async (message) => {
     const prefix = "\\x19Ethereum Signed Message:\\n" + message.length;
     const hash = keccak_256(new TextEncoder().encode(prefix + message));
-    const sig = secp256k1.sign(hash, privateKey, { prehash: false, format: "recovered" });
+    const sig = secp256k1.sign(hash, yourPrivateKey, { prehash: false, format: "recovered" });
     return new Uint8Array([...sig.slice(1), sig[0] + 27]);
   },
 };
@@ -92,11 +92,11 @@ main().catch((e) => {
   env: "dev",
   dbPath: null,
 });
-document.getElementById("messages").innerText = "Connected! Inbox ID: " + client.inboxId;`,
+document.getElementById("messages").innerText = "Connected! Your inbox ID: " + client.inboxId;`,
 
   send: () =>
     `const dm = await client.conversations.createDmWithIdentifier({
-  identifier: otherAddress,
+  identifier: theirAddress,
   identifierKind: IdentifierKind.Ethereum,
 });
 
