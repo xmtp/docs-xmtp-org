@@ -358,7 +358,7 @@ export const QuickstartInbox = ({ inboxIdentity, appIdentity }: { inboxIdentity:
         <div className="qi-messages">
           {messages.length === 0 ? (
             <div className="qi-empty">
-              Ready to message ✨
+              Ready to message with your quickstart app ✨
             </div>
           ) : (
             messages.map((msg) => (
