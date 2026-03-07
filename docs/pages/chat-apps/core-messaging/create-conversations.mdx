@@ -163,7 +163,7 @@ const memberIdentifiers = [
 // Create a group using identifiers instead of inbox IDs
 const group = await client.conversations.createGroupWithIdentifiers(
   memberIdentifiers,
-  { name: "Group Name", description: "Group description" }
+  { groupName: "Group Name", groupDescription: "Group description" }
 );
 ```
 
@@ -179,7 +179,7 @@ const memberIdentifiers = [
 // Create a group using identifiers instead of inbox IDs
 const group = await client.conversations.createGroupWithIdentifiers(
   memberIdentifiers,
-  { name: "Group Name", description: "Group description" }
+  { groupName: "Group Name", groupDescription: "Group description" }
 );
 ```
 
