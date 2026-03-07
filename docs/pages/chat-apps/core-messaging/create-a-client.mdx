@@ -616,9 +616,7 @@ if (!registered) {
 
 ```js [Node]
 // Check if the client is registered
-const registered = await client.isRegistered();
-
-if (!registered) {
+if (!client.isRegistered) {
   // Register the client manually
   await client.register();
 }

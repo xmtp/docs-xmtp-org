@@ -568,7 +568,7 @@ import { generateInboxId, IdentifierKind } from "@xmtp/browser-sdk";
 
 // Generate the inbox ID for an Ethereum address
 const inboxId = await generateInboxId({
-  kind: IdentifierKind.Ethereum,
+  identifierKind: IdentifierKind.Ethereum,
   identifier: "0x1234567890abcdef1234567890abcdef12345678",
 });
 
@@ -579,8 +579,8 @@ console.log("Inbox ID:", inboxId);
 import { generateInboxId, IdentifierKind } from "@xmtp/node-sdk";
 
 // Generate the inbox ID for an Ethereum address
-const inboxId = await generateInboxId({
-  kind: IdentifierKind.Ethereum,
+const inboxId = generateInboxId({
+  identifierKind: IdentifierKind.Ethereum,
   identifier: "0x1234567890abcdef1234567890abcdef12345678",
 });
 
@@ -601,7 +601,7 @@ import { getInboxIdForIdentifier, IdentifierKind } from "@xmtp/browser-sdk";
 // Look up the inbox ID for an Ethereum address
 const inboxId = await getInboxIdForIdentifier(
   {
-    kind: IdentifierKind.Ethereum,
+    identifierKind: IdentifierKind.Ethereum,
     identifier: "0x1234567890abcdef1234567890abcdef12345678",
   },
   "production" // optional, defaults to "dev"
@@ -620,7 +620,7 @@ import { getInboxIdForIdentifier, IdentifierKind } from "@xmtp/node-sdk";
 // Look up the inbox ID for an Ethereum address
 const inboxId = await getInboxIdForIdentifier(
   {
-    kind: IdentifierKind.Ethereum,
+    identifierKind: IdentifierKind.Ethereum,
     identifier: "0x1234567890abcdef1234567890abcdef12345678",
   },
   "production" // optional, defaults to "dev"
@@ -712,7 +712,7 @@ Only the current recovery identity can authorize this change. The new recovery i
 ```js [Browser]
 // Change the recovery identity to another identity associated with this inbox
 await client.changeRecoveryIdentifier({
-  kind: IdentifierKind.Ethereum,
+  identifierKind: IdentifierKind.Ethereum,
   identifier: "0xNEW_RECOVERY_ADDRESS",
 });
 ```
@@ -720,7 +720,7 @@ await client.changeRecoveryIdentifier({
 ```js [Node]
 // Change the recovery identity to another identity associated with this inbox
 await client.changeRecoveryIdentifier({
-  kind: IdentifierKind.Ethereum,
+  identifierKind: IdentifierKind.Ethereum,
   identifier: "0xNEW_RECOVERY_ADDRESS",
 });
 ```
@@ -990,7 +990,7 @@ import { IdentifierKind, toSafeSigner } from "@xmtp/browser-sdk";
 const { signatureText, signatureRequestId } =
   await client.unsafe_addAccountSignatureText(
     {
-      kind: IdentifierKind.Ethereum,
+      identifierKind: IdentifierKind.Ethereum,
       identifier: "0xNEW_ACCOUNT_ADDRESS",
     },
     false // allowInboxReassign - set to true to reassign from another inbox
@@ -1009,7 +1009,7 @@ import { IdentifierKind } from "@xmtp/node-sdk";
 // Step 1: Generate the signature request for adding an account
 const signatureRequest = await client.unsafe_addAccountSignatureRequest(
   {
-    kind: IdentifierKind.Ethereum,
+    identifierKind: IdentifierKind.Ethereum,
     identifier: "0xNEW_ACCOUNT_ADDRESS",
   },
   false // allowInboxReassign - set to true to reassign from another inbox
@@ -1040,7 +1040,7 @@ import { IdentifierKind, toSafeSigner } from "@xmtp/browser-sdk";
 // Step 1: Generate the signature text for removing an account
 const { signatureText, signatureRequestId } =
   await client.unsafe_removeAccountSignatureText({
-    kind: IdentifierKind.Ethereum,
+    identifierKind: IdentifierKind.Ethereum,
     identifier: "0xACCOUNT_TO_REMOVE",
   });
 
@@ -1056,7 +1056,7 @@ import { IdentifierKind } from "@xmtp/node-sdk";
 
 // Step 1: Generate the signature request for removing an account
 const signatureRequest = await client.unsafe_removeAccountSignatureRequest({
-  kind: IdentifierKind.Ethereum,
+  identifierKind: IdentifierKind.Ethereum,
   identifier: "0xACCOUNT_TO_REMOVE",
 });
 
@@ -1173,7 +1173,7 @@ import { IdentifierKind, toSafeSigner } from "@xmtp/browser-sdk";
 // Step 1: Generate the signature text for changing recovery
 const { signatureText, signatureRequestId } =
   await client.unsafe_changeRecoveryIdentifierSignatureText({
-    kind: IdentifierKind.Ethereum,
+    identifierKind: IdentifierKind.Ethereum,
     identifier: "0xNEW_RECOVERY_ADDRESS",
   });
 
@@ -1190,7 +1190,7 @@ import { IdentifierKind } from "@xmtp/node-sdk";
 // Step 1: Generate the signature request for changing recovery
 const signatureRequest =
   await client.unsafe_changeRecoveryIdentifierSignatureRequest({
-    kind: IdentifierKind.Ethereum,
+    identifierKind: IdentifierKind.Ethereum,
     identifier: "0xNEW_RECOVERY_ADDRESS",
   });
 

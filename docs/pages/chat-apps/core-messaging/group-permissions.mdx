@@ -105,6 +105,7 @@ When setting custom permissions, use these `PermissionOption` values:
 
 ```js [Browser]
 import {
+  GroupPermissionsOptions,
   PermissionPolicy,
   type PermissionPolicySet,
 } from "@xmtp/browser-sdk";
@@ -117,20 +118,23 @@ const customPermissions: PermissionPolicySet = {
   removeAdminPolicy: PermissionPolicy.SuperAdmin,
   updateGroupNamePolicy: PermissionPolicy.Allow,
   updateGroupDescriptionPolicy: PermissionPolicy.Allow,
-  updateGroupImagePolicy: PermissionPolicy.Admin,
+  updateGroupImageUrlSquarePolicy: PermissionPolicy.Admin,
   updateMessageDisappearingPolicy: PermissionPolicy.SuperAdmin,
+  updateAppDataPolicy: PermissionPolicy.Admin,
 };
 
 // Create a group with custom permissions
 const group = await client.conversations.createGroup([memberInboxId1, memberInboxId2], {
-  permissionPolicySet: customPermissions,
-  name: "Custom Group",
-  description: "A group with custom permissions",
+  permissions: GroupPermissionsOptions.CustomPolicy,
+  customPermissionPolicySet: customPermissions,
+  groupName: "Custom Group",
+  groupDescription: "A group with custom permissions",
 });
 ```
 
 ```js [Node]
 import {
+  GroupPermissionsOptions,
   PermissionPolicy,
   type PermissionPolicySet,
 } from "@xmtp/node-sdk";
@@ -143,15 +147,17 @@ const customPermissions: PermissionPolicySet = {
   removeAdminPolicy: PermissionPolicy.SuperAdmin,
   updateGroupNamePolicy: PermissionPolicy.Allow,
   updateGroupDescriptionPolicy: PermissionPolicy.Allow,
-  updateGroupImagePolicy: PermissionPolicy.Admin,
+  updateGroupImageUrlSquarePolicy: PermissionPolicy.Admin,
   updateMessageDisappearingPolicy: PermissionPolicy.SuperAdmin,
+  updateAppDataPolicy: PermissionPolicy.Admin,
 };
 
 // Create a group with custom permissions
 const group = await client.conversations.createGroup([memberInboxId1, memberInboxId2], {
-  permissionPolicySet: customPermissions,
-  name: "Custom Group",
-  description: "A group with custom permissions",
+  permissions: GroupPermissionsOptions.CustomPolicy,
+  customPermissionPolicySet: customPermissions,
+  groupName: "Custom Group",
+  groupDescription: "A group with custom permissions",
 });
 ```
 
@@ -238,7 +244,8 @@ To retrieve the current permissions for a group:
 
 ```js [Browser]
 // Get the current permission policy set for a group
-const policySet = group.permissionPolicySet;
+const permissions = await group.permissions();
+const policySet = permissions.policySet;
 
 console.log("Add member policy:", policySet.addMemberPolicy);
 console.log("Remove member policy:", policySet.removeMemberPolicy);
@@ -247,7 +254,8 @@ console.log("Update name policy:", policySet.updateGroupNamePolicy);
 
 ```js [Node]
 // Get the current permission policy set for a group
-const policySet = group.permissionPolicySet;
+const permissions = group.permissions();
+const policySet = permissions.policySet;
 
 console.log("Add member policy:", policySet.addMemberPolicy);
 console.log("Remove member policy:", policySet.removeMemberPolicy);
@@ -432,17 +440,17 @@ try await group.updateRemoveAdminPermission(newPermissionOption: .superAdmin)
 :::code-group
 
 ```js [Browser]
-import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+import { MetadataField, PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
 
 // Allow all members to update the group name
-await group.updatePermission(PermissionUpdateType.UpdateGroupName, PermissionPolicy.Allow);
+await group.updatePermission(PermissionUpdateType.UpdateMetadata, PermissionPolicy.Allow, MetadataField.GroupName);
 ```
 
 ```js [Node]
-import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+import { MetadataField, PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
 
 // Allow all members to update the group name
-await group.updatePermission(PermissionUpdateType.UpdateGroupName, PermissionPolicy.Allow);
+await group.updatePermission(PermissionUpdateType.UpdateMetadata, PermissionPolicy.Allow, MetadataField.GroupName);
 ```
 
 ```tsx [React Native]
@@ -467,17 +475,17 @@ try await group.updateNamePermission(newPermissionOption: .allow)
 :::code-group
 
 ```js [Browser]
-import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+import { MetadataField, PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
 
 // Allow only admins to update the description
-await group.updatePermission(PermissionUpdateType.UpdateGroupDescription, PermissionPolicy.Admin);
+await group.updatePermission(PermissionUpdateType.UpdateMetadata, PermissionPolicy.Admin, MetadataField.Description);
 ```
 
 ```js [Node]
-import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+import { MetadataField, PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
 
 // Allow only admins to update the description
-await group.updatePermission(PermissionUpdateType.UpdateGroupDescription, PermissionPolicy.Admin);
+await group.updatePermission(PermissionUpdateType.UpdateMetadata, PermissionPolicy.Admin, MetadataField.Description);
 ```
 
 ```tsx [React Native]
@@ -502,17 +510,17 @@ try await group.updateDescriptionPermission(newPermissionOption: .admin)
 :::code-group
 
 ```js [Browser]
-import { PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
+import { MetadataField, PermissionUpdateType, PermissionPolicy } from "@xmtp/browser-sdk";
 
 // Allow only admins to update the group image
-await group.updatePermission(PermissionUpdateType.UpdateGroupImageUrl, PermissionPolicy.Admin);
+await group.updatePermission(PermissionUpdateType.UpdateMetadata, PermissionPolicy.Admin, MetadataField.GroupImageUrlSquare);
 ```
 
 ```js [Node]
-import { PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
+import { MetadataField, PermissionUpdateType, PermissionPolicy } from "@xmtp/node-sdk";
 
 // Allow only admins to update the group image
-await group.updatePermission(PermissionUpdateType.UpdateGroupImageUrl, PermissionPolicy.Admin);
+await group.updatePermission(PermissionUpdateType.UpdateMetadata, PermissionPolicy.Admin, MetadataField.GroupImageUrlSquare);
 ```
 
 ```tsx [React Native]
@@ -539,7 +547,7 @@ try await group.updateImageUrlPermission(newPermissionOption: .admin)
 :::code-group
 
 ```js [Browser]
-const isAdmin = group.isAdmin(inboxId);
+const isAdmin = await group.isAdmin(inboxId);
 ```
 
 ```js [Node]
@@ -568,7 +576,7 @@ try group.isAdmin(client.inboxID)
 :::code-group
 
 ```js [Browser]
-const isSuperAdmin = group.isSuperAdmin(inboxId);
+const isSuperAdmin = await group.isSuperAdmin(inboxId);
 ```
 
 ```js [Node]
@@ -953,7 +961,7 @@ if (isPending) {
 await group.requestRemoval();
 
 // Check if removal is still pending
-const isPending = await group.isPendingRemoval();
+const isPending = group.isPendingRemoval();
 
 if (isPending) {
   // User has requested to leave, but removal not yet fully processed
@@ -1138,22 +1146,6 @@ let peerInboxId = try dm.peerInboxId
 Check if the current user created the conversation:
 
 :::code-group
-
-```js [Browser]
-// Check if current user created the group
-const isGroupCreator = group.isCreator;
-
-// Check if current user created the DM
-const isDmCreator = dm.isCreator;
-```
-
-```js [Node]
-// Check if current user created the group
-const isGroupCreator = group.isCreator;
-
-// Check if current user created the DM
-const isDmCreator = dm.isCreator;
-```
 
 ```kotlin [Kotlin]
 // Check if current user created the group
