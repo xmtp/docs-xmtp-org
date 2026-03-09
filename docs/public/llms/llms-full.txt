@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 09:12 PM UTC / March 04, 2026
+Generated at 07:51 PM UTC / March 09, 2026
 
 ## About this file
 
@@ -4470,6 +4470,95 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 - Found a bug or need help? Contact [dev support](/chat-apps/intro/dev-support).
 
 
+## chat-apps/intro/quickstart.mdx
+import { QuickstartProvider, QuickstartStep, CopyableCode, STATIC_CODE } from '../../../components/QuickstartSteps';
+
+# Build a quickstart chat app
+
+Follow this tutorial to build a quickstart chat app with XMTP.
+
+When you build your quickstart app, you will use a key pair to create an identity and register it with XMTP. This gives you an inbox ID, which is a stable identifier that serves as the destination for your messages.
+  
+Separately, the **XMTP Live Inbox** in the sidebar also has a key pair that we already used to create an XMTP inbox ID you can send messages to.
+
+By the end of this tutorial, you'll be able to use the quickstart chat app and XMTP Live Inbox to message each other.
+
+:::tip[Not seeing the sidebar and the XMTP Live Inbox?]
+Display your browser window at full width (at least 1280px).
+:::
+
+<QuickstartProvider>
+
+## 1. Set up your project
+
+Create a Vite project with the vanilla template. 
+
+:::warning
+When Vite prompts you with **Install with npm and start now?**, select ***No***.
+:::
+
+```bash
+npm create vite@latest my-xmtp-app -- --template vanilla
+```
+
+Then move into the project and install the XMTP SDK and key generation libraries:
+
+```bash
+cd my-xmtp-app
+npm install @xmtp/browser-sdk @noble/curves @noble/hashes
+```
+
+The XMTP SDK uses WASM, which requires a Vite config change. Add `vite.config.js` to your project root:
+
+<CopyableCode analyticsStep="1-vite-setup" label="vite.config.js" code={STATIC_CODE.viteConfig} />
+
+## 2. Add the starter code
+
+In your project, replace `src/main.js` with the code below. `yourAddress` and `yourPrivateKey` are the key pair for the identity you'll register with XMTP to get an inbox ID. You can compare the `yourAddress` to an email address and the `yourPrivateKey` to an email password. `theirAddress` is the address of the identity used by the XMTP Live Inbox. These are the two sides of the conversation.
+
+:::tip
+Refreshing this page generates new identities. If you refresh, update `yourPrivateKey`, `yourAddress`, and `theirAddress` in your `src/main.js` to match the values in the code below.
+:::
+
+<QuickstartStep step="identity" label="src/main.js" />
+
+Then replace the contents of `<div id="app">` in your `index.html` with:
+
+<CopyableCode analyticsStep="2-index-html" label="index.html" lang="html" code={STATIC_CODE.indexHtml} />
+
+Run `npm run dev` to start your app. You should see the UI with a text input and **Send** button.
+
+## 3. Connect to XMTP
+
+In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Your quickstart app should display its own Inbox ID. For example: `Connected! Your inbox ID: 89cd9d2dbb077080842102655f7ab3bced74e837769a239c6ec888708cb93b26`
+
+<QuickstartStep step="connect" label="src/main.js" />
+
+## 4. Send a message
+
+Replace `// Step 4 goes here` in `main()` with the code below.
+
+Then type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not in your quickstart app.
+
+With XMTP, sending a message delivers it to the network, but doesn't automatically update the local UI (unless you use [optimistic sending](/chat-apps/core-messaging/send-messages#optimistically-send-messages)). The XMTP Live Inbox displays the message because it already has a stream listening for new messages. You'll add streaming to your quickstart app in the next step.
+
+<QuickstartStep step="send" label="src/main.js" />
+
+## 5. Stream messages
+
+Replace `// Step 5 goes here` in `main()` with the code below. Now messages you send from the quickstart app display there. Additionally, messages you send from the XMTP Live Inbox appear in the quickstart app.
+
+<QuickstartStep step="stream" label="src/main.js" />
+
+</QuickstartProvider>
+
+## Next steps
+
+- Try the [xmtp.chat](https://xmtp.chat/) web app for more development and debugging tools.
+
+- Ready to build a full-fledged chat app with XMTP? See [Get started](/chat-apps/intro/get-started).
+
+
 ## chat-apps/intro/what-is-xmtp.mdx
 import ProjectsTable from '../../../snippets/projects-table.mdx';
 
@@ -4580,9 +4669,10 @@ Because XMTP is a protocol, not a platform:
 
 ## Next steps
 
-- [Why build with XMTP?](/chat-apps/intro/why-xmtp) - Understand the benefits and use cases
-- [Try xmtp.chat](https://xmtp.chat) - Experience XMTP as a user before you build
-- [Get started building](/chat-apps/intro/get-started) - Jump into implementation with your chosen SDK
+- [Why build with XMTP?](/chat-apps/intro/why-xmtp)
+- [Build a quickstart app with XMTP](/chat-apps/intro/quickstart)
+- [Try xmtp.chat](https://xmtp.chat): Experience XMTP as a user before you build
+
 
 ## chat-apps/intro/why-xmtp.mdx
 # Why build with XMTP?
@@ -4608,6 +4698,10 @@ Build with XMTP to:
 - **Create with confidence**
 
   Developers are free to create the messaging experiences their users want—on a censorship-resistant protocol architected to last forever. Because XMTP isn't a closed proprietary platform, developers can build confidently, knowing their access and functionality can't be revoked by a central authority.
+
+## Build a quickstart app with XMTP
+
+[Follow this tutorial](/chat-apps/intro/quickstart) to build a quickstart chat app with XMTP.
 
 ## Try an app built with XMTP
 
@@ -17139,4 +17233,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 98 files from 5 sections.
+This documentation contains 99 files from 5 sections.
