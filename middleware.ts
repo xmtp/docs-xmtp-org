@@ -1,5 +1,3 @@
-import { next } from "@vercel/edge";
-
 /**
  * Known AI/bot User-Agent patterns.
  * Each entry: [pattern, label shown in logs]
@@ -44,18 +42,30 @@ const AI_BOT_PATTERNS: [RegExp, string][] = [
   [/llamaindex/i, "LlamaIndex"],
 ];
 
-export default function middleware(request: Request) {
+export default function middleware(request: Request): Response | undefined {
   const ua = request.headers.get("user-agent") || "";
   const url = new URL(request.url);
 
   // Skip static assets — only log page/doc requests
   if (/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map)$/i.test(url.pathname)) {
-    return next();
+    return;
+  }
+
+  // Track llms.txt fetches — strong signal of AI/agent tooling
+  if (/^\/llms/i.test(url.pathname)) {
+    console.log(
+      JSON.stringify({
+        type: "llms-txt-fetch",
+        path: url.pathname,
+        ua: ua.slice(0, 300),
+        ts: new Date().toISOString(),
+      })
+    );
   }
 
   for (const [pattern, label] of AI_BOT_PATTERNS) {
     if (pattern.test(ua)) {
-      // Structured JSON log — shows up in Vercel Observability
+      // Structured JSON log — shows up in Vercel Monitoring > Logs
       console.log(
         JSON.stringify({
           type: "ai-bot-visit",
@@ -65,15 +75,11 @@ export default function middleware(request: Request) {
           ts: new Date().toISOString(),
         })
       );
-      // Continue serving the page normally
-      return next();
+      return;
     }
   }
-
-  return next();
 }
 
 export const config = {
-  // Run on all doc pages, skip Vercel internals and static chunks
   matcher: ["/((?!_vercel|_next/static|_next/image|favicon.ico).*)"],
 };
