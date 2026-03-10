@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 10:30 PM UTC / February 25, 2026
+Generated at 07:51 PM UTC / March 09, 2026
 
 ## About this file
 
@@ -4470,6 +4470,95 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 - Found a bug or need help? Contact [dev support](/chat-apps/intro/dev-support).
 
 
+## chat-apps/intro/quickstart.mdx
+import { QuickstartProvider, QuickstartStep, CopyableCode, STATIC_CODE } from '../../../components/QuickstartSteps';
+
+# Build a quickstart chat app
+
+Follow this tutorial to build a quickstart chat app with XMTP.
+
+When you build your quickstart app, you will use a key pair to create an identity and register it with XMTP. This gives you an inbox ID, which is a stable identifier that serves as the destination for your messages.
+  
+Separately, the **XMTP Live Inbox** in the sidebar also has a key pair that we already used to create an XMTP inbox ID you can send messages to.
+
+By the end of this tutorial, you'll be able to use the quickstart chat app and XMTP Live Inbox to message each other.
+
+:::tip[Not seeing the sidebar and the XMTP Live Inbox?]
+Display your browser window at full width (at least 1280px).
+:::
+
+<QuickstartProvider>
+
+## 1. Set up your project
+
+Create a Vite project with the vanilla template. 
+
+:::warning
+When Vite prompts you with **Install with npm and start now?**, select ***No***.
+:::
+
+```bash
+npm create vite@latest my-xmtp-app -- --template vanilla
+```
+
+Then move into the project and install the XMTP SDK and key generation libraries:
+
+```bash
+cd my-xmtp-app
+npm install @xmtp/browser-sdk @noble/curves @noble/hashes
+```
+
+The XMTP SDK uses WASM, which requires a Vite config change. Add `vite.config.js` to your project root:
+
+<CopyableCode analyticsStep="1-vite-setup" label="vite.config.js" code={STATIC_CODE.viteConfig} />
+
+## 2. Add the starter code
+
+In your project, replace `src/main.js` with the code below. `yourAddress` and `yourPrivateKey` are the key pair for the identity you'll register with XMTP to get an inbox ID. You can compare the `yourAddress` to an email address and the `yourPrivateKey` to an email password. `theirAddress` is the address of the identity used by the XMTP Live Inbox. These are the two sides of the conversation.
+
+:::tip
+Refreshing this page generates new identities. If you refresh, update `yourPrivateKey`, `yourAddress`, and `theirAddress` in your `src/main.js` to match the values in the code below.
+:::
+
+<QuickstartStep step="identity" label="src/main.js" />
+
+Then replace the contents of `<div id="app">` in your `index.html` with:
+
+<CopyableCode analyticsStep="2-index-html" label="index.html" lang="html" code={STATIC_CODE.indexHtml} />
+
+Run `npm run dev` to start your app. You should see the UI with a text input and **Send** button.
+
+## 3. Connect to XMTP
+
+In `src/main.js`, replace `// Step 3 goes here` in `main()` with the code below. Your quickstart app should display its own Inbox ID. For example: `Connected! Your inbox ID: 89cd9d2dbb077080842102655f7ab3bced74e837769a239c6ec888708cb93b26`
+
+<QuickstartStep step="connect" label="src/main.js" />
+
+## 4. Send a message
+
+Replace `// Step 4 goes here` in `main()` with the code below.
+
+Then type a message in your quickstart app and **Send**. The message appears in the XMTP Live Inbox on this page but not in your quickstart app.
+
+With XMTP, sending a message delivers it to the network, but doesn't automatically update the local UI (unless you use [optimistic sending](/chat-apps/core-messaging/send-messages#optimistically-send-messages)). The XMTP Live Inbox displays the message because it already has a stream listening for new messages. You'll add streaming to your quickstart app in the next step.
+
+<QuickstartStep step="send" label="src/main.js" />
+
+## 5. Stream messages
+
+Replace `// Step 5 goes here` in `main()` with the code below. Now messages you send from the quickstart app display there. Additionally, messages you send from the XMTP Live Inbox appear in the quickstart app.
+
+<QuickstartStep step="stream" label="src/main.js" />
+
+</QuickstartProvider>
+
+## Next steps
+
+- Try the [xmtp.chat](https://xmtp.chat/) web app for more development and debugging tools.
+
+- Ready to build a full-fledged chat app with XMTP? See [Get started](/chat-apps/intro/get-started).
+
+
 ## chat-apps/intro/what-is-xmtp.mdx
 import ProjectsTable from '../../../snippets/projects-table.mdx';
 
@@ -4580,9 +4669,10 @@ Because XMTP is a protocol, not a platform:
 
 ## Next steps
 
-- [Why build with XMTP?](/chat-apps/intro/why-xmtp) - Understand the benefits and use cases
-- [Try xmtp.chat](https://xmtp.chat) - Experience XMTP as a user before you build
-- [Get started building](/chat-apps/intro/get-started) - Jump into implementation with your chosen SDK
+- [Why build with XMTP?](/chat-apps/intro/why-xmtp)
+- [Build a quickstart app with XMTP](/chat-apps/intro/quickstart)
+- [Try xmtp.chat](https://xmtp.chat): Experience XMTP as a user before you build
+
 
 ## chat-apps/intro/why-xmtp.mdx
 # Why build with XMTP?
@@ -4608,6 +4698,10 @@ Build with XMTP to:
 - **Create with confidence**
 
   Developers are free to create the messaging experiences their users want—on a censorship-resistant protocol architected to last forever. Because XMTP isn't a closed proprietary platform, developers can build confidently, knowing their access and functionality can't be revoked by a central authority.
+
+## Build a quickstart app with XMTP
+
+[Follow this tutorial](/chat-apps/intro/quickstart) to build a quickstart chat app with XMTP.
 
 ## Try an app built with XMTP
 
@@ -10637,7 +10731,7 @@ Any developer building with XMTP can create a custom content type and immediatel
 
 Building a custom content type enables you to manage data in a way that's more personalized or specialized to the needs of your app.
 
-For example, if you need a content type that isn't covered by a [standard](/chat-apps/content-types/content-types#standard-content-types) or [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content type, you can create a custom content type and begin using it immediately in your app.
+For example, if you need a content type that isn't covered by a [standard](/chat-apps/content-types/content-types#standard-content-types) content type, you can create a custom content type and begin using it immediately in your app.
 
 :::warning[warning]
 
@@ -10649,7 +10743,7 @@ Fallback plain text is "alt text"-like description text that you can associate w
 
 If another app wants to display your custom content type, they must implement your custom content type in their code exactly as it's defined in your code.
 
-For more common content types, you can usually find a [standard](/chat-apps/content-types/content-types#standard-content-types) or [standards-track](/chat-apps/content-types/content-types#standards-track-content-types) content type to serve your needs.
+For more common content types, you can usually find a [standard](/chat-apps/content-types/content-types#standard-content-types) content type to serve your needs.
 
 If your custom content type generates interest within the developer community, consider proposing it as a standard content type through the [XIP process](/protocol/xips).
 
@@ -14297,6 +14391,74 @@ agent.on('unhandledError', (error) => {
 ```
 
 
+## agents/content-types/actions.mdx
+# Send actions and handle intents
+
+Actions let your agent send a message with tappable buttons. When the user picks one, the agent gets an intent event with the selected button's ID. This works well for confirmations, payment flows, menu navigation, and polls.
+
+:::note
+Buttons only render in apps that support this content type, such as the [Base](https://base.org) app. Other clients show a numbered text fallback.
+:::
+
+## Send actions
+
+```ts [Node]
+await ctx.conversation.sendActions({
+  id: `actions-${Date.now()}`,
+  description: 'Would you like to proceed?',
+  actions: [
+    { id: 'action-yes', label: 'Yes', style: 'primary' },
+    { id: 'action-no', label: 'No', style: 'secondary' },
+  ],
+});
+```
+
+Each action button has the following fields:
+
+- `id`: Returned as `actionId` in the intent when tapped
+- `label`: The button text
+- `style` (optional): `"primary"`, `"secondary"`, or `"danger"`
+- `imageUrl` (optional): An image to show alongside the button
+- `expiresAt` (optional): ISO 8601 timestamp after which the button expires
+
+Set a top-level `expiresAt` to expire the entire prompt.
+
+### Payment example
+
+```ts [Node]
+await ctx.conversation.sendActions({
+  id: 'payment_alice_123',
+  description: 'Choose amount to send',
+  actions: [
+    { id: 'send_10', label: 'Send $10', style: 'primary' },
+    { id: 'send_20', label: 'Send $20', style: 'primary' },
+  ],
+});
+```
+
+## Receive an intent
+
+When a user taps a button, the SDK fires an `"intent"` event. Match on `actionId` to know which button was pressed.
+
+```ts [Node]
+agent.on('intent', async (ctx) => {
+  const { actionId } = ctx.message.content;
+
+  if (actionId === 'send_10') {
+    await ctx.conversation.sendText('Sending $10...');
+  } else if (actionId === 'send_20') {
+    await ctx.conversation.sendText('Sending $20...');
+  }
+});
+```
+
+The intent payload has three fields:
+
+- `id`: The ID of the original action prompt
+- `actionId`: The ID of the button that was tapped
+- `metadata` (optional): Key-value context sent by the client
+
+
 ## agents/content-types/attachments.mdx
 # Support attachments with your agent built with XMTP
 
@@ -14442,103 +14604,18 @@ When you build an agent with XMTP, all messages are encoded with a content type 
 
 In addition, message payloads are transported as a set of bytes. This means that payloads can carry any content type that a client supports, such as plain text, JSON, or even non-text binary or media content.
 
-At a high level, there are three categories of content types with XMTP:
+At a high level, there are these categories of content types with XMTP:
 
 - Standard
-- Standards-track
 - Custom
 
 ## Standard content types
 
 A standard content type is one that has undergone the XMTP Request for Comment (XRC) process and has been adopted as an [XMTP Improvement Proposal](https://github.com/xmtp/XIPs#readme) (XIP).
 
-Once adopted, a standard content type is bundled in XMTP client SDKs. All standard and standards-track content types are built into the Agent SDK—no installation or codec registration is required.
+All [standard content types](/chat-apps/content-types/content-types#standard-content-types) are built into the Agent SDK and can be used with dedicated send methods:
 
-### Text content type
-
-An agent built with XMTP uses the text content type by default. This means that if your agent is sending plain text messages only, you don't need to perform any additional steps related to content types.
-
-```jsx [Node]
-await ctx.sendText('gm');
-```
-
-## Receiving content types
-
-When your agent receives messages with different content types, use event handlers to handle them appropriately:
-
-```jsx [Node]
-// Listen for specific content types
-agent.on('attachment', async (ctx) => {
-  // Handle attachment logic
-});
-
-agent.on('reaction', async (ctx) => {
-  // Handle reaction logic
-});
-
-agent.on('reply', async (ctx) => {
-  // Handle reply logic - replies now include the original message
-  const reply = ctx.message.content;
-  if (reply.inReplyTo) {
-    console.log(`Replying to: ${reply.inReplyTo.content}`);
-  }
-});
-
-// Use type guards for type-safe content access
-agent.on('message', async (ctx) => {
-  if (ctx.isText()) {
-    // ctx.message.content is typed as string
-  } else if (ctx.isReply()) {
-    // ctx.message.content is typed as EnrichedReply
-  }
-  
-  // For custom content types, access the content type directly
-  const contentType = ctx.message.contentType;
-  if (contentType?.typeId === 'my-custom-type') {
-    // Handle custom content logic
-  }
-});
-```
-
-## Enriched messages
-
-Messages now include additional context to make it easier to build rich messaging experiences:
-
-- **Reply count**: Each message includes `numReplies` showing how many replies it has received
-- **Reactions array**: Messages include a `reactions` array containing all reaction messages
-- **Parent message in replies**: Reply messages include the original message being replied to via `inReplyTo`
-- **Expiration timestamp**: For conversations with disappearing messages enabled, messages include an `expiresAtNs` timestamp
-
-```jsx [Node]
-const messages = await conversation.messages();
-
-for (const message of messages) {
-  // Number of replies to a message
-  console.log(`Message ${message.id} has ${message.numReplies} replies`);
-  
-  // Array of reaction messages
-  console.log(`Message ${message.id} has ${message.reactions.length} reactions`);
-  
-  // Message expiration timestamp (for disappearing messages)
-  if (message.expiresAtNs !== undefined) {
-    const expiresAt = Number(message.expiresAtNs) / 1_000_000_000; // Convert nanoseconds to seconds
-    console.log(`Message expires at: ${new Date(expiresAt * 1000).toISOString()}`);
-  }
-  
-  // Reply messages include the original message
-  if (ctx.isReply()) {
-    const reply = ctx.message.content;
-    console.log(`Replying to: ${reply.inReplyTo?.content}`);
-  }
-}
-```
-
-## Standards-track content types
-
-A standards-track content type is one that's being actively reviewed for adoption as a standard content type through the XIP process.
-
-All standards-track content types are built into the Agent SDK and can be used with dedicated send methods:
-
+- [Actions content type](/agents/content-types/actions): Use `sendActions()` to send interactive button prompts.
 - [Group updates content type](/agents/content-types/group-updates): Use to send group updates, such as name, description, and members.
 - [Remote attachment content type](/agents/content-types/attachments): Use `sendRemoteAttachment()` to send attachments of any size.
 - [Markdown content type](/agents/content-types/markdown): Use `sendMarkdown()` to send rich formatted text messages with headers, lists, tables, and code blocks.
@@ -14549,7 +14626,88 @@ All standards-track content types are built into the Agent SDK and can be used w
 
 ## Custom content types
 
-Custom content types allow you to define your own schemas for messages that go beyond what is covered by standard or standards-track types. These are useful for experiments, domain-specific features, or app-specific behaviors.
+Custom content types allow you to define your own schemas for messages that go beyond what is covered by standard content types. These are useful for experiments, domain-specific features, or app-specific behaviors.
+
+### Writing custom codecs
+
+A content type needs a codec which must satisfy the `ContentCodec` interface from `@xmtp/content-type-primitives`.
+
+Example:
+
+```ts
+import type {
+  ContentCodec,
+  ContentTypeId,
+  EncodedContent,
+} from '@xmtp/content-type-primitives';
+
+// Define the content type identifier
+export const CustomContentType: ContentTypeId = {
+  authorityId: 'your-domain.com',
+  typeId: 'your-custom-id',
+  versionMajor: 1,
+  versionMinor: 0,
+};
+
+// Implement the codec as a class
+export class CustomCodec implements ContentCodec<string> {
+  contentType = CustomContentType;
+
+  encode(content: string): EncodedContent {
+    return {
+      type: this.contentType,
+      parameters: {},
+      content: new TextEncoder().encode(content),
+    };
+  }
+
+  decode(content: EncodedContent): string {
+    return new TextDecoder().decode(content.content);
+  }
+
+  fallback(content: string): string | undefined {
+    return content;
+  }
+
+  shouldPush(): boolean {
+    return false;
+  }
+}
+```
+
+### Registering custom codecs
+
+Pass codec instances to `Agent.create()`:
+
+```ts
+import { Agent } from '@xmtp/agent-sdk';
+
+const client = await Agent.create(signer, {
+  codecs: [new CustomCodec()],
+});
+```
+
+### Sending custom content
+
+Encode the content using your codec, then pass the encoded bytes to `send()`:
+
+```ts
+const codec = new CustomCodec();
+await conversation.send(codec.encode('Hello from custom type'));
+```
+
+### Receiving custom content
+
+The SDK automatically decodes incoming messages using the registered codecs. Access the decoded content via `message.content`:
+
+```ts
+const messages = await conversation.messages();
+for (const message of messages) {
+  if (message.type.sameAs(CustomContentType)) {
+    console.log(message.content); // decoded type
+  }
+}
+```
 
 
 ## agents/content-types/group-updates.mdx
@@ -17075,4 +17233,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 97 files from 5 sections.
+This documentation contains 99 files from 5 sections.
