@@ -3,24 +3,20 @@
  * Each entry: [pattern, label shown in logs]
  */
 const AI_BOT_PATTERNS: [RegExp, string][] = [
-  // LLM crawlers
-  [/GPTBot/i, "GPTBot (OpenAI)"],
+  // AI Search — fetching docs in real-time for a user's question
   [/ChatGPT-User/i, "ChatGPT-User (OpenAI)"],
   [/OAI-SearchBot/i, "OAI-SearchBot (OpenAI)"],
+  [/Perplexity-User/i, "Perplexity-User"],
+  [/PerplexityBot/i, "PerplexityBot"],
   [/Claude-Web/i, "Claude-Web (Anthropic)"],
+  [/YouBot/i, "YouBot (You.com)"],
+
+  // AI Crawlers (RAG) — bulk indexing docs for future use
+  [/GPTBot/i, "GPTBot (OpenAI)"],
   [/ClaudeBot/i, "ClaudeBot (Anthropic)"],
   [/anthropic-ai/i, "Anthropic AI"],
-  [/PerplexityBot/i, "PerplexityBot"],
-  [/Perplexity-User/i, "Perplexity-User"],
   [/cohere-ai/i, "Cohere"],
-  [/YouBot/i, "YouBot (You.com)"],
   [/Google-Extended/i, "Google-Extended (Gemini)"],
-
-  // Code/dev agents
-  [/Devin/i, "Devin"],
-  [/Codex/i, "Codex (OpenAI)"],
-
-  // Common crawlers that feed AI
   [/CCBot/i, "CCBot (Common Crawl)"],
   [/Amazonbot/i, "Amazonbot"],
   [/Bytespider/i, "Bytespider (ByteDance)"],
@@ -34,6 +30,11 @@ const AI_BOT_PATTERNS: [RegExp, string][] = [
   [/Scrapy/i, "Scrapy"],
   [/PetalBot/i, "PetalBot"],
   [/Webz\.io/i, "Webz.io"],
+
+  // Code/dev agents
+  [/Devin/i, "Devin"],
+  [/Codex/i, "Codex (OpenAI)"],
+  [/kapa\.ai/i, "Kapa.ai"],
 
   // Generic AI agent patterns
   [/ai-agent/i, "AI Agent (generic)"],
@@ -64,7 +65,8 @@ export default function middleware(request: Request): Response | undefined {
 
     // Try to identify the tool from available signals
     let tool = "unknown";
-    if (/claude/i.test(ua)) tool = "Claude Code";
+    if (/kapa\.ai/i.test(ua)) tool = "Kapa.ai";
+    else if (/claude/i.test(ua)) tool = "Claude Code";
     else if (/cursor/i.test(ua)) tool = "Cursor";
     else if (/copilot/i.test(ua)) tool = "GitHub Copilot";
     else if (/vscode/i.test(ua)) tool = "VS Code";
@@ -72,8 +74,8 @@ export default function middleware(request: Request): Response | undefined {
     else if (/cline/i.test(ua)) tool = "Cline";
     else if (/aider/i.test(ua)) tool = "Aider";
     else if (/continue/i.test(ua)) tool = "Continue";
-    else if (/undici/i.test(ua)) tool = "Node.js (undici)";
-    else if (/node/i.test(ua) && !referer) tool = "Node.js (unknown tool)";
+    else if (/undici|node/i.test(ua) && !referer) tool = "Node.js (dev tool)";
+    else if (/Mozilla.*Chrome|Safari|Firefox/i.test(ua)) tool = "Browser (human)";
 
     console.log(
       JSON.stringify({
