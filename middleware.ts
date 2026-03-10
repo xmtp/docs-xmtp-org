@@ -53,11 +53,41 @@ export default function middleware(request: Request): Response | undefined {
 
   // Track llms.txt fetches — strong signal of AI/agent tooling
   if (/^\/llms/i.test(url.pathname)) {
+    // Collect headers that help identify which tool is making the request
+    const accept = request.headers.get("accept") || "";
+    const referer = request.headers.get("referer") || "";
+    const origin = request.headers.get("origin") || "";
+    const secFetchSite = request.headers.get("sec-fetch-site") || "";
+    const secFetchMode = request.headers.get("sec-fetch-mode") || "";
+    const acceptEncoding = request.headers.get("accept-encoding") || "";
+    const connection = request.headers.get("connection") || "";
+
+    // Try to identify the tool from available signals
+    let tool = "unknown";
+    if (/claude/i.test(ua)) tool = "Claude Code";
+    else if (/cursor/i.test(ua)) tool = "Cursor";
+    else if (/copilot/i.test(ua)) tool = "GitHub Copilot";
+    else if (/vscode/i.test(ua)) tool = "VS Code";
+    else if (/windsurf/i.test(ua)) tool = "Windsurf";
+    else if (/cline/i.test(ua)) tool = "Cline";
+    else if (/aider/i.test(ua)) tool = "Aider";
+    else if (/continue/i.test(ua)) tool = "Continue";
+    else if (/undici/i.test(ua)) tool = "Node.js (undici)";
+    else if (/node/i.test(ua) && !referer) tool = "Node.js (unknown tool)";
+
     console.log(
       JSON.stringify({
         type: "llms-txt-fetch",
         path: url.pathname,
+        tool,
         ua: ua.slice(0, 300),
+        accept,
+        referer: referer.slice(0, 200),
+        origin,
+        secFetchSite,
+        secFetchMode,
+        acceptEncoding,
+        connection,
         ts: new Date().toISOString(),
       })
     );
