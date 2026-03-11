@@ -76,7 +76,7 @@ Use these methods to manage the sync flow.
 
 ### Archive options
 
-The following methods accept an `ArchiveOptions` parameter that controls what data is included in the sync archive:
+The following methods accept an optional options parameter that controls what data is included in the sync archive:
 
 - [`sendSyncRequest`](#send-a-sync-request)
 - [`sendSyncArchive`](#send-a-sync-archive)
@@ -89,7 +89,7 @@ The following methods accept an `ArchiveOptions` parameter that controls what da
 | `archiveElements` | `[messages, consent]` | What to include in the archive: `messages`, `consent`, or both |
 | `excludeDisappearingMessages` | `false` | Whether to exclude disappearing messages from the archive |
 
-Using `ArchiveOptions()` with no arguments includes all messages and consent data.
+Calling these methods without the options parameter includes all messages and consent data.
 
 ### Send a sync request
 
@@ -98,11 +98,25 @@ Send a request to other installations to sync conversations and messages to the 
 :::code-group
 
 ```js [Browser]
-await client.sendSyncRequest(options, serverUrl);
+// With default options
+await client.sendSyncRequest();
+
+// With custom options
+await client.sendSyncRequest(
+  { archiveElements: ["consent"] },            // options
+  "https://your-history-sync-server.example.com/" // serverUrl
+);
 ```
 
 ```js [Node]
-await client.sendSyncRequest(options, serverUrl);
+// With default options
+await client.sendSyncRequest();
+
+// With custom options
+await client.sendSyncRequest(
+  { archiveElements: ["consent"] },            // options
+  "https://your-history-sync-server.example.com/" // serverUrl
+);
 ```
 
 ```tsx [React Native]
@@ -139,6 +153,30 @@ Send an archive to the sync group without waiting for a request from another ins
 
 :::code-group
 
+```js [Browser]
+// With default options
+await client.sendSyncArchive("my-pin");
+
+// With custom options
+await client.sendSyncArchive(
+  "my-pin",                                    // pin
+  { archiveElements: ["consent"] },            // options
+  "https://your-history-sync-server.example.com/" // serverUrl
+);
+```
+
+```js [Node]
+// With default options
+await client.sendSyncArchive("my-pin");
+
+// With custom options
+await client.sendSyncArchive(
+  "my-pin",                                    // pin
+  { archiveElements: ["consent"] },            // options
+  "https://your-history-sync-server.example.com/" // serverUrl
+);
+```
+
 ```kotlin [Kotlin]
 // With default options
 client.sendSyncArchive(pin = "my-pin")
@@ -169,6 +207,14 @@ Sync all device sync groups from the network.
 
 :::code-group
 
+```js [Browser]
+const summary = await client.syncAllDeviceSyncGroups();
+```
+
+```js [Node]
+const summary = await client.syncAllDeviceSyncGroups();
+```
+
 ```kotlin [Kotlin]
 val summary = client.syncAllDeviceSyncGroups()
 ```
@@ -184,6 +230,16 @@ let summary = try await client.syncAllDeviceSyncGroups()
 Get a list of archives available for import from the sync group. This method reads from the local database only and does not sync from the network. If you believe your data may be out of date, call `syncAllDeviceSyncGroups()` first to pull the latest state.
 
 :::code-group
+
+```js [Browser]
+// List archives from the last 30 days
+const archives = await client.listAvailableArchives(BigInt(30));
+```
+
+```js [Node]
+// List archives from the last 30 days
+const archives = await client.listAvailableArchives(BigInt(30));
+```
 
 ```kotlin [Kotlin]
 // List archives from the last 30 days
@@ -202,6 +258,22 @@ let archives = try client.listAvailableArchives(daysCutoff: 30)
 Process an available archive from the sync group. If no pin is provided, it processes the last archive sent.
 
 :::code-group
+
+```js [Browser]
+// Process a specific archive by pin
+await client.processSyncArchive("my-pin");
+
+// Process the last archive sent
+await client.processSyncArchive();
+```
+
+```js [Node]
+// Process a specific archive by pin
+await client.processSyncArchive("my-pin");
+
+// Process the last archive sent
+await client.processSyncArchive();
+```
 
 ```kotlin [Kotlin]
 // Process a specific archive by pin
