@@ -5,8 +5,8 @@ Once [Testnet- and Mainnet-compatible XMTP SDKs are delivered](/fund-agents-apps
 The minimum supported SDK version for each platform will be:
 
 - Agent SDK v2.0.0
-- Browser SDK v6.0.0
-- Node SDK v5.0.0
+- Browser SDK v7.0.0
+- Node SDK v6.0.0
 - React Native SDK v6.0.0
 - Kotlin SDK v5.0.0
 - Swift SDK v5.0.0
