@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 12:06 AM UTC / March 12, 2026
+Generated at 07:09 PM UTC / March 12, 2026
 
 ## About this file
 
@@ -6797,7 +6797,7 @@ try conversation.isDisappearingMessagesEnabled()
 
 A background worker runs every one second to clean up expired disappearing messages. The worker automatically deletes expired messages from local storage. No additional action is required by integrators.
 
-To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_mls/src/groups/disappearing_messages.rs#L16).
+To learn more about the background worker, see [disappearing_messages.rs](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_mls/src/worker/disappearing_messages.rs).
 
 
 ## Access disappearing message expiration timestamps
