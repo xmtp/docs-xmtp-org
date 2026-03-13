@@ -28,7 +28,7 @@ import type { Signer } from "@xmtp/browser-sdk";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { keccak_256 } from "@noble/hashes/sha3";
 
-// Generate a secp256k1 key pair
+// Generate a private key pair
 const privateKey = crypto.getRandomValues(new Uint8Array(32));
 
 // Derive the public address
@@ -59,7 +59,7 @@ import type { Signer } from "@xmtp/node-sdk";
 import { secp256k1 } from "@noble/curves/secp256k1";
 import { keccak_256 } from "@noble/hashes/sha3";
 
-// Generate a secp256k1 key pair
+// Generate a private key pair
 const privateKey = crypto.getRandomValues(new Uint8Array(32));
 
 // Derive the public address
