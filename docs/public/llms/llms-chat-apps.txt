@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 11:47 PM UTC / March 13, 2026
+Generated at 11:50 PM UTC / March 13, 2026
 
 ## About this file
 
@@ -4621,6 +4621,18 @@ import { SdkButtons, SdkButton } from '../../../components/SdkButtons';
 XMTP (Extensible Message Transport Protocol) is the largest and most secure decentralized messaging network. XMTP is open and permissionless, empowering any developer to build end-to-end encrypted 1:1, group, and agent messaging experiences, and more.
 
 To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
+
+## Ways to build with XMTP
+
+Whether you're building a **standalone chat app** or **adding messaging to an existing app**, the integration steps are the same and the phases below apply to both.
+
+The main difference is how you connect XMTP to your existing systems:
+
+- **Signer**: If your app already has wallet-based authentication, you can reuse that signer with XMTP. No extra login step needed. If your app doesn't use wallets, you can generate a key pair for each user behind the scenes. See [Create a signer](/chat-apps/core-messaging/create-a-signer).
+
+- **Client lifecycle**: For standalone chat apps, you typically create the XMTP client at app launch. For embedded chat, you can choose to create it only when the user opens the chat feature for the first time.
+
+- **Identity mapping**: If your app has existing users, you'll want to map each user to an XMTP inbox ID. You can store this mapping in your backend and use [canMessage](/chat-apps/core-messaging/create-conversations#check-if-an-identity-is-reachable) to check if other users in your app are reachable on XMTP.
 
 ## 🛠️ Phase 0: Explore XMTP developer tools
 
