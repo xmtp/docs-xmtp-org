@@ -1,0 +1,117 @@
+/**
+ * Known AI/bot User-Agent patterns.
+ * Each entry: [pattern, label shown in logs]
+ */
+const AI_BOT_PATTERNS: [RegExp, string][] = [
+  // AI Search — fetching docs in real-time for a user's question
+  [/ChatGPT-User/i, "ChatGPT-User (OpenAI)"],
+  [/OAI-SearchBot/i, "OAI-SearchBot (OpenAI)"],
+  [/Perplexity-User/i, "Perplexity-User"],
+  [/PerplexityBot/i, "PerplexityBot"],
+  [/Claude-Web/i, "Claude-Web (Anthropic)"],
+  [/YouBot/i, "YouBot (You.com)"],
+
+  // AI Crawlers (RAG) — bulk indexing docs for future use
+  [/GPTBot/i, "GPTBot (OpenAI)"],
+  [/ClaudeBot/i, "ClaudeBot (Anthropic)"],
+  [/anthropic-ai/i, "Anthropic AI"],
+  [/cohere-ai/i, "Cohere"],
+  [/Google-Extended/i, "Google-Extended (Gemini)"],
+  [/CCBot/i, "CCBot (Common Crawl)"],
+  [/Amazonbot/i, "Amazonbot"],
+  [/Bytespider/i, "Bytespider (ByteDance)"],
+  [/Diffbot/i, "Diffbot"],
+  [/FacebookBot/i, "FacebookBot (Meta)"],
+  [/meta-externalagent/i, "Meta External Agent"],
+  [/Applebot-Extended/i, "Applebot-Extended"],
+  [/AI2Bot/i, "AI2Bot (Allen AI)"],
+  [/Timpibot/i, "Timpibot"],
+  [/ISSCyberRiskCrawler/i, "ISSCyberRiskCrawler"],
+  [/Scrapy/i, "Scrapy"],
+  [/PetalBot/i, "PetalBot"],
+  [/Webz\.io/i, "Webz.io"],
+
+  // Code/dev agents
+  [/Devin/i, "Devin"],
+  [/Codex/i, "Codex (OpenAI)"],
+  [/kapa\.ai/i, "Kapa.ai"],
+
+  // Generic AI agent patterns
+  [/ai-agent/i, "AI Agent (generic)"],
+  [/llm/i, "LLM (generic)"],
+  [/langchain/i, "LangChain"],
+  [/llamaindex/i, "LlamaIndex"],
+];
+
+export default function middleware(request: Request): Response | undefined {
+  const ua = request.headers.get("user-agent") || "";
+  const url = new URL(request.url);
+
+  // Skip static assets — only log page/doc requests
+  if (/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map)$/i.test(url.pathname)) {
+    return;
+  }
+
+  // Track llms.txt fetches — strong signal of AI/agent tooling
+  if (/^\/llms/i.test(url.pathname)) {
+    // Collect headers that help identify which tool is making the request
+    const accept = request.headers.get("accept") || "";
+    const referer = request.headers.get("referer") || "";
+    const origin = request.headers.get("origin") || "";
+    const secFetchSite = request.headers.get("sec-fetch-site") || "";
+    const secFetchMode = request.headers.get("sec-fetch-mode") || "";
+    const acceptEncoding = request.headers.get("accept-encoding") || "";
+    const connection = request.headers.get("connection") || "";
+
+    // Try to identify the tool from available signals
+    let tool = "unknown";
+    if (/kapa\.ai/i.test(ua)) tool = "Kapa.ai";
+    else if (/claude/i.test(ua)) tool = "Claude Code";
+    else if (/cursor/i.test(ua)) tool = "Cursor";
+    else if (/copilot/i.test(ua)) tool = "GitHub Copilot";
+    else if (/vscode/i.test(ua)) tool = "VS Code";
+    else if (/windsurf/i.test(ua)) tool = "Windsurf";
+    else if (/cline/i.test(ua)) tool = "Cline";
+    else if (/aider/i.test(ua)) tool = "Aider";
+    else if (/continue/i.test(ua)) tool = "Continue";
+    else if (/undici|node/i.test(ua) && !referer) tool = "Node.js (dev tool)";
+    else if (/Mozilla.*Chrome|Safari|Firefox/i.test(ua)) tool = "Browser (human)";
+
+    console.log(
+      JSON.stringify({
+        type: "llms-txt-fetch",
+        path: url.pathname,
+        tool,
+        ua: ua.slice(0, 300),
+        accept,
+        referer: referer.slice(0, 200),
+        origin,
+        secFetchSite,
+        secFetchMode,
+        acceptEncoding,
+        connection,
+        ts: new Date().toISOString(),
+      })
+    );
+  }
+
+  for (const [pattern, label] of AI_BOT_PATTERNS) {
+    if (pattern.test(ua)) {
+      // Structured JSON log — shows up in Vercel Monitoring > Logs
+      console.log(
+        JSON.stringify({
+          type: "ai-bot-visit",
+          bot: label,
+          path: url.pathname,
+          ua: ua.slice(0, 300),
+          ts: new Date().toISOString(),
+        })
+      );
+      return;
+    }
+  }
+}
+
+export const config = {
+  matcher: ["/((?!_vercel|_next/static|_next/image|favicon.ico).*)"],
+};
