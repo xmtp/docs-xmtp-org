@@ -28,6 +28,32 @@ The group message topic is used to send and receive messages within a specific c
 - **Purpose**: Carries all ongoing communication for a conversation, including [application messages](/protocol/envelope-types#application-messages) (text, reactions, etc.) and [commit messages](/protocol/envelope-types#commit-messages) that modify the group state.
 - **Usage**: When an app wants to receive messages for a conversation, it subscribes to this topic. The `conversation.topic` property in the SDKs provides this value.
 
+#### Example: Accessing the group message topic
+
+:::code-group
+
+```js [Browser]
+import { Client } from '@xmtp/browser-sdk';
+
+const client = await Client.create(signer);
+const group = await client.conversations.createGroup([...memberInboxIds]);
+
+// Get the group message topic
+console.log(group.topic); // e.g., "/xmtp/mls/1/g-abc123/proto"
+```
+
+```js [Node]
+import { Client } from '@xmtp/node-sdk';
+
+const client = await Client.create(signer);
+const group = await client.conversations.createGroup([...memberInboxIds]);
+
+// Get the group message topic
+console.log(group.topic); // e.g., "/xmtp/mls/1/g-abc123/proto"
+```
+
+:::
+
 > \*\*Note on [DM stitching](/chat-apps/push-notifs/understand-push-notifs#understand-dm-stitching-and-push-notifications): For direct messages, multiple underlying conversations might be "stitched" together in the UI. For push notifications to be reliable, an app must subscribe to the group message topic for each of these underlying conversations.
 
 ### Welcome message topic
