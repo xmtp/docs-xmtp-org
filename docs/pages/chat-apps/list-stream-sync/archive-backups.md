@@ -37,7 +37,7 @@ To enable a user to create an archive:
    const archiveData = await client.createArchive(
      key,                                         // encryption key
      {                                             // options
-       archiveElements: ["consent"],
+       elements: [BackupElementSelectionOption.Consent],
        excludeDisappearingMessages: true,
      }
    );
@@ -46,17 +46,18 @@ To enable a user to create an archive:
 
    ```js [Node]
    // With default options
-   const archiveData = await client.createArchive(key);
+   await client.createArchive(path, key);
 
    // With custom options
-   const archiveData = await client.createArchive(
+   await client.createArchive(
+     path,                                        // file path
      key,                                         // encryption key
      {                                             // options
-       archiveElements: ["consent"],
+       elements: [BackupElementSelectionOption.Consent],
        excludeDisappearingMessages: true,
      }
    );
-   // archiveData is a Uint8Array — store it to your preferred location
+   // Creates archive file at the specified path
    ```
 
    ```tsx [React Native]
@@ -118,7 +119,7 @@ const metadata = await client.archiveMetadata(
 
 ```js [Node]
 const metadata = await client.archiveMetadata(
-  data, // Uint8Array (archive data)
+  path, // string (file path to archive)
   key,  // Uint8Array (32-byte encryption key)
 );
 // metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
@@ -171,7 +172,7 @@ await client.importArchive(
 
 ```js [Node]
 await client.importArchive(
-  data, // Uint8Array (archive data)
+  path, // string (file path to archive)
   key,  // Uint8Array (32-byte encryption key)
 );
 ```
