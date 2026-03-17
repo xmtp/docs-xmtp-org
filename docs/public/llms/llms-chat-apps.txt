@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 07:09 PM UTC / March 12, 2026
+Generated at 11:50 PM UTC / March 13, 2026
 
 ## About this file
 
@@ -4622,6 +4622,18 @@ XMTP (Extensible Message Transport Protocol) is the largest and most secure dece
 
 To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
+## Ways to build with XMTP
+
+Whether you're building a **standalone chat app** or **adding messaging to an existing app**, the integration steps are the same and the phases below apply to both.
+
+The main difference is how you connect XMTP to your existing systems:
+
+- **Signer**: If your app already has wallet-based authentication, you can reuse that signer with XMTP. No extra login step needed. If your app doesn't use wallets, you can generate a key pair for each user behind the scenes. See [Create a signer](/chat-apps/core-messaging/create-a-signer).
+
+- **Client lifecycle**: For standalone chat apps, you typically create the XMTP client at app launch. For embedded chat, you can choose to create it only when the user opens the chat feature for the first time.
+
+- **Identity mapping**: If your app has existing users, you'll want to map each user to an XMTP inbox ID. You can store this mapping in your backend and use [canMessage](/chat-apps/core-messaging/create-conversations#check-if-an-identity-is-reachable) to check if other users in your app are reachable on XMTP.
+
 ## 🛠️ Phase 0: Explore XMTP developer tools
 
 - Pick your SDK:
@@ -4646,7 +4658,7 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 ## 💬 Phase I: Build core messaging
 
-1. [Create an EOA or SCW signer](/chat-apps/core-messaging/create-a-signer).
+1. [Create a signer](/chat-apps/core-messaging/create-a-signer).
 
 2. [Create an XMTP client](/chat-apps/core-messaging/create-a-client). Be sure to set the `appVersion` client option.
 
@@ -5603,70 +5615,103 @@ try await client.deleteLocalDatabase()
 
 
 ## chat-apps/core-messaging/create-a-signer.mdx
-# Create a EOA or SCW signer
+# Create a signer
 
-XMTP SDKs support message signing with 2 different types of Ethereum accounts: **Externally Owned Accounts** (EOAs) and [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271) compatible **Smart Contract Wallets** (SCWs).
+To connect to XMTP, your app needs a **signer**, an object that identifies a user and can sign messages on their behalf. Under the hood, XMTP uses [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) signatures on the **secp256k1** curve.
 
-Smart contract wallets have addresses that are unique to the chain on which they are deployed, while EOAs share the same address across multiple EVM-compatible chains.
+There are three ways to create a signer:
 
-All XMTP clients require a signer object (or instance) that provides a method for signing messages on behalf of the account.
+- **Key pair**: Generate or provide a secp256k1 private key directly. No wallet or blockchain needed.
+- **Externally Owned Account (EOA)**: Use an Ethereum wallet.
+- **Smart Contract Wallet (SCW)**: Use an [ERC-1271](https://eips.ethereum.org/EIPS/eip-1271) compatible smart contract wallet.
 
-## Wallet comparison
+All three produce the same signer interface, so the rest of your XMTP integration is identical regardless of which you choose.
 
-| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
-| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
-| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
-| Gas payment    | User pays native gas                                                                          | Relayer (e.g. [Base](https://www.base.org/)) can pay                                                                     |
-| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
+## Create a signer from a key pair
 
-## How do I know if I have a SCW?
+Generate a secp256k1 key pair and sign messages directly.
 
-Your wallet is most likely a smart contract wallet if it shows several of these traits:
+Install [@noble/curves](https://github.com/paulmillr/noble-curves) and [@noble/hashes](https://github.com/paulmillr/noble-hashes):
 
-- It lets you sign in with email, social logins, or passkeys rather than a seed phrase
-- It never reveals a private key or recovery phrase
-- Transaction fees are sponsored or relayed (you can transact without holding native gas tokens)
-- A block explorer for the relevant chain (e.g., [Basescan](https://basescan.org/), [Abstract Explorer](https://abscan.org/)) displays a "Contract" tab for your wallet address
-
-The most reliable way to verify is by calling [eth_getCode(address)](https://ethereum.org/developers/docs/apis/json-rpc/#eth_getcode) on any Ethereum-compatible RPC endpoint. A return value of `undefined` means the address is an EOA, while any non-empty bytecode confirms it is a smart contract account.
-
-```ts
-import { createPublicClient, http } from 'viem';
-import { mainnet } from 'viem/chains';
-
-// RPC endpoint for the target chain
-// Update this to match your chain
-const chainRpcUrl = 'https://base-mainnet.g.alchemy.com/v2';
-
-// Alchemy API key
-// https://www.alchemy.com/docs/create-an-api-key
-const apiKey = 'secret';
-
-// Create a client to interact with the blockchain
-const client = createPublicClient({
-  chain: mainnet,
-  transport: http(`${chainRpcUrl}/${apiKey}`),
-});
-
-// The address to check
-const address = '0x...';
-
-// Retrieve the bytecode deployed at the address.
-const code = await client.getCode({ address });
-
-// EOAs have no bytecode, while smart contracts do.
-if (code === undefined) {
-  console.log('This address is an EOA (no contract code).');
-} else {
-  console.log('This address has contract code (smart contract account).');
-}
+```bash
+npm install @noble/curves @noble/hashes
 ```
 
-## Create an Externally Owned Account signer
+:::code-group
 
-The EOA signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
+```tsx [Browser]
+import { IdentifierKind } from "@xmtp/browser-sdk";
+import type { Signer } from "@xmtp/browser-sdk";
+import { secp256k1 } from "@noble/curves/secp256k1";
+import { keccak_256 } from "@noble/hashes/sha3";
+
+// Generate a private key pair
+const privateKey = crypto.getRandomValues(new Uint8Array(32));
+
+// Derive the public address
+const publicKey = secp256k1.getPublicKey(privateKey, false);
+const addressBytes = keccak_256(publicKey.slice(1)).slice(-20);
+const address =
+  "0x" +
+  Array.from(addressBytes, (b) => b.toString(16).padStart(2, "0")).join("");
+
+const signer: Signer = {
+  type: "EOA", // direct key signing
+  getIdentifier: () => ({
+    identifier: address.toLowerCase(),
+    identifierKind: IdentifierKind.Ethereum,
+  }),
+  signMessage: async (message: string) => {
+    const prefix = `\x19Ethereum Signed Message:\n${message.length}`;
+    const hash = keccak_256(new TextEncoder().encode(prefix + message));
+    const sig = secp256k1.sign(hash, privateKey);
+    return new Uint8Array([...sig.toCompactRawBytes(), sig.recovery + 27]);
+  },
+};
+```
+
+```tsx [Node]
+import { IdentifierKind } from "@xmtp/node-sdk";
+import type { Signer } from "@xmtp/node-sdk";
+import { secp256k1 } from "@noble/curves/secp256k1";
+import { keccak_256 } from "@noble/hashes/sha3";
+
+// Generate a private key pair
+const privateKey = crypto.getRandomValues(new Uint8Array(32));
+
+// Derive the public address
+const publicKey = secp256k1.getPublicKey(privateKey, false);
+const addressBytes = keccak_256(publicKey.slice(1)).slice(-20);
+const address =
+  "0x" +
+  Array.from(addressBytes, (b) => b.toString(16).padStart(2, "0")).join("");
+
+const signer: Signer = {
+  type: "EOA", // direct key signing
+  getIdentifier: () => ({
+    identifier: address.toLowerCase(),
+    identifierKind: IdentifierKind.Ethereum,
+  }),
+  signMessage: async (message: string) => {
+    const prefix = `\x19Ethereum Signed Message:\n${message.length}`;
+    const hash = keccak_256(new TextEncoder().encode(prefix + message));
+    const sig = secp256k1.sign(hash, privateKey);
+    return new Uint8Array([...sig.toCompactRawBytes(), sig.recovery + 27]);
+  },
+};
+```
+
+:::
+
+:::tip[Naming conventions]
+`type: 'EOA'` and `IdentifierKind.Ethereum` are XMTP SDK constants for direct-key signers. Your key pair doesn't need to be associated with an Ethereum account or blockchain. Any secp256k1 private key works.
+:::
+
+To keep the same XMTP identity across sessions, save the private key and reload it instead of generating a new one each time.
+
+## Create a signer from an EOA
+
+If your users already have Ethereum wallets, you can create a signer from their Externally Owned Account. The signer must have 3 properties: the account type, a function that returns the account identifier, and a function that signs messages.
 
 :::code-group
 
@@ -5761,11 +5806,64 @@ public struct EOAWallet: SigningKey {
 
 :::
 
-## Create a Smart Contract Wallet signer
+## Create a signer from a SCW
 
-The SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID of the blockchain being used and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
+If your users have ERC-1271 compatible smart contract wallets, the SCW signer has the same 3 required properties as the EOA signer, but also requires a function that returns the chain ID and an optional function that returns the block number to verify signatures against. If a function is not provided to retrieve the block number, the latest block number will be used.
 
-Here is a list of supported chain IDs for SCWs:
+### EOA vs SCW
+
+| Feature        | Wallet (EOA)                                                                                  | Smart Wallet (SCW)                                                                                                       |
+| -------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| On-chain form  | Native account                                                                                | Smart contract                                                                                                           |
+| Authentication | [ECDSA](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm) private key | Programmable (e.g. [Passkeys](https://fidoalliance.org/passkeys/))                                                       |
+| Recovery       | Recovery / Seed phrase                                                                        | Programmable ([multisig](https://shivanisb10.medium.com/multisig-contracts-in-ethereum-ffd8a1a9a025), trusted guardians) |
+| Gas payment    | User pays native gas                                                                          | Relayer (e.g. [Base](https://www.base.org/)) can pay                                                                     |
+| Security model | Single key                                                                                    | Policy-based, multi-layer security                                                                                       |
+
+### How do I know if I have a SCW?
+
+Your wallet is most likely a smart contract wallet if it shows several of these traits:
+
+- It lets you sign in with email, social logins, or passkeys rather than a seed phrase
+- It never reveals a private key or recovery phrase
+- Transaction fees are sponsored or relayed (you can transact without holding native gas tokens)
+- A block explorer for the relevant chain (e.g., [Basescan](https://basescan.org/), [Abstract Explorer](https://abscan.org/)) displays a "Contract" tab for your wallet address
+
+The most reliable way to verify is by calling [eth_getCode(address)](https://ethereum.org/developers/docs/apis/json-rpc/#eth_getcode) on any Ethereum-compatible RPC endpoint. A return value of `undefined` means the address is an EOA, while any non-empty bytecode confirms it is a smart contract account.
+
+```ts
+import { createPublicClient, http } from 'viem';
+import { mainnet } from 'viem/chains';
+
+// RPC endpoint for the target chain
+// Update this to match your chain
+const chainRpcUrl = 'https://base-mainnet.g.alchemy.com/v2';
+
+// Alchemy API key
+// https://www.alchemy.com/docs/create-an-api-key
+const apiKey = 'secret';
+
+// Create a client to interact with the blockchain
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(`${chainRpcUrl}/${apiKey}`),
+});
+
+// The address to check
+const address = '0x...';
+
+// Retrieve the bytecode deployed at the address.
+const code = await client.getCode({ address });
+
+// EOAs have no bytecode, while smart contracts do.
+if (code === undefined) {
+  console.log('This address is an EOA (no contract code).');
+} else {
+  console.log('This address has contract code (smart contract account).');
+}
+```
+
+### Supported chain IDs
 
 | Chain ID | Network          |
 | -------- | ---------------- |
@@ -5788,6 +5886,8 @@ Chain ID `0` is reserved by XMTP as a sentinel value indicating that an inbox wa
 
 To add SCW support for a new EVM chain, add the chain ID and a public RPC endpoint to [chain_urls_default.json](https://github.com/xmtp/libxmtp/pull/3021/changes).
 
+### Signer setup
+
 The details of creating an SCW signer are highly dependent on the wallet provider and the library you're using to interact with it. Here are some general guidelines to consider:
 
 - **Wallet provider integration**: Different wallet providers (Safe, Argent, Rainbow, etc.) have different methods for signing messages. See the wallet provider documentation for more details.
@@ -5800,7 +5900,7 @@ The details of creating an SCW signer are highly dependent on the wallet provide
 
 - **Sign the replay-safe hash**: The replay-safe hash is signed using the private key of the SCW. This generates a cryptographic signature that proves ownership of the wallet and ensures the integrity of the message.
 
-- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing.
+- **Convert the signature to a Uint8Array**: The resulting signature is converted to a `Uint8Array` format, which is required by the XMTP SDK for compatibility and further processing.
 
 The code snippets below are examples only and will need to be adapted based on your specific wallet provider and library.
 
@@ -6932,7 +7032,7 @@ This document provides a general blueprint for how to extend XMTP to non-EVM pla
 XMTP is designed to support EVM chains by default. EVMs all share the same address format and signature scheme.
 
 - **EOAs on EVM chain**: Work automatically. Signature verification is purely cryptographic (secp256k1 ECDSA), so no configuration is needed.
-- **SCWs on EVM chains**: Require adding the chain's RPC endpoint to the verifier config. See [Create a SCW signer](/chat-apps/core-messaging/create-a-signer#create-a-smart-contract-wallet-signer).
+- **SCWs on EVM chains**: Require adding the chain's RPC endpoint to the verifier config. See [Create a SCW signer](/chat-apps/core-messaging/create-a-signer#create-a-signer-from-a-scw).
 - **Non-EVM chains**: Require implementing new identity types and signature verification, as described in this document.
 
 For example, see the different address formats, signature schemes, signature standards,and verification methods required by these chains:
