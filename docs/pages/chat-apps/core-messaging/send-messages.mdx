@@ -173,13 +173,6 @@ const contentType = new ContentTypeId({
   versionMinor: 0,
 });
 await conversation.prepareMessage(customContent, { contentType });
-
-// Control publication timing with noSend parameter (v5.5.0+)
-// Prepare message without auto-publishing
-const messageId = await conversation.prepareMessage('Hello world', {}, true);
-
-// Publish the specific message when ready
-await conversation.publishMessage(messageId);
 ```
 
 ```kotlin [Kotlin]

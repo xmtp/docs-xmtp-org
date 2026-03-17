@@ -25,6 +25,7 @@ To enable a user to create an archive:
 3. Call `createArchive` with the encryption key and optional archive options. Optionally, you can pass in the following:
    - Archive start and end time in nanoseconds (`startNs` and `endNs`). If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
+   - `excludeDisappearingMessages`: Set to `true` to exclude [disappearing messages](/chat-apps/core-messaging/disappearing-messages) from the backup. Defaults to `false` (disappearing messages are included).
 
    :::code-group
 
@@ -59,11 +60,11 @@ To enable a user to create an archive:
    ```
 
    ```tsx [React Native]
-   // v5.5.0+ - excludeDisappearingMessages option removed
-   createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
-     startTime?: Date,
-     endTime?: Date,
-     elements?: ("Consent" | "Messages")[]
+   createArchive(path: string, encryptionKey: Uint8Array, options?: {
+     startNs?: number,
+     endNs?: number,
+     archiveElements?: ("messages" | "consent")[],
+     excludeDisappearingMessages?: boolean
    })
    ```
 

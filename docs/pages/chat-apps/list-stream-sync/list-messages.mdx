@@ -490,14 +490,14 @@ You can filter messages using insertion time ranges with `insertedAfterNs` and `
 const lastInsertionTime = 1738620126404999936;
 const newMessages = await group.messages({
   insertedAfterNs: lastInsertionTime,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 
 // Get messages inserted within a time range
 const messages = await group.messages({
   insertedAfterNs: startTime,
   insertedBeforeNs: endTime,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 ```
 
@@ -544,13 +544,13 @@ You can sort messages using `insertedAtNs`.
 ```tsx [React Native]
 // Sort by insertion time for reliable pagination
 const messages = await group.messages({
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
   limit: 20,
 });
 
 // Each message has both timestamps available
 messages.forEach((message) => {
-  console.log(`Sent at: ${message.sentAtNs}`);
+  console.log(`Sent at: ${message.sentNs}`);
   console.log(`Inserted at: ${message.insertedAtNs}`);
 });
 ```
@@ -601,14 +601,14 @@ Here's how to implement reliable message pagination using insertion time:
 // First page
 const firstPage = await group.messages({
   limit: 20,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 
 // Next page
 const secondPage = await group.messages({
   limit: 20,
   insertedBeforeNs: firstPage[firstPage.length - 1].insertedAtNs,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 ```
 
