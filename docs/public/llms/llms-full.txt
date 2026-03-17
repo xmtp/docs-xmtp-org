@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 11:27 PM UTC / March 17, 2026
+Generated at 11:48 PM UTC / March 17, 2026
 
 ## About this file
 
@@ -2343,6 +2343,14 @@ Use `reactions` to get a list of reaction messages associated with the message.
 // Retrieve messages with enriched data from a group
 const groupMessages = await group.enrichedMessages();
 
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
+
 // Retrieve messages with enriched data from a DM
 const dmMessages = await dm.enrichedMessages();
 
@@ -2404,6 +2412,14 @@ Messages returned by `enrichedMessages()` include reply information when a messa
 ```tsx [React Native]
 // Retrieve messages with enriched data from a group
 const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
 
 // Retrieve messages with enriched data from a DM
 const dmMessages = await dm.enrichedMessages();
@@ -3765,32 +3781,41 @@ To sync conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENI
 
 To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stream-sync/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
 
-The method returns a summary object (Browser/Node/Kotlin/Swift) or a count (React Native) indicating sync results.
+The method returns a summary object that includes the total number of conversations eligible for syncing and the number of conversations that were actually synced.
 
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```js [Node]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-// Returns the number of conversations that were synced
-const syncedCount = await client.conversations.syncAllConversations([
+// Returns a GroupSyncSummary object with sync statistics
+const syncSummary = await client.conversations.syncAllConversations([
   'allowed',
 ]);
-console.log(`Synced ${syncedCount} conversations`);
+console.log(`Eligible conversations: ${syncSummary.numEligible}`);
+console.log(`Successfully synced: ${syncSummary.numSynced}`);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+// Returns a GroupSyncSummary object with sync statistics
+val syncSummary = client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+println("Eligible conversations: ${syncSummary.numEligible}")
+println("Successfully synced: ${syncSummary.numSynced}")
 ```
 
 ```swift [Swift]
-try await client.conversations.syncAllConversations(consentState: [.allowed])
+// Returns a GroupSyncSummary object with sync statistics
+let syncSummary = try await client.conversations.syncAllConversations(consentState: [.allowed])
+print("Eligible conversations: \(syncSummary.numEligible)")
+print("Successfully synced: \(syncSummary.numSynced)")
 ```
 
 :::
@@ -6244,6 +6269,7 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   name: "The Group Name",
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
+  appData: """{"theme": "dark", "version": "1.0"}""" // Custom app data
 )
 ```
 
@@ -7331,6 +7357,10 @@ const appData = await group.appData();
 
 ```kotlin [Kotlin]
 val appData = group.appData()
+```
+
+```swift [Swift]
+let appData = try group.appData()
 ```
 
 :::
@@ -11563,11 +11593,15 @@ for (const reactionMessage of reactions) {
 ```jsx [React Native]
 if (message.contentTypeId === 'xmtp.org/reaction:1.0') {
   const reaction = message.content();
+  
+  // Access reaction properties
+  console.log('Message being reacted to:', reaction.reference);
+  console.log('Sender of original message:', reaction.referenceInboxId); // Optional field
+  console.log('Reaction action:', reaction.action); // 'added' or 'removed'
+  console.log('Reaction schema:', reaction.schema); // 'unicode', 'shortcode', or 'custom'
+  console.log('Reaction content:', reaction.content); // '💖', 'smile', etc.
+  
   return reaction;
-  //reaction.reference = id of the message being reacted to,
-  //reaction.action = 'added',
-  //reaction.schema =  'unicode',
-  //reaction.content = '💖',
 }
 ```
 
