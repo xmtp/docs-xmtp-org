@@ -394,6 +394,11 @@ type ClientOptions = {
    */
   customLocalHost?: string;
   /**
+   * OPTIONAL specify if device sync (history sync) should be enabled or disabled.
+   * Defaults to true.
+   */
+  deviceSyncEnabled?: boolean;
+  /**
    * Allow configuring codecs for additional content types
    */
   codecs?: ContentCodec[];
@@ -410,6 +415,11 @@ data class ClientOptions(
     val preAuthenticateToInboxCallback: PreEventCallback? = null,
     val appContext: Context,
     val dbEncryptionKey: ByteArray,
+    val historySyncUrl: String? = when (api.env) {
+        XMTPEnvironment.PRODUCTION -> "https://message-history.production.ephemera.network/"
+        XMTPEnvironment.LOCAL -> "http://0.0.0.0:5558"
+        else -> "https://message-history.dev.ephemera.network/"
+    },
     val dbDirectory: String? = null,
 ) {
     data class Api(
@@ -478,6 +488,7 @@ public struct ClientOptions {
 
  public var dbEncryptionKey: Data
  public var dbDirectory: String?
+ public var historySyncUrl: String?
 }
 ```
 

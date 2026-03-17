@@ -265,50 +265,6 @@ To reactivate a DM or group conversation:
 
 Inactive conversations in which participants frequently send messages may seem to activate immediately.
 
-## AvailableArchive Type
-
-The `AvailableArchive` interface represents a sync archive that can be processed from another device. This type is used with the sync archive functions like `listAvailableArchives()`.
-
-### React Native SDK
-
-```tsx
-interface AvailableArchive {
-  /** Archive PIN used for identification */
-  pin: string;
-  /** JSON-encoded archive metadata, when provided by the native layer */
-  metadata?: string;
-  /** Base64-encoded installation ID that sent the archive, when provided */
-  sentByInstallation?: string;
-}
-```
-
-**Properties:**
-
-- `pin`: A unique identifier for the archive used when processing it with `processSyncArchive()`
-- `metadata`: Optional JSON-encoded metadata about the archive contents, including start/end timestamps and elements included
-- `sentByInstallation`: Optional base64-encoded installation ID indicating which device created the archive
-
-**Usage example:**
-
-```tsx
-// List available archives from the last 30 days
-const archives = await client.listAvailableArchives(30);
-
-archives.forEach(archive => {
-  console.log(`Archive PIN: ${archive.pin}`);
-  if (archive.metadata) {
-    const metadata = JSON.parse(archive.metadata);
-    console.log(`Created: ${new Date(metadata.exportedAtNs / 1000000)}`);
-  }
-  if (archive.sentByInstallation) {
-    console.log(`From device: ${archive.sentByInstallation}`);
-  }
-});
-
-// Process a specific archive
-await client.processSyncArchive(archives[0].pin);
-```
-
 ## Archive-based backups vs History Sync
 
 Archive-based backups and History Sync serve similar purposes: helping you restore messages on new devices. When should you use one or the other?

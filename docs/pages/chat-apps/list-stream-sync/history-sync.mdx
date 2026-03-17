@@ -13,14 +13,20 @@ History sync enables your users pick up conversations where they left off, regar
 
 ## Enable history sync
 
-History sync is enabled by default. When [creating a client](/chat-apps/core-messaging/create-a-client), XMTP automatically uses the appropriate history sync server URL based on your `env` client option setting.
+History sync is enabled by default. When [creating a client](/chat-apps/core-messaging/create-a-client), the history sync server URL is automatically set based on your `env` client option setting.
 
-- When `env` is set to `dev`, XMTP uses `https://message-history.dev.ephemera.network/`
-- When `env` is set to `production`, XMTP uses `https://message-history.production.ephemera.network`
+- When `env` is set to `dev`, the server URL is `https://message-history.dev.ephemera.network/`
+- When `env` is set to `production`, the server URL is `https://message-history.production.ephemera.network`
 
 These default servers are managed and operated by [XMTP Labs](https://xmtplabs.com/), a steward of the development and adoption of XMTP.
 
-You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server) and configure your client to use it with the new sync archive methods.
+You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server). All SDKs accept a `serverUrl` parameter on [`sendSyncRequest()`](#send-a-sync-request) and [`sendSyncArchive()`](#send-a-sync-archive) to specify a custom server per call. Additionally, Browser, Node, Kotlin, and Swift SDKs let you set `historySyncUrl` in your [client options](/chat-apps/core-messaging/create-a-client) to override the default server for all sync operations.
+
+To disable history sync:
+
+- **Browser and Node**: Set `disableDeviceSync: true` in your client options.
+- **React Native**: Set `deviceSyncEnabled: false` in your client options.
+- **Kotlin and Swift**: Set `historySyncUrl` to an empty string in your client options.
 
 ## How history sync works
 
@@ -118,19 +124,12 @@ await client.sendSyncRequest(
 ```
 
 ```tsx [React Native]
-// With default options
 await client.sendSyncRequest();
-
-// With custom options (using client methods directly)
-await client.sendSyncArchive(
-  "my-pin",                                    // pin
-  "https://your-history-sync-server.example.com/", // serverUrl
-  Date.now() * 1000000,                       // startNs (optional)
-  (Date.now() + 86400000) * 1000000,         // endNs (optional)  
-  ["messages", "consent"],                     // archiveElements (optional)
-  false                                        // excludeDisappearingMessages (optional)
-);
 ```
+
+:::tip[React Native v5.7.0+ breaking change]
+Automatic sending of sync requests on new installations has been removed. You must now call `sendSyncRequest()` explicitly after creating a client on a new installation.
+:::
 
 ```kotlin [Kotlin]
 // With default options
@@ -285,6 +284,20 @@ let archives = try client.listAvailableArchives(daysCutoff: 30)
 ```
 
 :::
+
+Each archive is returned as an `AvailableArchive` object:
+
+- `pin`: A unique identifier for the archive, used when processing it with `processSyncArchive()`
+- `metadata`: Optional JSON-encoded metadata about the archive contents, including start/end timestamps and elements included
+- `sentByInstallation`: Optional base64-encoded installation ID indicating which device created the archive
+
+```tsx
+interface AvailableArchive {
+  pin: string;
+  metadata?: string;
+  sentByInstallation?: string;
+}
+```
 
 ### Process a sync archive
 
