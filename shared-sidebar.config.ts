@@ -93,6 +93,10 @@ export const sidebarConfig = {
           link: "/agents/content-types/content-types",
         },
         {
+          text: "Actions",
+          link: "/agents/content-types/actions",
+        },
+        {
           text: "Reactions",
           link: "/agents/content-types/reactions",
         },
@@ -300,8 +304,8 @@ export const sidebarConfig = {
           link: "/chat-apps/intro/why-xmtp",
         },
         {
-          text: "FAQ",
-          link: "/chat-apps/intro/faq",
+          text: "Build a quickstart app",
+          link: "/chat-apps/intro/quickstart",
         },
         {
           text: "Get started",
@@ -310,6 +314,10 @@ export const sidebarConfig = {
         {
           text: "Build with LLMs",
           link: "/chat-apps/intro/build-with-llms",
+        },
+        {
+          text: "FAQ",
+          link: "/chat-apps/intro/faq",
         },
         {
           text: "Dev support",
@@ -355,7 +363,7 @@ export const sidebarConfig = {
       collapsed: false,
       items: [
         {
-          text: "Create an EOA or SCW signer",
+          text: "Create a signer",
           link: "/chat-apps/core-messaging/create-a-signer",
         },
         {

@@ -6,6 +6,18 @@ XMTP (Extensible Message Transport Protocol) is the largest and most secure dece
 
 To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
+## Ways to build with XMTP
+
+Whether you're building a **standalone chat app** or **adding messaging to an existing app**, the integration steps are the same and the phases below apply to both.
+
+The main difference is how you connect XMTP to your existing systems:
+
+- **Signer**: If your app already has wallet-based authentication, you can reuse that signer with XMTP. No extra login step needed. If your app doesn't use wallets, you can generate a key pair for each user behind the scenes. See [Create a signer](/chat-apps/core-messaging/create-a-signer).
+
+- **Client lifecycle**: For standalone chat apps, you typically create the XMTP client at app launch. For embedded chat, you can choose to create it only when the user opens the chat feature for the first time.
+
+- **Identity mapping**: If your app has existing users, you'll want to map each user to an XMTP inbox ID. You can store this mapping in your backend and use [canMessage](/chat-apps/core-messaging/create-conversations#check-if-an-identity-is-reachable) to check if other users in your app are reachable on XMTP.
+
 ## 🛠️ Phase 0: Explore XMTP developer tools
 
 - Pick your SDK:
@@ -30,7 +42,7 @@ To learn more, see [Why build with XMTP?](/chat-apps/intro/why-xmtp).
 
 ## 💬 Phase I: Build core messaging
 
-1. [Create an EOA or SCW signer](/chat-apps/core-messaging/create-a-signer).
+1. [Create a signer](/chat-apps/core-messaging/create-a-signer).
 
 2. [Create an XMTP client](/chat-apps/core-messaging/create-a-client). Be sure to set the `appVersion` client option.
 

@@ -9,7 +9,7 @@ This document provides a general blueprint for how to extend XMTP to non-EVM pla
 XMTP is designed to support EVM chains by default. EVMs all share the same address format and signature scheme.
 
 - **EOAs on EVM chain**: Work automatically. Signature verification is purely cryptographic (secp256k1 ECDSA), so no configuration is needed.
-- **SCWs on EVM chains**: Require adding the chain's RPC endpoint to the verifier config. See [Create a SCW signer](/chat-apps/core-messaging/create-a-signer#create-a-smart-contract-wallet-signer).
+- **SCWs on EVM chains**: Require adding the chain's RPC endpoint to the verifier config. See [Create a SCW signer](/chat-apps/core-messaging/create-a-signer#create-a-signer-from-a-scw).
 - **Non-EVM chains**: Require implementing new identity types and signature verification, as described in this document.
 
 For example, see the different address formats, signature schemes, signature standards,and verification methods required by these chains:
@@ -59,7 +59,7 @@ Every account on your target platform has a unique identifier (an address or pub
 You'll need to:
 
 1. Define the new identifier kind in the [Rust identity module](https://github.com/xmtp/libxmtp/blob/main/crates/xmtp_id/src/associations/ident.rs) in the libxmtp repo.
-2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto). in the proto repo.
+2. Add a new variant to the `MemberIdentifier` protobuf message. You can do this in [association.proto](https://github.com/xmtp/proto/blob/main/proto/identity/associations/association.proto) in the proto repo.
 
 ### Implement signature verification
 
