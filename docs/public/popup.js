@@ -53,8 +53,8 @@ function createPopup() {
         color: #888;
         cursor: pointer;
       ">×</button>
-      <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">📣 Got feedback?</h3>
-      <p style="margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.4;">
+      <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #111;">📣 Got feedback?</h3>
+      <p style="margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.4; color: #333;">
         Help us improve the XMTP docs—get a $50 gift card.
       </p>
       <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">

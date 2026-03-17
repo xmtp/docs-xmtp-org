@@ -10,21 +10,53 @@ To learn more, see [4. Handle post-import conversation statuses](#4-handle-post-
 
 This feature includes three core methods:
 
-- `createArchive(path, encryptionKey, options?)`
-- `archiveMetadata(path, encryptionKey)`
-- `importArchive(path, encryptionKey)`
+- `createArchive` — Create an encrypted archive
+- `archiveMetadata` — Read metadata from an archive before importing
+- `importArchive` — Import an archive into the current installation
+
+On mobile SDKs (React Native, Kotlin, Swift), these methods work with file paths that can point directly to cloud-synced locations like iCloud or Google Drive. On Browser and Node SDKs, they work with in-memory `Uint8Array` data, and you handle storage yourself — for example, IndexedDB, a user-initiated file download, or uploading to your server.
 
 ## 1. Create the archive
 
 To enable a user to create an archive:
 
-1. Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists.
-2. Generate a 32-byte array encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive file, and will persist after your app has been uninstalled. A common place to store this encryption key is the iCloud Keychain.
-3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
-   - Archive start and end time. If left blank, the archive will include all time.
+1. **Mobile SDKs**: Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists. **Browser and Node SDKs**: The method returns archive data as a `Uint8Array` that you can store to your preferred location.
+2. Generate a 32-byte encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive, and will persist after your app has been uninstalled.
+3. Call `createArchive` with the encryption key and optional archive options. Optionally, you can pass in the following:
+   - Archive start and end time in nanoseconds (`startNs` and `endNs`). If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
 
    :::code-group
+
+   ```js [Browser]
+   // With default options
+   const archiveData = await client.createArchive(key);
+
+   // With custom options
+   const archiveData = await client.createArchive(
+     key,                                         // encryption key
+     {                                             // options
+       archiveElements: ["consent"],
+       excludeDisappearingMessages: true,
+     }
+   );
+   // archiveData is a Uint8Array — store it to your preferred location
+   ```
+
+   ```js [Node]
+   // With default options
+   const archiveData = await client.createArchive(key);
+
+   // With custom options
+   const archiveData = await client.createArchive(
+     key,                                         // encryption key
+     {                                             // options
+       archiveElements: ["consent"],
+       excludeDisappearingMessages: true,
+     }
+   );
+   // archiveData is a Uint8Array — store it to your preferred location
+   ```
 
    ```tsx [React Native]
    // v5.5.0+ - excludeDisappearingMessages option removed
@@ -37,13 +69,13 @@ To enable a user to create an archive:
 
    ```kotlin [Kotlin]
    // Create an archive backup
-   XMTPClient.createArchive(
+   client.createArchive(
        path = "/path/to/archive.xmtp",
        encryptionKey = encryptionKey,
-       options = ArchiveOptions(
-           startTime = startTime,
-           endTime = endTime,
-           elements = listOf(ArchiveElement.CONSENT, ArchiveElement.MESSAGES),
+       opts = ArchiveOptions(
+           startNs = startNs,
+           endNs = endNs,
+           archiveElements = listOf(ArchiveElement.MESSAGES, ArchiveElement.CONSENT),
            excludeDisappearingMessages = false // Set to true to exclude disappearing messages
        )
    )
@@ -51,13 +83,13 @@ To enable a user to create an archive:
 
    ```swift [Swift]
    // Create an archive backup
-   try await xmtp.createArchive(
+   try await client.createArchive(
        path: "/path/to/archive.xmtp",
        encryptionKey: encryptionKey,
-       options: ArchiveOptions(
-           startTime: startTime,
-           endTime: endTime,
-           elements: [.consent, .messages],
+       opts: ArchiveOptions(
+           startNs: startNs,
+           endNs: endNs,
+           archiveElements: [.messages, .consent],
            excludeDisappearingMessages: false // Set to true to exclude disappearing messages
        )
    )
@@ -75,35 +107,51 @@ To enable a user to view information about their archive(s) before importing it 
 
 :::code-group
 
+```js [Browser]
+const metadata = await client.archiveMetadata(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
+```
+
+```js [Node]
+const metadata = await client.archiveMetadata(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
+```
+
 ```tsx [React Native]
 archiveMetadata(path: string, encryptionKey: string)
 ```
 
 ```kotlin [Kotlin]
 // Get archive metadata
-val metadata = XMTPClient.archiveMetadata(
+val metadata = client.archiveMetadata(
     path = "/path/to/archive.xmtp",
     encryptionKey = encryptionKey
 )
-// metadata.startTime, metadata.endTime, metadata.elements, metadata.createdAt
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
 ```
 
 ```swift [Swift]
 // Get archive metadata
-let metadata = try await xmtp.archiveMetadata(
+let metadata = try await client.archiveMetadata(
     path: "/path/to/archive.xmtp",
     encryptionKey: encryptionKey
 )
-// metadata.startTime, metadata.endTime, metadata.elements, metadata.createdAt
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
 ```
 
 :::
 
 This will return information that enables the user to better understand the archive(s) they want to import:
 
-- Start and end time of archived data
+- Start and end time of archived data (in nanoseconds via `startNs` and `endNs`)
 - Archived elements (messages and/or consent)
-- Archive creation date
+- Archive creation timestamp (in nanoseconds via `exportedAtNs`)
 
 You can get the archive file size from the file system.
 
@@ -113,13 +161,27 @@ To enable a user to import a selected archive to an installation:
 
 :::code-group
 
+```js [Browser]
+await client.importArchive(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+```
+
+```js [Node]
+await client.importArchive(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+```
+
 ```tsx [React Native]
 importArchive(path: string, encryptionKey: string)
 ```
 
 ```kotlin [Kotlin]
 // Import an archive backup
-XMTPClient.importArchive(
+client.importArchive(
     path = "/path/to/archive.xmtp",
     encryptionKey = encryptionKey
 )
@@ -127,7 +189,7 @@ XMTPClient.importArchive(
 
 ```swift [Swift]
 // Import an archive backup
-try await xmtp.importArchive(
+try await client.importArchive(
     path: "/path/to/archive.xmtp",
     encryptionKey: encryptionKey
 )
@@ -184,7 +246,7 @@ if (conversation.isActive()) {
 
 ```swift [Swift]
 // Check if the conversation is active
-if conversation.isActive() {
+if try conversation.isActive() {
     // Conversation is active, safe to send or sync
 } else {
     // Conversation is inactive, show read-only UI

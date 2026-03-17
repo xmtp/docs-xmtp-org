@@ -145,9 +145,43 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
 
 :::
 
+### Create a group chat using identities
+
+Instead of using inbox IDs, you can create groups directly using identities (EOA or SCW addresses). This is useful when you have wallet addresses but haven't yet resolved them to inbox IDs.
+
+:::code-group
+
+```tsx [React Native]
+// Create a group using identities instead of inbox IDs
+const group = await client.conversations.newGroupWithIdentities(
+  [memberIdentity1, memberIdentity2],
+  { name: 'Group Name', description: 'Group description' }
+);
+```
+
+```kotlin [Kotlin]
+// Create a group using identities instead of inbox IDs
+val group = client.conversations.newGroupWithIdentities(
+    identities = listOf(memberIdentity1, memberIdentity2),
+    name = "Group Name",
+    description = "Group description"
+)
+```
+
+```swift [Swift]
+// Create a group using identities instead of inbox IDs
+let group = try await client.conversations.newGroupWithIdentities(
+    with: [memberIdentity1, memberIdentity2],
+    name: "Group Name",
+    description: "Group description"
+)
+```
+
+:::
+
 ## Optimistically create a new group chat
 
-Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline. 
+Optimistic group creation enables instant group chat creation and message preparation before adding members and even when offline.
 
 For example, use optimistic group creation when your user creates a new group without any members listed.
 
@@ -264,6 +298,35 @@ let conversation = try await client.conversations.newConversation(inboxId)
 
 :::
 
+### Create a DM using an identity
+
+You can also create a DM directly using an identity (EOA or SCW address) instead of an inbox ID:
+
+:::code-group
+
+```tsx [React Native]
+// Create or find a DM using an identity
+const dm = await client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity);
+```
+
+```kotlin [Kotlin]
+// Create or find a DM using a identity
+val dm = client.conversations.findOrCreateDmWithIdentity(peerPublicIdentity)
+
+// Or use newConversationWithIdentity
+val conversation = client.conversations.newConversationWithIdentity(peerPublicIdentity)
+```
+
+```swift [Swift]
+// Create or find a DM using an identity
+let dm = try await client.conversations.findOrCreateDmWithIdentity(with: peerPublicIdentity)
+
+// Or use newConversationWithIdentity
+let conversation = try await client.conversations.newConversationWithIdentity(with: peerPublicIdentity)
+```
+
+:::
+
 ## Conversation helper methods
 
 Use these helper methods to quickly locate and access specific conversations—whether by conversation ID, topic, group ID, or DM identity—returning the appropriate ConversationContainer, group, or DM object.
@@ -314,8 +377,12 @@ await alix.conversations.findConversation(conversation.id);
 await alix.conversations.findConversationByTopic(conversation.topic);
 // Returns a Group
 await alix.conversations.findGroup(group.id);
-// Returns a DM
+// Returns a DM by inbox ID
+await alix.conversations.findDmByInboxId(bo.inboxId);
+// Returns a DM by identity
 await alix.conversations.findDmByIdentity(bo.identity);
+// Returns a specific message
+await alix.conversations.findMessage(messageId);
 ```
 
 ```kotlin [Kotlin]
@@ -324,18 +391,30 @@ alix.conversations.findConversation(conversation.id)
 alix.conversations.findConversationByTopic(conversation.topic)
 // Returns a Group
 alix.conversations.findGroup(group.id)
-// Returns a DM
-alix.conversations.findDmbyInboxId(bo.inboxId);
+// Returns a DM by inbox ID
+alix.conversations.findDmByInboxId(bo.inboxId)
+// Returns a DM by identity
+alix.conversations.findDmByIdentity(bo.publicIdentity)
+// Returns a specific message
+alix.conversations.findMessage(messageId)
+// Returns a message with reactions
+alix.conversations.findEnrichedMessage(messageId)
 ```
 
 ```swift [Swift]
 // Returns a ConversationContainer
-try alix.conversations.findConversation(conversation.id)
-try alix.conversations.findConversationByTopic(conversation.topic)
+try await alix.conversations.findConversation(conversationId: conversation.id)
+try await alix.conversations.findConversationByTopic(topic: conversation.topic)
 // Returns a Group
-try alix.conversations.findGroup(group.id)
-// Returns a DM
-try alix.conversations. findDmbyInboxId(bo.inboxId)
+try await alix.conversations.findGroup(groupId: group.id)
+// Returns a DM by inbox ID
+try await alix.conversations.findDmByInboxId(inboxId: bo.inboxId)
+// Returns a DM by identity
+try await alix.conversations.findDmByIdentity(publicIdentity: bo.publicIdentity)
+// Returns a specific message
+try alix.conversations.findMessage(messageId: messageId)
+// Returns a message with reactions
+try alix.conversations.findEnrichedMessage(messageId: messageId)
 ```
 
 :::

@@ -43,33 +43,11 @@ try await client.conversation.sync()
 
 :::
 
-## Manually request sync from other devices
+## Send a sync request
 
-When a device installation comes online, it automatically sends a request to other devices on the network to sync conversations and messages. However, in scenarios where this automatic process is interrupted, you can manually trigger a sync request.
+Send a history sync request to other installations. Call this after creating a client on a new installation to pull in historical data. 
 
-:::code-group
-
-```js [Browser]
-await client.sendSyncRequest();
-```
-
-```js [Node]
-await client.sendSyncRequest();
-```
-
-```tsx [React Native]
-await client.sendSyncRequest();
-```
-
-```kotlin [Kotlin]
-client.sendSyncRequest()
-```
-
-```swift [Swift]
-try await client.sendSyncRequest()
-```
-
-:::
+See [Send a sync request](/chat-apps/list-stream-sync/history-sync#send-a-sync-request) for details and code examples.
 
 ## Sync new conversations
 
@@ -141,4 +119,58 @@ client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALL
 try await client.conversations.syncAllConversations(consentState: [.allowed])
 ```
 
+:::
+
+## Manage database connections
+
+In some scenarios, you may need to temporarily release the local database connection, such as when performing database maintenance or when the app goes into the background for an extended period.
+
+### Drop the database connection
+
+Temporarily release the connection to the local database:
+
+:::code-group
+
+```tsx [React Native]
+// Drop the local database connection
+await client.dropLocalDatabaseConnection();
+```
+
+```kotlin [Kotlin]
+// Drop the local database connection
+client.dropLocalDatabaseConnection()
+```
+
+```swift [Swift]
+// Drop the local database connection
+try client.dropLocalDatabaseConnection()
+```
+
+:::
+
+### Reconnect to the database
+
+Reconnect to the local database after dropping the connection:
+
+:::code-group
+
+```tsx [React Native]
+// Reconnect to the local database
+await client.reconnectLocalDatabase();
+```
+
+```kotlin [Kotlin]
+// Reconnect to the local database
+client.reconnectLocalDatabase()
+```
+
+```swift [Swift]
+// Reconnect to the local database
+try await client.reconnectLocalDatabase()
+```
+
+:::
+
+:::warning
+After calling `dropLocalDatabaseConnection()`, any operations that require database access will fail until you call `reconnectLocalDatabase()`.
 :::
