@@ -222,6 +222,40 @@ This is particularly useful for ensuring that push notifications work correctly 
 
 :::code-group
 
+```js [Browser]
+// Stream HMAC key updates
+const stream = await client.preferences.streamPreferences({
+  onValue: (preferenceUpdate) => {
+    // HMAC keys updated - resubscribe to topics
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+});
+
+// Or use for-await loop
+for await (const preferenceUpdate of stream) {
+  // HMAC keys updated - resubscribe to topics
+}
+```
+
+```js [Node]
+// Stream HMAC key updates
+const stream = await client.preferences.streamPreferences({
+  onValue: (preferenceUpdate) => {
+    // HMAC keys updated - resubscribe to topics
+  },
+  onError: (error) => {
+    console.error("Stream error:", error);
+  },
+});
+
+// Or use for-await loop
+for await (const preferenceUpdate of stream) {
+  // HMAC keys updated - resubscribe to topics
+}
+```
+
 ```tsx [React Native]
 await client.preferences.streamPreferenceUpdates(
   async (preferenceType) => {
