@@ -10,22 +10,54 @@ To learn more, see [4. Handle post-import conversation statuses](#4-handle-post-
 
 This feature includes three core methods:
 
-- `createArchive(path, encryptionKey, options?)`
-- `archiveMetadata(path, encryptionKey)`
-- `importArchive(path, encryptionKey)`
+- `createArchive` — Create an encrypted archive
+- `archiveMetadata` — Read metadata from an archive before importing
+- `importArchive` — Import an archive into the current installation
+
+On mobile SDKs (React Native, Kotlin, Swift), these methods work with file paths that can point directly to cloud-synced locations like iCloud or Google Drive. On Browser and Node SDKs, they work with in-memory `Uint8Array` data, and you handle storage yourself — for example, IndexedDB, a user-initiated file download, or uploading to your server.
 
 ## 1. Create the archive
 
 To enable a user to create an archive:
 
-1. Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists.
-2. Generate a 32-byte array encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive file, and will persist after your app has been uninstalled. A common place to store this encryption key is the iCloud Keychain.
-3. Call `createArchive(path, encryptionKey, options?)` with the archive file path and the encryption key. Optionally, you can pass in the following:
+1. **Mobile SDKs**: Specify the archive file path (e.g., iCloud, Google Cloud, or your server). Ensure the parent folder already exists. **Browser and Node SDKs**: The method returns archive data as a `Uint8Array` that you can store to your preferred location.
+2. Generate a 32-byte encryption key to protect the archive contents. This ensures that other apps and devices cannot access the contents without the key. Securely store the key in a location that is secure, independent of the archive, and will persist after your app has been uninstalled.
+3. Call `createArchive` with the encryption key and optional archive options. Optionally, you can pass in the following:
    - Archive start and end time in nanoseconds (`startNs` and `endNs`). If left blank, the archive will include all time.
    - Archive contents, which can be `Consent` or `Messages`. If left blank, the archive will include both.
    - `excludeDisappearingMessages`: Set to `true` to exclude [disappearing messages](/chat-apps/core-messaging/disappearing-messages) from the backup. Defaults to `false` (disappearing messages are included).
 
    :::code-group
+
+   ```js [Browser]
+   // With default options
+   const archiveData = await client.createArchive(key);
+
+   // With custom options
+   const archiveData = await client.createArchive(
+     key,                                         // encryption key
+     {                                             // options
+       archiveElements: ["consent"],
+       excludeDisappearingMessages: true,
+     }
+   );
+   // archiveData is a Uint8Array — store it to your preferred location
+   ```
+
+   ```js [Node]
+   // With default options
+   const archiveData = await client.createArchive(key);
+
+   // With custom options
+   const archiveData = await client.createArchive(
+     key,                                         // encryption key
+     {                                             // options
+       archiveElements: ["consent"],
+       excludeDisappearingMessages: true,
+     }
+   );
+   // archiveData is a Uint8Array — store it to your preferred location
+   ```
 
    ```tsx [React Native]
    createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
@@ -76,6 +108,22 @@ To enable a user to view information about their archive(s) before importing it 
 
 :::code-group
 
+```js [Browser]
+const metadata = await client.archiveMetadata(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
+```
+
+```js [Node]
+const metadata = await client.archiveMetadata(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+// metadata.startNs, metadata.endNs, metadata.elements, metadata.exportedAtNs
+```
+
 ```tsx [React Native]
 archiveMetadata(path: string, encryptionKey: string)
 ```
@@ -113,6 +161,20 @@ You can get the archive file size from the file system.
 To enable a user to import a selected archive to an installation:
 
 :::code-group
+
+```js [Browser]
+await client.importArchive(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+```
+
+```js [Node]
+await client.importArchive(
+  data, // Uint8Array (archive data)
+  key,  // Uint8Array (32-byte encryption key)
+);
+```
 
 ```tsx [React Native]
 importArchive(path: string, encryptionKey: string)
