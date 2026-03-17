@@ -82,6 +82,10 @@ export const sidebarConfig = {
           text: "Context",
           link: "/agents/concepts/context",
         },
+        {
+          text: "Error codes",
+          link: "/agents/concepts/error-codes",
+        },
       ],
     },
     {
@@ -138,6 +142,10 @@ export const sidebarConfig = {
         {
           text: "Debug agents",
           link: "/agents/deploy/debug-agents",
+        },
+        {
+          text: "Troubleshoot errors",
+          link: "/agents/deploy/error-codes",
         },
         {
           text: "Deploy agents",
@@ -567,9 +575,18 @@ export const sidebarConfig = {
       ],
     },
     {
-      text: "Debug your app",
-      link: "/chat-apps/debug-your-app",
-      items: [],
+      text: "Debug",
+      collapsed: false,
+      items: [
+        {
+            text: "Debug your app",
+            link: "/chat-apps/debug/debug-your-app",
+        },
+        {
+          text: "Troubleshoot errors",
+          link: "/chat-apps/debug/error-codes",
+        },
+      ],
     },
     {
       text: "Sign and verify payloads",
