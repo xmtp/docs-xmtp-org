@@ -91,32 +91,41 @@ To sync conversations regardless of consent state, pass `[ALLOWED, UNKNOWN, DENI
 
 To sync preferences only, you can call [`preferences.sync`](/chat-apps/list-stream-sync/sync-preferences). Note that `preferences.sync` will also sync welcomes to ensure that you have all potential new installations before syncing.
 
-The method returns a summary object (Browser/Node/Kotlin/Swift) or a count (React Native) indicating sync results.
+The method returns a summary object that includes the total number of conversations eligible for syncing and the number of conversations that were actually synced.
 
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```js [Node]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-// Returns the number of conversations that were synced
-const syncedCount = await client.conversations.syncAllConversations([
+// Returns a GroupSyncSummary object with sync statistics
+const syncSummary = await client.conversations.syncAllConversations([
   'allowed',
 ]);
-console.log(`Synced ${syncedCount} conversations`);
+console.log(`Eligible conversations: ${syncSummary.numEligible}`);
+console.log(`Successfully synced: ${syncSummary.numSynced}`);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+// Returns a GroupSyncSummary object with sync statistics
+val syncSummary = client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+println("Eligible conversations: ${syncSummary.numEligible}")
+println("Successfully synced: ${syncSummary.numSynced}")
 ```
 
 ```swift [Swift]
-try await client.conversations.syncAllConversations(consentState: [.allowed])
+// Returns a GroupSyncSummary object with sync statistics
+let syncSummary = try await client.conversations.syncAllConversations(consentState: [.allowed])
+print("Eligible conversations: \(syncSummary.numEligible)")
+print("Successfully synced: \(syncSummary.numSynced)")
 ```
 
 :::

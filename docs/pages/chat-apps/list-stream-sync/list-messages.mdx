@@ -53,6 +53,14 @@ Use `reactions` to get a list of reaction messages associated with the message.
 // Retrieve messages with enriched data from a group
 const groupMessages = await group.enrichedMessages();
 
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
+
 // Retrieve messages with enriched data from a DM
 const dmMessages = await dm.enrichedMessages();
 
@@ -114,6 +122,14 @@ Messages returned by `enrichedMessages()` include reply information when a messa
 ```tsx [React Native]
 // Retrieve messages with enriched data from a group
 const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
 
 // Retrieve messages with enriched data from a DM
 const dmMessages = await dm.enrichedMessages();
