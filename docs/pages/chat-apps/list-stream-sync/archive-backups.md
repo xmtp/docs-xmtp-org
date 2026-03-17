@@ -60,10 +60,10 @@ To enable a user to create an archive:
    ```
 
    ```tsx [React Native]
-   createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
-     startTime?: Date,
-     endTime?: Date,
-     elements?: ("Consent" | "Messages")[],
+   createArchive(path: string, encryptionKey: Uint8Array, options?: {
+     startNs?: number,
+     endNs?: number,
+     archiveElements?: ("messages" | "consent")[],
      excludeDisappearingMessages?: boolean
    })
    ```
