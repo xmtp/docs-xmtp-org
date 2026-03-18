@@ -1,6 +1,6 @@
 # XMTP Documentation for Building Chat Applications
 
-Generated at 12:17 AM UTC / March 18, 2026
+Generated at 12:24 AM UTC / March 18, 2026
 
 ## About this file
 
@@ -28,529 +28,6 @@ Ensure that you select the correct code block to avoid compatibility issues.
 ---
 
 # Section: chat-apps
-
-## chat-apps/debug-your-app.mdx
-# Debug your chat app
-
-This document covers tools and features available for debugging apps built with XMTP, including stress testing, group chat diagnostics, logging, and network monitoring capabilities.
-
-## XMTP Debug
-
-You can use the XMTP Debug tool to stress and burn-in test your chat app on the `local` and `dev` XMTP environments.
-
-To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_debug/README.md).
-
-## Forked group debugging tool
-
-:::tip[Preventing forks is XMTP's responsibility]
-
-This tool helps you identify forked groups in your app, but preventing forks in the first place is XMTP's responsibility. This diagnostic tool is just an aid and not a shift in responsibility to your app.
-
-:::
-
-A conversation has `getDebugInformation`. You can use this to see:
-
-- The MLS epoch of a group chat conversation for a member
-- The local commit log for expert analysis
-- Whether a group chat is forked (no false positives) via:
-  - `isCommitLogForked` for Browser and Node SDKs
-  - `commitLogForkStatus` for React Native, Android and iOS SDKs
-
-The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork detection without false positives. To minimize the negative effects of spam, fork detection is active only for groups that a user has actively consented to, which is automatically true for groups/DMs they created or groups/DMs they've sent a message in. To learn more about consent, see [Support user consent](/chat-apps/user-consent/support-user-consent).
-
-:::code-group
-
-```typescript [Browser, Node]
-// Get detailed debug information for a conversation
-const debugInfo = await conversation?.debugInfo();
-
-console.log('Epoch:', debugInfo.epoch);
-console.log('Cursor:', debugInfo.cursor);
-console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
-console.log('Local Commit Log:', debugInfo.localCommitLog);
-console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
-console.log('Fork Details:', debugInfo.forkDetails);
-```
-
-```tsx [React Native]
-// Get detailed debug information for a conversation
-const debugInfo = await conversation?.getDebugInformation();
-
-console.log('Epoch:', debugInfo.epoch);
-console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
-console.log('Local Commit Log:', debugInfo.localCommitLog);
-console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
-console.log('Fork Details:', debugInfo.forkDetails);
-```
-
-```kotlin [Kotlin]
-// Get detailed debug information for a conversation
-val debugInfo = conversation.getDebugInformation()
-
-println("Epoch: ${debugInfo.epoch}")
-println("Fork Status: ${debugInfo.commitLogForkStatus}") // FORKED, NOT_FORKED, or UNKNOWN
-println("Local Commit Log: ${debugInfo.localCommitLog}")
-println("Remote Commit Log: ${debugInfo.remoteCommitLog}")
-println("Fork Details: ${debugInfo.forkDetails}")
-```
-
-```swift [Swift]
-// Get detailed debug information for a conversation
-let debugInfo = try await conversation.getDebugInformation()
-
-print("Epoch: \(debugInfo.epoch)")
-print("Fork Status: \(debugInfo.commitLogForkStatus)") // .forked, .notForked, or .unknown
-print("Local Commit Log: \(debugInfo.localCommitLog)")
-print("Remote Commit Log: \(debugInfo.remoteCommitLog)")
-print("Fork Details: \(debugInfo.forkDetails)")
-```
-
-:::
-
-You can also check fork status directly from conversation lists:
-
-:::code-group
-
-```typescript [Browser, Node]
-// Check fork status when listing conversations
-const conversations = await client.conversations.list();
-
-conversations.forEach((conversation) => {
-  if (conversation.isCommitLogForked) {
-    console.log(`Conversation ${conversation.id} is forked`);
-  }
-});
-```
-
-```tsx [React Native]
-// Check fork status when listing conversations
-const conversations = await client.conversations.list();
-
-conversations.forEach((conversation) => {
-  if (conversation.commitLogForkStatus === 'forked') {
-    console.log(`Conversation ${conversation.id} is forked`);
-  }
-});
-```
-
-```kotlin [Kotlin]
-// Check fork status when listing conversations
-val conversations = client.conversations.list()
-
-conversations.forEach { conversation ->
-    if (conversation.commitLogForkStatus == CommitLogForkStatus.FORKED) {
-        println("Conversation ${conversation.id} is forked")
-    }
-}
-```
-
-```swift [Swift]
-// Check fork status when listing conversations
-let conversations = try await client.conversations.list()
-
-for conversation in conversations {
-    if conversation.commitLogForkStatus == .forked {
-        print("Conversation \(conversation.id) is forked")
-    }
-}
-```
-
-:::
-
-To learn about group chat forks, see [MLS Group State Forks: What, Why, How](https://cryspen.com/post/mls-fork-resolution/).
-
-If you believe you are experiencing a forked group, please [open an issue](https://github.com/xmtp/libxmtp/issues) in the LibXMTP repo to get support. Please include logs, the epoch, and other fork details.
-
-Forked groups are not recoverable. Your options are to:
-
-- Remove all members from the forked group and then re-add them to the group.
-- Start a new group.
-
-## Check if conversation is paused for protocol upgrade
-
-Conversations may be temporarily paused when a protocol upgrade is in progress. Use `pausedForVersion()` to check if a conversation is paused and which version it's waiting for.
-
-:::code-group
-
-```tsx [React Native]
-// Check if conversation is paused for a protocol upgrade
-const pausedVersion = await conversation.pausedForVersion();
-
-if (pausedVersion) {
-  console.log('Conversation is paused waiting for version:', pausedVersion);
-  // Show appropriate UI indicating the conversation is temporarily unavailable
-} else {
-  // Conversation is active and not paused
-}
-
-// Works on groups and DMs
-const groupPausedVersion = await group.pausedForVersion();
-const dmPausedVersion = await dm.pausedForVersion();
-```
-
-```kotlin [Kotlin]
-// Check if conversation is paused for a protocol upgrade
-val pausedVersion = conversation.pausedForVersion()
-
-if (pausedVersion != null) {
-    println("Conversation is paused waiting for version: $pausedVersion")
-    // Show appropriate UI indicating the conversation is temporarily unavailable
-} else {
-    // Conversation is active and not paused
-}
-
-// Works on groups and DMs
-val groupPausedVersion = group.pausedForVersion()
-val dmPausedVersion = dm.pausedForVersion()
-```
-
-```swift [Swift]
-// Check if conversation is paused for a protocol upgrade
-let pausedVersion = try await conversation.pausedForVersion()
-
-if let pausedVersion = pausedVersion {
-    print("Conversation is paused waiting for version: \(pausedVersion)")
-    // Show appropriate UI indicating the conversation is temporarily unavailable
-} else {
-    // Conversation is active and not paused
-}
-
-// Works on groups and DMs
-let groupPausedVersion = try group.pausedForVersion()
-let dmPausedVersion = try dm.pausedForVersion()
-```
-
-:::
-
-## File logging
-
-These file logging functions enable the XMTP rust process to write directly to persistent log files that roll during every hour of active usage and provide a 6-hour window of logs. This can be especially helpful when debugging group chat errors and other complex issues.
-
-The file logs complement Android and iOS system logs, which rely on memory buffer constraints, but often don't go back far enough to help catch when an issue occurs.
-
-To use file logging, call the following static functions:
-
-- `Client.activatePersistentLibXMTPLogWriter()`: Use to activate the file logging feature.
-  - We recommend using `LogLevel.Debug`, `LogRotation.Hourly`, and a `logMaxFiles` value of 5-10. Log files can grow to ~100mb each with active clients on debug level in an hour of usage.
-- `Client.getXMTPLogFilePaths()`: Use to get the full paths of log files written so far. This is useful for passing to iOS or Android Share functions.
-- Here are additional helper static functions in the XMTP Client object:
-  - `deactivatePersistentLibXMTPLogWriter()`
-  - `isLogWriterActive()`
-  - `readXMTPLogFile()`
-  - `clearXMTPLogs()`
-
-:::code-group
-
-```tsx [React Native]
-import { Client, LogLevel, LogRotation } from '@xmtp/react-native-sdk';
-
-// Activate persistent logging
-await Client.activatePersistentLibXMTPLogWriter(
-  LogLevel.DEBUG,
-  LogRotation.HOURLY,
-  10 // max files
-);
-
-// Get log file paths for sharing
-const logPaths = Client.getXMTPLogFilePaths();
-
-// Check if logging is active
-const isActive = Client.isLogWriterActive();
-
-// Read a specific log file
-const logContent = await Client.readXMTPLogFile(logPaths[0]);
-
-// Deactivate logging
-Client.deactivatePersistentLibXMTPLogWriter();
-
-// Clear all log files
-const clearedCount = Client.clearXMTPLogs();
-```
-
-```kotlin [Kotlin]
-// Get log file paths for sharing
-val logPaths = Client.getXMTPLogFilePaths(context)
-
-// Check if logging is active
-val isActive = Client.isLogWriterActive()
-
-// Deactivate logging
-Client.deactivatePersistentLibXMTPLogWriter()
-
-// Clear all log files
-Client.clearXMTPLogs(context)
-```
-
-```swift [Swift]
-// Get log file paths for sharing
-let logPaths = try Client.getXMTPLogFilePaths()
-
-// Check if logging is active
-let isActive = Client.isLogWriterActive()
-
-// Deactivate logging
-Client.deactivatePersistentLibXMTPLogWriter()
-
-// Clear all log files
-try Client.clearXMTPLogs()
-```
-
-:::
-
-For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
-
-### Multi-process logging
-
-For apps with notification extensions or other background services, you can enable separate log files for each process type. This prevents log file conflicts and makes it easier to debug issues in notification services.
-
-When you call the logging functions, specify the process type:
-
-:::code-group
-
-```kotlin [Kotlin]
-import org.xmtp.android.library.ProcessType
-
-// In your main application
-Client.enterDebugWriter(
-    directory = logDirectory,
-    logLevel = FfiLogLevel.DEBUG,
-    rotation = FfiLogRotation.HOURLY,
-    maxFiles = 10u,
-    processType = ProcessType.MAIN
-)
-
-// In your notification extension/service
-Client.enterDebugWriter(
-    directory = logDirectory,
-    logLevel = FfiLogLevel.DEBUG,
-    rotation = FfiLogRotation.HOURLY,
-    maxFiles = 10u,
-    processType = ProcessType.NOTIFICATION_EXTENSION
-)
-```
-
-```swift [Swift]
-import XMTP
-
-// In your main application
-try await Client.activatePersistentLibXMTPLogWriter(
-    logLevel: .debug,
-    rotationSchedule: .hourly,
-    maxFiles: 10,
-    processType: .main
-)
-
-// In your notification extension
-try await Client.activatePersistentLibXMTPLogWriter(
-    logLevel: .debug,
-    rotationSchedule: .hourly,
-    maxFiles: 10,
-    processType: .notificationExtension
-)
-```
-
-:::
-
-Log files are automatically named with the process type and process ID to avoid conflicts:
-- Format: `libxmtp-v{version}.{commit}.{process_type}.{pid}.log.{date}`
-- Main process example: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
-- Notification extension example: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
-
-This naming convention ensures that logs from different processes don't overwrite each other, making it easier to debug issues that occur in notification extensions or other background services.
-
-## Network statistics
-
-You can use these statistics to see which and how many API, identity, and streaming calls are going across the network, which can help you better manage network usage and debug potential rate limiting issues.
-
-These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
-
-### Get aggregated statistics
-
-To return aggregated statistics, run:
-
-- For Browser and Node SDKs: `client.debugInformation.apiAggregateStatistics()`
-- For iOS and Android SDKs: `client.debugInformation.aggregateStatistics`
-- For React Native SDK: `client.debugInformation.aggregateStatistics`
-
-```text
-Aggregate Stats:
-============ Api Stats ============
-UploadKeyPackage        1
-FetchKeyPackage         2
-SendGroupMessages       5
-SendWelcomeMessages     1
-QueryGroupMessages      7
-QueryWelcomeMessages    0
-============ Identity ============
-PublishIdentityUpdate    1
-GetIdentityUpdatesV2     4
-GetInboxIds             2
-VerifySCWSignatures     0
-============ Stream ============
-SubscribeMessages        0
-SubscribeWelcomes       0
-```
-
-:::code-group
-
-```tsx [React Native]
-// Get network debug information
-const debugInfo = await client.debugInformation.getNetworkDebugInformation();
-
-// Get aggregated statistics as formatted string
-console.log(debugInfo.aggregateStatistics);
-
-// Access individual API statistics
-console.log('Uploads:', debugInfo.apiStatistics.uploadKeyPackage);
-console.log('Fetches:', debugInfo.apiStatistics.fetchKeyPackage);
-console.log('Sent messages:', debugInfo.apiStatistics.sendGroupMessages);
-
-// Access identity statistics
-console.log('Identity updates:', debugInfo.identityStatistics.publishIdentityUpdate);
-console.log('Inbox ID lookups:', debugInfo.identityStatistics.getInboxIds);
-
-// Clear all statistics
-await client.debugInformation.clearAllStatistics();
-```
-
-```kotlin [Kotlin]
-// Get network debug information
-val debugInfo = client.debugInformation
-
-// Get aggregated statistics
-println(debugInfo.aggregateStatistics)
-
-// Access individual API statistics
-println("Uploads: ${debugInfo.apiStatistics.uploadKeyPackage}")
-println("Fetches: ${debugInfo.apiStatistics.fetchKeyPackage}")
-
-// Clear all statistics
-client.debugInformation.clearAllStatistics()
-```
-
-```swift [Swift]
-// Get network debug information
-let debugInfo = client.debugInformation
-
-// Get aggregated statistics
-print(debugInfo.aggregateStatistics)
-
-// Access individual API statistics
-print("Uploads: \(debugInfo.apiStatistics.uploadKeyPackage)")
-print("Fetches: \(debugInfo.apiStatistics.fetchKeyPackage)")
-
-// Clear all statistics
-try await client.debugInformation.clearAllStatistics()
-```
-
-:::
-
-### Get an individual statistic
-
-To return an individual statistic as a number, run:
-
-- For Browser and Node SDKs:
-  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
-
-- For iOS and Android SDKs:
-  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `client.debugInformation.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
-
-- For React Native SDK (async - must call `getNetworkDebugInformation()` first):
-  - `debugInfo.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
-  - `debugInfo.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
-
-For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
-
-### Clear statistics
-
-To clear all API, identity, and stream statistics and set them to zero, run `client.debugInformation.clearAllStatistics()`.
-
-This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
-
-### Statistic descriptions
-
-#### API statistics
-
-| Statistic            | Description                                                                                             |
-| -------------------- | ------------------------------------------------------------------------------------------------------- |
-| UploadKeyPackage     | Number of times key packages have been uploaded.                                                        |
-| FetchKeyPackage      | Number of times key packages have been fetched.                                                         |
-| SendGroupMessages    | Number of times messages have been sent to group chat and DM conversations.                             |
-| SendWelcomeMessages  | Number of times welcome messages have been sent.                                                        |
-| QueryGroupMessages   | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
-| QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages.                                       |
-
-#### Identity statistics
-
-| Statistic             | Description                                                                        |
-| --------------------- | ---------------------------------------------------------------------------------- |
-| PublishIdentityUpdate | Number of times identity updates have been published.                              |
-| GetIdentityUpdatesV2  | Number of times identity updates have been fetched.                                |
-| GetInboxIds           | Number of times inbox ID queries have been made.                                   |
-| VerifySCWSignatures   | Number of times smart contract wallet signature verifications have been performed. |
-
-#### Stream statistics
-
-| Statistic         | Description                                                                                                 |
-| ----------------- | ----------------------------------------------------------------------------------------------------------- |
-| SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
-| SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations.      |
-
-## Get client version information
-
-You can retrieve version information from the XMTP client to help with debugging or ensuring compatibility.
-
-The `libxmtpVersion` property can be useful for debugging or ensuring compatibility with the underlying XMTP APIs. The `appVersion` returns the value that was set in the `appVersion` client option during [client creation](/chat-apps/core-messaging/create-a-client#configure-an-xmtp-client).
-
-### Get libxmtp version
-
-Get the version of the underlying libxmtp library used by the client:
-
-:::code-group
-
-```tsx [Browser]
-const libxmtpVersion = client.libxmtpVersion;
-console.log('libxmtp version:', libxmtpVersion);
-```
-
-```tsx [Node]
-const libxmtpVersion = client.libxmtpVersion;
-console.log('libxmtp version:', libxmtpVersion);
-```
-
-```kotlin [Kotlin]
-val libxmtpVersion = client.libXMTPVersion
-println("libxmtp version: $libxmtpVersion")
-```
-
-```swift [Swift]
-let libxmtpVersion = client.libXMTPVersion
-print("libxmtp version:", libxmtpVersion)
-```
-
-:::
-
-### Get app version
-
-Get the app version that was configured when creating the client:
-
-:::code-group
-
-```tsx [Browser]
-const appVersion = client.appVersion;
-console.log('App version:', appVersion);
-```
-
-```tsx [Node]
-const appVersion = client.appVersion;
-console.log('App version:', appVersion);
-```
-
-:::
-
-
 
 ## chat-apps/use-signatures.mdx
 # Use signatures with XMTP
@@ -806,7 +283,7 @@ Log files from your notification extension will have a distinct naming pattern:
 - Notification logs: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
 - Main app logs: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
 
-To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug-your-app#file-logging).
+To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug/debug-your-app#file-logging).
 
 
 ## chat-apps/push-notifs/ios-pn.mdx
@@ -894,7 +371,7 @@ Log files from your notification extension will have a distinct naming pattern:
 - Notification logs: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
 - Main app logs: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
 
-To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug-your-app#file-logging).
+To learn more about file logging and debugging, see [Debug your app](/chat-apps/debug/debug-your-app#file-logging).
 
 
 ## chat-apps/push-notifs/pn-server.mdx
@@ -4805,11 +4282,13 @@ The main difference is how you connect XMTP to your existing systems:
 
 ## 🧪 Phase IV: Test and debug
 
-- [Stress and burn-in test](/chat-apps/debug-your-app#xmtp-debug) your chat app.
+- [Troubleshoot errors](/chat-apps/debug/error-codes).
 
-- [Enable file logging](/chat-apps/debug-your-app#file-logging).
+- [Stress and burn-in test](/chat-apps/debug/debug-your-app#xmtp-debug) your chat app.
 
-- [Capture network statistics](/chat-apps/debug-your-app#network-statistics).
+- [Enable file logging](/chat-apps/debug/debug-your-app#file-logging).
+
+- [Capture network statistics](/chat-apps/debug/debug-your-app#network-statistics).
 
 - Found a bug or need help? Contact [dev support](/chat-apps/intro/dev-support).
 
@@ -5063,6 +4542,534 @@ Try [xmtp.chat](https://xmtp.chat/), an app made for devs to learn to build with
 - **XMTP is for everyone**
   - [Join the conversation](https://community.xmtp.org/) and become part of the movement to redefine digital communications.
 
+
+## chat-apps/debug/debug-your-app.mdx
+# Debug your chat app
+
+This document covers tools and features available for debugging apps built with XMTP, including stress testing, group chat diagnostics, logging, and network monitoring capabilities.
+
+## XMTP Debug
+
+You can use the XMTP Debug tool to stress and burn-in test your chat app on the `local` and `dev` XMTP environments.
+
+To learn more, see [XMTP Debug](https://github.com/xmtp/libxmtp/blob/main/xmtp_debug/README.md).
+
+## Forked group debugging tool
+
+:::tip[Preventing forks is XMTP's responsibility]
+
+This tool helps you identify forked groups in your app, but preventing forks in the first place is XMTP's responsibility. This diagnostic tool is just an aid and not a shift in responsibility to your app.
+
+:::
+
+A conversation has `getDebugInformation`. You can use this to see:
+
+- The MLS epoch of a group chat conversation for a member
+- The local commit log for expert analysis
+- Whether a group chat is forked (no false positives) via:
+  - `isCommitLogForked` for Browser and Node SDKs
+  - `commitLogForkStatus` for React Native, Android and iOS SDKs
+
+The `isCommitLogForked`/`commitLogForkStatus` field provides definitive fork detection without false positives. To minimize the negative effects of spam, fork detection is active only for groups that a user has actively consented to, which is automatically true for groups/DMs they created or groups/DMs they've sent a message in. To learn more about consent, see [Support user consent](/chat-apps/user-consent/support-user-consent).
+
+:::code-group
+
+```typescript [Browser, Node]
+// Get detailed debug information for a conversation
+const debugInfo = await conversation?.debugInfo();
+
+console.log('Epoch:', debugInfo.epoch);
+console.log('Cursor:', debugInfo.cursor);
+console.log('Fork Status:', debugInfo.isCommitLogForked); // true, false, or undefined
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+```tsx [React Native]
+// Get detailed debug information for a conversation
+const debugInfo = await conversation?.getDebugInformation();
+
+console.log('Epoch:', debugInfo.epoch);
+console.log('Fork Status:', debugInfo.commitLogForkStatus); // 'forked', 'notForked', or 'unknown'
+console.log('Local Commit Log:', debugInfo.localCommitLog);
+console.log('Remote Commit Log:', debugInfo.remoteCommitLog);
+console.log('Fork Details:', debugInfo.forkDetails);
+```
+
+```kotlin [Kotlin]
+// Get detailed debug information for a conversation
+val debugInfo = conversation.getDebugInformation()
+
+println("Epoch: ${debugInfo.epoch}")
+println("Fork Status: ${debugInfo.commitLogForkStatus}") // FORKED, NOT_FORKED, or UNKNOWN
+println("Local Commit Log: ${debugInfo.localCommitLog}")
+println("Remote Commit Log: ${debugInfo.remoteCommitLog}")
+println("Fork Details: ${debugInfo.forkDetails}")
+```
+
+```swift [Swift]
+// Get detailed debug information for a conversation
+let debugInfo = try await conversation.getDebugInformation()
+
+print("Epoch: \(debugInfo.epoch)")
+print("Fork Status: \(debugInfo.commitLogForkStatus)") // .forked, .notForked, or .unknown
+print("Local Commit Log: \(debugInfo.localCommitLog)")
+print("Remote Commit Log: \(debugInfo.remoteCommitLog)")
+print("Fork Details: \(debugInfo.forkDetails)")
+```
+
+:::
+
+You can also check fork status directly from conversation lists:
+
+:::code-group
+
+```typescript [Browser, Node]
+// Check fork status when listing conversations
+const conversations = await client.conversations.list();
+
+conversations.forEach((conversation) => {
+  if (conversation.isCommitLogForked) {
+    console.log(`Conversation ${conversation.id} is forked`);
+  }
+});
+```
+
+```tsx [React Native]
+// Check fork status when listing conversations
+const conversations = await client.conversations.list();
+
+conversations.forEach((conversation) => {
+  if (conversation.commitLogForkStatus === 'forked') {
+    console.log(`Conversation ${conversation.id} is forked`);
+  }
+});
+```
+
+```kotlin [Kotlin]
+// Check fork status when listing conversations
+val conversations = client.conversations.list()
+
+conversations.forEach { conversation ->
+    if (conversation.commitLogForkStatus == CommitLogForkStatus.FORKED) {
+        println("Conversation ${conversation.id} is forked")
+    }
+}
+```
+
+```swift [Swift]
+// Check fork status when listing conversations
+let conversations = try await client.conversations.list()
+
+for conversation in conversations {
+    if conversation.commitLogForkStatus == .forked {
+        print("Conversation \(conversation.id) is forked")
+    }
+}
+```
+
+:::
+
+To learn about group chat forks, see [MLS Group State Forks: What, Why, How](https://cryspen.com/post/mls-fork-resolution/).
+
+If you believe you are experiencing a forked group, please [open an issue](https://github.com/xmtp/libxmtp/issues) in the LibXMTP repo to get support. Please include logs, the epoch, and other fork details.
+
+Forked groups are not recoverable. Your options are to:
+
+- Remove all members from the forked group and then re-add them to the group.
+- Start a new group.
+
+## Check if conversation is paused for protocol upgrade
+
+Conversations may be temporarily paused when a protocol upgrade is in progress. Use `pausedForVersion()` to check if a conversation is paused and which version it's waiting for.
+
+:::code-group
+
+```tsx [React Native]
+// Check if conversation is paused for a protocol upgrade
+const pausedVersion = await conversation.pausedForVersion();
+
+if (pausedVersion) {
+  console.log('Conversation is paused waiting for version:', pausedVersion);
+  // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+  // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+const groupPausedVersion = await group.pausedForVersion();
+const dmPausedVersion = await dm.pausedForVersion();
+```
+
+```kotlin [Kotlin]
+// Check if conversation is paused for a protocol upgrade
+val pausedVersion = conversation.pausedForVersion()
+
+if (pausedVersion != null) {
+    println("Conversation is paused waiting for version: $pausedVersion")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+val groupPausedVersion = group.pausedForVersion()
+val dmPausedVersion = dm.pausedForVersion()
+```
+
+```swift [Swift]
+// Check if conversation is paused for a protocol upgrade
+let pausedVersion = try await conversation.pausedForVersion()
+
+if let pausedVersion = pausedVersion {
+    print("Conversation is paused waiting for version: \(pausedVersion)")
+    // Show appropriate UI indicating the conversation is temporarily unavailable
+} else {
+    // Conversation is active and not paused
+}
+
+// Works on groups and DMs
+let groupPausedVersion = try group.pausedForVersion()
+let dmPausedVersion = try dm.pausedForVersion()
+```
+
+:::
+
+## File logging
+
+These file logging functions enable the XMTP rust process to write directly to persistent log files that roll during every hour of active usage and provide a 6-hour window of logs. This can be especially helpful when debugging group chat errors and other complex issues.
+
+The file logs complement Android and iOS system logs, which rely on memory buffer constraints, but often don't go back far enough to help catch when an issue occurs.
+
+To use file logging, call the following static functions:
+
+- `Client.activatePersistentLibXMTPLogWriter()`: Use to activate the file logging feature.
+  - We recommend using `LogLevel.Debug`, `LogRotation.Hourly`, and a `logMaxFiles` value of 5-10. Log files can grow to ~100mb each with active clients on debug level in an hour of usage.
+- `Client.getXMTPLogFilePaths()`: Use to get the full paths of log files written so far. This is useful for passing to iOS or Android Share functions.
+- Here are additional helper static functions in the XMTP Client object:
+  - `deactivatePersistentLibXMTPLogWriter()`
+  - `isLogWriterActive()`
+  - `readXMTPLogFile()`
+  - `clearXMTPLogs()`
+
+:::code-group
+
+```tsx [React Native]
+import { Client, LogLevel, LogRotation } from '@xmtp/react-native-sdk';
+
+// Activate persistent logging
+await Client.activatePersistentLibXMTPLogWriter(
+  LogLevel.DEBUG,
+  LogRotation.HOURLY,
+  10 // max files
+);
+
+// Get log file paths for sharing
+const logPaths = Client.getXMTPLogFilePaths();
+
+// Check if logging is active
+const isActive = Client.isLogWriterActive();
+
+// Read a specific log file
+const logContent = await Client.readXMTPLogFile(logPaths[0]);
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter();
+
+// Clear all log files
+const clearedCount = Client.clearXMTPLogs();
+```
+
+```kotlin [Kotlin]
+// Get log file paths for sharing
+val logPaths = Client.getXMTPLogFilePaths(context)
+
+// Check if logging is active
+val isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+Client.clearXMTPLogs(context)
+```
+
+```swift [Swift]
+// Get log file paths for sharing
+let logPaths = try Client.getXMTPLogFilePaths()
+
+// Check if logging is active
+let isActive = Client.isLogWriterActive()
+
+// Deactivate logging
+Client.deactivatePersistentLibXMTPLogWriter()
+
+// Clear all log files
+try Client.clearXMTPLogs()
+```
+
+:::
+
+For an example UI implementation, see PR to [add new persistent log debug menu options](https://github.com/xmtplabs/convos-app/pull/6) to the Convos app, built with XMTP.
+
+### Multi-process logging
+
+For apps with notification extensions or other background services, you can enable separate log files for each process type. This prevents log file conflicts and makes it easier to debug issues in notification services.
+
+When you call the logging functions, specify the process type:
+
+:::code-group
+
+```kotlin [Kotlin]
+import org.xmtp.android.library.ProcessType
+
+// In your main application
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.MAIN
+)
+
+// In your notification extension/service
+Client.enterDebugWriter(
+    directory = logDirectory,
+    logLevel = FfiLogLevel.DEBUG,
+    rotation = FfiLogRotation.HOURLY,
+    maxFiles = 10u,
+    processType = ProcessType.NOTIFICATION_EXTENSION
+)
+```
+
+```swift [Swift]
+import XMTP
+
+// In your main application
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .main
+)
+
+// In your notification extension
+try await Client.activatePersistentLibXMTPLogWriter(
+    logLevel: .debug,
+    rotationSchedule: .hourly,
+    maxFiles: 10,
+    processType: .notificationExtension
+)
+```
+
+:::
+
+Log files are automatically named with the process type and process ID to avoid conflicts:
+- Format: `libxmtp-v{version}.{commit}.{process_type}.{pid}.log.{date}`
+- Main process example: `libxmtp-v1.6.0.abc123.main.12345.log.2025-12-03`
+- Notification extension example: `libxmtp-v1.6.0.abc123.notif.67890.log.2025-12-03`
+
+This naming convention ensures that logs from different processes don't overwrite each other, making it easier to debug issues that occur in notification extensions or other background services.
+
+## Network statistics
+
+You can use these statistics to see which and how many API, identity, and streaming calls are going across the network, which can help you better manage network usage and debug potential rate limiting issues.
+
+These statistics are maintained per client instance, so each app installation has its own separate counter. Each one is a rolling counter for the entire session since the gRPC client was created. To get a snapshot of statistics at a moment in time, you can check the counter, run the action, get the counter again, and then diff the counter with the original counter.
+
+### Get aggregated statistics
+
+To return aggregated statistics, run:
+
+- For Browser and Node SDKs: `client.debugInformation.apiAggregateStatistics()`
+- For iOS and Android SDKs: `client.debugInformation.aggregateStatistics`
+- For React Native SDK: `client.debugInformation.aggregateStatistics`
+
+```text
+Aggregate Stats:
+============ Api Stats ============
+UploadKeyPackage        1
+FetchKeyPackage         2
+SendGroupMessages       5
+SendWelcomeMessages     1
+QueryGroupMessages      7
+QueryWelcomeMessages    0
+============ Identity ============
+PublishIdentityUpdate    1
+GetIdentityUpdatesV2     4
+GetInboxIds             2
+VerifySCWSignatures     0
+============ Stream ============
+SubscribeMessages        0
+SubscribeWelcomes       0
+```
+
+:::code-group
+
+```tsx [React Native]
+// Get network debug information
+const debugInfo = await client.debugInformation.getNetworkDebugInformation();
+
+// Get aggregated statistics as formatted string
+console.log(debugInfo.aggregateStatistics);
+
+// Access individual API statistics
+console.log('Uploads:', debugInfo.apiStatistics.uploadKeyPackage);
+console.log('Fetches:', debugInfo.apiStatistics.fetchKeyPackage);
+console.log('Sent messages:', debugInfo.apiStatistics.sendGroupMessages);
+
+// Access identity statistics
+console.log('Identity updates:', debugInfo.identityStatistics.publishIdentityUpdate);
+console.log('Inbox ID lookups:', debugInfo.identityStatistics.getInboxIds);
+
+// Clear all statistics
+await client.debugInformation.clearAllStatistics();
+```
+
+```kotlin [Kotlin]
+// Get network debug information
+val debugInfo = client.debugInformation
+
+// Get aggregated statistics
+println(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+println("Uploads: ${debugInfo.apiStatistics.uploadKeyPackage}")
+println("Fetches: ${debugInfo.apiStatistics.fetchKeyPackage}")
+
+// Clear all statistics
+client.debugInformation.clearAllStatistics()
+```
+
+```swift [Swift]
+// Get network debug information
+let debugInfo = client.debugInformation
+
+// Get aggregated statistics
+print(debugInfo.aggregateStatistics)
+
+// Access individual API statistics
+print("Uploads: \(debugInfo.apiStatistics.uploadKeyPackage)")
+print("Fetches: \(debugInfo.apiStatistics.fetchKeyPackage)")
+
+// Clear all statistics
+try await client.debugInformation.clearAllStatistics()
+```
+
+:::
+
+### Get an individual statistic
+
+To return an individual statistic as a number, run:
+
+- For Browser and Node SDKs:
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.apiIdentityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For iOS and Android SDKs:
+  - `client.debugInformation.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `client.debugInformation.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+- For React Native SDK (async - must call `getNetworkDebugInformation()` first):
+  - `debugInfo.apiStatistics.uploadKeyPackage` to track `uploadKeyPackage` only, for example
+  - `debugInfo.identityStatistics.publishIdentityUpdate` to track `publishIdentityUpdate` only, for example
+
+For available individual statistics, see [Statistic descriptions](#statistic-descriptions).
+
+### Clear statistics
+
+To clear all API, identity, and stream statistics and set them to zero, run `client.debugInformation.clearAllStatistics()`.
+
+This is useful when you want to get a clean baseline before running specific actions. It's also particularly helpful for managing memory usage on mobile devices where gRPC client caching can accumulate large statistics.
+
+### Statistic descriptions
+
+#### API statistics
+
+| Statistic            | Description                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| UploadKeyPackage     | Number of times key packages have been uploaded.                                                        |
+| FetchKeyPackage      | Number of times key packages have been fetched.                                                         |
+| SendGroupMessages    | Number of times messages have been sent to group chat and DM conversations.                             |
+| SendWelcomeMessages  | Number of times welcome messages have been sent.                                                        |
+| QueryGroupMessages   | Number of times queries have been made to fetch messages being sent to group chat and DM conversations. |
+| QueryWelcomeMessages | Number of times queries have been made to fetch welcome messages.                                       |
+
+#### Identity statistics
+
+| Statistic             | Description                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------- |
+| PublishIdentityUpdate | Number of times identity updates have been published.                              |
+| GetIdentityUpdatesV2  | Number of times identity updates have been fetched.                                |
+| GetInboxIds           | Number of times inbox ID queries have been made.                                   |
+| VerifySCWSignatures   | Number of times smart contract wallet signature verifications have been performed. |
+
+#### Stream statistics
+
+| Statistic         | Description                                                                                                 |
+| ----------------- | ----------------------------------------------------------------------------------------------------------- |
+| SubscribeMessages | Number of times message subscription requests have been made. This is streaming messages in a conversation. |
+| SubscribeWelcomes | Number of times welcome message subscription requests have been made. This is streaming conversations.      |
+
+## Get client version information
+
+You can retrieve version information from the XMTP client to help with debugging or ensuring compatibility.
+
+The `libxmtpVersion` property can be useful for debugging or ensuring compatibility with the underlying XMTP APIs. The `appVersion` returns the value that was set in the `appVersion` client option during [client creation](/chat-apps/core-messaging/create-a-client#configure-an-xmtp-client).
+
+### Get libxmtp version
+
+Get the version of the underlying libxmtp library used by the client:
+
+:::code-group
+
+```tsx [Browser]
+const libxmtpVersion = client.libxmtpVersion;
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```tsx [Node]
+const libxmtpVersion = client.libxmtpVersion;
+console.log('libxmtp version:', libxmtpVersion);
+```
+
+```kotlin [Kotlin]
+val libxmtpVersion = client.libXMTPVersion
+println("libxmtp version: $libxmtpVersion")
+```
+
+```swift [Swift]
+let libxmtpVersion = client.libXMTPVersion
+print("libxmtp version:", libxmtpVersion)
+```
+
+:::
+
+### Get app version
+
+Get the app version that was configured when creating the client:
+
+:::code-group
+
+```tsx [Browser]
+const appVersion = client.appVersion;
+console.log('App version:', appVersion);
+```
+
+```tsx [Node]
+const appVersion = client.appVersion;
+console.log('App version:', appVersion);
+```
+
+:::
+
+
+
+## chat-apps/debug/error-codes.mdx
+import ErrorCodes from '../../../snippets/error-codes.mdx';
+
+<ErrorCodes />
 
 ## chat-apps/core-messaging/create-a-client.mdx
 # Create an XMTP client
@@ -5588,7 +5595,7 @@ If you have an app and an agent, it's best to distinguish them from each other b
 
 The `appVersion` value is included with API requests to provide telemetry that shows which apps are using the XMTP client SDK. This information can help XMTP core developers provide you with app support, especially around communicating important SDK updates, deprecations, and required upgrades.
 
-To learn how to retrieve the client `appVersion` and `libxmtpVersion` values for debugging purposes, see [Get client version information](/chat-apps/debug-your-app#get-client-version-information).
+To learn how to retrieve the client `appVersion` and `libxmtpVersion` values for debugging purposes, see [Get client version information](/chat-apps/debug/debug-your-app#get-client-version-information).
 
 ### XMTP network environments
 
@@ -15019,4 +15026,4 @@ Local databases will be fully migrated. No messages will be lost during the tran
 
 # Summary
 
-This documentation contains 70 files from 4 sections.
+This documentation contains 71 files from 4 sections.
