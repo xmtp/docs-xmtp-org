@@ -352,6 +352,12 @@ const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
   identifierKind: IdentifierKind.Ethereum,
 });
+
+// get a conversation's topic (for subscribing to incoming messages)
+const topic = conversation.topic;
+
+// get the welcome topic (for subscribing to incoming welcomes)
+const welcomeTopic = client.conversations.topic;
 ```
 
 ```js [Node]
@@ -370,6 +376,12 @@ const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
   identifierKind: IdentifierKind.Ethereum,
 });
+
+// get a conversation's topic (for subscribing to incoming messages)
+const topic = conversation.topic;
+
+// get the welcome topic (for subscribing to incoming welcomes)
+const welcomeTopic = client.conversations.topic;
 ```
 
 ```tsx [React Native]
