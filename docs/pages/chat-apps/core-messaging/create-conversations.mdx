@@ -140,6 +140,7 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   name: "The Group Name",
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
+  appData: """{"theme": "dark", "version": "1.0"}""" // Custom app data
 )
 ```
 
@@ -351,6 +352,12 @@ const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
   identifierKind: IdentifierKind.Ethereum,
 });
+
+// get a conversation's topic (for subscribing to incoming messages)
+const topic = conversation.topic;
+
+// get the welcome topic (for subscribing to incoming welcomes)
+const welcomeTopic = client.conversations.topic;
 ```
 
 ```js [Node]
@@ -369,6 +376,12 @@ const dmByIdentifier = await client.conversations.fetchDmByIdentifier({
   identifier: '0xpeerAddress',
   identifierKind: IdentifierKind.Ethereum,
 });
+
+// get a conversation's topic (for subscribing to incoming messages)
+const topic = conversation.topic;
+
+// get the welcome topic (for subscribing to incoming welcomes)
+const welcomeTopic = client.conversations.topic;
 ```
 
 ```tsx [React Native]

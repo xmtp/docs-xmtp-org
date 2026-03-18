@@ -177,11 +177,15 @@ for (const reactionMessage of reactions) {
 ```jsx [React Native]
 if (message.contentTypeId === 'xmtp.org/reaction:1.0') {
   const reaction = message.content();
+  
+  // Access reaction properties
+  console.log('Message being reacted to:', reaction.reference);
+  console.log('Sender of original message:', reaction.referenceInboxId); // Optional field
+  console.log('Reaction action:', reaction.action); // 'added' or 'removed'
+  console.log('Reaction schema:', reaction.schema); // 'unicode', 'shortcode', or 'custom'
+  console.log('Reaction content:', reaction.content); // '💖', 'smile', etc.
+  
   return reaction;
-  //reaction.reference = id of the message being reacted to,
-  //reaction.action = 'added',
-  //reaction.schema =  'unicode',
-  //reaction.content = '💖',
 }
 ```
 

@@ -1,6 +1,6 @@
 # XMTP Full Documentation
 
-Generated at 11:50 PM UTC / March 13, 2026
+Generated at 12:06 AM UTC / March 18, 2026
 
 ## About this file
 
@@ -1694,10 +1694,10 @@ To enable a user to create an archive:
    ```
 
    ```tsx [React Native]
-   createArchive(path: string, encryptionKey: string | Uint8Array, options?: {
-     startTime?: Date,
-     endTime?: Date,
-     elements?: ("Consent" | "Messages")[],
+   createArchive(path: string, encryptionKey: Uint8Array, options?: {
+     startNs?: number,
+     endNs?: number,
+     archiveElements?: ("messages" | "consent")[],
      excludeDisappearingMessages?: boolean
    })
    ```
@@ -1992,20 +1992,24 @@ History sync enables your users pick up conversations where they left off, regar
 
 ## Enable history sync
 
-History sync is enabled by default. When [creating a client](/chat-apps/core-messaging/create-a-client), the `historySyncUrl` client option is dynamically set to a default history sync server URL based on your `env` client option setting.
+History sync is enabled by default. When [creating a client](/chat-apps/core-messaging/create-a-client), the history sync server URL is automatically set based on your `env` client option setting.
 
-- When `env` is set to `dev`, the `historySyncUrl` is set to `https://message-history.dev.ephemera.network/`
-- When `env` is set to `production`, the `historySyncUrl` is set to `https://message-history.production.ephemera.network`
+- When `env` is set to `dev`, the server URL is `https://message-history.dev.ephemera.network/`
+- When `env` is set to `production`, the server URL is `https://message-history.production.ephemera.network`
 
 These default servers are managed and operated by [XMTP Labs](https://xmtplabs.com/), a steward of the development and adoption of XMTP.
 
-You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server) and set the `historySyncUrl` to your server's URL.
+You can choose to [run your own server](https://github.com/xmtp/xmtp-message-history-server). All SDKs accept a `serverUrl` parameter on [`sendSyncRequest()`](#send-a-sync-request) and [`sendSyncArchive()`](#send-a-sync-archive) to specify a custom server per call. Additionally, Browser, Node, Kotlin, and Swift SDKs let you set `historySyncUrl` in your [client options](/chat-apps/core-messaging/create-a-client) to override the default server for all sync operations.
 
-If needed, you can turn off history sync by setting the `historySyncUrl` client option to an empty string.
+To disable history sync:
+
+- **Browser and Node**: Set `disableDeviceSync: true` in your client options.
+- **React Native**: Set `deviceSyncEnabled: false` in your client options.
+- **Kotlin and Swift**: Set `historySyncUrl` to an empty string in your client options.
 
 ## How history sync works
 
-When you send a sync request (via [`sendSyncRequest()`](/chat-apps/list-stream-sync/sync-and-syncall#send-a-sync-request)) and a `historySyncUrl` client option is present, the receiving installation creates an encrypted archive.
+When you send a sync request (via [`sendSyncRequest()`](/chat-apps/list-stream-sync/sync-and-syncall#send-a-sync-request)), the receiving installation creates an encrypted archive.
 
 <div>
   <img
@@ -2156,6 +2160,21 @@ await client.sendSyncArchive(
 );
 ```
 
+```tsx [React Native]
+// With default options
+await client.sendSyncArchive("my-pin");
+
+// With custom options
+await client.sendSyncArchive(
+  "my-pin",                                    // pin
+  "https://your-history-sync-server.example.com/", // serverUrl
+  Date.now() * 1000000,                       // startNs (optional)
+  (Date.now() + 86400000) * 1000000,         // endNs (optional)
+  ["consent"],                                 // archiveElements (optional)
+  false                                        // excludeDisappearingMessages (optional)
+);
+```
+
 ```kotlin [Kotlin]
 // With default options
 client.sendSyncArchive(pin = "my-pin")
@@ -2194,6 +2213,10 @@ const summary = await client.syncAllDeviceSyncGroups();
 const summary = await client.syncAllDeviceSyncGroups();
 ```
 
+```tsx [React Native]
+const summary = await client.syncAllDeviceSyncGroups();
+```
+
 ```kotlin [Kotlin]
 val summary = client.syncAllDeviceSyncGroups()
 ```
@@ -2220,6 +2243,11 @@ const archives = await client.listAvailableArchives(BigInt(30));
 const archives = await client.listAvailableArchives(BigInt(30));
 ```
 
+```tsx [React Native]
+// List archives from the last 30 days
+const archives = await client.listAvailableArchives(30);
+```
+
 ```kotlin [Kotlin]
 // List archives from the last 30 days
 val archives = client.listAvailableArchives(daysCutoff = 30)
@@ -2231,6 +2259,20 @@ let archives = try client.listAvailableArchives(daysCutoff: 30)
 ```
 
 :::
+
+Each archive is returned as an `AvailableArchive` object:
+
+- `pin`: A unique identifier for the archive, used when processing it with `processSyncArchive()`
+- `metadata`: Optional JSON-encoded metadata about the archive contents, including start/end timestamps and elements included
+- `sentByInstallation`: Optional base64-encoded installation ID indicating which device created the archive
+
+```tsx
+interface AvailableArchive {
+  pin: string;
+  metadata?: string;
+  sentByInstallation?: string;
+}
+```
 
 ### Process a sync archive
 
@@ -2247,6 +2289,14 @@ await client.processSyncArchive();
 ```
 
 ```js [Node]
+// Process a specific archive by pin
+await client.processSyncArchive("my-pin");
+
+// Process the last archive sent
+await client.processSyncArchive();
+```
+
+```tsx [React Native]
 // Process a specific archive by pin
 await client.processSyncArchive("my-pin");
 
@@ -2309,6 +2359,22 @@ All parameters are optional and can be combined to create precise filters and so
 | `insertedAfterNs`                              | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database after this timestamp (nanoseconds)                                |
 | `sortBy`                                       | `SortBy` / enum                    | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
 
+## Enriched messages method parameters
+
+For `enrichedMessages()`, the available parameters are more limited but include new options:
+
+| Parameter           | Type                               | Description                                                                 |
+| ------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
+| `limit`             | `Int` / `Long` / `bigint`          | Maximum number of messages to return                                        |
+| `beforeNs`          | `Int64` / `Long` / `bigint`        | Filter messages sent before this timestamp (nanoseconds)                    |
+| `afterNs`           | `Int64` / `Long` / `bigint`        | Filter messages sent after this timestamp (nanoseconds)                     |
+| `direction`         | `SortDirection` / `string`         | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
+| `excludeSenderInboxIds` | Array of strings               | Inbox IDs whose messages should be excluded                                 |
+| `deliveryStatus`    | `EnrichedMessageDeliveryStatus`    | Filter by delivery status for enriched messages                             |
+| `insertedAfterNs`   | `Int64` / `Long` / `bigint`        | Filter messages inserted after this timestamp (nanoseconds)                 |
+| `insertedBeforeNs`  | `Int64` / `Long` / `bigint`        | Filter messages inserted before this timestamp (nanoseconds)                |
+| `sortBy`            | `EnrichedMessageSortBy`            | Sort by sent time or insertion time for enriched messages                   |
+
 ## List messages with enriched metadata
 
 The `enrichedMessages()` method retrieves messages from conversations with enriched metadata automatically included. This means reactions, replies, and other associated data are "baked in" to each message, eliminating the need for separate queries to fetch this information.
@@ -2325,20 +2391,28 @@ Use `reactions` to get a list of reaction messages associated with the message.
 
 ```tsx [React Native]
 // Retrieve messages with enriched data from a group
-const groupMessages = await group.enrichedMessages()
+const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
 
 // Retrieve messages with enriched data from a DM
-const dmMessages = await dm.enrichedMessages()
+const dmMessages = await dm.enrichedMessages();
 
 // Access reaction data for each message
 // Same enriched data is available for both groups and DMs
-for (const message of groupMessages) {
+groupMessages.forEach((message) => {
   // Access the list of reactions
   message.reactions.forEach((reaction) => {
-    const reactionContent = reaction.content() as { content: string }
-    console.log(`Reaction: ${reactionContent.content}`)
-  })
-}
+    const reactionContent = reaction.content();
+    console.log(`Reaction: ${reactionContent.content}`);
+  });
+});
 ```
 
 ```kotlin [Kotlin]
@@ -2387,21 +2461,32 @@ Messages returned by `enrichedMessages()` include reply information when a messa
 
 ```tsx [React Native]
 // Retrieve messages with enriched data from a group
-const groupMessages = await group.enrichedMessages()
+const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
 
 // Retrieve messages with enriched data from a DM
-const dmMessages = await dm.enrichedMessages()
+const dmMessages = await dm.enrichedMessages();
 
 // Access reply data for each message
 // Same enriched data is available for both groups and DMs
-for (const message of groupMessages) {
+groupMessages.forEach((message) => {
   // Check if the message is a reply
   if (message.contentTypeId === 'xmtp.org/reply:1.0') {
-    const replyContent = message.content() as ReplyContent
-    console.log(`This is a reply to message: ${replyContent.reference}`)
-    console.log(`Reply text: ${replyContent.content}`)
+    const replyContent = message.content();
+
+    if (replyContent) {
+      console.log(`This is a reply to message: ${replyContent.reference}`);
+      console.log(`Reply text: ${replyContent.content}`);
+    }
   }
-}
+});
 ```
 
 ```kotlin [Kotlin]
@@ -2761,14 +2846,14 @@ You can filter messages using insertion time ranges with `insertedAfterNs` and `
 const lastInsertionTime = 1738620126404999936;
 const newMessages = await group.messages({
   insertedAfterNs: lastInsertionTime,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 
 // Get messages inserted within a time range
 const messages = await group.messages({
   insertedAfterNs: startTime,
   insertedBeforeNs: endTime,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 ```
 
@@ -2815,13 +2900,13 @@ You can sort messages using `insertedAtNs`.
 ```tsx [React Native]
 // Sort by insertion time for reliable pagination
 const messages = await group.messages({
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
   limit: 20,
 });
 
 // Each message has both timestamps available
 messages.forEach((message) => {
-  console.log(`Sent at: ${message.sentAtNs}`);
+  console.log(`Sent at: ${message.sentNs}`);
   console.log(`Inserted at: ${message.insertedAtNs}`);
 });
 ```
@@ -2872,14 +2957,14 @@ Here's how to implement reliable message pagination using insertion time:
 // First page
 const firstPage = await group.messages({
   limit: 20,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 
 // Next page
 const secondPage = await group.messages({
   limit: 20,
   insertedBeforeNs: firstPage[firstPage.length - 1].insertedAtNs,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 ```
 
@@ -3751,28 +3836,36 @@ The method returns a summary object that includes the total number of conversati
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```js [Node]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-// Returns a summary object with sync statistics
+// Returns a GroupSyncSummary object with sync statistics
 const syncSummary = await client.conversations.syncAllConversations([
   'allowed',
 ]);
-// syncSummary.numEligible - Total number of conversations eligible for syncing
-// syncSummary.numSynced - Number of conversations that were actually synced
+console.log(`Eligible conversations: ${syncSummary.numEligible}`);
+console.log(`Successfully synced: ${syncSummary.numSynced}`);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+// Returns a GroupSyncSummary object with sync statistics
+val syncSummary = client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+println("Eligible conversations: ${syncSummary.numEligible}")
+println("Successfully synced: ${syncSummary.numSynced}")
 ```
 
 ```swift [Swift]
-try await client.conversations.syncAllConversations(consentState: [.allowed])
+// Returns a GroupSyncSummary object with sync statistics
+let syncSummary = try await client.conversations.syncAllConversations(consentState: [.allowed])
+print("Eligible conversations: \(syncSummary.numEligible)")
+print("Successfully synced: \(syncSummary.numSynced)")
 ```
 
 :::
@@ -5375,13 +5468,14 @@ type ClientOptions = {
    */
   dbDirectory?: string;
   /**
-   * OPTIONAL specify a url to sync message history from
-   */
-  historySyncUrl?: string;
-  /**
    * OPTIONAL specify a custom local host for testing on physical devices for example `localhost`
    */
   customLocalHost?: string;
+  /**
+   * OPTIONAL specify if device sync (history sync) should be enabled or disabled.
+   * Defaults to true.
+   */
+  deviceSyncEnabled?: boolean;
   /**
    * Allow configuring codecs for additional content types
    */
@@ -5405,6 +5499,7 @@ data class ClientOptions(
         else -> "https://message-history.dev.ephemera.network/"
     },
     val dbDirectory: String? = null,
+    val deviceSyncEnabled: Boolean = true,
 ) {
     data class Api(
         val env: XMTPEnvironment = XMTPEnvironment.DEV,
@@ -5473,6 +5568,7 @@ public struct ClientOptions {
  public var dbEncryptionKey: Data
  public var dbDirectory: String?
  public var historySyncUrl: String?
+ public var deviceSyncEnabled: Bool = true
 }
 ```
 
@@ -6226,6 +6322,7 @@ let group = try await alix.conversations.newGroup([bo.inboxId, caro.inboxId],
   name: "The Group Name",
   imageUrl: "www.groupImage.com",
   description: "The description of the group",
+  appData: """{"theme": "dark", "version": "1.0"}""" // Custom app data
 )
 ```
 
@@ -6641,8 +6738,8 @@ for await (const deletedMessageId of stream) {
 
 ```tsx [React Native]
 // Stream all message deletions
-await client.conversations.streamMessageDeletions(async (deletedMessage) => {
-  console.log("Message deleted:", deletedMessage.id);
+await client.conversations.streamMessageDeletions(async (messageId, conversationId) => {
+  console.log(`Message deleted: ${messageId} in conversation: ${conversationId}`);
 });
 ```
 
@@ -7313,6 +7410,10 @@ const appData = await group.appData();
 
 ```kotlin [Kotlin]
 val appData = group.appData()
+```
+
+```swift [Swift]
+let appData = try group.appData()
 ```
 
 :::
@@ -8608,6 +8709,23 @@ Here is how static installation revocation works behind the scenes:
 :::code-group
 
 ```tsx [Browser]
+// Method 1: Using Backend instance (recommended)
+import { createBackend } from '@xmtp/browser-sdk';
+
+const backend = await createBackend({ env: "production" });
+
+const inboxStates = await Client.fetchInboxStates([inboxId], backend);
+
+const toRevokeInstallationBytes = inboxStates[0].installations.map((i) => i.bytes);
+
+await Client.revokeInstallations(
+  signer,
+  inboxId,
+  toRevokeInstallationBytes,
+  backend
+);
+
+// Method 2: Using environment string (deprecated but still supported)
 const inboxStates = await Client.fetchInboxStates(
   [inboxId],
   "production", // optional, defaults to "dev"
@@ -8624,6 +8742,25 @@ await Client.revokeInstallations(
 ```
 
 ```tsx [Node]
+// Method 1: Using Backend instance (recommended)
+import { createBackend } from '@xmtp/node-sdk';
+
+const backend = await createBackend({ env: "production" });
+
+const inboxStates = await Client.fetchInboxStates([inboxId], backend);
+
+const toRevokeInstallationBytes = inboxStates[0].installations.map(
+  (i) => i.bytes
+);
+
+await Client.revokeInstallations(
+  signer,
+  inboxId,
+  toRevokeInstallationBytes,
+  backend
+);
+
+// Method 2: Using environment string (deprecated but still supported)
 const inboxStates = await Client.fetchInboxStates(
   [inboxId],
   'production', // optional, defaults to "dev"
@@ -9181,7 +9318,7 @@ const contentType = new ContentTypeId({
   versionMajor: 1,
   versionMinor: 0,
 });
-await conversation.prepareMessage(customContent, contentType);
+await conversation.prepareMessage(customContent, { contentType });
 ```
 
 ```kotlin [Kotlin]
@@ -9333,13 +9470,12 @@ This is useful when sending [remote attachments](/chat-apps/content-types/attach
 
 ```tsx [React Native]
 // Prepare message without auto-publishing
-const messageId = await conversation.prepareMessage(content, { noSend: true });
+const messageId = await conversation.prepareMessage('Hello world', {}, true);
 
 // Publish the specific message when ready
 await conversation.publishMessage(messageId);
 
-// Or delete it locally if needed
-await conversation.deleteMessageLocally(messageId);
+// Local deletion functionality is not yet available in React Native
 ```
 
 ```kotlin [Kotlin]
@@ -11510,11 +11646,15 @@ for (const reactionMessage of reactions) {
 ```jsx [React Native]
 if (message.contentTypeId === 'xmtp.org/reaction:1.0') {
   const reaction = message.content();
+  
+  // Access reaction properties
+  console.log('Message being reacted to:', reaction.reference);
+  console.log('Sender of original message:', reaction.referenceInboxId); // Optional field
+  console.log('Reaction action:', reaction.action); // 'added' or 'removed'
+  console.log('Reaction schema:', reaction.schema); // 'unicode', 'shortcode', or 'custom'
+  console.log('Reaction content:', reaction.content); // '💖', 'smile', etc.
+  
   return reaction;
-  //reaction.reference = id of the message being reacted to,
-  //reaction.action = 'added',
-  //reaction.schema =  'unicode',
-  //reaction.content = '💖',
 }
 ```
 
