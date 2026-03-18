@@ -19,6 +19,22 @@ All parameters are optional and can be combined to create precise filters and so
 | `insertedAfterNs`                              | `Int64` / `Long` / `bigint`        | Filter messages inserted into the local database after this timestamp (nanoseconds)                                |
 | `sortBy`                                       | `SortBy` / enum                    | Sort by `SENT_TIME` (default, when message was sent) or `INSERTED_TIME` (when message was added to local database) |
 
+## Enriched messages method parameters
+
+For `enrichedMessages()`, the available parameters are more limited but include new options:
+
+| Parameter           | Type                               | Description                                                                 |
+| ------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
+| `limit`             | `Int` / `Long` / `bigint`          | Maximum number of messages to return                                        |
+| `beforeNs`          | `Int64` / `Long` / `bigint`        | Filter messages sent before this timestamp (nanoseconds)                    |
+| `afterNs`           | `Int64` / `Long` / `bigint`        | Filter messages sent after this timestamp (nanoseconds)                     |
+| `direction`         | `SortDirection` / `string`         | Sort order: `descending` (default, newest first) or `ascending` (oldest first) |
+| `excludeSenderInboxIds` | Array of strings               | Inbox IDs whose messages should be excluded                                 |
+| `deliveryStatus`    | `EnrichedMessageDeliveryStatus`    | Filter by delivery status for enriched messages                             |
+| `insertedAfterNs`   | `Int64` / `Long` / `bigint`        | Filter messages inserted after this timestamp (nanoseconds)                 |
+| `insertedBeforeNs`  | `Int64` / `Long` / `bigint`        | Filter messages inserted before this timestamp (nanoseconds)                |
+| `sortBy`            | `EnrichedMessageSortBy`            | Sort by sent time or insertion time for enriched messages                   |
+
 ## List messages with enriched metadata
 
 The `enrichedMessages()` method retrieves messages from conversations with enriched metadata automatically included. This means reactions, replies, and other associated data are "baked in" to each message, eliminating the need for separate queries to fetch this information.
@@ -35,20 +51,28 @@ Use `reactions` to get a list of reaction messages associated with the message.
 
 ```tsx [React Native]
 // Retrieve messages with enriched data from a group
-const groupMessages = await group.enrichedMessages()
+const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
 
 // Retrieve messages with enriched data from a DM
-const dmMessages = await dm.enrichedMessages()
+const dmMessages = await dm.enrichedMessages();
 
 // Access reaction data for each message
 // Same enriched data is available for both groups and DMs
-for (const message of groupMessages) {
+groupMessages.forEach((message) => {
   // Access the list of reactions
   message.reactions.forEach((reaction) => {
-    const reactionContent = reaction.content() as { content: string }
-    console.log(`Reaction: ${reactionContent.content}`)
-  })
-}
+    const reactionContent = reaction.content();
+    console.log(`Reaction: ${reactionContent.content}`);
+  });
+});
 ```
 
 ```kotlin [Kotlin]
@@ -97,21 +121,32 @@ Messages returned by `enrichedMessages()` include reply information when a messa
 
 ```tsx [React Native]
 // Retrieve messages with enriched data from a group
-const groupMessages = await group.enrichedMessages()
+const groupMessages = await group.enrichedMessages();
+
+// Retrieve messages with enriched data with filtering and sorting options
+const filteredMessages = await group.enrichedMessages({
+  limit: 50,
+  afterNs: lastCheckTimestamp,
+  sortBy: 'INSERTED_TIME',
+  insertedAfterNs: lastInsertionTime,
+})
 
 // Retrieve messages with enriched data from a DM
-const dmMessages = await dm.enrichedMessages()
+const dmMessages = await dm.enrichedMessages();
 
 // Access reply data for each message
 // Same enriched data is available for both groups and DMs
-for (const message of groupMessages) {
+groupMessages.forEach((message) => {
   // Check if the message is a reply
   if (message.contentTypeId === 'xmtp.org/reply:1.0') {
-    const replyContent = message.content() as ReplyContent
-    console.log(`This is a reply to message: ${replyContent.reference}`)
-    console.log(`Reply text: ${replyContent.content}`)
+    const replyContent = message.content();
+
+    if (replyContent) {
+      console.log(`This is a reply to message: ${replyContent.reference}`);
+      console.log(`Reply text: ${replyContent.content}`);
+    }
   }
-}
+});
 ```
 
 ```kotlin [Kotlin]
@@ -471,14 +506,14 @@ You can filter messages using insertion time ranges with `insertedAfterNs` and `
 const lastInsertionTime = 1738620126404999936;
 const newMessages = await group.messages({
   insertedAfterNs: lastInsertionTime,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 
 // Get messages inserted within a time range
 const messages = await group.messages({
   insertedAfterNs: startTime,
   insertedBeforeNs: endTime,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 ```
 
@@ -525,13 +560,13 @@ You can sort messages using `insertedAtNs`.
 ```tsx [React Native]
 // Sort by insertion time for reliable pagination
 const messages = await group.messages({
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
   limit: 20,
 });
 
 // Each message has both timestamps available
 messages.forEach((message) => {
-  console.log(`Sent at: ${message.sentAtNs}`);
+  console.log(`Sent at: ${message.sentNs}`);
   console.log(`Inserted at: ${message.insertedAtNs}`);
 });
 ```
@@ -582,14 +617,14 @@ Here's how to implement reliable message pagination using insertion time:
 // First page
 const firstPage = await group.messages({
   limit: 20,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 
 // Next page
 const secondPage = await group.messages({
   limit: 20,
   insertedBeforeNs: firstPage[firstPage.length - 1].insertedAtNs,
-  sortBy: 'INSERTED',
+  sortBy: 'INSERTED_TIME',
 });
 ```
 

@@ -43,33 +43,11 @@ try await client.conversation.sync()
 
 :::
 
-## Manually request sync from other devices
+## Send a sync request
 
-When a device installation comes online, it automatically sends a request to other devices on the network to sync conversations and messages. However, in scenarios where this automatic process is interrupted, you can manually trigger a sync request.
+Send a history sync request to other installations. Call this after creating a client on a new installation to pull in historical data. 
 
-:::code-group
-
-```js [Browser]
-await client.sendSyncRequest();
-```
-
-```js [Node]
-await client.sendSyncRequest();
-```
-
-```tsx [React Native]
-await client.sendSyncRequest();
-```
-
-```kotlin [Kotlin]
-client.sendSyncRequest()
-```
-
-```swift [Swift]
-try await client.sendSyncRequest()
-```
-
-:::
+See [Send a sync request](/chat-apps/list-stream-sync/history-sync#send-a-sync-request) for details and code examples.
 
 ## Sync new conversations
 
@@ -118,28 +96,36 @@ The method returns a summary object that includes the total number of conversati
 :::code-group
 
 ```js [Browser]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```js [Node]
-await client.conversations.syncAll(['allowed']);
+// Returns the number of conversations synced
+const numSynced = await client.conversations.syncAll(['allowed']);
 ```
 
 ```tsx [React Native]
-// Returns a summary object with sync statistics
+// Returns a GroupSyncSummary object with sync statistics
 const syncSummary = await client.conversations.syncAllConversations([
   'allowed',
 ]);
-// syncSummary.numEligible - Total number of conversations eligible for syncing
-// syncSummary.numSynced - Number of conversations that were actually synced
+console.log(`Eligible conversations: ${syncSummary.numEligible}`);
+console.log(`Successfully synced: ${syncSummary.numSynced}`);
 ```
 
 ```kotlin [Kotlin]
-client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+// Returns a GroupSyncSummary object with sync statistics
+val syncSummary = client.conversations.syncAllConversations(consentState = listOf(ConsentState.ALLOWED))
+println("Eligible conversations: ${syncSummary.numEligible}")
+println("Successfully synced: ${syncSummary.numSynced}")
 ```
 
 ```swift [Swift]
-try await client.conversations.syncAllConversations(consentState: [.allowed])
+// Returns a GroupSyncSummary object with sync statistics
+let syncSummary = try await client.conversations.syncAllConversations(consentState: [.allowed])
+print("Eligible conversations: \(syncSummary.numEligible)")
+print("Successfully synced: \(syncSummary.numSynced)")
 ```
 
 :::

@@ -172,7 +172,7 @@ const contentType = new ContentTypeId({
   versionMajor: 1,
   versionMinor: 0,
 });
-await conversation.prepareMessage(customContent, contentType);
+await conversation.prepareMessage(customContent, { contentType });
 ```
 
 ```kotlin [Kotlin]
@@ -324,13 +324,12 @@ This is useful when sending [remote attachments](/chat-apps/content-types/attach
 
 ```tsx [React Native]
 // Prepare message without auto-publishing
-const messageId = await conversation.prepareMessage(content, { noSend: true });
+const messageId = await conversation.prepareMessage('Hello world', {}, true);
 
 // Publish the specific message when ready
 await conversation.publishMessage(messageId);
 
-// Or delete it locally if needed
-await conversation.deleteMessageLocally(messageId);
+// Local deletion functionality is not yet available in React Native
 ```
 
 ```kotlin [Kotlin]
