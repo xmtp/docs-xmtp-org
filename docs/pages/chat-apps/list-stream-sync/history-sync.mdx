@@ -127,10 +127,6 @@ await client.sendSyncRequest(
 await client.sendSyncRequest();
 ```
 
-:::tip[React Native v5.7.0+ breaking change]
-Automatic sending of sync requests on new installations has been removed. You must now call `sendSyncRequest()` explicitly after creating a client on a new installation.
-:::
-
 ```kotlin [Kotlin]
 // With default options
 client.sendSyncRequest()

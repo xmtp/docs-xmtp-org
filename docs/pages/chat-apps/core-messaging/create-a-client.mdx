@@ -206,6 +206,11 @@ type ClientOptions = {
    */
   apiUrl?: string;
   /**
+   * historySyncUrl can be used to override the `env` flag and connect to a
+   * specific endpoint for syncing history
+   */
+  historySyncUrl?: string | null;
+  /**
    * Allow configuring codecs for additional content types
    */
   codecs?: ContentCodec[];
@@ -296,6 +301,11 @@ type ClientOptions = {
    * specific endpoint
    */
   apiUrl?: string;
+  /**
+   * historySyncUrl can be used to override the `env` flag and connect to a
+   * specific endpoint for syncing history
+   */
+  historySyncUrl?: string | null;
   /**
    * Path to the local DB
    *
@@ -421,6 +431,7 @@ data class ClientOptions(
         else -> "https://message-history.dev.ephemera.network/"
     },
     val dbDirectory: String? = null,
+    val deviceSyncEnabled: Boolean = true,
 ) {
     data class Api(
         val env: XMTPEnvironment = XMTPEnvironment.DEV,
@@ -489,6 +500,7 @@ public struct ClientOptions {
  public var dbEncryptionKey: Data
  public var dbDirectory: String?
  public var historySyncUrl: String?
+ public var deviceSyncEnabled: Bool = true
 }
 ```
 
