@@ -90,7 +90,7 @@ The following methods accept an optional options parameter that controls what da
 | --- | --- | --- |
 | `startNs` | `nil`/`null` | Start timestamp in nanoseconds to filter the archive to a time range |
 | `endNs` | `nil`/`null` | End timestamp in nanoseconds to filter the archive to a time range |
-| `archiveElements` | `[messages, consent]` | What to include in the archive: `messages`, `consent`, or both |
+| `elements` | `[BackupElementSelectionOption.Consent, BackupElementSelectionOption.Messages]` | What to include in the archive: `messages`, `consent`, or both |
 | `excludeDisappearingMessages` | `false` | Whether to exclude disappearing messages from the archive |
 
 Calling these methods without the options parameter includes all messages and consent data.
@@ -102,23 +102,23 @@ Send a request to other installations to sync conversations and messages to the 
 :::code-group
 
 ```js [Browser]
-// With default options
+// With default options (syncs consent and messages to default server)
 await client.sendSyncRequest();
 
 // With custom options
 await client.sendSyncRequest(
-  { archiveElements: ["consent"] },            // options
+  { elements: [BackupElementSelectionOption.Consent] },            // options
   "https://your-history-sync-server.example.com/" // serverUrl
 );
 ```
 
 ```js [Node]
-// With default options
+// With default options (syncs consent and messages to default server)
 await client.sendSyncRequest();
 
 // With custom options
 await client.sendSyncRequest(
-  { archiveElements: ["consent"] },            // options
+  { elements: [BackupElementSelectionOption.Consent] },            // options
   "https://your-history-sync-server.example.com/" // serverUrl
 );
 ```
@@ -158,25 +158,25 @@ Send an archive to the sync group without waiting for a request from another ins
 :::code-group
 
 ```js [Browser]
-// With default options
+// With default options (syncs consent and messages to default server)
 await client.sendSyncArchive("my-pin");
 
 // With custom options
 await client.sendSyncArchive(
   "my-pin",                                    // pin
-  { archiveElements: ["consent"] },            // options
+  { elements: [BackupElementSelectionOption.Consent] },            // options
   "https://your-history-sync-server.example.com/" // serverUrl
 );
 ```
 
 ```js [Node]
-// With default options
+// With default options (syncs consent and messages to default server)
 await client.sendSyncArchive("my-pin");
 
 // With custom options
 await client.sendSyncArchive(
   "my-pin",                                    // pin
-  { archiveElements: ["consent"] },            // options
+  { elements: [BackupElementSelectionOption.Consent] },            // options
   "https://your-history-sync-server.example.com/" // serverUrl
 );
 ```
@@ -256,12 +256,12 @@ Get a list of archives available for import from the sync group. This method rea
 
 ```js [Browser]
 // List archives from the last 30 days
-const archives = await client.listAvailableArchives(BigInt(30));
+const archives = await client.listAvailableArchives(30);
 ```
 
 ```js [Node]
 // List archives from the last 30 days
-const archives = await client.listAvailableArchives(BigInt(30));
+const archives = client.listAvailableArchives(30);
 ```
 
 ```tsx [React Native]
