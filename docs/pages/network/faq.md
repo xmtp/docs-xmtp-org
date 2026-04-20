@@ -12,14 +12,14 @@ These nodes in the `dev` and `production` XMTP network environments operate in U
 - Iran
 - North Korea
 - Syria
-- The Crimea, Donetsk People's Republic, and Luhansk People's Republic regions of Ukraine
+- The Crimea, the so-called Donetsk People's Republic (DNR) and Luhansk People's Republic (LNR) regions of Ukraine
 
 ## Is XMTP a blockchain?
 
-The Testnet of the decentralized XMTP network includes two distributed systems:
+The testnet of the decentralized XMTP network includes two distributed systems:
 
 - The XMTP Broadcast Network
-- The XMTP App Chain, which is an L3 blockchain securing all metadata that require strict ordering.
+- The XMTP App Chain, which is an L3 blockchain securing all metadata that requires strict ordering.
 
 To learn more, see [Decentralizing XMTP](https://xmtp.org/decentralization).
 
