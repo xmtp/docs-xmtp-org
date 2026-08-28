@@ -2,7 +2,7 @@
 
 This document lists all error codes defined in LibXMTP, the core library underlying the XMTP SDKs. Each error code is a unique identifier returned to help diagnose issues.
 
-**29 error types** across **9 crates** with **327 total error codes**.
+**30 error types** across **10 crates** with **331 total error codes**.
 
 ## mobile
 
@@ -20,6 +20,21 @@ This document lists all error codes defined in LibXMTP, the core library underly
 | `GenericError::ReloadLog` | Reload log error. Failed to reload log subscriber. Not retryable. |
 | `GenericError::Log` | Log error. Error initializing debug log file. Not retryable. |
 | `GenericError::Expired` | Timer expired. Operation timed out. Retryable. |
+
+## wasm
+
+### ContentTypeError <sub>enum</sub>
+
+<small>`bindings/wasm/src/content_types/mod.rs`</small>
+
+Content type errors exposed by the Browser SDK use the format `[ContentTypeError::Variant] message`. The variant identifies the error category, while the runtime message provides the specific field or operation that failed. These errors are deterministic and should not be retried without changing the input.
+
+| Error Code | Description |
+|:-----------|:------------|
+| `ContentTypeError::InvalidData` | Invalid content type data. Validation or conversion failed, such as when a required field is missing or wallet call metadata is invalid. Not retryable. |
+| `ContentTypeError::TimestampOutOfRange` | Timestamp out of range. An action expiration timestamp cannot be represented in nanoseconds. Not retryable. |
+| `ContentTypeError::Codec` | Codec error. Content type encoding or decoding failed; the runtime message identifies the underlying codec failure. Not retryable. |
+| `ContentTypeError::Crypto` | Crypto error. A content type cryptographic operation failed; the runtime message identifies the underlying cryptographic failure. Not retryable. |
 
 ## xmtp_api
 
